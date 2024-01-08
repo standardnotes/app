@@ -1,10 +1,11 @@
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ElementFormatType, NodeKey } from 'lexical'
+import { $getNodeByKey, CLICK_COMMAND, COMMAND_PRIORITY_LOW, ElementFormatType, NodeKey } from 'lexical'
 import { useApplication } from '@/Components/ApplicationProvider'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileItem } from '@standardnotes/snjs'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection'
 
 export type FileComponentProps = Readonly<{
   className: Readonly<{
@@ -65,6 +66,29 @@ export function FileComponent({ className, format, nodeKey, fileUuid, zoomLevel,
     },
     [editor, setZoomLevel],
   )
+
+  const [isSelected, setSelected] = useLexicalNodeSelection(nodeKey)
+
+  useEffect(() => {
+    return editor.registerCommand<MouseEvent>(
+      CLICK_COMMAND,
+      (event) => {
+        if (blockWrapperRef.current?.contains(event.target as Node)) {
+          event.preventDefault()
+
+          $getNodeByKey(nodeKey)?.selectEnd()
+
+          setTimeout(() => {
+            setSelected(!isSelected)
+          })
+          return true
+        }
+
+        return false
+      },
+      COMMAND_PRIORITY_LOW,
+    )
+  }, [editor, isSelected, nodeKey, setSelected])
 
   if (!file) {
     return (

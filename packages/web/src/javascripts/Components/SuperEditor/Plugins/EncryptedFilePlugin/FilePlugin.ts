@@ -77,9 +77,8 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
       ),
       editor.registerNodeTransform(FileNode, (node) => {
         /**
-         * Before this was added, we used to wrap the file node in a paragraph node,
-         * which caused issues with selection. We no longer do that, but for existing
-         * notes that have this, we use this transform to remove the wrapper node.
+         * When adding the node we wrap it with a paragraph to avoid insertion errors,
+         * however that causes issues with selection. We unwrap the node to fix that.
          */
         const parent = node.getParent()
         if (!parent) {

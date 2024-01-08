@@ -5,11 +5,12 @@ import { isDesktopApplication } from '@/Utils'
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { classNames, Platform } from '@standardnotes/snjs'
-import { ElementFormatType, NodeKey } from 'lexical'
-import { useCallback, useState } from 'react'
+import { $getNodeByKey, CLICK_COMMAND, COMMAND_PRIORITY_LOW, ElementFormatType, NodeKey } from 'lexical'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { $createFileNode } from '../EncryptedFilePlugin/Nodes/FileUtils'
 import { RemoteImageNode } from './RemoteImageNode'
 import { isIOS } from '@standardnotes/ui-services'
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection'
 
 type Props = {
   src: string
@@ -66,9 +67,33 @@ const RemoteImageComponent = ({ className, src, alt, node, format, nodeKey }: Pr
   const isBase64OrDataUrl = src.startsWith('data:')
   const canShowSaveButton = application.isNativeMobileWeb() || isDesktopApplication() || isBase64OrDataUrl
 
+  const ref = useRef<HTMLDivElement>(null)
+  const [isSelected, setSelected] = useLexicalNodeSelection(nodeKey)
+
+  useEffect(() => {
+    return editor.registerCommand<MouseEvent>(
+      CLICK_COMMAND,
+      (event) => {
+        if (ref.current?.contains(event.target as Node)) {
+          event.preventDefault()
+
+          $getNodeByKey(nodeKey)?.selectEnd()
+
+          setTimeout(() => {
+            setSelected(!isSelected)
+          })
+          return true
+        }
+
+        return false
+      },
+      COMMAND_PRIORITY_LOW,
+    )
+  }, [editor, isSelected, nodeKey, setSelected])
+
   return (
     <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
-      <div className="relative flex min-h-[2rem] flex-col items-center gap-2.5">
+      <div ref={ref} className="relative flex min-h-[2rem] flex-col items-center gap-2.5">
         <img
           alt={alt}
           src={src}
