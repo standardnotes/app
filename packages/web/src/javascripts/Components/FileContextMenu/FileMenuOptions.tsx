@@ -15,6 +15,7 @@ import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import { iconClass } from '../NotesOptions/ClassNames'
 import { useApplication } from '../ApplicationProvider'
 import MenuSection from '../Menu/MenuSection'
+import { ToastType, addToast } from '@standardnotes/toast'
 
 type Props = {
   closeMenu: () => void
@@ -35,11 +36,12 @@ const FileMenuOptions: FunctionComponent<Props> = ({
 }) => {
   const application = useApplication()
 
-  const { handleFileAction } = application.filesController
+  const { shouldUseStreamingAPI, handleFileAction } = application.filesController
   const { toggleAppPane } = useResponsiveAppPane()
 
   const hasProtectedFiles = useMemo(() => selectedFiles.some((file) => file.protected), [selectedFiles])
   const hasSelectedMultipleFiles = useMemo(() => selectedFiles.length > 1, [selectedFiles.length])
+  const canShowZipDownloadOption = shouldUseStreamingAPI && hasSelectedMultipleFiles
 
   const totalFileSize = useMemo(
     () => selectedFiles.map((file) => file.decryptedSize).reduce((prev, next) => prev + next, 0),
@@ -136,8 +138,28 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           }}
         >
           <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-          Download
+          Download {canShowZipDownloadOption ? 'separately' : ''}
         </MenuItem>
+        {canShowZipDownloadOption && (
+          <MenuItem
+            onClick={() => {
+              application.filesController.downloadFilesAsZip(selectedFiles).catch((error) => {
+                if (error instanceof DOMException && error.name === 'AbortError') {
+                  return
+                }
+                console.error(error)
+                addToast({
+                  type: ToastType.Error,
+                  message: error.message || 'Failed to download files as archive',
+                })
+              })
+              closeMenu()
+            }}
+          >
+            <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
+            Download as archive
+          </MenuItem>
+        )}
         {shouldShowRenameOption && (
           <MenuItem
             onClick={() => {

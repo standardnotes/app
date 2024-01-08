@@ -11,6 +11,7 @@ import {
   ArchiveManager,
   confirmDialog,
   IsNativeMobileWeb,
+  parseAndCreateZippableFileName,
   VaultDisplayServiceInterface,
 } from '@standardnotes/ui-services'
 import { Strings, StringUtils } from '@/Constants/Strings'
@@ -44,6 +45,7 @@ import { action, makeObservable, observable, reaction } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController/NotesController'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
+import { truncateString } from '@/Components/SuperEditor/Utils'
 
 const UnprotectedFileActions = [FileItemActionType.ToggleFileProtection]
 const NonMutatingFileActions = [FileItemActionType.DownloadFile, FileItemActionType.PreviewFile]
@@ -715,5 +717,87 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         }),
       ),
     )
+  }
+
+  downloadFilesAsZip = async (files: FileItem[]) => {
+    if (!this.shouldUseStreamingAPI) {
+      throw new Error('Device does not support streaming API')
+    }
+
+    const protectedFiles = files.filter((file) => file.protected)
+
+    if (protectedFiles.length > 0) {
+      const authorized = await this.protections.authorizeProtectedActionForItems(
+        protectedFiles,
+        ChallengeReason.AccessProtectedFile,
+      )
+      if (authorized.length === 0) {
+        throw new Error('Authorization is required to download protected files')
+      }
+    }
+
+    const zipFileHandle = await window.showSaveFilePicker({
+      types: [
+        {
+          description: 'ZIP file',
+          accept: { 'application/zip': ['.zip'] },
+        },
+      ],
+    })
+
+    const toast = addToast({
+      type: ToastType.Progress,
+      title: `Downloading ${files.length} files as archive`,
+      message: 'Preparing archive...',
+    })
+
+    try {
+      const zip = await import('@zip.js/zip.js')
+
+      const zipStream = await zipFileHandle.createWritable()
+
+      const zipWriter = new zip.ZipWriter(zipStream, {
+        level: 0,
+      })
+
+      const addedFilenames: string[] = []
+
+      for (const file of files) {
+        const fileStream = new TransformStream()
+
+        let name = parseAndCreateZippableFileName(file.name)
+
+        if (addedFilenames.includes(name)) {
+          name = `${Date.now()} ${name}`
+        }
+
+        zipWriter.add(name, fileStream.readable).catch(console.error)
+
+        addedFilenames.push(name)
+
+        const writer = fileStream.writable.getWriter()
+
+        await this.files
+          .downloadFile(file, async (bytesChunk, progress) => {
+            await writer.write(bytesChunk)
+            updateToast(toast, {
+              message: `Downloading file "${truncateString(file.name, 20)}"`,
+              progress: Math.floor(progress.percentComplete),
+            })
+          })
+          .catch(console.error)
+
+        await writer.close()
+      }
+
+      await zipWriter.close()
+    } finally {
+      dismissToast(toast)
+    }
+
+    addToast({
+      type: ToastType.Success,
+      message: `Successfully downloaded ${files.length} files as archive`,
+    })
   }
 }
