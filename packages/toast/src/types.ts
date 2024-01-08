@@ -7,6 +7,7 @@ export type ToastAction = {
 
 type CommonToastProperties = {
   type: ToastType
+  title?: string
   message: string
   actions?: ToastAction[]
   progress?: number
