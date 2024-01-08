@@ -781,7 +781,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           .downloadFile(file, async (bytesChunk, progress) => {
             await writer.write(bytesChunk)
             updateToast(toast, {
-              message: `Downloading file "${truncateString(file.name, 20)}"`,
+              message: `Downloading "${truncateString(file.name, 25)}"`,
               progress: Math.floor(progress.percentComplete),
             })
           })
