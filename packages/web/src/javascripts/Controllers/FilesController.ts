@@ -763,11 +763,6 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       const addedFilenames: string[] = []
 
       for (const file of files) {
-        updateToast(toast, {
-          message: `Downloading file "${truncateString(file.name, 20)}"`,
-          progress: 0,
-        })
-
         const fileStream = new TransformStream()
 
         let name = parseAndCreateZippableFileName(file.name)
@@ -786,6 +781,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           .downloadFile(file, async (bytesChunk, progress) => {
             await writer.write(bytesChunk)
             updateToast(toast, {
+              message: `Downloading file "${truncateString(file.name, 20)}"`,
               progress: Math.floor(progress.percentComplete),
             })
           })
