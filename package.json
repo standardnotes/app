@@ -43,7 +43,9 @@
     "@types/styled-components-react-native/@types/react": "17.0.2",
     "@types/react-native-vector-icons/@types/react": "17.0.2",
     "@types/react-native/@types/react": "17.0.2",
-    "@types/hoist-non-react-statics/@types/react": "17.0.2"
+    "@types/hoist-non-react-statics/@types/react": "17.0.2",
+    "@lexical/clipboard@0.12.6": "patch:@lexical/clipboard@npm:0.12.6#.yarn/patches/@lexical-clipboard-npm-0.12.6-4163a238a6.patch",
+    "@lexical/rich-text@0.12.6": "patch:@lexical/rich-text@npm:0.12.6#.yarn/patches/@lexical-rich-text-npm-0.12.6-1692a2faf1.patch"
   },
   "dependencies": {
     "@standardnotes/snjs": "workspace:*"

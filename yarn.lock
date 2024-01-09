@@ -3779,6 +3779,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lexical/clipboard@patch:@lexical/clipboard@npm:0.12.6#.yarn/patches/@lexical-clipboard-npm-0.12.6-4163a238a6.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
+  version: 0.12.6
+  resolution: "@lexical/clipboard@patch:@lexical/clipboard@npm%3A0.12.6#.yarn/patches/@lexical-clipboard-npm-0.12.6-4163a238a6.patch::version=0.12.6&hash=0011f4&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  dependencies:
+    "@lexical/html": 0.12.6
+    "@lexical/list": 0.12.6
+    "@lexical/selection": 0.12.6
+    "@lexical/utils": 0.12.6
+  peerDependencies:
+    lexical: 0.12.6
+  checksum: 338dfa2def24d7a1a89ef259d06e284938ac57efd11440718c25dccb74aa5c23a2950a0670ad669e276a12384b5720802525cddc97a88d315514b20dd38b6149
+  languageName: node
+  linkType: hard
+
 "@lexical/code@npm:0.12.6":
   version: 0.12.6
   resolution: "@lexical/code@npm:0.12.6"
@@ -3961,6 +3975,18 @@ __metadata:
     "@lexical/utils": 0.12.6
     lexical: 0.12.6
   checksum: fa61b28a79f20be8be3a485733f8ca6bbe5124268f9eca95486df51388ec411a0967aac7c3d40a2c2dcb1c87fa40404df48e9c66f1d86a76311305598ca2262e
+  languageName: node
+  linkType: hard
+
+"@lexical/rich-text@patch:@lexical/rich-text@npm:0.12.6#.yarn/patches/@lexical-rich-text-npm-0.12.6-1692a2faf1.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
+  version: 0.12.6
+  resolution: "@lexical/rich-text@patch:@lexical/rich-text@npm%3A0.12.6#.yarn/patches/@lexical-rich-text-npm-0.12.6-1692a2faf1.patch::version=0.12.6&hash=92d887&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  peerDependencies:
+    "@lexical/clipboard": 0.12.6
+    "@lexical/selection": 0.12.6
+    "@lexical/utils": 0.12.6
+    lexical: 0.12.6
+  checksum: 84d2609fa16192b77d47a191c2e625e5e97eb99cc61a591a112d68e7ee08b873217ff93207357348da02a06793d9d385d517f0a05fa731b39c21c2f5a7cc1d75
   languageName: node
   linkType: hard
 
