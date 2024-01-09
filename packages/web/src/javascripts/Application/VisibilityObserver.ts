@@ -11,6 +11,7 @@ export class VisibilityObserver {
      */
     document.addEventListener('visibilitychange', this.onVisibilityChange)
     window.addEventListener('focus', this.onFocusEvent, false)
+    window.addEventListener('blur', this.onBlurEvent, false)
   }
 
   onVisibilityChange = () => {
@@ -21,6 +22,10 @@ export class VisibilityObserver {
 
   onFocusEvent = () => {
     this.notifyEvent(WebAppEvent.WindowDidFocus)
+  }
+
+  onBlurEvent = () => {
+    this.notifyEvent(WebAppEvent.WindowDidBlur)
   }
 
   private notifyEvent(event: WebAppEvent): void {
