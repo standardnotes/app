@@ -128,6 +128,8 @@ export class SyncService
   extends AbstractService<SyncEvent>
   implements SyncServiceInterface, InternalEventHandlerInterface
 {
+  private DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE = 200
+
   private dirtyIndexAtLastPresyncSave?: number
   private lastSyncDate?: Date
   private outOfSync = false
@@ -156,6 +158,8 @@ export class SyncService
   private autoSyncInterval?: NodeJS.Timer
   private wasNotifiedOfItemsChangeOnServer = false
 
+  private callsPerMinuteMap: Map<string, number>
+
   constructor(
     private itemManager: ItemManager,
     private sessionManager: SessionManager,
@@ -173,6 +177,7 @@ export class SyncService
   ) {
     super(internalEventBus)
     this.opStatus = this.initializeStatus()
+    this.callsPerMinuteMap = new Map<string, number>()
   }
 
   /**
@@ -209,6 +214,8 @@ export class SyncService
     ;(this.opStatus as unknown) = undefined
     this.resolveQueue.length = 0
     this.spawnQueue.length = 0
+    this.callsPerMinuteMap.clear()
+    ;(this.callsPerMinuteMap as unknown) = undefined
     super.deinit()
   }
 
@@ -643,7 +650,8 @@ export class SyncService
     const syncInProgress = this.opStatus.syncInProgress
     const databaseLoaded = this.databaseLoaded
     const canExecuteSync = !this.syncLock
-    const shouldExecuteSync = canExecuteSync && databaseLoaded && !syncInProgress
+    const syncLimitReached = this.isSyncCallsThresholdReachedThisMinute()
+    const shouldExecuteSync = canExecuteSync && databaseLoaded && !syncInProgress && !syncLimitReached
 
     if (shouldExecuteSync) {
       this.syncLock = true
@@ -1296,6 +1304,8 @@ export class SyncService
 
     this.lastSyncDate = new Date()
 
+    this.incrementCallsPerMinute()
+
     if (operation instanceof AccountSyncOperation && operation.numberOfItemsInvolved >= this.majorChangeThreshold) {
       void this.notifyEvent(SyncEvent.MajorDataChange)
     }
@@ -1510,6 +1520,42 @@ export class SyncService
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
       awaitAll: true,
     })
+  }
+
+  private isSyncCallsThresholdReachedThisMinute() {
+    const stringDateToTheMinute = this.getCallsPerMinuteKey()
+    const persistedCallsCount = this.callsPerMinuteMap.get(stringDateToTheMinute)
+    const newMinuteStarted = persistedCallsCount === undefined
+
+    if (newMinuteStarted) {
+      this.callsPerMinuteMap.clear()
+    }
+    const count = persistedCallsCount || 0
+
+    const thresholdReached = count >= this.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE
+    if (thresholdReached) {
+      this.logger.debug(`Sync calls threshold reached for this minute (${stringDateToTheMinute}) with ${count} calls`)
+    }
+
+    return thresholdReached
+  }
+
+  private incrementCallsPerMinute() {
+    const stringDateToTheMinute = this.getCallsPerMinuteKey()
+    const persistedCallsCount = this.callsPerMinuteMap.get(stringDateToTheMinute)
+    const newMinuteStarted = persistedCallsCount === undefined
+
+    if (newMinuteStarted) {
+      this.callsPerMinuteMap.set(stringDateToTheMinute, 1)
+    } else {
+      this.callsPerMinuteMap.set(stringDateToTheMinute, persistedCallsCount + 1)
+    }
+  }
+
+  private getCallsPerMinuteKey() {
+    const now = new Date()
+
+    return `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}T${now.getHours()}:${now.getMinutes()}`
   }
 
   /** @e2e_testing */
