@@ -650,7 +650,7 @@ export class SyncService
     const syncInProgress = this.opStatus.syncInProgress
     const databaseLoaded = this.databaseLoaded
     const canExecuteSync = !this.syncLock
-    const syncLimitReached = this.cleanupCallsRegistryAndCalculateIfSyncCallsThresholdReachedThisMinute()
+    const syncLimitReached = this.isSyncCallsThresholdReachedThisMinute()
     const shouldExecuteSync = canExecuteSync && databaseLoaded && !syncInProgress && !syncLimitReached
 
     if (shouldExecuteSync) {
@@ -1522,19 +1522,15 @@ export class SyncService
     })
   }
 
-  private cleanupCallsRegistryAndCalculateIfSyncCallsThresholdReachedThisMinute(): boolean {
+  private isSyncCallsThresholdReachedThisMinute(): boolean {
     const stringDateToTheMinute = this.getCallsPerMinuteKey()
-    const persistedCallsCount = this.callsPerMinuteMap.get(stringDateToTheMinute)
-    const newMinuteStarted = persistedCallsCount === undefined
+    const persistedCallsCount = this.callsPerMinuteMap.get(stringDateToTheMinute) || 0
 
-    if (newMinuteStarted) {
-      this.callsPerMinuteMap.clear()
-    }
-    const count = persistedCallsCount || 0
-
-    const thresholdReached = count >= this.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE
+    const thresholdReached = persistedCallsCount >= this.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE
     if (thresholdReached) {
-      this.logger.debug(`Sync calls threshold reached for this minute (${stringDateToTheMinute}) with ${count} calls`)
+      this.logger.debug(
+        `Sync calls threshold reached for this minute (${stringDateToTheMinute}) with ${persistedCallsCount} calls`,
+      )
     }
 
     return thresholdReached
@@ -1546,6 +1542,7 @@ export class SyncService
     const newMinuteStarted = persistedCallsCount === undefined
 
     if (newMinuteStarted) {
+      this.callsPerMinuteMap.clear()
       this.callsPerMinuteMap.set(stringDateToTheMinute, 1)
     } else {
       this.callsPerMinuteMap.set(stringDateToTheMinute, persistedCallsCount + 1)
