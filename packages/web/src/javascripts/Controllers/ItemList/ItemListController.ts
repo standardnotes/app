@@ -216,7 +216,7 @@ export class ItemListController
     eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
     eventBus.addEventHandler(this, ApplicationEvent.SignedIn)
     eventBus.addEventHandler(this, ApplicationEvent.CompletedFullSync)
-    eventBus.addEventHandler(this, WebAppEvent.EditorFocused)
+    eventBus.addEventHandler(this, WebAppEvent.EditorDidFocus)
 
     this.disposers.push(
       reaction(
@@ -325,7 +325,7 @@ export class ItemListController
         break
       }
 
-      case WebAppEvent.EditorFocused: {
+      case WebAppEvent.EditorDidFocus: {
         this.setShowDisplayOptionsMenu(false)
         break
       }

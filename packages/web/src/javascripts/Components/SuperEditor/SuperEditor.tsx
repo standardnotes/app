@@ -6,6 +6,7 @@ import {
   FeatureStatus,
   GetSuperNoteFeature,
   EditorLineHeightValues,
+  WebAppEvent,
 } from '@standardnotes/snjs'
 import { CSSProperties, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { BlocksEditor } from './BlocksEditor'
@@ -37,6 +38,7 @@ import NotEntitledBanner from '../ComponentView/NotEntitledBanner'
 import AutoFocusPlugin from './Plugins/AutoFocusPlugin'
 import usePreference from '@/Hooks/usePreference'
 import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
+import { EditorEventSource } from '@/Types/EditorEventSource'
 
 export const SuperNotePreviewCharLimit = 160
 
@@ -179,6 +181,13 @@ export const SuperEditor: FunctionComponent<Props> = ({
     }
   }, [])
 
+  const onFocus = useCallback(() => {
+    application.notifyWebEvent(WebAppEvent.EditorDidFocus, { eventSource: EditorEventSource.UserInteraction })
+  }, [application])
+  const onBlur = useCallback(() => {
+    application.notifyWebEvent(WebAppEvent.EditorDidBlur, { eventSource: EditorEventSource.UserInteraction })
+  }, [application])
+
   return (
     <div
       className="font-editor relative flex h-full w-full flex-col"
@@ -203,6 +212,8 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 previewLength={SuperNotePreviewCharLimit}
                 spellcheck={spellcheck}
                 readonly={note.current.locked || readonly}
+                onFocus={onFocus}
+                onBlur={onBlur}
               >
                 <ItemSelectionPlugin currentNote={note.current} />
                 <FilePlugin currentNote={note.current} />

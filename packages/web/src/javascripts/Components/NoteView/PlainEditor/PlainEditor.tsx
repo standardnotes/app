@@ -122,20 +122,19 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         needsAdjustMobileCursor.current = true
       }
 
-      if (lastEditorFocusEventSource.current) {
-        application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: lastEditorFocusEventSource })
-      }
+      application.notifyWebEvent(WebAppEvent.EditorDidFocus, { eventSource: lastEditorFocusEventSource.current })
 
       lastEditorFocusEventSource.current = undefined
+
       onFocus()
     }, [application, isAdjustingMobileCursor, lastEditorFocusEventSource, onFocus])
 
     const onContentBlur = useCallback(
       (event: FocusEvent) => {
-        if (lastEditorFocusEventSource.current) {
-          application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: lastEditorFocusEventSource })
-        }
+        application.notifyWebEvent(WebAppEvent.EditorDidBlur, { eventSource: lastEditorFocusEventSource.current })
+
         lastEditorFocusEventSource.current = undefined
+
         onBlur(event)
       },
       [application, lastEditorFocusEventSource, onBlur],
