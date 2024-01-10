@@ -650,7 +650,7 @@ export class SyncService
     const syncInProgress = this.opStatus.syncInProgress
     const databaseLoaded = this.databaseLoaded
     const canExecuteSync = !this.syncLock
-    const syncLimitReached = this.isSyncCallsThresholdReachedThisMinute()
+    const syncLimitReached = this.cleanupCallsRegistryAndCalculateIfSyncCallsThresholdReachedThisMinute()
     const shouldExecuteSync = canExecuteSync && databaseLoaded && !syncInProgress && !syncLimitReached
 
     if (shouldExecuteSync) {
@@ -1522,7 +1522,7 @@ export class SyncService
     })
   }
 
-  private isSyncCallsThresholdReachedThisMinute() {
+  private cleanupCallsRegistryAndCalculateIfSyncCallsThresholdReachedThisMinute(): boolean {
     const stringDateToTheMinute = this.getCallsPerMinuteKey()
     const persistedCallsCount = this.callsPerMinuteMap.get(stringDateToTheMinute)
     const newMinuteStarted = persistedCallsCount === undefined
@@ -1540,7 +1540,7 @@ export class SyncService
     return thresholdReached
   }
 
-  private incrementCallsPerMinute() {
+  private incrementCallsPerMinute(): void {
     const stringDateToTheMinute = this.getCallsPerMinuteKey()
     const persistedCallsCount = this.callsPerMinuteMap.get(stringDateToTheMinute)
     const newMinuteStarted = persistedCallsCount === undefined
@@ -1552,7 +1552,7 @@ export class SyncService
     }
   }
 
-  private getCallsPerMinuteKey() {
+  private getCallsPerMinuteKey(): string {
     const now = new Date()
 
     return `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}T${now.getHours()}:${now.getMinutes()}`
