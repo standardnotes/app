@@ -10,8 +10,10 @@ import {
 import { Deferred } from '@standardnotes/utils'
 import { EditorSaveTimeoutDebounce } from '../Components/NoteView/Controller/EditorSaveTimeoutDebounce'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
+import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 
 const NotePreviewCharLimit = 160
+const LargeNoteThreshold = 2 * BYTES_IN_ONE_MEGABYTE
 
 export type NoteSaveFunctionParams = {
   title?: string
@@ -28,7 +30,8 @@ export type NoteSaveFunctionParams = {
 export class NoteSyncController {
   savingLocallyPromise: ReturnType<typeof Deferred<void>> | null = null
 
-  private saveTimeout?: ReturnType<typeof setTimeout>
+  private localSaveTimeout?: ReturnType<typeof setTimeout>
+  private remoteSaveTimeout?: ReturnType<typeof setTimeout>
 
   constructor(
     private item: SNNote,
@@ -45,34 +48,43 @@ export class NoteSyncController {
   }
 
   deinit() {
-    if (this.saveTimeout) {
-      clearTimeout(this.saveTimeout)
+    if (this.localSaveTimeout) {
+      clearTimeout(this.localSaveTimeout)
     }
     if (this.savingLocallyPromise) {
       this.savingLocallyPromise.reject()
     }
     this.savingLocallyPromise = null
-    this.saveTimeout = undefined
+    this.localSaveTimeout = undefined
     ;(this.item as unknown) = undefined
   }
 
   public async saveAndAwaitLocalPropagation(params: NoteSaveFunctionParams): Promise<void> {
     this.savingLocallyPromise = Deferred<void>()
 
-    if (this.saveTimeout) {
-      clearTimeout(this.saveTimeout)
+    if (this.localSaveTimeout) {
+      clearTimeout(this.localSaveTimeout)
+    }
+    if (this.remoteSaveTimeout) {
+      clearTimeout(this.remoteSaveTimeout)
     }
 
     const noDebounce = params.bypassDebouncer || this.sessions.isSignedOut()
 
-    const syncDebouceMs = noDebounce
+    const textByteSize = new Blob([params.text ? params.text : this.item.text]).size
+
+    const isLargeNote = textByteSize > LargeNoteThreshold
+
+    const localSaveDebouceMs = noDebounce
       ? EditorSaveTimeoutDebounce.ImmediateChange
       : this._isNativeMobileWeb.execute().getValue()
       ? EditorSaveTimeoutDebounce.NativeMobileWeb
       : EditorSaveTimeoutDebounce.Desktop
 
+    const remoteSaveDebounceMs = isLargeNote ? EditorSaveTimeoutDebounce.LargeNote : localSaveDebouceMs
+
     return new Promise((resolve) => {
-      this.saveTimeout = setTimeout(() => {
+      this.localSaveTimeout = setTimeout(() => {
         void this.undebouncedSave({
           ...params,
           onLocalPropagationComplete: () => {
@@ -82,7 +94,12 @@ export class NoteSyncController {
             resolve()
           },
         })
-      }, syncDebouceMs)
+      }, localSaveDebouceMs)
+      this.remoteSaveTimeout = setTimeout(() => {
+        void this.sync.sync().then(() => {
+          params.onRemoteSyncComplete?.()
+        })
+      }, remoteSaveDebounceMs)
     })
   }
 
@@ -122,10 +139,6 @@ export class NoteSyncController {
       },
       params.isUserModified ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
     )
-
-    void this.sync.sync().then(() => {
-      params.onRemoteSyncComplete?.()
-    })
 
     params.onLocalPropagationComplete?.()
   }
