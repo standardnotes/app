@@ -97,6 +97,7 @@ import {
 import { CreatePayloadFromRawServerItem } from './Account/Utilities'
 import { DecryptedServerConflictMap, TrustedServerConflictMap } from './Account/ServerConflictMap'
 import { ContentType } from '@standardnotes/domain-core'
+import { SyncFrequencyGuardInterface } from './SyncFrequencyGuardInterface'
 
 const DEFAULT_MAJOR_CHANGE_THRESHOLD = 15
 const INVALID_SESSION_RESPONSE_STATUS = 401
@@ -128,8 +129,6 @@ export class SyncService
   extends AbstractService<SyncEvent>
   implements SyncServiceInterface, InternalEventHandlerInterface
 {
-  private DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE = 200
-
   private dirtyIndexAtLastPresyncSave?: number
   private lastSyncDate?: Date
   private outOfSync = false
@@ -158,8 +157,6 @@ export class SyncService
   private autoSyncInterval?: NodeJS.Timer
   private wasNotifiedOfItemsChangeOnServer = false
 
-  private callsPerMinuteMap: Map<string, number>
-
   constructor(
     private itemManager: ItemManager,
     private sessionManager: SessionManager,
@@ -173,11 +170,11 @@ export class SyncService
     private readonly options: ApplicationSyncOptions,
     private logger: LoggerInterface,
     private sockets: WebSocketsService,
+    private syncFrequencyGuard: SyncFrequencyGuardInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
     this.opStatus = this.initializeStatus()
-    this.callsPerMinuteMap = new Map<string, number>()
   }
 
   /**
@@ -214,8 +211,6 @@ export class SyncService
     ;(this.opStatus as unknown) = undefined
     this.resolveQueue.length = 0
     this.spawnQueue.length = 0
-    this.callsPerMinuteMap.clear()
-    ;(this.callsPerMinuteMap as unknown) = undefined
     super.deinit()
   }
 
@@ -650,7 +645,7 @@ export class SyncService
     const syncInProgress = this.opStatus.syncInProgress
     const databaseLoaded = this.databaseLoaded
     const canExecuteSync = !this.syncLock
-    const syncLimitReached = this.isSyncCallsThresholdReachedThisMinute()
+    const syncLimitReached = this.syncFrequencyGuard.isSyncCallsThresholdReachedThisMinute()
     const shouldExecuteSync = canExecuteSync && databaseLoaded && !syncInProgress && !syncLimitReached
 
     if (shouldExecuteSync) {
@@ -1304,7 +1299,7 @@ export class SyncService
 
     this.lastSyncDate = new Date()
 
-    this.incrementCallsPerMinute()
+    this.syncFrequencyGuard.incrementCallsPerMinute()
 
     if (operation instanceof AccountSyncOperation && operation.numberOfItemsInvolved >= this.majorChangeThreshold) {
       void this.notifyEvent(SyncEvent.MajorDataChange)
@@ -1520,39 +1515,6 @@ export class SyncService
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
       awaitAll: true,
     })
-  }
-
-  private isSyncCallsThresholdReachedThisMinute(): boolean {
-    const stringDateToTheMinute = this.getCallsPerMinuteKey()
-    const persistedCallsCount = this.callsPerMinuteMap.get(stringDateToTheMinute) || 0
-
-    const thresholdReached = persistedCallsCount >= this.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE
-    if (thresholdReached) {
-      this.logger.debug(
-        `Sync calls threshold reached for this minute (${stringDateToTheMinute}) with ${persistedCallsCount} calls`,
-      )
-    }
-
-    return thresholdReached
-  }
-
-  private incrementCallsPerMinute(): void {
-    const stringDateToTheMinute = this.getCallsPerMinuteKey()
-    const persistedCallsCount = this.callsPerMinuteMap.get(stringDateToTheMinute)
-    const newMinuteStarted = persistedCallsCount === undefined
-
-    if (newMinuteStarted) {
-      this.callsPerMinuteMap.clear()
-      this.callsPerMinuteMap.set(stringDateToTheMinute, 1)
-    } else {
-      this.callsPerMinuteMap.set(stringDateToTheMinute, persistedCallsCount + 1)
-    }
-  }
-
-  private getCallsPerMinuteKey(): string {
-    const now = new Date()
-
-    return `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}T${now.getHours()}:${now.getMinutes()}`
   }
 
   /** @e2e_testing */

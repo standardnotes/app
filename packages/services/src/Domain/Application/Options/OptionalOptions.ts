@@ -18,6 +18,8 @@ export interface ApplicationOptionalConfiguratioOptions {
    */
   webSocketUrl?: string
 
+  syncCallsThresholdPerMinute?: number
+
   /**
    * 3rd party library function for prompting U2F authenticator device registration
    *
