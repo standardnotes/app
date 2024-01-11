@@ -204,71 +204,74 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
       }
     }, [spellcheck, previousSpellcheck])
 
-    const onRef = (ref: HTMLTextAreaElement | null) => {
-      if (tabObserverDisposer.current || !ref) {
-        return
-      }
-
-      log(LoggingDomain.NoteView, 'On system editor ref')
-
-      /**
-       * Insert 4 spaces when a tab key is pressed, only used when inside of the text editor.
-       * If the shift key is pressed first, this event is not fired.
-       */
-      const editor = document.getElementById(ElementIds.NoteTextEditor) as HTMLInputElement
-
-      if (!editor) {
-        console.error('Editor is not yet mounted; unable to add tab observer.')
-        return
-      }
-
-      tabObserverDisposer.current = application.keyboardService.addCommandHandler({
-        element: editor,
-        command: TAB_COMMAND,
-        onKeyDown: (event) => {
-          if (document.hidden || note.current.locked || event.shiftKey) {
-            return
-          }
-          event.preventDefault()
-          /** Using document.execCommand gives us undo support */
-          const insertSuccessful = document.execCommand('insertText', false, '\t')
-          if (!insertSuccessful) {
-            /** document.execCommand works great on Chrome/Safari but not Firefox */
-            const start = editor.selectionStart || 0
-            const end = editor.selectionEnd || 0
-            const spaces = '    '
-            /** Insert 4 spaces */
-            editor.value = editor.value.substring(0, start) + spaces + editor.value.substring(end)
-            /** Place cursor 4 spaces away from where the tab key was pressed */
-            editor.selectionStart = editor.selectionEnd = start + 4
-          }
-
-          setEditorText(editor.value)
-
-          void controller.saveAndAwaitLocalPropagation({
-            text: editor.value,
-            bypassDebouncer: true,
-            isUserModified: true,
-          })
-        },
-      })
-
-      const observer = new MutationObserver((records) => {
-        for (const record of records) {
-          record.removedNodes.forEach((node) => {
-            if (node.isEqualNode(editor)) {
-              tabObserverDisposer.current?.()
-              tabObserverDisposer.current = undefined
-              observer.disconnect()
-            }
-          })
+    const onRef = useCallback(
+      (ref: HTMLTextAreaElement | null) => {
+        if (tabObserverDisposer.current || !ref) {
+          return
         }
-      })
 
-      observer.observe(editor.parentElement as HTMLElement, { childList: true })
+        log(LoggingDomain.NoteView, 'On system editor ref')
 
-      mutationObserver.current = observer
-    }
+        /**
+         * Insert 4 spaces when a tab key is pressed, only used when inside of the text editor.
+         * If the shift key is pressed first, this event is not fired.
+         */
+        const editor = document.getElementById(ElementIds.NoteTextEditor) as HTMLInputElement
+
+        if (!editor) {
+          console.error('Editor is not yet mounted; unable to add tab observer.')
+          return
+        }
+
+        tabObserverDisposer.current = application.keyboardService.addCommandHandler({
+          element: editor,
+          command: TAB_COMMAND,
+          onKeyDown: (event) => {
+            if (document.hidden || note.current.locked || event.shiftKey) {
+              return
+            }
+            event.preventDefault()
+            /** Using document.execCommand gives us undo support */
+            const insertSuccessful = document.execCommand('insertText', false, '\t')
+            if (!insertSuccessful) {
+              /** document.execCommand works great on Chrome/Safari but not Firefox */
+              const start = editor.selectionStart || 0
+              const end = editor.selectionEnd || 0
+              const spaces = '    '
+              /** Insert 4 spaces */
+              editor.value = editor.value.substring(0, start) + spaces + editor.value.substring(end)
+              /** Place cursor 4 spaces away from where the tab key was pressed */
+              editor.selectionStart = editor.selectionEnd = start + 4
+            }
+
+            setEditorText(editor.value)
+
+            void controller.saveAndAwaitLocalPropagation({
+              text: editor.value,
+              bypassDebouncer: true,
+              isUserModified: true,
+            })
+          },
+        })
+
+        const observer = new MutationObserver((records) => {
+          for (const record of records) {
+            record.removedNodes.forEach((node) => {
+              if (node.isEqualNode(editor)) {
+                tabObserverDisposer.current?.()
+                tabObserverDisposer.current = undefined
+                observer.disconnect()
+              }
+            })
+          }
+        })
+
+        observer.observe(editor.parentElement as HTMLElement, { childList: true })
+
+        mutationObserver.current = observer
+      },
+      [application.keyboardService, controller],
+    )
 
     if (textareaUnloading) {
       return null
