@@ -43,16 +43,16 @@ export async function createAndInitSimpleAppContext(
   }
 }
 
-export async function createAppContextWithFakeCrypto(identifier, email, password) {
-  return createAppContext({ identifier, crypto: new FakeWebCrypto(), email, password })
+export async function createAppContextWithFakeCrypto(identifier, email, password, syncCallsThresholdPerMinute) {
+  return createAppContext({ identifier, crypto: new FakeWebCrypto(), email, password, syncCallsThresholdPerMinute })
 }
 
 export async function createAppContextWithRealCrypto(identifier) {
   return createAppContext({ identifier, crypto: new SNWebCrypto() })
 }
 
-export async function createAppContext({ identifier, crypto, email, password, host } = {}) {
-  const context = new AppContext({ identifier, crypto, email, password, host })
+export async function createAppContext({ identifier, crypto, email, password, host, syncCallsThresholdPerMinute } = {}) {
+  const context = new AppContext({ identifier, crypto, email, password, host, syncCallsThresholdPerMinute })
   await context.initialize()
   return context
 }

@@ -176,10 +176,14 @@ import { Logger, isNotUndefined, isDeinitable, LoggerInterface } from '@standard
 import { EncryptionOperators } from '@standardnotes/encryption'
 import { AsymmetricMessagePayload, AsymmetricMessageSharedVaultInvite } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { SyncFrequencyGuard } from '@Lib/Services/Sync/SyncFrequencyGuard'
+import { SyncFrequencyGuardInterface } from '@Lib/Services/Sync/SyncFrequencyGuardInterface'
 
 export class Dependencies {
   private factory = new Map<symbol, () => unknown>()
   private dependencies = new Map<symbol, unknown>()
+
+  private DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE = 200
 
   constructor(private options: FullyResolvedApplicationOptions) {
     this.dependencies.set(TYPES.DeviceInterface, options.deviceInterface)
@@ -1341,6 +1345,12 @@ export class Dependencies {
       )
     })
 
+    this.factory.set(TYPES.SyncFrequencyGuard, () => {
+      return new SyncFrequencyGuard(
+        this.options.syncCallsThresholdPerMinute ?? this.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE,
+      )
+    })
+
     this.factory.set(TYPES.SyncService, () => {
       return new SyncService(
         this.get<ItemManager>(TYPES.ItemManager),
@@ -1358,6 +1368,7 @@ export class Dependencies {
         },
         this.get<Logger>(TYPES.Logger),
         this.get<WebSocketsService>(TYPES.WebSocketsService),
+        this.get<SyncFrequencyGuardInterface>(TYPES.SyncFrequencyGuard),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })
