@@ -1,5 +1,7 @@
 export const DefaultServerPort = 3123
 
+export const DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE = 100
+
 export function getDefaultHost() {
   return `http://localhost:${DefaultServerPort}`
 }

@@ -1,6 +1,7 @@
 import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 import * as Utils from '../lib/Utils.js'
+import * as Defaults from '../lib/Defaults.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -431,6 +432,22 @@ describe('online syncing', function () {
     /** We expect that item has been deleted */
     const allItems = application.items.items
     expect(allItems.length).to.equal(expectedItemCount)
+  })
+
+  it('should defer syncing if syncing is breaching the sync calls per minute threshold', async function () {
+    const safeGuard = application.dependencies.get(TYPES.SyncFrequencyGuard)
+
+    let syncCount = 0
+    while(!safeGuard.isSyncCallsThresholdReachedThisMinute()) {
+      await application.sync.sync({
+        onPresyncSave: () => {
+          syncCount++
+        }
+      })
+    }
+
+    expect(safeGuard.isSyncCallsThresholdReachedThisMinute()).to.equal(true)
+    expect(syncCount <= Defaults.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE).to.equal(true)
   })
 
   it('items that are never synced and deleted should not be uploaded to server', async function () {

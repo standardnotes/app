@@ -22,6 +22,7 @@ export function createApplicationWithOptions({ identifier, environment, platform
     defaultHost: host || Defaults.getDefaultHost(),
     appVersion: Defaults.getAppVersion(),
     webSocketUrl: Defaults.getDefaultWebSocketUrl(),
+    syncCallsThresholdPerMinute: Defaults.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE,
   })
 }
 

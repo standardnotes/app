@@ -18,6 +18,9 @@ export interface ApplicationOptionalConfiguratioOptions {
    */
   webSocketUrl?: string
 
+  /**
+   * Amount sync calls allowed per minute.
+   */
   syncCallsThresholdPerMinute?: number
 
   /**
