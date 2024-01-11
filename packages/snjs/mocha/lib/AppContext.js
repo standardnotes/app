@@ -16,13 +16,14 @@ const MaximumSyncOptions = {
 let GlobalSubscriptionIdCounter = 1001
 
 export class AppContext {
-  constructor({ identifier, crypto, email, password, passcode, host } = {}) {
+  constructor({ identifier, crypto, email, password, passcode, host, syncCallsThresholdPerMinute } = {}) {
     this.identifier = identifier || `${Math.random()}`
     this.crypto = crypto
     this.email = email || UuidGenerator.GenerateUuid()
     this.password = password || UuidGenerator.GenerateUuid()
     this.passcode = passcode || 'mypasscode'
     this.host = host || Defaults.getDefaultHost()
+    this.syncCallsThresholdPerMinute = syncCallsThresholdPerMinute
   }
 
   enableLogging() {
@@ -46,6 +47,7 @@ export class AppContext {
       undefined,
       this.host,
       this.crypto || new FakeWebCrypto(),
+      this.syncCallsThresholdPerMinute,
     )
 
     this.application.dependencies.get(TYPES.Logger).setLevel('error')
