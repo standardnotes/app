@@ -1,7 +1,6 @@
 import { BaseItemCounts } from '../lib/BaseItemCounts.js'
 import * as Factory from '../lib/factory.js'
 import * as Utils from '../lib/Utils.js'
-import * as Defaults from '../lib/Defaults.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -453,7 +452,7 @@ describe('online syncing', function () {
     }
 
     expect(safeGuard.isSyncCallsThresholdReachedThisMinute()).to.equal(true)
-    expect(syncCount <= Defaults.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE).to.equal(true)
+    expect(syncCount == 200).to.equal(true)
   })
 
   it('items that are never synced and deleted should not be uploaded to server', async function () {
@@ -598,7 +597,7 @@ describe('online syncing', function () {
   it('should sync all items including ones that are breaching transfer limit', async function () {
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
-    const numberOfNotesToExceedThe1MBTransferLimit = 80
+    const numberOfNotesToExceedThe1MBTransferLimit = Math.ceil(100_000 / buffer.length) + 1
 
     const testContext = await Factory.createAppContextWithFakeCrypto()
     await testContext.launch()
