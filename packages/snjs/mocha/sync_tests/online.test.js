@@ -60,6 +60,7 @@ describe('online syncing', function () {
 
     application = undefined
     context = undefined
+    safeGuard = undefined
   })
 
   function noteObjectsFromObjects(items) {
