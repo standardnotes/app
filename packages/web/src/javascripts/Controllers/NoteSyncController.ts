@@ -89,25 +89,39 @@ export class NoteSyncController {
 
     return new Promise((resolve) => {
       this.localSaveTimeout = setTimeout(() => {
-        void this.undebouncedSave({
+        void this.undebouncedLocalSave({
           ...params,
           onLocalPropagationComplete: () => {
             if (this.savingLocallyPromise) {
               this.savingLocallyPromise.resolve()
             }
+
             resolve()
           },
         })
       }, localSaveDebouceMs)
+
       this.remoteSaveTimeout = setTimeout(() => {
-        void this.sync.sync().then(() => {
-          params.onRemoteSyncComplete?.()
-        })
+        if (this.savingLocallyPromise) {
+          this.savingLocallyPromise.promise
+            .then(() => {
+              void this.undebouncedRemoteSave(params)
+            })
+            .catch(console.error)
+        } else {
+          void this.undebouncedRemoteSave(params)
+        }
       }, remoteSaveDebounceMs)
     })
   }
 
-  private async undebouncedSave(params: NoteSaveFunctionParams): Promise<void> {
+  private async undebouncedRemoteSave(params: NoteSaveFunctionParams): Promise<void> {
+    void this.sync.sync().then(() => {
+      params.onRemoteSyncComplete?.()
+    })
+  }
+
+  private async undebouncedLocalSave(params: NoteSaveFunctionParams): Promise<void> {
     if (!this.items.findItem(this.item.uuid)) {
       void this.alerts.alert(InfoStrings.InvalidNote)
       return
