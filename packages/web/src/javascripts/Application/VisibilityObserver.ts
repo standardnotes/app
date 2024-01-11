@@ -40,6 +40,7 @@ export class VisibilityObserver {
   deinit(): void {
     document.removeEventListener('visibilitychange', this.onVisibilityChange)
     window.removeEventListener('focus', this.onFocusEvent)
+    window.removeEventListener('blur', this.onBlurEvent)
     ;(this.onEvent as unknown) = undefined
   }
 }

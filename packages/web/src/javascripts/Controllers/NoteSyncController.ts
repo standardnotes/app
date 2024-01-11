@@ -51,11 +51,15 @@ export class NoteSyncController {
     if (this.localSaveTimeout) {
       clearTimeout(this.localSaveTimeout)
     }
+    if (this.remoteSaveTimeout) {
+      clearTimeout(this.remoteSaveTimeout)
+    }
     if (this.savingLocallyPromise) {
       this.savingLocallyPromise.reject()
     }
     this.savingLocallyPromise = null
     this.localSaveTimeout = undefined
+    this.remoteSaveTimeout = undefined
     ;(this.item as unknown) = undefined
   }
 
