@@ -20,11 +20,16 @@ export class SyncFrequencyGuard implements SyncFrequencyGuardInterface {
     const newMinuteStarted = persistedCallsCount === undefined
 
     if (newMinuteStarted) {
-      this.callsPerMinuteMap.clear()
+      this.clear()
+
       this.callsPerMinuteMap.set(stringDateToTheMinute, 1)
     } else {
       this.callsPerMinuteMap.set(stringDateToTheMinute, persistedCallsCount + 1)
     }
+  }
+
+  clear(): void {
+    this.callsPerMinuteMap.clear()
   }
 
   private getCallsPerMinuteKey(): string {

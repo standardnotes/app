@@ -435,6 +435,8 @@ describe('online syncing', function () {
   })
 
   it('should defer syncing if syncing is breaching the sync calls per minute threshold', async function () {
+    safeGuard.clear()
+
     const safeGuard = application.dependencies.get(TYPES.SyncFrequencyGuard)
 
     let syncCount = 0
@@ -448,6 +450,8 @@ describe('online syncing', function () {
 
     expect(safeGuard.isSyncCallsThresholdReachedThisMinute()).to.equal(true)
     expect(syncCount <= Defaults.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE).to.equal(true)
+
+    safeGuard.clear()
   })
 
   it('items that are never synced and deleted should not be uploaded to server', async function () {
