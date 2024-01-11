@@ -14,6 +14,7 @@ describe('online syncing', function () {
   let password
   let expectedItemCount
   let context
+  let safeGuard
 
   const syncOptions = {
     checkIntegrity: true,
@@ -38,6 +39,10 @@ describe('online syncing', function () {
       email: email,
       password: password,
     })
+
+    safeGuard = application.dependencies.get(TYPES.SyncFrequencyGuard)
+
+    safeGuard.clear()
   })
 
   afterEach(async function () {
@@ -50,6 +55,8 @@ describe('online syncing', function () {
     expect(rawPayloads.length).to.equal(expectedItemCount)
     await Factory.safeDeinit(application)
     localStorage.clear()
+
+    safeGuard.clear()
 
     application = undefined
     context = undefined
@@ -435,10 +442,6 @@ describe('online syncing', function () {
   })
 
   it('should defer syncing if syncing is breaching the sync calls per minute threshold', async function () {
-    safeGuard.clear()
-
-    const safeGuard = application.dependencies.get(TYPES.SyncFrequencyGuard)
-
     let syncCount = 0
     while(!safeGuard.isSyncCallsThresholdReachedThisMinute()) {
       await application.sync.sync({
@@ -450,8 +453,6 @@ describe('online syncing', function () {
 
     expect(safeGuard.isSyncCallsThresholdReachedThisMinute()).to.equal(true)
     expect(syncCount <= Defaults.DEFAULT_SYNC_CALLS_THRESHOLD_PER_MINUTE).to.equal(true)
-
-    safeGuard.clear()
   })
 
   it('items that are never synced and deleted should not be uploaded to server', async function () {
