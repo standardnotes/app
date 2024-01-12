@@ -908,7 +908,7 @@ export class SyncService
 
     const latestItems = await this.prepareForSyncExecution(items, inTimeResolveQueue, beginDate, frozenDirtyIndex)
 
-    const online = options.offline != undefined ? !options.offline : this.sessionManager.online()
+    const online = this.sessionManager.online()
 
     const { operation, mode: syncMode } = await this.createSyncOperation(
       latestItems.map((i) => i.payloadRepresentation()),

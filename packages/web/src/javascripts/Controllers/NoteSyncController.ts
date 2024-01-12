@@ -212,10 +212,6 @@ export class NoteSyncController {
       params.isUserModified ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
     )
 
-    void this.sync.sync({
-      offline: true,
-    })
-
     params.onLocalPropagationComplete?.()
   }
 }
