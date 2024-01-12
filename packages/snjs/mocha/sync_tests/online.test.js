@@ -452,7 +452,7 @@ describe('online syncing', function () {
     }
 
     expect(safeGuard.isSyncCallsThresholdReachedThisMinute()).to.equal(true)
-    expect(syncCount == 200).to.equal(true)
+    expect(syncCount).to.equal(200)
   })
 
   it('items that are never synced and deleted should not be uploaded to server', async function () {
