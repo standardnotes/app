@@ -11,6 +11,8 @@ import { Deferred } from '@standardnotes/utils'
 import { EditorSaveTimeoutDebounce } from '../Components/NoteView/Controller/EditorSaveTimeoutDebounce'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
+import { NoteStatus } from '@/Components/NoteView/NoteStatusIndicator'
+import { action, makeObservable, observable } from 'mobx'
 
 const NotePreviewCharLimit = 160
 const LargeNoteThreshold = 2 * BYTES_IN_ONE_MEGABYTE
@@ -33,6 +35,10 @@ export class NoteSyncController {
   private localSaveTimeout?: ReturnType<typeof setTimeout>
   private remoteSaveTimeout?: ReturnType<typeof setTimeout>
 
+  status: NoteStatus | undefined = undefined
+
+  isWaitingToSyncLargeNote = false
+
   constructor(
     private item: SNNote,
     private items: ItemManagerInterface,
@@ -41,7 +47,49 @@ export class NoteSyncController {
     private sync: SyncServiceInterface,
     private alerts: AlertService,
     private _isNativeMobileWeb: IsNativeMobileWeb,
-  ) {}
+  ) {
+    makeObservable(this, {
+      status: observable,
+      setStatus: action,
+    })
+  }
+
+  setStatus(status: NoteStatus) {
+    this.status = status
+  }
+
+  showSavingStatus() {
+    this.setStatus({
+      type: 'saving',
+      message: 'Saving…',
+    })
+  }
+
+  showAllChangesSavedStatus() {
+    this.setStatus({
+      type: 'saved',
+      message: 'All changes saved' + (this.sessions.isSignedOut() ? ' offline' : ''),
+    })
+  }
+
+  showWaitingToSyncLargeNoteStatus() {
+    this.setStatus({
+      type: 'waiting',
+      message: 'Note is too large',
+      description: 'It will be synced less often. Changes will be saved offline normally.',
+    })
+  }
+
+  showErrorStatus(error?: NoteStatus) {
+    if (!error) {
+      error = {
+        type: 'error',
+        message: 'Sync Unreachable',
+        description: 'Changes saved offline',
+      }
+    }
+    this.setStatus(error)
+  }
 
   setItem(item: SNNote) {
     this.item = item
@@ -101,6 +149,10 @@ export class NoteSyncController {
         })
       }, localSaveDebouceMs)
 
+      if (isLargeNote) {
+        this.showWaitingToSyncLargeNoteStatus()
+      }
+
       this.remoteSaveTimeout = setTimeout(() => {
         if (this.savingLocallyPromise) {
           this.savingLocallyPromise.promise
@@ -116,7 +168,9 @@ export class NoteSyncController {
   }
 
   private async undebouncedRemoteSave(params: NoteSaveFunctionParams): Promise<void> {
+    this.showSavingStatus()
     void this.sync.sync().then(() => {
+      this.showAllChangesSavedStatus()
       params.onRemoteSyncComplete?.()
     })
   }

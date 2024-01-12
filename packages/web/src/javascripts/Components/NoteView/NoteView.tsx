@@ -54,8 +54,6 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
 import Icon from '../Icon/Icon'
 
-const MinimumStatusDuration = 400
-
 function sortAlphabetically(array: ComponentInterface[]): ComponentInterface[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
 }
@@ -91,7 +89,6 @@ type State = {
 class NoteView extends AbstractComponent<NoteViewProps, State> {
   readonly controller!: NoteViewController
 
-  private statusTimeout?: NodeJS.Timeout
   onEditorComponentLoad?: () => void
 
   private removeTrashKeyObserver?: () => void
@@ -167,8 +164,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     ;(this.ensureNoteIsInsertedBeforeUIAction as unknown) = undefined
 
     this.onEditorComponentLoad = undefined
-
-    this.statusTimeout = undefined
     ;(this.onPanelResizeFinish as unknown) = undefined
     ;(this.authorizeAndDismissProtectedWarning as unknown) = undefined
     ;(this.editorComponentViewerRequestsReload as unknown) = undefined
@@ -235,8 +230,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
 
     this.autorun(() => {
+      const syncStatus = this.controller.syncStatus
       this.setState({
         showProtectedWarning: this.application.notesController.showProtectedWarning,
+        noteStatus: syncStatus,
+        saveError: syncStatus?.type === 'error',
+        syncTakingTooLong: false,
       })
     })
 
@@ -325,20 +324,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     if (isTemplateNoteInsertedToBeInteractableWithEditor) {
       return
     }
-
-    if (note.lastSyncBegan || note.dirty) {
-      if (note.lastSyncEnd) {
-        const shouldShowSavingStatus = note.lastSyncBegan && note.lastSyncBegan.getTime() > note.lastSyncEnd.getTime()
-        const shouldShowSavedStatus = note.lastSyncBegan && note.lastSyncEnd.getTime() > note.lastSyncBegan.getTime()
-        if (note.dirty || shouldShowSavingStatus) {
-          this.showSavingStatus()
-        } else if (this.state.noteStatus && shouldShowSavedStatus) {
-          this.showAllChangesSavedStatus()
-        }
-      } else {
-        this.showSavingStatus()
-      }
-    }
   }
 
   override componentWillUnmount(): void {
@@ -372,7 +357,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         const isInErrorState = this.state.saveError
         /** if we're still dirty, don't change status, a sync is likely upcoming. */
         if (!this.note.dirty && isInErrorState) {
-          this.showAllChangesSavedStatus()
+          this.controller.showAllChangesSavedStatus()
         }
         break
       }
@@ -383,14 +368,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
          * and we don't want to display an error here.
          */
         if (this.note.dirty) {
-          this.showErrorStatus()
+          this.controller.showErrorSyncStatus()
         }
         break
       case ApplicationEvent.LocalDatabaseWriteError:
-        this.showErrorStatus({
+        this.controller.showErrorSyncStatus({
           type: 'error',
           message: 'Offline Saving Issue',
-          desc: 'Changes not saved',
+          description: 'Changes not saved',
         })
         break
       case ApplicationEvent.UnprotectedSessionBegan: {
@@ -549,59 +534,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   hasAvailableExtensions() {
     return this.application.actions.extensionsInContextOfItem(this.note).length > 0
-  }
-
-  showSavingStatus() {
-    this.setStatus({ type: 'saving', message: 'Saving…' }, false)
-  }
-
-  showAllChangesSavedStatus() {
-    this.setState({
-      saveError: false,
-      syncTakingTooLong: false,
-    })
-    this.setStatus({
-      type: 'saved',
-      message: 'All changes saved' + (this.application.sessions.isSignedOut() ? ' offline' : ''),
-    })
-  }
-
-  showErrorStatus(error?: NoteStatus) {
-    if (!error) {
-      error = {
-        type: 'error',
-        message: 'Sync Unreachable',
-        desc: 'Changes saved offline',
-      }
-    }
-    this.setState({
-      saveError: true,
-      syncTakingTooLong: false,
-    })
-    this.setStatus(error)
-  }
-
-  setStatus(status: NoteStatus, wait = true) {
-    if (this.statusTimeout) {
-      clearTimeout(this.statusTimeout)
-    }
-    if (wait) {
-      this.statusTimeout = setTimeout(() => {
-        this.setState({
-          noteStatus: status,
-        })
-      }, MinimumStatusDuration)
-    } else {
-      this.setState({
-        noteStatus: status,
-      })
-    }
-  }
-
-  cancelPendingSetStatus() {
-    if (this.statusTimeout) {
-      clearTimeout(this.statusTimeout)
-    }
   }
 
   onTitleEnter: KeyboardEventHandler<HTMLInputElement> = ({ key, currentTarget }) => {

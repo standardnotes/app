@@ -25,6 +25,7 @@ import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerO
 import { log, LoggingDomain } from '@/Logging'
 import { NoteSaveFunctionParams, NoteSyncController } from '../../../Controllers/NoteSyncController'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
+import { NoteStatus } from '../NoteStatusIndicator'
 
 export type EditorValues = {
   title: string
@@ -44,6 +45,15 @@ export class NoteViewController implements ItemViewControllerInterface {
   private defaultTag?: SNTag
 
   private syncController!: NoteSyncController
+  public get syncStatus(): NoteStatus | undefined {
+    return this.syncController.status
+  }
+  public showAllChangesSavedStatus(): void {
+    this.syncController.showAllChangesSavedStatus()
+  }
+  public showErrorSyncStatus(error?: NoteStatus): void {
+    this.syncController.showErrorStatus(error)
+  }
 
   constructor(
     item: SNNote | undefined,

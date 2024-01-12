@@ -4,11 +4,12 @@ import { ReactNode, useCallback, useState } from 'react'
 import { IconType, PrefKey, PrefDefaults } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
+import { observer } from 'mobx-react-lite'
 
 export type NoteStatus = {
-  type: 'saving' | 'saved' | 'error'
+  type: 'saving' | 'saved' | 'error' | 'waiting'
   message: string
-  desc?: string
+  description?: ReactNode
 }
 
 const IndicatorWithTooltip = ({
@@ -85,7 +86,7 @@ const NoteStatusIndicator = ({
         isTooltipVisible={isTooltipVisible}
       >
         <div className="text-sm font-bold text-danger">{status.message}</div>
-        {status.desc && <div className="mt-0.5">{status.desc}</div>}
+        {status.description && <div className="mt-0.5">{status.description}</div>}
       </IndicatorWithTooltip>
     )
   }
@@ -102,7 +103,7 @@ const NoteStatusIndicator = ({
         {status ? (
           <>
             <div className="text-sm font-bold text-warning">{status.message}</div>
-            {status.desc && <div className="mt-0.5">{status.desc}</div>}
+            {status.description && <div className="mt-0.5">{status.description}</div>}
           </>
         ) : (
           <div className="text-sm font-bold text-warning">Sync taking too long</div>
@@ -117,15 +118,16 @@ const NoteStatusIndicator = ({
         className={classNames(
           status.type === 'saving' && 'bg-contrast',
           status.type === 'saved' && 'bg-success text-success-contrast',
+          status.type === 'waiting' && 'bg-warning text-warning-contrast',
         )}
         onClick={toggleShowPreference}
         onBlur={onBlur}
-        icon={status.type === 'saving' ? 'sync' : 'check'}
+        icon={status.type === 'saving' ? 'sync' : status.type === 'waiting' ? 'clock' : 'check'}
         animateIcon={status.type === 'saving'}
         isTooltipVisible={isTooltipVisible}
       >
         <div className="text-sm font-bold">{status.message}</div>
-        {status.desc && <div className="mt-0.5">{status.desc}</div>}
+        {status.description && <div className="mt-0.5">{status.description}</div>}
       </IndicatorWithTooltip>
     )
   }
@@ -144,4 +146,4 @@ const NoteStatusIndicator = ({
   )
 }
 
-export default NoteStatusIndicator
+export default observer(NoteStatusIndicator)
