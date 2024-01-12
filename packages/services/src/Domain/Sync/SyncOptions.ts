@@ -25,4 +25,7 @@ export type SyncOptions = {
 
   /** If true and sharedVaultUuids is present, excludes sending global syncToken as part of request */
   syncSharedVaultsFromScratch?: boolean
+
+  /** Override whether the created sync operation is online or offline */
+  offline?: boolean
 }
