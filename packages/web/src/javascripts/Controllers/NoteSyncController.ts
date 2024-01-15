@@ -181,7 +181,7 @@ export class NoteSyncController {
       return
     }
 
-    await this.mutator.changeItem(
+    const mutatedItem = await this.mutator.changeItem(
       this.item,
       (mutator) => {
         const noteMutator = mutator as NoteMutator
@@ -211,6 +211,8 @@ export class NoteSyncController {
       },
       params.isUserModified ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
     )
+
+    void this.sync.persistItemPayloads([mutatedItem])
 
     params.onLocalPropagationComplete?.()
   }

@@ -499,6 +499,12 @@ export class SyncService
     return payloads
   }
 
+  public async persistItemPayloads(items: DecryptedItemInterface[]): Promise<void> {
+    const payloads = items.map((item) => item.payloadRepresentation())
+
+    await this.persistPayloads(payloads)
+  }
+
   private queueStrategyResolveOnNext(): Promise<unknown> {
     return new Promise((resolve, reject) => {
       this.resolveQueue.push({ resolve, reject })
