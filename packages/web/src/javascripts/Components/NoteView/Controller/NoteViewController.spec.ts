@@ -34,6 +34,7 @@ describe('note view controller', () => {
 
     Object.defineProperty(application, 'sync', { value: {} as jest.Mocked<SyncServiceInterface> })
     application.sync.sync = jest.fn().mockReturnValue(Promise.resolve())
+    application.sync.persistItemPayloads = jest.fn().mockReturnValue(Promise.resolve())
 
     componentManager = {} as jest.Mocked<ComponentManager>
     Object.defineProperty(application, 'componentManager', { value: componentManager })
