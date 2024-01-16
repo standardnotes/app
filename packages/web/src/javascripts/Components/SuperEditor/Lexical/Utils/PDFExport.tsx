@@ -1,9 +1,10 @@
 import { getBase64FromBlob } from '@/Utils'
 import { Document, Page, View, Text, StyleSheet, pdf, Link } from '@react-pdf/renderer'
-import { $getRoot, $isElementNode, $isTextNode, LexicalEditor, LexicalNode } from 'lexical'
+import { $getRoot, $isElementNode, $isLineBreakNode, $isTextNode, LexicalEditor, LexicalNode } from 'lexical'
 import { $isLinkNode } from '@lexical/link'
 import { $isHeadingNode } from '@lexical/rich-text'
 import { $isListNode, $isListItemNode, ListType } from '@lexical/list'
+import { $isCodeNode } from '@lexical/code'
 import { ReactNode } from 'react'
 
 const styles = StyleSheet.create({
@@ -16,6 +17,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginVertical: 5,
     fontSize: 14,
+  },
+  wrap: {
+    flexWrap: 'wrap',
   },
   row: {
     flexDirection: 'row',
@@ -42,14 +46,24 @@ const ListItem = ({ children, value, listType }: { children: ReactNode; value: n
 }
 
 const Node = ({ node }: { node: LexicalNode }) => {
+  const parent = node.getParent()
+
+  if ($isLineBreakNode(node)) {
+    return <Text>{'\n'}</Text>
+  }
+
   if ($isTextNode(node)) {
-    let font = node.hasFormat('code') ? 'Courier' : 'Helvetica'
-    if (node.hasFormat('bold') || node.hasFormat('italic')) {
+    const isCode = node.hasFormat('code') || $isCodeNode(parent)
+    const isBold = node.hasFormat('bold')
+    const isItalic = node.hasFormat('italic')
+
+    let font = isCode ? 'Courier' : 'Helvetica'
+    if (isBold || isItalic) {
       font += '-'
-      if (node.hasFormat('bold')) {
+      if (isBold) {
         font += 'Bold'
       }
-      if (node.hasFormat('italic')) {
+      if (isItalic) {
         font += 'Oblique'
       }
     }
@@ -63,10 +77,44 @@ const Node = ({ node }: { node: LexicalNode }) => {
             : node.hasFormat('strikethrough')
             ? 'line-through'
             : undefined,
+          backgroundColor: isCode ? '#f1f1f1' : undefined,
+          fontSize: isCode ? 12 : undefined,
         }}
       >
         {node.getTextContent()}
       </Text>
+    )
+  }
+
+  if ($isCodeNode(node)) {
+    const children = node.getChildren()
+    const lines: LexicalNode[][] = [[]]
+
+    for (let i = 0, currentLine = 0; i < children.length; i++) {
+      const child = children[i]
+
+      if (!$isLineBreakNode(child)) {
+        lines[currentLine].push(child)
+      } else {
+        lines.push([])
+        currentLine++
+      }
+    }
+
+    return (
+      <View
+        style={[styles.column, { backgroundColor: '#f1f1f1', padding: 12, borderRadius: 6, fontFamily: 'Courier' }]}
+      >
+        {lines.map((line, index) => {
+          return (
+            <View style={[styles.row, styles.wrap]} key={index}>
+              {line.map((child, index) => {
+                return <Node node={child} key={index} />
+              })}
+            </View>
+          )
+        })}
+      </View>
     )
   }
 
@@ -81,7 +129,6 @@ const Node = ({ node }: { node: LexicalNode }) => {
   }
 
   if ($isListItemNode(node)) {
-    const parent = node.getParent()
     if (!$isListNode(parent)) {
       return null
     }
