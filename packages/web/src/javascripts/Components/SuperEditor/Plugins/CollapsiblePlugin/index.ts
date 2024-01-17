@@ -27,6 +27,7 @@ import {
   KEY_ARROW_LEFT_COMMAND,
   KEY_ARROW_RIGHT_COMMAND,
   KEY_ARROW_UP_COMMAND,
+  LexicalNode,
   NodeKey,
 } from 'lexical'
 import { useEffect } from 'react'
@@ -83,11 +84,16 @@ export default function CollapsiblePlugin(): JSX.Element | null {
         if ($isCollapsibleContainerNode(container)) {
           const parent = container.getParent()
           if (parent !== null && parent.getLastChild() === container) {
-            const lastDescendant = container.getLastDescendant()
+            const titleParagraph = container.getFirstDescendant<LexicalNode>()
+            const contentParagraph = container.getLastDescendant<LexicalNode>()
+
             if (
-              lastDescendant !== null &&
-              selection.anchor.key === lastDescendant.getKey() &&
-              selection.anchor.offset === lastDescendant.getTextContentSize()
+              (contentParagraph !== null &&
+                selection.anchor.key === contentParagraph.getKey() &&
+                selection.anchor.offset === contentParagraph.getTextContentSize()) ||
+              (titleParagraph !== null &&
+                selection.anchor.key === titleParagraph.getKey() &&
+                selection.anchor.offset === titleParagraph.getTextContentSize())
             ) {
               container.insertAfter($createParagraphNode())
             }
