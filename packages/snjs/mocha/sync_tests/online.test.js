@@ -13,6 +13,7 @@ describe('online syncing', function () {
   let password
   let expectedItemCount
   let context
+  let safeGuard
 
   const syncOptions = {
     checkIntegrity: true,
@@ -37,6 +38,10 @@ describe('online syncing', function () {
       email: email,
       password: password,
     })
+
+    safeGuard = application.dependencies.get(TYPES.SyncFrequencyGuard)
+
+    safeGuard.clear()
   })
 
   afterEach(async function () {
@@ -50,8 +55,11 @@ describe('online syncing', function () {
     await Factory.safeDeinit(application)
     localStorage.clear()
 
+    safeGuard.clear()
+
     application = undefined
     context = undefined
+    safeGuard = undefined
   })
 
   function noteObjectsFromObjects(items) {
@@ -433,6 +441,20 @@ describe('online syncing', function () {
     expect(allItems.length).to.equal(expectedItemCount)
   })
 
+  it('should defer syncing if syncing is breaching the sync calls per minute threshold', async function () {
+    let syncCount = 0
+    while(!safeGuard.isSyncCallsThresholdReachedThisMinute()) {
+      await application.sync.sync({
+        onPresyncSave: () => {
+          syncCount++
+        }
+      })
+    }
+
+    expect(safeGuard.isSyncCallsThresholdReachedThisMinute()).to.equal(true)
+    expect(syncCount).to.equal(200)
+  })
+
   it('items that are never synced and deleted should not be uploaded to server', async function () {
     const note = await Factory.createMappedNote(application)
     await application.mutator.setItemDirty(note)
@@ -575,7 +597,7 @@ describe('online syncing', function () {
   it('should sync all items including ones that are breaching transfer limit', async function () {
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
-    const numberOfNotesToExceedThe1MBTransferLimit = 80
+    const numberOfNotesToExceedThe1MBTransferLimit = Math.ceil(100_000 / buffer.length) + 1
 
     const testContext = await Factory.createAppContextWithFakeCrypto()
     await testContext.launch()

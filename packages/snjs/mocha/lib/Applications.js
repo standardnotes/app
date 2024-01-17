@@ -2,7 +2,7 @@ import WebDeviceInterface from './web_device_interface.js'
 import FakeWebCrypto from './fake_web_crypto.js'
 import * as Defaults from './Defaults.js'
 
-export function createApplicationWithOptions({ identifier, environment, platform, host, crypto, device }) {
+export function createApplicationWithOptions({ identifier, environment, platform, host, crypto, device, syncCallsThresholdPerMinute }) {
   if (!device) {
     device = new WebDeviceInterface()
     device.environment = environment
@@ -22,11 +22,12 @@ export function createApplicationWithOptions({ identifier, environment, platform
     defaultHost: host || Defaults.getDefaultHost(),
     appVersion: Defaults.getAppVersion(),
     webSocketUrl: Defaults.getDefaultWebSocketUrl(),
+    syncCallsThresholdPerMinute,
   })
 }
 
-export function createApplication(identifier, environment, platform, host, crypto) {
-  return createApplicationWithOptions({ identifier, environment, platform, host, crypto })
+export function createApplication(identifier, environment, platform, host, crypto, syncCallsThresholdPerMinute) {
+  return createApplicationWithOptions({ identifier, environment, platform, host, crypto, syncCallsThresholdPerMinute })
 }
 
 export function createApplicationWithFakeCrypto(identifier, environment, platform, host) {

@@ -120,7 +120,6 @@ export const usePaneSwipeGesture = (
         underlayElement.style.left = '0'
         underlayElement.style.width = '100%'
         underlayElement.style.height = '100%'
-        underlayElement.style.pointerEvents = 'none'
         if (adjustedGesture === 'pan') {
           underlayElement.style.backgroundColor = '#000'
         } else {
@@ -128,6 +127,7 @@ export const usePaneSwipeGesture = (
             direction === 'right'
               ? 'linear-gradient(to right, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))'
               : 'linear-gradient(to left, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))'
+          underlayElement.style.pointerEvents = 'none'
         }
         underlayElement.style.opacity = '0'
         underlayElement.style.willChange = 'opacity'
