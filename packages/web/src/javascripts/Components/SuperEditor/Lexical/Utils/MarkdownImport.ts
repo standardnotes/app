@@ -14,7 +14,7 @@
 import { CodeNode, $createCodeNode } from '@lexical/code'
 import { ElementTransformer, TextFormatTransformer, TextMatchTransformer, Transformer } from '@lexical/markdown'
 
-import { $isListItemNode, $isListNode } from '@lexical/list'
+import { $isListItemNode, $isListNode, ListItemNode } from '@lexical/list'
 import { $isQuoteNode } from '@lexical/rich-text'
 import { $findMatchingParent } from '@lexical/utils'
 import {
@@ -132,7 +132,7 @@ function importBlocks(
   if (elementNode.isAttached() && lineTextTrimmed.length > 0) {
     const previousNode = elementNode.getPreviousSibling()
     if ($isParagraphNode(previousNode) || $isQuoteNode(previousNode) || $isListNode(previousNode)) {
-      let targetNode: LexicalNode | null = previousNode
+      let targetNode: typeof previousNode | ListItemNode | null = previousNode
 
       if ($isListNode(previousNode)) {
         const lastDescendant = previousNode.getLastDescendant()
