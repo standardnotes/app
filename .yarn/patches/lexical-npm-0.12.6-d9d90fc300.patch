@@ -1,8 +1,21 @@
 diff --git a/Lexical.dev.js b/Lexical.dev.js
-index 9de98c64cf4aab8b575d25d9b4b998cd29e7eb54..a6d8d752a32b871d24fd207a64968d9fd5459120 100644
+index 9de98c64cf4aab8b575d25d9b4b998cd29e7eb54..eae21f07cfc917ca316719b27dc54ae0635afc7c 100644
 --- a/Lexical.dev.js
 +++ b/Lexical.dev.js
-@@ -4123,11 +4123,7 @@ class LineBreakNode extends LexicalNode {
+@@ -2517,8 +2517,10 @@ function onBeforeInput(event, editor) {
+             }
+             selection.style = anchorNode.getStyle();
+           }
+-          const selectedText = selection.anchor.getNode().getTextContent();
+-          if (selectedText.length <= 1) {
++          const selectedNodeText = selection.anchor.getNode().getTextContent();
++          const isSelectedNodeTextOneOrLessCharacters = selectedNodeText.length <= 1;
++          const hasSelectedAllTextInNode = selection.anchor.offset === 0 && selection.focus.offset === selectedNodeText.length;
++          if (isSelectedNodeTextOneOrLessCharacters || hasSelectedAllTextInNode) {
+             event.preventDefault();
+             dispatchCommand(editor, DELETE_CHARACTER_COMMAND, true);
+           }
+@@ -4123,11 +4125,7 @@ class LineBreakNode extends LexicalNode {
    static importDOM() {
      return {
        br: node => {
@@ -15,7 +28,7 @@ index 9de98c64cf4aab8b575d25d9b4b998cd29e7eb54..a6d8d752a32b871d24fd207a64968d9f
            return null;
          }
          return {
-@@ -4158,6 +4154,22 @@ function $createLineBreakNode() {
+@@ -4158,6 +4156,22 @@ function $createLineBreakNode() {
  function $isLineBreakNode(node) {
    return node instanceof LineBreakNode;
  }
@@ -38,7 +51,7 @@ index 9de98c64cf4aab8b575d25d9b4b998cd29e7eb54..a6d8d752a32b871d24fd207a64968d9f
  
  /**
   * Copyright (c) Meta Platforms, Inc. and affiliates.
-@@ -6251,7 +6263,8 @@ class RangeSelection extends INTERNAL_PointSelection {
+@@ -6251,7 +6265,8 @@ class RangeSelection extends INTERNAL_PointSelection {
        }
        return selection.insertNodes(nodes);
      }
@@ -49,9 +62,26 @@ index 9de98c64cf4aab8b575d25d9b4b998cd29e7eb54..a6d8d752a32b871d24fd207a64968d9f
  
      // CASE 1: insert inside a code block
 diff --git a/Lexical.prod.js b/Lexical.prod.js
-index 6e381d4f241e25f09a347718c83c72cb1672505d..fe80a4e2db67b20205d622a6250b2f6efb84ee2f 100644
+index 6e381d4f241e25f09a347718c83c72cb1672505d..dbed04f260ac47fd0ea20c919ac26cb5ce98cc9d 100644
 --- a/Lexical.prod.js
 +++ b/Lexical.prod.js
+@@ -52,11 +52,11 @@ function Pd(a,b,c){let {anchorNode:d,anchorOffset:e,focusNode:f,focusOffset:g}=a
+ h.format=m.getFormat();h.style=m.getStyle()}else"element"!==k.type||p||(h.format=0,h.style="")}else{k=255;m=!1;n=h.getNodes();p=n.length;for(let l=0;l<p;l++){let r=n[l];if(B(r)&&(m=!0,k&=r.getFormat(),0===k))break}h.format=m?k:0}}R(b,aa,void 0)}})}
+ function Ad(a,b){v(b,()=>{let c=u();var d=xb(b._window);let e=nc();if(d)if(C(c)){let g=c.anchor;var f=g.getNode();"element"===g.type&&0===g.offset&&c.isCollapsed()&&!L(f)&&1===J().getChildrenSize()&&f.getTopLevelElementOrThrow().isEmpty()&&null!==e&&c.is(e)?(d.removeAllRanges(),c.dirty=!0):3!==a.detail||c.isCollapsed()||(d=c.focus.getNode(),f!==d&&(E(f)?f.select(0):f.getParentOrThrow().select(0)))}else"touch"===a.pointerType&&(f=d.anchorNode,null!==f&&(f=f.nodeType,1===f||3===f))&&(d=Qd(e,d,b,a),
+ Ab(d));R(b,ba,a)})}function wd(a,b){let c=a.target;a=a.pointerType;c instanceof Node&&"touch"!==a&&v(b,()=>{x(wb(c))||(Jd=!0)})}function Rd(a){if(!a.getTargetRanges)return null;a=a.getTargetRanges();return 0===a.length?null:a[0]}function Sd(a,b){return a!==b||E(a)||E(b)||!a.isToken()||!b.isToken()}
+-function Cd(a,b){let c=a.inputType,d=Rd(a);"deleteCompositionText"===c||Xa&&Bb(b)||"insertCompositionText"!==c&&v(b,()=>{let e=u();if("deleteContentBackward"===c){if(null===e){var f=nc();if(!C(f))return;Ab(f.clone())}if(C(e)){ab&&H(e.anchor.key);if(229===Ed&&a.timeStamp<Dd+30&&b.isComposing()&&e.anchor.key===e.focus.key){H(null);Dd=0;setTimeout(()=>{v(b,()=>{H(null)})},30);if(C(e)){f=e.anchor.getNode();f.markDirty();e.format=f.getFormat();if(!B(f))throw Error("Anchor node must be a TextNode");e.style=
+-f.getStyle()}1>=e.anchor.getNode().getTextContent().length&&(a.preventDefault(),R(b,da,!0))}else H(null),a.preventDefault(),R(b,da,!0);return}}if(C(e)){f=a.data;null!==Gd&&mc(!1,b,Gd);e.dirty&&null===Gd||!e.isCollapsed()||L(e.anchor.getNode())||null===d||e.applyDOMRange(d);Gd=null;var g=e.focus,h=e.anchor.getNode();g=g.getNode();if("insertText"===c||"insertTranspose"===c)"\n"===f?(a.preventDefault(),R(b,ea,!1)):"\n\n"===f?(a.preventDefault(),R(b,ja,void 0)):null==f&&a.dataTransfer?(f=a.dataTransfer.getData("text/plain"),
+-a.preventDefault(),e.insertRawText(f)):null!=f&&Nd(e,d,f,a.timeStamp,!0)?(a.preventDefault(),R(b,ka,f)):Gd=f,Fd=a.timeStamp;else switch(a.preventDefault(),c){case "insertFromYank":case "insertFromDrop":case "insertReplacementText":R(b,ka,a);break;case "insertFromComposition":H(null);R(b,ka,a);break;case "insertLineBreak":H(null);R(b,ea,!1);break;case "insertParagraph":H(null);Kd&&!$a?(Kd=!1,R(b,ea,!1)):R(b,ja,void 0);break;case "insertFromPaste":case "insertFromPasteAsQuotation":R(b,la,a);break;case "deleteByComposition":Sd(h,
+-g)&&R(b,na,a);break;case "deleteByDrag":case "deleteByCut":R(b,na,a);break;case "deleteContent":R(b,da,!1);break;case "deleteWordBackward":R(b,oa,!0);break;case "deleteWordForward":R(b,oa,!1);break;case "deleteHardLineBackward":case "deleteSoftLineBackward":R(b,pa,!0);break;case "deleteContentForward":case "deleteHardLineForward":case "deleteSoftLineForward":R(b,pa,!1);break;case "formatStrikeThrough":R(b,qa,"strikethrough");break;case "formatBold":R(b,qa,"bold");break;case "formatItalic":R(b,qa,
+-"italic");break;case "formatUnderline":R(b,qa,"underline");break;case "historyUndo":R(b,ra,void 0);break;case "historyRedo":R(b,sa,void 0)}}})}
++function Cd(a,b){let c=a.inputType,d=Rd(a);"deleteCompositionText"===c||Xa&&Bb(b)||"insertCompositionText"!==c&&v(b,()=>{var e=u();if("deleteContentBackward"===c){if(null===e){var f=nc();if(!C(f))return;Ab(f.clone())}if(C(e)){ab&&H(e.anchor.key);if(229===Ed&&a.timeStamp<Dd+30&&b.isComposing()&&e.anchor.key===e.focus.key){H(null);Dd=0;setTimeout(()=>{v(b,()=>{H(null)})},30);if(C(e)){f=e.anchor.getNode();f.markDirty();e.format=f.getFormat();if(!B(f))throw Error("Anchor node must be a TextNode");e.style=
++f.getStyle()}f=e.anchor.getNode().getTextContent();e=0===e.anchor.offset&&e.focus.offset===f.length;if(1>=f.length||e)a.preventDefault(),R(b,da,!0)}else H(null),a.preventDefault(),R(b,da,!0);return}}if(C(e)){f=a.data;null!==Gd&&mc(!1,b,Gd);e.dirty&&null===Gd||!e.isCollapsed()||L(e.anchor.getNode())||null===d||e.applyDOMRange(d);Gd=null;var g=e.focus,h=e.anchor.getNode();g=g.getNode();if("insertText"===c||"insertTranspose"===c)"\n"===f?(a.preventDefault(),R(b,ea,!1)):"\n\n"===f?(a.preventDefault(),
++R(b,ja,void 0)):null==f&&a.dataTransfer?(f=a.dataTransfer.getData("text/plain"),a.preventDefault(),e.insertRawText(f)):null!=f&&Nd(e,d,f,a.timeStamp,!0)?(a.preventDefault(),R(b,ka,f)):Gd=f,Fd=a.timeStamp;else switch(a.preventDefault(),c){case "insertFromYank":case "insertFromDrop":case "insertReplacementText":R(b,ka,a);break;case "insertFromComposition":H(null);R(b,ka,a);break;case "insertLineBreak":H(null);R(b,ea,!1);break;case "insertParagraph":H(null);Kd&&!$a?(Kd=!1,R(b,ea,!1)):R(b,ja,void 0);
++break;case "insertFromPaste":case "insertFromPasteAsQuotation":R(b,la,a);break;case "deleteByComposition":Sd(h,g)&&R(b,na,a);break;case "deleteByDrag":case "deleteByCut":R(b,na,a);break;case "deleteContent":R(b,da,!1);break;case "deleteWordBackward":R(b,oa,!0);break;case "deleteWordForward":R(b,oa,!1);break;case "deleteHardLineBackward":case "deleteSoftLineBackward":R(b,pa,!0);break;case "deleteContentForward":case "deleteHardLineForward":case "deleteSoftLineForward":R(b,pa,!1);break;case "formatStrikeThrough":R(b,
++qa,"strikethrough");break;case "formatBold":R(b,qa,"bold");break;case "formatItalic":R(b,qa,"italic");break;case "formatUnderline":R(b,qa,"underline");break;case "historyUndo":R(b,ra,void 0);break;case "historyRedo":R(b,sa,void 0)}}})}
+ function zd(a,b){a.stopPropagation();v(b,()=>{var c=u(),d=a.data,e=Rd(a);if(null!=d&&C(c)&&Nd(c,e,d,a.timeStamp,!1)){Ld&&(Td(b,d),Ld=!1);var f=c.anchor,g=f.getNode();e=xb(b._window);if(null===e)return;let h=f.offset;if(f=Ya&&!c.isCollapsed()&&B(g)&&null!==e.anchorNode)g=g.getTextContent().slice(0,h)+d+g.getTextContent().slice(h+c.focus.offset),e=e.anchorNode,f=g===(3===e.nodeType?e.nodeValue:null);f||R(b,ka,d);d=d.length;Xa&&1<d&&"insertCompositionText"===a.inputType&&!b.isComposing()&&(c.anchor.offset-=
+ d);Za||$a||cb||!b.isComposing()||(Dd=0,H(null))}else mc(!1,b,null!==d?d:void 0),Ld&&(Td(b,d||void 0),Ld=!1);G();c=F();Cb(c)});Gd=null}function xd(a,b){v(b,()=>{let c=u();if(C(c)&&!b.isComposing()){let d=c.anchor,e=c.anchor.getNode();H(d.key);(a.timeStamp<Dd+30||"element"===d.type||!c.isCollapsed()||e.getFormat()!==c.format||B(e)&&e.getStyle()!==c.style)&&R(b,ka,eb)}})}
+ function Td(a,b){var c=a._compositionKey;H(null);if(null!==c&&null!=b){if(""===b){b=I(c);a=Xb(a.getElementByKey(c));null!==a&&null!==a.nodeValue&&B(b)&&yb(b,a.nodeValue,null,null,!0);return}if("\n"===b[b.length-1]&&(c=u(),C(c))){b=c.focus;c.anchor.set(b.key,b.offset,b.type);R(a,Ba,null);return}}mc(!0,a,b)}function yd(a,b){Xa?Ld=!0:v(b,()=>{Td(b,a.data)})}
 @@ -82,134 +82,134 @@ null!==c&&(c=c.clone());Ac(this,a);let d=this.getLatest(),e=this.__key,f=a.__key
  n=c.__next;null===e?k.__last=m:e.getWritable().__prev=m;k.__size++;c.__next=m;d.__next=n;d.__prev=c.__key;d.__parent=c.__parent;b&&C(f)&&(b=this.getIndexWithinParent(),ae(f,k,b+1),c=k.__key,g&&f.anchor.set(c,b+2,"element"),h&&f.focus.set(c,b+2,"element"));return a}insertBefore(a,b=!0){G();Ac(this,a);var c=this.getWritable();let d=a.getWritable(),e=d.__key;bc(d);let f=this.getPreviousSibling(),g=this.getParentOrThrow().getWritable(),h=c.__prev,k=this.getIndexWithinParent();null===f?g.__first=e:f.getWritable().__next=
  e;g.__size++;c.__prev=e;d.__prev=h;d.__next=c.__key;d.__parent=c.__parent;c=u();b&&C(c)&&(b=this.getParentOrThrow(),ae(c,b,k));return a}isParentRequired(){return!1}createParentElementNode(){return ee()}selectStart(){return this.selectPrevious()}selectEnd(){return this.selectNext(0,0)}selectPrevious(a,b){G();let c=this.getPreviousSibling(),d=this.getParentOrThrow();return null===c?d.select(0,0):E(c)?c.select():B(c)?c.select(a,b):(a=c.getIndexWithinParent()+1,d.select(a,a))}selectNext(a,b){G();let c=
