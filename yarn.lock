@@ -18419,6 +18419,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lexical@patch:lexical@npm:0.12.6#.yarn/patches/lexical-npm-0.12.6-d9d90fc300.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
+  version: 0.12.6
+  resolution: "lexical@patch:lexical@npm%3A0.12.6#.yarn/patches/lexical-npm-0.12.6-d9d90fc300.patch::version=0.12.6&hash=f7fdec&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  checksum: ca16623a952428ca32b53ec6c7ee06409bdc3ea7423373cb7deecf67147999a1caecb3440d5c263a614830d606320eee099793bee8f355a8fc1422927214cd6e
+  languageName: node
+  linkType: hard
+
 "libnpmaccess@npm:^7.0.2":
   version: 7.0.2
   resolution: "libnpmaccess@npm:7.0.2"
