@@ -94,7 +94,8 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
               if (!fileItem) {
                 return
               }
-              if (embedBehavior === 'inline' && getFileBase64) {
+              const canInlineFileType = toFormat === 'pdf' ? fileItem.mimeType.startsWith('image/') : true
+              if (embedBehavior === 'inline' && getFileBase64 && canInlineFileType) {
                 const fileBase64 = await getFileBase64(fileNode.getId())
                 if (!fileBase64) {
                   return

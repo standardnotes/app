@@ -1,16 +1,19 @@
 import { getBase64FromBlob } from '@/Utils'
-import { Document, Page, View, Text, StyleSheet, pdf, Link } from '@react-pdf/renderer'
+import { Document, Page, View, Text, StyleSheet, pdf, Link, Image } from '@react-pdf/renderer'
 import { $getRoot, $isElementNode, $isLineBreakNode, $isTextNode, LexicalEditor, LexicalNode } from 'lexical'
 import { $isLinkNode } from '@lexical/link'
 import { $isHeadingNode } from '@lexical/rich-text'
 import { $isListNode, $isListItemNode, ListType } from '@lexical/list'
 import { $isCodeNode } from '@lexical/code'
 import { ReactNode } from 'react'
+import { $isInlineFileNode } from '../../Plugins/InlineFilePlugin/InlineFileNode'
+import { $isRemoteImageNode } from '../../Plugins/RemoteImagePlugin/RemoteImageNode'
 
 const styles = StyleSheet.create({
   page: {
     paddingVertical: 20,
     paddingHorizontal: 20,
+    lineHeight: 1.5,
   },
   block: {
     flexDirection: 'row',
@@ -118,6 +121,17 @@ const Node = ({ node }: { node: LexicalNode }) => {
     )
   }
 
+  if ($isInlineFileNode(node) || $isRemoteImageNode(node)) {
+    if (!node.__src.startsWith('data:')) {
+      return (
+        <View style={styles.block}>
+          <Link src={node.__src}>{node.__src}</Link>
+        </View>
+      )
+    }
+    return <Image src={node.__src} />
+  }
+
   const children = $isElementNode(node)
     ? node.getChildren().map((child, index) => {
         return <Node node={child} key={index} />
@@ -183,7 +197,11 @@ const Node = ({ node }: { node: LexicalNode }) => {
     )
   }
 
-  return null
+  return (
+    <View style={styles.block}>
+      <Text>{node.getTextContent()}</Text>
+    </View>
+  )
 }
 
 const PDFDocument = ({ nodes }: { nodes: LexicalNode[] }) => {

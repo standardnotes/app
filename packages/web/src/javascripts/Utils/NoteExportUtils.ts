@@ -187,7 +187,7 @@ export const createNoteExport = async (
   )
   const superEmbedBehaviorPref =
     superExportFormatPref === 'pdf'
-      ? 'reference'
+      ? 'inline'
       : application.getPreference(
           PrefKey.SuperNoteExportEmbedBehavior,
           PrefDefaults[PrefKey.SuperNoteExportEmbedBehavior],
