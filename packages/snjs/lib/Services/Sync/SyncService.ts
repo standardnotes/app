@@ -499,12 +499,6 @@ export class SyncService
     return payloads
   }
 
-  public async persistItemPayloads(items: DecryptedItemInterface[]): Promise<void> {
-    const payloads = items.map((item) => item.payloadRepresentation())
-
-    await this.persistPayloads(payloads)
-  }
-
   private queueStrategyResolveOnNext(): Promise<unknown> {
     return new Promise((resolve, reject) => {
       this.resolveQueue.push({ resolve, reject })
@@ -901,6 +895,11 @@ export class SyncService
     const { shouldExecuteSync, releaseLock } = this.configureSyncLock(options)
 
     const { items, beginDate, frozenDirtyIndex, neverSyncedDeleted } = await this.prepareForSync(options)
+
+    if (options.mode === SyncMode.LocalOnly) {
+      this.logger.debug('Syncing local only, skipping remote sync request')
+      return
+    }
 
     const inTimeResolveQueue = this.getPendingRequestsMadeInTimeToPiggyBackOnCurrentRequest()
 

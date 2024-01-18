@@ -21,7 +21,6 @@ export interface SyncServiceInterface extends AbstractService<SyncEvent> {
   markAllItemsAsNeedingSyncAndPersist(): Promise<void>
   downloadFirstSync(waitTimeOnFailureMs: number, otherSyncOptions?: Partial<SyncOptions>): Promise<void>
   persistPayloads(payloads: FullyFormedPayloadInterface[]): Promise<void>
-  persistItemPayloads(items: DecryptedItemInterface[]): Promise<void>
   lockSyncing(): void
   unlockSyncing(): void
   syncSharedVaultsFromScratch(sharedVaultUuids: string[]): Promise<void>

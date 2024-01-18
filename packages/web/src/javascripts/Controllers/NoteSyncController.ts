@@ -5,6 +5,7 @@ import {
   ItemManagerInterface,
   MutatorClientInterface,
   SessionsClientInterface,
+  SyncMode,
   SyncServiceInterface,
 } from '@standardnotes/snjs'
 import { Deferred } from '@standardnotes/utils'
@@ -26,18 +27,15 @@ export type NoteSaveFunctionParams = {
   previews?: { previewPlain: string; previewHtml?: string }
   customMutate?: (mutator: NoteMutator) => void
   onLocalPropagationComplete?: () => void
-  onRemoteSyncComplete?: () => void
 }
 
 export class NoteSyncController {
   savingLocallyPromise: ReturnType<typeof Deferred<void>> | null = null
 
-  private localSaveTimeout?: ReturnType<typeof setTimeout>
-  private remoteSaveTimeout?: ReturnType<typeof setTimeout>
+  private syncTimeout?: ReturnType<typeof setTimeout>
+  private largeNoteSyncTimeout?: ReturnType<typeof setTimeout>
 
   status: NoteStatus | undefined = undefined
-
-  isWaitingToSyncLargeNote = false
 
   constructor(
     private item: SNNote,
@@ -96,90 +94,83 @@ export class NoteSyncController {
   }
 
   deinit() {
-    if (this.localSaveTimeout) {
-      clearTimeout(this.localSaveTimeout)
+    if (this.syncTimeout) {
+      clearTimeout(this.syncTimeout)
     }
-    if (this.remoteSaveTimeout) {
-      clearTimeout(this.remoteSaveTimeout)
+    if (this.largeNoteSyncTimeout) {
+      clearTimeout(this.largeNoteSyncTimeout)
     }
     if (this.savingLocallyPromise) {
       this.savingLocallyPromise.reject()
     }
     this.savingLocallyPromise = null
-    this.localSaveTimeout = undefined
-    this.remoteSaveTimeout = undefined
+    this.largeNoteSyncTimeout = undefined
+    this.syncTimeout = undefined
     ;(this.item as unknown) = undefined
   }
 
   public async saveAndAwaitLocalPropagation(params: NoteSaveFunctionParams): Promise<void> {
     this.savingLocallyPromise = Deferred<void>()
 
-    if (this.localSaveTimeout) {
-      clearTimeout(this.localSaveTimeout)
-    }
-    if (this.remoteSaveTimeout) {
-      clearTimeout(this.remoteSaveTimeout)
+    if (this.syncTimeout) {
+      clearTimeout(this.syncTimeout)
     }
 
     const noDebounce = params.bypassDebouncer || this.sessions.isSignedOut()
-
-    const textByteSize = new Blob([params.text ? params.text : this.item.text]).size
-
-    const isLargeNote = textByteSize > LargeNoteThreshold
-
-    const localSaveDebouceMs = noDebounce
+    const syncDebounceMs = noDebounce
       ? EditorSaveTimeoutDebounce.ImmediateChange
       : this._isNativeMobileWeb.execute().getValue()
       ? EditorSaveTimeoutDebounce.NativeMobileWeb
       : EditorSaveTimeoutDebounce.Desktop
 
-    const remoteSaveDebounceMs = isLargeNote ? EditorSaveTimeoutDebounce.LargeNote : localSaveDebouceMs
-
     return new Promise((resolve) => {
+      const textByteSize = new Blob([params.text ? params.text : this.item.text]).size
+      const isLargeNote = textByteSize > LargeNoteThreshold
+
       if (isLargeNote) {
         this.showWaitingToSyncLargeNoteStatus()
+
+        const isAlreadyAQueuedLargeNoteSync = this.largeNoteSyncTimeout !== undefined
+
+        if (!isAlreadyAQueuedLargeNoteSync) {
+          this.largeNoteSyncTimeout = setTimeout(() => {
+            this.largeNoteSyncTimeout = undefined
+            void this.performSyncOfLargeItem()
+          }, EditorSaveTimeoutDebounce.LargeNote)
+        }
       }
 
-      this.localSaveTimeout = setTimeout(() => {
-        void this.undebouncedLocalSave({
+      this.syncTimeout = setTimeout(() => {
+        void this.undebouncedMutateAndSync({
           ...params,
+          localOnly: isLargeNote,
           onLocalPropagationComplete: () => {
             if (this.savingLocallyPromise) {
               this.savingLocallyPromise.resolve()
             }
-
             resolve()
           },
         })
-      }, localSaveDebouceMs)
-
-      this.remoteSaveTimeout = setTimeout(() => {
-        if (this.savingLocallyPromise) {
-          this.savingLocallyPromise.promise
-            .then(() => {
-              void this.undebouncedRemoteSave(params)
-            })
-            .catch(console.error)
-        } else {
-          void this.undebouncedRemoteSave(params)
-        }
-      }, remoteSaveDebounceMs)
+      }, syncDebounceMs)
     })
   }
 
-  private async undebouncedRemoteSave(params: NoteSaveFunctionParams): Promise<void> {
-    void this.sync.sync().then(() => {
-      params.onRemoteSyncComplete?.()
-    })
+  private async performSyncOfLargeItem(): Promise<void> {
+    const item = this.items.findItem(this.item.uuid)
+    if (!item || !item.dirty) {
+      return
+    }
+
+    void this.sync.sync()
   }
 
-  private async undebouncedLocalSave(params: NoteSaveFunctionParams): Promise<void> {
+  private async undebouncedMutateAndSync(params: NoteSaveFunctionParams & { localOnly: boolean }): Promise<void> {
     if (!this.items.findItem(this.item.uuid)) {
       void this.alerts.alert(InfoStrings.InvalidNote)
       return
     }
 
-    const mutatedItem = await this.mutator.changeItem(
+    await this.mutator.changeItem(
       this.item,
       (mutator) => {
         const noteMutator = mutator as NoteMutator
@@ -210,7 +201,7 @@ export class NoteSyncController {
       params.isUserModified ? MutationType.UpdateUserTimestamps : MutationType.NoUpdateUserTimestamps,
     )
 
-    void this.sync.persistItemPayloads([mutatedItem])
+    void this.sync.sync({ mode: params.localOnly ? SyncMode.LocalOnly : undefined })
 
     params.onLocalPropagationComplete?.()
   }
