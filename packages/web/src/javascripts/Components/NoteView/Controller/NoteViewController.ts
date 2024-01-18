@@ -45,15 +45,6 @@ export class NoteViewController implements ItemViewControllerInterface {
   private defaultTag?: SNTag
 
   private syncController!: NoteSyncController
-  public get syncStatus(): NoteStatus | undefined {
-    return this.syncController.status
-  }
-  public showAllChangesSavedStatus(): void {
-    this.syncController.showAllChangesSavedStatus()
-  }
-  public showErrorSyncStatus(error?: NoteStatus): void {
-    this.syncController.showErrorStatus(error)
-  }
 
   constructor(
     item: SNNote | undefined,
@@ -228,5 +219,21 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
 
     await this.syncController.saveAndAwaitLocalPropagation(params)
+  }
+
+  public get syncStatus(): NoteStatus | undefined {
+    return this.syncController.status
+  }
+
+  public showSavingStatus(): void {
+    this.syncController.showSavingStatus()
+  }
+
+  public showAllChangesSavedStatus(): void {
+    this.syncController.showAllChangesSavedStatus()
+  }
+
+  public showErrorSyncStatus(error?: NoteStatus): void {
+    this.syncController.showErrorStatus(error)
   }
 }

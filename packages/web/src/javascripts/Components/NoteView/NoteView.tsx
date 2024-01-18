@@ -324,6 +324,23 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     if (isTemplateNoteInsertedToBeInteractableWithEditor) {
       return
     }
+
+    if (note.lastSyncBegan || note.dirty) {
+      const currentStatus = this.controller.syncStatus
+      const isWaitingToSyncLargeNote = currentStatus?.type === 'waiting'
+      if (note.lastSyncEnd) {
+        const hasStartedNewSync = note.lastSyncBegan && note.lastSyncBegan.getTime() > note.lastSyncEnd.getTime()
+        const shouldShowSavedStatus = note.lastSyncBegan && note.lastSyncEnd.getTime() > note.lastSyncBegan.getTime()
+        const shouldShowSavingStatusForDirtyNote = note.dirty && !isWaitingToSyncLargeNote
+        if (shouldShowSavingStatusForDirtyNote || hasStartedNewSync) {
+          this.controller.showSavingStatus()
+        } else if (this.state.noteStatus && shouldShowSavedStatus && !isWaitingToSyncLargeNote) {
+          this.controller.showAllChangesSavedStatus()
+        }
+      } else if (note.lastSyncBegan) {
+        this.controller.showSavingStatus()
+      }
+    }
   }
 
   override componentWillUnmount(): void {

@@ -136,6 +136,10 @@ export class NoteSyncController {
     const remoteSaveDebounceMs = isLargeNote ? EditorSaveTimeoutDebounce.LargeNote : localSaveDebouceMs
 
     return new Promise((resolve) => {
+      if (isLargeNote) {
+        this.showWaitingToSyncLargeNoteStatus()
+      }
+
       this.localSaveTimeout = setTimeout(() => {
         void this.undebouncedLocalSave({
           ...params,
@@ -148,10 +152,6 @@ export class NoteSyncController {
           },
         })
       }, localSaveDebouceMs)
-
-      if (isLargeNote) {
-        this.showWaitingToSyncLargeNoteStatus()
-      }
 
       this.remoteSaveTimeout = setTimeout(() => {
         if (this.savingLocallyPromise) {
@@ -168,9 +168,7 @@ export class NoteSyncController {
   }
 
   private async undebouncedRemoteSave(params: NoteSaveFunctionParams): Promise<void> {
-    this.showSavingStatus()
     void this.sync.sync().then(() => {
-      this.showAllChangesSavedStatus()
       params.onRemoteSyncComplete?.()
     })
   }
