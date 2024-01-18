@@ -1,10 +1,12 @@
-import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
-import { ReactNode, useCallback, useState } from 'react'
+import { ReactNode, useCallback, useRef, useState } from 'react'
 import { IconType, PrefKey, PrefDefaults } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { observer } from 'mobx-react-lite'
+import { VisuallyHidden } from '@ariakit/react'
+import Button from '../Button/Button'
+import Popover from '../Popover/Popover'
 
 export type NoteStatus = {
   type: 'saving' | 'saved' | 'error' | 'waiting'
@@ -15,42 +17,50 @@ export type NoteStatus = {
 const IndicatorWithTooltip = ({
   className,
   onClick,
-  onBlur,
   icon,
   isTooltipVisible,
+  setIsTooltipVisible,
   children,
   animateIcon = false,
 }: {
   className: string
   onClick: () => void
-  onBlur: () => void
   icon: IconType
   isTooltipVisible: boolean
+  setIsTooltipVisible: React.Dispatch<React.SetStateAction<boolean>>
   children: ReactNode
   animateIcon?: boolean
-}) => (
-  <div className="note-status-tooltip-container relative">
-    <button
-      className={classNames('peer flex h-5 w-5 items-center justify-center rounded-full', className)}
-      onClick={onClick}
-      onBlur={onBlur}
-      aria-describedby={ElementIds.NoteStatusTooltip}
-    >
-      <Icon className={animateIcon ? 'animate-spin' : ''} type={icon} size="small" />
-      <span className="sr-only">Note sync status</span>
-    </button>
-    <div
-      id={ElementIds.NoteStatusTooltip}
-      className={classNames(
-        isTooltipVisible ? '' : 'hidden',
-        'absolute right-0 top-full min-w-[90vw] translate-x-2 translate-y-1 select-none rounded border border-border',
-        'bg-default px-3 py-1.5 text-left peer-hover:block peer-focus:block md:min-w-max',
-      )}
-    >
-      {children}
-    </div>
-  </div>
-)
+}) => {
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  return (
+    <>
+      <button
+        className={classNames('peer flex h-5 w-5 cursor-pointer items-center justify-center rounded-full', className)}
+        onClick={onClick}
+        ref={buttonRef}
+      >
+        <Icon className={animateIcon ? 'animate-spin' : ''} type={icon} size="small" />
+        <VisuallyHidden>Note sync status</VisuallyHidden>
+      </button>
+      <Popover
+        title="Note sync status"
+        open={isTooltipVisible}
+        togglePopover={() => setIsTooltipVisible((visible) => !visible)}
+        className="px-3 py-2"
+        containerClassName="!min-w-0 !w-auto"
+        anchorElement={buttonRef}
+        side="bottom"
+        align="center"
+        offset={6}
+        disableMobileFullscreenTakeover
+        disableApplyingMobileWidth
+      >
+        {children}
+      </Popover>
+    </>
+  )
+}
 
 type Props = {
   status: NoteStatus | undefined
@@ -66,7 +76,9 @@ const NoteStatusIndicator = ({
   const application = useApplication()
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
-  const onBlur = () => setIsTooltipVisible(false)
+  const toggleTooltip = useCallback(() => {
+    setIsTooltipVisible((visible) => !visible)
+  }, [])
 
   const toggleShowPreference = useCallback(() => {
     void application.setPreference(PrefKey.UpdateSavingStatusIndicator, !updateSavingIndicator)
@@ -80,10 +92,10 @@ const NoteStatusIndicator = ({
     return (
       <IndicatorWithTooltip
         className="bg-danger text-danger-contrast"
-        onClick={toggleShowPreference}
-        onBlur={onBlur}
+        onClick={toggleTooltip}
         icon="warning"
         isTooltipVisible={isTooltipVisible}
+        setIsTooltipVisible={setIsTooltipVisible}
       >
         <div className="text-sm font-bold text-danger">{status.message}</div>
         {status.description && <div className="mt-0.5">{status.description}</div>}
@@ -95,10 +107,10 @@ const NoteStatusIndicator = ({
     return (
       <IndicatorWithTooltip
         className="bg-warning text-warning-contrast"
-        onClick={toggleShowPreference}
-        onBlur={onBlur}
+        onClick={toggleTooltip}
         icon={status && status.type === 'saving' ? 'sync' : 'warning'}
         isTooltipVisible={isTooltipVisible}
+        setIsTooltipVisible={setIsTooltipVisible}
       >
         {status ? (
           <>
@@ -120,14 +132,23 @@ const NoteStatusIndicator = ({
           status.type === 'saved' && 'bg-success text-success-contrast',
           status.type === 'waiting' && 'bg-warning text-warning-contrast',
         )}
-        onClick={toggleShowPreference}
-        onBlur={onBlur}
+        onClick={toggleTooltip}
         icon={status.type === 'saving' ? 'sync' : status.type === 'waiting' ? 'clock' : 'check'}
         animateIcon={status.type === 'saving'}
         isTooltipVisible={isTooltipVisible}
+        setIsTooltipVisible={setIsTooltipVisible}
       >
         <div className="text-sm font-bold">{status.message}</div>
         {status.description && <div className="mt-0.5">{status.description}</div>}
+        {status.type === 'waiting' ? (
+          <Button small className="mt-1" onClick={() => application.sync.sync().catch(console.error)}>
+            Sync now
+          </Button>
+        ) : (
+          <Button small className="mt-1" onClick={toggleShowPreference}>
+            Disable status updates
+          </Button>
+        )}
       </IndicatorWithTooltip>
     )
   }
@@ -135,13 +156,15 @@ const NoteStatusIndicator = ({
   return (
     <IndicatorWithTooltip
       className="bg-contrast text-passive-1"
-      onClick={toggleShowPreference}
-      onBlur={onBlur}
+      onClick={toggleTooltip}
       icon="info"
       isTooltipVisible={isTooltipVisible}
+      setIsTooltipVisible={setIsTooltipVisible}
     >
       <div className="text-sm font-bold">Note status updates are disabled</div>
-      <div className="mt-0.5">Click to enable.</div>
+      <Button small className="mt-1" onClick={toggleShowPreference}>
+        Enable status updates
+      </Button>
     </IndicatorWithTooltip>
   )
 }

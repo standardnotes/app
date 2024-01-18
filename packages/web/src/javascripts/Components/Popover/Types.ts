@@ -44,6 +44,7 @@ type CommonPopoverProps = {
   togglePopover?: () => void
   disableMobileFullscreenTakeover?: boolean
   disableFlip?: boolean
+  disableApplyingMobileWidth?: boolean
   forceFullHeightOnMobile?: boolean
   title: string
   portal?: boolean

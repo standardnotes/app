@@ -27,6 +27,7 @@ const PositionedPopoverContent = ({
   disableClickOutside,
   disableMobileFullscreenTakeover,
   disableFlip,
+  disableApplyingMobileWidth,
   maxHeight,
   portal = true,
   offset,
@@ -57,6 +58,7 @@ const PositionedPopoverContent = ({
     side,
     disableMobileFullscreenTakeover,
     disableFlip,
+    disableApplyingMobileWidth,
     maxHeightFunction: maxHeight,
     offset,
   })
