@@ -898,6 +898,7 @@ export class SyncService
 
     if (options.mode === SyncMode.LocalOnly) {
       this.logger.debug('Syncing local only, skipping remote sync request')
+      releaseLock()
       return
     }
 
