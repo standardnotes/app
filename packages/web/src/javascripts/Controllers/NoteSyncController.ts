@@ -129,15 +129,7 @@ export class NoteSyncController {
 
       if (isLargeNote) {
         this.showWaitingToSyncLargeNoteStatus()
-
-        const isAlreadyAQueuedLargeNoteSync = this.largeNoteSyncTimeout !== undefined
-
-        if (!isAlreadyAQueuedLargeNoteSync) {
-          this.largeNoteSyncTimeout = setTimeout(() => {
-            this.largeNoteSyncTimeout = undefined
-            void this.performSyncOfLargeItem()
-          }, EditorSaveTimeoutDebounce.LargeNote)
-        }
+        this.queueLargeNoteSyncIfNeeded()
       }
 
       this.syncTimeout = setTimeout(() => {
@@ -153,6 +145,17 @@ export class NoteSyncController {
         })
       }, syncDebounceMs)
     })
+  }
+
+  private queueLargeNoteSyncIfNeeded(): void {
+    const isAlreadyAQueuedLargeNoteSync = this.largeNoteSyncTimeout !== undefined
+
+    if (!isAlreadyAQueuedLargeNoteSync) {
+      this.largeNoteSyncTimeout = setTimeout(() => {
+        this.largeNoteSyncTimeout = undefined
+        void this.performSyncOfLargeItem()
+      }, EditorSaveTimeoutDebounce.LargeNote)
+    }
   }
 
   private async performSyncOfLargeItem(): Promise<void> {
@@ -202,6 +205,8 @@ export class NoteSyncController {
     )
 
     void this.sync.sync({ mode: params.localOnly ? SyncMode.LocalOnly : undefined })
+
+    this.queueLargeNoteSyncIfNeeded()
 
     params.onLocalPropagationComplete?.()
   }
