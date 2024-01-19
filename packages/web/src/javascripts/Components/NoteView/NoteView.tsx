@@ -81,6 +81,7 @@ type State = {
   updateSavingIndicator?: boolean
   editorFeatureIdentifier?: string
   noteType?: NoteType
+  focusModeEnabled?: boolean
 
   conflictedNotes: SNNote[]
   showConflictResolutionModal: boolean
@@ -231,12 +232,21 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.autorun(() => {
       const syncStatus = this.controller.syncStatus
+
+      const isFocusModeEnabled = this.application.paneController.focusModeEnabled
+      const didFocusModeChange = this.state.focusModeEnabled !== isFocusModeEnabled
+
       this.setState({
         showProtectedWarning: this.application.notesController.showProtectedWarning,
         noteStatus: syncStatus,
         saveError: syncStatus?.type === 'error',
         syncTakingTooLong: false,
+        focusModeEnabled: isFocusModeEnabled,
       })
+
+      if (!isFocusModeEnabled && didFocusModeChange) {
+        this.controller.syncOnlyIfLargeNote()
+      }
     })
 
     this.reloadEditorComponent().catch(console.error)

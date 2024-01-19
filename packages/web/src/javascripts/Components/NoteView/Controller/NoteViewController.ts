@@ -240,4 +240,8 @@ export class NoteViewController implements ItemViewControllerInterface {
   public syncNow(): void {
     this.sync.sync().catch(console.error)
   }
+
+  public syncOnlyIfLargeNote(): void {
+    this.syncController.syncOnlyIfLargeNote()
+  }
 }

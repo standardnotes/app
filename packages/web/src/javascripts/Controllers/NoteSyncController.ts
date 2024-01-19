@@ -132,6 +132,11 @@ export class NoteSyncController {
     ;(this.item as unknown) = undefined
   }
 
+  private isLargeNote(text: string): boolean {
+    const textByteSize = new Blob([text]).size
+    return textByteSize > LargeNoteThreshold
+  }
+
   public async saveAndAwaitLocalPropagation(params: NoteSaveFunctionParams): Promise<void> {
     this.savingLocallyPromise = Deferred<void>()
 
@@ -147,8 +152,7 @@ export class NoteSyncController {
       : EditorSaveTimeoutDebounce.Desktop
 
     return new Promise((resolve) => {
-      const textByteSize = new Blob([params.text ? params.text : this.item.text]).size
-      const isLargeNote = textByteSize > LargeNoteThreshold
+      const isLargeNote = this.isLargeNote(params.text ? params.text : this.item.text)
 
       if (isLargeNote) {
         this.showWaitingToSyncLargeNoteStatus()
@@ -235,5 +239,12 @@ export class NoteSyncController {
     this.queueLargeNoteSyncIfNeeded()
 
     params.onLocalPropagationComplete?.()
+  }
+
+  public syncOnlyIfLargeNote(): void {
+    const isLargeNote = this.isLargeNote(this.item.text)
+    if (isLargeNote) {
+      void this.performSyncOfLargeItem()
+    }
   }
 }
