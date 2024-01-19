@@ -885,6 +885,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   />
                 </div>
                 <NoteStatusIndicator
+                  note={this.note}
                   status={this.state.noteStatus}
                   syncTakingTooLong={this.state.syncTakingTooLong}
                   updateSavingIndicator={this.state.updateSavingIndicator}

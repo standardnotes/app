@@ -1,12 +1,13 @@
 import { classNames } from '@standardnotes/utils'
 import { ReactNode, useCallback, useRef, useState } from 'react'
-import { IconType, PrefKey, PrefDefaults } from '@standardnotes/snjs'
+import { IconType, PrefKey, PrefDefaults, SNNote } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { observer } from 'mobx-react-lite'
 import { VisuallyHidden } from '@ariakit/react'
 import Button from '../Button/Button'
 import Popover from '../Popover/Popover'
+import { getRelativeTimeString } from '@/Utils/GetRelativeTimeString'
 
 export type NoteStatus = {
   type: 'saving' | 'saved' | 'error' | 'waiting'
@@ -63,12 +64,14 @@ const IndicatorWithTooltip = ({
 }
 
 type Props = {
+  note: SNNote
   status: NoteStatus | undefined
   syncTakingTooLong: boolean
   updateSavingIndicator?: boolean
 }
 
 const NoteStatusIndicator = ({
+  note,
   status,
   syncTakingTooLong,
   updateSavingIndicator = PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
@@ -140,6 +143,9 @@ const NoteStatusIndicator = ({
       >
         <div className="text-sm font-bold">{status.message}</div>
         {status.description && <div className="mt-0.5">{status.description}</div>}
+        {status.type === 'waiting' && note.lastSyncEnd && (
+          <div className="mt-0.5">Last synced {getRelativeTimeString(note.lastSyncEnd)}</div>
+        )}
         {status.type === 'waiting' ? (
           <Button
             small
