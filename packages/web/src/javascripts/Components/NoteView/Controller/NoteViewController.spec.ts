@@ -28,6 +28,9 @@ describe('note view controller', () => {
         createTemplateItem: jest.fn().mockReturnValue({} as SNNote),
       } as unknown as jest.Mocked<ItemManagerInterface>,
       mutator: {} as jest.Mocked<MutatorClientInterface>,
+      sessions: {
+        isSignedIn: jest.fn().mockReturnValue(true),
+      },
     } as unknown as jest.Mocked<WebApplication>
 
     application.isNativeMobileWeb = jest.fn().mockReturnValue(false)
