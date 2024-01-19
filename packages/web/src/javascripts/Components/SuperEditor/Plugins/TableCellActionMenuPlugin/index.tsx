@@ -18,8 +18,6 @@ import {
   $isTextNode,
   DEPRECATED_$getNodeTriplet,
   DEPRECATED_$isGridCellNode,
-  DEPRECATED_$isGridSelection,
-  GridSelection,
 } from 'lexical'
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
@@ -40,6 +38,8 @@ import {
   HTMLTableElementWithWithTableSelectionState,
   TableCellHeaderStates,
   TableCellNode,
+  GridSelection,
+  $isGridSelection,
 } from '@lexical/table'
 import { ReactPortal, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -103,8 +103,8 @@ function $canUnmerge(): boolean {
   const selection = $getSelection()
   if (
     ($isRangeSelection(selection) && !selection.isCollapsed()) ||
-    (DEPRECATED_$isGridSelection(selection) && !selection.anchor.is(selection.focus)) ||
-    (!$isRangeSelection(selection) && !DEPRECATED_$isGridSelection(selection))
+    ($isGridSelection(selection) && !selection.anchor.is(selection.focus)) ||
+    (!$isRangeSelection(selection) && !$isGridSelection(selection))
   ) {
     return false
   }
@@ -167,7 +167,7 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
     editor.getEditorState().read(() => {
       const selection = $getSelection()
       // Merge cells
-      if (DEPRECATED_$isGridSelection(selection)) {
+      if ($isGridSelection(selection)) {
         const currentSelectionCounts = computeSelectionCount(selection)
         updateSelectionCounts(computeSelectionCount(selection))
         setCanMergeCells(
@@ -207,7 +207,7 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
   const mergeTableCellsAtSelection = () => {
     editor.update(() => {
       const selection = $getSelection()
-      if (DEPRECATED_$isGridSelection(selection)) {
+      if ($isGridSelection(selection)) {
         const { columns, rows } = computeSelectionCount(selection)
         const nodes = selection.getNodes()
         let firstCell: null | DEPRECATED_GridCellNode = null
