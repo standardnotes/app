@@ -13,7 +13,7 @@ import { EditorSaveTimeoutDebounce } from '../Components/NoteView/Controller/Edi
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 import { LargeNoteThreshold } from '@/Constants/Constants'
 import { NoteStatus } from '@/Components/NoteView/NoteStatusIndicator'
-import { action, makeObservable, observable } from 'mobx'
+import { action, makeObservable, observable, runInAction } from 'mobx'
 
 const NotePreviewCharLimit = 160
 const MinimumStatusChangeDuration = 400
@@ -59,7 +59,9 @@ export class NoteSyncController {
     }
     if (wait) {
       this.statusChangeTimeout = setTimeout(() => {
-        this.status = status
+        runInAction(() => {
+          this.status = status
+        })
       }, MinimumStatusChangeDuration)
     } else {
       this.status = status
@@ -84,11 +86,14 @@ export class NoteSyncController {
   }
 
   showWaitingToSyncLargeNoteStatus() {
-    this.setStatus({
-      type: 'waiting',
-      message: 'Note is too large',
-      description: 'It will be synced less often. Changes will be saved offline normally.',
-    })
+    this.setStatus(
+      {
+        type: 'waiting',
+        message: 'Note is too large',
+        description: 'It will be synced less often. Changes will be saved offline normally.',
+      },
+      false,
+    )
   }
 
   showErrorStatus(error?: NoteStatus) {

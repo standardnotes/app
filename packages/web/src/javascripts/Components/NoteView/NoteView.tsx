@@ -331,8 +331,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       if (note.lastSyncEnd) {
         const hasStartedNewSync = note.lastSyncBegan && note.lastSyncBegan.getTime() > note.lastSyncEnd.getTime()
         const shouldShowSavedStatus = note.lastSyncBegan && note.lastSyncEnd.getTime() > note.lastSyncBegan.getTime()
-        const shouldShowSavingStatusForDirtyNote = note.dirty && !isWaitingToSyncLargeNote
-        if (shouldShowSavingStatusForDirtyNote || hasStartedNewSync) {
+        if (hasStartedNewSync) {
           this.controller.showSavingStatus()
         } else if (this.state.noteStatus && shouldShowSavedStatus && !isWaitingToSyncLargeNote) {
           this.controller.showAllChangesSavedStatus()
