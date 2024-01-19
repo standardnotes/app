@@ -9,7 +9,7 @@ export const NoteSizeWarning: FunctionComponent<{
 }> = ({ note }) => {
   return new Blob([note.text]).size > LargeNoteThreshold ? (
     <>
-      <HorizontalSeparator classes="my-2" />
+      <HorizontalSeparator classes="mt-2" />
       <div className="bg-warning-faded relative flex items-center px-3 py-3.5">
         <Icon type="warning" className="mr-3 flex-shrink-0 text-accessory-tint-3" />
         <div className="leading-140% max-w-80% select-none text-warning">
