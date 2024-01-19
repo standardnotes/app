@@ -1,5 +1,5 @@
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
-import { destroyAllObjectProperties, isMobileScreen } from '@/Utils'
+import { debounce, destroyAllObjectProperties, isMobileScreen } from '@/Utils'
 import {
   ApplicationEvent,
   CollectionSort,
@@ -276,9 +276,9 @@ export class ItemListController
       ),
     )
 
-    window.onresize = () => {
+    window.onresize = debounce(() => {
       this.resetPagination(true)
-    }
+    }, 100)
   }
 
   getPersistableValue = (): SelectionControllerPersistableValue => {
