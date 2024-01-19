@@ -184,9 +184,6 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const onFocus = useCallback(() => {
     application.notifyWebEvent(WebAppEvent.EditorDidFocus, { eventSource: EditorEventSource.UserInteraction })
   }, [application])
-  const onBlur = useCallback(() => {
-    application.notifyWebEvent(WebAppEvent.EditorDidBlur, { eventSource: EditorEventSource.UserInteraction })
-  }, [application])
 
   return (
     <div
@@ -213,7 +210,6 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 spellcheck={spellcheck}
                 readonly={note.current.locked || readonly}
                 onFocus={onFocus}
-                onBlur={onBlur}
               >
                 <ItemSelectionPlugin currentNote={note.current} />
                 <FilePlugin currentNote={note.current} />

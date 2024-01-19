@@ -1,7 +1,6 @@
 export enum WebAppEvent {
   NewUpdateAvailable = 'NewUpdateAvailable',
   EditorDidFocus = 'EditorDidFocus',
-  EditorDidBlur = 'EditorDidBlur',
   BeganBackupDownload = 'BeganBackupDownload',
   EndedBackupDownload = 'EndedBackupDownload',
   PanelResized = 'PanelResized',

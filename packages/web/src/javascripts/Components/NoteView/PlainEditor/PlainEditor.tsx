@@ -131,13 +131,11 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
 
     const onContentBlur = useCallback(
       (event: FocusEvent) => {
-        application.notifyWebEvent(WebAppEvent.EditorDidBlur, { eventSource: lastEditorFocusEventSource.current })
-
         lastEditorFocusEventSource.current = undefined
 
         onBlur(event)
       },
-      [application, lastEditorFocusEventSource, onBlur],
+      [lastEditorFocusEventSource, onBlur],
     )
 
     const scrollMobileCursorIntoViewAfterWebviewResize = useCallback(() => {
