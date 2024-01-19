@@ -788,6 +788,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }))
   }
 
+  triggerSyncOnAction = () => {
+    this.controller.syncNow()
+  }
+
   override render() {
     if (this.controller.dealloced) {
       return null
@@ -895,10 +899,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   <>
                     <LinkedItemsButton
                       linkingController={this.application.linkingController}
+                      onClick={this.triggerSyncOnAction}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
                     <ChangeEditorButton
                       noteViewController={this.controller}
+                      onClick={this.triggerSyncOnAction}
                       onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                     />
                     <PinNoteButton
@@ -909,6 +915,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 )}
                 <NotesOptionsPanel
                   notesController={this.application.notesController}
+                  onClick={this.triggerSyncOnAction}
                   onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   onButtonBlur={() => {
                     this.setState({

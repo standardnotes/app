@@ -141,7 +141,14 @@ const NoteStatusIndicator = ({
         <div className="text-sm font-bold">{status.message}</div>
         {status.description && <div className="mt-0.5">{status.description}</div>}
         {status.type === 'waiting' ? (
-          <Button small className="mt-1" onClick={() => application.sync.sync().catch(console.error)}>
+          <Button
+            small
+            className="mt-1"
+            onClick={() => {
+              application.sync.sync().catch(console.error)
+              toggleTooltip()
+            }}
+          >
             Sync now
           </Button>
         ) : (

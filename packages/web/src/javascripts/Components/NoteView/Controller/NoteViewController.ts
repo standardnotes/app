@@ -236,4 +236,8 @@ export class NoteViewController implements ItemViewControllerInterface {
   public showErrorSyncStatus(error?: NoteStatus): void {
     this.syncController.showErrorStatus(error)
   }
+
+  public syncNow(): void {
+    this.sync.sync().catch(console.error)
+  }
 }

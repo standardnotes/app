@@ -168,11 +168,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   useEffect(() => {
     const removeObserver = application.addWebEventObserver(async (eventName) => {
-      if (
-        eventName === WebAppEvent.WindowDidFocus ||
-        eventName === WebAppEvent.WindowDidBlur ||
-        eventName === WebAppEvent.EditorDidBlur
-      ) {
+      if (eventName === WebAppEvent.WindowDidFocus || eventName === WebAppEvent.WindowDidBlur) {
         if (!(await application.protections.isLocked())) {
           application.sync.sync().catch(console.error)
         }
