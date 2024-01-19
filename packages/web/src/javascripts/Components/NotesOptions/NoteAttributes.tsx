@@ -4,6 +4,7 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { calculateReadTime } from './Utils/calculateReadTime'
 import { countNoteAttributes } from './Utils/countNoteAttributes'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
 
 export const useNoteAttributes = (application: WebApplicationInterface, note: SNNote) => {
   const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])
@@ -15,10 +16,13 @@ export const useNoteAttributes = (application: WebApplicationInterface, note: SN
 
   const dateCreated = useMemo(() => formatDateForContextMenu(note.created_at), [note.created_at])
 
+  const size = useMemo(() => new Blob([note.text]).size, [note.text])
+
   const editor = application.componentManager.editorForNote(note)
   const format = editor.fileType
 
   return {
+    size,
     words,
     characters,
     paragraphs,
@@ -35,22 +39,29 @@ export const NoteAttributes: FunctionComponent<{
   note: SNNote
   className?: string
 }> = ({ application, note, className }) => {
-  const { words, characters, paragraphs, readTime, userModifiedDate, dateCreated, format } = useNoteAttributes(
+  const { size, words, characters, paragraphs, readTime, userModifiedDate, dateCreated, format } = useNoteAttributes(
     application,
     note,
   )
 
+  const canShowWordCount = typeof words === 'number' && (format === 'txt' || format === 'md')
+
   return (
     <div className={classNames('select-text px-3 py-1.5 text-sm font-medium text-neutral lg:text-xs', className)}>
-      {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
-        <>
-          <div className="mb-1">
-            {words} words · {characters} characters · {paragraphs} paragraphs
-          </div>
-          <div className="mb-1">
-            <span className="font-semibold">Read time:</span> {readTime}
-          </div>
-        </>
+      <div className="mb-1">
+        {!canShowWordCount && <span className="font-semibold">Size: </span>}
+        {formatSizeToReadableString(size)}
+        {canShowWordCount ? (
+          <>
+            {' '}
+            · {words} words · {characters} characters · {paragraphs} paragraphs
+          </>
+        ) : null}
+      </div>
+      {canShowWordCount ? (
+        <div className="mb-1">
+          <span className="font-semibold">Read time:</span> {readTime}
+        </div>
       ) : null}
       <div className="mb-1">
         <span className="font-semibold">Last modified:</span> {userModifiedDate}
