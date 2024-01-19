@@ -34,7 +34,7 @@ const IndicatorWithTooltip = ({
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   return (
-    <>
+    <div className="note-status-tooltip-container">
       <button
         className={classNames('peer flex h-5 w-5 cursor-pointer items-center justify-center rounded-full', className)}
         onClick={onClick}
@@ -58,7 +58,7 @@ const IndicatorWithTooltip = ({
       >
         {children}
       </Popover>
-    </>
+    </div>
   )
 }
 

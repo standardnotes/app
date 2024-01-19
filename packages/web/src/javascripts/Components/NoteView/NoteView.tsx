@@ -882,6 +882,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               </div>
               {shouldShowConflictsButton && (
                 <Button
+                  id={ElementIds.ConflictResolutionButton}
                   className="flex items-center"
                   primary
                   colorStyle="warning"
