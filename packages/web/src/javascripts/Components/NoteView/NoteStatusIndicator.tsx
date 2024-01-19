@@ -48,7 +48,7 @@ const IndicatorWithTooltip = ({
         open={isTooltipVisible}
         togglePopover={() => setIsTooltipVisible((visible) => !visible)}
         className="px-3 py-2"
-        containerClassName="!min-w-0 !w-auto"
+        containerClassName="!min-w-0 !w-auto max-w-[90vw]"
         anchorElement={buttonRef}
         side="bottom"
         align="center"
