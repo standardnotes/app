@@ -168,9 +168,8 @@ export class NoteSyncController {
   private queueLargeNoteSyncIfNeeded(): void {
     const isAlreadyAQueuedLargeNoteSync = this.largeNoteSyncTimeout !== undefined
 
-    const isSignedIn = this.sessions.isSignedIn()
-
     if (!isAlreadyAQueuedLargeNoteSync) {
+      const isSignedIn = this.sessions.isSignedIn()
       const timeout = isSignedIn ? EditorSaveTimeoutDebounce.LargeNote : EditorSaveTimeoutDebounce.ImmediateChange
 
       this.largeNoteSyncTimeout = setTimeout(() => {

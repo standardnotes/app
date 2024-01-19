@@ -48,20 +48,15 @@ export const NoteAttributes: FunctionComponent<{
 
   return (
     <div className={classNames('select-text px-3 py-1.5 text-sm font-medium text-neutral lg:text-xs', className)}>
-      <div className="mb-1">
-        {!canShowWordCount && <span className="font-semibold">Size: </span>}
-        {formatSizeToReadableString(size)}
-        {canShowWordCount ? (
-          <>
-            {' '}
-            · {words} words · {characters} characters · {paragraphs} paragraphs
-          </>
-        ) : null}
-      </div>
       {canShowWordCount ? (
-        <div className="mb-1">
-          <span className="font-semibold">Read time:</span> {readTime}
-        </div>
+        <>
+          <div className="mb-1">
+            {words} words · {characters} characters · {paragraphs} paragraphs
+          </div>
+          <div className="mb-1">
+            <span className="font-semibold">Read time:</span> {readTime}
+          </div>
+        </>
       ) : null}
       <div className="mb-1">
         <span className="font-semibold">Last modified:</span> {userModifiedDate}
@@ -69,8 +64,11 @@ export const NoteAttributes: FunctionComponent<{
       <div className="mb-1">
         <span className="font-semibold">Created:</span> {dateCreated}
       </div>
-      <div>
+      <div className="mb-1">
         <span className="font-semibold">Note ID:</span> {note.uuid}
+      </div>
+      <div>
+        <span className="font-semibold">Size:</span> {formatSizeToReadableString(size)}
       </div>
     </div>
   )
