@@ -1,15 +1,13 @@
 import Icon from '@/Components/Icon/Icon'
 import { FunctionComponent } from 'react'
 import { SNNote } from '@standardnotes/snjs'
-import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
+import { LargeNoteThreshold } from '@/Constants/Constants'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
-
-export const NOTE_SIZE_WARNING_THRESHOLD = 0.5 * BYTES_IN_ONE_MEGABYTE
 
 export const NoteSizeWarning: FunctionComponent<{
   note: SNNote
 }> = ({ note }) => {
-  return new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
+  return new Blob([note.text]).size > LargeNoteThreshold ? (
     <>
       <HorizontalSeparator classes="my-2" />
       <div className="bg-warning-faded relative flex items-center px-3 py-3.5">

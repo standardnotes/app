@@ -11,12 +11,11 @@ import {
 import { Deferred } from '@standardnotes/utils'
 import { EditorSaveTimeoutDebounce } from '../Components/NoteView/Controller/EditorSaveTimeoutDebounce'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
-import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
+import { LargeNoteThreshold } from '@/Constants/Constants'
 import { NoteStatus } from '@/Components/NoteView/NoteStatusIndicator'
 import { action, makeObservable, observable } from 'mobx'
 
 const NotePreviewCharLimit = 160
-const LargeNoteThreshold = 2 * BYTES_IN_ONE_MEGABYTE
 
 export type NoteSaveFunctionParams = {
   title?: string

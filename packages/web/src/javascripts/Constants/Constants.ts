@@ -59,3 +59,5 @@ export const SupportsPassiveListeners = (() => {
   }
   return supportsPassive
 })()
+
+export const LargeNoteThreshold = 1.5 * BYTES_IN_ONE_MEGABYTE
