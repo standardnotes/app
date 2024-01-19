@@ -16,6 +16,7 @@ import { NoteStatus } from '@/Components/NoteView/NoteStatusIndicator'
 import { action, makeObservable, observable } from 'mobx'
 
 const NotePreviewCharLimit = 160
+const MinimumStatusChangeDuration = 400
 
 export type NoteSaveFunctionParams = {
   title?: string
@@ -33,6 +34,7 @@ export class NoteSyncController {
 
   private syncTimeout?: ReturnType<typeof setTimeout>
   private largeNoteSyncTimeout?: ReturnType<typeof setTimeout>
+  private statusChangeTimeout?: ReturnType<typeof setTimeout>
 
   status: NoteStatus | undefined = undefined
 
@@ -51,15 +53,27 @@ export class NoteSyncController {
     })
   }
 
-  setStatus(status: NoteStatus) {
-    this.status = status
+  setStatus(status: NoteStatus, wait = true) {
+    if (this.statusChangeTimeout) {
+      clearTimeout(this.statusChangeTimeout)
+    }
+    if (wait) {
+      this.statusChangeTimeout = setTimeout(() => {
+        this.status = status
+      }, MinimumStatusChangeDuration)
+    } else {
+      this.status = status
+    }
   }
 
   showSavingStatus() {
-    this.setStatus({
-      type: 'saving',
-      message: 'Saving…',
-    })
+    this.setStatus(
+      {
+        type: 'saving',
+        message: 'Saving…',
+      },
+      false,
+    )
   }
 
   showAllChangesSavedStatus() {
@@ -99,12 +113,17 @@ export class NoteSyncController {
     if (this.largeNoteSyncTimeout) {
       clearTimeout(this.largeNoteSyncTimeout)
     }
+    if (this.statusChangeTimeout) {
+      clearTimeout(this.statusChangeTimeout)
+    }
     if (this.savingLocallyPromise) {
       this.savingLocallyPromise.reject()
     }
     this.savingLocallyPromise = null
     this.largeNoteSyncTimeout = undefined
     this.syncTimeout = undefined
+    this.status = undefined
+    this.statusChangeTimeout = undefined
     ;(this.item as unknown) = undefined
   }
 
