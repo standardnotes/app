@@ -6,8 +6,8 @@ export const PopoverClassNames = classNames(
 )
 
 export const PopoverItemClassNames = classNames(
-  'flex w-full items-center text-base overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground',
-  'focus:bg-info-backdrop cursor-pointer m-0 focus:bg-contrast focus:text-foreground',
+  'flex w-full items-center text-base overflow-hidden py-2 px-3 hover:bg-info hover:text-info-contrast',
+  'cursor-pointer m-0 focus:bg-info focus:text-info-contrast',
 )
 
-export const PopoverItemSelectedClassNames = classNames('bg-contrast text-foreground')
+export const PopoverItemSelectedClassNames = classNames('bg-info text-info-contrast')
