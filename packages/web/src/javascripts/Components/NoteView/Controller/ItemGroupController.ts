@@ -104,6 +104,9 @@ export class ItemGroupController {
     controller: NoteViewController | FileViewController,
     { notify = true }: { notify: boolean } = { notify: true },
   ): void {
+    if (controller instanceof NoteViewController) {
+      controller.syncOnlyIfLargeNote()
+    }
     controller.deinit()
 
     removeFromArray(this.itemControllers, controller)

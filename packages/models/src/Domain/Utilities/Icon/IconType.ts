@@ -37,6 +37,7 @@ export type IconType =
   | 'chevron-right'
   | 'chevron-up'
   | 'clear-circle-filled'
+  | 'clock'
   | 'close'
   | 'cloud-off'
   | 'code-2'

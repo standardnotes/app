@@ -43,6 +43,7 @@ import ChevronUpIcon from './ic-chevron-up.svg'
 import CircleIcon from './circle-55.svg'
 import ClearCircleFilledIcon from './ic-clear-circle-filled.svg'
 import CloseCircleFilledIcon from './ic-close-circle-filled.svg'
+import ClockIcon from './ic-clock.svg'
 import CloseIcon from './ic-close.svg'
 import CloudOffIcon from './ic-cloud-off.svg'
 import CodeIcon from './ic-code.svg'
@@ -263,6 +264,7 @@ export {
   CircleIcon,
   ClearCircleFilledIcon,
   CloseCircleFilledIcon,
+  ClockIcon,
   CloseIcon,
   CloudOffIcon,
   CodeIcon,

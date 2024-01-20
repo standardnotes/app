@@ -11,4 +11,5 @@ export enum SyncMode {
    * all data to see if user has an items key, and if not, only then create a new one.
    */
   DownloadFirst = 'DownloadFirst',
+  LocalOnly = 'LocalOnly',
 }

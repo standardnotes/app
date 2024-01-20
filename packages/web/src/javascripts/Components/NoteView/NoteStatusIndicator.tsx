@@ -1,63 +1,77 @@
-import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
-import { ReactNode, useCallback, useState } from 'react'
-import { IconType, PrefKey, PrefDefaults } from '@standardnotes/snjs'
+import { ReactNode, useCallback, useRef, useState } from 'react'
+import { IconType, PrefKey, PrefDefaults, SNNote } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
+import { observer } from 'mobx-react-lite'
+import { VisuallyHidden } from '@ariakit/react'
+import Button from '../Button/Button'
+import Popover from '../Popover/Popover'
+import { getRelativeTimeString } from '@/Utils/GetRelativeTimeString'
 
 export type NoteStatus = {
-  type: 'saving' | 'saved' | 'error'
+  type: 'saving' | 'saved' | 'error' | 'waiting'
   message: string
-  desc?: string
+  description?: ReactNode
 }
 
 const IndicatorWithTooltip = ({
   className,
   onClick,
-  onBlur,
   icon,
   isTooltipVisible,
+  setIsTooltipVisible,
   children,
   animateIcon = false,
 }: {
   className: string
   onClick: () => void
-  onBlur: () => void
   icon: IconType
   isTooltipVisible: boolean
+  setIsTooltipVisible: React.Dispatch<React.SetStateAction<boolean>>
   children: ReactNode
   animateIcon?: boolean
-}) => (
-  <div className="note-status-tooltip-container relative">
-    <button
-      className={classNames('peer flex h-5 w-5 items-center justify-center rounded-full', className)}
-      onClick={onClick}
-      onBlur={onBlur}
-      aria-describedby={ElementIds.NoteStatusTooltip}
-    >
-      <Icon className={animateIcon ? 'animate-spin' : ''} type={icon} size="small" />
-      <span className="sr-only">Note sync status</span>
-    </button>
-    <div
-      id={ElementIds.NoteStatusTooltip}
-      className={classNames(
-        isTooltipVisible ? '' : 'hidden',
-        'absolute right-0 top-full min-w-[90vw] translate-x-2 translate-y-1 select-none rounded border border-border',
-        'bg-default px-3 py-1.5 text-left peer-hover:block peer-focus:block md:min-w-max',
-      )}
-    >
-      {children}
+}) => {
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  return (
+    <div className="note-status-tooltip-container">
+      <button
+        className={classNames('peer flex h-5 w-5 cursor-pointer items-center justify-center rounded-full', className)}
+        onClick={onClick}
+        ref={buttonRef}
+      >
+        <Icon className={animateIcon ? 'animate-spin' : ''} type={icon} size="small" />
+        <VisuallyHidden>Note sync status</VisuallyHidden>
+      </button>
+      <Popover
+        title="Note sync status"
+        open={isTooltipVisible}
+        togglePopover={() => setIsTooltipVisible((visible) => !visible)}
+        className="px-3 py-2"
+        containerClassName="!min-w-0 !w-auto max-w-[90vw]"
+        anchorElement={buttonRef}
+        side="bottom"
+        align="center"
+        offset={6}
+        disableMobileFullscreenTakeover
+        disableApplyingMobileWidth
+      >
+        {children}
+      </Popover>
     </div>
-  </div>
-)
+  )
+}
 
 type Props = {
+  note: SNNote
   status: NoteStatus | undefined
   syncTakingTooLong: boolean
   updateSavingIndicator?: boolean
 }
 
 const NoteStatusIndicator = ({
+  note,
   status,
   syncTakingTooLong,
   updateSavingIndicator = PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
@@ -65,7 +79,9 @@ const NoteStatusIndicator = ({
   const application = useApplication()
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
-  const onBlur = () => setIsTooltipVisible(false)
+  const toggleTooltip = useCallback(() => {
+    setIsTooltipVisible((visible) => !visible)
+  }, [])
 
   const toggleShowPreference = useCallback(() => {
     void application.setPreference(PrefKey.UpdateSavingStatusIndicator, !updateSavingIndicator)
@@ -79,13 +95,13 @@ const NoteStatusIndicator = ({
     return (
       <IndicatorWithTooltip
         className="bg-danger text-danger-contrast"
-        onClick={toggleShowPreference}
-        onBlur={onBlur}
+        onClick={toggleTooltip}
         icon="warning"
         isTooltipVisible={isTooltipVisible}
+        setIsTooltipVisible={setIsTooltipVisible}
       >
         <div className="text-sm font-bold text-danger">{status.message}</div>
-        {status.desc && <div className="mt-0.5">{status.desc}</div>}
+        {status.description && <div className="mt-0.5">{status.description}</div>}
       </IndicatorWithTooltip>
     )
   }
@@ -94,15 +110,15 @@ const NoteStatusIndicator = ({
     return (
       <IndicatorWithTooltip
         className="bg-warning text-warning-contrast"
-        onClick={toggleShowPreference}
-        onBlur={onBlur}
+        onClick={toggleTooltip}
         icon={status && status.type === 'saving' ? 'sync' : 'warning'}
         isTooltipVisible={isTooltipVisible}
+        setIsTooltipVisible={setIsTooltipVisible}
       >
         {status ? (
           <>
             <div className="text-sm font-bold text-warning">{status.message}</div>
-            {status.desc && <div className="mt-0.5">{status.desc}</div>}
+            {status.description && <div className="mt-0.5">{status.description}</div>}
           </>
         ) : (
           <div className="text-sm font-bold text-warning">Sync taking too long</div>
@@ -117,15 +133,35 @@ const NoteStatusIndicator = ({
         className={classNames(
           status.type === 'saving' && 'bg-contrast',
           status.type === 'saved' && 'bg-success text-success-contrast',
+          status.type === 'waiting' && 'bg-warning text-warning-contrast',
         )}
-        onClick={toggleShowPreference}
-        onBlur={onBlur}
-        icon={status.type === 'saving' ? 'sync' : 'check'}
+        onClick={toggleTooltip}
+        icon={status.type === 'saving' ? 'sync' : status.type === 'waiting' ? 'clock' : 'check'}
         animateIcon={status.type === 'saving'}
         isTooltipVisible={isTooltipVisible}
+        setIsTooltipVisible={setIsTooltipVisible}
       >
         <div className="text-sm font-bold">{status.message}</div>
-        {status.desc && <div className="mt-0.5">{status.desc}</div>}
+        {status.description && <div className="mt-0.5">{status.description}</div>}
+        {status.type === 'waiting' && note.lastSyncEnd && (
+          <div className="mt-0.5">Last synced {getRelativeTimeString(note.lastSyncEnd)}</div>
+        )}
+        {status.type === 'waiting' ? (
+          <Button
+            small
+            className="mt-1"
+            onClick={() => {
+              application.sync.sync().catch(console.error)
+              toggleTooltip()
+            }}
+          >
+            Sync now
+          </Button>
+        ) : (
+          <Button small className="mt-1" onClick={toggleShowPreference}>
+            Disable status updates
+          </Button>
+        )}
       </IndicatorWithTooltip>
     )
   }
@@ -133,15 +169,17 @@ const NoteStatusIndicator = ({
   return (
     <IndicatorWithTooltip
       className="bg-contrast text-passive-1"
-      onClick={toggleShowPreference}
-      onBlur={onBlur}
+      onClick={toggleTooltip}
       icon="info"
       isTooltipVisible={isTooltipVisible}
+      setIsTooltipVisible={setIsTooltipVisible}
     >
       <div className="text-sm font-bold">Note status updates are disabled</div>
-      <div className="mt-0.5">Click to enable.</div>
+      <Button small className="mt-1" onClick={toggleShowPreference}>
+        Enable status updates
+      </Button>
     </IndicatorWithTooltip>
   )
 }
 
-export default NoteStatusIndicator
+export default observer(NoteStatusIndicator)

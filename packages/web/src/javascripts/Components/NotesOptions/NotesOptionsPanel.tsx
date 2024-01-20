@@ -9,11 +9,12 @@ import { ElementIds } from '@/Constants/ElementIDs'
 
 type Props = {
   notesController: NotesController
+  onClick?: () => void
   onClickPreprocessing?: () => Promise<void>
   onButtonBlur?: (event: FocusEvent) => void
 }
 
-const NotesOptionsPanel = ({ notesController, onClickPreprocessing, onButtonBlur }: Props) => {
+const NotesOptionsPanel = ({ notesController, onClick, onClickPreprocessing, onButtonBlur }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -23,7 +24,10 @@ const NotesOptionsPanel = ({ notesController, onClickPreprocessing, onButtonBlur
       await onClickPreprocessing()
     }
     setIsOpen(willMenuOpen)
-  }, [onClickPreprocessing, isOpen])
+    if (onClick) {
+      onClick()
+    }
+  }, [isOpen, onClickPreprocessing, onClick])
 
   const [disableClickOutside, setDisableClickOutside] = useState(false)
   const handleDisableClickOutsideRequest = useCallback((disabled: boolean) => {

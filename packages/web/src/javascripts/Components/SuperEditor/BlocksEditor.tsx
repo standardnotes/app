@@ -44,6 +44,8 @@ type BlocksEditorProps = {
   spellcheck?: boolean
   ignoreFirstChange?: boolean
   readonly?: boolean
+  onFocus?: () => void
+  onBlur?: () => void
 }
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
@@ -54,6 +56,8 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   spellcheck,
   ignoreFirstChange = false,
   readonly,
+  onFocus,
+  onBlur,
 }) => {
   const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false)
   const handleChange = useCallback(
@@ -95,6 +99,8 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
                     className,
                   )}
                   spellCheck={spellcheck}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
                 />
                 <div className="search-highlight-container pointer-events-none absolute left-0 top-0 h-full w-full" />
               </div>
