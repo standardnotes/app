@@ -650,6 +650,17 @@ const ToolbarPlugin = () => {
               </>
             )}
             <ToolbarButton
+              name="Formatting options"
+              onSelect={() => {
+                setIsTextStyleMenuOpen(!isTextStyleMenuOpen)
+              }}
+              ref={textStyleAnchorRef}
+              className={isTextStyleMenuOpen ? 'md:bg-default' : ''}
+            >
+              <Icon type={blockTypeToIconName[blockType]} size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
+              <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
+            </ToolbarButton>
+            <ToolbarButton
               name="Bold"
               iconName="bold"
               active={isBold}
@@ -682,7 +693,7 @@ const ToolbarPlugin = () => {
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')}
             />
             <ToolbarButton
-              name="Formatting options"
+              name="Text style"
               onSelect={() => {
                 setIsTextFormatMenuOpen(!isTextFormatMenuOpen)
               }}
@@ -691,17 +702,6 @@ const ToolbarPlugin = () => {
             >
               <Icon type="text" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
               <Icon type="chevron-down" size="custom" className="ml-1 h-4 w-4 md:h-3.5 md:w-3.5" />
-            </ToolbarButton>
-            <ToolbarButton
-              name="Text style"
-              onSelect={() => {
-                setIsTextStyleMenuOpen(!isTextStyleMenuOpen)
-              }}
-              ref={textStyleAnchorRef}
-              className={isTextStyleMenuOpen ? 'md:bg-default' : ''}
-            >
-              <Icon type={blockTypeToIconName[blockType]} size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
-              <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
             </ToolbarButton>
             <ToolbarButton
               name="Alignment"
