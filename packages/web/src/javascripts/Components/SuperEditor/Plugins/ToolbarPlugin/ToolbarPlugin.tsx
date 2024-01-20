@@ -504,7 +504,7 @@ const ToolbarPlugin = () => {
 
   const [isFocusInEditor, setIsFocusInEditor] = useState(false)
   const [isFocusInToolbar, setIsFocusInToolbar] = useState(false)
-  const canShowToolbarOnMobile = true
+  const canShowToolbarOnMobile = isFocusInEditor || isFocusInToolbar
   const canShowAllItems = isMobile || isToolbarFixedToTop
 
   useEffect(() => {
