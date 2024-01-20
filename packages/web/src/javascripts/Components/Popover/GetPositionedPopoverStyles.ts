@@ -3,7 +3,7 @@ import { isMobileScreen } from '@/Utils'
 import { CSSProperties } from 'react'
 import { PopoverAlignment, PopoverSide } from './Types'
 import { OppositeSide, checkCollisions, getNonCollidingAlignment } from './Utils/Collisions'
-import { getAppRect, getPopoverMaxHeight, getPositionedPopoverRect } from './Utils/Rect'
+import { getPopoverMaxHeight, getPositionedPopoverRect } from './Utils/Rect'
 
 const percentOf = (percent: number, value: number) => (percent / 100) * value
 
@@ -154,7 +154,7 @@ export const getPositionedPopoverStyles = ({
   )
 
   let maxHeight = getPopoverMaxHeight(
-    getAppRect(),
+    documentRect,
     anchorRect,
     disableFlip ? side : sideWithLessOverflows,
     finalAlignment,

@@ -39,6 +39,7 @@ import AutoFocusPlugin from './Plugins/AutoFocusPlugin'
 import usePreference from '@/Hooks/usePreference'
 import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
 import { EditorEventSource } from '@/Types/EditorEventSource'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 export const SuperNotePreviewCharLimit = 160
 
@@ -187,6 +188,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
 
   return (
     <div
+      id={ElementIds.SuperEditor}
       className="font-editor relative flex h-full w-full flex-col"
       style={
         {

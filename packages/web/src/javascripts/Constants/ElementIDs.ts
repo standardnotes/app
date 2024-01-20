@@ -14,4 +14,5 @@ export const ElementIds = {
   ItemLinkAutocompleteInput: 'item-link-autocomplete-input',
   SearchBar: 'search-bar',
   ConflictResolutionButton: 'conflict-resolution-button',
+  SuperEditor: 'super-editor',
 } as const

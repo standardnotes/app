@@ -65,6 +65,7 @@ import { useStateRef } from '@/Hooks/useStateRef'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
 import usePreference from '@/Hooks/usePreference'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -503,7 +504,7 @@ const ToolbarPlugin = () => {
 
   const [isFocusInEditor, setIsFocusInEditor] = useState(false)
   const [isFocusInToolbar, setIsFocusInToolbar] = useState(false)
-  const canShowToolbarOnMobile = isFocusInEditor || isFocusInToolbar
+  const canShowToolbarOnMobile = true
   const canShowAllItems = isMobile || isToolbarFixedToTop
 
   useEffect(() => {
@@ -583,7 +584,8 @@ const ToolbarPlugin = () => {
     toolbarStore,
   ])
 
-  const popoverDocumentElement = editor.getRootElement()?.parentElement ?? document.body
+  const popoverDocumentElement =
+    document.getElementById(ElementIds.SuperEditor) ?? editor.getRootElement()?.parentElement ?? document.body
 
   return (
     <>
@@ -760,7 +762,7 @@ const ToolbarPlugin = () => {
         disableMobileFullscreenTakeover
         disableFlip
         portal={false}
-        documentElement={isMobile ? popoverDocumentElement : undefined}
+        documentElement={popoverDocumentElement}
       >
         <div className="mb-1.5 mt-1 px-3 text-sm font-semibold uppercase text-text">Table of Contents</div>
         <LexicalTableOfContents>
@@ -816,7 +818,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
         portal={false}
-        documentElement={isMobile ? popoverDocumentElement : undefined}
+        documentElement={popoverDocumentElement}
       >
         <Menu a11yLabel="Text formatting options" className="!px-0" onClick={() => setIsTextFormatMenuOpen(false)}>
           <ToolbarMenuItem
@@ -857,7 +859,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
         portal={false}
-        documentElement={isMobile ? popoverDocumentElement : undefined}
+        documentElement={popoverDocumentElement}
       >
         <Menu a11yLabel="Text style" className="!px-0" onClick={() => setIsTextStyleMenuOpen(false)}>
           <ToolbarMenuItem
@@ -930,7 +932,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
         portal={false}
-        documentElement={isMobile ? popoverDocumentElement : undefined}
+        documentElement={popoverDocumentElement}
       >
         <Menu a11yLabel="Alignment" className="!px-0" onClick={() => setIsAlignmentMenuOpen(false)}>
           <ToolbarMenuItem
@@ -971,7 +973,7 @@ const ToolbarPlugin = () => {
         disableFlip
         containerClassName="md:!min-w-60 md:!w-auto"
         portal={false}
-        documentElement={isMobile ? popoverDocumentElement : undefined}
+        documentElement={popoverDocumentElement}
       >
         <Menu a11yLabel="Insert" className="!px-0" onClick={() => setIsInsertMenuOpen(false)}>
           <ToolbarMenuItem
