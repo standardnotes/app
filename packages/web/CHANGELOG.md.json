@@ -29,10 +29,10 @@
       "body": "### Features\n\n* Editing large notes (greater than 1.5MB) will result in more optimized syncing, in which changes are saved locally immediately, but sync with the server less frequently (roughly every 30 seconds rather than after every change). ([#2768](https://github.com/standardnotes/app/issues/2768)) ([396ee3f](https://github.com/standardnotes/app/commit/396ee3f449c612600bbbe3294c61dc8be46ea365))",
       "parsed": {
         "_": [
-          "Editing large notes (greater than 1.5MB) will result in more optimized syncing, in which changes are saved locally immediately, but sync with the server less frequently (roughly every 30 seconds rather than after every change). (#2768) (396ee3f)"
+          "Editing large notes, greater than 1.5MB, will result in more optimized syncing, in which changes are saved locally immediately, but sync with the server less frequently,  roughly every 30 seconds rather than after every change. (#2768) (396ee3f)"
         ],
         "Features": [
-          "Editing large notes (greater than 1.5MB) will result in more optimized syncing, in which changes are saved locally immediately, but sync with the server less frequently (roughly every 30 seconds rather than after every change). (#2768) (396ee3f)"
+          "Editing large notes, greater than 1.5MB, will result in more optimized syncing, in which changes are saved locally immediately, but sync with the server less frequently,  roughly every 30 seconds rather than after every change. (#2768) (396ee3f)"
         ]
       }
     },
