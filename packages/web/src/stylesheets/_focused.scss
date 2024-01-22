@@ -49,13 +49,17 @@
       }
 
       .note-view-options-buttons,
-      .note-status-tooltip-container {
+      .note-status-tooltip-container,
+      #conflict-resolution-button {
         opacity: 0;
       }
 
-      #editor-title-bar:hover .note-view-options-buttons,
-      #editor-title-bar:hover .note-status-tooltip-container {
-        opacity: 1;
+      #editor-title-bar:hover {
+        .note-view-options-buttons,
+        .note-status-tooltip-container,
+        #conflict-resolution-button {
+          opacity: 1;
+        }
       }
     }
 

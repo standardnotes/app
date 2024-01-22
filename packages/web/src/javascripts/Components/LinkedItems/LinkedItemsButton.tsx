@@ -7,10 +7,11 @@ import LinkedItemsPanel from './LinkedItemsPanel'
 
 type Props = {
   linkingController: LinkingController
+  onClick?: () => void
   onClickPreprocessing?: () => Promise<void>
 }
 
-const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) => {
+const LinkedItemsButton = ({ linkingController, onClick, onClickPreprocessing }: Props) => {
   const { activeItem, isLinkingPanelOpen, setIsLinkingPanelOpen } = linkingController
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -20,7 +21,10 @@ const LinkedItemsButton = ({ linkingController, onClickPreprocessing }: Props) =
       await onClickPreprocessing()
     }
     setIsLinkingPanelOpen(willMenuOpen)
-  }, [isLinkingPanelOpen, onClickPreprocessing, setIsLinkingPanelOpen])
+    if (onClick) {
+      onClick()
+    }
+  }, [isLinkingPanelOpen, onClick, onClickPreprocessing, setIsLinkingPanelOpen])
 
   if (!activeItem) {
     return null

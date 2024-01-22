@@ -70,7 +70,7 @@ class Footer extends AbstractComponent<Props, State> {
         case WebAppEvent.NewUpdateAvailable:
           this.onNewUpdateAvailable()
           break
-        case WebAppEvent.EditorFocused:
+        case WebAppEvent.EditorDidFocus:
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if ((data as any).eventSource === EditorEventSource.UserInteraction) {
             this.closeAccountMenu()

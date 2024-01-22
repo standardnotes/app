@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.185.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.185.2...@standardnotes/web@3.185.3) (2024-01-21)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.185.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.185.1...@standardnotes/web@3.185.2) (2024-01-20)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.185.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.185.0...@standardnotes/web@3.185.1) (2024-01-20)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.185.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.184.5...@standardnotes/web@3.185.0) (2024-01-20)
+
+### Features
+
+* Editing large notes (greater than 1.5MB) will result in more optimized syncing, in which changes are saved locally immediately, but sync with the server less frequently (roughly every 30 seconds rather than after every change). ([#2768](https://github.com/standardnotes/app/issues/2768)) ([396ee3f](https://github.com/standardnotes/app/commit/396ee3f449c612600bbbe3294c61dc8be46ea365))
+
+## [3.184.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.184.4...@standardnotes/web@3.184.5) (2024-01-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.184.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.184.3...@standardnotes/web@3.184.4) (2024-01-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.184.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.184.2...@standardnotes/web@3.184.3) (2024-01-12)
 
 **Note:** Version bump only for package @standardnotes/web

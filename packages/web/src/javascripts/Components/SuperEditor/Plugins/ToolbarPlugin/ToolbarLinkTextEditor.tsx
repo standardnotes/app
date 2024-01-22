@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { KeyboardKey } from '@standardnotes/ui-services'
-import { $getSelection, $isRangeSelection, $isTextNode, LexicalEditor, RangeSelection } from 'lexical'
+import { $getSelection, $isRangeSelection, $isTextNode, LexicalEditor, RangeSelection, TextNode } from 'lexical'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { VisuallyHidden } from '@ariakit/react'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
@@ -14,7 +14,10 @@ type Props = {
   setEditMode: (isEditMode: boolean) => void
 }
 
-export const $isLinkTextNode = (node: ReturnType<typeof getSelectedNode>, selection: RangeSelection) => {
+export const $isLinkTextNode = (
+  node: ReturnType<typeof getSelectedNode>,
+  selection: RangeSelection,
+): node is TextNode => {
   const parent = node.getParent()
   return $isLinkNode(parent) && $isTextNode(node) && selection.anchor.getNode() === selection.focus.getNode()
 }

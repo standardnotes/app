@@ -896,6 +896,12 @@ export class SyncService
 
     const { items, beginDate, frozenDirtyIndex, neverSyncedDeleted } = await this.prepareForSync(options)
 
+    if (options.mode === SyncMode.LocalOnly) {
+      this.logger.debug('Syncing local only, skipping remote sync request')
+      releaseLock()
+      return
+    }
+
     const inTimeResolveQueue = this.getPendingRequestsMadeInTimeToPiggyBackOnCurrentRequest()
 
     if (!shouldExecuteSync) {

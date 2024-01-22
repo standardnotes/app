@@ -84,6 +84,7 @@ export const IconNameToSvgMapping = {
   bold: icons.BoldIcon,
   camera: icons.CameraIcon,
   check: icons.CheckIcon,
+  clock: icons.ClockIcon,
   close: icons.CloseIcon,
   code: icons.CodeIcon,
   comment: icons.FeedbackIcon,

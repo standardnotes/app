@@ -4,6 +4,7 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { calculateReadTime } from './Utils/calculateReadTime'
 import { countNoteAttributes } from './Utils/countNoteAttributes'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
 
 export const useNoteAttributes = (application: WebApplicationInterface, note: SNNote) => {
   const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])
@@ -15,10 +16,13 @@ export const useNoteAttributes = (application: WebApplicationInterface, note: SN
 
   const dateCreated = useMemo(() => formatDateForContextMenu(note.created_at), [note.created_at])
 
+  const size = useMemo(() => new Blob([note.text]).size, [note.text])
+
   const editor = application.componentManager.editorForNote(note)
   const format = editor.fileType
 
   return {
+    size,
     words,
     characters,
     paragraphs,
@@ -35,14 +39,16 @@ export const NoteAttributes: FunctionComponent<{
   note: SNNote
   className?: string
 }> = ({ application, note, className }) => {
-  const { words, characters, paragraphs, readTime, userModifiedDate, dateCreated, format } = useNoteAttributes(
+  const { size, words, characters, paragraphs, readTime, userModifiedDate, dateCreated, format } = useNoteAttributes(
     application,
     note,
   )
 
+  const canShowWordCount = typeof words === 'number' && (format === 'txt' || format === 'md')
+
   return (
     <div className={classNames('select-text px-3 py-1.5 text-sm font-medium text-neutral lg:text-xs', className)}>
-      {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
+      {canShowWordCount ? (
         <>
           <div className="mb-1">
             {words} words · {characters} characters · {paragraphs} paragraphs
@@ -58,8 +64,11 @@ export const NoteAttributes: FunctionComponent<{
       <div className="mb-1">
         <span className="font-semibold">Created:</span> {dateCreated}
       </div>
-      <div>
+      <div className="mb-1">
         <span className="font-semibold">Note ID:</span> {note.uuid}
+      </div>
+      <div>
+        <span className="font-semibold">Size:</span> {formatSizeToReadableString(size)}
       </div>
     </div>
   )

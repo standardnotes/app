@@ -12,7 +12,6 @@ import { classNames } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import { TOGGLE_LINK_COMMAND } from '@lexical/link'
-import Portal from '@/Components/Portal/Portal'
 import { mergeRegister } from '@lexical/utils'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import Button from '@/Components/Button/Button'
@@ -20,6 +19,9 @@ import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
 import { $isLinkTextNode } from './ToolbarLinkTextEditor'
 import { useElementResize } from '@/Hooks/useElementRect'
+import { createPortal } from 'react-dom'
+import { ElementIds } from '@/Constants/ElementIDs'
+import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
 
 const FloatingLinkEditor = ({
   linkUrl,
@@ -90,7 +92,8 @@ const FloatingLinkEditor = ({
       maxHeightFunction: () => 'none',
     })
     if (calculatedStyles) {
-      Object.entries(calculatedStyles).forEach(([key, value]) => {
+      const adjustedStyles = getAdjustedStylesForNonPortalPopover(linkEditorElement, calculatedStyles)
+      Object.entries(adjustedStyles).forEach(([key, value]) => {
         linkEditorElement.style.setProperty(key, value)
       })
       linkEditorElement.style.opacity = '1'
@@ -145,50 +148,28 @@ const FloatingLinkEditor = ({
     setTimeout(updateLinkEditorPosition)
   }, [isEditMode, updateLinkEditorPosition])
 
-  return (
-    <Portal>
-      <div
-        id="super-link-editor"
-        className="absolute bottom-12 left-1/2 z-modal w-[calc(100%_-_1rem)] -translate-x-1/2 rounded-lg border border-border bg-contrast px-2 py-1 shadow-sm shadow-contrast translucent-ui:border-[--popover-border-color] translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)] md:bottom-[unset] md:left-0 md:top-0 md:w-auto md:translate-x-0 md:opacity-0"
-        ref={linkEditorRef}
-      >
-        {isEditMode ? (
-          <div
-            className="flex flex-col gap-2 py-1"
-            onBlur={(event) => {
-              if (!linkEditorRef.current?.contains(event.relatedTarget as Node)) {
-                setEditMode(false)
-              }
-            }}
-          >
-            {isLinkText && (
-              <div className="flex items-center gap-1.5">
-                <Icon type="plain-text" className="flex-shrink-0" />
-                <input
-                  value={editedLinkText}
-                  onChange={(event) => {
-                    setEditedLinkText(event.target.value)
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === KeyboardKey.Enter) {
-                      event.preventDefault()
-                      handleSubmission()
-                    } else if (event.key === KeyboardKey.Escape) {
-                      event.preventDefault()
-                      setEditMode(false)
-                    }
-                  }}
-                  className="flex-grow rounded-sm bg-contrast p-1 text-text sm:min-w-[20ch]"
-                />
-              </div>
-            )}
+  return createPortal(
+    <div
+      id="super-link-editor"
+      className="absolute bottom-12 left-1/2 z-modal w-[calc(100%_-_1rem)] -translate-x-1/2 rounded-lg border border-border bg-contrast px-2 py-1 shadow-sm shadow-contrast translucent-ui:border-[--popover-border-color] translucent-ui:bg-[--popover-background-color] translucent-ui:[backdrop-filter:var(--popover-backdrop-filter)] md:bottom-[unset] md:left-0 md:top-0 md:w-auto md:translate-x-0 md:opacity-0"
+      ref={linkEditorRef}
+    >
+      {isEditMode ? (
+        <div
+          className="flex flex-col gap-2 py-1"
+          onBlur={(event) => {
+            if (!linkEditorRef.current?.contains(event.relatedTarget as Node)) {
+              setEditMode(false)
+            }
+          }}
+        >
+          {isLinkText && (
             <div className="flex items-center gap-1.5">
-              <Icon type="link" className="flex-shrink-0" />
+              <Icon type="plain-text" className="flex-shrink-0" />
               <input
-                ref={focusInput}
-                value={editedLinkUrl}
+                value={editedLinkText}
                 onChange={(event) => {
-                  setEditedLinkUrl(event.target.value)
+                  setEditedLinkText(event.target.value)
                 }}
                 onKeyDown={(event) => {
                   if (event.key === KeyboardKey.Enter) {
@@ -199,84 +180,105 @@ const FloatingLinkEditor = ({
                     setEditMode(false)
                   }
                 }}
-                className="flex-grow rounded-sm bg-contrast p-1 text-text sm:min-w-[40ch]"
+                className="flex-grow rounded-sm bg-contrast p-1 text-text sm:min-w-[20ch]"
               />
             </div>
-            <div className="flex items-center justify-end gap-1.5">
-              <StyledTooltip showOnMobile showOnHover label="Cancel editing">
-                <Button
-                  onClick={() => {
-                    setEditMode(false)
-                    editor.focus()
-                  }}
-                  onMouseDown={(event) => event.preventDefault()}
-                >
-                  Cancel
-                </Button>
-              </StyledTooltip>
-              <StyledTooltip showOnMobile showOnHover label="Save link">
-                <Button primary onClick={handleSubmission} onMouseDown={(event) => event.preventDefault()}>
-                  Apply
-                </Button>
-              </StyledTooltip>
-            </div>
+          )}
+          <div className="flex items-center gap-1.5">
+            <Icon type="link" className="flex-shrink-0" />
+            <input
+              ref={focusInput}
+              value={editedLinkUrl}
+              onChange={(event) => {
+                setEditedLinkUrl(event.target.value)
+              }}
+              onKeyDown={(event) => {
+                if (event.key === KeyboardKey.Enter) {
+                  event.preventDefault()
+                  handleSubmission()
+                } else if (event.key === KeyboardKey.Escape) {
+                  event.preventDefault()
+                  setEditMode(false)
+                }
+              }}
+              className="flex-grow rounded-sm bg-contrast p-1 text-text sm:min-w-[40ch]"
+            />
           </div>
-        ) : (
-          <div className="flex items-center gap-1">
-            <a
-              className={classNames(
-                'mr-1 flex flex-grow items-center gap-2 overflow-hidden whitespace-nowrap underline',
-                isAutoLink && 'py-2.5',
-              )}
-              href={linkUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Icon type="open-in" className="ml-1 flex-shrink-0" />
-              <div className="max-w-[35ch] overflow-hidden text-ellipsis">{linkUrl}</div>
-            </a>
-            <StyledTooltip showOnMobile showOnHover label="Copy link">
-              <button
-                className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+          <div className="flex items-center justify-end gap-1.5">
+            <StyledTooltip showOnMobile showOnHover label="Cancel editing">
+              <Button
                 onClick={() => {
-                  navigator.clipboard.writeText(linkUrl).catch(console.error)
+                  setEditMode(false)
+                  editor.focus()
                 }}
                 onMouseDown={(event) => event.preventDefault()}
               >
-                <Icon type="copy" size="medium" />
-              </button>
+                Cancel
+              </Button>
             </StyledTooltip>
-            {!isAutoLink && (
-              <>
-                <StyledTooltip showOnMobile showOnHover label="Edit link">
-                  <button
-                    className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
-                    onClick={() => {
-                      setEditedLinkUrl(linkUrl)
-                      setEditMode(true)
-                    }}
-                    onMouseDown={(event) => event.preventDefault()}
-                  >
-                    <Icon type="pencil-filled" size="medium" />
-                  </button>
-                </StyledTooltip>
-                <StyledTooltip showOnMobile showOnHover label="Remove link">
-                  <button
-                    className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
-                    onClick={() => {
-                      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
-                    }}
-                    onMouseDown={(event) => event.preventDefault()}
-                  >
-                    <Icon type="trash-filled" size="medium" />
-                  </button>
-                </StyledTooltip>
-              </>
-            )}
+            <StyledTooltip showOnMobile showOnHover label="Save link">
+              <Button primary onClick={handleSubmission} onMouseDown={(event) => event.preventDefault()}>
+                Apply
+              </Button>
+            </StyledTooltip>
           </div>
-        )}
-      </div>
-    </Portal>
+        </div>
+      ) : (
+        <div className="flex items-center gap-1">
+          <a
+            className={classNames(
+              'mr-1 flex flex-grow items-center gap-2 overflow-hidden whitespace-nowrap underline',
+              isAutoLink && 'py-2.5',
+            )}
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon type="open-in" className="ml-1 flex-shrink-0" />
+            <div className="max-w-[35ch] overflow-hidden text-ellipsis">{linkUrl}</div>
+          </a>
+          <StyledTooltip showOnMobile showOnHover label="Copy link">
+            <button
+              className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+              onClick={() => {
+                navigator.clipboard.writeText(linkUrl).catch(console.error)
+              }}
+              onMouseDown={(event) => event.preventDefault()}
+            >
+              <Icon type="copy" size="medium" />
+            </button>
+          </StyledTooltip>
+          {!isAutoLink && (
+            <>
+              <StyledTooltip showOnMobile showOnHover label="Edit link">
+                <button
+                  className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+                  onClick={() => {
+                    setEditedLinkUrl(linkUrl)
+                    setEditMode(true)
+                  }}
+                  onMouseDown={(event) => event.preventDefault()}
+                >
+                  <Icon type="pencil-filled" size="medium" />
+                </button>
+              </StyledTooltip>
+              <StyledTooltip showOnMobile showOnHover label="Remove link">
+                <button
+                  className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
+                  onClick={() => {
+                    editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
+                  }}
+                  onMouseDown={(event) => event.preventDefault()}
+                >
+                  <Icon type="trash-filled" size="medium" />
+                </button>
+              </StyledTooltip>
+            </>
+          )}
+        </div>
+      )}
+    </div>,
+    document.getElementById(ElementIds.SuperEditor) ?? document.body,
   )
 }
 

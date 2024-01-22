@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.51.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.50.2...@standardnotes/models@1.51.0) (2024-01-20)
+
+### Features
+
+* Editing large notes (greater than 1.5MB) will result in more optimized syncing, in which changes are saved locally immediately, but sync with the server less frequently (roughly every 30 seconds rather than after every change). ([#2768](https://github.com/standardnotes/app/issues/2768)) ([396ee3f](https://github.com/standardnotes/app/commit/396ee3f449c612600bbbe3294c61dc8be46ea365))
+
 ## [1.50.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.50.1...@standardnotes/models@1.50.2) (2023-12-28)
 
 **Note:** Version bump only for package @standardnotes/models

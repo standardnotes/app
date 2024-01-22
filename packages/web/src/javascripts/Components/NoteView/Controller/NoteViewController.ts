@@ -25,6 +25,7 @@ import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerO
 import { log, LoggingDomain } from '@/Logging'
 import { NoteSaveFunctionParams, NoteSyncController } from '../../../Controllers/NoteSyncController'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
+import { NoteStatus } from '../NoteStatusIndicator'
 
 export type EditorValues = {
   title: string
@@ -218,5 +219,29 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
 
     await this.syncController.saveAndAwaitLocalPropagation(params)
+  }
+
+  public get syncStatus(): NoteStatus | undefined {
+    return this.syncController.status
+  }
+
+  public showSavingStatus(): void {
+    this.syncController.showSavingStatus()
+  }
+
+  public showAllChangesSavedStatus(): void {
+    this.syncController.showAllChangesSavedStatus()
+  }
+
+  public showErrorSyncStatus(error?: NoteStatus): void {
+    this.syncController.showErrorStatus(error)
+  }
+
+  public syncNow(): void {
+    this.sync.sync().catch(console.error)
+  }
+
+  public syncOnlyIfLargeNote(): void {
+    this.syncController.syncOnlyIfLargeNote()
   }
 }

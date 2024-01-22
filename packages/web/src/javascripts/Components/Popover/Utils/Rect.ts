@@ -24,7 +24,7 @@ export const getPopoverMaxHeight = (
   if (buttonRect) {
     switch (side) {
       case 'top':
-        constraint = appRect.height - buttonRect.top
+        constraint = Math.abs(appRect.height - buttonRect.top)
         if (topSafeAreaInset > 0) {
           constraint += topSafeAreaInset
         }

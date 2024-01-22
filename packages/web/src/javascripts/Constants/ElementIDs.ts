@@ -13,4 +13,6 @@ export const ElementIds = {
   NoteStatusTooltip: 'note-status-tooltip',
   ItemLinkAutocompleteInput: 'item-link-autocomplete-input',
   SearchBar: 'search-bar',
+  ConflictResolutionButton: 'conflict-resolution-button',
+  SuperEditor: 'super-editor',
 } as const
