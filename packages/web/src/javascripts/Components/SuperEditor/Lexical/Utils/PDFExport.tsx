@@ -16,18 +16,20 @@ import { $isCodeNode } from '@lexical/code'
 import { ReactNode } from 'react'
 import { $isInlineFileNode } from '../../Plugins/InlineFilePlugin/InlineFileNode'
 import { $isRemoteImageNode } from '../../Plugins/RemoteImagePlugin/RemoteImageNode'
+import { $isCollapsibleContainerNode } from '../../Plugins/CollapsiblePlugin/CollapsibleContainerNode'
+import { $isCollapsibleContentNode } from '../../Plugins/CollapsiblePlugin/CollapsibleContentNode'
+import { $isCollapsibleTitleNode } from '../../Plugins/CollapsiblePlugin/CollapsibleTitleNode'
 
 const styles = StyleSheet.create({
   page: {
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    paddingVertical: 35,
+    paddingHorizontal: 35,
     lineHeight: 1.5,
     fontSize: 12,
+    gap: 14,
   },
   block: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginVertical: 7.5,
+    gap: 14,
   },
   wrap: {
     flexWrap: 'wrap',
@@ -40,6 +42,15 @@ const styles = StyleSheet.create({
   },
   listMarker: {
     height: '100%',
+    marginRight: 2,
+  },
+  collapsibleTitle: {
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    paddingTop: 3,
+    paddingBottom: 2,
+    paddingHorizontal: 6,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
   },
 })
 
@@ -47,14 +58,7 @@ const ListItem = ({ children, value, listType }: { children: ReactNode; value: n
   const marker = listType === 'bullet' ? '\u2022' : `${value}.`
 
   return (
-    <View
-      style={[
-        styles.row,
-        {
-          marginBottom: 2.5,
-        },
-      ]}
-    >
+    <View style={[styles.row]}>
       <View style={styles.listMarker}>
         <Text>{marker + ' '}</Text>
       </View>
@@ -80,11 +84,13 @@ const Node = ({ node }: { node: LexicalNode }) => {
   }
 
   if ($isTextNode(node)) {
-    const isCode = node.hasFormat('code') || $isCodeNode(parent)
+    const isInlineCode = node.hasFormat('code')
+    const isCodeNodeText = $isCodeNode(parent)
     const isBold = node.hasFormat('bold')
     const isItalic = node.hasFormat('italic')
+    const isHighlight = node.hasFormat('highlight')
 
-    let font = isCode ? 'Courier' : 'Helvetica'
+    let font = isInlineCode || isCodeNodeText ? 'Courier' : 'Helvetica'
     if (isBold || isItalic) {
       font += '-'
       if (isBold) {
@@ -104,8 +110,8 @@ const Node = ({ node }: { node: LexicalNode }) => {
             : node.hasFormat('strikethrough')
             ? 'line-through'
             : undefined,
-          backgroundColor: isCode ? '#f1f1f1' : undefined,
-          fontSize: isCode ? 11 : undefined,
+          backgroundColor: isInlineCode ? '#f1f1f1' : isHighlight ? 'rgb(255,255,0)' : undefined,
+          fontSize: isInlineCode || isCodeNodeText ? 11 : undefined,
         }}
       >
         {node.getTextContent()}
@@ -133,11 +139,10 @@ const Node = ({ node }: { node: LexicalNode }) => {
         style={[
           styles.column,
           {
-            backgroundColor: '#f1f1f1',
+            backgroundColor: 'rgba(0,0,0,0.05)',
             padding: 12,
             borderRadius: 6,
             fontFamily: 'Courier',
-            marginBottom: 7.5,
           },
         ]}
       >
@@ -206,7 +211,50 @@ const Node = ({ node }: { node: LexicalNode }) => {
   }
 
   if ($isListNode(node)) {
-    return <View style={[styles.block, styles.column]}>{children}</View>
+    return (
+      <View
+        style={[
+          styles.column,
+          {
+            gap: 7,
+          },
+        ]}
+      >
+        {children}
+      </View>
+    )
+  }
+
+  if ($isCollapsibleContentNode(node)) {
+    return (
+      <View
+        style={[
+          styles.block,
+          styles.column,
+          {
+            padding: 6,
+          },
+        ]}
+      >
+        {children}
+      </View>
+    )
+  }
+
+  if ($isCollapsibleContainerNode(node)) {
+    return (
+      <View
+        style={[
+          styles.column,
+          {
+            backgroundColor: 'rgba(0,0,0,0.05)',
+            borderRadius: 6,
+          },
+        ]}
+      >
+        {children}
+      </View>
+    )
   }
 
   if ($isParagraphNode(node) && node.getTextContent().length === 0) {
@@ -218,9 +266,12 @@ const Node = ({ node }: { node: LexicalNode }) => {
       <View
         style={[
           styles.block,
+          styles.row,
+          styles.wrap,
           {
             fontSize: $isHeadingNode(node) ? getFontSizeForHeading(node) : undefined,
           },
+          $isCollapsibleTitleNode(node) ? styles.collapsibleTitle : {},
         ]}
       >
         <Text
@@ -235,7 +286,7 @@ const Node = ({ node }: { node: LexicalNode }) => {
   }
 
   return (
-    <View style={styles.block}>
+    <View style={[styles.block, styles.row, styles.wrap]}>
       <Text>{node.getTextContent()}</Text>
     </View>
   )
