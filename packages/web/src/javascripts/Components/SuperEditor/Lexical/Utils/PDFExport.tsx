@@ -8,6 +8,7 @@ import {
   $isTextNode,
   LexicalEditor,
   LexicalNode,
+  ElementNode,
 } from 'lexical'
 import { $isLinkNode } from '@lexical/link'
 import { $isHeadingNode, type HeadingNode } from '@lexical/rich-text'
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
   },
   collapsibleTitle: {
     backgroundColor: 'rgba(0,0,0,0.05)',
-    paddingTop: 3,
+    paddingTop: 4,
     paddingBottom: 2,
     paddingHorizontal: 6,
     borderTopLeftRadius: 6,
@@ -74,6 +75,24 @@ const getFontSizeForHeading = (heading: HeadingNode) => {
   const multiplier = (MaxHeadingLevel - level) * 2
 
   return MinimumHeadingFontSize + multiplier
+}
+
+const getNodeTextAlignment = (node: ElementNode) => {
+  const formatType = node.getFormatType()
+
+  if (!formatType) {
+    return 'left'
+  }
+
+  if (formatType === 'start') {
+    return 'left'
+  }
+
+  if (formatType === 'end') {
+    return 'right'
+  }
+
+  return formatType
 }
 
 const Node = ({ node }: { node: LexicalNode }) => {
@@ -112,6 +131,7 @@ const Node = ({ node }: { node: LexicalNode }) => {
             : undefined,
           backgroundColor: isInlineCode ? '#f1f1f1' : isHighlight ? 'rgb(255,255,0)' : undefined,
           fontSize: isInlineCode || isCodeNodeText ? 11 : undefined,
+          textAlign: $isElementNode(parent) ? getNodeTextAlignment(parent) : 'left',
         }}
       >
         {node.getTextContent()}
