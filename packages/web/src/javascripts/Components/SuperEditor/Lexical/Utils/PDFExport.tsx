@@ -1,8 +1,16 @@
 import { getBase64FromBlob } from '@/Utils'
 import { Document, Page, View, Text, StyleSheet, pdf, Link, Image } from '@react-pdf/renderer'
-import { $getRoot, $isElementNode, $isLineBreakNode, $isTextNode, LexicalEditor, LexicalNode } from 'lexical'
+import {
+  $getRoot,
+  $isElementNode,
+  $isParagraphNode,
+  $isLineBreakNode,
+  $isTextNode,
+  LexicalEditor,
+  LexicalNode,
+} from 'lexical'
 import { $isLinkNode } from '@lexical/link'
-import { $isHeadingNode } from '@lexical/rich-text'
+import { $isHeadingNode, type HeadingNode } from '@lexical/rich-text'
 import { $isListNode, $isListItemNode, ListType } from '@lexical/list'
 import { $isCodeNode } from '@lexical/code'
 import { ReactNode } from 'react'
@@ -14,12 +22,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 20,
     lineHeight: 1.5,
+    fontSize: 12,
   },
   block: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginVertical: 5,
-    fontSize: 14,
+    marginVertical: 7.5,
   },
   wrap: {
     flexWrap: 'wrap',
@@ -39,13 +47,29 @@ const ListItem = ({ children, value, listType }: { children: ReactNode; value: n
   const marker = listType === 'bullet' ? '\u2022' : `${value}.`
 
   return (
-    <View style={styles.row}>
+    <View
+      style={[
+        styles.row,
+        {
+          marginBottom: 2.5,
+        },
+      ]}
+    >
       <View style={styles.listMarker}>
         <Text>{marker + ' '}</Text>
       </View>
       <Text>{children}</Text>
     </View>
   )
+}
+
+const MinimumHeadingFontSize = 13
+const MaxHeadingLevel = 6
+const getFontSizeForHeading = (heading: HeadingNode) => {
+  const level = parseInt(heading.getTag().slice(1))
+  const multiplier = (MaxHeadingLevel - level) * 2
+
+  return MinimumHeadingFontSize + multiplier
 }
 
 const Node = ({ node }: { node: LexicalNode }) => {
@@ -81,7 +105,7 @@ const Node = ({ node }: { node: LexicalNode }) => {
             ? 'line-through'
             : undefined,
           backgroundColor: isCode ? '#f1f1f1' : undefined,
-          fontSize: isCode ? 12 : undefined,
+          fontSize: isCode ? 11 : undefined,
         }}
       >
         {node.getTextContent()}
@@ -106,7 +130,16 @@ const Node = ({ node }: { node: LexicalNode }) => {
 
     return (
       <View
-        style={[styles.column, { backgroundColor: '#f1f1f1', padding: 12, borderRadius: 6, fontFamily: 'Courier' }]}
+        style={[
+          styles.column,
+          {
+            backgroundColor: '#f1f1f1',
+            padding: 12,
+            borderRadius: 6,
+            fontFamily: 'Courier',
+            marginBottom: 7.5,
+          },
+        ]}
       >
         {lines.map((line, index) => {
           return (
@@ -176,13 +209,17 @@ const Node = ({ node }: { node: LexicalNode }) => {
     return <View style={[styles.block, styles.column]}>{children}</View>
   }
 
+  if ($isParagraphNode(node) && node.getTextContent().length === 0) {
+    return null
+  }
+
   if ($isElementNode(node)) {
     return (
       <View
         style={[
           styles.block,
           {
-            fontSize: $isHeadingNode(node) ? 16 + (6 - parseInt(node.getTag().slice(1))) * 2 : 14,
+            fontSize: $isHeadingNode(node) ? getFontSizeForHeading(node) : undefined,
           },
         ]}
       >
