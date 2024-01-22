@@ -86,6 +86,7 @@ import {
   ApplicationSyncOptions,
   WebSocketsServiceEvent,
   WebSocketsService,
+  SyncBackoffServiceInterface,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -171,6 +172,7 @@ export class SyncService
     private logger: LoggerInterface,
     private sockets: WebSocketsService,
     private syncFrequencyGuard: SyncFrequencyGuardInterface,
+    private syncBackoffService: SyncBackoffServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -452,7 +454,11 @@ export class SyncService
   }
 
   private itemsNeedingSync() {
-    return this.itemManager.getDirtyItems()
+    const dirtyItems = this.itemManager.getDirtyItems()
+
+    const itemsWithoutBackoffPenalty = dirtyItems.filter((item) => !this.syncBackoffService.isItemInBackoff(item))
+
+    return itemsWithoutBackoffPenalty
   }
 
   public async markAllItemsAsNeedingSyncAndPersist(): Promise<void> {
