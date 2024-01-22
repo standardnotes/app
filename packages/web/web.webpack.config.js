@@ -82,6 +82,7 @@ module.exports = (env) => {
         crypto: false,
         path: false,
         url: false,
+        fs: false,
       },
       alias: {
         '@': path.resolve(__dirname, 'src/javascripts'),
