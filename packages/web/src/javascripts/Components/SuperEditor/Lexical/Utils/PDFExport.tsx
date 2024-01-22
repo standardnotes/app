@@ -13,6 +13,7 @@ import {
 import { $isLinkNode } from '@lexical/link'
 import { $isHeadingNode, type HeadingNode, $isQuoteNode } from '@lexical/rich-text'
 import { $isListNode, $isListItemNode, ListType } from '@lexical/list'
+import { $isTableNode, $isTableRowNode, $isTableCellNode } from '@lexical/table'
 import { $isCodeNode } from '@lexical/code'
 import { ReactNode } from 'react'
 import { $isInlineFileNode } from '../../Plugins/InlineFilePlugin/InlineFileNode'
@@ -228,11 +229,12 @@ const Node = ({ node }: { node: LexicalNode }) => {
     return <Image src={node.__src} />
   }
 
-  const children = $isElementNode(node)
-    ? node.getChildren().map((child, index) => {
-        return <Node node={child} key={index} />
-      })
-    : null
+  const children =
+    $isElementNode(node) || $isTableNode(node) || $isTableCellNode(node) || $isTableRowNode(node)
+      ? node.getChildren().map((child, index) => {
+          return <Node node={child} key={index} />
+        })
+      : null
 
   if ($isLinkNode(node)) {
     return <Link src={node.getURL()}>{children}</Link>
@@ -317,6 +319,32 @@ const Node = ({ node }: { node: LexicalNode }) => {
 
   if ($isParagraphNode(node) && node.getTextContent().length === 0) {
     return null
+  }
+
+  if ($isTableCellNode(node)) {
+    return (
+      <View
+        style={[
+          {
+            backgroundColor: node.hasHeader() ? '#f4f5f7' : undefined,
+            borderColor: '#e3e3e3',
+            borderWidth: 1,
+            flex: 1,
+            padding: 2,
+          },
+        ]}
+      >
+        {children}
+      </View>
+    )
+  }
+
+  if ($isTableRowNode(node)) {
+    return <View style={[styles.row]}>{children}</View>
+  }
+
+  if ($isTableNode(node)) {
+    return <View>{children}</View>
   }
 
   if ($isElementNode(node)) {
