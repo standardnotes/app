@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   listMarker: {
+    flexShrink: 0,
     height: '100%',
     marginRight: 2,
   },
@@ -102,7 +103,13 @@ const ListItem = ({
           <Text>{marker + ' '}</Text>
         </View>
       )}
-      <Text>{children}</Text>
+      <Text
+        style={{
+          flex: 1,
+        }}
+      >
+        {children}
+      </Text>
     </View>
   )
 }
