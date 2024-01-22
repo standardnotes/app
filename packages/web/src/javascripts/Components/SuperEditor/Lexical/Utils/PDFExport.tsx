@@ -11,7 +11,7 @@ import {
   ElementNode,
 } from 'lexical'
 import { $isLinkNode } from '@lexical/link'
-import { $isHeadingNode, type HeadingNode } from '@lexical/rich-text'
+import { $isHeadingNode, type HeadingNode, $isQuoteNode } from '@lexical/rich-text'
 import { $isListNode, $isListItemNode, ListType } from '@lexical/list'
 import { $isCodeNode } from '@lexical/code'
 import { ReactNode } from 'react'
@@ -52,6 +52,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
+  },
+  quote: {
+    borderLeftWidth: 4,
+    color: 'rgba(46, 46, 46)',
+    borderLeftColor: '#72767e',
+    paddingLeft: 12,
+    paddingVertical: 4,
+    gap: 4,
   },
 })
 
@@ -292,6 +300,7 @@ const Node = ({ node }: { node: LexicalNode }) => {
             fontSize: $isHeadingNode(node) ? getFontSizeForHeading(node) : undefined,
           },
           $isCollapsibleTitleNode(node) ? styles.collapsibleTitle : {},
+          $isQuoteNode(node) ? styles.quote : {},
         ]}
       >
         <Text
