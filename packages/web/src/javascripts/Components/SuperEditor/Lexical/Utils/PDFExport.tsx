@@ -1,5 +1,5 @@
 import { getBase64FromBlob } from '@/Utils'
-import { Document, Page, View, Text, StyleSheet, pdf, Link, Image } from '@react-pdf/renderer'
+import { Document, Page, View, Text, StyleSheet, pdf, Link, Image, Svg, Path } from '@react-pdf/renderer'
 import {
   $getRoot,
   $isElementNode,
@@ -63,14 +63,44 @@ const styles = StyleSheet.create({
   },
 })
 
-const ListItem = ({ children, value, listType }: { children: ReactNode; value: number; listType: ListType }) => {
+const ListItem = ({
+  children,
+  value,
+  listType,
+  checked,
+}: {
+  children: ReactNode
+  value: number
+  listType: ListType
+  checked?: boolean
+}) => {
   const marker = listType === 'bullet' ? '\u2022' : `${value}.`
 
   return (
     <View style={[styles.row]}>
-      <View style={styles.listMarker}>
-        <Text>{marker + ' '}</Text>
-      </View>
+      {listType === 'check' ? (
+        <View
+          style={{
+            width: 14,
+            height: 14,
+            borderRadius: 2,
+            borderWidth: 1,
+            borderColor: checked ? '#086dd6' : '#000',
+            backgroundColor: checked ? '#086dd6' : 'transparent',
+            marginRight: 6,
+          }}
+        >
+          {checked ? (
+            <Svg viewBox="0 0 20 20" fill="#ffffff">
+              <Path d="M17.5001 5.83345L7.50008 15.8334L2.91675 11.2501L4.09175 10.0751L7.50008 13.4751L16.3251 4.65845L17.5001 5.83345Z" />
+            </Svg>
+          ) : null}
+        </View>
+      ) : (
+        <View style={styles.listMarker}>
+          <Text>{marker + ' '}</Text>
+        </View>
+      )}
       <Text>{children}</Text>
     </View>
   )
@@ -232,7 +262,7 @@ const Node = ({ node }: { node: LexicalNode }) => {
     }
 
     return (
-      <ListItem value={node.getValue()} listType={listType}>
+      <ListItem value={node.getValue()} listType={listType} checked={node.getChecked()}>
         {children}
       </ListItem>
     )
