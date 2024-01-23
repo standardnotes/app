@@ -145,6 +145,8 @@ import {
   IsVaultAdmin,
   IsReadonlyVaultMember,
   DesignateSurvivor,
+  SyncBackoffService,
+  SyncBackoffServiceInterface,
 } from '@standardnotes/services'
 import { ItemManager } from '../../Services/Items/ItemManager'
 import { PayloadManager } from '../../Services/Payloads/PayloadManager'
@@ -1351,6 +1353,10 @@ export class Dependencies {
       )
     })
 
+    this.factory.set(TYPES.SyncBackoffService, () => {
+      return new SyncBackoffService()
+    })
+
     this.factory.set(TYPES.SyncService, () => {
       return new SyncService(
         this.get<ItemManager>(TYPES.ItemManager),
@@ -1369,6 +1375,7 @@ export class Dependencies {
         this.get<Logger>(TYPES.Logger),
         this.get<WebSocketsService>(TYPES.WebSocketsService),
         this.get<SyncFrequencyGuardInterface>(TYPES.SyncFrequencyGuard),
+        this.get<SyncBackoffServiceInterface>(TYPES.SyncBackoffService),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })
