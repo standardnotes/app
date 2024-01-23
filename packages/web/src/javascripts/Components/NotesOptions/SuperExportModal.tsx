@@ -15,9 +15,17 @@ type Props = {
 
 const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
   const application = useApplication()
+  const isNativeMobileWeb = application.isNativeMobileWeb()
+
   const superNoteExportFormat = usePreference(PrefKey.SuperNoteExportFormat)
   const superNoteExportEmbedBehavior = usePreference(PrefKey.SuperNoteExportEmbedBehavior)
   const superNoteExportUseMDFrontmatter = usePreference(PrefKey.SuperNoteExportUseMDFrontmatter)
+
+  useEffect(() => {
+    if (isNativeMobileWeb && superNoteExportFormat === 'pdf') {
+      void application.setPreference(PrefKey.SuperNoteExportFormat, 'json')
+    }
+  }, [application, isNativeMobileWeb, superNoteExportFormat])
 
   useEffect(() => {
     if (superNoteExportFormat === 'json' && superNoteExportEmbedBehavior === 'separate') {
@@ -66,8 +74,7 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
             { label: 'Super (.json)', value: 'json' },
             { label: 'Markdown (.md)', value: 'md' },
             { label: 'HTML', value: 'html' },
-            { label: 'PDF', value: 'pdf' },
-          ]}
+          ].concat(!isNativeMobileWeb ? [{ label: 'PDF', value: 'pdf' }] : [])}
           value={superNoteExportFormat}
           onChange={(value) => {
             void application.setPreference(

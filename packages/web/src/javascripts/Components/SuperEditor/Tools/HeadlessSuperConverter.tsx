@@ -18,7 +18,6 @@ import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
 import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 import { $convertFromMarkdownString } from '../Lexical/Utils/MarkdownImport'
 import { $convertToMarkdownString } from '../Lexical/Utils/MarkdownExport'
-import { $generatePDFFromNodes } from '../Lexical/Utils/PDFExport'
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
@@ -146,9 +145,11 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
               resolve()
               break
             case 'pdf': {
-              void $generatePDFFromNodes(this.exportEditor).then((pdf) => {
-                content = pdf
-                resolve()
+              void import('../Lexical/Utils/PDFExport').then(({ $generatePDFFromNodes }) => {
+                void $generatePDFFromNodes(this.exportEditor).then((pdf) => {
+                  content = pdf
+                  resolve()
+                })
               })
               break
             }
