@@ -145,7 +145,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
               resolve()
               break
             case 'pdf': {
-              void import('../Lexical/Utils/PDFExport').then(({ $generatePDFFromNodes }) => {
+              void import('../Lexical/Utils/PDFExport/PDFExport').then(({ $generatePDFFromNodes }) => {
                 void $generatePDFFromNodes(this.exportEditor).then((pdf) => {
                   content = pdf
                   resolve()

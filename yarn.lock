@@ -7705,6 +7705,7 @@ __metadata:
     autoprefixer: ^10.4.13
     babel-loader: ^9.1.2
     circular-dependency-plugin: ^5.2.2
+    comlink: ^4.4.1
     copy-webpack-plugin: ^11.0.0
     css-loader: "*"
     dayjs: ^1.11.9
@@ -11775,6 +11776,13 @@ __metadata:
   dependencies:
     delayed-stream: ~1.0.0
   checksum: 49fa4aeb4916567e33ea81d088f6584749fc90c7abec76fd516bf1c5aa5c79f3584b5ba3de6b86d26ddd64bae5329c4c7479343250cfe71c75bb366eae53bb7c
+  languageName: node
+  linkType: hard
+
+"comlink@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "comlink@npm:4.4.1"
+  checksum: 16d58a8f590087fc45432e31d6c138308dfd4b75b89aec0b7f7bb97ad33d810381bd2b1e608a1fb2cf05979af9cbfcdcaf1715996d5fcf77aeb013b6da3260af
   languageName: node
   linkType: hard
 
