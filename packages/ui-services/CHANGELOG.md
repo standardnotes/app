@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.35.23](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.35.22...@standardnotes/ui-services@1.35.23) (2024-01-24)
+
+### Bug Fixes
+
+* Fixed issue with Simplenote importer where empty notes would not be imported ([#2793](https://github.com/standardnotes/app/issues/2793)) ([cf0a7a6](https://github.com/standardnotes/app/commit/cf0a7a6bf1dec2ad33334310185e99200b31f5b1))
+
 ## [1.35.22](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.35.21...@standardnotes/ui-services@1.35.22) (2024-01-24)
 
 **Note:** Version bump only for package @standardnotes/ui-services
