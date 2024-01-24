@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.186.0",
+      "title": "[3.186.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.185.4...@standardnotes/web@3.186.0) (2024-01-24)",
+      "date": null,
+      "body": "### Features\n\n* Super notes can now be exported as PDF ([#2776](https://github.com/standardnotes/app/issues/2776)) ([418d1a7](https://github.com/standardnotes/app/commit/418d1a7371d8fb981de80737a9d1ec4d7772476c))",
+      "parsed": {
+        "_": [
+          "Super notes can now be exported as PDF (#2776) (418d1a7)"
+        ],
+        "Features": [
+          "Super notes can now be exported as PDF (#2776) (418d1a7)"
+        ]
+      }
+    },
+    {
       "version": "3.185.4",
       "title": "[3.185.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.185.3...@standardnotes/web@3.185.4) (2024-01-23)",
       "date": null,

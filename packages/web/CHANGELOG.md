@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.186.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.185.4...@standardnotes/web@3.186.0) (2024-01-24)
+
+### Features
+
+* Super notes can now be exported as PDF ([#2776](https://github.com/standardnotes/app/issues/2776)) ([418d1a7](https://github.com/standardnotes/app/commit/418d1a7371d8fb981de80737a9d1ec4d7772476c))
+
 ## [3.185.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.185.3...@standardnotes/web@3.185.4) (2024-01-23)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.52.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.51.0...@standardnotes/models@1.52.0) (2024-01-24)
+
+### Features
+
+* Super notes can now be exported as PDF ([#2776](https://github.com/standardnotes/app/issues/2776)) ([418d1a7](https://github.com/standardnotes/app/commit/418d1a7371d8fb981de80737a9d1ec4d7772476c))
+
 # [1.51.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.50.2...@standardnotes/models@1.51.0) (2024-01-20)
 
 ### Features
