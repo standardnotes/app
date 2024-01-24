@@ -12,7 +12,8 @@ type SimplenoteData = {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isSimplenoteEntry = (entry: any): boolean => entry.id && entry.content && entry.creationDate && entry.lastModified
+const isSimplenoteEntry = (entry: any): boolean =>
+  entry.id && entry.content != undefined && entry.creationDate && entry.lastModified
 
 export class SimplenoteConverter implements Converter {
   constructor() {}
