@@ -142,6 +142,22 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     downloadSelectedItems().catch(console.error)
   }, [downloadSelectedItems, notes])
 
+  const shareSelectedItems = useCallback(() => {
+    createNoteExport(application, notes)
+      .then((result) => {
+        if (!result) {
+          return
+        }
+
+        const { blob, fileName } = result
+
+        shareBlobOnMobile(application.mobileDevice, application.isNativeMobileWeb(), blob, fileName).catch(
+          console.error,
+        )
+      })
+      .catch(console.error)
+  }, [application, notes])
+
   const closeMenuAndToggleNotesList = useCallback(() => {
     const isMobileScreen = matchMedia(MutuallyExclusiveMediaQueryBreakpoints.sm).matches
     if (isMobileScreen) {
@@ -347,34 +363,14 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
           </MenuItem>
         )}
-        <MenuItem
-          onClick={() => {
-            if (application.isNativeMobileWeb()) {
-              createNoteExport(application, notes)
-                .then((result) => {
-                  if (!result) {
-                    return
-                  }
-
-                  const { blob, fileName } = result
-
-                  shareBlobOnMobile(application.mobileDevice, application.isNativeMobileWeb(), blob, fileName).catch(
-                    console.error,
-                  )
-                })
-                .catch(console.error)
-            } else {
-              exportSelectedItems()
-            }
-          }}
-        >
-          <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
-          {application.platform === Platform.Android ? 'Share' : 'Export'}
+        <MenuItem onClick={exportSelectedItems}>
+          <Icon type="download" className={iconClass} />
+          Export
         </MenuItem>
         {application.platform === Platform.Android && (
-          <MenuItem onClick={exportSelectedItems}>
-            <Icon type="download" className={iconClass} />
-            Export
+          <MenuItem onClick={shareSelectedItems}>
+            <Icon type="share" className={iconClass} />
+            Share
           </MenuItem>
         )}
         <MenuItem onClick={duplicateSelectedItems} disabled={areSomeNotesInReadonlySharedVault}>
