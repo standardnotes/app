@@ -77,6 +77,9 @@ export const getNoteBlob = async (
     case 'md':
       type = 'text/markdown'
       break
+    case 'pdf':
+      type = 'application/pdf'
+      break
     default:
       type = 'text/plain'
       break
@@ -103,11 +106,15 @@ export const getNoteBlob = async (
         PrefKey.SuperNoteExportUseMDFrontmatter,
         PrefDefaults[PrefKey.SuperNoteExportUseMDFrontmatter],
       )
+    // result is a data url string if format is pdf
     const result =
       format === 'html' ? superHTML(note, content) : useMDFrontmatter ? superMarkdown(note, content) : content
-    const blob = new Blob([result], {
-      type,
-    })
+    const blob =
+      format === 'pdf'
+        ? await fetch(result).then((res) => res.blob())
+        : new Blob([result], {
+            type,
+          })
     return blob
   }
   const blob = new Blob([note.text], {
@@ -132,7 +139,7 @@ const noteRequiresFolder = (
   if (!isSuperNote(note)) {
     return false
   }
-  if (superExportFormat === 'json') {
+  if (superExportFormat === 'json' || superExportFormat === 'pdf') {
     return false
   }
   if (superEmbedBehavior !== 'separate') {
@@ -178,10 +185,13 @@ export const createNoteExport = async (
     PrefKey.SuperNoteExportFormat,
     PrefDefaults[PrefKey.SuperNoteExportFormat],
   )
-  const superEmbedBehaviorPref = application.getPreference(
-    PrefKey.SuperNoteExportEmbedBehavior,
-    PrefDefaults[PrefKey.SuperNoteExportEmbedBehavior],
-  )
+  const superEmbedBehaviorPref =
+    superExportFormatPref === 'pdf'
+      ? 'inline'
+      : application.getPreference(
+          PrefKey.SuperNoteExportEmbedBehavior,
+          PrefDefaults[PrefKey.SuperNoteExportEmbedBehavior],
+        )
 
   if (notes.length === 1 && !noteRequiresFolder(notes[0], superExportFormatPref, superEmbedBehaviorPref)) {
     const blob = await getNoteBlob(application, notes[0], superEmbedBehaviorPref)

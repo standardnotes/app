@@ -18,6 +18,7 @@ import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
 import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 import { $convertFromMarkdownString } from '../Lexical/Utils/MarkdownImport'
 import { $convertToMarkdownString } from '../Lexical/Utils/MarkdownExport'
+
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
   private exportEditor: LexicalEditor
@@ -50,7 +51,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
 
   async convertSuperStringToOtherFormat(
     superString: string,
-    toFormat: 'txt' | 'md' | 'html' | 'json',
+    toFormat: 'txt' | 'md' | 'html' | 'json' | 'pdf',
     config?: {
       embedBehavior?: PrefValue[PrefKey.SuperNoteExportEmbedBehavior]
       getFileItem?: (id: string) => FileItem | undefined
@@ -92,7 +93,8 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
               if (!fileItem) {
                 return
               }
-              if (embedBehavior === 'inline' && getFileBase64) {
+              const canInlineFileType = toFormat === 'pdf' ? fileItem.mimeType.startsWith('image/') : true
+              if (embedBehavior === 'inline' && getFileBase64 && canInlineFileType) {
                 const fileBase64 = await getFileBase64(fileNode.getId())
                 if (!fileBase64) {
                   return
@@ -122,31 +124,45 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       )
     })
 
-    this.exportEditor.update(
-      () => {
-        switch (toFormat) {
-          case 'txt':
-          case 'md': {
-            const paragraphs = $nodesOfType(ParagraphNode)
-            for (const paragraph of paragraphs) {
-              if (paragraph.isEmpty()) {
-                paragraph.remove()
+    await new Promise<void>((resolve) => {
+      this.exportEditor.update(
+        () => {
+          switch (toFormat) {
+            case 'txt':
+            case 'md': {
+              const paragraphs = $nodesOfType(ParagraphNode)
+              for (const paragraph of paragraphs) {
+                if (paragraph.isEmpty()) {
+                  paragraph.remove()
+                }
               }
+              content = $convertToMarkdownString(MarkdownTransformers)
+              resolve()
+              break
             }
-            content = $convertToMarkdownString(MarkdownTransformers)
-            break
+            case 'html':
+              content = $generateHtmlFromNodes(this.exportEditor)
+              resolve()
+              break
+            case 'pdf': {
+              void import('../Lexical/Utils/PDFExport/PDFExport').then(({ $generatePDFFromNodes }) => {
+                void $generatePDFFromNodes(this.exportEditor).then((pdf) => {
+                  content = pdf
+                  resolve()
+                })
+              })
+              break
+            }
+            case 'json':
+            default:
+              content = superString
+              resolve()
+              break
           }
-          case 'html':
-            content = $generateHtmlFromNodes(this.exportEditor)
-            break
-          case 'json':
-          default:
-            content = superString
-            break
-        }
-      },
-      { discrete: true },
-    )
+        },
+        { discrete: true },
+      )
+    })
 
     if (typeof content !== 'string') {
       throw new Error('Could not export note')

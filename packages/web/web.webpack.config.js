@@ -82,6 +82,7 @@ module.exports = (env) => {
         crypto: false,
         path: false,
         url: false,
+        fs: false,
       },
       alias: {
         '@': path.resolve(__dirname, 'src/javascripts'),
@@ -97,7 +98,8 @@ module.exports = (env) => {
            * Exclude all node_modules, except for those we need to run through our babel rules because
            * they may contain class properties and other ES6+ syntax.
            */
-          exclude: /node_modules\/(?!(@standardnotes\/common|@standardnotes\/domain-core|webextension-polyfill))/,
+          exclude:
+            /node_modules\/(?!(@standardnotes\/common|@standardnotes\/domain-core|webextension-polyfill|yoga-layout))/,
           use: [
             'babel-loader',
             {

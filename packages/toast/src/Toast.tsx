@@ -90,8 +90,8 @@ export const Toast = forwardRef(({ toast, index }: Props, ref: ForwardedRef<HTML
       }}
       ref={ref}
     >
-      <div className="grid gap-x-2.5 gap-y-1 overflow-hidden grid-cols-[1fr,auto] pl-3 pr-3.5 py-2.5">
-        {icon ? <div className="sn-icon flex flex-shrink-0 items-center justify-center">{icon}</div> : null}
+      <div className="grid gap-x-2.5 gap-y-1 overflow-hidden grid-cols-[min-content,auto] pl-3 pr-3.5 py-2.5">
+        {icon ? <div className="sn-icon flex items-center justify-center">{icon}</div> : null}
         {toast.title && <div className="text-text text-sm font-semibold col-start-2">{toast.title}</div>}
         <div className="text-text text-sm [word-wrap:anywhere] col-start-2">{toast.message}</div>
         {hasActions && (

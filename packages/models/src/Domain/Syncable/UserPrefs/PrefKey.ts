@@ -87,7 +87,7 @@ export type PrefValue = {
   [PrefKey.MomentsDefaultTagUuid]: string | undefined
   [PrefKey.ClipperDefaultTagUuid]: string | undefined
   [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>
-  [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
+  [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html' | 'pdf'
   [PrefKey.SuperNoteExportEmbedBehavior]: 'reference' | 'inline' | 'separate'
   [PrefKey.SuperNoteExportUseMDFrontmatter]: boolean
   [PrefKey.AuthenticatorNames]: string

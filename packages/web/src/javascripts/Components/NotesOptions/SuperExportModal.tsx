@@ -15,6 +15,7 @@ type Props = {
 
 const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
   const application = useApplication()
+
   const superNoteExportFormat = usePreference(PrefKey.SuperNoteExportFormat)
   const superNoteExportEmbedBehavior = usePreference(PrefKey.SuperNoteExportEmbedBehavior)
   const superNoteExportUseMDFrontmatter = usePreference(PrefKey.SuperNoteExportUseMDFrontmatter)
@@ -26,9 +27,14 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
     if (superNoteExportFormat === 'md' && superNoteExportEmbedBehavior === 'reference') {
       void application.setPreference(PrefKey.SuperNoteExportEmbedBehavior, 'separate')
     }
+    if (superNoteExportFormat === 'pdf' && superNoteExportEmbedBehavior !== 'inline') {
+      void application.setPreference(PrefKey.SuperNoteExportEmbedBehavior, 'inline')
+    }
   }, [application, superNoteExportEmbedBehavior, superNoteExportFormat])
 
   const someNotesHaveEmbeddedFiles = notes.some(noteHasEmbeddedFiles)
+
+  const canShowEmbeddedFileOptions = !['json', 'pdf'].includes(superNoteExportFormat)
 
   return (
     <Modal
@@ -61,6 +67,7 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
             { label: 'Super (.json)', value: 'json' },
             { label: 'Markdown (.md)', value: 'md' },
             { label: 'HTML', value: 'html' },
+            { label: 'PDF', value: 'pdf' },
           ]}
           value={superNoteExportFormat}
           onChange={(value) => {
@@ -93,7 +100,7 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
           </Switch>
         </div>
       )}
-      {superNoteExportFormat !== 'json' && someNotesHaveEmbeddedFiles && (
+      {canShowEmbeddedFileOptions && someNotesHaveEmbeddedFiles && (
         <div className="mb-2 mt-4">
           <div className="mb-1">How do you want embedded files to be handled?</div>
           <RadioButtonGroup
