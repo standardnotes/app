@@ -15,6 +15,17 @@ type SimplenoteData = {
 const isSimplenoteEntry = (entry: any): boolean =>
   entry.id && entry.content != undefined && entry.creationDate && entry.lastModified
 
+const splitAtFirst = (str: string, delim: string): [string, string] | [] => {
+  const indexOfDelimiter = str.indexOf(delim)
+  const hasDelimiter = indexOfDelimiter > -1
+  if (!hasDelimiter) {
+    return []
+  }
+  const before = str.slice(0, indexOfDelimiter)
+  const after = str.slice(indexOfDelimiter + delim.length)
+  return [before, after]
+}
+
 export class SimplenoteConverter implements Converter {
   constructor() {}
 
@@ -58,17 +69,15 @@ export class SimplenoteConverter implements Converter {
     const createdAtDate = new Date(item.creationDate)
     const updatedAtDate = new Date(item.lastModified)
 
-    const splitItemContent = item.content.split('\r\n')
-    const hasTitleAndContent = splitItemContent.length === 2
-    const title =
-      hasTitleAndContent && splitItemContent[0].length ? splitItemContent[0] : createdAtDate.toLocaleString()
-    const content = hasTitleAndContent && splitItemContent[1].length ? splitItemContent[1] : item.content
+    const splitContent = splitAtFirst(item.content, '\r\n')
+    const title = splitContent[0] ?? createdAtDate.toLocaleString()
+    const text = splitContent[1] ?? item.content
 
     return createNote({
       createdAt: createdAtDate,
       updatedAt: updatedAtDate,
       title,
-      text: content,
+      text,
       trashed,
       useSuperIfPossible: true,
     })
