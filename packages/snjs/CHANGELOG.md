@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.206.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.205.2...@standardnotes/snjs@2.206.0) (2024-01-27)
+
+### Features
+
+* Added "Keyboard shortcuts" help dialog. Can be opened by pressing Shift + ? ([ff3c45b](https://github.com/standardnotes/app/commit/ff3c45ba359fb53520310c2c44bd368255e31023))
+
 ## [2.205.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.205.1...@standardnotes/snjs@2.205.2) (2024-01-24)
 
 **Note:** Version bump only for package @standardnotes/snjs

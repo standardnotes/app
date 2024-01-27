@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.53.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.52.0...@standardnotes/models@1.53.0) (2024-01-27)
+
+### Features
+
+* Added "Page size" option when exporting Super notes as PDF ([853fab5](https://github.com/standardnotes/app/commit/853fab53ab37567acc23d2f1c5bf8c8d0c4a573b))
+
 # [1.52.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.51.0...@standardnotes/models@1.52.0) (2024-01-24)
 
 ### Features

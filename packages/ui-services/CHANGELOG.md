@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.36.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.35.23...@standardnotes/ui-services@1.36.0) (2024-01-27)
+
+### Bug Fixes
+
+* Fixed issue with Simplenote importer not titling multi-line documents ([#2798](https://github.com/standardnotes/app/issues/2798)) ([c858e51](https://github.com/standardnotes/app/commit/c858e516bb20096d15ef1bcd4fa9c5c60ae8301d))
+
+### Features
+
+* Added "Keyboard shortcuts" help dialog. Can be opened by pressing Shift + ? ([ff3c45b](https://github.com/standardnotes/app/commit/ff3c45ba359fb53520310c2c44bd368255e31023))
+
 ## [1.35.23](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.35.22...@standardnotes/ui-services@1.35.23) (2024-01-24)
 
 ### Bug Fixes

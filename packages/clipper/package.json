@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/clipper",
   "description": "Web clipper browser extension for Standard Notes",
-  "version": "1.1.398",
+  "version": "1.1.399",
   "private": true,
   "scripts": {
     "build-mv2": "yarn clean && webpack --config ./webpack.config.prod.js",
