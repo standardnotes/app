@@ -38,6 +38,8 @@ export const SearchPlugin = () => {
     return application.keyboardService.addCommandHandlers([
       {
         command: SUPER_TOGGLE_SEARCH,
+        category: 'Super notes',
+        description: 'Search in current note',
         onKeyDown: (event) => {
           if (!isFocusInEditor()) {
             return
@@ -50,6 +52,8 @@ export const SearchPlugin = () => {
       },
       {
         command: SUPER_SEARCH_TOGGLE_REPLACE_MODE,
+        category: 'Super notes',
+        description: 'Search and replace in current note',
         onKeyDown: (event) => {
           if (!isFocusInEditor()) {
             return
@@ -72,6 +76,8 @@ export const SearchPlugin = () => {
       },
       {
         command: SUPER_SEARCH_NEXT_RESULT,
+        category: 'Super notes',
+        description: 'Go to next search result',
         onKeyDown(event) {
           if (!isFocusInEditor()) {
             return
@@ -85,6 +91,8 @@ export const SearchPlugin = () => {
       },
       {
         command: SUPER_SEARCH_PREVIOUS_RESULT,
+        category: 'Super notes',
+        description: 'Go to previous search result',
         onKeyDown(event) {
           if (!isFocusInEditor()) {
             return

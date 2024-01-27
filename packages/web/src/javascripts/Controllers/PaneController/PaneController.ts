@@ -102,6 +102,8 @@ export class PaneController extends AbstractViewController implements InternalEv
     this.disposers.push(
       keyboardService.addCommandHandler({
         command: TOGGLE_FOCUS_MODE_COMMAND,
+        category: 'General',
+        description: 'Toggle focus mode',
         onKeyDown: (event) => {
           event.preventDefault()
           this.setFocusModeEnabled(!this.focusModeEnabled)
@@ -110,6 +112,8 @@ export class PaneController extends AbstractViewController implements InternalEv
       }),
       keyboardService.addCommandHandler({
         command: TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
+        category: 'General',
+        description: 'Toggle notes panel',
         onKeyDown: (event) => {
           event.preventDefault()
           this.toggleListPane()
@@ -117,6 +121,8 @@ export class PaneController extends AbstractViewController implements InternalEv
       }),
       keyboardService.addCommandHandler({
         command: TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
+        category: 'General',
+        description: 'Toggle tags panel',
         onKeyDown: (event) => {
           event.preventDefault()
           this.toggleNavigationPane()

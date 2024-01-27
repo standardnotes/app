@@ -90,12 +90,16 @@ export class NotesController
     this.disposers.push(
       this.keyboardService.addCommandHandler({
         command: PIN_NOTE_COMMAND,
+        category: 'Current note',
+        description: 'Pin current note',
         onKeyDown: () => {
           this.togglePinSelectedNotes()
         },
       }),
       this.keyboardService.addCommandHandler({
         command: STAR_NOTE_COMMAND,
+        category: 'Current note',
+        description: 'Star current note',
         onKeyDown: () => {
           this.toggleStarSelectedNotes()
         },

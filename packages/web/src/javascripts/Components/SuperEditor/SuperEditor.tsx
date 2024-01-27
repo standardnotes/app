@@ -28,7 +28,7 @@ import {
   ChangeEditorFunction,
 } from './Plugins/ChangeContentCallback/ChangeContentCallback'
 import { useCommandService } from '@/Components/CommandProvider'
-import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
+import { SUPER_SHOW_MARKDOWN_PREVIEW, getPrimaryModifier } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
 import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
@@ -83,9 +83,47 @@ export const SuperEditor: FunctionComponent<Props> = ({
   useEffect(() => {
     return commandService.addCommandHandler({
       command: SUPER_SHOW_MARKDOWN_PREVIEW,
+      category: 'Super notes',
+      description: 'Show markdown preview for current note',
       onKeyDown: () => setShowMarkdownPreview(true),
     })
   }, [commandService])
+
+  useEffect(() => {
+    const platform = application.platform
+    const primaryModifier = getPrimaryModifier(application.platform)
+
+    return commandService.registerExternalKeyboardShortcutHelpItems([
+      {
+        key: 'b',
+        modifiers: [primaryModifier],
+        description: 'Bold',
+        category: 'Formatting',
+        platform: platform,
+      },
+      {
+        key: 'i',
+        modifiers: [primaryModifier],
+        description: 'Italic',
+        category: 'Formatting',
+        platform: platform,
+      },
+      {
+        key: 'u',
+        modifiers: [primaryModifier],
+        description: 'Underline',
+        category: 'Formatting',
+        platform: platform,
+      },
+      {
+        key: 'k',
+        modifiers: [primaryModifier],
+        description: 'Link',
+        category: 'Formatting',
+        platform: platform,
+      },
+    ])
+  }, [application.platform, commandService])
 
   const closeMarkdownPreview = useCallback(() => {
     setShowMarkdownPreview(false)

@@ -31,6 +31,7 @@ import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
 import EditorWidthSelectionModalWrapper from '../EditorWidthSelectionModal/EditorWidthSelectionModal'
 import { ProtectionEvent } from '@standardnotes/services'
+import KeyboardShortcutsModal from '../KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal'
 
 type Props = {
   application: WebApplication
@@ -267,6 +268,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <EditorWidthSelectionModalWrapper />
                     <ConfirmDeleteAccountContainer application={application} />
                     <ImportModal importModalController={application.importModalController} />
+                    <KeyboardShortcutsModal keyboardService={application.keyboardService} />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}
                   {isIOS() && <IosKeyboardClose />}

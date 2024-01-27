@@ -2,7 +2,7 @@ import { DeviceInterface, MobileDeviceInterface, Platform, platformFromString } 
 import { IsDesktopPlatform, IsWebPlatform } from '@/Constants/Version'
 import { EMAIL_REGEX } from '../Constants/Constants'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
-import { isIOS } from '@standardnotes/ui-services'
+import { isAndroid, isIOS } from '@standardnotes/ui-services'
 
 declare const process: {
   env: {
@@ -16,9 +16,9 @@ export function getPlatformString() {
   try {
     const platform = navigator.platform.toLowerCase()
     let trimmed = ''
-    if (platform.includes('iphone')) {
+    if (platform.includes('iphone') || isIOS()) {
       trimmed = 'ios'
-    } else if (platform.includes('android')) {
+    } else if (platform.includes('android') || isAndroid()) {
       trimmed = 'android'
     } else if (platform.includes('mac')) {
       trimmed = 'mac'

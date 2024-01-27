@@ -15,6 +15,8 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
   useEffect(() => {
     return commandService.addCommandHandler({
       command: OPEN_PREFERENCES_COMMAND,
+      category: 'General',
+      description: 'Open preferences',
       onKeyDown: () => application.preferencesController.openPreferences(),
     })
   }, [commandService, application])

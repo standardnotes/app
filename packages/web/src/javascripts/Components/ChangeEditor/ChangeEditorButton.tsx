@@ -57,6 +57,8 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onCl
   useEffect(() => {
     return application.keyboardService.addCommandHandler({
       command: CHANGE_EDITOR_COMMAND,
+      category: 'Current note',
+      description: 'Change note type',
       onKeyDown: () => {
         void toggleMenu()
       },

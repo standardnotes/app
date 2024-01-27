@@ -180,6 +180,8 @@ const EditorWidthSelectionModalWrapper = () => {
   useEffect(() => {
     return application.keyboardService.addCommandHandler({
       command: CHANGE_EDITOR_WIDTH_COMMAND,
+      category: 'Current note',
+      description: 'Change editor width',
       onKeyDown: (_, data) => {
         if (typeof data === 'boolean' && data) {
           setIsGlobal(data)

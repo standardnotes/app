@@ -189,6 +189,8 @@ export class NavigationController
     this.disposers.push(
       this.keyboardService.addCommandHandler({
         command: CREATE_NEW_TAG_COMMAND,
+        category: 'General',
+        description: 'Create new tag',
         onKeyDown: () => {
           this.createNewTemplate()
         },

@@ -9,7 +9,7 @@ export function platformFromString(string: string) {
     'windows-web': Platform.WindowsWeb,
     'windows-desktop': Platform.WindowsDesktop,
     'ios-web': Platform.Ios,
-    android: Platform.Android,
+    'android-web': Platform.Android,
   }
   return map[string]
 }

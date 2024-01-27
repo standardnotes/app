@@ -25,6 +25,8 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
   useEffect(() => {
     return commandService.addCommandHandler({
       command: TOGGLE_DARK_MODE_COMMAND,
+      category: 'General',
+      description: 'Toggle dark mode',
       onKeyDown: () => {
         void application.componentManager.toggleTheme(new UIFeature(GetDarkThemeFeature()))
       },

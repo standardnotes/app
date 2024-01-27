@@ -553,6 +553,8 @@ const ToolbarPlugin = () => {
   useEffect(() => {
     return application.keyboardService.addCommandHandler({
       command: SUPER_TOGGLE_TOOLBAR,
+      category: 'Super notes',
+      description: 'Toggle Super note toolbar',
       onKeyDown(event) {
         if (isMobile) {
           return

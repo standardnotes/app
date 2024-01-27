@@ -178,6 +178,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       return application.keyboardService.addCommandHandlers([
         {
           command: CREATE_NEW_NOTE_KEYBOARD_COMMAND,
+          category: 'General',
+          description: 'Create new note',
           onKeyDown: (event) => {
             event.preventDefault()
             void addNewItem()
@@ -185,6 +187,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: NEXT_LIST_ITEM_KEYBOARD_COMMAND,
+          category: 'Notes list',
+          description: 'Go to next item',
           elements: [document.body, ...(searchBarElement ? [searchBarElement] : [])],
           onKeyDown: () => {
             if (searchBarElement === document.activeElement) {
@@ -198,6 +202,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
+          category: 'Notes list',
+          description: 'Go to previous item',
           element: document.body,
           onKeyDown: () => {
             if (shouldUseTableView) {
@@ -208,6 +214,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SEARCH_KEYBOARD_COMMAND,
+          category: 'General',
+          description: 'Toggle global search',
           onKeyDown: (event) => {
             if (searchBarElement) {
               event.preventDefault()
@@ -225,6 +233,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
+          category: 'General',
+          description: 'Select all items',
           onKeyDown: (event) => {
             const isTargetInsideContentList = (event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)
 

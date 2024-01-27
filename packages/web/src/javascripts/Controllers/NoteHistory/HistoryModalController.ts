@@ -27,6 +27,8 @@ export class HistoryModalController extends AbstractViewController {
     this.disposers.push(
       keyboardService.addCommandHandler({
         command: OPEN_NOTE_HISTORY_COMMAND,
+        category: 'Current note',
+        description: 'Open note history',
         onKeyDown: () => {
           this.openModal(notesController.firstSelectedNote)
           return true

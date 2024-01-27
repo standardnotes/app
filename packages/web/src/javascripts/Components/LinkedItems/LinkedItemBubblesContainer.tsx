@@ -60,6 +60,8 @@ const LinkedItemBubblesContainer = ({
   useEffect(() => {
     return commandService.addCommandHandler({
       command: FOCUS_TAGS_INPUT_COMMAND,
+      category: 'Current note',
+      description: 'Link tags, notes, files',
       onKeyDown: () => {
         const input = document.getElementById(ElementIds.ItemLinkAutocompleteInput)
         if (input) {

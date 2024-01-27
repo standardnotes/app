@@ -1,31 +1,31 @@
+import { classNames } from '@standardnotes/snjs'
 import {
   PlatformedKeyboardShortcut,
   keyboardCharacterForModifier,
-  isMacPlatform,
   isMobilePlatform,
+  keyboardCharacterForKeyOrCode,
 } from '@standardnotes/ui-services'
 import { useMemo } from 'react'
 
 type Props = {
-  shortcut: PlatformedKeyboardShortcut
+  shortcut: Omit<PlatformedKeyboardShortcut, 'command'>
+  small?: boolean
+  dimmed?: boolean
   className?: string
 }
 
-export const KeyboardShortcutIndicator = ({ shortcut, className }: Props) => {
-  const addPluses = !isMacPlatform(shortcut.platform)
-  const spacingClass = addPluses ? '' : 'ml-0.5'
-
+export const KeyboardShortcutIndicator = ({ shortcut, small = true, dimmed = true, className }: Props) => {
   const keys = useMemo(() => {
     const modifiers = shortcut.modifiers || []
-    const primaryKey = (shortcut.key || '').toUpperCase()
+    const primaryKey = shortcut.key
+      ? keyboardCharacterForKeyOrCode(shortcut.key)
+      : shortcut.code
+      ? keyboardCharacterForKeyOrCode(shortcut.code)
+      : undefined
 
     const results: string[] = []
-    modifiers.forEach((modifier, index) => {
+    modifiers.forEach((modifier) => {
       results.push(keyboardCharacterForModifier(modifier, shortcut.platform))
-
-      if (addPluses && (primaryKey || index !== modifiers.length - 1)) {
-        results.push('+')
-      }
     })
 
     if (primaryKey) {
@@ -33,19 +33,25 @@ export const KeyboardShortcutIndicator = ({ shortcut, className }: Props) => {
     }
 
     return results
-  }, [shortcut, addPluses])
+  }, [shortcut])
 
   if (isMobilePlatform(shortcut.platform)) {
     return null
   }
 
   return (
-    <div className={`keyboard-shortcut-indicator flex opacity-[0.35] ${className}`}>
+    <div className={classNames('flex items-center gap-1', dimmed && 'opacity-70', className)}>
       {keys.map((key, index) => {
         return (
-          <div className={index !== 0 ? spacingClass : ''} key={index}>
+          <kbd
+            className={classNames(
+              'rounded border-[0.5px] border-passive-3 bg-default p-1 text-center font-sans capitalize leading-none text-text shadow-[var(--tw-shadow-color)_0px_2px_0px_0px] shadow-passive-3',
+              small ? 'text-[length:0.65rem]' : 'text-xs',
+            )}
+            key={index}
+          >
             {key}
-          </div>
+          </kbd>
         )
       })}
     </div>

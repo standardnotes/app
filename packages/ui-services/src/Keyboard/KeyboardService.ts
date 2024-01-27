@@ -4,13 +4,15 @@ import { KeyboardCommand } from './KeyboardCommands'
 import { KeyboardKeyEvent } from './KeyboardKeyEvent'
 import { KeyboardModifier } from './KeyboardModifier'
 import { KeyboardCommandHandler } from './KeyboardCommandHandler'
-import { KeyboardShortcut, PlatformedKeyboardShortcut } from './KeyboardShortcut'
+import { KeyboardShortcut, KeyboardShortcutHelpItem, PlatformedKeyboardShortcut } from './KeyboardShortcut'
 import { getKeyboardShortcuts } from './getKeyboardShortcuts'
 
 export class KeyboardService {
   readonly activeModifiers = new Set<KeyboardModifier>()
   private commandHandlers = new Set<KeyboardCommandHandler>()
   private commandMap = new Map<KeyboardCommand, KeyboardShortcut>()
+
+  private keyboardShortcutHelpItems = new Set<KeyboardShortcutHelpItem>()
 
   constructor(
     private platform: Platform,
@@ -190,10 +192,18 @@ export class KeyboardService {
   addCommandHandler(observer: KeyboardCommandHandler): () => void {
     this.commandHandlers.add(observer)
 
+    const helpItem = this.getKeyboardShortcutHelpItemForHandler(observer)
+    if (helpItem) {
+      this.keyboardShortcutHelpItems.add(helpItem)
+    }
+
     return () => {
       observer.onKeyDown = undefined
       observer.onKeyDown = undefined
       this.commandHandlers.delete(observer)
+      if (helpItem) {
+        this.keyboardShortcutHelpItems.delete(helpItem)
+      }
     }
   }
 
@@ -216,5 +226,49 @@ export class KeyboardService {
       platform: this.platform,
       ...shortcut,
     }
+  }
+
+  getKeyboardShortcutHelpItemForHandler(handler: KeyboardCommandHandler): KeyboardShortcutHelpItem | undefined {
+    const shortcut = this.keyboardShortcutForCommand(handler.command)
+
+    if (!shortcut || !handler.category || !handler.description) {
+      return undefined
+    }
+
+    return {
+      ...shortcut,
+      category: handler.category,
+      description: handler.description,
+    }
+  }
+
+  /**
+   * Register help item for a keyboard shortcut that is handled outside of the KeyboardService,
+   * for example by a library like Lexical.
+   */
+  registerExternalKeyboardShortcutHelpItem(item: KeyboardShortcutHelpItem): () => void {
+    this.keyboardShortcutHelpItems.add(item)
+
+    return () => {
+      this.keyboardShortcutHelpItems.delete(item)
+    }
+  }
+
+  /**
+   * Register help item for a keyboard shortcut that is handled outside of the KeyboardService,
+   * for example by a library like Lexical.
+   */
+  registerExternalKeyboardShortcutHelpItems(items: KeyboardShortcutHelpItem[]): () => void {
+    const disposers = items.map((item) => this.registerExternalKeyboardShortcutHelpItem(item))
+
+    return () => {
+      for (const disposer of disposers) {
+        disposer()
+      }
+    }
+  }
+
+  getRegisteredKeyboardShorcutHelpItems(): KeyboardShortcutHelpItem[] {
+    return Array.from(this.keyboardShortcutHelpItems)
   }
 }

@@ -13,6 +13,8 @@ import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { useApplication } from '../ApplicationProvider'
 import MenuSection from '../Menu/MenuSection'
+import { TOGGLE_KEYBOARD_SHORTCUTS_MODAL, isMobilePlatform } from '@standardnotes/ui-services'
+import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
@@ -89,6 +91,10 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
 
   const CREATE_ACCOUNT_INDEX = 1
   const SWITCHER_INDEX = 0
+
+  const keyboardShortcutsHelpShortcut = useMemo(() => {
+    return application.keyboardService.keyboardShortcutForCommand(TOGGLE_KEYBOARD_SHORTCUTS_MODAL)
+  }, [application.keyboardService])
 
   return (
     <>
@@ -187,6 +193,19 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
             </div>
             <span className="text-neutral">v{application.version}</span>
           </MenuItem>
+          {!isMobilePlatform(application.platform) && (
+            <MenuItem
+              onClick={() => {
+                application.keyboardService.triggerCommand(TOGGLE_KEYBOARD_SHORTCUTS_MODAL)
+              }}
+            >
+              <Icon type="keyboard" className={iconClassName} />
+              Keyboard shortcuts
+              {keyboardShortcutsHelpShortcut && (
+                <KeyboardShortcutIndicator shortcut={keyboardShortcutsHelpShortcut} className="ml-auto" />
+              )}
+            </MenuItem>
+          )}
         </MenuSection>
         {user ? (
           <MenuSection>
