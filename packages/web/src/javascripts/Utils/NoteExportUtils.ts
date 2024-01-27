@@ -99,6 +99,12 @@ export const getNoteBlob = async (
         }
         return await getBase64FromBlob(fileBlob)
       },
+      pdf: {
+        pageSize: application.getPreference(
+          PrefKey.SuperNoteExportPDFPageSize,
+          PrefDefaults[PrefKey.SuperNoteExportPDFPageSize],
+        ),
+      },
     })
     const useMDFrontmatter =
       format === 'md' &&

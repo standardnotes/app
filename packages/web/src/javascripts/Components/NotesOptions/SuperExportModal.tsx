@@ -6,6 +6,7 @@ import RadioButtonGroup from '../RadioButtonGroup/RadioButtonGroup'
 import { useEffect } from 'react'
 import Switch from '../Switch/Switch'
 import { noteHasEmbeddedFiles } from '@/Utils/NoteExportUtils'
+import Dropdown from '../Dropdown/Dropdown'
 
 type Props = {
   notes: SNNote[]
@@ -19,6 +20,7 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
   const superNoteExportFormat = usePreference(PrefKey.SuperNoteExportFormat)
   const superNoteExportEmbedBehavior = usePreference(PrefKey.SuperNoteExportEmbedBehavior)
   const superNoteExportUseMDFrontmatter = usePreference(PrefKey.SuperNoteExportUseMDFrontmatter)
+  const superNoteExportPDFPageSize = usePreference(PrefKey.SuperNoteExportPDFPageSize)
 
   useEffect(() => {
     if (superNoteExportFormat === 'json' && superNoteExportEmbedBehavior === 'separate') {
@@ -60,23 +62,25 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
       ]}
     >
       <div className="mb-2">
-        <div className="mb-3 text-base">We detected your selection includes Super notes.</div>
-        <div className="mb-1">What format do you want to export them in?</div>
-        <RadioButtonGroup
-          items={[
-            { label: 'Super (.json)', value: 'json' },
-            { label: 'Markdown (.md)', value: 'md' },
-            { label: 'HTML', value: 'html' },
-            { label: 'PDF', value: 'pdf' },
-          ]}
-          value={superNoteExportFormat}
-          onChange={(value) => {
-            void application.setPreference(
-              PrefKey.SuperNoteExportFormat,
-              value as PrefValue[PrefKey.SuperNoteExportFormat],
-            )
-          }}
-        />
+        <div className="mb-2 flex items-center justify-between">
+          <div className="text-base">Choose export format {notes.length > 1 ? 'for Super notes' : ''}</div>
+          <Dropdown
+            label="Export format"
+            items={[
+              { label: 'Super (.json)', value: 'json' },
+              { label: 'Markdown (.md)', value: 'md' },
+              { label: 'HTML', value: 'html' },
+              { label: 'PDF', value: 'pdf' },
+            ]}
+            value={superNoteExportFormat}
+            onChange={(value) => {
+              void application.setPreference(
+                PrefKey.SuperNoteExportFormat,
+                value as PrefValue[PrefKey.SuperNoteExportFormat],
+              )
+            }}
+          />
+        </div>
         {superNoteExportFormat === 'md' && (
           <div className="mt-2 text-xs text-passive-0">
             Note that conversion to Markdown is not lossless. Some features like collapsible blocks and formatting like
@@ -84,6 +88,33 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
           </div>
         )}
       </div>
+      {superNoteExportFormat === 'pdf' && (
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-base">Page size</div>
+          <Dropdown
+            label="Page size"
+            items={
+              [
+                { label: 'A3', value: 'A3' },
+                { label: 'A4', value: 'A4' },
+                { label: 'Letter', value: 'LETTER' },
+                { label: 'Legal', value: 'LEGAL' },
+                { label: 'Tabloid', value: 'TABLOID' },
+              ] satisfies {
+                label: string
+                value: PrefValue[PrefKey.SuperNoteExportPDFPageSize]
+              }[]
+            }
+            value={superNoteExportPDFPageSize}
+            onChange={(value) => {
+              void application.setPreference(
+                PrefKey.SuperNoteExportPDFPageSize,
+                value as PrefValue[PrefKey.SuperNoteExportPDFPageSize],
+              )
+            }}
+          />
+        </div>
+      )}
       {superNoteExportFormat === 'md' && (
         <div className="mt-4">
           <Switch

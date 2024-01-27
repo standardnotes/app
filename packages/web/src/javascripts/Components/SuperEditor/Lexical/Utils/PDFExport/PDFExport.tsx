@@ -22,6 +22,7 @@ import { $isCollapsibleTitleNode } from '../../../Plugins/CollapsiblePlugin/Coll
 import { PDFDataNode, PDFWorker } from './PDFWorker'
 import { wrap } from 'comlink'
 import { getBase64FromBlob } from '@/Utils'
+import { PrefKey, PrefValue } from '@standardnotes/snjs'
 
 const styles = StyleSheet.create({
   page: {
@@ -422,7 +423,7 @@ const PDFWorkerComlink = wrap<PDFWorker>(new Worker(new URL('./PDFWorker.tsx', i
 /**
  * @returns The PDF as a base64 string
  */
-export function $generatePDFFromNodes(editor: LexicalEditor) {
+export function $generatePDFFromNodes(editor: LexicalEditor, pageSize: PrefValue[PrefKey.SuperNoteExportPDFPageSize]) {
   return new Promise<string>((resolve) => {
     editor.getEditorState().read(() => {
       const root = $getRoot()
@@ -430,7 +431,7 @@ export function $generatePDFFromNodes(editor: LexicalEditor) {
 
       const pdfDataNodes = getPDFDataNodesFromLexicalNodes(nodes)
 
-      void PDFWorkerComlink.renderPDF(pdfDataNodes).then((blob) => {
+      void PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize).then((blob) => {
         void getBase64FromBlob(blob).then((base64) => {
           resolve(base64)
         })

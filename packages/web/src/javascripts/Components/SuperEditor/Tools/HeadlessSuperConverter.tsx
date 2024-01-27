@@ -56,6 +56,9 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       embedBehavior?: PrefValue[PrefKey.SuperNoteExportEmbedBehavior]
       getFileItem?: (id: string) => FileItem | undefined
       getFileBase64?: (id: string) => Promise<string | undefined>
+      pdf?: {
+        pageSize?: PrefValue[PrefKey.SuperNoteExportPDFPageSize]
+      }
     },
   ): Promise<string> {
     if (superString.length === 0) {
@@ -145,8 +148,8 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
               resolve()
               break
             case 'pdf': {
-              void import('../Lexical/Utils/PDFExport/PDFExport').then(({ $generatePDFFromNodes }) => {
-                void $generatePDFFromNodes(this.exportEditor).then((pdf) => {
+              void import('../Lexical/Utils/PDFExport/PDFExport').then(({ $generatePDFFromNodes }): void => {
+                void $generatePDFFromNodes(this.exportEditor, config?.pdf?.pageSize || 'A4').then((pdf) => {
                   content = pdf
                   resolve()
                 })

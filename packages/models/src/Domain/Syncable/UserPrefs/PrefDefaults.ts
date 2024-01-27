@@ -42,6 +42,7 @@ export const PrefDefaults = {
   [PrefKey.SuperNoteExportFormat]: 'json',
   [PrefKey.SuperNoteExportEmbedBehavior]: 'reference',
   [PrefKey.SuperNoteExportUseMDFrontmatter]: true,
+  [PrefKey.SuperNoteExportPDFPageSize]: 'A4',
   [PrefKey.SystemViewPreferences]: {},
   [PrefKey.AuthenticatorNames]: '',
   [PrefKey.ComponentPreferences]: {},

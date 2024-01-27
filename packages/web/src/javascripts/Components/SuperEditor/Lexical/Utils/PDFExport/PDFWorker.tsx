@@ -14,6 +14,7 @@ import {
   TextProps,
   SVGProps,
   ImageWithSrcProp,
+  PageProps,
 } from '@react-pdf/renderer'
 import { expose } from 'comlink'
 
@@ -72,10 +73,11 @@ const Node = ({ node }: { node: PDFDataNode }) => {
   }
 }
 
-const PDFDocument = ({ nodes }: { nodes: PDFDataNode[] }) => {
+const PDFDocument = ({ nodes, pageSize }: { nodes: PDFDataNode[]; pageSize: PageProps['size'] }) => {
   return (
     <Document>
       <Page
+        size={pageSize}
         style={{
           paddingVertical: 35,
           paddingHorizontal: 35,
@@ -92,8 +94,8 @@ const PDFDocument = ({ nodes }: { nodes: PDFDataNode[] }) => {
   )
 }
 
-const renderPDF = (nodes: PDFDataNode[]) => {
-  return pdf(<PDFDocument nodes={nodes} />).toBlob()
+const renderPDF = (nodes: PDFDataNode[], pageSize: PageProps['size']) => {
+  return pdf(<PDFDocument pageSize={pageSize} nodes={nodes} />).toBlob()
 }
 
 expose({
