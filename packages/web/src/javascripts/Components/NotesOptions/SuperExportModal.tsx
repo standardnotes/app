@@ -2,7 +2,6 @@ import { PrefKey, PrefValue, SNNote } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import Modal from '../Modal/Modal'
 import usePreference from '@/Hooks/usePreference'
-import RadioButtonGroup from '../RadioButtonGroup/RadioButtonGroup'
 import { useEffect } from 'react'
 import Switch from '../Switch/Switch'
 import { noteHasEmbeddedFiles } from '@/Utils/NoteExportUtils'
@@ -62,7 +61,7 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
       ]}
     >
       <div className="mb-2">
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <div className="text-base">Choose export format {notes.length > 1 ? 'for Super notes' : ''}</div>
           <Dropdown
             label="Export format"
@@ -79,6 +78,9 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
                 value as PrefValue[PrefKey.SuperNoteExportFormat],
               )
             }}
+            classNameOverride={{
+              wrapper: 'w-full md:w-fit',
+            }}
           />
         </div>
         {superNoteExportFormat === 'md' && (
@@ -89,7 +91,7 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
         )}
       </div>
       {superNoteExportFormat === 'pdf' && (
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
           <div className="text-base">Page size</div>
           <Dropdown
             label="Page size"
@@ -112,6 +114,9 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
                 value as PrefValue[PrefKey.SuperNoteExportPDFPageSize],
               )
             }}
+            classNameOverride={{
+              wrapper: 'w-full md:w-fit',
+            }}
           />
         </div>
       )}
@@ -132,9 +137,10 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
         </div>
       )}
       {canShowEmbeddedFileOptions && someNotesHaveEmbeddedFiles && (
-        <div className="mb-2 mt-4">
-          <div className="mb-1">How do you want embedded files to be handled?</div>
-          <RadioButtonGroup
+        <div className="mb-2 mt-4 flex flex-wrap items-center justify-between gap-2">
+          <div className="text-base">Embedded files</div>
+          <Dropdown
+            label="Embedded files"
             items={[
               { label: 'Inline', value: 'inline' },
               { label: 'Export separately', value: 'separate' },
