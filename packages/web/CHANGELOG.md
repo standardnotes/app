@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.187.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.187.0...@standardnotes/web@3.187.1) (2024-01-28)
+
+### Bug Fixes
+
+* The shortcut for displaying the keyboard shortcut help dialog has been changed to `Ctrl + /` ([5a49005](https://github.com/standardnotes/app/commit/5a49005e7961ed254667f62cdba5deba2c792fa7))
+
 # [3.187.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.186.1...@standardnotes/web@3.187.0) (2024-01-27)
 
 ### Features

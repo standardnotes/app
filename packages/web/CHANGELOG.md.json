@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.187.1",
+      "title": "[3.187.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.187.0...@standardnotes/web@3.187.1) (2024-01-28)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* The shortcut for displaying the keyboard shortcut help dialog has been changed to `Ctrl + /` ([5a49005](https://github.com/standardnotes/app/commit/5a49005e7961ed254667f62cdba5deba2c792fa7))",
+      "parsed": {
+        "_": [
+          "The shortcut for displaying the keyboard shortcut help dialog has been changed to Ctrl + / (5a49005)"
+        ],
+        "Bug Fixes": [
+          "The shortcut for displaying the keyboard shortcut help dialog has been changed to Ctrl + / (5a49005)"
+        ]
+      }
+    },
+    {
       "version": "3.187.0",
       "title": "[3.187.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.186.1...@standardnotes/web@3.187.0) (2024-01-27)",
       "date": null,
