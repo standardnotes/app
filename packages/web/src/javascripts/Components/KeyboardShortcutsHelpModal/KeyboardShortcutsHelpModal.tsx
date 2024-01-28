@@ -48,6 +48,7 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
   useEffect(() => {
     return keyboardService.addCommandHandler({
       command: TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
+      category: 'General',
       description: 'Toggle keyboard shortcuts help',
       onKeyDown: () => {
         setItems(createGroupedItems(keyboardService.getRegisteredKeyboardShorcutHelpItems()))

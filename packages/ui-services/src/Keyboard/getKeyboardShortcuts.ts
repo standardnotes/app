@@ -195,9 +195,8 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
     },
     {
       command: TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
-      key: '?',
-      preventDefault: true,
-      modifiers: [KeyboardModifier.Shift],
+      key: '/',
+      modifiers: [primaryModifier],
     },
   ]
 }

@@ -194,6 +194,10 @@ export class KeyboardService {
 
     const helpItem = this.getKeyboardShortcutHelpItemForHandler(observer)
     if (helpItem) {
+      const existingItem = Array.from(this.keyboardShortcutHelpItems).find((item) => item.command === helpItem.command)
+      if (existingItem) {
+        this.keyboardShortcutHelpItems.delete(existingItem)
+      }
       this.keyboardShortcutHelpItems.add(helpItem)
     }
 

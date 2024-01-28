@@ -22,6 +22,7 @@ export type PlatformedKeyboardShortcut = KeyboardShortcut & {
 export type KeyboardShortcutCategory = 'General' | 'Notes list' | 'Current note' | 'Super notes' | 'Formatting'
 
 export type KeyboardShortcutHelpItem = Omit<PlatformedKeyboardShortcut, 'command'> & {
+  command?: KeyboardCommand
   category: KeyboardShortcutCategory
   description: string
 }
