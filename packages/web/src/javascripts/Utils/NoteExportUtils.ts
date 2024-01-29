@@ -44,7 +44,7 @@ ${superEditorCSS.toString()}
 ${exportOverridesCSS.toString()}
     </style>
   </head>
-  <body>
+  <body style="--font-size: 1rem; --line-height: 1.5; font-size: var(--font-size); line-height: var(--line-height);">
     ${content}
   </body>
 </html>

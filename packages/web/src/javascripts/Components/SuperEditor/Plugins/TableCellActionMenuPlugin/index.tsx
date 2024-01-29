@@ -7,7 +7,6 @@
  */
 
 import {
-  DEPRECATED_GridCellNode,
   ElementNode,
   $createParagraphNode,
   $getRoot,
@@ -16,8 +15,6 @@ import {
   $isParagraphNode,
   $isRangeSelection,
   $isTextNode,
-  DEPRECATED_$getNodeTriplet,
-  DEPRECATED_$isGridCellNode,
 } from 'lexical'
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
@@ -25,6 +22,7 @@ import useLexicalEditable from '@lexical/react/useLexicalEditable'
 import {
   $deleteTableColumn__EXPERIMENTAL,
   $deleteTableRow__EXPERIMENTAL,
+  $getNodeTriplet,
   $getTableCellNodeFromLexicalNode,
   $getTableColumnIndexFromTableCellNode,
   $getTableNodeFromLexicalNodeOrThrow,
@@ -33,13 +31,13 @@ import {
   $insertTableRow__EXPERIMENTAL,
   $isTableCellNode,
   $isTableRowNode,
+  $isTableSelection,
   $unmergeCell,
-  getTableSelectionFromTableElement,
+  getTableObserverFromTableElement,
   HTMLTableElementWithWithTableSelectionState,
   TableCellHeaderStates,
   TableCellNode,
-  GridSelection,
-  $isGridSelection,
+  TableSelection,
 } from '@lexical/table'
 import { ReactPortal, useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -50,7 +48,7 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 
-function computeSelectionCount(selection: GridSelection): {
+function computeSelectionCount(selection: TableSelection): {
   columns: number
   rows: number
 } {
@@ -63,7 +61,7 @@ function computeSelectionCount(selection: GridSelection): {
 
 // This is important when merging cells as there is no good way to re-merge weird shapes (a result
 // of selecting merged cells and non-merged)
-function isGridSelectionRectangular(selection: GridSelection): boolean {
+function isGridSelectionRectangular(selection: TableSelection): boolean {
   const nodes = selection.getNodes()
   const currentRows: Array<number> = []
   let currentRow = null
@@ -103,16 +101,16 @@ function $canUnmerge(): boolean {
   const selection = $getSelection()
   if (
     ($isRangeSelection(selection) && !selection.isCollapsed()) ||
-    ($isGridSelection(selection) && !selection.anchor.is(selection.focus)) ||
-    (!$isRangeSelection(selection) && !$isGridSelection(selection))
+    ($isTableSelection(selection) && !selection.anchor.is(selection.focus)) ||
+    (!$isRangeSelection(selection) && !$isTableSelection(selection))
   ) {
     return false
   }
-  const [cell] = DEPRECATED_$getNodeTriplet(selection.anchor)
+  const [cell] = $getNodeTriplet(selection.anchor)
   return cell.__colSpan > 1 || cell.__rowSpan > 1
 }
 
-function $cellContainsEmptyParagraph(cell: DEPRECATED_GridCellNode): boolean {
+function $cellContainsEmptyParagraph(cell: TableCellNode): boolean {
   if (cell.getChildrenSize() !== 1) {
     return false
   }
@@ -167,7 +165,7 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
     editor.getEditorState().read(() => {
       const selection = $getSelection()
       // Merge cells
-      if ($isGridSelection(selection)) {
+      if ($isTableSelection(selection)) {
         const currentSelectionCounts = computeSelectionCount(selection)
         updateSelectionCounts(computeSelectionCount(selection))
         setCanMergeCells(
@@ -190,7 +188,7 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
           throw new Error('Expected to find tableElement in DOM')
         }
 
-        const tableSelection = getTableSelectionFromTableElement(tableElement)
+        const tableSelection = getTableObserverFromTableElement(tableElement)
         if (tableSelection !== null) {
           tableSelection.clearHighlight()
         }
@@ -207,13 +205,13 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
   const mergeTableCellsAtSelection = () => {
     editor.update(() => {
       const selection = $getSelection()
-      if ($isGridSelection(selection)) {
+      if ($isTableSelection(selection)) {
         const { columns, rows } = computeSelectionCount(selection)
         const nodes = selection.getNodes()
-        let firstCell: null | DEPRECATED_GridCellNode = null
+        let firstCell: null | TableCellNode = null
         for (let i = 0; i < nodes.length; i++) {
           const node = nodes[i]
-          if (DEPRECATED_$isGridCellNode(node)) {
+          if ($isTableCellNode(node)) {
             if (firstCell === null) {
               node.setColSpan(columns).setRowSpan(rows)
               firstCell = node
@@ -222,7 +220,7 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
               if (isEmpty && $isParagraphNode((firstChild = node.getFirstChild()))) {
                 firstChild.remove()
               }
-            } else if (DEPRECATED_$isGridCellNode(firstCell)) {
+            } else if ($isTableCellNode(firstCell)) {
               const isEmpty = $cellContainsEmptyParagraph(node)
               if (!isEmpty) {
                 firstCell.append(...node.getChildren())

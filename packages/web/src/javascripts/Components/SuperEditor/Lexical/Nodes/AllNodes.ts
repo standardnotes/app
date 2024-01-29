@@ -17,7 +17,6 @@ import { BubbleNode } from '../../Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import { RemoteImageNode } from '../../Plugins/RemoteImagePlugin/RemoteImageNode'
 import { InlineFileNode } from '../../Plugins/InlineFilePlugin/InlineFileNode'
 import { CreateEditorArgs } from 'lexical'
-import { ListHTMLExportNode } from '../../Plugins/List/ListHTMLExportNode'
 import { FileExportNode } from './FileExportNode'
 
 const CommonNodes = [
@@ -44,18 +43,9 @@ const CommonNodes = [
   BubbleNode,
   RemoteImageNode,
   InlineFileNode,
+  ListNode,
 ]
 
-export const BlockEditorNodes = [...CommonNodes, ListNode]
+export const BlockEditorNodes = CommonNodes
 
-export const SuperExportNodes: CreateEditorArgs['nodes'] = [
-  ...CommonNodes,
-  FileExportNode,
-  ListHTMLExportNode,
-  {
-    replace: ListNode,
-    with(node) {
-      return new ListHTMLExportNode(node.getListType(), node.getStart())
-    },
-  },
-]
+export const SuperExportNodes: CreateEditorArgs['nodes'] = [...CommonNodes, FileExportNode]

@@ -60,6 +60,7 @@ const BlocksEditorTheme: EditorThemeClasses = {
     },
     olDepth: ['Lexical__ol1', 'Lexical__ol2', 'Lexical__ol3', 'Lexical__ol4', 'Lexical__ol5'],
     ul: 'Lexical__ul',
+    checklist: 'Lexical__checkList',
   },
   ltr: 'Lexical__ltr',
   mark: 'Lexical__mark',
