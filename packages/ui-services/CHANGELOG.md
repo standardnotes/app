@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.36.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.36.1...@standardnotes/ui-services@1.36.2) (2024-01-30)
+
+### Bug Fixes
+
+* Changed shortcut for Replace on macOS to `Opt+Cmd+F` ([2950aaa](https://github.com/standardnotes/app/commit/2950aaa09aa40532eb67779ac1c74a837bdb96da))
+
 ## [1.36.1](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.36.0...@standardnotes/ui-services@1.36.1) (2024-01-28)
 
 ### Bug Fixes
