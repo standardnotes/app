@@ -35,6 +35,7 @@ import {
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier, getPrimaryModifier } from './KeyboardModifier'
 import { KeyboardShortcut } from './KeyboardShortcut'
+import { isMacPlatform } from './platformCheck'
 
 export function getKeyboardShortcuts(platform: Platform, _environment: Environment): KeyboardShortcut[] {
   const primaryModifier = getPrimaryModifier(platform)
@@ -158,8 +159,9 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
     },
     {
       command: SUPER_SEARCH_TOGGLE_REPLACE_MODE,
-      key: 'h',
-      modifiers: [primaryModifier],
+      key: isMacPlatform(platform) ? undefined : 'h',
+      code: isMacPlatform(platform) ? 'KeyF' : undefined,
+      modifiers: isMacPlatform(platform) ? [KeyboardModifier.Alt, primaryModifier] : [primaryModifier],
     },
     {
       command: SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
