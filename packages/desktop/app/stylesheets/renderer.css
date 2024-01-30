@@ -13,6 +13,9 @@
   .mac-desktop .app-pane {
     padding-top: 25px;
   }
+  .mac-desktop [data-dialog] [data-mobile-modal-header] {
+    padding-top: 25px;
+  }
 }
 
 @media screen and (min-width: 768px) {

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import Modal from '../Modal/Modal'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
 import {
   KeyboardService,
@@ -57,9 +57,21 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
     })
   }, [keyboardService])
 
+  const actions = useMemo(
+    (): ModalAction[] => [
+      {
+        label: 'Cancel',
+        onClick: close,
+        type: 'cancel',
+        mobileSlot: 'left',
+      },
+    ],
+    [close],
+  )
+
   return (
     <ModalOverlay isOpen={isOpen} close={close}>
-      <Modal title="Keyboard shortcuts" close={close}>
+      <Modal title="Keyboard shortcuts" close={close} actions={actions}>
         {Object.entries(items).map(
           ([category, items]) =>
             items.length > 0 && (
