@@ -74,7 +74,7 @@
   -webkit-app-region: drag;
 }
 
-.mac-desktop [data-dialog-portal]::after {
+.mac-desktop [data-dialog-portal]:has([data-dialog])::after {
   content: '';
   position: absolute;
   top: 0;
