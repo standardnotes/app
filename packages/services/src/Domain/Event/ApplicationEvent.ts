@@ -57,4 +57,5 @@ export enum ApplicationEvent {
   CompletedInitialSync = 'Application:CompletedInitialSync',
   DidPurchaseSubscription = 'Application:DidPurchaseSubscription',
   SyncTooManyRequests = 'Application:SyncTooManyRequests',
+  SyncPayloadTooLarge = 'Application:SyncPayloadTooLarge',
 }

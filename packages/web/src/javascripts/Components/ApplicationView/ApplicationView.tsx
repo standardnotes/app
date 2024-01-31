@@ -118,35 +118,47 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     }
 
     const removeAppObserver = application.addEventObserver(async (eventName) => {
-      if (eventName === ApplicationEvent.Started) {
-        onAppStart()
-      } else if (eventName === ApplicationEvent.Launched) {
-        onAppLaunch()
-      } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
-        if (!currentLoadErrorDialog.current) {
-          alertDialog({
-            text: 'Unable to load local database. Please restart the app and try again.',
-          })
-            .then(() => {
-              currentLoadErrorDialog.current = null
+      switch (eventName) {
+        case ApplicationEvent.Started:
+          onAppStart()
+          break
+        case ApplicationEvent.Launched:
+          onAppLaunch()
+          break
+        case ApplicationEvent.LocalDatabaseReadError:
+          if (!currentLoadErrorDialog.current) {
+            alertDialog({
+              text: 'Unable to load local database. Please restart the app and try again.',
             })
-            .catch(console.error)
-        }
-      } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
-        if (!currentWriteErrorDialog.current) {
-          currentWriteErrorDialog.current = alertDialog({
-            text: 'Unable to write to local database. Please restart the app and try again.',
-          })
-            .then(() => {
-              currentWriteErrorDialog.current = null
+              .then(() => {
+                currentLoadErrorDialog.current = null
+              })
+              .catch(console.error)
+          }
+          break
+        case ApplicationEvent.LocalDatabaseWriteError:
+          if (!currentWriteErrorDialog.current) {
+            currentWriteErrorDialog.current = alertDialog({
+              text: 'Unable to write to local database. Please restart the app and try again.',
             })
-            .catch(console.error)
-        }
-      } else if (eventName === ApplicationEvent.SyncTooManyRequests) {
-        addToast({
-          type: ToastType.Error,
-          message: 'Too many requests. Please try again later.',
-        })
+              .then(() => {
+                currentWriteErrorDialog.current = null
+              })
+              .catch(console.error)
+          }
+          break
+        case ApplicationEvent.SyncTooManyRequests:
+          addToast({
+            type: ToastType.Error,
+            message: 'Too many requests. Please try again later.',
+          })
+          break
+        case ApplicationEvent.SyncPayloadTooLarge:
+          addToast({
+            type: ToastType.Error,
+            message: 'Payload too large. Please try again later.',
+          })
+          break
       }
     })
 

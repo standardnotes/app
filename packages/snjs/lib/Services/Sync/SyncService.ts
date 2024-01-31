@@ -102,6 +102,7 @@ import { SyncFrequencyGuardInterface } from './SyncFrequencyGuardInterface'
 
 const DEFAULT_MAJOR_CHANGE_THRESHOLD = 15
 const INVALID_SESSION_RESPONSE_STATUS = 401
+const PAYLOAD_TOO_LARGE = 413
 const TOO_MANY_REQUESTS_RESPONSE_STATUS = 429
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
 
@@ -1018,6 +1019,10 @@ export class SyncService
 
     if (response.status === TOO_MANY_REQUESTS_RESPONSE_STATUS) {
       void this.notifyEvent(SyncEvent.TooManyRequests)
+    }
+
+    if (response.status === PAYLOAD_TOO_LARGE) {
+      void this.notifyEvent(SyncEvent.PayloadTooLarge)
     }
 
     this.opStatus?.setError(response.error)
