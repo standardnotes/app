@@ -1,11 +1,10 @@
-import { DOMConversionMap, DOMExportOutput, ElementFormatType, LexicalEditor, NodeKey } from 'lexical'
-import { DecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
+import { DOMConversionMap, DOMExportOutput, DecoratorNode, LexicalEditor, NodeKey } from 'lexical'
 import { $createBubbleNode, convertToBubbleElement } from './BubbleUtils'
 import { BubbleComponent } from './BubbleComponent'
 import { SerializedBubbleNode } from './SerializedBubbleNode'
 import { ItemNodeInterface } from '../../ItemNodeInterface'
 
-export class BubbleNode extends DecoratorBlockNode implements ItemNodeInterface {
+export class BubbleNode extends DecoratorNode<JSX.Element> implements ItemNodeInterface {
   __id: string
 
   static getType(): string {
@@ -13,18 +12,16 @@ export class BubbleNode extends DecoratorBlockNode implements ItemNodeInterface 
   }
 
   static clone(node: BubbleNode): BubbleNode {
-    return new BubbleNode(node.__id, node.__format, node.__key)
+    return new BubbleNode(node.__id, node.__key)
   }
 
   static importJSON(serializedNode: SerializedBubbleNode): BubbleNode {
     const node = $createBubbleNode(serializedNode.itemUuid)
-    node.setFormat(serializedNode.format)
     return node
   }
 
-  exportJSON(): SerializedBubbleNode {
+  override exportJSON(): SerializedBubbleNode {
     return {
-      ...super.exportJSON(),
       itemUuid: this.getId(),
       version: 1,
       type: 'snbubble',
@@ -57,8 +54,12 @@ export class BubbleNode extends DecoratorBlockNode implements ItemNodeInterface 
     return { element }
   }
 
-  constructor(id: string, format?: ElementFormatType, key?: NodeKey) {
-    super(format, key)
+  updateDOM(): false {
+    return false
+  }
+
+  constructor(id: string, key?: NodeKey) {
+    super(key)
     this.__id = id
   }
 

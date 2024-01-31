@@ -1,5 +1,4 @@
-import { Spread } from 'lexical'
-import { SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
+import { Spread, SerializedLexicalNode } from 'lexical'
 
 export type SerializedBubbleNode = Spread<
   {
@@ -7,5 +6,5 @@ export type SerializedBubbleNode = Spread<
     version: 1
     type: 'snbubble'
   },
-  SerializedDecoratorBlockNode
+  SerializedLexicalNode
 >

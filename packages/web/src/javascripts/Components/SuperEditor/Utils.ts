@@ -30,6 +30,7 @@ export function handleEditorChange(
     const stringifiedEditorState = JSON.stringify(editorState.toJSON())
     onChange?.(stringifiedEditorState, previewText)
   } catch (error) {
+    console.error(error)
     window.alert(
       `An invalid change was made inside the Super editor. Your change was not saved. Please report this error to the team: ${JSON.stringify(
         error,
