@@ -1,13 +1,11 @@
 import { AnyItemInterface, ServerSyncPushContextualPayload } from '@standardnotes/models'
-import {
-  AbstractService,
-  ApplicationEvent,
-  InternalEventBusInterface,
-  InternalEventHandlerInterface,
-  InternalEventInterface,
-} from '@standardnotes/snjs'
 
 import { SyncBackoffServiceInterface } from './SyncBackoffServiceInterface'
+import { AbstractService } from '../Service/AbstractService'
+import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { InternalEventInterface } from '../Internal/InternalEventInterface'
+import { ApplicationEvent } from '../Event/ApplicationEvent'
 
 export class SyncBackoffService
   extends AbstractService
