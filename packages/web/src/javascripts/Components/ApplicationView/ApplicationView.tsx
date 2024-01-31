@@ -156,7 +156,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
         case ApplicationEvent.SyncPayloadTooLarge:
           addToast({
             type: ToastType.Error,
-            message: 'Payload too large. Please try again later.',
+            message: 'Unable to sync. The payload of the request is too large.',
           })
           break
       }
