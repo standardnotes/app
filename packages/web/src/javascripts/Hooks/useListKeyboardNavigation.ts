@@ -1,58 +1,69 @@
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
-import { useCallback, useEffect, RefObject, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 export const useListKeyboardNavigation = (
-  container: RefObject<HTMLElement | null>,
+  containerElement: HTMLElement | null,
   initialFocus = 0,
   shouldAutoFocus = false,
+  shouldWrapAround = true,
 ) => {
   const listItems = useRef<HTMLButtonElement[]>([])
+  const setLatestListItems = useCallback(() => {
+    if (!containerElement) {
+      return
+    }
+    listItems.current = Array.from(containerElement.querySelectorAll('button, div[role="button"]'))
+  }, [containerElement])
+
   const focusedItemIndex = useRef<number>(initialFocus)
 
-  const focusItemWithIndex = useCallback((index: number, items?: HTMLButtonElement[]) => {
+  const focusItemWithIndex = useCallback((index: number) => {
     focusedItemIndex.current = index
-    if (items && items.length > 0) {
-      items[index]?.focus()
-    } else {
-      listItems.current[index]?.focus()
-    }
+    listItems.current[index]?.focus()
   }, [])
 
-  const getNextFocusableIndex = useCallback((currentIndex: number, items: HTMLButtonElement[]) => {
-    let nextIndex = currentIndex + 1
-    if (nextIndex > items.length - 1) {
-      nextIndex = 0
-    }
-    while (items[nextIndex].disabled) {
-      nextIndex++
+  const getNextFocusableIndex = useCallback(
+    (currentIndex: number, items: HTMLButtonElement[]) => {
+      let nextIndex = currentIndex + 1
       if (nextIndex > items.length - 1) {
-        nextIndex = 0
+        nextIndex = shouldWrapAround ? 0 : currentIndex
       }
-    }
-    return nextIndex
-  }, [])
+      while (items[nextIndex].disabled) {
+        nextIndex++
+        if (nextIndex > items.length - 1) {
+          nextIndex = shouldWrapAround ? 0 : currentIndex
+        }
+      }
+      return nextIndex
+    },
+    [shouldWrapAround],
+  )
 
-  const getPreviousFocusableIndex = useCallback((currentIndex: number, items: HTMLButtonElement[]) => {
-    let previousIndex = currentIndex - 1
-    if (previousIndex < 0) {
-      previousIndex = items.length - 1
-    }
-    while (items[previousIndex].disabled) {
-      previousIndex--
+  const getPreviousFocusableIndex = useCallback(
+    (currentIndex: number, items: HTMLButtonElement[]) => {
+      let previousIndex = currentIndex - 1
       if (previousIndex < 0) {
-        previousIndex = items.length - 1
+        previousIndex = shouldWrapAround ? items.length - 1 : currentIndex
       }
-    }
-    return previousIndex
-  }, [])
+      while (items[previousIndex].disabled) {
+        previousIndex--
+        if (previousIndex < 0) {
+          previousIndex = shouldWrapAround ? items.length - 1 : currentIndex
+        }
+      }
+      return previousIndex
+    },
+    [shouldWrapAround],
+  )
 
   useEffect(() => {
-    if (container.current) {
-      container.current.tabIndex = FOCUSABLE_BUT_NOT_TABBABLE
-      listItems.current = Array.from(container.current.querySelectorAll('button'))
+    if (containerElement) {
+      containerElement.tabIndex = FOCUSABLE_BUT_NOT_TABBABLE
+      setLatestListItems()
+      listItems.current[0].tabIndex = 0
     }
-  }, [container])
+  }, [containerElement, setLatestListItems])
 
   const keyDownHandler = useCallback(
     (e: KeyboardEvent) => {
@@ -95,7 +106,7 @@ export const useListKeyboardNavigation = (
     let indexToFocus = selectedItemIndex > -1 ? selectedItemIndex : initialFocus
     indexToFocus = getNextFocusableIndex(indexToFocus - 1, items)
 
-    focusItemWithIndex(indexToFocus, items)
+    focusItemWithIndex(indexToFocus)
   }, [focusItemWithIndex, getNextFocusableIndex, initialFocus])
 
   useEffect(() => {
@@ -112,17 +123,26 @@ export const useListKeyboardNavigation = (
     }
   }, [])
 
-  useEffect(() => {
-    const containerElement = container.current
+  const focusOutHandler = useCallback(
+    (event: FocusEvent) => {
+      if (containerElement && containerElement.contains(event.relatedTarget as Node)) {
+        return
+      }
+      focusedItemIndex.current = initialFocus
+    },
+    [containerElement, initialFocus],
+  )
 
+  useEffect(() => {
     if (!containerElement) {
       return
     }
 
     containerElement.addEventListener('keydown', keyDownHandler)
+    containerElement.addEventListener('focusout', focusOutHandler)
 
     const containerMutationObserver = new MutationObserver(() => {
-      listItems.current = Array.from(containerElement.querySelectorAll('button'))
+      setLatestListItems()
     })
 
     containerMutationObserver.observe(containerElement, {
@@ -131,10 +151,11 @@ export const useListKeyboardNavigation = (
     })
 
     return () => {
-      containerElement?.removeEventListener('keydown', keyDownHandler)
+      containerElement.removeEventListener('keydown', keyDownHandler)
+      containerElement.removeEventListener('focusout', focusOutHandler)
       containerMutationObserver.disconnect()
     }
-  }, [container, setInitialFocus, keyDownHandler])
+  }, [setInitialFocus, keyDownHandler, focusOutHandler, containerElement, setLatestListItems])
 
   return {
     setInitialFocus,

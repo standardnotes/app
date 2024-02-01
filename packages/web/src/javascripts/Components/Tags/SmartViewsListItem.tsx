@@ -111,74 +111,69 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
   }
 
   return (
-    <>
-      <div
-        role="button"
-        tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-        className={classNames('tag group px-3.5 py-0.5 md:py-0', isSelected && 'selected', isFaded && 'opacity-50')}
-        onClick={selectCurrentTag}
-        onContextMenu={(event) => {
-          event.preventDefault()
-          event.stopPropagation()
-          if (isSystemView(view)) {
-            return
-          }
-          onClickEdit()
-        }}
-        style={{
-          paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
-        }}
-      >
-        <div className="tag-info">
-          <div className={'tag-icon mr-2'}>
-            <Icon type={view.iconString} className={classNames(iconClass, 'group-hover:text-text')} />
-          </div>
-          {isEditing ? (
-            <input
-              className={'title editing text-mobile-navigation-list-item lg:text-navigation-list-item'}
-              id={`react-tag-${view.uuid}`}
-              onBlur={onBlur}
-              onInput={onInput}
-              value={title}
-              onKeyUp={onKeyUp}
-              spellCheck={false}
-              ref={inputRef}
-            />
-          ) : (
-            <div
-              className={
-                'title overflow-hidden text-left text-mobile-navigation-list-item lg:text-navigation-list-item'
-              }
-              id={`react-tag-${view.uuid}`}
-            >
-              {title}
-            </div>
-          )}
-          <div className={'count text-base lg:text-sm'}>
-            {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
-            {view.uuid === SystemViewId.Files && tagsState.allFilesCount}
-            {view.uuid === SystemViewId.Conflicts && conflictsCount}
-          </div>
+    <button
+      tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+      className={classNames('tag group px-3.5 py-0.5 md:py-0', isSelected && 'selected', isFaded && 'opacity-50')}
+      onClick={selectCurrentTag}
+      onContextMenu={(event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        if (isSystemView(view)) {
+          return
+        }
+        onClickEdit()
+      }}
+      style={{
+        paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
+      }}
+    >
+      <div className="tag-info">
+        <div className={'tag-icon mr-2'}>
+          <Icon type={view.iconString} className={classNames(iconClass, 'group-hover:text-text')} />
         </div>
-
-        {!isSystemView(view) && (
-          <div className="meta">
-            {view.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
-
-            {isSelected && (
-              <div className="menu">
-                <a className="item" onClick={onClickEdit}>
-                  Edit
-                </a>
-                <a className="item" onClick={onClickDelete}>
-                  Delete
-                </a>
-              </div>
-            )}
+        {isEditing ? (
+          <input
+            className={'title editing text-mobile-navigation-list-item lg:text-navigation-list-item'}
+            id={`react-tag-${view.uuid}`}
+            onBlur={onBlur}
+            onInput={onInput}
+            value={title}
+            onKeyUp={onKeyUp}
+            spellCheck={false}
+            ref={inputRef}
+          />
+        ) : (
+          <div
+            className={'title overflow-hidden text-left text-mobile-navigation-list-item lg:text-navigation-list-item'}
+            id={`react-tag-${view.uuid}`}
+          >
+            {title}
           </div>
         )}
+        <div className={'count text-base lg:text-sm'}>
+          {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
+          {view.uuid === SystemViewId.Files && tagsState.allFilesCount}
+          {view.uuid === SystemViewId.Conflicts && conflictsCount}
+        </div>
       </div>
-    </>
+
+      {!isSystemView(view) && (
+        <div className="meta">
+          {view.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
+
+          {isSelected && (
+            <div className="menu">
+              <a className="item" onClick={onClickEdit}>
+                Edit
+              </a>
+              <a className="item" onClick={onClickDelete}>
+                Delete
+              </a>
+            </div>
+          )}
+        </div>
+      )}
+    </button>
   )
 }
 
