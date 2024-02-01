@@ -1,4 +1,5 @@
 import { AnyItemInterface, ServerSyncPushContextualPayload } from '@standardnotes/models'
+import { Uuid } from '@standardnotes/domain-core'
 
 import { SyncBackoffServiceInterface } from './SyncBackoffServiceInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -19,6 +20,21 @@ export class SyncBackoffService
 
     this.backoffPenalties = new Map<string, number>()
     this.backoffStartTimestamps = new Map<string, number>()
+  }
+
+  getSmallerSubsetOfItemUuidsInBackoff(): Uuid[] {
+    const uuids = Array.from(this.backoffPenalties.keys())
+
+    const uuidsSortedByPenaltyAscending = uuids.sort((a, b) => {
+      const penaltyA = this.backoffPenalties.get(a) || 0
+      const penaltyB = this.backoffPenalties.get(b) || 0
+
+      return penaltyA - penaltyB
+    })
+
+    const halfLength = Math.ceil(uuidsSortedByPenaltyAscending.length / 2)
+
+    return uuidsSortedByPenaltyAscending.slice(0, halfLength).map((uuid) => Uuid.create(uuid).getValue())
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -47,12 +63,12 @@ export class SyncBackoffService
     return backoffEndTimestamp > Date.now()
   }
 
-  backoffItem(item: AnyItemInterface): void {
-    const backoffPenalty = this.backoffPenalties.get(item.uuid) || 0
+  backoffItem(itemUuid: Uuid): void {
+    const backoffPenalty = this.backoffPenalties.get(itemUuid.value) || 0
 
     const newBackoffPenalty = backoffPenalty === 0 ? 1_000 : backoffPenalty * 2
 
-    this.backoffPenalties.set(item.uuid, newBackoffPenalty)
-    this.backoffStartTimestamps.set(item.uuid, Date.now())
+    this.backoffPenalties.set(itemUuid.value, newBackoffPenalty)
+    this.backoffStartTimestamps.set(itemUuid.value, Date.now())
   }
 }
