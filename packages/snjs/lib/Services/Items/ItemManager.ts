@@ -34,12 +34,12 @@ export class ItemManager extends Services.AbstractService implements Services.It
     Models.SNNote | Models.FileItem,
     Models.NotesAndFilesDisplayOptions
   >
-  private tagDisplayController!: Models.ItemDisplayController<Models.SNTag, Models.TagsDisplayOptions>
+  private tagDisplayController!: Models.ItemDisplayController<Models.SNTag, Models.TagsAndViewsDisplayOptions>
   private itemsKeyDisplayController!: Models.ItemDisplayController<SNItemsKey>
   private componentDisplayController!: Models.ItemDisplayController<Models.ComponentInterface>
   private themeDisplayController!: Models.ItemDisplayController<Models.ComponentInterface>
   private fileDisplayController!: Models.ItemDisplayController<Models.FileItem>
-  private smartViewDisplayController!: Models.ItemDisplayController<Models.SmartView>
+  private smartViewDisplayController!: Models.ItemDisplayController<Models.SmartView, Models.TagsAndViewsDisplayOptions>
 
   constructor(
     private payloadManager: PayloadManager,
@@ -73,10 +73,14 @@ export class ItemManager extends Services.AbstractService implements Services.It
         hiddenContentTypes: [],
       },
     )
-    this.tagDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.TYPES.Tag], {
-      sortBy: 'title',
-      sortDirection: 'asc',
-    })
+    this.tagDisplayController = new Models.ItemDisplayController<Models.SNTag, Models.TagsAndViewsDisplayOptions>(
+      this.collection,
+      [ContentType.TYPES.Tag],
+      {
+        sortBy: 'title',
+        sortDirection: 'asc',
+      },
+    )
     this.itemsKeyDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.TYPES.ItemsKey], {
       sortBy: 'created_at',
       sortDirection: 'asc',
@@ -89,7 +93,10 @@ export class ItemManager extends Services.AbstractService implements Services.It
       sortBy: 'title',
       sortDirection: 'asc',
     })
-    this.smartViewDisplayController = new Models.ItemDisplayController(this.collection, [ContentType.TYPES.SmartView], {
+    this.smartViewDisplayController = new Models.ItemDisplayController<
+      Models.SmartView,
+      Models.TagsAndViewsDisplayOptions
+    >(this.collection, [ContentType.TYPES.SmartView], {
       sortBy: 'title',
       sortDirection: 'asc',
     })
@@ -192,6 +199,16 @@ export class ItemManager extends Services.AbstractService implements Services.It
     })
 
     this.itemCounter.setDisplayOptions(updatedOptions)
+  }
+
+  public setTagsAndViewsDisplayOptions(options: Models.TagsAndViewsDisplayOptions): void {
+    const updatedOptions: Models.TagsAndViewsDisplayOptions = {
+      customFilter: Models.computeUnifiedFilterForDisplayOptions(options, this.collection),
+      ...options,
+    }
+
+    this.tagDisplayController.setDisplayOptions(updatedOptions)
+    this.smartViewDisplayController.setDisplayOptions(updatedOptions)
   }
 
   public setVaultDisplayOptions(options: Models.VaultDisplayOptions): void {

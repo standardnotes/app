@@ -21,6 +21,7 @@ import {
   NotesAndFilesDisplayControllerOptions,
   ComponentInterface,
   ItemStream,
+  TagsAndViewsDisplayOptions,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -130,6 +131,7 @@ export interface ItemManagerInterface extends AbstractService {
   getDisplayableNotes(): SNNote[]
   getDisplayableNotesAndFiles(): (SNNote | FileItem)[]
   setPrimaryItemDisplayOptions(options: NotesAndFilesDisplayControllerOptions): void
+  setTagsAndViewsDisplayOptions(options: TagsAndViewsDisplayOptions): void
   getTagPrefixTitle(tag: SNTag): string | undefined
   getItemLinkedFiles(item: DecryptedItemInterface): FileItem[]
   getItemLinkedNotes(item: DecryptedItemInterface): SNNote[]

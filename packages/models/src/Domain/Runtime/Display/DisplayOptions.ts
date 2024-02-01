@@ -19,7 +19,10 @@ export interface NotesAndFilesDisplayOptions extends GenericDisplayOptions {
   customFilter?: DisplayControllerCustomFilter
 }
 
-export type TagsDisplayOptions = GenericDisplayOptions
+export interface TagsAndViewsDisplayOptions extends GenericDisplayOptions {
+  searchQuery?: SearchQuery
+  customFilter?: DisplayControllerCustomFilter
+}
 
 export interface DisplayControllerDisplayOptions extends GenericDisplayOptions {
   sortBy: CollectionSortProperty
@@ -27,5 +30,5 @@ export interface DisplayControllerDisplayOptions extends GenericDisplayOptions {
 }
 
 export type NotesAndFilesDisplayControllerOptions = NotesAndFilesDisplayOptions & DisplayControllerDisplayOptions
-export type TagsDisplayControllerOptions = TagsDisplayOptions & DisplayControllerDisplayOptions
-export type AnyDisplayOptions = NotesAndFilesDisplayOptions | TagsDisplayOptions | GenericDisplayOptions
+export type TagsDisplayControllerOptions = TagsAndViewsDisplayOptions & DisplayControllerDisplayOptions
+export type AnyDisplayOptions = NotesAndFilesDisplayOptions | TagsAndViewsDisplayOptions | GenericDisplayOptions
