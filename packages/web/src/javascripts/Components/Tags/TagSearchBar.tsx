@@ -48,7 +48,7 @@ const TagSearchBar = ({ navigationController }: Props) => {
       className={classNames(
         'sticky top-0 bg-[inherit] px-4 pt-4',
         isParentScrolling &&
-          'after:absolute after:left-0 after:top-full after:block after:h-4 after:w-full after:border-b after:border-border after:bg-[inherit]',
+          'after:absolute after:left-0 after:top-full after:-z-[1] after:block after:h-4 after:w-full after:border-b after:border-border after:bg-[inherit]',
       )}
       role="search"
       ref={searchBarRef}
