@@ -1057,6 +1057,7 @@ export class SyncService
   }
 
   private markTooLargePayloadsAsBackedOff(operation: AccountSyncOperation): void {
+    const uuidsToBackOff = []
     for (const payload of operation.payloads) {
       this.logger.debug(`Marking item ${payload.uuid} as backed off due to request payload being too large`)
 
@@ -1066,10 +1067,10 @@ export class SyncService
 
         continue
       }
-      const uuid = uuidOrError.getValue()
-
-      this.syncBackoffService.backoffItem(uuid)
+      uuidsToBackOff.push(uuidOrError.getValue())
     }
+
+    this.syncBackoffService.backoffItems(uuidsToBackOff)
   }
 
   private async handleSuccessServerResponse(operation: AccountSyncOperation, response: ServerSyncResponse) {

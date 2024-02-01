@@ -21,7 +21,7 @@ describe('SyncBackoffService', () => {
   it('should be in backoff if backoff was set', () => {
     const service = createService()
 
-    service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000000').getValue())
+    service.backoffItems([Uuid.create('00000000-0000-0000-0000-000000000000').getValue()])
 
     expect(service.isItemInBackoff({ uuid: '00000000-0000-0000-0000-000000000000' } as jest.Mocked<AnyItemInterface>)).toBe(true)
   })
@@ -31,7 +31,7 @@ describe('SyncBackoffService', () => {
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(1_000_000)
 
-    service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000000').getValue())
+    service.backoffItems([Uuid.create('00000000-0000-0000-0000-000000000000').getValue()])
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(2_000_000)
 
@@ -43,19 +43,19 @@ describe('SyncBackoffService', () => {
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(1_000_000)
 
-    service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000000').getValue())
+    service.backoffItems([Uuid.create('00000000-0000-0000-0000-000000000000').getValue()])
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(1_000_000)
     expect(service.isItemInBackoff({ uuid: '00000000-0000-0000-0000-000000000000' } as jest.Mocked<AnyItemInterface>)).toBe(true)
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(1_000_000)
-    service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000000').getValue())
+    service.backoffItems([Uuid.create('00000000-0000-0000-0000-000000000000').getValue()])
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(1_001_000)
     expect(service.isItemInBackoff({ uuid: '00000000-0000-0000-0000-000000000000' } as jest.Mocked<AnyItemInterface>)).toBe(true)
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(1_000_000)
-    service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000000').getValue())
+    service.backoffItems([Uuid.create('00000000-0000-0000-0000-000000000000').getValue()])
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(1_003_000)
     expect(service.isItemInBackoff({ uuid: '00000000-0000-0000-0000-000000000000' } as jest.Mocked<AnyItemInterface>)).toBe(true)
@@ -66,7 +66,7 @@ describe('SyncBackoffService', () => {
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(1_000_000)
 
-    service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000000').getValue())
+    service.backoffItems([Uuid.create('00000000-0000-0000-0000-000000000000').getValue()])
 
     jest.spyOn(Date, 'now').mockReturnValueOnce(1_000_000)
     expect(service.isItemInBackoff({ uuid: '00000000-0000-0000-0000-000000000000' } as jest.Mocked<AnyItemInterface>)).toBe(true)
@@ -85,31 +85,25 @@ describe('SyncBackoffService', () => {
     expect(service.isItemInBackoff({ uuid: '00000000-0000-0000-0000-000000000000' } as jest.Mocked<AnyItemInterface>)).toBe(false)
   })
 
-  it('should get a smaller subset of item uuids in backoff that have lesser penalty', () => {
+  it('should get a smaller and smaller subset of item uuids to back off until single uuids are ruled out', () => {
     const service = createService()
 
-    jest.spyOn(Date, 'now').mockReturnValueOnce(1_000_000)
+    jest.spyOn(Date, 'now').mockReturnValue(1_000_000)
 
-    for (let i = 0; i < 5; i++) {
-      service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000000').getValue())
-    }
-    for (let i = 0; i < 4; i++) {
-      service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000001').getValue())
-    }
-    for (let i = 0; i < 3; i++) {
-      service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000002').getValue())
-    }
-    for (let i = 0; i < 2; i++) {
-      service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000003').getValue())
-    }
-    service.backoffItem(Uuid.create('00000000-0000-0000-0000-000000000004').getValue())
+    service.backoffItems([
+      Uuid.create('00000000-0000-0000-0000-000000000000').getValue(),
+      Uuid.create('00000000-0000-0000-0000-000000000001').getValue(),
+      Uuid.create('00000000-0000-0000-0000-000000000002').getValue(),
+      Uuid.create('00000000-0000-0000-0000-000000000003').getValue(),
+      Uuid.create('00000000-0000-0000-0000-000000000004').getValue(),
+    ])
 
-    const subset = service.getSmallerSubsetOfItemUuidsInBackoff()
+    const expectedSubsetLenghts = [3, 3, 3, 3, 2, 1, 1, 1, 1, 1, 0]
+    for (let i = 0; i < expectedSubsetLenghts.length; i++) {
+      const subset = service.getSmallerSubsetOfItemUuidsInBackoff()
+      service.backoffItems(subset)
 
-    expect(subset.length).toEqual(3)
-
-    expect(subset[0].value).toBe('00000000-0000-0000-0000-000000000004')
-    expect(subset[1].value).toBe('00000000-0000-0000-0000-000000000003')
-    expect(subset[2].value).toBe('00000000-0000-0000-0000-000000000002')
+      expect(subset.length).toBe(expectedSubsetLenghts[i])
+    }
   })
 })
