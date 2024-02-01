@@ -209,7 +209,12 @@ export class NavigationController
     runInAction(() => {
       this.tags = this.items.getDisplayableTags()
       this.starredTags = this.tags.filter((tag) => tag.starred)
-      this.smartViews = this.items.getSmartViews()
+      this.smartViews = this.items.getSmartViews().filter((view) => {
+        if (!this.isSearching) {
+          return true
+        }
+        return !isSystemView(view)
+      })
     })
   }
 

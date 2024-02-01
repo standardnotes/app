@@ -35,8 +35,10 @@ const TagsList: FunctionComponent<Props> = ({ type }: Props) => {
   return (
     <>
       {allTags.length === 0 ? (
-        <div className="no-tags-placeholder text-base opacity-[0.4] lg:text-sm">
-          No tags or folders. Create one using the add button above.
+        <div className="px-4 text-base opacity-50 lg:text-sm">
+          {application.navigationController.isSearching
+            ? 'No tags found. Try a different search.'
+            : 'No tags or folders. Create one using the add button above.'}
         </div>
       ) : (
         <>

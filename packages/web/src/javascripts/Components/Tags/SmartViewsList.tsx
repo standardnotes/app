@@ -18,21 +18,23 @@ const SmartViewsList: FunctionComponent<Props> = ({
 }: Props) => {
   const allViews = navigationController.smartViews
 
-  return (
-    <>
-      {allViews.map((view) => {
-        return (
-          <SmartViewsListItem
-            key={view.uuid}
-            view={view}
-            tagsState={navigationController}
-            features={featuresController}
-            setEditingSmartView={setEditingSmartView}
-          />
-        )
-      })}
-    </>
-  )
+  if (allViews.length === 0 && navigationController.isSearching) {
+    return (
+      <div className="px-4 py-1 text-base opacity-60 lg:text-sm">No smart views found. Try a different search.</div>
+    )
+  }
+
+  return allViews.map((view) => {
+    return (
+      <SmartViewsListItem
+        key={view.uuid}
+        view={view}
+        tagsState={navigationController}
+        features={featuresController}
+        setEditingSmartView={setEditingSmartView}
+      />
+    )
+  })
 }
 
 export default observer(SmartViewsList)
