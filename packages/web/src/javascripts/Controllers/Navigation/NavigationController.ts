@@ -384,7 +384,7 @@ export class NavigationController
     const children = this.items.getTagChildren(tag)
 
     const childrenUuids = children.map((childTag) => childTag.uuid)
-    const childrenTags = this.tags.filter((tag) => childrenUuids.includes(tag.uuid))
+    const childrenTags = this.isSearching ? children : this.tags.filter((tag) => childrenUuids.includes(tag.uuid))
     return childrenTags
   }
 

@@ -91,10 +91,18 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         e?.stopPropagation()
         const shouldShowChildren = !showChildren
         setShowChildren(shouldShowChildren)
-        navigationController.setExpanded(tag, shouldShowChildren)
+        if (!navigationController.isSearching) {
+          navigationController.setExpanded(tag, shouldShowChildren)
+        }
       },
       [showChildren, tag, navigationController],
     )
+
+    useEffect(() => {
+      if (!navigationController.isSearching) {
+        setShowChildren(tag.expanded)
+      }
+    }, [navigationController.isSearching, tag])
 
     const selectCurrentTag = useCallback(async () => {
       await navigationController.setSelectedTag(tag, type, {
