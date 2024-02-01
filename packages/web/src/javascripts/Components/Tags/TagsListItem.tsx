@@ -282,7 +282,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             e.preventDefault()
             onContextMenu(tag, type, e.clientX, e.clientY)
           }}
-          draggable={true}
+          draggable={!navigationController.isSearching}
           onDragStart={onDragStart}
           onDragEnter={onDragEnter}
           onDragExit={removeDragIndicator}

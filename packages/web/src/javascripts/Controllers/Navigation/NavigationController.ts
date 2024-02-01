@@ -678,4 +678,8 @@ export class NavigationController
     this.searchQuery = query
     this.setDisplayOptionsAndReloadTags()
   }
+
+  public get isSearching(): boolean {
+    return this.searchQuery.length > 0
+  }
 }
