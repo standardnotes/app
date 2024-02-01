@@ -3,7 +3,8 @@ import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
 import { observer } from 'mobx-react-lite'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { classNames } from '@standardnotes/snjs'
 
 type Props = {
   navigationController: NavigationController
@@ -16,8 +17,42 @@ const TagSearchBar = ({ navigationController }: Props) => {
     setSearchQuery('')
   }, [setSearchQuery])
 
+  const [isParentScrolling, setIsParentScrolling] = useState(false)
+  const searchBarRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const searchBar = searchBarRef.current
+    if (!searchBar) {
+      return
+    }
+
+    const parent = searchBar.parentElement
+    if (!parent) {
+      return
+    }
+
+    const scrollListener = () => {
+      const { scrollTop } = parent
+      setIsParentScrolling(scrollTop > 0)
+    }
+
+    parent.addEventListener('scroll', scrollListener)
+
+    return () => {
+      parent.removeEventListener('scroll', scrollListener)
+    }
+  }, [])
+
   return (
-    <div className="sticky top-0 bg-[inherit] px-4 pt-4" role="search">
+    <div
+      className={classNames(
+        'sticky top-0 bg-[inherit] px-4 pt-4',
+        isParentScrolling &&
+          'after:absolute after:left-0 after:top-full after:block after:h-4 after:w-full after:border-b after:border-border after:bg-[inherit]',
+      )}
+      role="search"
+      ref={searchBarRef}
+    >
       <DecoratedInput
         autocomplete={false}
         className={{
