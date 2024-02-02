@@ -23,7 +23,7 @@ export const useListKeyboardNavigation = (containerElement: HTMLElement | null, 
       return
     }
     listItems.current = Array.from(containerElement.querySelectorAll('button, div[role="button"]'))
-    if (listItems.current.length > 0) {
+    if (listItems.current[0]) {
       listItems.current[0].tabIndex = 0
     }
   }, [containerElement])
@@ -73,7 +73,9 @@ export const useListKeyboardNavigation = (containerElement: HTMLElement | null, 
     if (containerElement) {
       containerElement.tabIndex = FOCUSABLE_BUT_NOT_TABBABLE
       setLatestListItems()
-      listItems.current[0].tabIndex = 0
+      if (listItems.current[0]) {
+        listItems.current[0].tabIndex = 0
+      }
     }
   }, [containerElement, setLatestListItems])
 
