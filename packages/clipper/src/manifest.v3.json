@@ -23,7 +23,7 @@
     "128": "images/icon128.png"
   },
   "content_security_policy": {
-    "extension_pages": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src * data: blob:; style-src 'unsafe-inline' 'self'; frame-src * blob:; img-src * data: blob:;"
+    "extension_pages": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src * data: blob:; style-src 'self'; frame-src * blob:; img-src * data: blob:;"
   },
   "browser_specific_settings": {
     "gecko": {
