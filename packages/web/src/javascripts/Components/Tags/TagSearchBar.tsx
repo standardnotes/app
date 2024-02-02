@@ -13,8 +13,11 @@ type Props = {
 const TagSearchBar = ({ navigationController }: Props) => {
   const { searchQuery, setSearchQuery } = navigationController
 
+  const inputRef = useRef<HTMLInputElement>(null)
+
   const onClearSearch = useCallback(() => {
     setSearchQuery('')
+    inputRef.current?.focus()
   }, [setSearchQuery])
 
   const [isParentScrolling, setIsParentScrolling] = useState(false)
@@ -54,6 +57,7 @@ const TagSearchBar = ({ navigationController }: Props) => {
       ref={searchBarRef}
     >
       <DecoratedInput
+        ref={inputRef}
         autocomplete={false}
         className={{
           container: '!bg-default px-1',
