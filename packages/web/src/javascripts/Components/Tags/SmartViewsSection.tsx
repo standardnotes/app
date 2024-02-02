@@ -40,13 +40,15 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
           <div className="title text-base md:text-sm">
             <span className="font-bold">Views</span>
           </div>
-          <IconButton
-            focusable={true}
-            icon="add"
-            title="Create a new smart view"
-            className="p-0 text-neutral"
-            onClick={createNewSmartView}
-          />
+          {!navigationController.isSearching && (
+            <IconButton
+              focusable={true}
+              icon="add"
+              title="Create a new smart view"
+              className="p-0 text-neutral"
+              onClick={createNewSmartView}
+            />
+          )}
         </div>
       </div>
       <SmartViewsList

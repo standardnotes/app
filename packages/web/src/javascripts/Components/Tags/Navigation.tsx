@@ -17,6 +17,7 @@ import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import QuickSettingsButton from '../Footer/QuickSettingsButton'
 import VaultSelectionButton from '../Footer/VaultSelectionButton'
 import PreferencesButton from '../Footer/PreferencesButton'
+import TagSearchBar from './TagSearchBar'
 
 type Props = {
   application: WebApplication
@@ -78,6 +79,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           'md:hover:[overflow-y:_overlay] pointer-coarse:md:overflow-y-auto',
         )}
       >
+        <TagSearchBar navigationController={application.navigationController} />
         <SmartViewsSection
           application={application}
           featuresController={application.featuresController}

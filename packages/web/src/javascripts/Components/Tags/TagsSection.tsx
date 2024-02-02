@@ -73,7 +73,9 @@ const TagsSection: FunctionComponent = () => {
               hasMigration={hasMigration}
               onClickMigration={runMigration}
             />
-            <TagsSectionAddButton tags={application.navigationController} features={application.featuresController} />
+            {!application.navigationController.isSearching && (
+              <TagsSectionAddButton tags={application.navigationController} features={application.featuresController} />
+            )}
           </div>
         </div>
         <TagsList type="all" />

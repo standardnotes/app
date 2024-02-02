@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { Fragment, FunctionComponent, useMemo, useRef } from 'react'
+import { Fragment, FunctionComponent, useMemo, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
@@ -22,9 +22,9 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
 }) => {
   const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedEntry } = noteHistoryController
 
-  const remoteHistoryListRef = useRef<HTMLDivElement>(null)
+  const [listElement, setListElement] = useState<HTMLDivElement | null>(null)
 
-  useListKeyboardNavigation(remoteHistoryListRef)
+  useListKeyboardNavigation(listElement)
 
   const remoteHistoryLength = useMemo(() => remoteHistory?.map((group) => group.entries).flat().length, [remoteHistory])
 
@@ -33,7 +33,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
       className={`flex h-full w-full flex-col focus:shadow-none ${
         isFetchingRemoteHistory || !remoteHistoryLength ? 'items-center justify-center' : ''
       }`}
-      ref={remoteHistoryListRef}
+      ref={setListElement}
     >
       {isFetchingRemoteHistory && <Spinner className="h-5 w-5" />}
       {remoteHistory?.map((group) => {

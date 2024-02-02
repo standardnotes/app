@@ -33,7 +33,7 @@ import {
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { FeaturesController } from '../FeaturesController'
-import { destroyAllObjectProperties } from '@/Utils'
+import { debounce, destroyAllObjectProperties } from '@/Utils'
 import { isValidFutureSiblings, rootTags, tagSiblings } from './Utils'
 import { AnyTag } from './AnyTagType'
 import { CrossControllerEvent } from '../CrossControllerEvent'
@@ -64,6 +64,8 @@ export class NavigationController
   contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 }
   contextMenuTag: SNTag | undefined = undefined
   contextMenuTagSection: TagListSectionType | undefined = undefined
+
+  searchQuery = ''
 
   private readonly tagsCountsState: TagsCountsState
 
@@ -130,6 +132,9 @@ export class NavigationController
       isInFilesView: computed,
 
       hydrateFromPersistedValue: action,
+
+      searchQuery: observable,
+      setSearchQuery: action,
     })
 
     this.disposers.push(
@@ -196,13 +201,20 @@ export class NavigationController
         },
       }),
     )
+
+    this.setDisplayOptionsAndReloadTags = debounce(this.setDisplayOptionsAndReloadTags, 50)
   }
 
   private reloadTags(): void {
     runInAction(() => {
       this.tags = this.items.getDisplayableTags()
       this.starredTags = this.tags.filter((tag) => tag.starred)
-      this.smartViews = this.items.getSmartViews()
+      this.smartViews = this.items.getSmartViews().filter((view) => {
+        if (!this.isSearching) {
+          return true
+        }
+        return !isSystemView(view)
+      })
     })
   }
 
@@ -377,7 +389,7 @@ export class NavigationController
     const children = this.items.getTagChildren(tag)
 
     const childrenUuids = children.map((childTag) => childTag.uuid)
-    const childrenTags = this.tags.filter((tag) => childrenUuids.includes(tag.uuid))
+    const childrenTags = this.isSearching ? children : this.tags.filter((tag) => childrenUuids.includes(tag.uuid))
     return childrenTags
   }
 
@@ -655,5 +667,24 @@ export class NavigationController
         mutator.title = newTitle
       })
     }
+  }
+
+  private setDisplayOptionsAndReloadTags = () => {
+    this.items.setTagsAndViewsDisplayOptions({
+      searchQuery: {
+        query: this.searchQuery,
+        includeProtectedNoteText: false,
+      },
+    })
+    this.reloadTags()
+  }
+
+  public setSearchQuery = (query: string) => {
+    this.searchQuery = query
+    this.setDisplayOptionsAndReloadTags()
+  }
+
+  public get isSearching(): boolean {
+    return this.searchQuery.length > 0
   }
 }
