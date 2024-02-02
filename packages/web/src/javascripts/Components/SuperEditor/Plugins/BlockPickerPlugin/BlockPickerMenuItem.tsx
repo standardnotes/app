@@ -1,6 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
-import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '../ClassNames'
+import { PopoverItemClassNames } from '../ClassNames'
 import { BlockPickerOption } from './BlockPickerOption'
+import { classNames } from '@standardnotes/snjs'
 
 export function BlockPickerMenuItem({
   index,
@@ -19,9 +20,11 @@ export function BlockPickerMenuItem({
     <li
       key={option.key}
       tabIndex={-1}
-      className={`gap-3 border-b-[0.5px] border-border ${PopoverItemClassNames} ${
-        isSelected ? PopoverItemSelectedClassNames : ''
-      }`}
+      className={classNames(
+        'gap-3 border-b-[0.5px] border-border px-3 py-2',
+        isSelected && 'bg-info-backdrop',
+        PopoverItemClassNames,
+      )}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}

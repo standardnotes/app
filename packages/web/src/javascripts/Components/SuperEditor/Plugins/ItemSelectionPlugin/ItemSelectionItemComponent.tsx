@@ -1,7 +1,8 @@
 import LinkedItemMeta from '@/Components/LinkedItems/LinkedItemMeta'
 import { LinkedItemSearchResultsAddTagOption } from '@/Components/LinkedItems/LinkedItemSearchResultsAddTagOption'
-import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '../ClassNames'
+import { PopoverItemClassNames } from '../ClassNames'
 import { ItemOption } from './ItemOption'
+import { classNames } from '@standardnotes/snjs'
 
 type Props = {
   index: number
@@ -17,7 +18,12 @@ export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouse
     <li
       key={option.key}
       tabIndex={-1}
-      className={`gap-4 ${PopoverItemClassNames} ${isSelected ? PopoverItemSelectedClassNames : ''}`}
+      className={classNames(
+        'gap-4',
+        PopoverItemClassNames,
+        isSelected && 'bg-info-backdrop',
+        option.item && 'px-3 py-2',
+      )}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}

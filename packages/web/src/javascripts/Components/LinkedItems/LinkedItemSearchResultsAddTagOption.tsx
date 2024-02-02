@@ -15,7 +15,6 @@ export const LinkedItemSearchResultsAddTagOption = forwardRef(
         className={classNames(
           'group flex w-full items-center gap-2 overflow-hidden px-3 py-2 hover:bg-contrast hover:text-foreground',
           'focus:bg-info-backdrop [&[data-active-item]]:bg-info-backdrop',
-          isFocused ? 'bg-info-backdrop text-foreground' : '',
         )}
         onClick={() => {
           if (onClickCallback) {
