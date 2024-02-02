@@ -282,6 +282,11 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             isBeingDraggedOver && 'is-drag-over',
           )}
           onClick={selectCurrentTag}
+          onKeyDown={(event) => {
+            if (event.key === KeyboardKey.Enter || event.key === KeyboardKey.Space) {
+              selectCurrentTag().catch(console.error)
+            }
+          }}
           ref={tagRef}
           style={{
             paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
