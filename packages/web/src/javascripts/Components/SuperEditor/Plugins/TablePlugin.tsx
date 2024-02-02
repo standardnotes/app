@@ -64,6 +64,9 @@ export function RemoveBrokenTablesPlugin() {
         }
         const hasNextSibling = !!node.getNextSibling()
         const hasPreviousSibling = !!node.getPreviousSibling()
+        if (!node.getParent()) {
+          return
+        }
         if (!hasNextSibling) {
           node.insertAfter($createParagraphNode())
         } else if (!hasPreviousSibling) {

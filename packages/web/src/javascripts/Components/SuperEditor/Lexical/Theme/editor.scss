@@ -116,6 +116,9 @@
   margin: 0.5rem 0;
   color: var(--sn-stylekit-contrast-foreground-color);
 }
+.Lexical__tableSelection *::selection {
+  background-color: transparent !important;
+}
 .Lexical__tableSelected {
   outline: 2px solid rgb(60, 132, 244);
 }
@@ -149,7 +152,7 @@
   top: 0;
 }
 .Lexical__tableCellHeader {
-  background-color: var(--sn-stylekit-contrast-background-color) !important;
+  background-color: var(--sn-stylekit-contrast-background-color);
   border-color: var(--sn-stylekit-contrast-border-color);
   text-align: start;
 }
