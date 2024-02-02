@@ -141,6 +141,10 @@ export class NavigationController
       this.items.streamItems([ContentType.TYPES.Tag, ContentType.TYPES.SmartView], ({ changed, removed }) => {
         this.reloadTags()
 
+        if (this.contextMenuTag && FindItem(removed, this.contextMenuTag.uuid)) {
+          this.setContextMenuTag(undefined)
+        }
+
         runInAction(() => {
           const currentSelectedTag = this.selected_
 
