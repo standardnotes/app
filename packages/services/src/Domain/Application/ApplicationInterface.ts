@@ -13,6 +13,7 @@ import {
   MfaServiceInterface,
   GenerateUuid,
   CreateDecryptedBackupFile,
+  SyncBackoffServiceInterface,
 } from '@standardnotes/services'
 import { VaultLockServiceInterface } from './../VaultLock/VaultLockServiceInterface'
 import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
@@ -100,6 +101,7 @@ export interface ApplicationInterface {
   get storage(): StorageServiceInterface
   get subscriptions(): SubscriptionManagerInterface
   get sync(): SyncServiceInterface
+  get syncBackoff(): SyncBackoffServiceInterface
   get user(): UserServiceInterface
   get vaultInvites(): VaultInviteServiceInterface
   get vaultLocks(): VaultLockServiceInterface

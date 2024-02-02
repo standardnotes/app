@@ -81,6 +81,7 @@ import {
   CreateDecryptedBackupFile,
   CreateEncryptedBackupFile,
   WebSocketsService,
+  SyncBackoffServiceInterface,
 } from '@standardnotes/services'
 import {
   SNNote,
@@ -1014,6 +1015,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get sync(): SyncServiceInterface {
     return this.dependencies.get<SyncServiceInterface>(TYPES.SyncService)
+  }
+
+  public get syncBackoff(): SyncBackoffServiceInterface {
+    return this.dependencies.get<SyncBackoffServiceInterface>(TYPES.SyncBackoffService)
   }
 
   public get user(): UserServiceInterface {

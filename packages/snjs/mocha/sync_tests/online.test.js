@@ -627,6 +627,69 @@ describe('online syncing', function () {
     await secondContext.deinit()
   }).timeout(Factory.SixtySecondTimeout)
 
+  it('should eventually sync notes that are backed off for a penalty time because of creating too large of a payload', async function () {
+    const response = await fetch('/mocha/assets/small_file.md')
+    const buffer = new Uint8Array(await response.arrayBuffer())
+    const contents = buffer.toString()
+    const numberOfNotesToExceedThe1MBPayloadLimit = Math.ceil(100_000 / buffer.length) + 1
+
+    expect(application.items.getDirtyItems().length).to.equal(0)
+
+    for (let i = 0; i < numberOfNotesToExceedThe1MBPayloadLimit; i++) {
+      await context.createUnsyncedNote(`note ${i}`, contents)
+      expectedItemCount++
+    }
+    await context.sync()
+
+    expect(application.items.getDirtyItems().length).to.equal(numberOfNotesToExceedThe1MBPayloadLimit)
+
+    while (application.items.getDirtyItems().length > 0) {
+      application.items.getDirtyItems().length
+
+      await context.sync()
+
+      await Factory.sleep(1)
+    }
+
+    expect(application.items.getDirtyItems().length).to.equal(0)
+  }).timeout(Factory.TwentySecondTimeout)
+
+  it('should not sync notes that solely create a too large payload and are backed off for a penalty time', async function () {
+    const response = await fetch('/mocha/assets/small_file.md')
+    const buffer = new Uint8Array(await response.arrayBuffer())
+    const contents = buffer.toString()
+    const numberOfNotesToExceedThe1MBPayloadLimit = Math.ceil(100_000 / buffer.length) + 1
+
+    expect(application.items.getDirtyItems().length).to.equal(0)
+
+    let hugeContents = ''
+    for (let i = 0; i < numberOfNotesToExceedThe1MBPayloadLimit; i++) {
+      hugeContents += contents
+    }
+    const hugeNote = await context.createUnsyncedNote(`Huge note that never should be synced`, hugeContents)
+    expectedItemCount++
+    const smallNote = await context.createUnsyncedNote(`Small note that should be synced`, 'Small note that should be synced')
+    expectedItemCount++
+
+    await context.sync()
+
+    expect(application.items.getDirtyItems().length).to.equal(2)
+
+    while (application.items.getDirtyItems().length > 1) {
+      await Factory.sleep(1)
+
+      application.items.getDirtyItems().length
+
+      await context.sync()
+    }
+
+    expect(application.syncBackoff.isItemInBackoff(smallNote)).to.equal(false)
+    expect(application.syncBackoff.isItemInBackoff(hugeNote)).to.equal(true)
+
+    const hugeNoteIsNotConsideredForAPotentialCandidateForNextSync = application.syncBackoff.getSmallerSubsetOfItemUuidsInBackoff().length === 0
+    expect(hugeNoteIsNotConsideredForAPotentialCandidateForNextSync).to.equal(true)
+  }).timeout(Factory.TwentySecondTimeout)
+
   it('syncing an item should storage it encrypted', async function () {
     const note = await Factory.createMappedNote(application)
     await application.mutator.setItemDirty(note)
