@@ -4,7 +4,7 @@ import {
   KeyboardEventHandler,
   useCallback,
   useImperativeHandle,
-  useRef,
+  useState,
 } from 'react'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
@@ -33,7 +33,7 @@ const Menu = forwardRef(
     }: MenuProps,
     forwardedRef,
   ) => {
-    const menuElementRef = useRef<HTMLMenuElement>(null)
+    const [menuElement, setMenuElement] = useState<HTMLMenuElement | null>(null)
 
     const handleKeyDown: KeyboardEventHandler<HTMLMenuElement> = useCallback(
       (event) => {
@@ -49,11 +49,10 @@ const Menu = forwardRef(
 
     const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
-    const { setInitialFocus } = useListKeyboardNavigation(
-      menuElementRef,
+    const { setInitialFocus } = useListKeyboardNavigation(menuElement, {
       initialFocus,
-      isMobileScreen ? false : shouldAutoFocus,
-    )
+      shouldAutoFocus: isMobileScreen ? false : shouldAutoFocus,
+    })
 
     useImperativeHandle(forwardedRef, () => ({
       focus: () => {
@@ -65,7 +64,7 @@ const Menu = forwardRef(
       <menu
         className={`m-0 list-none px-4 focus:shadow-none md:px-0 ${className}`}
         onKeyDown={handleKeyDown}
-        ref={mergeRefs([menuElementRef, forwardedRef])}
+        ref={mergeRefs([setMenuElement, forwardedRef])}
         style={style}
         aria-label={a11yLabel}
         {...props}

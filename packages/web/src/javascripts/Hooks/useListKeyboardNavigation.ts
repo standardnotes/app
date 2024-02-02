@@ -2,12 +2,21 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useCallback, useEffect, useRef } from 'react'
 
-export const useListKeyboardNavigation = (
-  containerElement: HTMLElement | null,
-  initialFocus = 0,
-  shouldAutoFocus = false,
-  shouldWrapAround = true,
-) => {
+type Options = {
+  initialFocus?: number
+  shouldAutoFocus?: boolean
+  shouldWrapAround?: boolean
+  resetLastFocusedOnBlur?: boolean
+}
+
+export const useListKeyboardNavigation = (containerElement: HTMLElement | null, options?: Options) => {
+  const {
+    initialFocus = 0,
+    shouldAutoFocus = false,
+    shouldWrapAround = true,
+    resetLastFocusedOnBlur = false,
+  } = options || {}
+
   const listItems = useRef<HTMLButtonElement[]>([])
   const setLatestListItems = useCallback(() => {
     if (!containerElement) {
@@ -125,12 +134,13 @@ export const useListKeyboardNavigation = (
 
   const focusOutHandler = useCallback(
     (event: FocusEvent) => {
-      if (containerElement && containerElement.contains(event.relatedTarget as Node)) {
+      const isFocusInContainer = containerElement && containerElement.contains(event.relatedTarget as Node)
+      if (isFocusInContainer || !resetLastFocusedOnBlur) {
         return
       }
       focusedItemIndex.current = initialFocus
     },
-    [containerElement, initialFocus],
+    [containerElement, initialFocus, resetLastFocusedOnBlur],
   )
 
   useEffect(() => {

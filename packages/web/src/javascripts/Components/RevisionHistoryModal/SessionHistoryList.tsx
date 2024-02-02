@@ -1,4 +1,4 @@
-import { Fragment, FunctionComponent, useMemo, useRef } from 'react'
+import { Fragment, FunctionComponent, useMemo, useState } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { observer } from 'mobx-react-lite'
@@ -12,9 +12,9 @@ type Props = {
 const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController, onSelectRevision }) => {
   const { sessionHistory, selectedRevision, selectSessionRevision } = noteHistoryController
 
-  const sessionHistoryListRef = useRef<HTMLDivElement>(null)
+  const [listElement, setListElement] = useState<HTMLDivElement | null>(null)
 
-  useListKeyboardNavigation(sessionHistoryListRef)
+  useListKeyboardNavigation(listElement)
 
   const sessionHistoryLength = useMemo(
     () => sessionHistory?.map((group) => group.entries).flat().length,
@@ -26,7 +26,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController, o
       className={`flex h-full w-full flex-col focus:shadow-none ${
         !sessionHistoryLength ? 'items-center justify-center' : ''
       }`}
-      ref={sessionHistoryListRef}
+      ref={setListElement}
     >
       {sessionHistory?.map((group) => {
         if (group.entries && group.entries.length) {

@@ -1,5 +1,5 @@
 import { Action } from '@standardnotes/snjs'
-import { FunctionComponent, useRef } from 'react'
+import { FunctionComponent, useState } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
@@ -13,16 +13,16 @@ type Props = {
 const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistoryController, onSelectRevision }) => {
   const { selectLegacyRevision, selectedEntry } = noteHistoryController
 
-  const legacyHistoryListRef = useRef<HTMLDivElement>(null)
+  const [listElement, setListElement] = useState<HTMLDivElement | null>(null)
 
-  useListKeyboardNavigation(legacyHistoryListRef)
+  useListKeyboardNavigation(listElement)
 
   return (
     <div
       className={`flex h-full w-full flex-col focus:shadow-none ${
         !legacyHistory?.length ? 'items-center justify-center' : ''
       }`}
-      ref={legacyHistoryListRef}
+      ref={setListElement}
     >
       {legacyHistory?.map((entry) => {
         const selectedEntryUrl = (selectedEntry as Action)?.subactions?.[0].url

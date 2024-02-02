@@ -35,7 +35,12 @@ const TagsList: FunctionComponent<Props> = ({ type }: Props) => {
 
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
 
-  useListKeyboardNavigation(container, undefined, false, false)
+  useListKeyboardNavigation(container, {
+    initialFocus: 0,
+    shouldAutoFocus: false,
+    shouldWrapAround: false,
+    resetLastFocusedOnBlur: true,
+  })
 
   if (allTags.length === 0) {
     return (
