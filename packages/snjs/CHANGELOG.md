@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.207.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.206.0...@standardnotes/snjs@2.207.0) (2024-02-02)
+
+### Features
+
+* Added search bar to navigation panel for searching tags and smart views ([#2815](https://github.com/standardnotes/app/issues/2815)) ([b07abaa](https://github.com/standardnotes/app/commit/b07abaa5df9ad580355f8179bab616002a33af33))
+
 # [2.206.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.205.2...@standardnotes/snjs@2.206.0) (2024-01-27)
 
 ### Features

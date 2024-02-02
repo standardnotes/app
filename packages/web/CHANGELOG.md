@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.188.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.187.3...@standardnotes/web@3.188.0) (2024-02-02)
+
+### Features
+
+* Added search bar to navigation panel for searching tags and smart views ([#2815](https://github.com/standardnotes/app/issues/2815)) ([b07abaa](https://github.com/standardnotes/app/commit/b07abaa5df9ad580355f8179bab616002a33af33))
+
 ## [3.187.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.187.2...@standardnotes/web@3.187.3) (2024-01-31)
 
 **Note:** Version bump only for package @standardnotes/web

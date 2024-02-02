@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/filepicker",
-  "version": "1.28.115",
+  "version": "1.28.116",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },

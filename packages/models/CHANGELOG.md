@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.54.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.53.0...@standardnotes/models@1.54.0) (2024-02-02)
+
+### Features
+
+* Added search bar to navigation panel for searching tags and smart views ([#2815](https://github.com/standardnotes/app/issues/2815)) ([b07abaa](https://github.com/standardnotes/app/commit/b07abaa5df9ad580355f8179bab616002a33af33))
+
 # [1.53.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.52.0...@standardnotes/models@1.53.0) (2024-01-27)
 
 ### Features
