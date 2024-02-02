@@ -117,7 +117,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       onAppLaunch()
     }
 
-    const removeAppObserver = application.addEventObserver(async (eventName) => {
+    const removeAppObserver = application.addEventObserver(async (eventName, data) => {
       switch (eventName) {
         case ApplicationEvent.Started:
           onAppStart()
@@ -153,12 +153,19 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             message: 'Too many requests. Please try again later.',
           })
           break
-        case ApplicationEvent.SyncPayloadTooLarge:
+        case ApplicationEvent.SyncPayloadTooLarge: {
+          if ('uuids' in (data as Record<string, unknown>) === false) {
+            return
+          }
+          const notes = application.items.findItems((data as Record<string, unknown>).uuids as string[])
+          const noteTitles = notes.map((note) => `"${note.title}"`).join(', ')
+
           addToast({
             type: ToastType.Error,
-            message: 'Unable to sync. The payload of the request is too large.',
+            message: `Unable to sync. The payload of the request is too large for the following notes: ${noteTitles}`,
           })
           break
+        }
       }
     })
 

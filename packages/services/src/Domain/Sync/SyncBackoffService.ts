@@ -6,7 +6,7 @@ import { AbstractService } from '../Service/AbstractService'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
-import { ApplicationEvent } from '../Event/ApplicationEvent'
+import { SyncEvent } from '../Event/SyncEvent'
 
 export class SyncBackoffService
   extends AbstractService
@@ -63,12 +63,18 @@ export class SyncBackoffService
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === ApplicationEvent.CompletedIncrementalSync) {
-      for (const payload of (event.payload as Record<string, unknown>)
-        .uploadedPayloads as ServerSyncPushContextualPayload[]) {
-        this.backoffPenalties.delete(payload.uuid)
-        this.backoffStartTimestamps.delete(payload.uuid)
-      }
+    if (
+      event.type !== SyncEvent.PaginatedSyncRequestCompleted ||
+      event.payload === undefined ||
+      (event.payload as Record<string, unknown>).uploadedPayloads === undefined
+    ) {
+      return
+    }
+
+    for (const payload of (event.payload as Record<string, unknown>)
+      .uploadedPayloads as ServerSyncPushContextualPayload[]) {
+      this.backoffPenalties.delete(payload.uuid)
+      this.backoffStartTimestamps.delete(payload.uuid)
     }
   }
 

@@ -1047,7 +1047,6 @@ export class SyncService
     }
 
     if (response.status === PAYLOAD_TOO_LARGE) {
-      void this.notifyEvent(SyncEvent.PayloadTooLarge)
       this.opStatus?.setIsTooLarge()
     }
 
@@ -1069,6 +1068,10 @@ export class SyncService
       }
       uuidsToBackOff.push(uuidOrError.getValue())
     }
+
+    void this.notifyEvent(SyncEvent.PayloadTooLarge, {
+      uuids: uuidsToBackOff.map((uuid) => uuid.value),
+    })
 
     this.syncBackoffService.backoffItems(uuidsToBackOff)
   }
