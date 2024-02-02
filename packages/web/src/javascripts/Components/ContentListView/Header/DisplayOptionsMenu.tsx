@@ -10,6 +10,7 @@ import {
   TagPreferences,
   VectorIconNameOrEmoji,
   PrefDefaults,
+  isTag,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
@@ -86,13 +87,16 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   selectedTag,
   paneController,
 }) => {
+  const isRegularTag = isTag(selectedTag)
   const isSystemTag = isSmartView(selectedTag) && isSystemView(selectedTag)
   const selectedTagPreferences = isSystemTag
     ? application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
     : selectedTag.preferences
-  const [currentMode, setCurrentMode] = useState<PreferenceMode>(selectedTagPreferences ? 'tag' : 'global')
-  const [preferences, setPreferences] = useState<TagPreferences>({})
   const hasSubscription = application.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription()
+  const [currentMode, setCurrentMode] = useState<PreferenceMode>(
+    (hasSubscription && isRegularTag) || selectedTagPreferences ? 'tag' : 'global',
+  )
+  const [preferences, setPreferences] = useState<TagPreferences>({})
   const controlsDisabled = currentMode === 'tag' && !hasSubscription
   const isDailyEntry = selectedTagPreferences?.entryMode === 'daily'
 
