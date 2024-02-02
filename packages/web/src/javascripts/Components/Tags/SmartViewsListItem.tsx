@@ -113,7 +113,11 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
   return (
     <button
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-      className={classNames('tag group px-3.5 py-0.5 md:py-0', isSelected && 'selected', isFaded && 'opacity-50')}
+      className={classNames(
+        'tag group px-3.5 py-0.5 focus-visible:!shadow-inner md:py-0',
+        isSelected && 'selected',
+        isFaded && 'opacity-50',
+      )}
       onClick={selectCurrentTag}
       onContextMenu={(event) => {
         event.preventDefault()

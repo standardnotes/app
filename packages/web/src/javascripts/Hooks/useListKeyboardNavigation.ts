@@ -23,6 +23,9 @@ export const useListKeyboardNavigation = (containerElement: HTMLElement | null, 
       return
     }
     listItems.current = Array.from(containerElement.querySelectorAll('button, div[role="button"]'))
+    if (listItems.current.length > 0) {
+      listItems.current[0].tabIndex = 0
+    }
   }, [containerElement])
 
   const focusedItemIndex = useRef<number>(initialFocus)
@@ -125,12 +128,6 @@ export const useListKeyboardNavigation = (containerElement: HTMLElement | null, 
       }, FIRST_ITEM_FOCUS_TIMEOUT)
     }
   }, [setInitialFocus, shouldAutoFocus])
-
-  useEffect(() => {
-    if (listItems.current.length > 0) {
-      listItems.current[0].tabIndex = 0
-    }
-  }, [])
 
   const focusOutHandler = useCallback(
     (event: FocusEvent) => {

@@ -277,7 +277,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           role="button"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
           className={classNames(
-            'tag group px-3.5 py-0.5 md:py-0',
+            'tag group px-3.5 py-0.5 focus-visible:!shadow-inner md:py-0',
             (isSelected || isContextMenuOpenForTag) && 'selected',
             isBeingDraggedOver && 'is-drag-over',
           )}
