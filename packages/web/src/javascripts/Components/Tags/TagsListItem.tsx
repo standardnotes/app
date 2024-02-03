@@ -86,16 +86,26 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       setTitle(tag.title || '')
     }, [setTitle, tag])
 
+    const setTagExpanded = useCallback(
+      (expanded: boolean) => {
+        if (!hasChildren) {
+          return
+        }
+        setShowChildren(expanded)
+        if (!navigationController.isSearching) {
+          navigationController.setExpanded(tag, expanded)
+        }
+      },
+      [hasChildren, navigationController, tag],
+    )
+
     const toggleChildren = useCallback(
       (e?: MouseEvent) => {
         e?.stopPropagation()
         const shouldShowChildren = !showChildren
-        setShowChildren(shouldShowChildren)
-        if (!navigationController.isSearching) {
-          navigationController.setExpanded(tag, shouldShowChildren)
-        }
+        setTagExpanded(shouldShowChildren)
       },
-      [showChildren, tag, navigationController],
+      [showChildren, setTagExpanded],
     )
 
     useEffect(() => {
@@ -285,6 +295,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           onKeyDown={(event) => {
             if (event.key === KeyboardKey.Enter || event.key === KeyboardKey.Space) {
               selectCurrentTag().catch(console.error)
+            } else if (event.key === KeyboardKey.Left) {
+              setTagExpanded(false)
+            } else if (event.key === KeyboardKey.Right) {
+              setTagExpanded(true)
             }
           }}
           ref={tagRef}
