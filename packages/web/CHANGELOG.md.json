@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.189.0",
+      "title": "[3.189.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.188.1...@standardnotes/web@3.189.0) (2024-02-03)",
+      "date": null,
+      "body": "### Features\n\n* Improved keyboard navigation for tags and smart views. Tags can now be expanded/closed using left and right arrow keys. ([2d168a6](https://github.com/standardnotes/app/commit/2d168a68cf3f4b04adac0c7abec68a557613238b))",
+      "parsed": {
+        "_": [
+          "Improved keyboard navigation for tags and smart views. Tags can now be expanded/closed using left and right arrow keys. (2d168a6)"
+        ],
+        "Features": [
+          "Improved keyboard navigation for tags and smart views. Tags can now be expanded/closed using left and right arrow keys. (2d168a6)"
+        ]
+      }
+    },
+    {
       "version": "3.188.1",
       "title": "[3.188.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.188.0...@standardnotes/web@3.188.1) (2024-02-02)",
       "date": null,

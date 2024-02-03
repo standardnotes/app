@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.189.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.188.1...@standardnotes/web@3.189.0) (2024-02-03)
+
+### Features
+
+* Improved keyboard navigation for tags and smart views. Tags can now be expanded/closed using left and right arrow keys. ([2d168a6](https://github.com/standardnotes/app/commit/2d168a68cf3f4b04adac0c7abec68a557613238b))
+
 ## [3.188.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.188.0...@standardnotes/web@3.188.1) (2024-02-02)
 
 **Note:** Version bump only for package @standardnotes/web
