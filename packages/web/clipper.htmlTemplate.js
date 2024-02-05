@@ -9,14 +9,7 @@ module.exports = ({ htmlWebpackPlugin }) => {
 		<title>Standard Notes</title>
 		<script src="./globals.js"></script>
 		${htmlWebpackPlugin.tags.headTags}
-		<style>
-			html,
-			body {
-				min-width: 350px;
-				max-width: 350px;
-				min-height: 260px;
-			}
-		</style>
+		<link rel="stylesheet" href="./style.css" />
 	</head>
 	<body></body>
 	</html>`
