@@ -117,7 +117,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       onAppLaunch()
     }
 
-    const removeAppObserver = application.addEventObserver(async (eventName) => {
+    const removeAppObserver = application.addEventObserver(async (eventName, data?: unknown) => {
       if (eventName === ApplicationEvent.Started) {
         onAppStart()
       } else if (eventName === ApplicationEvent.Launched) {
@@ -146,6 +146,22 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
         addToast({
           type: ToastType.Error,
           message: 'Too many requests. Please try again later.',
+        })
+      } else if (eventName === ApplicationEvent.FailedSync) {
+        let errorMessage = 'Sync error. Please try again later.'
+        if (
+          data &&
+          typeof data === 'object' &&
+          'error' in data &&
+          data.error &&
+          typeof data.error === 'object' &&
+          'message' in data.error
+        ) {
+          errorMessage = data.error.message as string
+        }
+        addToast({
+          type: ToastType.Error,
+          message: errorMessage,
         })
       }
     })
