@@ -1,0 +1,71 @@
+diff --git a/LexicalList.dev.js b/LexicalList.dev.js
+index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..7965886b460ec64dbfad0025e5076ccb656d51c3 100644
+--- a/LexicalList.dev.js
++++ b/LexicalList.dev.js
+@@ -140,26 +140,18 @@ function wrapInListItem(node) {
+ function $isSelectingEmptyListItem(anchorNode, nodes) {
+   return $isListItemNode(anchorNode) && (nodes.length === 0 || nodes.length === 1 && anchorNode.is(nodes[0]) && anchorNode.getChildrenSize() === 0);
+ }
+-function $getListItemValue(listItem) {
+-  const list = listItem.getParent();
+-  let value = 1;
+-  if (list != null) {
+-    if (!$isListNode(list)) {
+-      {
+-        throw Error(`$getListItemValue: list node is not parent of list item node`);
++function $getListItemValues(list) {
++  let value = list.getStart();
++  const keyToValue = new Map();
++  for (const child of list.getChildren()) {
++    if ($isListItemNode(child)) {
++      keyToValue.set(child.getKey(), value);
++      if (!$isListNode(child.getFirstChild())) {
++        value++;
+       }
+-    } else {
+-      value = list.getStart();
+     }
+   }
+-  const siblings = listItem.getPreviousSiblings();
+-  for (let i = 0; i < siblings.length; i++) {
+-    const sibling = siblings[i];
+-    if ($isListItemNode(sibling) && !$isListNode(sibling.getFirstChild())) {
+-      value++;
+-    }
+-  }
+-  return value;
++  return keyToValue;
+ }
+ 
+ /**
+@@ -360,11 +352,15 @@ function removeList(editor) {
+ function updateChildrenListItemValue(list, children) {
+   const childrenOrExisting = children || list.getChildren();
+   if (childrenOrExisting !== undefined) {
++    const keyValueMap = $getListItemValues(list);
+     for (let i = 0; i < childrenOrExisting.length; i++) {
+       const child = childrenOrExisting[i];
+       if ($isListItemNode(child)) {
+         const prevValue = child.getValue();
+-        const nextValue = $getListItemValue(child);
++        const nextValue = keyValueMap.get(child.getKey());
++        if (!(nextValue !== undefined)) {
++          throw Error(`updateChildrenListItemValue: list node is not parent of list item node`);
++        }
+         if (prevValue !== nextValue) {
+           child.setValue(nextValue);
+         }
+diff --git a/LexicalList.prod.js b/LexicalList.prod.js
+index 4687f6a90633c254974aedd06538d334f84de249..462d3ab6f912f9e843d996ce19512529608829dd 100644
+--- a/LexicalList.prod.js
++++ b/LexicalList.prod.js
+@@ -8,7 +8,8 @@
+ function n(a){let b=1;for(a=a.getParent();null!=a;){if(p(a)){a=a.getParent();if(q(a)){b++;a=a.getParent();continue}l(40)}break}return b}function r(a){a=a.getParent();q(a)||l(40);let b=a;for(;null!==b;)b=b.getParent(),q(b)&&(a=b);return a}function t(a){let b=[];a=a.getChildren().filter(p);for(let c=0;c<a.length;c++){let d=a[c],e=d.getFirstChild();q(e)?b=b.concat(t(e)):b.push(d)}return b}function u(a){return p(a)&&q(a.getFirstChild())}
+ function v(a){for(;null==a.getNextSibling()&&null==a.getPreviousSibling();){let b=a.getParent();if(null==b||!p(a)&&!q(a))break;a=b}a.remove()}function w(a){return y().append(a)}function z(a,b){return p(a)&&(0===b.length||1===b.length&&a.is(b[0])&&0===a.getChildrenSize())}function C(a,b){a.splice(a.getChildrenSize(),0,b)}
+ function D(a,b){if(q(a))return a;let c=a.getPreviousSibling(),d=a.getNextSibling(),e=y();e.setFormat(a.getFormatType());e.setIndent(a.getIndent());C(e,a.getChildren());if(q(c)&&b===c.getListType())return c.append(e),a.remove(),q(d)&&b===d.getListType()&&(C(c,d.getChildren()),d.remove()),c;if(q(d)&&b===d.getListType())return d.getFirstChildOrThrow().insertBefore(e),a.remove(),d;b=E(b);b.append(e);a.replace(b);F(b);return b}
+-function G(a,b){var c=a.getLastChild();let d=b.getFirstChild();c&&d&&u(c)&&u(d)&&(G(c.getFirstChild(),d.getFirstChild()),d.remove());c=b.getChildren();0<c.length&&(a.append(...c),F(a));b.remove()}function F(a,b){a=b||a.getChildren();if(void 0!==a)for(b=0;b<a.length;b++){let f=a[b];if(p(f)){let g=f.getValue();var c=f,d=c.getParent(),e=1;null!=d&&(q(d)?e=d.getStart():l(44));c=c.getPreviousSiblings();for(d=0;d<c.length;d++){let m=c[d];p(m)&&!q(m.getFirstChild())&&e++}g!==e&&f.setValue(e)}}}
++function G(a,b){var c=a.getLastChild();let d=b.getFirstChild();c&&d&&u(c)&&u(d)&&(G(c.getFirstChild(),d.getFirstChild()),d.remove());c=b.getChildren();0<c.length&&(a.append(...c),F(a));b.remove()}
++function F(a,b){b=b||a.getChildren();if(void 0!==b){var c=a.getStart(),d=new Map;for(var e of a.getChildren())p(e)&&(d.set(e.getKey(),c),q(e.getFirstChild())||c++);a=d;for(e=0;e<b.length;e++)if(c=b[e],p(c)){d=c.getValue();let f=a.get(c.getKey());if(void 0===f)throw Error("updateChildrenListItemValue: list node is not parent of list item node");d!==f&&c.setValue(f)}}}
+ function H(a){if(!u(a)){var b=a.getParent(),c=b?b.getParent():void 0,d=c?c.getParent():void 0;if(q(d)&&p(c)&&q(b)){var e=b?b.getFirstChild():void 0,f=b?b.getLastChild():void 0;if(a.is(e))c.insertBefore(a),b.isEmpty()&&c.remove();else if(a.is(f))c.insertAfter(a),b.isEmpty()&&c.remove();else{var g=b.getListType();e=y();let m=E(g);e.append(m);a.getPreviousSiblings().forEach(x=>m.append(x));f=y();g=E(g);f.append(g);C(g,a.getNextSiblings());c.insertBefore(e);c.insertAfter(f);c.replace(a)}F(b);F(d)}}}
+ class I extends h.ElementNode{static getType(){return"listitem"}static clone(a){return new I(a.__value,a.__checked,a.__key)}constructor(a,b,c){super(c);this.__value=void 0===a?1:a;this.__checked=b}createDOM(a){let b=document.createElement("li"),c=this.getParent();q(c)&&"check"===c.getListType()&&J(b,this,null);b.value=this.__value;K(b,a.theme,this);return b}updateDOM(a,b,c){let d=this.getParent();q(d)&&"check"===d.getListType()&&J(b,this,a);b.value=this.__value;K(b,c.theme,this);return!1}static transform(){return a=>
+ {let b=a.getParent();q(b)&&(F(b),p(a)||l(144),"check"!==b.getListType()&&null!=a.getChecked()&&a.setChecked(void 0))}}static importDOM(){return{li:()=>({conversion:L,priority:0})}}static importJSON(a){let b=y();b.setChecked(a.checked);b.setValue(a.value);b.setFormat(a.format);b.setDirection(a.direction);return b}exportDOM(a){a=this.createDOM(a._config);a.style.textAlign=this.getFormatType();return{element:a}}exportJSON(){return{...super.exportJSON(),checked:this.getChecked(),type:"listitem",value:this.getValue(),
