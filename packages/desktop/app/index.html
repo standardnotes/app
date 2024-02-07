@@ -9,7 +9,7 @@
         script-src 'self' 'wasm-unsafe-eval';
         worker-src 'self' blob:;
         connect-src * data: blob:;
-        style-src 'self' http://localhost:* http://127.0.0.1:45653;
+        style-src 'self' 'unsafe-hashes' http://localhost:* http://127.0.0.1:45653 'sha256-jpJOxTrdc58x4woq2mVygDDIvjIAGNkLZ2yfx4ppdXo=' 'sha256-tbWZ4NP1341cpcrZVDn7B3o9bt/muXgduILAnC0Zbaw=';
         frame-src * blob:;
         img-src * data: blob:;
       "
