@@ -3890,12 +3890,12 @@ __metadata:
 
 "@lexical/list@patch:@lexical/list@npm:0.13.1#.yarn/patches/@lexical-list-npm-0.13.1-788c53f078.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
   version: 0.13.1
-  resolution: "@lexical/list@patch:@lexical/list@npm%3A0.13.1#.yarn/patches/@lexical-list-npm-0.13.1-788c53f078.patch::version=0.13.1&hash=759f3b&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  resolution: "@lexical/list@patch:@lexical/list@npm%3A0.13.1#.yarn/patches/@lexical-list-npm-0.13.1-788c53f078.patch::version=0.13.1&hash=ef92c3&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
   dependencies:
     "@lexical/utils": 0.13.1
   peerDependencies:
     lexical: 0.13.1
-  checksum: 4605422c81bc6e4d4b6881f539a9481f10c6a58b19af4ecd8b10a4d1917bed1ec3774986ab0bc2ba94b7c0b04212ada3f58ba55c82c44e95f6328dfed0cf0df6
+  checksum: 6908fa16cf9ad0bae644e16aa3ed51993619b8c02040f55420be72b46047633d49fe5438fc6511c84c755dd83ea1c051bb18c2077212c3d818393993924c93f6
   languageName: node
   linkType: hard
 
