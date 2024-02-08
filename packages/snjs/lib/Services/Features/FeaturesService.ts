@@ -311,6 +311,10 @@ export class FeaturesService
     if (updatedRepos.length > 0) {
       await this.downloadOfflineRoles(updatedRepos[0])
     }
+
+    for (const repo of featureRepos) {
+      await this.downloadOfflineRoles(repo)
+    }
   }
 
   hasPaidAnyPartyOnlineOrOfflineSubscription(): boolean {
