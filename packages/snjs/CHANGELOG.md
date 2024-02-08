@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.207.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.207.0...@standardnotes/snjs@2.207.1) (2024-02-08)
+
+### Bug Fixes
+
+* Fixed an issue where signing into a self-hosted account would not correctly load subscription status ([77f692f](https://github.com/standardnotes/app/commit/77f692fe66b5e4b88cb8bbd2438717efe1590506))
+
 # [2.207.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.206.0...@standardnotes/snjs@2.207.0) (2024-02-02)
 
 ### Features
