@@ -16,6 +16,7 @@ import {
   SNTag,
   DeletedItemInterface,
   EncryptedItemInterface,
+  LocalPrefKey,
 } from '@standardnotes/models'
 import {
   ComponentArea,
@@ -393,7 +394,7 @@ export class ComponentManager
     this.logger.info('Toggling theme', uiFeature.uniqueIdentifier)
 
     if (this.isThemeActive(uiFeature)) {
-      await this.removeActiveTheme(uiFeature)
+      this.removeActiveTheme(uiFeature)
       return
     }
 
@@ -403,7 +404,7 @@ export class ComponentManager
     }
 
     /* Activate current before deactivating others, so as not to flicker */
-    await this.addActiveTheme(uiFeature)
+    this.addActiveTheme(uiFeature)
 
     /* Deactive currently active theme(s) if new theme is not layerable */
     if (!uiFeature.layerable) {
@@ -416,7 +417,7 @@ export class ComponentManager
         }
 
         if (!candidate.layerable) {
-          await this.removeActiveTheme(candidate)
+          this.removeActiveTheme(candidate)
         }
       }
     }
@@ -453,7 +454,7 @@ export class ComponentManager
     const features: NativeFeatureIdentifier[] = []
     const uuids: Uuid[] = []
 
-    const strings = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+    const strings = this.preferences.getLocalValue(LocalPrefKey.ActiveThemes, undefined) ?? []
     for (const string of strings) {
       const nativeIdentifier = NativeFeatureIdentifier.create(string)
       if (!nativeIdentifier.isFailed()) {
@@ -534,24 +535,24 @@ export class ComponentManager
     return preferences[preferencesLookupKey]
   }
 
-  async addActiveTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void> {
-    const activeThemes = (this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []).slice()
+  addActiveTheme(theme: UIFeature<ThemeFeatureDescription>) {
+    const activeThemes = this.preferences.getLocalValue(LocalPrefKey.ActiveThemes, []).slice()
 
     activeThemes.push(theme.uniqueIdentifier.value)
 
-    await this.preferences.setValue(PrefKey.ActiveThemes, activeThemes)
+    this.preferences.setLocalValue(LocalPrefKey.ActiveThemes, activeThemes)
   }
 
-  async replaceActiveTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void> {
-    await this.preferences.setValue(PrefKey.ActiveThemes, [theme.uniqueIdentifier.value])
+  replaceActiveTheme(theme: UIFeature<ThemeFeatureDescription>) {
+    this.preferences.setLocalValue(LocalPrefKey.ActiveThemes, [theme.uniqueIdentifier.value])
   }
 
-  async removeActiveTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void> {
-    const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+  removeActiveTheme(theme: UIFeature<ThemeFeatureDescription>) {
+    const activeThemes = this.preferences.getLocalValue(LocalPrefKey.ActiveThemes, [])
 
     const filteredThemes = activeThemes.filter((activeTheme) => activeTheme !== theme.uniqueIdentifier.value)
 
-    await this.preferences.setValue(PrefKey.ActiveThemes, filteredThemes)
+    this.preferences.setLocalValue(LocalPrefKey.ActiveThemes, filteredThemes)
   }
 
   isThemeActive(theme: UIFeature<ThemeFeatureDescription>): boolean {
@@ -559,13 +560,13 @@ export class ComponentManager
       return false
     }
 
-    const activeThemes = this.preferences.getValue(PrefKey.ActiveThemes, undefined) ?? []
+    const activeThemes = this.preferences.getLocalValue(LocalPrefKey.ActiveThemes, [])
 
     return activeThemes.includes(theme.uniqueIdentifier.value)
   }
 
   async addActiveComponent(component: ComponentInterface): Promise<void> {
-    const activeComponents = (this.preferences.getValue(PrefKey.ActiveComponents, undefined) ?? []).slice()
+    const activeComponents = this.preferences.getValue(PrefKey.ActiveComponents, []).slice()
 
     activeComponents.push(component.uuid)
 

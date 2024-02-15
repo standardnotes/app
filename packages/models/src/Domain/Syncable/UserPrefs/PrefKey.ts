@@ -28,10 +28,6 @@ export enum PrefKey {
   NotesHideDate = 'hideDate',
   NotesHideTags = 'hideTags',
   NotesHideEditorIcon = 'hideEditorIcon',
-  UseSystemColorScheme = 'useSystemColorScheme',
-  UseTranslucentUI = 'useTranslucentUI',
-  AutoLightThemeIdentifier = 'autoLightThemeIdentifier',
-  AutoDarkThemeIdentifier = 'autoDarkThemeIdentifier',
   NoteAddToParentFolders = 'noteAddToParentFolders',
   NewNoteTitleFormat = 'newNoteTitleFormat',
   CustomNoteTitleFormat = 'customNoteTitleFormat',
@@ -47,12 +43,24 @@ export enum PrefKey {
   AuthenticatorNames = 'authenticatorNames',
   PaneGesturesEnabled = 'paneGesturesEnabled',
   ComponentPreferences = 'componentPreferences',
-  ActiveThemes = 'activeThemes',
   ActiveComponents = 'activeComponents',
   AlwaysShowSuperToolbar = 'alwaysShowSuperToolbar',
   AddImportsToTag = 'addImportsToTag',
   AlwaysCreateNewTagForImports = 'alwaysCreateNewTagForImports',
   ExistingTagForImports = 'existingTagForImports',
+  DEPRECATED_ActiveThemes = 'activeThemes',
+  DEPRECATED_UseSystemColorScheme = 'useSystemColorScheme',
+  DEPRECATED_UseTranslucentUI = 'useTranslucentUI',
+  DEPRECATED_AutoLightThemeIdentifier = 'autoLightThemeIdentifier',
+  DEPRECATED_AutoDarkThemeIdentifier = 'autoDarkThemeIdentifier',
+}
+
+export enum LocalPrefKey {
+  ActiveThemes = 'activeThemes',
+  UseSystemColorScheme = 'useSystemColorScheme',
+  UseTranslucentUI = 'useTranslucentUI',
+  AutoLightThemeIdentifier = 'autoLightThemeIdentifier',
+  AutoDarkThemeIdentifier = 'autoDarkThemeIdentifier',
 }
 
 export type PrefValue = {
@@ -73,10 +81,11 @@ export type PrefValue = {
   [PrefKey.NotesHideDate]: boolean
   [PrefKey.NotesHideTags]: boolean
   [PrefKey.NotesHideEditorIcon]: boolean
-  [PrefKey.UseSystemColorScheme]: boolean
-  [PrefKey.UseTranslucentUI]: boolean
-  [PrefKey.AutoLightThemeIdentifier]: string
-  [PrefKey.AutoDarkThemeIdentifier]: string
+  [PrefKey.DEPRECATED_ActiveThemes]: string[]
+  [PrefKey.DEPRECATED_UseSystemColorScheme]: boolean
+  [PrefKey.DEPRECATED_UseTranslucentUI]: boolean
+  [PrefKey.DEPRECATED_AutoLightThemeIdentifier]: string
+  [PrefKey.DEPRECATED_AutoDarkThemeIdentifier]: string
   [PrefKey.NoteAddToParentFolders]: boolean
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat
   [PrefKey.CustomNoteTitleFormat]: string
@@ -95,10 +104,17 @@ export type PrefValue = {
   [PrefKey.AuthenticatorNames]: string
   [PrefKey.PaneGesturesEnabled]: boolean
   [PrefKey.ComponentPreferences]: AllComponentPreferences
-  [PrefKey.ActiveThemes]: string[]
   [PrefKey.ActiveComponents]: string[]
   [PrefKey.AlwaysShowSuperToolbar]: boolean
   [PrefKey.AddImportsToTag]: boolean
   [PrefKey.AlwaysCreateNewTagForImports]: boolean
   [PrefKey.ExistingTagForImports]: string | undefined
+}
+
+export type LocalPrefValue = {
+  [LocalPrefKey.ActiveThemes]: string[]
+  [LocalPrefKey.UseSystemColorScheme]: boolean
+  [LocalPrefKey.UseTranslucentUI]: boolean
+  [LocalPrefKey.AutoLightThemeIdentifier]: string
+  [LocalPrefKey.AutoDarkThemeIdentifier]: string
 }

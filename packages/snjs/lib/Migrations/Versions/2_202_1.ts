@@ -66,7 +66,7 @@ export class Migration2_202_1 extends Migration {
     const activeThemes = allActiveitems.filter((component) => component.isTheme())
     const activeComponents = allActiveitems.filter((component) => !component.isTheme())
 
-    await this.services.preferences.setValueDetached(PrefKey.ActiveThemes, Uuids(activeThemes))
+    await this.services.preferences.setValueDetached(PrefKey.DEPRECATED_ActiveThemes, Uuids(activeThemes))
     await this.services.preferences.setValueDetached(PrefKey.ActiveComponents, Uuids(activeComponents))
   }
 }

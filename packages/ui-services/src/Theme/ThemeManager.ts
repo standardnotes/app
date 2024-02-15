@@ -2,9 +2,9 @@ import {
   UIFeature,
   CreateDecryptedLocalStorageContextPayload,
   LocalStorageDecryptedContextualPayload,
-  PrefKey,
   PrefDefaults,
   ComponentInterface,
+  LocalPrefKey,
 } from '@standardnotes/models'
 import {
   InternalEventBusInterface,
@@ -78,7 +78,7 @@ export class ThemeManager extends AbstractUIService {
 
     this.eventDisposers.push(
       this.preferences.addEventObserver(async (event) => {
-        if (event !== PreferencesServiceEvent.PreferencesChanged) {
+        if (event !== PreferencesServiceEvent.LocalPreferencesChanged) {
           return
         }
 
@@ -154,7 +154,7 @@ export class ThemeManager extends AbstractUIService {
         }
         break
       }
-      case ApplicationEvent.PreferencesChanged: {
+      case ApplicationEvent.LocalPreferencesChanged: {
         void this.handlePreferencesChangeEvent()
         break
       }
@@ -162,7 +162,7 @@ export class ThemeManager extends AbstractUIService {
   }
 
   async handleMobileColorSchemeChangeEvent() {
-    const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
+    const useDeviceThemeSettings = this.application.getLocalPreference(LocalPrefKey.UseSystemColorScheme, false)
 
     if (useDeviceThemeSettings) {
       const prefersDarkColorScheme = (await this.application.mobileDevice.getColorScheme()) === 'dark'
@@ -173,7 +173,7 @@ export class ThemeManager extends AbstractUIService {
   private async handlePreferencesChangeEvent() {
     this.toggleTranslucentUIColors()
 
-    const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
+    const useDeviceThemeSettings = this.application.getLocalPreference(LocalPrefKey.UseSystemColorScheme, false)
 
     const hasPreferenceChanged = useDeviceThemeSettings !== this.lastUseDeviceThemeSettings
 
@@ -218,7 +218,7 @@ export class ThemeManager extends AbstractUIService {
   }
 
   private colorSchemeEventHandler(event: MediaQueryListEvent) {
-    const shouldChangeTheme = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
+    const shouldChangeTheme = this.application.getLocalPreference(LocalPrefKey.UseSystemColorScheme, false)
 
     if (shouldChangeTheme) {
       this.setThemeAsPerColorScheme(event.matches)
@@ -226,10 +226,14 @@ export class ThemeManager extends AbstractUIService {
   }
 
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
-    const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
+    const preference = prefersDarkColorScheme
+      ? LocalPrefKey.AutoDarkThemeIdentifier
+      : LocalPrefKey.AutoLightThemeIdentifier
 
     const preferenceDefault =
-      preference === PrefKey.AutoDarkThemeIdentifier ? NativeFeatureIdentifier.TYPES.DarkTheme : DefaultThemeIdentifier
+      preference === LocalPrefKey.AutoDarkThemeIdentifier
+        ? NativeFeatureIdentifier.TYPES.DarkTheme
+        : DefaultThemeIdentifier
 
     const usecase = new GetAllThemesUseCase(this.application.items)
     const { thirdParty, native } = usecase.execute({ excludeLayerable: false })
@@ -237,7 +241,7 @@ export class ThemeManager extends AbstractUIService {
 
     const activeTheme = themes.find((theme) => this.components.isThemeActive(theme) && !theme.layerable)
 
-    const themeIdentifier = this.preferences.getValue(preference, preferenceDefault)
+    const themeIdentifier = this.preferences.getLocalValue(preference, preferenceDefault)
 
     const toggleActiveTheme = () => {
       if (activeTheme) {
@@ -337,7 +341,10 @@ export class ThemeManager extends AbstractUIService {
   }
 
   private shouldUseTranslucentUI() {
-    return this.application.getPreference(PrefKey.UseTranslucentUI, PrefDefaults[PrefKey.UseTranslucentUI])
+    return this.application.getLocalPreference(
+      LocalPrefKey.UseTranslucentUI,
+      PrefDefaults[LocalPrefKey.UseTranslucentUI],
+    )
   }
 
   private toggleTranslucentUIColors() {

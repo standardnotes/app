@@ -81,6 +81,7 @@ import {
   CreateDecryptedBackupFile,
   CreateEncryptedBackupFile,
   WebSocketsService,
+  PreferencesServiceEvent,
 } from '@standardnotes/services'
 import {
   SNNote,
@@ -90,6 +91,8 @@ import {
   EncryptedItemInterface,
   Environment,
   Platform,
+  LocalPrefKey,
+  LocalPrefValue,
 } from '@standardnotes/models'
 import {
   HttpResponse,
@@ -326,8 +329,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     const preferencesService = this.dependencies.get<PreferencesService>(TYPES.PreferencesService)
     this.serviceObservers.push(
-      preferencesService.addEventObserver(() => {
-        void this.notifyEvent(ApplicationEvent.PreferencesChanged)
+      preferencesService.addEventObserver((event) => {
+        if (event === PreferencesServiceEvent.PreferencesChanged) {
+          void this.notifyEvent(ApplicationEvent.PreferencesChanged)
+        } else if (event === PreferencesServiceEvent.LocalPreferencesChanged) {
+          void this.notifyEvent(ApplicationEvent.LocalPreferencesChanged)
+        }
       }),
     )
 
@@ -691,6 +698,19 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public async setPreference<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void> {
     return this.preferences.setValue(key, value)
+  }
+
+  public getLocalPreference<K extends LocalPrefKey>(key: K): LocalPrefValue[K] | undefined
+  public getLocalPreference<K extends LocalPrefKey>(key: K, defaultValue: LocalPrefValue[K]): LocalPrefValue[K]
+  public getLocalPreference<K extends LocalPrefKey>(
+    key: K,
+    defaultValue?: LocalPrefValue[K],
+  ): LocalPrefValue[K] | undefined {
+    return this.preferences.getLocalValue(key, defaultValue)
+  }
+
+  public setLocalPreference<K extends LocalPrefKey>(key: K, value: LocalPrefValue[K]): void {
+    return this.preferences.setLocalValue(key, value)
   }
 
   /**

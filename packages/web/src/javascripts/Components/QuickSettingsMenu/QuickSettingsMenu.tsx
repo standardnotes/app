@@ -76,7 +76,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ closeMenu }) => {
 
   useEffect(() => {
     return application.preferences.addEventObserver((event) => {
-      if (event === PreferencesServiceEvent.PreferencesChanged) {
+      if (event === PreferencesServiceEvent.LocalPreferencesChanged) {
         reloadThemes()
       }
     })
