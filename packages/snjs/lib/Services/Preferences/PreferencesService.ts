@@ -85,6 +85,7 @@ export class PreferencesService
         }
       } else if (stage === ApplicationStage.StorageDecrypted_09) {
         this.localPreferences = this.storage.getValue(StorageKey.LocalPreferences, StorageValueModes.Nonwrapped) ?? {}
+        void this.notifyEvent(PreferencesServiceEvent.LocalPreferencesChanged)
       }
     }
   }
