@@ -3890,12 +3890,12 @@ __metadata:
 
 "@lexical/list@patch:@lexical/list@npm:0.13.1#.yarn/patches/@lexical-list-npm-0.13.1-788c53f078.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
   version: 0.13.1
-  resolution: "@lexical/list@patch:@lexical/list@npm%3A0.13.1#.yarn/patches/@lexical-list-npm-0.13.1-788c53f078.patch::version=0.13.1&hash=ef92c3&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  resolution: "@lexical/list@patch:@lexical/list@npm%3A0.13.1#.yarn/patches/@lexical-list-npm-0.13.1-788c53f078.patch::version=0.13.1&hash=3b4480&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
   dependencies:
     "@lexical/utils": 0.13.1
   peerDependencies:
     lexical: 0.13.1
-  checksum: 6908fa16cf9ad0bae644e16aa3ed51993619b8c02040f55420be72b46047633d49fe5438fc6511c84c755dd83ea1c051bb18c2077212c3d818393993924c93f6
+  checksum: 152a2addf1dd5222e4bee55a125b9935f29fa596b2b33962f9f2e0064d6948bd753ec74eb98c8fb0a20e656579c6754b193885c70ccfbaefeda98921278766ee
   languageName: node
   linkType: hard
 
@@ -18744,8 +18744,8 @@ __metadata:
 
 "lexical@patch:lexical@npm:0.13.1#.yarn/patches/lexical-npm-0.13.1-ac06219fd6.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
   version: 0.13.1
-  resolution: "lexical@patch:lexical@npm%3A0.13.1#.yarn/patches/lexical-npm-0.13.1-ac06219fd6.patch::version=0.13.1&hash=f8f788&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
-  checksum: 85d0ec97e022c00f5b982adc9eac96e9be2251555a81b7368d9e23a9d297d8a798a9201562c39063e184a7b496bdb70695ac36a39c40b4787195be4493b8415e
+  resolution: "lexical@patch:lexical@npm%3A0.13.1#.yarn/patches/lexical-npm-0.13.1-ac06219fd6.patch::version=0.13.1&hash=002bca&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  checksum: 47dba8703d91116591064699b63481ec8a8e402f58d3cccaa6ed6d895a4e1c74196bc7a98575adc67875944a409c8f431ae55a3d02db4c4c5e97045f025894a0
   languageName: node
   linkType: hard
 
