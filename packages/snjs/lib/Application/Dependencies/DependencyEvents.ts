@@ -45,6 +45,7 @@ export function RegisterApplicationServicesEvents(container: Dependencies, event
   events.addEventHandler(container.get(TYPES.VaultInviteService), ApplicationEvent.Launched)
   events.addEventHandler(container.get(TYPES.VaultInviteService), SyncEvent.ReceivedSharedVaultInvites)
   events.addEventHandler(container.get(TYPES.VaultInviteService), WebSocketsServiceEvent.UserInvitedToSharedVault)
+  events.addEventHandler(container.get(TYPES.SyncBackoffService), SyncEvent.PaginatedSyncRequestCompleted)
 
   if (container.get(TYPES.FilesBackupService)) {
     events.addEventHandler(container.get(TYPES.FilesBackupService), ApplicationEvent.ApplicationStageChanged)

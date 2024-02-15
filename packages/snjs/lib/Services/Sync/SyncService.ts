@@ -97,11 +97,12 @@ import {
 } from '@standardnotes/encryption'
 import { CreatePayloadFromRawServerItem } from './Account/Utilities'
 import { DecryptedServerConflictMap, TrustedServerConflictMap } from './Account/ServerConflictMap'
-import { ContentType } from '@standardnotes/domain-core'
+import { ContentType, Uuid } from '@standardnotes/domain-core'
 import { SyncFrequencyGuardInterface } from './SyncFrequencyGuardInterface'
 
 const DEFAULT_MAJOR_CHANGE_THRESHOLD = 15
 const INVALID_SESSION_RESPONSE_STATUS = 401
+const PAYLOAD_TOO_LARGE = 413
 const TOO_MANY_REQUESTS_RESPONSE_STATUS = 429
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
 
@@ -458,7 +459,23 @@ export class SyncService
 
     const itemsWithoutBackoffPenalty = dirtyItems.filter((item) => !this.syncBackoffService.isItemInBackoff(item))
 
-    return itemsWithoutBackoffPenalty
+    const itemsNeedingSync = itemsWithoutBackoffPenalty
+
+    if (itemsWithoutBackoffPenalty.length === 0) {
+      const subsetOfBackoffUuids = this.syncBackoffService.getSmallerSubsetOfItemUuidsInBackoff()
+      if (subsetOfBackoffUuids.length > 0) {
+        this.logger.debug('All items are synced. Attempting to sync a subset of backoff items.')
+
+        subsetOfBackoffUuids.forEach((uuid: Uuid) => {
+          const item = dirtyItems.find((item) => item.uuid === uuid.value)
+          if (item) {
+            itemsNeedingSync.push(item)
+          }
+        })
+      }
+    }
+
+    return itemsNeedingSync
   }
 
   public async markAllItemsAsNeedingSyncAndPersist(): Promise<void> {
@@ -940,8 +957,17 @@ export class SyncService
 
     releaseLock()
 
-    const { hasError } = await this.handleSyncOperationFinish(operation, options, neverSyncedDeleted, syncMode)
+    const { hasError, isPayloadTooLarge } = await this.handleSyncOperationFinish(
+      operation,
+      options,
+      neverSyncedDeleted,
+      syncMode,
+    )
     if (hasError) {
+      if (isPayloadTooLarge && operation instanceof AccountSyncOperation) {
+        this.markTooLargePayloadsAsBackedOff(operation)
+      }
+
       return
     }
 
@@ -1020,9 +1046,34 @@ export class SyncService
       void this.notifyEvent(SyncEvent.TooManyRequests)
     }
 
+    if (response.status === PAYLOAD_TOO_LARGE) {
+      this.opStatus?.setIsTooLarge()
+    }
+
     this.opStatus?.setError(response.error)
 
     void this.notifyEvent(SyncEvent.SyncError, response)
+  }
+
+  private markTooLargePayloadsAsBackedOff(operation: AccountSyncOperation): void {
+    const uuidsToBackOff = []
+    for (const payload of operation.payloads) {
+      this.logger.debug(`Marking item ${payload.uuid} as backed off due to request payload being too large`)
+
+      const uuidOrError = Uuid.create(payload.uuid)
+      if (uuidOrError.isFailed()) {
+        this.logger.error('Failed to create uuid from payload', payload)
+
+        continue
+      }
+      uuidsToBackOff.push(uuidOrError.getValue())
+    }
+
+    void this.notifyEvent(SyncEvent.PayloadTooLarge, {
+      uuids: uuidsToBackOff.map((uuid) => uuid.value),
+    })
+
+    this.syncBackoffService.backoffItems(uuidsToBackOff)
   }
 
   private async handleSuccessServerResponse(operation: AccountSyncOperation, response: ServerSyncResponse) {
@@ -1300,11 +1351,11 @@ export class SyncService
     options: SyncOptions,
     neverSyncedDeleted: DeletedItemInterface[],
     syncMode: SyncMode,
-  ) {
+  ): Promise<{ hasError: boolean; isPayloadTooLarge: boolean }> {
     this.opStatus.setDidEnd()
 
     if (this.opStatus.hasError()) {
-      return { hasError: true }
+      return { hasError: true, isPayloadTooLarge: this.opStatus.isTooLargeToSync }
     }
 
     this.opStatus.reset()
@@ -1327,7 +1378,7 @@ export class SyncService
       })
     }
 
-    return { hasError: false }
+    return { hasError: false, isPayloadTooLarge: false }
   }
 
   private async handleDownloadFirstCompletionAndSyncAgain(online: boolean, options: SyncOptions) {

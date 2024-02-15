@@ -17,6 +17,7 @@ const map: Record<string, ApplicationEvent> = {
   [SyncEvent.DatabaseWriteError]: ApplicationEvent.LocalDatabaseWriteError,
   [SyncEvent.DownloadFirstSyncCompleted]: ApplicationEvent.CompletedInitialSync,
   [SyncEvent.TooManyRequests]: ApplicationEvent.SyncTooManyRequests,
+  [SyncEvent.PayloadTooLarge]: ApplicationEvent.SyncPayloadTooLarge,
 }
 
 export function applicationEventForSyncEvent(syncEvent: SyncEvent): ApplicationEvent | undefined {

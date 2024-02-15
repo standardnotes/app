@@ -81,6 +81,7 @@ import {
   CreateDecryptedBackupFile,
   CreateEncryptedBackupFile,
   WebSocketsService,
+  SyncBackoffServiceInterface,
 } from '@standardnotes/services'
 import {
   SNNote,
@@ -116,7 +117,7 @@ import {
   LoggerInterface,
   canBlockDeinit,
 } from '@standardnotes/utils'
-import { UuidString, ApplicationEventPayload } from '../Types'
+import { UuidString } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
@@ -273,12 +274,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }),
     )
 
-    const syncEventCallback = async (eventName: SyncEvent) => {
+    const syncEventCallback = async (eventName: SyncEvent, data?: unknown) => {
       const appEvent = applicationEventForSyncEvent(eventName)
       if (appEvent) {
         await encryptionService.onSyncEvent(eventName)
 
-        await this.notifyEvent(appEvent)
+        await this.notifyEvent(appEvent, data)
 
         if (appEvent === ApplicationEvent.CompletedFullSync) {
           if (!this.handledFullSyncStage) {
@@ -529,7 +530,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.addEventObserver(filteredCallback, event)
   }
 
-  private async notifyEvent(event: ApplicationEvent, data?: ApplicationEventPayload) {
+  private async notifyEvent(event: ApplicationEvent, data?: unknown) {
     if (event === ApplicationEvent.Started) {
       this.onStart()
     } else if (event === ApplicationEvent.Launched) {
@@ -1014,6 +1015,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get sync(): SyncServiceInterface {
     return this.dependencies.get<SyncServiceInterface>(TYPES.SyncService)
+  }
+
+  public get syncBackoff(): SyncBackoffServiceInterface {
+    return this.dependencies.get<SyncBackoffServiceInterface>(TYPES.SyncBackoffService)
   }
 
   public get user(): UserServiceInterface {

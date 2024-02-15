@@ -1354,7 +1354,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.SyncBackoffService, () => {
-      return new SyncBackoffService()
+      return new SyncBackoffService(this.get<InternalEventBus>(TYPES.InternalEventBus))
     })
 
     this.factory.set(TYPES.SyncService, () => {

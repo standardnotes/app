@@ -34,6 +34,7 @@ export enum SyncEvent {
   ReceivedNotifications = 'received-user-events',
   ReceivedAsymmetricMessages = 'received-asymmetric-messages',
   TooManyRequests = 'too-many-requests',
+  PayloadTooLarge = 'payload-too-large',
 }
 
 export type SyncEventReceivedRemoteSharedVaultsData = SharedVaultServerHash[]

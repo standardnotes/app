@@ -593,6 +593,14 @@ export class AppContext {
     return note
   }
 
+  async createUnsyncedNote(title = 'foo', text = 'bar') {
+    const payload = createNotePayload(title, text)
+    const item = await this.application.mutator.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
+    await this.application.mutator.setItemDirty(item)
+
+    return item
+  }
+
   lockSyncing() {
     this.application.sync.lockSyncing()
   }

@@ -17,6 +17,7 @@ export class SyncOpStatus {
   private databaseLoadTotal = 0
   private databaseLoadDone = false
   private syncing = false
+  private isTooLarge = false
   private syncStart!: Date
   private timingMonitor?: any
 
@@ -69,6 +70,14 @@ export class SyncOpStatus {
 
   public setDidEnd() {
     this.syncing = false
+  }
+
+  setIsTooLarge() {
+    this.isTooLarge = true
+  }
+
+  get isTooLargeToSync() {
+    return this.isTooLarge
   }
 
   get syncInProgress() {
