@@ -5,7 +5,6 @@ import {
   PrefDefaults,
   ComponentInterface,
   LocalPrefKey,
-  PrefKey,
 } from '@standardnotes/models'
 import {
   InternalEventBusInterface,
@@ -29,7 +28,6 @@ const DefaultThemeIdentifier = 'Default'
 export class ThemeManager extends AbstractUIService {
   private themesActiveInTheUI: ActiveThemeList
   private lastUseDeviceThemeSettings = false
-  private handledFirstPreferencesChangeEvent = false
 
   constructor(
     application: WebApplicationInterface,
@@ -109,10 +107,6 @@ export class ThemeManager extends AbstractUIService {
         void this.handleLocalPreferencesChangeEvent()
         break
       }
-      case ApplicationEvent.PreferencesChanged: {
-        void this.handlePreferencesChangeEvent()
-        break
-      }
     }
   }
 
@@ -165,59 +159,6 @@ export class ThemeManager extends AbstractUIService {
     if (hasChange) {
       this.cacheThemeState().catch(console.error)
     }
-  }
-
-  private migrateSyncedThemesToLocalPreferences() {
-    if (this.preferences.getLocalValue(LocalPrefKey.ActiveThemes) == undefined) {
-      this.preferences.setLocalValue(
-        LocalPrefKey.ActiveThemes,
-        this.application.getPreference(PrefKey.DEPRECATED_ActiveThemes, PrefDefaults[LocalPrefKey.ActiveThemes]),
-      )
-    }
-    if (this.preferences.getLocalValue(LocalPrefKey.UseSystemColorScheme) == undefined) {
-      this.preferences.setLocalValue(
-        LocalPrefKey.UseSystemColorScheme,
-        this.application.getPreference(
-          PrefKey.DEPRECATED_UseSystemColorScheme,
-          PrefDefaults[LocalPrefKey.UseSystemColorScheme],
-        ),
-      )
-    }
-    if (this.preferences.getLocalValue(LocalPrefKey.AutoLightThemeIdentifier) == undefined) {
-      this.preferences.setLocalValue(
-        LocalPrefKey.AutoLightThemeIdentifier,
-        this.application.getPreference(
-          PrefKey.DEPRECATED_AutoLightThemeIdentifier,
-          PrefDefaults[LocalPrefKey.AutoLightThemeIdentifier],
-        ),
-      )
-    }
-    if (this.preferences.getLocalValue(LocalPrefKey.AutoDarkThemeIdentifier) == undefined) {
-      this.preferences.setLocalValue(
-        LocalPrefKey.AutoDarkThemeIdentifier,
-        this.application.getPreference(
-          PrefKey.DEPRECATED_AutoDarkThemeIdentifier,
-          PrefDefaults[LocalPrefKey.AutoDarkThemeIdentifier],
-        ),
-      )
-    }
-    if (this.preferences.getLocalValue(LocalPrefKey.UseTranslucentUI) == undefined) {
-      this.preferences.setLocalValue(
-        LocalPrefKey.UseTranslucentUI,
-        this.application.getPreference(
-          PrefKey.DEPRECATED_UseTranslucentUI,
-          PrefDefaults[LocalPrefKey.UseTranslucentUI],
-        ),
-      )
-    }
-  }
-
-  private handlePreferencesChangeEvent() {
-    if (this.handledFirstPreferencesChangeEvent) {
-      return
-    }
-    this.handledFirstPreferencesChangeEvent = true
-    this.migrateSyncedThemesToLocalPreferences()
   }
 
   private async handleLocalPreferencesChangeEvent() {
