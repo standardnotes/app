@@ -22,16 +22,7 @@ import { AsymmetricMessageServiceInterface } from './../AsymmetricMessage/Asymme
 import { ImportDataResult } from '../Import/ImportDataResult'
 import { ChallengeServiceInterface } from './../Challenge/ChallengeServiceInterface'
 import { VaultServiceInterface } from '../Vault/VaultServiceInterface'
-import {
-  BackupFile,
-  Environment,
-  Platform,
-  PrefKey,
-  PrefValue,
-  ApplicationIdentifier,
-  LocalPrefKey,
-  LocalPrefValue,
-} from '@standardnotes/models'
+import { BackupFile, Environment, Platform, PrefKey, PrefValue, ApplicationIdentifier } from '@standardnotes/models'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 
 import { AlertService } from '../Alert/AlertService'
@@ -71,10 +62,6 @@ export interface ApplicationInterface {
   getPreference<K extends PrefKey>(key: K, defaultValue: PrefValue[K]): PrefValue[K]
   getPreference<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined
   setPreference<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void>
-  getLocalPreference<K extends LocalPrefKey>(key: K): LocalPrefValue[K] | undefined
-  getLocalPreference<K extends LocalPrefKey>(key: K, defaultValue: LocalPrefValue[K]): LocalPrefValue[K]
-  getLocalPreference<K extends LocalPrefKey>(key: K, defaultValue?: LocalPrefValue[K]): LocalPrefValue[K] | undefined
-  setLocalPreference<K extends LocalPrefKey>(key: K, value: LocalPrefValue[K]): void
 
   hasAccount(): boolean
   setCustomHost(host: string, websocketUrl?: string): Promise<void>

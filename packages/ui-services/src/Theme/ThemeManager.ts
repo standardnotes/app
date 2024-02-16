@@ -117,7 +117,7 @@ export class ThemeManager extends AbstractUIService {
   }
 
   async handleMobileColorSchemeChangeEvent() {
-    const useDeviceThemeSettings = this.application.getLocalPreference(LocalPrefKey.UseSystemColorScheme, false)
+    const useDeviceThemeSettings = this.preferences.getLocalValue(LocalPrefKey.UseSystemColorScheme, false)
 
     if (useDeviceThemeSettings) {
       const prefersDarkColorScheme = (await this.application.mobileDevice.getColorScheme()) === 'dark'
@@ -168,14 +168,14 @@ export class ThemeManager extends AbstractUIService {
   }
 
   private migrateSyncedThemesToLocalPreferences() {
-    if (this.application.getLocalPreference(LocalPrefKey.ActiveThemes) == undefined) {
-      this.application.setLocalPreference(
+    if (this.preferences.getLocalValue(LocalPrefKey.ActiveThemes) == undefined) {
+      this.preferences.setLocalValue(
         LocalPrefKey.ActiveThemes,
         this.application.getPreference(PrefKey.DEPRECATED_ActiveThemes, PrefDefaults[LocalPrefKey.ActiveThemes]),
       )
     }
-    if (this.application.getLocalPreference(LocalPrefKey.UseSystemColorScheme) == undefined) {
-      this.application.setLocalPreference(
+    if (this.preferences.getLocalValue(LocalPrefKey.UseSystemColorScheme) == undefined) {
+      this.preferences.setLocalValue(
         LocalPrefKey.UseSystemColorScheme,
         this.application.getPreference(
           PrefKey.DEPRECATED_UseSystemColorScheme,
@@ -183,8 +183,8 @@ export class ThemeManager extends AbstractUIService {
         ),
       )
     }
-    if (this.application.getLocalPreference(LocalPrefKey.AutoLightThemeIdentifier) == undefined) {
-      this.application.setLocalPreference(
+    if (this.preferences.getLocalValue(LocalPrefKey.AutoLightThemeIdentifier) == undefined) {
+      this.preferences.setLocalValue(
         LocalPrefKey.AutoLightThemeIdentifier,
         this.application.getPreference(
           PrefKey.DEPRECATED_AutoLightThemeIdentifier,
@@ -192,8 +192,8 @@ export class ThemeManager extends AbstractUIService {
         ),
       )
     }
-    if (this.application.getLocalPreference(LocalPrefKey.AutoDarkThemeIdentifier) == undefined) {
-      this.application.setLocalPreference(
+    if (this.preferences.getLocalValue(LocalPrefKey.AutoDarkThemeIdentifier) == undefined) {
+      this.preferences.setLocalValue(
         LocalPrefKey.AutoDarkThemeIdentifier,
         this.application.getPreference(
           PrefKey.DEPRECATED_AutoDarkThemeIdentifier,
@@ -201,8 +201,8 @@ export class ThemeManager extends AbstractUIService {
         ),
       )
     }
-    if (this.application.getLocalPreference(LocalPrefKey.UseTranslucentUI) == undefined) {
-      this.application.setLocalPreference(
+    if (this.preferences.getLocalValue(LocalPrefKey.UseTranslucentUI) == undefined) {
+      this.preferences.setLocalValue(
         LocalPrefKey.UseTranslucentUI,
         this.application.getPreference(
           PrefKey.DEPRECATED_UseTranslucentUI,
@@ -225,7 +225,7 @@ export class ThemeManager extends AbstractUIService {
 
     this.toggleTranslucentUIColors()
 
-    const useDeviceThemeSettings = this.application.getLocalPreference(LocalPrefKey.UseSystemColorScheme, false)
+    const useDeviceThemeSettings = this.preferences.getLocalValue(LocalPrefKey.UseSystemColorScheme, false)
 
     const hasPreferenceChanged = useDeviceThemeSettings !== this.lastUseDeviceThemeSettings
 
@@ -270,7 +270,7 @@ export class ThemeManager extends AbstractUIService {
   }
 
   private colorSchemeEventHandler(event: MediaQueryListEvent) {
-    const shouldChangeTheme = this.application.getLocalPreference(LocalPrefKey.UseSystemColorScheme, false)
+    const shouldChangeTheme = this.preferences.getLocalValue(LocalPrefKey.UseSystemColorScheme, false)
 
     if (shouldChangeTheme) {
       this.setThemeAsPerColorScheme(event.matches)
@@ -393,10 +393,7 @@ export class ThemeManager extends AbstractUIService {
   }
 
   private shouldUseTranslucentUI() {
-    return this.application.getLocalPreference(
-      LocalPrefKey.UseTranslucentUI,
-      PrefDefaults[LocalPrefKey.UseTranslucentUI],
-    )
+    return this.preferences.getLocalValue(LocalPrefKey.UseTranslucentUI, PrefDefaults[LocalPrefKey.UseTranslucentUI])
   }
 
   private toggleTranslucentUIColors() {
