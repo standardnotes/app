@@ -5,18 +5,18 @@ import { useCallback, useEffect, useState } from 'react'
 export function useLocalPreference<Key extends LocalPrefKey>(preference: Key) {
   const application = useApplication()
 
-  const [value, setValue] = useState(application.getLocalPreference(preference, PrefDefaults[preference]))
+  const [value, setValue] = useState(application.preferences.getLocalValue(preference, PrefDefaults[preference]))
 
   const setNewValue = useCallback(
     (newValue: LocalPrefValue[Key]) => {
-      application.setLocalPreference(preference, newValue)
+      application.preferences.setLocalValue(preference, newValue)
     },
     [application, preference],
   )
 
   useEffect(() => {
     return application.addEventObserver(async () => {
-      const latestValue = application.getLocalPreference(preference, PrefDefaults[preference])
+      const latestValue = application.preferences.getLocalValue(preference, PrefDefaults[preference])
 
       setValue(latestValue)
     }, ApplicationEvent.LocalPreferencesChanged)

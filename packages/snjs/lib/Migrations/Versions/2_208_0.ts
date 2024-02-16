@@ -1,6 +1,6 @@
-import { ApplicationStage } from '@standardnotes/services'
+import { LocalPrefKey, ApplicationStage } from '@standardnotes/services'
 import { Migration } from '@Lib/Migrations/Migration'
-import { LocalPrefKey, PrefDefaults, PrefKey } from '@standardnotes/models'
+import { PrefDefaults, PrefKey } from '@standardnotes/models'
 
 export class Migration2_208_0 extends Migration {
   static override version(): string {

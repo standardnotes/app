@@ -1,5 +1,6 @@
-import { LocalPrefKey, LocalPrefValue, PrefKey, PrefValue } from '@standardnotes/models'
+import { PrefKey, PrefValue } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
+import { LocalPrefKey, LocalPrefValue } from './LocalPrefKey'
 
 export enum PreferencesServiceEvent {
   LocalPreferencesChanged = 'LocalPreferencesChanged',

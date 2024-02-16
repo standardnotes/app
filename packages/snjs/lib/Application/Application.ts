@@ -91,8 +91,6 @@ import {
   EncryptedItemInterface,
   Environment,
   Platform,
-  LocalPrefKey,
-  LocalPrefValue,
 } from '@standardnotes/models'
 import {
   HttpResponse,
@@ -698,19 +696,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public async setPreference<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void> {
     return this.preferences.setValue(key, value)
-  }
-
-  public getLocalPreference<K extends LocalPrefKey>(key: K): LocalPrefValue[K] | undefined
-  public getLocalPreference<K extends LocalPrefKey>(key: K, defaultValue: LocalPrefValue[K]): LocalPrefValue[K]
-  public getLocalPreference<K extends LocalPrefKey>(
-    key: K,
-    defaultValue?: LocalPrefValue[K],
-  ): LocalPrefValue[K] | undefined {
-    return this.preferences.getLocalValue(key, defaultValue)
-  }
-
-  public setLocalPreference<K extends LocalPrefKey>(key: K, value: LocalPrefValue[K]): void {
-    return this.preferences.setLocalValue(key, value)
   }
 
   /**

@@ -16,7 +16,6 @@ import {
   SNTag,
   DeletedItemInterface,
   EncryptedItemInterface,
-  LocalPrefKey,
 } from '@standardnotes/models'
 import {
   ComponentArea,
@@ -49,6 +48,7 @@ import {
   ItemManagerInterface,
   SyncServiceInterface,
   FeatureStatus,
+  LocalPrefKey,
 } from '@standardnotes/services'
 import { GetFeatureUrl } from './UseCase/GetFeatureUrl'
 import { ComponentManagerEventData } from './ComponentManagerEventData'

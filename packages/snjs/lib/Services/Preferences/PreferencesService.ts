@@ -1,13 +1,4 @@
-import {
-  SNUserPrefs,
-  PrefKey,
-  PrefValue,
-  UserPrefsMutator,
-  ItemContent,
-  FillItemContent,
-  LocalPrefKey,
-  LocalPrefValue,
-} from '@standardnotes/models'
+import { SNUserPrefs, PrefKey, PrefValue, UserPrefsMutator, ItemContent, FillItemContent } from '@standardnotes/models'
 import { ItemManager } from '../Items/ItemManager'
 import { SingletonManager } from '../Singleton/SingletonManager'
 import { SyncService } from '../Sync/SyncService'
@@ -25,6 +16,8 @@ import {
   ApplicationStageChangedEventPayload,
   StorageServiceInterface,
   StorageKey,
+  LocalPrefKey,
+  LocalPrefValue,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
 

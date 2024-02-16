@@ -4,7 +4,6 @@ import {
   LocalStorageDecryptedContextualPayload,
   PrefDefaults,
   ComponentInterface,
-  LocalPrefKey,
 } from '@standardnotes/models'
 import {
   InternalEventBusInterface,
@@ -13,6 +12,7 @@ import {
   FeatureStatus,
   PreferenceServiceInterface,
   ComponentManagerInterface,
+  LocalPrefKey,
 } from '@standardnotes/services'
 import { NativeFeatureIdentifier, FindNativeTheme, ThemeFeatureDescription } from '@standardnotes/features'
 import { WebApplicationInterface } from '../WebApplication/WebApplicationInterface'

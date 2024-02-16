@@ -72,10 +72,10 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
 
   const toggleUseDeviceSettings = () => {
     setUseDeviceSettings(!useDeviceSettings)
-    if (!application.getLocalPreference(LocalPrefKey.AutoLightThemeIdentifier)) {
+    if (!application.preferences.getLocalValue(LocalPrefKey.AutoLightThemeIdentifier)) {
       setAutoLightTheme(autoLightTheme)
     }
-    if (!application.getLocalPreference(LocalPrefKey.AutoDarkThemeIdentifier)) {
+    if (!application.preferences.getLocalValue(LocalPrefKey.AutoDarkThemeIdentifier)) {
       setAutoDarkTheme(autoDarkTheme)
     }
     setUseDeviceSettings(!useDeviceSettings)
