@@ -454,7 +454,7 @@ export class ComponentManager
     const features: NativeFeatureIdentifier[] = []
     const uuids: Uuid[] = []
 
-    const strings = this.preferences.getLocalValue(LocalPrefKey.ActiveThemes, undefined) ?? []
+    const strings = this.preferences.getLocalValue(LocalPrefKey.ActiveThemes, [])
     for (const string of strings) {
       const nativeIdentifier = NativeFeatureIdentifier.create(string)
       if (!nativeIdentifier.isFailed()) {
