@@ -1,6 +1,7 @@
 export * from './UserPrefs'
 export * from './UserPrefsMutator'
 export * from './PrefKey'
+export * from './LocalPrefKey'
 export * from './EditorLineHeight'
 export * from './EditorFontSize'
 export * from './EditorLineWidth'

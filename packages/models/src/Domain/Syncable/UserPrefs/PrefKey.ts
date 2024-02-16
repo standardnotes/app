@@ -55,14 +55,6 @@ export enum PrefKey {
   DEPRECATED_AutoDarkThemeIdentifier = 'autoDarkThemeIdentifier',
 }
 
-export enum LocalPrefKey {
-  ActiveThemes = 'activeThemes',
-  UseSystemColorScheme = 'useSystemColorScheme',
-  UseTranslucentUI = 'useTranslucentUI',
-  AutoLightThemeIdentifier = 'autoLightThemeIdentifier',
-  AutoDarkThemeIdentifier = 'autoDarkThemeIdentifier',
-}
-
 export type PrefValue = {
   [PrefKey.TagsPanelWidth]: number
   [PrefKey.NotesPanelWidth]: number
@@ -109,12 +101,4 @@ export type PrefValue = {
   [PrefKey.AddImportsToTag]: boolean
   [PrefKey.AlwaysCreateNewTagForImports]: boolean
   [PrefKey.ExistingTagForImports]: string | undefined
-}
-
-export type LocalPrefValue = {
-  [LocalPrefKey.ActiveThemes]: string[]
-  [LocalPrefKey.UseSystemColorScheme]: boolean
-  [LocalPrefKey.UseTranslucentUI]: boolean
-  [LocalPrefKey.AutoLightThemeIdentifier]: string
-  [LocalPrefKey.AutoDarkThemeIdentifier]: string
 }
