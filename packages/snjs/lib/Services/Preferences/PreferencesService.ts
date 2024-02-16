@@ -25,7 +25,6 @@ import {
   ApplicationStageChangedEventPayload,
   StorageServiceInterface,
   StorageKey,
-  StorageValueModes,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
 
@@ -84,7 +83,7 @@ export class PreferencesService
           void this.notifyEvent(PreferencesServiceEvent.PreferencesChanged)
         }
       } else if (stage === ApplicationStage.StorageDecrypted_09) {
-        this.localPreferences = this.storage.getValue(StorageKey.LocalPreferences, StorageValueModes.Nonwrapped) ?? {}
+        this.localPreferences = this.storage.getValue(StorageKey.LocalPreferences) ?? {}
         void this.notifyEvent(PreferencesServiceEvent.LocalPreferencesChanged)
       }
     }
@@ -108,7 +107,7 @@ export class PreferencesService
   setLocalValue<K extends LocalPrefKey>(key: K, value: LocalPrefValue[K]): void {
     this.localPreferences[key] = value
 
-    this.storage.setValue(StorageKey.LocalPreferences, this.localPreferences, StorageValueModes.Nonwrapped)
+    this.storage.setValue(StorageKey.LocalPreferences, this.localPreferences)
 
     void this.notifyEvent(PreferencesServiceEvent.LocalPreferencesChanged)
   }
