@@ -179,7 +179,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
                 {
                   label: 'Open',
                   handler: (toastId) => {
-                    application.itemListController.selectItem(duplicated.uuid, true).catch(console.error)
+                    application.itemListController.selectUuids([duplicated.uuid], true).catch(console.error)
                     dismissToast(toastId)
                   },
                 },
