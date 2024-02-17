@@ -14,8 +14,11 @@ import {
 import { classNames } from '@standardnotes/utils'
 import { useCallback, useMemo, useState } from 'react'
 import { useSuperSearchContext } from './Context'
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 
 export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog: () => void }) => {
+  const [editor] = useLexicalComposerContext()
+
   const { query, results, currentResultIndex, isCaseSensitive, isReplaceMode, dispatch, dispatchReplaceEvent } =
     useSuperSearchContext()
 
@@ -53,22 +56,27 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
 
   return (
     <div
-      className="absolute right-6 top-13 z-10 flex select-none rounded border border-border bg-default"
+      className={classNames(
+        'absolute left-2 right-6 top-2 z-10 flex select-none rounded border border-border bg-default md:left-auto',
+        editor.isEditable() ? 'md:top-13' : 'md:top-3',
+      )}
       ref={setElement}
     >
-      <button
-        className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
-        onClick={() => {
-          dispatch({ type: 'toggle-replace-mode' })
-        }}
-        title={`Toggle Replace Mode (${toggleReplaceShortcut})`}
-      >
-        {isReplaceMode ? (
-          <ArrowDownIcon className="h-4 w-4 fill-text" />
-        ) : (
-          <ArrowRightIcon className="h-4 w-4 fill-text" />
-        )}
-      </button>
+      {editor.isEditable() && (
+        <button
+          className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
+          onClick={() => {
+            dispatch({ type: 'toggle-replace-mode' })
+          }}
+          title={`Toggle Replace Mode (${toggleReplaceShortcut})`}
+        >
+          {isReplaceMode ? (
+            <ArrowDownIcon className="h-4 w-4 fill-text" />
+          ) : (
+            <ArrowRightIcon className="h-4 w-4 fill-text" />
+          )}
+        </button>
+      )}
       <div
         className="flex flex-col gap-2 px-2 py-2"
         onKeyDown={(event) => {
@@ -171,7 +179,7 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
           </button>
         </div>
         {isReplaceMode && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
             <input
               type="text"
               placeholder="Replace"

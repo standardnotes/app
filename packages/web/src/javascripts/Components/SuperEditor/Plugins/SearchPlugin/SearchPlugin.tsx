@@ -28,26 +28,15 @@ export const SearchPlugin = () => {
   const resultsRef = useStateRef(results)
 
   useEffect(() => {
-    const isFocusInEditor = () => {
-      if (!document.activeElement || !document.activeElement.closest('.blocks-editor')) {
-        return false
-      }
-      return true
-    }
-
     return application.keyboardService.addCommandHandlers([
       {
         command: SUPER_TOGGLE_SEARCH,
         category: 'Super notes',
         description: 'Search in current note',
         onKeyDown: (event) => {
-          if (!isFocusInEditor()) {
-            return
-          }
           event.preventDefault()
           event.stopPropagation()
           dispatch({ type: 'toggle-search' })
-          editor.focus()
         },
       },
       {
@@ -55,7 +44,7 @@ export const SearchPlugin = () => {
         category: 'Super notes',
         description: 'Search and replace in current note',
         onKeyDown: (event) => {
-          if (!isFocusInEditor()) {
+          if (!editor.isEditable()) {
             return
           }
           event.preventDefault()
@@ -66,9 +55,6 @@ export const SearchPlugin = () => {
       {
         command: SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
         onKeyDown() {
-          if (!isFocusInEditor()) {
-            return
-          }
           dispatch({
             type: 'toggle-case-sensitive',
           })
@@ -79,9 +65,6 @@ export const SearchPlugin = () => {
         category: 'Super notes',
         description: 'Go to next search result',
         onKeyDown(event) {
-          if (!isFocusInEditor()) {
-            return
-          }
           event.preventDefault()
           event.stopPropagation()
           dispatch({
@@ -94,9 +77,6 @@ export const SearchPlugin = () => {
         category: 'Super notes',
         description: 'Go to previous search result',
         onKeyDown(event) {
-          if (!isFocusInEditor()) {
-            return
-          }
           event.preventDefault()
           event.stopPropagation()
           dispatch({

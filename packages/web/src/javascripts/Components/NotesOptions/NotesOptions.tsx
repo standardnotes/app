@@ -8,7 +8,6 @@ import {
   PIN_NOTE_COMMAND,
   SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
   STAR_NOTE_COMMAND,
-  SUPER_SHOW_MARKDOWN_PREVIEW,
 } from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
 import ListedActionsOption from './Listed/ListedActionsOption'
@@ -24,7 +23,6 @@ import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/Keyboard
 import { NoteAttributes } from './NoteAttributes'
 import { SpellcheckOptions } from './SpellcheckOptions'
 import { NoteSizeWarning } from './NoteSizeWarning'
-import { useCommandService } from '../CommandProvider'
 import { iconClass } from './ClassNames'
 import SuperNoteOptions from './SuperNoteOptions'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
@@ -48,12 +46,6 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
 
   const [altKeyDown, setAltKeyDown] = useState(false)
   const { toggleAppPane } = useResponsiveAppPane()
-  const commandService = useCommandService()
-
-  const markdownShortcut = useMemo(
-    () => commandService.keyboardShortcutForCommand(SUPER_SHOW_MARKDOWN_PREVIEW),
-    [commandService],
-  )
 
   const toggleOn = (condition: (note: SNNote) => boolean) => {
     const notesMatchingAttribute = notes.filter(condition)
@@ -212,10 +204,6 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     () => application.keyboardService.keyboardShortcutForCommand(STAR_NOTE_COMMAND),
     [application],
   )
-
-  const enableSuperMarkdownPreview = useCallback(() => {
-    commandService.triggerCommand(SUPER_SHOW_MARKDOWN_PREVIEW)
-  }, [commandService])
 
   const toggleLineWidthModal = useCallback(() => {
     application.keyboardService.triggerCommand(CHANGE_EDITOR_WIDTH_COMMAND)
@@ -468,13 +456,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
 
       {notes.length === 1 && (
         <>
-          {notes[0].noteType === NoteType.Super && (
-            <SuperNoteOptions
-              note={notes[0]}
-              markdownShortcut={markdownShortcut}
-              enableSuperMarkdownPreview={enableSuperMarkdownPreview}
-            />
-          )}
+          {notes[0].noteType === NoteType.Super && <SuperNoteOptions closeMenu={closeMenu} />}
 
           {!areSomeNotesInSharedVault && (
             <MenuSection>
