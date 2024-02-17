@@ -49,6 +49,7 @@ export enum ApplicationEvent {
   /** When StorageService is ready (but NOT yet decrypted) to start servicing read/write requests */
   StorageReady = 'Application:StorageReady',
   PreferencesChanged = 'Application:PreferencesChanged',
+  LocalPreferencesChanged = 'Application:LocalPreferencesChanged',
   UnprotectedSessionBegan = 'Application:UnprotectedSessionBegan',
   UserRolesChanged = 'Application:UserRolesChanged',
   FeaturesAvailabilityChanged = 'Application:FeaturesAvailabilityChanged',

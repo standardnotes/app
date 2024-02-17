@@ -81,6 +81,7 @@ import {
   CreateDecryptedBackupFile,
   CreateEncryptedBackupFile,
   WebSocketsService,
+  PreferencesServiceEvent,
 } from '@standardnotes/services'
 import {
   SNNote,
@@ -326,8 +327,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     const preferencesService = this.dependencies.get<PreferencesService>(TYPES.PreferencesService)
     this.serviceObservers.push(
-      preferencesService.addEventObserver(() => {
-        void this.notifyEvent(ApplicationEvent.PreferencesChanged)
+      preferencesService.addEventObserver((event) => {
+        if (event === PreferencesServiceEvent.PreferencesChanged) {
+          void this.notifyEvent(ApplicationEvent.PreferencesChanged)
+        } else if (event === PreferencesServiceEvent.LocalPreferencesChanged) {
+          void this.notifyEvent(ApplicationEvent.LocalPreferencesChanged)
+        }
       }),
     )
 

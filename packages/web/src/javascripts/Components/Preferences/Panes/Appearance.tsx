@@ -4,7 +4,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { WebApplication } from '@/Application/WebApplication'
-import { PrefKey, FeatureStatus, naturalSort, PrefDefaults } from '@standardnotes/snjs'
+import { FeatureStatus, naturalSort, LocalPrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { Subtitle, Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
@@ -14,7 +14,7 @@ import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import EditorAppearance from './Appearance/EditorAppearance'
 import { GetAllThemesUseCase } from '@standardnotes/ui-services'
-import usePreference from '@/Hooks/usePreference'
+import { useLocalPreference } from '@/Hooks/usePreference'
 
 type Props = {
   application: WebApplication
@@ -24,19 +24,14 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   const premiumModal = usePremiumModal()
 
   const [themeItems, setThemeItems] = useState<DropdownItem[]>([])
-  const [autoLightTheme, setAutoLightTheme] = useState<string>(() =>
-    application.getPreference(PrefKey.AutoLightThemeIdentifier, PrefDefaults[PrefKey.AutoLightThemeIdentifier]),
-  )
-  const [autoDarkTheme, setAutoDarkTheme] = useState<string>(() =>
-    application.getPreference(PrefKey.AutoDarkThemeIdentifier, PrefDefaults[PrefKey.AutoDarkThemeIdentifier]),
-  )
-  const [useDeviceSettings, setUseDeviceSettings] = useState(() =>
-    application.getPreference(PrefKey.UseSystemColorScheme, PrefDefaults[PrefKey.UseSystemColorScheme]),
-  )
 
-  const useTranslucentUI = usePreference(PrefKey.UseTranslucentUI)
+  const [autoLightTheme, setAutoLightTheme] = useLocalPreference(LocalPrefKey.AutoLightThemeIdentifier)
+  const [autoDarkTheme, setAutoDarkTheme] = useLocalPreference(LocalPrefKey.AutoDarkThemeIdentifier)
+  const [useDeviceSettings, setUseDeviceSettings] = useLocalPreference(LocalPrefKey.UseSystemColorScheme)
+
+  const [useTranslucentUI, setUseTranslucentUI] = useLocalPreference(LocalPrefKey.UseTranslucentUI)
   const toggleTranslucentUI = () => {
-    application.setPreference(PrefKey.UseTranslucentUI, !useTranslucentUI).catch(console.error)
+    setUseTranslucentUI(!useTranslucentUI)
   }
 
   useEffect(() => {
@@ -76,12 +71,12 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   }, [application])
 
   const toggleUseDeviceSettings = () => {
-    application.setPreference(PrefKey.UseSystemColorScheme, !useDeviceSettings).catch(console.error)
-    if (!application.getPreference(PrefKey.AutoLightThemeIdentifier)) {
-      application.setPreference(PrefKey.AutoLightThemeIdentifier, autoLightTheme).catch(console.error)
+    setUseDeviceSettings(!useDeviceSettings)
+    if (!application.preferences.getLocalValue(LocalPrefKey.AutoLightThemeIdentifier)) {
+      setAutoLightTheme(autoLightTheme)
     }
-    if (!application.getPreference(PrefKey.AutoDarkThemeIdentifier)) {
-      application.setPreference(PrefKey.AutoDarkThemeIdentifier, autoDarkTheme).catch(console.error)
+    if (!application.preferences.getLocalValue(LocalPrefKey.AutoDarkThemeIdentifier)) {
+      setAutoDarkTheme(autoDarkTheme)
     }
     setUseDeviceSettings(!useDeviceSettings)
   }
@@ -92,7 +87,6 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
       premiumModal.activate(`${item.label} theme`)
       return
     }
-    application.setPreference(PrefKey.AutoLightThemeIdentifier, value).catch(console.error)
     setAutoLightTheme(value)
   }
 
@@ -102,7 +96,6 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
       premiumModal.activate(`${item.label} theme`)
       return
     }
-    application.setPreference(PrefKey.AutoDarkThemeIdentifier, value).catch(console.error)
     setAutoDarkTheme(value)
   }
 

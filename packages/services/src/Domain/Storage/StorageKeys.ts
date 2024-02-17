@@ -50,6 +50,7 @@ export enum StorageKey {
   FileBackupsLocation = 'file_backups_location',
   VaultSelectionOptions = 'vault_selection_options',
   Subscription = 'subscription',
+  LocalPreferences = 'local_preferences',
 }
 
 export enum NonwrappedStorageKey {

@@ -14,6 +14,10 @@ import {
   InternalEventInterface,
   ApplicationEvent,
   ApplicationStageChangedEventPayload,
+  StorageServiceInterface,
+  StorageKey,
+  LocalPrefKey,
+  LocalPrefValue,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
 
@@ -24,6 +28,7 @@ export class PreferencesService
   private shouldReload = true
   private reloading = false
   private preferences?: SNUserPrefs
+  private localPreferences: { [key in LocalPrefKey]?: LocalPrefValue[key] } = {}
   private removeItemObserver?: () => void
   private removeSyncObserver?: () => void
 
@@ -32,6 +37,7 @@ export class PreferencesService
     items: ItemManager,
     private mutator: MutatorClientInterface,
     private sync: SyncService,
+    private storage: StorageServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -69,14 +75,34 @@ export class PreferencesService
         if (this.preferences) {
           void this.notifyEvent(PreferencesServiceEvent.PreferencesChanged)
         }
+      } else if (stage === ApplicationStage.StorageDecrypted_09) {
+        this.localPreferences = this.storage.getValue(StorageKey.LocalPreferences) ?? {}
+        void this.notifyEvent(PreferencesServiceEvent.LocalPreferencesChanged)
       }
     }
+  }
+
+  getLocalValue<K extends LocalPrefKey>(
+    key: K,
+    defaultValue: LocalPrefValue[K] | undefined,
+  ): LocalPrefValue[K] | undefined
+  getLocalValue<K extends LocalPrefKey>(key: K, defaultValue: LocalPrefValue[K]): LocalPrefValue[K]
+  getLocalValue<K extends LocalPrefKey>(key: K, defaultValue?: LocalPrefValue[K]): LocalPrefValue[K] | undefined {
+    return this.localPreferences[key] ?? defaultValue
   }
 
   getValue<K extends PrefKey>(key: K, defaultValue: PrefValue[K] | undefined): PrefValue[K] | undefined
   getValue<K extends PrefKey>(key: K, defaultValue: PrefValue[K]): PrefValue[K]
   getValue<K extends PrefKey>(key: K, defaultValue?: PrefValue[K]): PrefValue[K] | undefined {
     return this.preferences?.getPref(key) ?? defaultValue
+  }
+
+  setLocalValue<K extends LocalPrefKey>(key: K, value: LocalPrefValue[K]): void {
+    this.localPreferences[key] = value
+
+    this.storage.setValue(StorageKey.LocalPreferences, this.localPreferences)
+
+    void this.notifyEvent(PreferencesServiceEvent.LocalPreferencesChanged)
   }
 
   async setValue<K extends PrefKey>(key: K, value: PrefValue[K]): Promise<void> {
