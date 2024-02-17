@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.37.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.36.3...@standardnotes/ui-services@1.37.0) (2024-02-17)
+
+### Features
+
+* Themes and appeareance settings are now local to your device and not synced ([#2847](https://github.com/standardnotes/app/issues/2847)) ([bfbf9ab](https://github.com/standardnotes/app/commit/bfbf9ab8ceb6f1ecd3a0690bce3b5d1c5c52e84c))
+
 ## [1.36.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.36.2...@standardnotes/ui-services@1.36.3) (2024-02-02)
 
 **Note:** Version bump only for package @standardnotes/ui-services
