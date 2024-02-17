@@ -87,6 +87,10 @@
   -webkit-app-region: drag;
 }
 
+.mac-desktop [data-dialog-portal]:has([data-preferences-header])::after {
+  height: 0;
+}
+
 button,
 input,
 #navigation #navigation-content,
