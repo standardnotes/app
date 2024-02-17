@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.191.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.190.0...@standardnotes/web@3.191.0) (2024-02-17)
+
+### Features
+
+* Added "Find in note" option to note options/context menu for Super notes ([47745cb](https://github.com/standardnotes/app/commit/47745cb79c34239b58df61083e1af2c0d2ba1d16))
+
 # [3.190.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.189.5...@standardnotes/web@3.190.0) (2024-02-17)
 
 ### Features
