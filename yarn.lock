@@ -7167,7 +7167,7 @@ __metadata:
     get-yarn-workspaces: ^1.0.2
     metro-react-native-babel-preset: ^0.77.0
     npm-check-updates: "*"
-    pod-install: ^0.1.38
+    pod-install: ^0.2.0
     prettier: "*"
     prettier-plugin-organize-imports: ^3.2.0
     react: 18.2.0
@@ -22317,12 +22317,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pod-install@npm:^0.1.38":
-  version: 0.1.38
-  resolution: "pod-install@npm:0.1.38"
+"pod-install@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "pod-install@npm:0.2.0"
   bin:
     pod-install: build/index.js
-  checksum: 9ff3e8f50dba2cee1c174deeb394312d6a950096f39c5a413a9dbf9acf4acb890440a9c316381799c8e125858c4c84d2c4f0c3d7ef2ceb056ea820a417004fd7
+  checksum: ecfe94d1285b42dd56fb03b9d1850d805f5626b8030acd32f2cb9ea6902e678deaefbb8475d2e307d0a6311159c6b5deea173adcc045c5ff6d58b377b0dcf1b8
   languageName: node
   linkType: hard
 
