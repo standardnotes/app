@@ -45,15 +45,17 @@ Questions? Find answers on our [Help page](https://standardnotes.com/help).
 
 ---
 
-### Docker setup
+### Self-hosting the web app
 
-If you'd like to self-host the web application, we recommend using our official [Docker hub image](https://hub.docker.com/repository/docker/standardnotes/web).
+Our web app is compiled into a folder of static HTML, JS, and CSS files. You can serve these files behind a web server to get started:
 
-```
-docker run -d -p 3001:3001 --env-file=.env.sample standardnotes/web:stable
-```
+1. Clone the repo
+2. `cd packages/web`
+3. `yarn build`
+4. `cd dist`
+5. You can then use Python to serve this folder over http: `python -m http.server 8080`
 
-You can then access the app at `http://localhost:3001`. It may take a minute for the server to start up.
+You can now access the app at `http://localhost:8080`.
 
 ### Running Web App in Development Mode
 
