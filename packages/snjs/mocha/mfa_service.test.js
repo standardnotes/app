@@ -33,7 +33,7 @@ describe('mfa service', () => {
   it('generates 160 bit base32-encoded mfa secret', async () => {
     const RFC4648 = /[ABCDEFGHIJKLMNOPQRSTUVWXYZ234567]/g
 
-    const secret = await application.generateMfaSecret()
+    const secret = await application.mfa.generateMfaSecret()
     expect(secret).to.have.lengthOf(32)
     expect(secret.replace(RFC4648, '')).to.have.lengthOf(0)
   })
@@ -43,30 +43,30 @@ describe('mfa service', () => {
 
     Factory.handlePasswordChallenges(application, accountPassword)
 
-    expect(await application.isMfaActivated()).to.equal(false)
+    expect(await application.mfa.isMfaActivated()).to.equal(false)
 
-    const secret = await application.generateMfaSecret()
-    const token = await application.getOtpToken(secret)
+    const secret = await application.mfa.generateMfaSecret()
+    const token = await application.mfa.getOtpToken(secret)
 
-    await application.enableMfa(secret, token)
+    await application.mfa.enableMfa(secret, token)
 
-    expect(await application.isMfaActivated()).to.equal(true)
+    expect(await application.mfa.isMfaActivated()).to.equal(true)
 
-    await application.disableMfa()
+    await application.mfa.disableMfa()
 
-    expect(await application.isMfaActivated()).to.equal(false)
+    expect(await application.mfa.isMfaActivated()).to.equal(false)
   }).timeout(Factory.TenSecondTimeout)
 
   it('prompts for account password when disabling mfa', async () => {
     await registerApp(application)
 
     Factory.handlePasswordChallenges(application, accountPassword)
-    const secret = await application.generateMfaSecret()
-    const token = await application.getOtpToken(secret)
+    const secret = await application.mfa.generateMfaSecret()
+    const token = await application.mfa.getOtpToken(secret)
 
     sinon.spy(application.challenges, 'sendChallenge')
-    await application.enableMfa(secret, token)
-    await application.disableMfa()
+    await application.mfa.enableMfa(secret, token)
+    await application.mfa.disableMfa()
 
     const spyCall = application.challenges.sendChallenge.getCall(0)
     const challenge = spyCall.firstArg
