@@ -71,12 +71,12 @@ describe('account recovery', function () {
   })
 
   it('should disable MFA after recovery sign in', async () => {
-    const secret = await application.generateMfaSecret()
-    const token = await application.getOtpToken(secret)
+    const secret = await application.mfa.generateMfaSecret()
+    const token = await application.mfa.getOtpToken(secret)
 
-    await application.enableMfa(secret, token)
+    await application.mfa.enableMfa(secret, token)
 
-    expect(await application.isMfaActivated()).to.equal(true)
+    expect(await application.mfa.isMfaActivated()).to.equal(true)
 
     const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
 
@@ -88,7 +88,7 @@ describe('account recovery', function () {
       password: context.password,
     })
 
-    expect(await application.isMfaActivated()).to.equal(false)
+    expect(await application.mfa.isMfaActivated()).to.equal(false)
   })
 
   it('should not allow to sign in with recovery code and invalid credentials', async () => {

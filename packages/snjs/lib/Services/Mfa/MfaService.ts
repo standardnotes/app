@@ -1,7 +1,13 @@
 import { SettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { FeaturesService } from '../Features/FeaturesService'
-import { AbstractService, InternalEventBusInterface, MfaServiceInterface, SignInStrings } from '@standardnotes/services'
+import {
+  AbstractService,
+  InternalEventBusInterface,
+  MfaServiceInterface,
+  ProtectionsClientInterface,
+  SignInStrings,
+} from '@standardnotes/services'
 import { SettingName } from '@standardnotes/domain-core'
 
 export class MfaService extends AbstractService implements MfaServiceInterface {
@@ -9,6 +15,7 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
     private settingsService: SettingsService,
     private crypto: PureCryptoInterface,
     private featuresService: FeaturesService,
+    private protections: ProtectionsClientInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -48,6 +55,10 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
   }
 
   async disableMfa(): Promise<void> {
+    if (!(await this.protections.authorizeMfaDisable())) {
+      return
+    }
+
     return await this.settingsService.deleteSetting(SettingName.create(SettingName.NAMES.MfaSecret).getValue())
   }
 
