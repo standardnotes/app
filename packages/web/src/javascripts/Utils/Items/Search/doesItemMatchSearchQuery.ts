@@ -7,7 +7,11 @@ export function getItemTitleInContextOfLinkBubble(item: DecryptedItemInterface<I
 
 function getItemSearchableString(item: DecryptedItemInterface<ItemContent>, application: WebApplicationInterface) {
   if (isNote(item)) {
-    return item.title.length > 0 ? item.title : item.preview_plain
+    if (item.title.length > 0) {
+      return item.title
+    } else if (!item.protected) {
+      return item.preview_plain
+    }
   } else if (isTag(item)) {
     return application.items.getTagLongTitle(item)
   }
