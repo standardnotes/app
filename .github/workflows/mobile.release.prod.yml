@@ -77,8 +77,12 @@ jobs:
       - name: Export version from package.json
         run:
           echo "PACKAGE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
+      - name: Ruby Setup for Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: 'packages/mobile'
       - name: Install dependencies
-        run: yarn install --immutable && yarn install:pods
+        run: yarn install --immutable && bundle install && yarn install:pods
       - run: yarn build:mobile
       - name: Set ssh connection to Github
         uses: webfactory/ssh-agent@v0.4.1
@@ -86,10 +90,6 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Export Apple AppStore Connect API key
         run: echo "${{ secrets.APPSTORE_CONNECT_KEY }}" > ios/Authkey.p8
-      - name: Ruby Setup for Fastlane
-        uses: ruby/setup-ruby@v1
-        with:
-          working-directory: 'packages/mobile'
       - name: Setup fastlane
         uses: maierj/fastlane-action@v1.4.0
         env:
