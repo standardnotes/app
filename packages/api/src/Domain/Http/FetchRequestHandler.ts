@@ -63,6 +63,7 @@ export class FetchRequestHandler implements RequestHandlerInterface {
     return new Request(httpRequest.url, {
       method: httpRequest.verb,
       headers,
+      credentials: 'include',
     })
   }
 
