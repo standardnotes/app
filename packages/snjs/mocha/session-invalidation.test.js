@@ -48,7 +48,8 @@ describe('session invalidation', function () {
     await contextB.launch()
     await contextB.signIn()
 
-    await contextB.changeEmail('new-email')
+    const newEmail = UuidGenerator.GenerateUuid()
+    await contextB.changeEmail(newEmail)
     const note = await contextB.createSyncedNote()
 
     contextA.ignoreChallenges()
