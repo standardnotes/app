@@ -41,7 +41,7 @@ const IosKeyboardClose = () => {
   return (
     <button
       className={classNames(
-        'absolute bottom-3 right-3 rounded-full border border-border bg-contrast p-3',
+        'absolute bottom-1.5 right-3 rounded-full border border-border bg-contrast p-2.5',
         isFocusInSuperEditor && 'hidden',
       )}
     >

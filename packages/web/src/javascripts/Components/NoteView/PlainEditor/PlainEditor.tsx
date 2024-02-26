@@ -15,7 +15,7 @@ import {
   WebAppEvent,
   PrefDefaults,
 } from '@standardnotes/snjs'
-import { TAB_COMMAND } from '@standardnotes/ui-services'
+import { isIOS, TAB_COMMAND } from '@standardnotes/ui-services'
 import {
   ChangeEventHandler,
   forwardRef,
@@ -291,6 +291,9 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
           'editable font-editor flex-grow',
           lineHeight && `leading-${lineHeight.toLowerCase()}`,
           responsiveFontSize,
+          // Extra bottom padding is added on iOS so that text
+          // doesn't get hidden by the floating "Close keyboard" button
+          isIOS() && '!pb-12',
         )}
       ></textarea>
     )
