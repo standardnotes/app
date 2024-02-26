@@ -77,6 +77,10 @@
   -webkit-app-region: drag;
 }
 
+.mac-desktop.focus-mode #editor-title-bar {
+  -webkit-app-region: no-drag;
+}
+
 .mac-desktop [data-dialog-portal]:has([data-dialog])::after {
   content: '';
   position: absolute;

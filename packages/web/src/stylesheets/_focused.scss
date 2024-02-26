@@ -41,10 +41,17 @@
         display: none;
       }
 
-      #editor-title-bar:hover {
+      #editor-title-bar:hover,
+      #editor-title-bar:has(:focus) {
         .note-view-linking-container,
         #toggle-linking-container {
           display: flex;
+        }
+
+        .note-view-options-buttons,
+        .note-status-tooltip-container,
+        #conflict-resolution-button {
+          opacity: 1;
         }
       }
 
@@ -52,14 +59,6 @@
       .note-status-tooltip-container,
       #conflict-resolution-button {
         opacity: 0;
-      }
-
-      #editor-title-bar:hover {
-        .note-view-options-buttons,
-        .note-status-tooltip-container,
-        #conflict-resolution-button {
-          opacity: 1;
-        }
       }
     }
 
