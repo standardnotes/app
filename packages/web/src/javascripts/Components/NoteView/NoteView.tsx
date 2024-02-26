@@ -953,7 +953,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           id={ElementIds.EditorContent}
           className={classNames(
             ElementIds.EditorContent,
-            'z-editor-content overflow-auto [&>*]:mx-[var(--editor-margin)] [&>*]:max-w-[var(--editor-max-width)]',
+            'z-editor-content overflow-auto sm:[&>*]:mx-[var(--editor-margin)] sm:[&>*]:max-w-[var(--editor-max-width)]',
           )}
           style={
             {
