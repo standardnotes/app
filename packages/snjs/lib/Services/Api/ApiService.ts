@@ -81,7 +81,7 @@ import { Strings } from '@Lib/Strings'
 import { AnyFeatureDescription } from '@standardnotes/features'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
-const V0_API_VERSION = '20200115'
+const V0_API_VERSION = '20240226'
 
 type InvalidSessionObserver = (revoked: boolean) => void
 

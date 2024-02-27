@@ -397,8 +397,8 @@ describe('server session', function () {
     const refreshSessionResponse = await application.legacyApi.refreshSession()
 
     expect(refreshSessionResponse.status).to.equal(400)
-    expect(refreshSessionResponse.data.error.tag).to.equal('expired-refresh-token')
-    expect(refreshSessionResponse.data.error.message).to.equal('The refresh token has expired.')
+    expect(refreshSessionResponse.data.error.tag).to.equal('invalid-parameters')
+    expect(refreshSessionResponse.data.error.message).to.equal('The provided parameters are not valid.')
 
     /*
       The access token and refresh token should be expired up to this point.
@@ -411,7 +411,11 @@ describe('server session', function () {
     expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
   }).timeout(Factory.TwentySecondTimeout)
 
-  it('should fail when renewing a session with an invalid refresh token', async function () {
+  /**
+   * This test is skipped due to the fact that tokens reside now in cookies and are not accessible to the client.
+   * Thus it is not possible to tamper with the refresh token.
+   */
+  it.skip('should fail when renewing a session with an invalid refresh token', async function () {
     await Factory.registerUserToApplication({
       application: application,
       email: email,
