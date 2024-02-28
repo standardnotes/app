@@ -75,7 +75,7 @@ type State = {
   stackComponentViewers: ComponentViewerInterface[]
   syncTakingTooLong: boolean
   monospaceFont?: boolean
-  plainEditorFocused?: boolean
+  editorFocused?: boolean
   paneGestureEnabled?: boolean
   noteLastEditedByUuid?: string
   updateSavingIndicator?: boolean
@@ -780,15 +780,15 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
   }
 
-  onPlainFocus = () => {
-    this.setState({ plainEditorFocused: true })
+  onEditorFocus = () => {
+    this.setState({ editorFocused: true })
   }
 
-  onPlainBlur = (event: FocusEvent) => {
+  onEditorBlur = (event: FocusEvent) => {
     if (event.relatedTarget?.id === ElementIds.NoteOptionsButton) {
       return
     }
-    this.setState({ plainEditorFocused: false })
+    this.setState({ editorFocused: false })
   }
 
   toggleConflictResolutionModal = () => {
@@ -817,7 +817,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       )
     }
 
-    const renderHeaderOptions = isMobileScreen() ? !this.state.plainEditorFocused : true
+    const renderHeaderOptions = isMobileScreen() ? !this.state.editorFocused : true
 
     const editorMode =
       this.note.noteType === NoteType.Super
@@ -930,7 +930,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   onButtonBlur={() => {
                     this.setState({
-                      plainEditorFocused: false,
+                      editorFocused: false,
                     })
                   }}
                 />
@@ -983,8 +983,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               ref={this.setPlainEditorRef}
               controller={this.controller}
               locked={this.state.noteLocked || !!this.state.readonly}
-              onFocus={this.onPlainFocus}
-              onBlur={this.onPlainBlur}
+              onFocus={this.onEditorFocus}
+              onBlur={this.onEditorBlur}
             />
           )}
 
@@ -998,6 +998,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 spellcheck={this.state.spellcheck}
                 controller={this.controller}
                 readonly={this.state.readonly}
+                onFocus={this.onEditorFocus}
+                onBlur={this.onEditorBlur}
               />
             </div>
           )}

@@ -8,7 +8,7 @@ import {
   EditorLineHeightValues,
   WebAppEvent,
 } from '@standardnotes/snjs'
-import { CSSProperties, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import { CSSProperties, FocusEvent, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { BlocksEditor } from './BlocksEditor'
 import { BlocksEditorComposer } from './BlocksEditorComposer'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
@@ -50,6 +50,8 @@ type Props = {
   filesController: FilesController
   spellcheck: boolean
   readonly?: boolean
+  onFocus?: (event: FocusEvent) => void
+  onBlur?: (event: FocusEvent) => void
 }
 
 export const SuperEditor: FunctionComponent<Props> = ({
@@ -59,6 +61,8 @@ export const SuperEditor: FunctionComponent<Props> = ({
   spellcheck,
   controller,
   readonly,
+  onFocus,
+  onBlur,
 }) => {
   const note = useRef(controller.item)
   const changeEditorFunction = useRef<ChangeEditorFunction>()
@@ -220,9 +224,13 @@ export const SuperEditor: FunctionComponent<Props> = ({
     }
   }, [])
 
-  const onFocus = useCallback(() => {
-    application.notifyWebEvent(WebAppEvent.EditorDidFocus, { eventSource: EditorEventSource.UserInteraction })
-  }, [application])
+  const handleFocus = useCallback(
+    (event: FocusEvent) => {
+      application.notifyWebEvent(WebAppEvent.EditorDidFocus, { eventSource: EditorEventSource.UserInteraction })
+      onFocus?.(event)
+    },
+    [application, onFocus],
+  )
 
   return (
     <div
@@ -249,7 +257,8 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 previewLength={SuperNotePreviewCharLimit}
                 spellcheck={spellcheck}
                 readonly={note.current.locked || readonly}
-                onFocus={onFocus}
+                onFocus={handleFocus}
+                onBlur={onBlur}
               >
                 <ItemSelectionPlugin currentNote={note.current} />
                 <FilePlugin currentNote={note.current} />

@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useState } from 'react'
+import { FocusEvent, FunctionComponent, useCallback, useState } from 'react'
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
@@ -44,8 +44,8 @@ type BlocksEditorProps = {
   spellcheck?: boolean
   ignoreFirstChange?: boolean
   readonly?: boolean
-  onFocus?: () => void
-  onBlur?: () => void
+  onFocus?: (event: FocusEvent) => void
+  onBlur?: (event: FocusEvent) => void
 }
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
