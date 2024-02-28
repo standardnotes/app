@@ -96,8 +96,15 @@ describe('server session', function () {
     // After the above sync request is completed, we obtain the session information.
     const sessionAfterSync = application.legacyApi.getSession()
 
-    expect(sessionBeforeSync.accessToken.value).to.not.equal(sessionAfterSync.accessToken.value)
-    expect(sessionBeforeSync.refreshToken.value).to.not.equal(sessionAfterSync.refreshToken.value)
+    /**
+     * Access token and refresh token values in the new API version (20240226) represent the session uuid.
+     * So they should stay the same as they were since we are operating on the same session.
+     *
+     * The actual token values are stored in cookies indexed by the session uuid and are not accessible to the client.
+     */
+    expect(sessionBeforeSync.accessToken.value).to.equal(sessionAfterSync.accessToken.value)
+    expect(sessionBeforeSync.refreshToken.value).to.equal(sessionAfterSync.refreshToken.value)
+
     expect(sessionBeforeSync.accessToken.expiresAt).to.be.lessThan(sessionAfterSync.accessToken.expiresAt)
     // New token should expire in the future.
     expect(sessionAfterSync.accessToken.expiresAt).to.be.greaterThan(Date.now())
