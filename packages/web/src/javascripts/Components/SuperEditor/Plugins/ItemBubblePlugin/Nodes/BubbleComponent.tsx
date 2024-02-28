@@ -48,13 +48,14 @@ export function BubbleComponent({ itemUuid, node }: BubbleComponentProps) {
 
   return (
     <LinkedItemBubble
-      className="m-1"
+      className="mx-0.5"
       link={link}
       key={link.id}
       activateItem={activateItemAndTogglePane}
       unlinkItem={unlinkPressed}
       isBidirectional={false}
       inlineFlex={true}
+      wrappable
     />
   )
 }
