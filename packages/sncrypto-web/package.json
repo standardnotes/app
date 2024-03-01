@@ -13,7 +13,9 @@
     "dist/**/*.d.ts"
   ],
   "license": "AGPL-3.0",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "rm -fr dist",
     "prebuild": "yarn clean",
