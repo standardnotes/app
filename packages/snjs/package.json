@@ -83,5 +83,9 @@
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-merge": "*"
+  },
+  "dependencies": {
+    "connect": "^3.7.0",
+    "serve-static": "^1.15.0"
   }
 }

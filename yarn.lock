@@ -7468,6 +7468,7 @@ __metadata:
     babel-jest: ^29.3.1
     babel-loader: ^9.1.0
     circular-dependency-plugin: ^5.2.2
+    connect: ^3.7.0
     crypto-js: ^4.1.1
     docdash: ^2.0.0
     dom-storage: ^2.1.0
@@ -7483,6 +7484,7 @@ __metadata:
     reflect-metadata: ^0.1.13
     script-loader: ^0.7.2
     semver: ^7.3.8
+    serve-static: ^1.15.0
     ts-jest: ^29.0.3
     ts-loader: ^9.4.1
     ts-node: ^10.9.1
