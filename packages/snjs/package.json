@@ -12,6 +12,7 @@
     "mocha",
     "e2e-server.js"
   ],
+  "bin": "e2e-server.js",
   "license": "AGPL-3.0",
   "publishConfig": {
     "access": "public"

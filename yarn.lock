@@ -7492,6 +7492,8 @@ __metadata:
     webpack: "*"
     webpack-cli: "*"
     webpack-merge: "*"
+  bin:
+    snjs: e2e-server.js
   languageName: unknown
   linkType: soft
 

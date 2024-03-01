@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /* Used for running mocha tests */
 const connect = require('connect')
 const serveStatic = require('serve-static')
