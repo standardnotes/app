@@ -72,7 +72,7 @@ export class UserApiService implements UserApiServiceInterface {
 
     try {
       const response = await this.userServer.register({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
+        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
         password: registerDTO.serverPassword,
         email: registerDTO.email,
         ephemeral: registerDTO.ephemeral,
@@ -92,7 +92,7 @@ export class UserApiService implements UserApiServiceInterface {
 
     try {
       const response = await this.userServer.update({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
+        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
         user_uuid: updateDTO.userUuid,
       })
 

@@ -9,9 +9,11 @@ import {
   HttpResponse,
   HttpResponseMeta,
   isErrorResponse,
+  ApiEndpointParam,
 } from '@standardnotes/responses'
 import { HttpServiceInterface } from './HttpServiceInterface'
 
+import { ApiVersion } from '../Api'
 import { Paths } from '../Server/Auth/Paths'
 import { SessionRefreshResponseBody } from '../Response/Auth/SessionRefreshResponseBody'
 import { FetchRequestHandler } from './FetchRequestHandler'
@@ -145,6 +147,10 @@ export class HttpService implements HttpServiceInterface {
       await sleep(this.__latencySimulatorMs, true)
     }
 
+    httpRequest.params = httpRequest.params
+      ? this.params(httpRequest.params as Record<string | number | symbol, unknown>)
+      : undefined
+
     const isRefreshRequest = httpRequest.url === joinPaths(this.host, Paths.v1.refreshSession)
     if (this.inProgressRefreshSessionPromise && !isRefreshRequest) {
       await this.inProgressRefreshSessionPromise
@@ -235,5 +241,16 @@ export class HttpService implements HttpServiceInterface {
     this.refreshSessionCallback(this.session)
 
     return true
+  }
+
+  private params(inParams: Record<string | number | symbol, unknown>): HttpRequestParams {
+    const params = {
+      ...inParams,
+      ...{
+        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
+      },
+    }
+
+    return params
   }
 }

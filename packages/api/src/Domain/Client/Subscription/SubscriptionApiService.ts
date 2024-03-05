@@ -36,7 +36,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
 
     try {
       const response = await this.subscriptionServer.listInvites({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
+        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
       })
 
       return response
@@ -56,7 +56,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
 
     try {
       const response = await this.subscriptionServer.cancelInvite({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
+        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
         inviteUuid,
       })
 
@@ -77,7 +77,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
 
     try {
       const response = await this.subscriptionServer.invite({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
+        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
         identifier: inviteeEmail,
       })
 
