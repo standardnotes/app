@@ -110,6 +110,7 @@
   "dependencies": {
     "@ariakit/react": "^0.3.9",
     "@lexical/headless": "0.13.1",
+    "@lexical/list": "0.13.1",
     "@radix-ui/react-slot": "^1.0.1",
     "@react-pdf/renderer": "^3.3.2",
     "comlink": "^4.4.1",
