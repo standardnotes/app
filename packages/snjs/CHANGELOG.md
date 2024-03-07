@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.208.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.208.9...@standardnotes/snjs@2.208.10) (2024-03-07)
+
+### Bug Fixes
+
+* use API v0 on iOS ([#2858](https://github.com/standardnotes/app/issues/2858)) [skip e2e] ([3b2f761](https://github.com/standardnotes/app/commit/3b2f76166126a5b11f35b64aacefa37618622c3d))
+
 ## [2.208.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.208.8...@standardnotes/snjs@2.208.9) (2024-03-06)
 
 **Note:** Version bump only for package @standardnotes/snjs

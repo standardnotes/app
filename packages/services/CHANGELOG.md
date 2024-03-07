@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.70.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.70.2...@standardnotes/services@1.70.3) (2024-03-07)
+
+### Bug Fixes
+
+* use API v0 on iOS ([#2858](https://github.com/standardnotes/app/issues/2858)) [skip e2e] ([3b2f761](https://github.com/standardnotes/app/commit/3b2f76166126a5b11f35b64aacefa37618622c3d))
+
 ## [1.70.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.70.1...@standardnotes/services@1.70.2) (2024-03-05)
 
 **Note:** Version bump only for package @standardnotes/services

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.88](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.87...@standardnotes/mobile@3.58.88) (2024-03-07)
+
+### Bug Fixes
+
+* use API v0 on iOS ([#2858](https://github.com/standardnotes/app/issues/2858)) [skip e2e] ([3b2f761](https://github.com/standardnotes/app/commit/3b2f76166126a5b11f35b64aacefa37618622c3d))
+
 ## [3.58.87](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.86...@standardnotes/mobile@3.58.87) (2024-03-07)
 
 **Note:** Version bump only for package @standardnotes/mobile
