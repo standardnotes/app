@@ -1,3 +1,4 @@
+import { ApiVersion } from '@standardnotes/api'
 import { Environment, Platform, ApplicationIdentifier } from '@standardnotes/models'
 import { AlertService, DeviceInterface } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -39,4 +40,6 @@ export interface RequiredApplicationOptions {
    * Version of client application.
    */
   appVersion: string
+
+  apiVersion: ApiVersion
 }

@@ -15,7 +15,10 @@ import { AuthApiServiceInterface } from './AuthApiServiceInterface'
 export class AuthApiService implements AuthApiServiceInterface {
   private operationsInProgress: Map<AuthApiOperations, boolean>
 
-  constructor(private authServer: AuthServerInterface) {
+  constructor(
+    private authServer: AuthServerInterface,
+    private apiVersion: ApiVersion,
+  ) {
     this.operationsInProgress = new Map()
   }
 
@@ -50,7 +53,7 @@ export class AuthApiService implements AuthApiServiceInterface {
 
     try {
       const response = await this.authServer.recoveryKeyParams({
-        api_version: ApiVersion.v1,
+        api_version: this.apiVersion,
         code_challenge: dto.codeChallenge,
         recovery_codes: dto.recoveryCodes,
         username: dto.username,
@@ -78,7 +81,7 @@ export class AuthApiService implements AuthApiServiceInterface {
 
     try {
       const response = await this.authServer.signInWithRecoveryCodes({
-        api_version: ApiVersion.v1,
+        api_version: this.apiVersion,
         code_verifier: dto.codeVerifier,
         password: dto.password,
         recovery_codes: dto.recoveryCodes,

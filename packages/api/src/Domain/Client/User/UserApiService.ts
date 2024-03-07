@@ -22,6 +22,7 @@ export class UserApiService implements UserApiServiceInterface {
   constructor(
     private userServer: UserServerInterface,
     private userRequestServer: UserRequestServerInterface,
+    private apiVersion: ApiVersion,
   ) {
     this.operationsInProgress = new Map()
   }
@@ -72,7 +73,7 @@ export class UserApiService implements UserApiServiceInterface {
 
     try {
       const response = await this.userServer.register({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
+        [ApiEndpointParam.ApiVersion]: this.apiVersion,
         password: registerDTO.serverPassword,
         email: registerDTO.email,
         ephemeral: registerDTO.ephemeral,
@@ -92,7 +93,7 @@ export class UserApiService implements UserApiServiceInterface {
 
     try {
       const response = await this.userServer.update({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
+        [ApiEndpointParam.ApiVersion]: this.apiVersion,
         user_uuid: updateDTO.userUuid,
       })
 

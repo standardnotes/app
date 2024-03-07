@@ -23,7 +23,10 @@ import { GetUserSubscriptionRequestParams } from '../../Request/Subscription/Get
 export class SubscriptionApiService implements SubscriptionApiServiceInterface {
   private operationsInProgress: Map<SubscriptionApiOperations, boolean>
 
-  constructor(private subscriptionServer: SubscriptionServerInterface) {
+  constructor(
+    private subscriptionServer: SubscriptionServerInterface,
+    private apiVersion: ApiVersion,
+  ) {
     this.operationsInProgress = new Map()
   }
 
@@ -36,7 +39,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
 
     try {
       const response = await this.subscriptionServer.listInvites({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
+        [ApiEndpointParam.ApiVersion]: this.apiVersion,
       })
 
       return response
@@ -56,7 +59,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
 
     try {
       const response = await this.subscriptionServer.cancelInvite({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
+        [ApiEndpointParam.ApiVersion]: this.apiVersion,
         inviteUuid,
       })
 
@@ -77,7 +80,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
 
     try {
       const response = await this.subscriptionServer.invite({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
+        [ApiEndpointParam.ApiVersion]: this.apiVersion,
         identifier: inviteeEmail,
       })
 

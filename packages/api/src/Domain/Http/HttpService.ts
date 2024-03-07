@@ -36,6 +36,7 @@ export class HttpService implements HttpServiceInterface {
     private environment: Environment,
     private appVersion: string,
     private snjsVersion: string,
+    private apiVersion: ApiVersion,
     private logger: LoggerInterface,
   ) {
     this.requestHandler = new FetchRequestHandler(this.snjsVersion, this.appVersion, this.environment, this.logger)
@@ -247,7 +248,7 @@ export class HttpService implements HttpServiceInterface {
     const params = {
       ...inParams,
       ...{
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v1,
+        [ApiEndpointParam.ApiVersion]: this.apiVersion,
       },
     }
 

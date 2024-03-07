@@ -1090,7 +1090,7 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.AuthApiService, () => {
-      return new AuthApiService(this.get<AuthServer>(TYPES.AuthServer))
+      return new AuthApiService(this.get<AuthServer>(TYPES.AuthServer), this.options.apiVersion)
     })
 
     this.factory.set(TYPES.AuthManager, () => {
@@ -1432,13 +1432,14 @@ export class Dependencies {
     })
 
     this.factory.set(TYPES.SubscriptionApiService, () => {
-      return new SubscriptionApiService(this.get<SubscriptionServer>(TYPES.SubscriptionServer))
+      return new SubscriptionApiService(this.get<SubscriptionServer>(TYPES.SubscriptionServer), this.options.apiVersion)
     })
 
     this.factory.set(TYPES.UserApiService, () => {
       return new UserApiService(
         this.get<UserServer>(TYPES.UserServer),
         this.get<UserRequestServer>(TYPES.UserRequestServer),
+        this.options.apiVersion,
       )
     })
 
@@ -1542,6 +1543,7 @@ export class Dependencies {
         this.options.environment,
         this.options.appVersion,
         SnjsVersion,
+        this.options.apiVersion,
         this.get<Logger>(TYPES.Logger),
       )
     })
