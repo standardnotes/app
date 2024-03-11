@@ -113,8 +113,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       defaultHost: defaultSyncServerHost,
       appVersion: deviceInterface.appVersion,
       webSocketUrl: webSocketUrl,
-      /** iOS file:// based origin does not work with production cookies */
-      apiVersion: platform === Platform.Ios ? ApiVersion.v0 : ApiVersion.v1,
+      /**
+       * iOS file:// based origin does not work with production cookies
+       */
+      apiVersion: platform === Platform.Ios || platform === Platform.Android ? ApiVersion.v0 : ApiVersion.v1,
       loadBatchSize:
         deviceInterface.environment === Environment.Mobile ? 250 : ApplicationOptionsDefaults.loadBatchSize,
       sleepBetweenBatches:
