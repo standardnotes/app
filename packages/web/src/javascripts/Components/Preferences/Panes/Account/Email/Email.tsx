@@ -42,6 +42,16 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
     }
   }
 
+  const updateSubscriptionSetting = async (settingName: SettingName, payload: string): Promise<boolean> => {
+    try {
+      await application.settings.updateSubscriptionSetting(settingName, payload, false)
+      return true
+    } catch (e) {
+      application.alerts.alert(STRING_FAILED_TO_UPDATE_USER_SETTING).catch(console.error)
+      return false
+    }
+  }
+
   const loadSettings = useCallback(async () => {
     if (!application.sessions.getUser()) {
       return
@@ -79,7 +89,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
       previousValue === MuteSignInEmailsOption.Muted ? MuteSignInEmailsOption.NotMuted : MuteSignInEmailsOption.Muted
     setSignInEmailsMutedValue(newValue)
 
-    const updateResult = await updateSetting(
+    const updateResult = await updateSubscriptionSetting(
       SettingName.create(SettingName.NAMES.MuteSignInEmails).getValue(),
       newValue,
     )

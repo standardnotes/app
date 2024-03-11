@@ -206,6 +206,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       'identifier',
       'defaultHost',
       'appVersion',
+      'apiVersion',
     ]
 
     for (const optionName of requiredOptions) {

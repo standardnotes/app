@@ -42,6 +42,7 @@ const SettingsPaths = {
   setting: (userUuid: string, settingName: string) => `/v1/users/${userUuid}/settings/${settingName}`,
   subscriptionSetting: (userUuid: string, settingName: string) =>
     `/v1/users/${userUuid}/subscription-settings/${settingName}`,
+  subscriptionSettings: (userUuid: string) => `/v1/users/${userUuid}/subscription-settings`,
 }
 
 const SubscriptionPaths = {

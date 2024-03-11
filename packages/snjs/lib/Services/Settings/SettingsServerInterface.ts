@@ -21,5 +21,12 @@ export interface SettingsServerInterface {
 
   getSubscriptionSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<GetSettingResponse>>
 
+  updateSubscriptionSetting(
+    userUuid: UuidString,
+    settingName: string,
+    settingValue: string,
+    sensitive: boolean,
+  ): Promise<HttpResponse<UpdateSettingResponse>>
+
   deleteSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<DeleteSettingResponse>>
 }

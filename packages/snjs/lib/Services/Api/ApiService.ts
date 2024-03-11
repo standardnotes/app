@@ -588,6 +588,26 @@ export class LegacyApiService
     })
   }
 
+  async updateSubscriptionSetting(
+    userUuid: UuidString,
+    settingName: string,
+    settingValue: string | null,
+    sensitive: boolean,
+  ): Promise<HttpResponse<UpdateSettingResponse>> {
+    const params = {
+      name: settingName,
+      value: settingValue,
+      sensitive: sensitive,
+    }
+    return this.tokenRefreshableRequest<UpdateSettingResponse>({
+      verb: HttpVerb.Put,
+      url: joinPaths(this.host, Paths.v1.subscriptionSettings(userUuid)),
+      authentication: this.getSessionAccessToken(),
+      fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
+      params,
+    })
+  }
+
   async deleteSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<DeleteSettingResponse>> {
     return this.tokenRefreshableRequest<DeleteSettingResponse>({
       verb: HttpVerb.Delete,

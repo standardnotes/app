@@ -38,6 +38,10 @@ export class SettingsService extends AbstractService implements SettingsClientIn
     return this.provider.getSubscriptionSetting(name)
   }
 
+  async updateSubscriptionSetting(name: SettingName, payload: string, sensitive = false) {
+    return this.provider.updateSetting(name, payload, sensitive)
+  }
+
   async updateSetting(name: SettingName, payload: string, sensitive = false) {
     return this.provider.updateSetting(name, payload, sensitive)
   }
