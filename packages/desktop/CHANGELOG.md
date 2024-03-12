@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.110.36](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.191.21...@standardnotes/desktop@3.110.36) (2024-03-12)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
 ## [3.110.35](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.191.20...@standardnotes/desktop@3.110.35) (2024-03-11)
 
 **Note:** Version bump only for package @standardnotes/desktop
