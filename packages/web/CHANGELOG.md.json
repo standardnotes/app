@@ -18,10 +18,10 @@
       "body": "### Bug Fixes\n\n* use API v0 for Android ([6d872cd](https://github.com/standardnotes/app/commit/6d872cd45a504c824d6fa2d3325e1ba2401f3046))",
       "parsed": {
         "_": [
-          "Fixed issue with re-authentication prompts"
+          "Fixed issue with re-authentication prompts on Android"
         ],
         "Bug Fixes": [
-          "Fixed issue with re-authentication prompts"
+          "Fixed issue with re-authentication prompts on Android"
         ]
       }
     },
@@ -65,10 +65,10 @@
       "body": "### Bug Fixes\n\n* use API v0 on iOS ([#2858](https://github.com/standardnotes/app/issues/2858)) [skip e2e] ([3b2f761](https://github.com/standardnotes/app/commit/3b2f76166126a5b11f35b64aacefa37618622c3d))",
       "parsed": {
         "_": [
-          "Fixed issue with re-authentication prompts"
+          "Fixed issue with re-authentication prompts on iOS"
         ],
         "Bug Fixes": [
-          "Fixed issue with re-authentication prompts"
+          "Fixed issue with re-authentication prompts on iOS"
         ]
       }
     },
