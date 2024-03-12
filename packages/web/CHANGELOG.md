@@ -11,7 +11,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* use API v0 for Android [skip e2e] ([6d872cd](https://github.com/standardnotes/app/commit/6d872cd45a504c824d6fa2d3325e1ba2401f3046))
+* Fixed issue with re-authentication prompts ([6d872cd](https://github.com/standardnotes/app/commit/6d872cd45a504c824d6fa2d3325e1ba2401f3046))
 
 ## [3.191.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.191.19...@standardnotes/web@3.191.20) (2024-03-11)
 
@@ -29,7 +29,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* use API v0 on iOS ([#2858](https://github.com/standardnotes/app/issues/2858)) [skip e2e] ([3b2f761](https://github.com/standardnotes/app/commit/3b2f76166126a5b11f35b64aacefa37618622c3d))
+* Fixed issue with re-authentication prompts ([#2858](https://github.com/standardnotes/app/issues/2858)) [skip e2e] ([3b2f761](https://github.com/standardnotes/app/commit/3b2f76166126a5b11f35b64aacefa37618622c3d))
 
 ## [3.191.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.191.15...@standardnotes/web@3.191.16) (2024-03-07)
 
