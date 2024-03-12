@@ -172,10 +172,11 @@ interface ToolbarMenuItemProps extends Omit<MenuItemProps, 'children'> {
   active?: boolean
 }
 
-const ToolbarMenuItem = ({ name, iconName, active, ...props }: ToolbarMenuItemProps) => {
+const ToolbarMenuItem = ({ name, iconName, active, onClick, ...props }: ToolbarMenuItemProps) => {
   return (
     <MenuItem
       className={classNames('overflow-hidden md:py-2', active ? '!bg-info !text-info-contrast' : 'hover:bg-contrast')}
+      onMouseDown={onClick}
       {...props}
     >
       <Icon type={iconName} className="-mt-px mr-2.5 flex-shrink-0" />
