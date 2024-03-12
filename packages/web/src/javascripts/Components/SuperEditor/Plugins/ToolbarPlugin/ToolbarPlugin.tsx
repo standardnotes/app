@@ -20,11 +20,18 @@ import {
   ElementFormatType,
   $isElementNode,
   COMMAND_PRIORITY_LOW,
+  $createParagraphNode,
+  $isTextNode,
 } from 'lexical'
-import { mergeRegister, $findMatchingParent, $getNearestNodeOfType } from '@lexical/utils'
+import {
+  mergeRegister,
+  $findMatchingParent,
+  $getNearestNodeOfType,
+  $getNearestBlockElementAncestorOrThrow,
+} from '@lexical/utils'
 import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { $isListNode, ListNode } from '@lexical/list'
-import { $isHeadingNode } from '@lexical/rich-text'
+import { $isHeadingNode, $isQuoteNode } from '@lexical/rich-text'
 import {
   ComponentPropsWithoutRef,
   ForwardedRef,
@@ -66,6 +73,7 @@ import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPopoverStyles'
 import usePreference from '@/Hooks/usePreference'
 import { ElementIds } from '@/Constants/ElementIDs'
+import { $isDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -181,6 +189,7 @@ const ToolbarMenuItem = ({ name, iconName, active, onClick, ...props }: ToolbarM
     >
       <Icon type={iconName} className="-mt-px mr-2.5 flex-shrink-0" />
       <span className="overflow-hidden text-ellipsis whitespace-nowrap">{name}</span>
+      {active && <Icon type="check" className="ml-auto" />}
     </MenuItem>
   )
 }
@@ -377,6 +386,49 @@ const ToolbarPlugin = () => {
     containerElement.style.removeProperty('transform-origin')
     containerElement.style.removeProperty('opacity')
   }, [])
+
+  const clearFormatting = useCallback(() => {
+    activeEditor.update(() => {
+      const selection = $getSelection()
+      if ($isRangeSelection(selection)) {
+        const anchor = selection.anchor
+        const focus = selection.focus
+        const nodes = selection.getNodes()
+
+        if (anchor.key === focus.key && anchor.offset === focus.offset) {
+          return
+        }
+
+        nodes.forEach((node, idx) => {
+          // We split the first and last node by the selection
+          // So that we don't format unselected text inside those nodes
+          if ($isTextNode(node)) {
+            // Use a separate variable to ensure TS does not lose the refinement
+            let textNode = node
+            if (idx === 0 && anchor.offset !== 0) {
+              textNode = textNode.splitText(anchor.offset)[1] || textNode
+            }
+            if (idx === nodes.length - 1) {
+              textNode = textNode.splitText(focus.offset)[0] || textNode
+            }
+
+            if (textNode.__style !== '') {
+              textNode.setStyle('')
+            }
+            if (textNode.__format !== 0) {
+              textNode.setFormat(0)
+              $getNearestBlockElementAncestorOrThrow(textNode).setFormat('')
+            }
+            node = textNode
+          } else if ($isHeadingNode(node) || $isQuoteNode(node)) {
+            node.replace($createParagraphNode(), true)
+          } else if ($isDecoratorBlockNode(node)) {
+            node.setFormat('')
+          }
+        })
+      }
+    })
+  }, [activeEditor])
 
   useEffect(() => {
     if (isMobile) {
@@ -848,10 +900,11 @@ const ToolbarPlugin = () => {
             active={isSuperscript}
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')}
           />
+          <ToolbarMenuItem name="Clear formatting" iconName="trash" onClick={clearFormatting} />
         </Menu>
       </Popover>
       <Popover
-        title="Text style"
+        title="Block style"
         anchorElement={textStyleAnchorRef}
         open={isTextStyleMenuOpen}
         togglePopover={() => setIsTextStyleMenuOpen(!isTextStyleMenuOpen)}
@@ -864,7 +917,7 @@ const ToolbarPlugin = () => {
         portal={false}
         documentElement={popoverDocumentElement}
       >
-        <Menu a11yLabel="Text style" className="!px-0" onClick={() => setIsTextStyleMenuOpen(false)}>
+        <Menu a11yLabel="Block style" className="!px-0" onClick={() => setIsTextStyleMenuOpen(false)}>
           <ToolbarMenuItem
             name="Normal"
             iconName="paragraph"
