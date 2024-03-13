@@ -1,6 +1,6 @@
 import { LoggerInterface, joinPaths, sleep } from '@standardnotes/utils'
 import { Environment } from '@standardnotes/models'
-import { LegacySession, Session, SessionToken } from '@standardnotes/domain-core'
+import { LegacySession, Result, Session, SessionToken } from '@standardnotes/domain-core'
 import {
   HttpStatusCode,
   HttpRequestParams,
@@ -26,7 +26,7 @@ export class HttpService implements HttpServiceInterface {
   private declare host: string
   loggingEnabled = false
 
-  private inProgressRefreshSessionPromise?: Promise<boolean>
+  private inProgressRefreshSessionPromise?: Promise<Result<HttpResponse<SessionRefreshResponseBody>>>
   private updateMetaCallback!: (meta: HttpResponseMeta) => void
   private refreshSessionCallback!: (session: Session) => void
 
@@ -176,7 +176,11 @@ export class HttpService implements HttpServiceInterface {
         const hasSessionTokenRenewedInBetweenOurRequest = httpRequest.authentication !== this.getSessionAccessToken()
         if (!hasSessionTokenRenewedInBetweenOurRequest) {
           this.inProgressRefreshSessionPromise = this.refreshSession()
-          const isSessionRefreshed = await this.inProgressRefreshSessionPromise
+          const isSessionRefreshedResultOrError = await this.inProgressRefreshSessionPromise
+          let isSessionRefreshed = false
+          if (!isSessionRefreshedResultOrError.isFailed()) {
+            isSessionRefreshed = !isErrorResponse(isSessionRefreshedResultOrError.getValue())
+          }
           this.inProgressRefreshSessionPromise = undefined
 
           if (!isSessionRefreshed) {
@@ -193,13 +197,13 @@ export class HttpService implements HttpServiceInterface {
     return response
   }
 
-  async refreshSession(): Promise<boolean> {
+  async refreshSession(): Promise<Result<HttpResponse<SessionRefreshResponseBody>>> {
     if (!this.session) {
-      return false
+      return Result.fail('No session to refresh')
     }
 
     if (this.session instanceof LegacySession) {
-      return false
+      return Result.fail('Cannot refresh legacy session')
     }
 
     const response = await this.post<SessionRefreshResponseBody>(Paths.v1.refreshSession, {
@@ -208,7 +212,7 @@ export class HttpService implements HttpServiceInterface {
     })
 
     if (isErrorResponse(response)) {
-      return false
+      return Result.ok(response)
     }
 
     if (response.meta) {
@@ -220,7 +224,7 @@ export class HttpService implements HttpServiceInterface {
       response.data.session.access_expiration,
     )
     if (accessTokenOrError.isFailed()) {
-      return false
+      return Result.fail(accessTokenOrError.getError())
     }
 
     const accessToken = accessTokenOrError.getValue()
@@ -230,21 +234,21 @@ export class HttpService implements HttpServiceInterface {
       response.data.session.refresh_expiration,
     )
     if (refreshTokenOrError.isFailed()) {
-      return false
+      return Result.fail(refreshTokenOrError.getError())
     }
 
     const refreshToken = refreshTokenOrError.getValue()
 
     const sessionOrError = Session.create(accessToken, refreshToken, response.data.session.readonly_access)
     if (sessionOrError.isFailed()) {
-      return false
+      return Result.fail(sessionOrError.getError())
     }
 
     this.setSession(sessionOrError.getValue())
 
     this.refreshSessionCallback(this.session)
 
-    return true
+    return Result.ok(response)
   }
 
   private params(inParams: Record<string | number | symbol, unknown>): HttpRequestParams {

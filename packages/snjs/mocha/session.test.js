@@ -494,14 +494,20 @@ describe('server session', function () {
     application.http.setSession = mimickApplyingSessionFromTheServerUnsuccessfully
     application.http.refreshSessionCallback = mimickApplyingSessionFromTheServerUnsuccessfully
 
-    await application.http.refreshSession()
+    const refreshResultOrError = await application.http.refreshSession()
+    expect(refreshResultOrError.isFailed()).to.equal(false)
+
+    const refreshResult = refreshResultOrError.getValue()
+    expect(isErrorResponse(refreshResult)).to.equal(false)
+
+    const secondRefreshResultOrErrorWithNotAppliedSession = await application.http.refreshSession()
+    expect(secondRefreshResultOrErrorWithNotAppliedSession.isFailed()).to.equal(false)
+
+    const secondRefreshResultWithNotAppliedSession = secondRefreshResultOrErrorWithNotAppliedSession.getValue()
+    expect(isErrorResponse(secondRefreshResultWithNotAppliedSession)).to.equal(false)
 
     application.http.setSession = originalSetSessionFn
     application.http.refreshSessionCallback = originalRefreshSessionCallbackFn
-
-    await application.sync.sync()
-
-    expect(application.sync.isOutOfSync()).to.equal(false)
   })
 
   it('notes should be synced as expected after refreshing a session', async function () {
