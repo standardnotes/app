@@ -408,7 +408,12 @@ export class LegacyApiService
     }
   }
 
-  async refreshSession(): Promise<HttpResponse<SessionRenewalResponse>> {
+  /**
+   * @deprecated
+   *
+   * This function should be replaced with @standardnotes/api's `HttpService::refreshSession` function.
+   */
+  async deprecatedRefreshSessionOnlyUsedInE2eTests(): Promise<HttpResponse<SessionRenewalResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
       return preprocessingError

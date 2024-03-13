@@ -68,7 +68,7 @@ describe('server session', function () {
       password: password,
     })
 
-    const response = await application.legacyApi.refreshSession()
+    const response = await application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
 
     expect(response.status).to.equal(200)
     expect(response.data.session.access_token).to.be.a('string')
@@ -178,7 +178,7 @@ describe('server session', function () {
     expect(sessionFromStorage.refreshExpiration).to.equal(sessionFromApiService.refreshToken.expiresAt)
     expect(sessionFromStorage.readonlyAccess).to.equal(sessionFromApiService.isReadOnly())
 
-    await application.legacyApi.refreshSession()
+    await application.http.refreshSession()
 
     const updatedSessionFromStorage = await getSessionFromStorage(application)
     const updatedSessionFromApiService = application.legacyApi.getSession()
@@ -407,7 +407,7 @@ describe('server session', function () {
 
     await sleepUntilSessionExpires(application, false)
 
-    const refreshSessionResponse = await application.legacyApi.refreshSession()
+    const refreshSessionResponse = await application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
 
     expect(refreshSessionResponse.status).to.equal(400)
     /**
@@ -452,7 +452,7 @@ describe('server session', function () {
     })
     application.sessions.initializeFromDisk()
 
-    const refreshSessionResponse = await application.legacyApi.refreshSession()
+    const refreshSessionResponse = await application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
 
     expect(refreshSessionResponse.status).to.equal(400)
     expect(refreshSessionResponse.data.error.tag).to.equal('invalid-refresh-token')
@@ -470,7 +470,7 @@ describe('server session', function () {
       password: password,
     })
 
-    const refreshPromise = application.legacyApi.refreshSession()
+    const refreshPromise = application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
     const syncResponse = await application.legacyApi.sync([])
 
     expect(syncResponse.data.error).to.be.ok
@@ -490,7 +490,7 @@ describe('server session', function () {
 
     const previousSession = application.legacyApi.session
 
-    const refreshPromise = application.legacyApi.refreshSession()
+    const refreshPromise = application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
 
     const setSessionFn = application.legacyApi.setSession
     application.legacyApi.setSession = () => {}
