@@ -481,6 +481,48 @@ describe('server session', function () {
     await refreshPromise
   })
 
+  it('should tell the client to refresh the token if one is used during the cooldown period after a refresh', async function () {
+    await Factory.registerUserToApplication({
+      application: application,
+      email: email,
+      password: password,
+    })
+
+    const previousSession = application.legacyApi.session
+
+    const refreshPromise = application.legacyApi.refreshSession()
+
+    const setSessionFn = application.legacyApi.setSession
+    application.legacyApi.setSession = () => {}
+    const processSuccessResponseForMetaBodyFn = application.legacyApi.processSuccessResponseForMetaBody
+    application.legacyApi.processSuccessResponseForMetaBody = () => {}
+    const notifyEventFn = application.legacyApi.notifyEventSync
+    application.legacyApi.notifyEventSync = () => {}
+
+    await refreshPromise
+
+    const currentSession = application.legacyApi.session
+
+    expect(previousSession.props.accessToken.value).to.not.equal(currentSession.props.accessToken.value)
+    expect(previousSession.props.refreshToken.value).to.not.equal(currentSession.props.refreshToken.value)
+
+    application.legacyApi.session = previousSession
+
+    const syncResponse = await application.legacyApi.sync([])
+    expect(syncResponse.status).to.equal(200)
+
+    const sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession = application.legacyApi.session
+    expect(sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession.props.accessToken.value).to.not.equal(previousSession.props.accessToken.value)
+    expect(sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession.props.refreshToken.value).to.not.equal(previousSession.props.refreshToken.value)
+    expect(sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession.props.accessToken.value).to.not.equal(currentSession.props.accessToken.value)
+    expect(sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession.props.refreshToken.value).to.not.equal(currentSession.props.refreshToken.value)
+
+
+    application.legacyApi.setSession = setSessionFn
+    application.legacyApi.processSuccessResponseForMetaBody = processSuccessResponseForMetaBodyFn
+    application.legacyApi.notifyEventSync = notifyEventFn
+  })
+
   it('notes should be synced as expected after refreshing a session', async function () {
     await Factory.registerUserToApplication({
       application: application,

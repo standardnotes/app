@@ -173,12 +173,15 @@ export class HttpService implements HttpServiceInterface {
       if (this.inProgressRefreshSessionPromise) {
         await this.inProgressRefreshSessionPromise
       } else {
-        this.inProgressRefreshSessionPromise = this.refreshSession()
-        const isSessionRefreshed = await this.inProgressRefreshSessionPromise
-        this.inProgressRefreshSessionPromise = undefined
+        const hasSessionTokenRenewedInBetweenOurRequest = httpRequest.authentication !== this.getSessionAccessToken()
+        if (!hasSessionTokenRenewedInBetweenOurRequest) {
+          this.inProgressRefreshSessionPromise = this.refreshSession()
+          const isSessionRefreshed = await this.inProgressRefreshSessionPromise
+          this.inProgressRefreshSessionPromise = undefined
 
-        if (!isSessionRefreshed) {
-          return response
+          if (!isSessionRefreshed) {
+            return response
+          }
         }
       }
 
