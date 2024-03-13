@@ -178,7 +178,7 @@ describe('server session', function () {
     expect(sessionFromStorage.refreshExpiration).to.equal(sessionFromApiService.refreshToken.expiresAt)
     expect(sessionFromStorage.readonlyAccess).to.equal(sessionFromApiService.isReadOnly())
 
-    await application.http.refreshSession()
+    await application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
 
     const updatedSessionFromStorage = await getSessionFromStorage(application)
     const updatedSessionFromApiService = application.legacyApi.getSession()
@@ -488,39 +488,20 @@ describe('server session', function () {
       password: password,
     })
 
-    const previousSession = application.legacyApi.session
+    const mimickApplyingSessionFromTheServerUnsuccessfully = () => {}
+    const originalSetSessionFn = application.http.setSession
+    const originalRefreshSessionCallbackFn = application.http.refreshSessionCallback
+    application.http.setSession = mimickApplyingSessionFromTheServerUnsuccessfully
+    application.http.refreshSessionCallback = mimickApplyingSessionFromTheServerUnsuccessfully
 
-    const refreshPromise = application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
+    await application.http.refreshSession()
 
-    const setSessionFn = application.legacyApi.setSession
-    application.legacyApi.setSession = () => {}
-    const processSuccessResponseForMetaBodyFn = application.legacyApi.processSuccessResponseForMetaBody
-    application.legacyApi.processSuccessResponseForMetaBody = () => {}
-    const notifyEventFn = application.legacyApi.notifyEventSync
-    application.legacyApi.notifyEventSync = () => {}
+    application.http.setSession = originalSetSessionFn
+    application.http.refreshSessionCallback = originalRefreshSessionCallbackFn
 
-    await refreshPromise
+    await application.sync.sync()
 
-    const currentSession = application.legacyApi.session
-
-    expect(previousSession.props.accessToken.value).to.not.equal(currentSession.props.accessToken.value)
-    expect(previousSession.props.refreshToken.value).to.not.equal(currentSession.props.refreshToken.value)
-
-    application.legacyApi.session = previousSession
-
-    const syncResponse = await application.legacyApi.sync([])
-    expect(syncResponse.status).to.equal(200)
-
-    const sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession = application.legacyApi.session
-    expect(sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession.props.accessToken.value).to.not.equal(previousSession.props.accessToken.value)
-    expect(sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession.props.refreshToken.value).to.not.equal(previousSession.props.refreshToken.value)
-    expect(sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession.props.accessToken.value).to.not.equal(currentSession.props.accessToken.value)
-    expect(sessionRefreshedFromThePreviousSessionThatIsNewerThanCurrentSession.props.refreshToken.value).to.not.equal(currentSession.props.refreshToken.value)
-
-
-    application.legacyApi.setSession = setSessionFn
-    application.legacyApi.processSuccessResponseForMetaBody = processSuccessResponseForMetaBodyFn
-    application.legacyApi.notifyEventSync = notifyEventFn
+    expect(application.sync.isOutOfSync()).to.equal(false)
   })
 
   it('notes should be synced as expected after refreshing a session', async function () {
