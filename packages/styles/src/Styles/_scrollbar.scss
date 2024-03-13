@@ -45,3 +45,10 @@
 
   scrollbar-width: thin;
 }
+
+.windows-web,
+.windows-desktop {
+  .md\:hover\:overflow-y-auto {
+    scrollbar-gutter: stable;
+  }
+}
