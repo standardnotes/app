@@ -23,6 +23,7 @@ import { HttpRequestOptions } from './HttpRequestOptions'
 export class HttpService implements HttpServiceInterface {
   private session?: Session | LegacySession
   private __latencySimulatorMs?: number
+  private __simulateNextSessionRefreshResponseDrop = false
   private declare host: string
   loggingEnabled = false
 
@@ -210,6 +211,11 @@ export class HttpService implements HttpServiceInterface {
       access_token: this.session.accessToken.value,
       refresh_token: this.session.refreshToken.value,
     })
+
+    if (this.__simulateNextSessionRefreshResponseDrop) {
+      this.__simulateNextSessionRefreshResponseDrop = false
+      return Result.fail('Simulating a dropped response')
+    }
 
     if (isErrorResponse(response)) {
       return Result.ok(response)

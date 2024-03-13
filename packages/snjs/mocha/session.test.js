@@ -510,6 +510,28 @@ describe('server session', function () {
     application.http.refreshSessionCallback = originalRefreshSessionCallbackFn
   })
 
+  it('if session renewal response is dropped, next sync with server should return a 498 and successfully renew the session', async function () {
+    await Factory.registerUserToApplication({
+      application: application,
+      email: email,
+      password: password,
+    })
+
+    await sleepUntilSessionExpires(application)
+
+    const refreshSpy = sinon.spy(application.http, 'refreshSession')
+
+    /**
+     * With this sync, we expect refreshSession to be called twice, once where the response is dropped,
+     * and the other time where the request succeeds
+     */
+    application.http.__simulateNextSessionRefreshResponseDrop = true
+    await application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
+
+    expect(refreshSpy.callCount).to.equal(2)
+  })
+
   it('notes should be synced as expected after refreshing a session', async function () {
     await Factory.registerUserToApplication({
       application: application,
