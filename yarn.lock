@@ -3926,6 +3926,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lexical/markdown@patch:@lexical/markdown@npm:0.13.1#.yarn/patches/@lexical-markdown-npm-0.13.1-145f66b44d.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
+  version: 0.13.1
+  resolution: "@lexical/markdown@patch:@lexical/markdown@npm%3A0.13.1#.yarn/patches/@lexical-markdown-npm-0.13.1-145f66b44d.patch::version=0.13.1&hash=d07e28&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  dependencies:
+    "@lexical/code": 0.13.1
+    "@lexical/link": 0.13.1
+    "@lexical/list": 0.13.1
+    "@lexical/rich-text": 0.13.1
+    "@lexical/text": 0.13.1
+    "@lexical/utils": 0.13.1
+  peerDependencies:
+    lexical: 0.13.1
+  checksum: 7bf15d4dcfb20c3d408275644cc0c7d1b77d7a3a267f5686f2576990af1c71475f0e0cee36f1e2a74cb756f5cd5faf8d9fc8c8bcf51f3946db94950822004758
+  languageName: node
+  linkType: hard
+
 "@lexical/offset@npm:0.13.1":
   version: 0.13.1
   resolution: "@lexical/offset@npm:0.13.1"
@@ -7681,6 +7697,7 @@ __metadata:
     "@babel/plugin-transform-react-jsx": ^7.19.0
     "@babel/preset-env": "*"
     "@babel/preset-typescript": ^7.21.5
+    "@lexical/clipboard": 0.13.1
     "@lexical/headless": 0.13.1
     "@lexical/list": 0.13.1
     "@lexical/react": 0.13.1
