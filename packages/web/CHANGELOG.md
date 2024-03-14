@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.192.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.191.24...@standardnotes/web@3.192.0) (2024-03-14)
+
+### Features
+
+* Markdown text is now parsed correctly when pasted ([c5ca4a9](https://github.com/standardnotes/app/commit/c5ca4a9857a6e732b8ef51d4652eb7b9cdc5ddc0))
+
 ## [3.191.24](https://github.com/standardnotes/app/compare/@standardnotes/web@3.191.23...@standardnotes/web@3.191.24) (2024-03-14)
 
 **Note:** Version bump only for package @standardnotes/web
