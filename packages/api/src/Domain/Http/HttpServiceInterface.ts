@@ -1,7 +1,8 @@
-import { LegacySession, Session } from '@standardnotes/domain-core'
+import { LegacySession, Result, Session } from '@standardnotes/domain-core'
 import { HttpRequest, HttpRequestParams, HttpResponse, HttpResponseMeta } from '@standardnotes/responses'
 
 import { HttpRequestOptions } from './HttpRequestOptions'
+import { SessionRefreshResponseBody } from '../Response'
 
 export interface HttpServiceInterface {
   setHost(host: string): void
@@ -16,7 +17,7 @@ export interface HttpServiceInterface {
   runHttp<T>(httpRequest: HttpRequest): Promise<HttpResponse<T>>
 
   setSession(session: Session | LegacySession): void
-  refreshSession(): Promise<boolean>
+  refreshSession(): Promise<Result<HttpResponse<SessionRefreshResponseBody>>>
   setCallbacks(
     updateMetaCallback: (meta: HttpResponseMeta) => void,
     refreshSessionCallback: (session: Session) => void,

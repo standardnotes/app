@@ -68,7 +68,7 @@ describe('server session', function () {
       password: password,
     })
 
-    const response = await application.legacyApi.refreshSession()
+    const response = await application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
 
     expect(response.status).to.equal(200)
     expect(response.data.session.access_token).to.be.a('string')
@@ -178,7 +178,7 @@ describe('server session', function () {
     expect(sessionFromStorage.refreshExpiration).to.equal(sessionFromApiService.refreshToken.expiresAt)
     expect(sessionFromStorage.readonlyAccess).to.equal(sessionFromApiService.isReadOnly())
 
-    await application.legacyApi.refreshSession()
+    await application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
 
     const updatedSessionFromStorage = await getSessionFromStorage(application)
     const updatedSessionFromApiService = application.legacyApi.getSession()
@@ -407,7 +407,7 @@ describe('server session', function () {
 
     await sleepUntilSessionExpires(application, false)
 
-    const refreshSessionResponse = await application.legacyApi.refreshSession()
+    const refreshSessionResponse = await application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
 
     expect(refreshSessionResponse.status).to.equal(400)
     /**
@@ -452,7 +452,7 @@ describe('server session', function () {
     })
     application.sessions.initializeFromDisk()
 
-    const refreshSessionResponse = await application.legacyApi.refreshSession()
+    const refreshSessionResponse = await application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
 
     expect(refreshSessionResponse.status).to.equal(400)
     expect(refreshSessionResponse.data.error.tag).to.equal('invalid-refresh-token')
@@ -470,7 +470,7 @@ describe('server session', function () {
       password: password,
     })
 
-    const refreshPromise = application.legacyApi.refreshSession()
+    const refreshPromise = application.legacyApi.deprecatedRefreshSessionOnlyUsedInE2eTests()
     const syncResponse = await application.legacyApi.sync([])
 
     expect(syncResponse.data.error).to.be.ok
@@ -479,6 +479,57 @@ describe('server session', function () {
     expect(syncResponse.data.error.message).to.be.equal(errorMessage)
     /** Wait for finish so that test cleans up properly */
     await refreshPromise
+  })
+
+  it('should tell the client to refresh the token if one is used during the cooldown period after a refresh', async function () {
+    await Factory.registerUserToApplication({
+      application: application,
+      email: email,
+      password: password,
+    })
+
+    const mimickApplyingSessionFromTheServerUnsuccessfully = () => {}
+    const originalSetSessionFn = application.http.setSession
+    const originalRefreshSessionCallbackFn = application.http.refreshSessionCallback
+    application.http.setSession = mimickApplyingSessionFromTheServerUnsuccessfully
+    application.http.refreshSessionCallback = mimickApplyingSessionFromTheServerUnsuccessfully
+
+    const refreshResultOrError = await application.http.refreshSession()
+    expect(refreshResultOrError.isFailed()).to.equal(false)
+
+    const refreshResult = refreshResultOrError.getValue()
+    expect(isErrorResponse(refreshResult)).to.equal(false)
+
+    const secondRefreshResultOrErrorWithNotAppliedSession = await application.http.refreshSession()
+    expect(secondRefreshResultOrErrorWithNotAppliedSession.isFailed()).to.equal(false)
+
+    const secondRefreshResultWithNotAppliedSession = secondRefreshResultOrErrorWithNotAppliedSession.getValue()
+    expect(isErrorResponse(secondRefreshResultWithNotAppliedSession)).to.equal(false)
+
+    application.http.setSession = originalSetSessionFn
+    application.http.refreshSessionCallback = originalRefreshSessionCallbackFn
+  })
+
+  it('if session renewal response is dropped, next sync with server should return a 498 and successfully renew the session', async function () {
+    await Factory.registerUserToApplication({
+      application: application,
+      email: email,
+      password: password,
+    })
+
+    await sleepUntilSessionExpires(application)
+
+    const refreshSpy = sinon.spy(application.http, 'refreshSession')
+
+    /**
+     * With this sync, we expect refreshSession to be called twice, once where the response is dropped,
+     * and the other time where the request succeeds
+     */
+    application.http.__simulateNextSessionRefreshResponseDrop = true
+    await application.sync.sync(syncOptions)
+    await application.sync.sync(syncOptions)
+
+    expect(refreshSpy.callCount).to.equal(2)
   })
 
   it('notes should be synced as expected after refreshing a session', async function () {

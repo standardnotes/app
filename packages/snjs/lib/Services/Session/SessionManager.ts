@@ -874,7 +874,14 @@ export class SessionManager
     const willRefreshTokenExpireSoon = refreshTokenExpiration.getTime() - Date.now() < ThirtyMinutes
 
     if (willAccessTokenExpireSoon || willRefreshTokenExpireSoon) {
-      return this.httpService.refreshSession()
+      const refreshSessionResultOrError = await this.httpService.refreshSession()
+      if (refreshSessionResultOrError.isFailed()) {
+        return false
+      }
+
+      const refreshSessionResult = refreshSessionResultOrError.getValue()
+
+      return isErrorResponse(refreshSessionResult)
     }
 
     return false
