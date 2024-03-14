@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.192.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.0...@standardnotes/web@3.192.1) (2024-03-14)
+
+### Reverts
+
+* Revert "feat: Markdown text is now parsed correctly when pasted" ([bb81c8a](https://github.com/standardnotes/app/commit/bb81c8acfc470df76a70ab74fa8d487216e2d190))
+
 # [3.192.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.191.24...@standardnotes/web@3.192.0) (2024-03-14)
 
 **Note:** Version bump only for package @standardnotes/web
