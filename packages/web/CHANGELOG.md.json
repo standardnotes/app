@@ -7,10 +7,7 @@
       "body": "### Features\n\n* Markdown text is now parsed correctly when pasted ([c5ca4a9](https://github.com/standardnotes/app/commit/c5ca4a9857a6e732b8ef51d4652eb7b9cdc5ddc0))",
       "parsed": {
         "_": [
-          "Markdown text is now parsed correctly when pasted (c5ca4a9)"
-        ],
-        "Features": [
-          "Markdown text is now parsed correctly when pasted (c5ca4a9)"
+          "Note: Version bump only for package @standardnotes/web"
         ]
       }
     },
