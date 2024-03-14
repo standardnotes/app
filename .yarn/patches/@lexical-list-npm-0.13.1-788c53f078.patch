@@ -1,5 +1,5 @@
 diff --git a/LexicalList.dev.js b/LexicalList.dev.js
-index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7371d0434 100644
+index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..973dd18dd55a8efa594d16b9a1cc30da82361052 100644
 --- a/LexicalList.dev.js
 +++ b/LexicalList.dev.js
 @@ -140,27 +140,6 @@ function wrapInListItem(node) {
@@ -30,15 +30,116 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
  
  /**
   * Inserts a new ListNode. If the selection's anchor node is an empty ListItemNode and is a child of
-@@ -217,7 +196,6 @@ function insertList(editor, listType) {
-                   const newListNode = $createListNode(listType);
-                   append(newListNode, parent.getChildren());
-                   parent.replace(newListNode);
+@@ -177,59 +156,59 @@ function insertList(editor, listType) {
+     const selection = lexical.$getSelection();
+     if (selection !== null) {
+       const nodes = selection.getNodes();
+-      const anchorAndFocus = selection.getStartEndPoints();
+-      if (!(anchorAndFocus !== null)) {
+-        throw Error(`insertList: anchor should be defined`);
+-      }
+-      const [anchor] = anchorAndFocus;
+-      const anchorNode = anchor.getNode();
+-      const anchorNodeParent = anchorNode.getParent();
+-      if ($isSelectingEmptyListItem(anchorNode, nodes)) {
+-        const list = $createListNode(listType);
+-        if (lexical.$isRootOrShadowRoot(anchorNodeParent)) {
+-          anchorNode.replace(list);
+-          const listItem = $createListItemNode();
+-          if (lexical.$isElementNode(anchorNode)) {
+-            listItem.setFormat(anchorNode.getFormatType());
+-            listItem.setIndent(anchorNode.getIndent());
+-          }
+-          list.append(listItem);
+-        } else if ($isListItemNode(anchorNode)) {
+-          const parent = anchorNode.getParentOrThrow();
+-          append(list, parent.getChildren());
+-          parent.replace(list);
++      if (lexical.$isRangeSelection(selection)) {
++        const anchorAndFocus = selection.getStartEndPoints();
++        if (!(anchorAndFocus !== null)) {
++          throw Error(`insertList: anchor should be defined`);
+         }
+-        return;
+-      } else {
+-        const handled = new Set();
+-        for (let i = 0; i < nodes.length; i++) {
+-          const node = nodes[i];
+-          if (lexical.$isElementNode(node) && node.isEmpty() && !$isListItemNode(node) && !handled.has(node.getKey())) {
+-            createListOrMerge(node, listType);
+-            continue;
++        const [anchor] = anchorAndFocus;
++        const anchorNode = anchor.getNode();
++        const anchorNodeParent = anchorNode.getParent();
++        if ($isSelectingEmptyListItem(anchorNode, nodes)) {
++          const list = $createListNode(listType);
++          if (lexical.$isRootOrShadowRoot(anchorNodeParent)) {
++            anchorNode.replace(list);
++            const listItem = $createListItemNode();
++            if (lexical.$isElementNode(anchorNode)) {
++              listItem.setFormat(anchorNode.getFormatType());
++              listItem.setIndent(anchorNode.getIndent());
++            }
++            list.append(listItem);
++          } else if ($isListItemNode(anchorNode)) {
++            const parent = anchorNode.getParentOrThrow();
++            append(list, parent.getChildren());
++            parent.replace(list);
+           }
+-          if (lexical.$isLeafNode(node)) {
+-            let parent = node.getParent();
+-            while (parent != null) {
+-              const parentKey = parent.getKey();
+-              if ($isListNode(parent)) {
+-                if (!handled.has(parentKey)) {
+-                  const newListNode = $createListNode(listType);
+-                  append(newListNode, parent.getChildren());
+-                  parent.replace(newListNode);
 -                  updateChildrenListItemValue(newListNode);
-                   handled.add(parentKey);
-                 }
+-                  handled.add(parentKey);
+-                }
++          return;
++        }
++      }
++      const handled = new Set();
++      for (let i = 0; i < nodes.length; i++) {
++        const node = nodes[i];
++        if (lexical.$isElementNode(node) && node.isEmpty() && !$isListItemNode(node) && !handled.has(node.getKey())) {
++          createListOrMerge(node, listType);
++          continue;
++        }
++        if (lexical.$isLeafNode(node)) {
++          let parent = node.getParent();
++          while (parent != null) {
++            const parentKey = parent.getKey();
++            if ($isListNode(parent)) {
++              if (!handled.has(parentKey)) {
++                const newListNode = $createListNode(listType);
++                append(newListNode, parent.getChildren());
++                parent.replace(newListNode);
++                handled.add(parentKey);
++              }
++              break;
++            } else {
++              const nextParent = parent.getParent();
++              if (lexical.$isRootOrShadowRoot(nextParent) && !handled.has(parentKey)) {
++                handled.add(parentKey);
++                createListOrMerge(parent, listType);
                  break;
-@@ -268,7 +246,6 @@ function createListOrMerge(node, listType) {
+-              } else {
+-                const nextParent = parent.getParent();
+-                if (lexical.$isRootOrShadowRoot(nextParent) && !handled.has(parentKey)) {
+-                  handled.add(parentKey);
+-                  createListOrMerge(parent, listType);
+-                  break;
+-                }
+-                parent = nextParent;
+               }
++              parent = nextParent;
+             }
+           }
+         }
+@@ -268,7 +247,6 @@ function createListOrMerge(node, listType) {
      const list = $createListNode(listType);
      list.append(listItem);
      node.replace(list);
@@ -46,7 +147,7 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
      return list;
    }
  }
-@@ -289,7 +266,6 @@ function mergeLists(list1, list2) {
+@@ -289,7 +267,6 @@ function mergeLists(list1, list2) {
    const toMerge = list2.getChildren();
    if (toMerge.length > 0) {
      list1.append(...toMerge);
@@ -54,7 +155,7 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
    }
    list2.remove();
  }
-@@ -352,22 +328,23 @@ function removeList(editor) {
+@@ -352,22 +329,23 @@ function removeList(editor) {
  
  /**
   * Takes the value of a child ListItemNode and makes it the value the ListItemNode
@@ -92,7 +193,7 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
        }
      }
    }
-@@ -403,7 +380,6 @@ function $handleIndent(listItemNode) {
+@@ -403,7 +381,6 @@ function $handleIndent(listItemNode) {
          nextSibling.remove();
          removed.add(nextSibling.getKey());
        }
@@ -100,7 +201,7 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
      }
    } else if (isNestedListNode(nextSibling)) {
      // if the ListItemNode is next to a nested ListNode, merge them
-@@ -413,13 +389,11 @@ function $handleIndent(listItemNode) {
+@@ -413,13 +390,11 @@ function $handleIndent(listItemNode) {
        if (firstChild !== null) {
          firstChild.insertBefore(listItemNode);
        }
@@ -114,7 +215,7 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
      }
    } else {
      // otherwise, we need to create a new nested ListNode
-@@ -436,12 +410,8 @@ function $handleIndent(listItemNode) {
+@@ -436,12 +411,8 @@ function $handleIndent(listItemNode) {
        } else {
          parent.append(newListItem);
        }
@@ -127,7 +228,7 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
  }
  
  /**
-@@ -495,8 +465,6 @@ function $handleOutdent(listItemNode) {
+@@ -495,8 +466,6 @@ function $handleOutdent(listItemNode) {
        // replace the grandparent list item (now between the siblings) with the outdented list item.
        grandparentListItem.replace(listItemNode);
      }
@@ -136,7 +237,34 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
    }
  }
  
-@@ -603,12 +571,14 @@ class ListItemNode extends lexical.ElementNode {
+@@ -557,6 +526,26 @@ function $handleListInsertParagraph() {
+   return true;
+ }
+ 
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ */
++
++function normalizeClassNames(...classNames) {
++  const rval = [];
++  for (const className of classNames) {
++    if (className && typeof className === 'string') {
++      for (const [s] of className.matchAll(/\S+/g)) {
++        rval.push(s);
++      }
++    }
++  }
++  return rval;
++}
++
+ /**
+  * Copyright (c) Meta Platforms, Inc. and affiliates.
+  *
+@@ -603,12 +592,14 @@ class ListItemNode extends lexical.ElementNode {
    }
    static transform() {
      return node => {
@@ -155,7 +283,18 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
          if (parent.getListType() !== 'check' && node.getChecked() != null) {
            node.setChecked(undefined);
          }
-@@ -704,15 +674,10 @@ class ListItemNode extends lexical.ElementNode {
+@@ -666,7 +657,9 @@ class ListItemNode extends lexical.ElementNode {
+     }
+     this.setIndent(0);
+     const list = this.getParentOrThrow();
+-    if (!$isListNode(list)) return replaceWithNode;
++    if (!$isListNode(list)) {
++      return replaceWithNode;
++    }
+     if (list.__first === this.getKey()) {
+       list.insertBefore(replaceWithNode);
+     } else if (list.__last === this.getKey()) {
+@@ -704,15 +697,10 @@ class ListItemNode extends lexical.ElementNode {
          throw Error(`insertAfter: list node is not parent of list item node`);
        }
      }
@@ -173,7 +312,7 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
  
      // Attempt to merge if the list is of the same type.
  
-@@ -743,11 +708,6 @@ class ListItemNode extends lexical.ElementNode {
+@@ -743,11 +731,6 @@ class ListItemNode extends lexical.ElementNode {
      if (prevSibling && nextSibling && isNestedListNode(prevSibling) && isNestedListNode(nextSibling)) {
        mergeLists(prevSibling.getFirstChild(), nextSibling.getFirstChild());
        nextSibling.remove();
@@ -185,7 +324,7 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
      }
    }
    insertNewAfter(_, restoreSelection = true) {
-@@ -839,16 +799,6 @@ class ListItemNode extends lexical.ElementNode {
+@@ -839,16 +822,6 @@ class ListItemNode extends lexical.ElementNode {
      }
      return this;
    }
@@ -202,7 +341,26 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
    canInsertAfter(node) {
      return $isListItemNode(node);
    }
-@@ -1018,6 +968,14 @@ class ListNode extends lexical.ElementNode {
+@@ -883,8 +856,7 @@ function $setListItemThemeClassNames(dom, editorThemeClasses, node) {
+     nestedListItemClassName = listTheme.nested.listitem;
+   }
+   if (listItemClassName !== undefined) {
+-    const listItemClasses = listItemClassName.split(' ');
+-    classesToAdd.push(...listItemClasses);
++    classesToAdd.push(...normalizeClassNames(listItemClassName));
+   }
+   if (listTheme) {
+     const parentNode = node.getParent();
+@@ -901,7 +873,7 @@ function $setListItemThemeClassNames(dom, editorThemeClasses, node) {
+     }
+   }
+   if (nestedListItemClassName !== undefined) {
+-    const nestedListItemClasses = nestedListItemClassName.split(' ');
++    const nestedListItemClasses = normalizeClassNames(nestedListItemClassName);
+     if (node.getChildren().some(child => $isListNode(child))) {
+       classesToAdd.push(...nestedListItemClasses);
+     } else {
+@@ -1018,6 +990,14 @@ class ListNode extends lexical.ElementNode {
      setListThemeClassNames(dom, config.theme, this);
      return false;
    }
@@ -217,7 +375,7 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
    static importDOM() {
      return {
        ol: node => ({
-@@ -1087,7 +1045,6 @@ class ListNode extends lexical.ElementNode {
+@@ -1087,7 +1067,6 @@ class ListNode extends lexical.ElementNode {
          super.append(listItemNode);
        }
      }
@@ -225,16 +383,35 @@ index 3b91ac0e93f7e6a9d784c7d8a19f11496369ecc0..de90d1b8de072015dc57a9174e1206c7
      return this;
    }
    extractWithChild(child) {
+@@ -1117,8 +1096,7 @@ function setListThemeClassNames(dom, editorThemeClasses, node) {
+       classesToAdd.push(checklistClassName);
+     }
+     if (listLevelClassName !== undefined) {
+-      const listItemClasses = listLevelClassName.split(' ');
+-      classesToAdd.push(...listItemClasses);
++      classesToAdd.push(...normalizeClassNames(listLevelClassName));
+       for (let i = 0; i < listLevelsClassNames.length; i++) {
+         if (i !== normalizedListDepth) {
+           classesToRemove.push(node.__tag + i);
+@@ -1126,7 +1104,7 @@ function setListThemeClassNames(dom, editorThemeClasses, node) {
+       }
+     }
+     if (nestedListClassName !== undefined) {
+-      const nestedListItemClasses = nestedListClassName.split(' ');
++      const nestedListItemClasses = normalizeClassNames(nestedListClassName);
+       if (listDepth > 1) {
+         classesToAdd.push(...nestedListItemClasses);
+       } else {
 diff --git a/LexicalList.prod.js b/LexicalList.prod.js
-index 4687f6a90633c254974aedd06538d334f84de249..54fac0766cf47224af5d0e4e05054861f1072872 100644
+index 4687f6a90633c254974aedd06538d334f84de249..b44bfaaa0ae723cc58a7b7d46103f4ef3840a609 100644
 --- a/LexicalList.prod.js
 +++ b/LexicalList.prod.js
-@@ -4,32 +4,33 @@
+@@ -4,32 +4,34 @@
   * This source code is licensed under the MIT license found in the
   * LICENSE file in the root directory of this source tree.
   */
 -'use strict';var h=require("lexical"),k=require("@lexical/utils");function l(a){let b=new URLSearchParams;b.append("code",a);for(let c=1;c<arguments.length;c++)b.append("v",arguments[c]);throw Error(`Minified Lexical error #${a}; visit https://lexical.dev/docs/error?${b} for the full message or `+"use the non-minified dev environment for full errors and additional helpful warnings.");}
-+'use strict';var g=require("lexical"),k=require("@lexical/utils");function l(a){let b=new URLSearchParams;b.append("code",a);for(let c=1;c<arguments.length;c++)b.append("v",arguments[c]);throw Error(`Minified Lexical error #${a}; visit https://lexical.dev/docs/error?${b} for the full message or `+"use the non-minified dev environment for full errors and additional helpful warnings.");}
++'use strict';var g=require("lexical"),h=require("@lexical/utils");function l(a){let b=new URLSearchParams;b.append("code",a);for(let c=1;c<arguments.length;c++)b.append("v",arguments[c]);throw Error(`Minified Lexical error #${a}; visit https://lexical.dev/docs/error?${b} for the full message or `+"use the non-minified dev environment for full errors and additional helpful warnings.");}
  function n(a){let b=1;for(a=a.getParent();null!=a;){if(p(a)){a=a.getParent();if(q(a)){b++;a=a.getParent();continue}l(40)}break}return b}function r(a){a=a.getParent();q(a)||l(40);let b=a;for(;null!==b;)b=b.getParent(),q(b)&&(a=b);return a}function t(a){let b=[];a=a.getChildren().filter(p);for(let c=0;c<a.length;c++){let d=a[c],e=d.getFirstChild();q(e)?b=b.concat(t(e)):b.push(d)}return b}function u(a){return p(a)&&q(a.getFirstChild())}
 -function v(a){for(;null==a.getNextSibling()&&null==a.getPreviousSibling();){let b=a.getParent();if(null==b||!p(a)&&!q(a))break;a=b}a.remove()}function w(a){return y().append(a)}function z(a,b){return p(a)&&(0===b.length||1===b.length&&a.is(b[0])&&0===a.getChildrenSize())}function C(a,b){a.splice(a.getChildrenSize(),0,b)}
 -function D(a,b){if(q(a))return a;let c=a.getPreviousSibling(),d=a.getNextSibling(),e=y();e.setFormat(a.getFormatType());e.setIndent(a.getIndent());C(e,a.getChildren());if(q(c)&&b===c.getListType())return c.append(e),a.remove(),q(d)&&b===d.getListType()&&(C(c,d.getChildren()),d.remove()),c;if(q(d)&&b===d.getListType())return d.getFirstChildOrThrow().insertBefore(e),a.remove(),d;b=E(b);b.append(e);a.replace(b);F(b);return b}
@@ -263,34 +440,35 @@ index 4687f6a90633c254974aedd06538d334f84de249..54fac0766cf47224af5d0e4e05054861
 -b);else if(h.$isLeafNode(f))for(f=f.getParent();null!=f;){let m=f.getKey();if(q(f)){if(!c.has(m)){var g=E(b);C(g,f.getChildren());f.replace(g);F(g);c.add(m)}break}else{g=f.getParent();if(h.$isRootOrShadowRoot(g)&&!c.has(m)){c.add(m);D(f,b);break}f=g}}}}})};
 -exports.removeList=function(a){a.update(()=>{let b=h.$getSelection();if(h.$isRangeSelection(b)){var c=new Set,d=b.getNodes(),e=b.anchor.getNode();if(z(e,d))c.add(r(e));else for(e=0;e<d.length;e++){var f=d[e];h.$isLeafNode(f)&&(f=k.$getNearestNodeOfType(f,I),null!=f&&c.add(r(f)))}for(let g of c){c=g;d=t(g);for(let m of d)d=h.$createParagraphNode(),C(d,m.getChildren()),c.insertAfter(d),c=d,m.__key===b.anchor.key&&b.anchor.set(d.getKey(),0,"element"),m.__key===b.focus.key&&b.focus.set(d.getKey(),0,"element"),
 -m.remove();g.remove()}}})}
-+function v(a){for(;null==a.getNextSibling()&&null==a.getPreviousSibling();){let b=a.getParent();if(null==b||!p(a)&&!q(a))break;a=b}a.remove()}function w(a){return x().append(a)}function A(a,b){return p(a)&&(0===b.length||1===b.length&&a.is(b[0])&&0===a.getChildrenSize())}function B(a,b){a.splice(a.getChildrenSize(),0,b)}
++function v(a){for(;null==a.getNextSibling()&&null==a.getPreviousSibling();){let b=a.getParent();if(null==b||!p(a)&&!q(a))break;a=b}a.remove()}function w(a){return x().append(a)}function y(a,b){return p(a)&&(0===b.length||1===b.length&&a.is(b[0])&&0===a.getChildrenSize())}function B(a,b){a.splice(a.getChildrenSize(),0,b)}
 +function C(a,b){if(q(a))return a;let c=a.getPreviousSibling(),d=a.getNextSibling(),e=x();e.setFormat(a.getFormatType());e.setIndent(a.getIndent());B(e,a.getChildren());if(q(c)&&b===c.getListType())return c.append(e),a.remove(),q(d)&&b===d.getListType()&&(B(c,d.getChildren()),d.remove()),c;if(q(d)&&b===d.getListType())return d.getFirstChildOrThrow().insertBefore(e),a.remove(),d;b=D(b);b.append(e);a.replace(b);return b}
 +function E(a,b){var c=a.getLastChild();let d=b.getFirstChild();c&&d&&u(c)&&u(d)&&(E(c.getFirstChild(),d.getFirstChild()),d.remove());c=b.getChildren();0<c.length&&a.append(...c);b.remove()}
-+function F(a){if(!u(a)){var b=a.getParent(),c=b?b.getParent():void 0,d=c?c.getParent():void 0;if(q(d)&&p(c)&&q(b)){d=b?b.getFirstChild():void 0;var e=b?b.getLastChild():void 0;if(a.is(d))c.insertBefore(a),b.isEmpty()&&c.remove();else if(a.is(e))c.insertAfter(a),b.isEmpty()&&c.remove();else{e=b.getListType();b=x();let f=D(e);b.append(f);a.getPreviousSiblings().forEach(h=>f.append(h));d=x();e=D(e);d.append(e);B(e,a.getNextSiblings());c.insertBefore(b);c.insertAfter(d);c.replace(a)}}}}
-+class G extends g.ElementNode{static getType(){return"listitem"}static clone(a){return new G(a.__value,a.__checked,a.__key)}constructor(a,b,c){super(c);this.__value=void 0===a?1:a;this.__checked=b}createDOM(a){let b=document.createElement("li"),c=this.getParent();q(c)&&"check"===c.getListType()&&H(b,this,null);b.value=this.__value;I(b,a.theme,this);return b}updateDOM(a,b,c){let d=this.getParent();q(d)&&"check"===d.getListType()&&H(b,this,a);b.value=this.__value;I(b,c.theme,this);return!1}static transform(){return a=>
-+{p(a)||l(144);if(null!=a.__checked){var b=a.getParent();q(b)&&"check"!==b.getListType()&&null!=a.getChecked()&&a.setChecked(void 0)}}}static importDOM(){return{li:()=>({conversion:J,priority:0})}}static importJSON(a){let b=x();b.setChecked(a.checked);b.setValue(a.value);b.setFormat(a.format);b.setDirection(a.direction);return b}exportDOM(a){a=this.createDOM(a._config);a.style.textAlign=this.getFormatType();return{element:a}}exportJSON(){return{...super.exportJSON(),checked:this.getChecked(),type:"listitem",
++function F(a){if(!u(a)){var b=a.getParent(),c=b?b.getParent():void 0,d=c?c.getParent():void 0;if(q(d)&&p(c)&&q(b)){d=b?b.getFirstChild():void 0;var e=b?b.getLastChild():void 0;if(a.is(d))c.insertBefore(a),b.isEmpty()&&c.remove();else if(a.is(e))c.insertAfter(a),b.isEmpty()&&c.remove();else{e=b.getListType();b=x();let f=D(e);b.append(f);a.getPreviousSiblings().forEach(k=>f.append(k));d=x();e=D(e);d.append(e);B(e,a.getNextSiblings());c.insertBefore(b);c.insertAfter(d);c.replace(a)}}}}
++function G(...a){let b=[];for(let c of a)if(c&&"string"===typeof c)for(let [d]of c.matchAll(/\S+/g))b.push(d);return b}
++class H extends g.ElementNode{static getType(){return"listitem"}static clone(a){return new H(a.__value,a.__checked,a.__key)}constructor(a,b,c){super(c);this.__value=void 0===a?1:a;this.__checked=b}createDOM(a){let b=document.createElement("li"),c=this.getParent();q(c)&&"check"===c.getListType()&&I(b,this,null);b.value=this.__value;J(b,a.theme,this);return b}updateDOM(a,b,c){let d=this.getParent();q(d)&&"check"===d.getListType()&&I(b,this,a);b.value=this.__value;J(b,c.theme,this);return!1}static transform(){return a=>
++{p(a)||l(144);if(null!=a.__checked){var b=a.getParent();q(b)&&"check"!==b.getListType()&&null!=a.getChecked()&&a.setChecked(void 0)}}}static importDOM(){return{li:()=>({conversion:K,priority:0})}}static importJSON(a){let b=x();b.setChecked(a.checked);b.setValue(a.value);b.setFormat(a.format);b.setDirection(a.direction);return b}exportDOM(a){a=this.createDOM(a._config);a.style.textAlign=this.getFormatType();return{element:a}}exportJSON(){return{...super.exportJSON(),checked:this.getChecked(),type:"listitem",
 +value:this.getValue(),version:1}}append(...a){for(let b=0;b<a.length;b++){let c=a[b];if(g.$isElementNode(c)&&this.canMergeWith(c)){let d=c.getChildren();this.append(...d);c.remove()}else super.append(c)}return this}replace(a,b){if(p(a))return super.replace(a);this.setIndent(0);let c=this.getParentOrThrow();if(!q(c))return a;if(c.__first===this.getKey())c.insertBefore(a);else if(c.__last===this.getKey())c.insertAfter(a);else{let d=D(c.getListType()),e=this.getNextSibling();for(;e;){let f=e;e=e.getNextSibling();
 +d.append(f)}c.insertAfter(a);a.insertAfter(d)}b&&(g.$isElementNode(a)||l(139),this.getChildren().forEach(d=>{a.append(d)}));this.remove();0===c.getChildrenSize()&&c.remove();return a}insertAfter(a,b=!0){var c=this.getParentOrThrow();q(c)||l(39);if(p(a))return super.insertAfter(a,b);var d=this.getNextSiblings();if(q(a)){c=a;a=a.getChildren();for(d=a.length-1;0<=d;d--)c=a[d],this.insertAfter(c,b);return c}c.insertAfter(a,b);if(0!==d.length){let e=D(c.getListType());d.forEach(f=>e.append(f));a.insertAfter(e,
 +b)}return a}remove(a){let b=this.getPreviousSibling(),c=this.getNextSibling();super.remove(a);b&&c&&u(b)&&u(c)&&(E(b.getFirstChild(),c.getFirstChild()),c.remove())}insertNewAfter(a,b=!0){a=x(null==this.__checked?void 0:!1);this.insertAfter(a,b);return a}collapseAtStart(a){let b=g.$createParagraphNode();this.getChildren().forEach(f=>b.append(f));var c=this.getParentOrThrow(),d=c.getParentOrThrow();let e=p(d);1===c.getChildrenSize()?e?(c.remove(),d.select()):(c.insertBefore(b),c.remove(),c=a.anchor,
 +a=a.focus,d=b.getKey(),"element"===c.type&&c.getNode().is(this)&&c.set(d,c.offset,"element"),"element"===a.type&&a.getNode().is(this)&&a.set(d,a.offset,"element")):(c.insertBefore(b),this.remove());return!0}getValue(){return this.getLatest().__value}setValue(a){this.getWritable().__value=a}getChecked(){return this.getLatest().__checked}setChecked(a){this.getWritable().__checked=a}toggleChecked(){this.setChecked(!this.__checked)}getIndent(){var a=this.getParent();if(null===a)return this.getLatest().__indent;
 +a=a.getParentOrThrow();let b=0;for(;p(a);)a=a.getParentOrThrow().getParentOrThrow(),b++;return b}setIndent(a){"number"===typeof a&&-1<a||l(117);let b=this.getIndent();for(;b!==a;)if(b<a){var c=new Set;if(!u(this)&&!c.has(this.getKey())){var d=this.getParent(),e=this.getNextSibling(),f=this.getPreviousSibling();if(u(e)&&u(f))d=f.getFirstChild(),q(d)&&(d.append(this),f=e.getFirstChild(),q(f)&&(f=f.getChildren(),B(d,f),e.remove(),c.add(e.getKey())));else if(u(e))e=e.getFirstChild(),q(e)&&(e=e.getFirstChild(),
-+null!==e&&e.insertBefore(this));else if(u(f))e=f.getFirstChild(),q(e)&&e.append(this);else if(q(d)){c=x();let h=D(d.getListType());c.append(h);h.append(this);f?f.insertAfter(c):e?e.insertBefore(c):d.append(c)}}b++}else F(this),b--;return this}canInsertAfter(a){return p(a)}canReplaceWith(a){return p(a)}canMergeWith(a){return g.$isParagraphNode(a)||p(a)}extractWithChild(a,b){if(!g.$isRangeSelection(b))return!1;a=b.anchor.getNode();let c=b.focus.getNode();return this.isParentOf(a)&&this.isParentOf(c)&&
++null!==e&&e.insertBefore(this));else if(u(f))e=f.getFirstChild(),q(e)&&e.append(this);else if(q(d)){c=x();let k=D(d.getListType());c.append(k);k.append(this);f?f.insertAfter(c):e?e.insertBefore(c):d.append(c)}}b++}else F(this),b--;return this}canInsertAfter(a){return p(a)}canReplaceWith(a){return p(a)}canMergeWith(a){return g.$isParagraphNode(a)||p(a)}extractWithChild(a,b){if(!g.$isRangeSelection(b))return!1;a=b.anchor.getNode();let c=b.focus.getNode();return this.isParentOf(a)&&this.isParentOf(c)&&
 +this.getTextContent().length===b.getTextContent().length}isParentRequired(){return!0}createParentElementNode(){return D("bullet")}}
-+function I(a,b,c){let d=[],e=[];var f=(b=b.list)?b.listitem:void 0;if(b&&b.nested)var h=b.nested.listitem;void 0!==f&&(f=f.split(" "),d.push(...f));if(b){f=c.getParent();f=q(f)&&"check"===f.getListType();let m=c.getChecked();f&&!m||e.push(b.listitemUnchecked);f&&m||e.push(b.listitemChecked);f&&d.push(m?b.listitemChecked:b.listitemUnchecked)}void 0!==h&&(h=h.split(" "),c.getChildren().some(m=>q(m))?d.push(...h):e.push(...h));0<e.length&&k.removeClassNamesFromElement(a,...e);0<d.length&&k.addClassNamesToElement(a,
-+...d)}function H(a,b,c){q(b.getFirstChild())?(a.removeAttribute("role"),a.removeAttribute("tabIndex"),a.removeAttribute("aria-checked")):(a.setAttribute("role","checkbox"),a.setAttribute("tabIndex","-1"),c&&b.__checked===c.__checked||a.setAttribute("aria-checked",b.getChecked()?"true":"false"))}function J(a){a=k.isHTMLElement(a)&&"true"===a.getAttribute("aria-checked");return{node:x(a)}}function x(a){return g.$applyNodeReplacement(new G(void 0,a))}function p(a){return a instanceof G}
-+class K extends g.ElementNode{static getType(){return"list"}static clone(a){return new K(a.__listType||N[a.__tag],a.__start,a.__key)}constructor(a,b,c){super(c);this.__listType=a=N[a]||a;this.__tag="number"===a?"ol":"ul";this.__start=b}getTag(){return this.__tag}setListType(a){let b=this.getWritable();b.__listType=a;b.__tag="number"===a?"ol":"ul"}getListType(){return this.__listType}getStart(){return this.__start}createDOM(a){let b=document.createElement(this.__tag);1!==this.__start&&b.setAttribute("start",
-+String(this.__start));b.__lexicalListType=this.__listType;O(b,a.theme,this);return b}updateDOM(a,b,c){if(a.__tag!==this.__tag)return!0;O(b,c.theme,this);return!1}static transform(){return a=>{if(!q(a))throw Error("node is not a ListNode");let b="check"!==a.getListType(),c=a.getStart();for(let d of a.getChildren())p(d)&&(d.getValue()!==c&&d.setValue(c),b&&null!=d.getChecked()&&d.setChecked(void 0),q(d.getFirstChild())||c++)}}static importDOM(){return{ol:()=>({conversion:P,priority:0}),ul:()=>({conversion:P,
-+priority:0})}}static importJSON(a){let b=D(a.listType,a.start);b.setFormat(a.format);b.setIndent(a.indent);b.setDirection(a.direction);return b}exportDOM(a){({element:a}=super.exportDOM(a));a&&k.isHTMLElement(a)&&(1!==this.__start&&a.setAttribute("start",String(this.__start)),"check"===this.__listType&&a.setAttribute("__lexicalListType","check"));return{element:a}}exportJSON(){return{...super.exportJSON(),listType:this.getListType(),start:this.getStart(),tag:this.getTag(),type:"list",version:1}}canBeEmpty(){return!1}canIndent(){return!1}append(...a){for(let c=
++function J(a,b,c){let d=[],e=[];var f=(b=b.list)?b.listitem:void 0;if(b&&b.nested)var k=b.nested.listitem;void 0!==f&&d.push(...G(f));if(b){f=c.getParent();f=q(f)&&"check"===f.getListType();let m=c.getChecked();f&&!m||e.push(b.listitemUnchecked);f&&m||e.push(b.listitemChecked);f&&d.push(m?b.listitemChecked:b.listitemUnchecked)}void 0!==k&&(k=G(k),c.getChildren().some(m=>q(m))?d.push(...k):e.push(...k));0<e.length&&h.removeClassNamesFromElement(a,...e);0<d.length&&h.addClassNamesToElement(a,...d)}
++function I(a,b,c){q(b.getFirstChild())?(a.removeAttribute("role"),a.removeAttribute("tabIndex"),a.removeAttribute("aria-checked")):(a.setAttribute("role","checkbox"),a.setAttribute("tabIndex","-1"),c&&b.__checked===c.__checked||a.setAttribute("aria-checked",b.getChecked()?"true":"false"))}function K(a){a=h.isHTMLElement(a)&&"true"===a.getAttribute("aria-checked");return{node:x(a)}}function x(a){return g.$applyNodeReplacement(new H(void 0,a))}function p(a){return a instanceof H}
++class L extends g.ElementNode{static getType(){return"list"}static clone(a){return new L(a.__listType||O[a.__tag],a.__start,a.__key)}constructor(a,b,c){super(c);this.__listType=a=O[a]||a;this.__tag="number"===a?"ol":"ul";this.__start=b}getTag(){return this.__tag}setListType(a){let b=this.getWritable();b.__listType=a;b.__tag="number"===a?"ol":"ul"}getListType(){return this.__listType}getStart(){return this.__start}createDOM(a){let b=document.createElement(this.__tag);1!==this.__start&&b.setAttribute("start",
++String(this.__start));b.__lexicalListType=this.__listType;P(b,a.theme,this);return b}updateDOM(a,b,c){if(a.__tag!==this.__tag)return!0;P(b,c.theme,this);return!1}static transform(){return a=>{if(!q(a))throw Error("node is not a ListNode");let b="check"!==a.getListType(),c=a.getStart();for(let d of a.getChildren())p(d)&&(d.getValue()!==c&&d.setValue(c),b&&null!=d.getChecked()&&d.setChecked(void 0),q(d.getFirstChild())||c++)}}static importDOM(){return{ol:()=>({conversion:Q,priority:0}),ul:()=>({conversion:Q,
++priority:0})}}static importJSON(a){let b=D(a.listType,a.start);b.setFormat(a.format);b.setIndent(a.indent);b.setDirection(a.direction);return b}exportDOM(a){({element:a}=super.exportDOM(a));a&&h.isHTMLElement(a)&&(1!==this.__start&&a.setAttribute("start",String(this.__start)),"check"===this.__listType&&a.setAttribute("__lexicalListType","check"));return{element:a}}exportJSON(){return{...super.exportJSON(),listType:this.getListType(),start:this.getStart(),tag:this.getTag(),type:"list",version:1}}canBeEmpty(){return!1}canIndent(){return!1}append(...a){for(let c=
 +0;c<a.length;c++){var b=a[c];if(p(b))super.append(b);else{let d=x();q(b)?d.append(b):g.$isElementNode(b)?(b=g.$createTextNode(b.getTextContent()),d.append(b)):d.append(b);super.append(d)}}return this}extractWithChild(a){return p(a)}}
-+function O(a,b,c){let d=[],e=[];var f=b.list;if(void 0!==f){let m=f[`${c.__tag}Depth`]||[];b=n(c)-1;let L=b%m.length;var h=m[L];let M=f[c.__tag],y,z=f.nested;f=f.checklist;void 0!==z&&z.list&&(y=z.list);void 0!==M&&d.push(M);void 0!==f&&"check"===c.__listType&&d.push(f);if(void 0!==h)for(h=h.split(" "),d.push(...h),h=0;h<m.length;h++)h!==L&&e.push(c.__tag+h);void 0!==y&&(c=y.split(" "),1<b?d.push(...c):e.push(...c))}0<e.length&&k.removeClassNamesFromElement(a,...e);0<d.length&&k.addClassNamesToElement(a,
-+...d)}function Q(a){let b=[];for(let d=0;d<a.length;d++){var c=a[d];p(c)?(b.push(c),c=c.getChildren(),1<c.length&&c.forEach(e=>{q(e)&&b.push(w(e))})):b.push(w(c))}return b}function P(a){let b=a.nodeName.toLowerCase(),c=null;"ol"===b?c=D("number",a.start):"ul"===b&&(c=k.isHTMLElement(a)&&"check"===a.getAttribute("__lexicallisttype")?D("check"):D("bullet"));return{after:Q,node:c}}let N={ol:"number",ul:"bullet"};function D(a,b=1){return g.$applyNodeReplacement(new K(a,b))}
-+function q(a){return a instanceof K}let R=g.createCommand("INSERT_UNORDERED_LIST_COMMAND"),S=g.createCommand("INSERT_ORDERED_LIST_COMMAND"),T=g.createCommand("INSERT_CHECK_LIST_COMMAND"),U=g.createCommand("REMOVE_LIST_COMMAND");exports.$createListItemNode=x;exports.$createListNode=D;exports.$getListDepth=n;
++function P(a,b,c){let d=[],e=[];var f=b.list;if(void 0!==f){let m=f[`${c.__tag}Depth`]||[];b=n(c)-1;let M=b%m.length;var k=m[M];let N=f[c.__tag],z,A=f.nested;f=f.checklist;void 0!==A&&A.list&&(z=A.list);void 0!==N&&d.push(N);void 0!==f&&"check"===c.__listType&&d.push(f);if(void 0!==k)for(d.push(...G(k)),k=0;k<m.length;k++)k!==M&&e.push(c.__tag+k);void 0!==z&&(c=G(z),1<b?d.push(...c):e.push(...c))}0<e.length&&h.removeClassNamesFromElement(a,...e);0<d.length&&h.addClassNamesToElement(a,...d)}
++function R(a){let b=[];for(let d=0;d<a.length;d++){var c=a[d];p(c)?(b.push(c),c=c.getChildren(),1<c.length&&c.forEach(e=>{q(e)&&b.push(w(e))})):b.push(w(c))}return b}function Q(a){let b=a.nodeName.toLowerCase(),c=null;"ol"===b?c=D("number",a.start):"ul"===b&&(c=h.isHTMLElement(a)&&"check"===a.getAttribute("__lexicallisttype")?D("check"):D("bullet"));return{after:R,node:c}}let O={ol:"number",ul:"bullet"};function D(a,b=1){return g.$applyNodeReplacement(new L(a,b))}
++function q(a){return a instanceof L}let S=g.createCommand("INSERT_UNORDERED_LIST_COMMAND"),T=g.createCommand("INSERT_ORDERED_LIST_COMMAND"),U=g.createCommand("INSERT_CHECK_LIST_COMMAND"),V=g.createCommand("REMOVE_LIST_COMMAND");exports.$createListItemNode=x;exports.$createListNode=D;exports.$getListDepth=n;
 +exports.$handleListInsertParagraph=function(){var a=g.$getSelection();if(!g.$isRangeSelection(a)||!a.isCollapsed())return!1;a=a.anchor.getNode();if(!p(a)||0!==a.getChildrenSize())return!1;var b=r(a),c=a.getParent();q(c)||l(40);let d=c.getParent(),e;if(g.$isRootOrShadowRoot(d))e=g.$createParagraphNode(),b.insertAfter(e);else if(p(d))e=x(),d.insertAfter(e);else return!1;e.select();b=a.getNextSiblings();if(0<b.length){let f=D(c.getListType());g.$isParagraphNode(e)?e.insertAfter(f):(c=x(),c.append(f),
-+e.insertAfter(c));b.forEach(h=>{h.remove();f.append(h)})}v(a);return!0};exports.$isListItemNode=p;exports.$isListNode=q;exports.INSERT_CHECK_LIST_COMMAND=T;exports.INSERT_ORDERED_LIST_COMMAND=S;exports.INSERT_UNORDERED_LIST_COMMAND=R;exports.ListItemNode=G;exports.ListNode=K;exports.REMOVE_LIST_COMMAND=U;
-+exports.insertList=function(a,b){a.update(()=>{var c=g.$getSelection();if(null!==c){var d=c.getNodes();c=c.getStartEndPoints();null===c&&l(143);[c]=c;c=c.getNode();var e=c.getParent();if(A(c,d))d=D(b),g.$isRootOrShadowRoot(e)?(c.replace(d),e=x(),g.$isElementNode(c)&&(e.setFormat(c.getFormatType()),e.setIndent(c.getIndent())),d.append(e)):p(c)&&(c=c.getParentOrThrow(),B(d,c.getChildren()),c.replace(d));else for(c=new Set,e=0;e<d.length;e++){var f=d[e];if(g.$isElementNode(f)&&f.isEmpty()&&!p(f)&&!c.has(f.getKey()))C(f,
-+b);else if(g.$isLeafNode(f))for(f=f.getParent();null!=f;){let m=f.getKey();if(q(f)){if(!c.has(m)){var h=D(b);B(h,f.getChildren());f.replace(h);c.add(m)}break}else{h=f.getParent();if(g.$isRootOrShadowRoot(h)&&!c.has(m)){c.add(m);C(f,b);break}f=h}}}}})};
-+exports.removeList=function(a){a.update(()=>{let b=g.$getSelection();if(g.$isRangeSelection(b)){var c=new Set,d=b.getNodes(),e=b.anchor.getNode();if(A(e,d))c.add(r(e));else for(e=0;e<d.length;e++){var f=d[e];g.$isLeafNode(f)&&(f=k.$getNearestNodeOfType(f,G),null!=f&&c.add(r(f)))}for(let h of c){c=h;d=t(h);for(let m of d)d=g.$createParagraphNode(),B(d,m.getChildren()),c.insertAfter(d),c=d,m.__key===b.anchor.key&&b.anchor.set(d.getKey(),0,"element"),m.__key===b.focus.key&&b.focus.set(d.getKey(),0,"element"),
-+m.remove();h.remove()}}})}
++e.insertAfter(c));b.forEach(k=>{k.remove();f.append(k)})}v(a);return!0};exports.$isListItemNode=p;exports.$isListNode=q;exports.INSERT_CHECK_LIST_COMMAND=U;exports.INSERT_ORDERED_LIST_COMMAND=T;exports.INSERT_UNORDERED_LIST_COMMAND=S;exports.ListItemNode=H;exports.ListNode=L;exports.REMOVE_LIST_COMMAND=V;
++exports.insertList=function(a,b){a.update(()=>{var c=g.$getSelection();if(null!==c){var d=c.getNodes();if(g.$isRangeSelection(c)){c=c.getStartEndPoints();null===c&&l(143);[c]=c;c=c.getNode();var e=c.getParent();if(y(c,d)){d=D(b);g.$isRootOrShadowRoot(e)?(c.replace(d),e=x(),g.$isElementNode(c)&&(e.setFormat(c.getFormatType()),e.setIndent(c.getIndent())),d.append(e)):p(c)&&(c=c.getParentOrThrow(),B(d,c.getChildren()),c.replace(d));return}}c=new Set;for(e=0;e<d.length;e++){var f=d[e];if(g.$isElementNode(f)&&
++f.isEmpty()&&!p(f)&&!c.has(f.getKey()))C(f,b);else if(g.$isLeafNode(f))for(f=f.getParent();null!=f;){let m=f.getKey();if(q(f)){if(!c.has(m)){var k=D(b);B(k,f.getChildren());f.replace(k);c.add(m)}break}else{k=f.getParent();if(g.$isRootOrShadowRoot(k)&&!c.has(m)){c.add(m);C(f,b);break}f=k}}}}})};
++exports.removeList=function(a){a.update(()=>{let b=g.$getSelection();if(g.$isRangeSelection(b)){var c=new Set,d=b.getNodes(),e=b.anchor.getNode();if(y(e,d))c.add(r(e));else for(e=0;e<d.length;e++){var f=d[e];g.$isLeafNode(f)&&(f=h.$getNearestNodeOfType(f,H),null!=f&&c.add(r(f)))}for(let k of c){c=k;d=t(k);for(let m of d)d=g.$createParagraphNode(),B(d,m.getChildren()),c.insertAfter(d),c=d,m.__key===b.anchor.key&&b.anchor.set(d.getKey(),0,"element"),m.__key===b.focus.key&&b.focus.set(d.getKey(),0,"element"),
++m.remove();k.remove()}}})}
 diff --git a/LexicalListItemNode.d.ts b/LexicalListItemNode.d.ts
 index 9fd289fd0ab65e4f63b4d2814ec97f053348f9a9..cfed87598b2882973198cbb811552340a0fdcff6 100644
 --- a/LexicalListItemNode.d.ts
