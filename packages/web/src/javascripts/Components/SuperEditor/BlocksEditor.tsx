@@ -36,7 +36,6 @@ import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 import { MergeSiblingListsPlugin } from './Plugins/MergeSiblingListsPlugin'
-import { MarkdownPastePlugin } from './Plugins/MarkdownPastePlugin'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -143,7 +142,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <DatetimePlugin />
       <PasswordPlugin />
       <AutoLinkPlugin />
-      <MarkdownPastePlugin />
       {!readonly && floatingAnchorElem && (
         <>
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
