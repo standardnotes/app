@@ -3890,12 +3890,12 @@ __metadata:
 
 "@lexical/list@patch:@lexical/list@npm:0.13.1#.yarn/patches/@lexical-list-npm-0.13.1-788c53f078.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
   version: 0.13.1
-  resolution: "@lexical/list@patch:@lexical/list@npm%3A0.13.1#.yarn/patches/@lexical-list-npm-0.13.1-788c53f078.patch::version=0.13.1&hash=55e666&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  resolution: "@lexical/list@patch:@lexical/list@npm%3A0.13.1#.yarn/patches/@lexical-list-npm-0.13.1-788c53f078.patch::version=0.13.1&hash=3b4480&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
   dependencies:
     "@lexical/utils": 0.13.1
   peerDependencies:
     lexical: 0.13.1
-  checksum: 01921c993b19180a78355d989d8af97c1fe9ac2a9842cc5a3f7cc37284d3fd44379422a18f98f7ed1901b3938cae70a386117cad7a0e272657e40cbc9ce8c6e7
+  checksum: 152a2addf1dd5222e4bee55a125b9935f29fa596b2b33962f9f2e0064d6948bd753ec74eb98c8fb0a20e656579c6754b193885c70ccfbaefeda98921278766ee
   languageName: node
   linkType: hard
 
@@ -4000,13 +4000,13 @@ __metadata:
 
 "@lexical/rich-text@patch:@lexical/rich-text@npm:0.13.1#.yarn/patches/@lexical-rich-text-npm-0.13.1-df610fad54.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
   version: 0.13.1
-  resolution: "@lexical/rich-text@patch:@lexical/rich-text@npm%3A0.13.1#.yarn/patches/@lexical-rich-text-npm-0.13.1-df610fad54.patch::version=0.13.1&hash=e8a114&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  resolution: "@lexical/rich-text@patch:@lexical/rich-text@npm%3A0.13.1#.yarn/patches/@lexical-rich-text-npm-0.13.1-df610fad54.patch::version=0.13.1&hash=045627&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
   peerDependencies:
     "@lexical/clipboard": 0.13.1
     "@lexical/selection": 0.13.1
     "@lexical/utils": 0.13.1
     lexical: 0.13.1
-  checksum: b25910ef09c21f2b4d6bbc7940afd4890c9e91b765a7d0ec2a213f78c9735c23e6994a0419f923fe7b8e4473e7c6f9bc2d64603073a775034932828395934653
+  checksum: defa6abc742e1712cf392881efe9f10b1105ec98a38edab8fc66f0ff1a5b54a6b36c8ab56f577444d92cf477e401875977ae63abd4ac01bc1a308f1d80bc5ed7
   languageName: node
   linkType: hard
 
@@ -18751,8 +18751,8 @@ __metadata:
 
 "lexical@patch:lexical@npm:0.13.1#.yarn/patches/lexical-npm-0.13.1-ac06219fd6.patch::locator=%40standardnotes%2Fapp-monorepo%40workspace%3A.":
   version: 0.13.1
-  resolution: "lexical@patch:lexical@npm%3A0.13.1#.yarn/patches/lexical-npm-0.13.1-ac06219fd6.patch::version=0.13.1&hash=3f1d8d&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
-  checksum: 0f1acc55969e4b5171e567882be709e6c04e871d15c784bf1a1754e1599574626f598a884ad3231211008717b35a2571a365ac02322e44d5bbbec1222dd68004
+  resolution: "lexical@patch:lexical@npm%3A0.13.1#.yarn/patches/lexical-npm-0.13.1-ac06219fd6.patch::version=0.13.1&hash=002bca&locator=%40standardnotes%2Fapp-monorepo%40workspace%3A."
+  checksum: 47dba8703d91116591064699b63481ec8a8e402f58d3cccaa6ed6d895a4e1c74196bc7a98575adc67875944a409c8f431ae55a3d02db4c4c5e97045f025894a0
   languageName: node
   linkType: hard
 
