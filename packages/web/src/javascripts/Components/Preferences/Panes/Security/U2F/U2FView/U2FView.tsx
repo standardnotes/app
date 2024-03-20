@@ -15,9 +15,10 @@ import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBann
 
 type Props = {
   application: WebApplication
+  is2FAEnabled: boolean
 }
 
-const U2FView: FunctionComponent<Props> = ({ application }) => {
+const U2FView: FunctionComponent<Props> = ({ application, is2FAEnabled }) => {
   const [showDeviceAddingModal, setShowDeviceAddingModal] = useState(false)
   const [devices, setDevices] = useState<Array<{ id: string; name: string }>>([])
   const [error, setError] = useState('')
@@ -47,7 +48,7 @@ const U2FView: FunctionComponent<Props> = ({ application }) => {
         <PreferencesSegment>
           <div className="flex flex-col">
             <U2FTitle />
-            <U2FDescription />
+            <U2FDescription is2FAEnabled={is2FAEnabled} />
           </div>
         </PreferencesSegment>
         <PreferencesSegment classes="mt-2">
@@ -60,7 +61,7 @@ const U2FView: FunctionComponent<Props> = ({ application }) => {
           />
           <Button
             className="mt-1"
-            disabled={!application.isFullU2FClient}
+            disabled={!application.isFullU2FClient || !is2FAEnabled}
             label="Add Device"
             primary
             onClick={handleAddDeviceClick}

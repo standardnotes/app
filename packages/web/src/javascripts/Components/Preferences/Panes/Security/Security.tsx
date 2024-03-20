@@ -1,9 +1,8 @@
 import { NativeFeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
+import { FunctionComponent, useState } from 'react'
 
 import { WebApplication } from '@/Application/WebApplication'
-import { FunctionComponent } from 'react'
 import TwoFactorAuthWrapper from './TwoFactorAuth/TwoFactorAuthWrapper'
-import { MfaProps } from './TwoFactorAuth/MfaProps'
 import Encryption from './Encryption'
 import PasscodeLock from './PasscodeLock'
 import Privacy from './Privacy'
@@ -13,13 +12,23 @@ import PreferencesPane from '@/Components/Preferences/PreferencesComponents/Pref
 import BiometricsLock from '@/Components/Preferences/Panes/Security/BiometricsLock'
 import MultitaskingPrivacy from '@/Components/Preferences/Panes/Security/MultitaskingPrivacy'
 import U2FWrapper from './U2F/U2FWrapper'
+import { TwoFactorAuth, is2FAEnabled as checkIf2FAIsEnabled } from './TwoFactorAuth/TwoFactorAuth'
 
-interface SecurityProps extends MfaProps {
+interface SecurityProps {
   application: WebApplication
 }
 
 const Security: FunctionComponent<SecurityProps> = (props) => {
   const isNativeMobileWeb = props.application.isNativeMobileWeb()
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false)
+
+  const [auth] = useState(
+    () =>
+      new TwoFactorAuth(props.application.sessions, props.application.mfa, (status) =>
+        setIs2FAEnabled(checkIf2FAIsEnabled(status)),
+      ),
+  )
+  auth.fetchStatus()
 
   const isU2FFeatureAvailable =
     props.application.features.getFeatureStatus(
@@ -31,8 +40,8 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
       <Encryption />
       {props.application.items.invalidNonVaultedItems.length > 0 && <ErroredItems />}
       <Protections application={props.application} />
-      <TwoFactorAuthWrapper application={props.application} />
-      {isU2FFeatureAvailable && <U2FWrapper application={props.application} />}
+      <TwoFactorAuthWrapper auth={auth} application={props.application} />
+      {isU2FFeatureAvailable && <U2FWrapper application={props.application} is2FAEnabled={is2FAEnabled} />}
       {isNativeMobileWeb && <MultitaskingPrivacy application={props.application} />}
       <PasscodeLock application={props.application} />
       {isNativeMobileWeb && <BiometricsLock application={props.application} />}
