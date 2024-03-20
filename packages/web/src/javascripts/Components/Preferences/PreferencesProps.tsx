@@ -1,7 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { MfaProps } from './Panes/Security/TwoFactorAuth/MfaProps'
 
-export interface PreferencesProps extends MfaProps {
+export interface PreferencesProps {
   application: WebApplication
   closePreferences: () => void
 }

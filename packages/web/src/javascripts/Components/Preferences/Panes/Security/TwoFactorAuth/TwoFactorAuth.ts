@@ -19,6 +19,7 @@ export class TwoFactorAuth {
   constructor(
     private readonly sessions: SessionsClientInterface,
     private readonly mfa: MfaServiceInterface,
+    private callback?: (status: TwoFactorStatus) => void,
   ) {
     this._errorMessage = null
 
@@ -90,6 +91,9 @@ export class TwoFactorAuth {
         action((active) => {
           this._status = active ? 'two-factor-enabled' : 'two-factor-disabled'
           this.setError(null)
+          if (this.callback) {
+            this.callback(this._status)
+          }
         }),
       )
       .catch(
