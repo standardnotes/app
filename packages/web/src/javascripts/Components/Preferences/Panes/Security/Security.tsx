@@ -21,6 +21,7 @@ interface SecurityProps {
 const Security: FunctionComponent<SecurityProps> = (props) => {
   const isNativeMobileWeb = props.application.isNativeMobileWeb()
   const [is2FAEnabled, setIs2FAEnabled] = useState(false)
+  const [isDisabling2FAEnabled, setIsDisabling2FAEnabled] = useState(true)
 
   const [auth] = useState(
     () =>
@@ -29,6 +30,12 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
       ),
   )
   auth.fetchStatus()
+
+  const onU2FDevicesLoaded = (devices: Array<{ id: string; name: string }>) => {
+    if (devices.length > 0) {
+      setIsDisabling2FAEnabled(false)
+    }
+  }
 
   const isU2FFeatureAvailable =
     props.application.features.getFeatureStatus(
@@ -40,8 +47,14 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
       <Encryption />
       {props.application.items.invalidNonVaultedItems.length > 0 && <ErroredItems />}
       <Protections application={props.application} />
-      <TwoFactorAuthWrapper auth={auth} application={props.application} />
-      {isU2FFeatureAvailable && <U2FWrapper application={props.application} is2FAEnabled={is2FAEnabled} />}
+      <TwoFactorAuthWrapper auth={auth} application={props.application} isDisabling2FAEnabled={isDisabling2FAEnabled} />
+      {isU2FFeatureAvailable && (
+        <U2FWrapper
+          application={props.application}
+          is2FAEnabled={is2FAEnabled}
+          loadAuthenticatorsCallback={onU2FDevicesLoaded}
+        />
+      )}
       {isNativeMobileWeb && <MultitaskingPrivacy application={props.application} />}
       <PasscodeLock application={props.application} />
       {isNativeMobileWeb && <BiometricsLock application={props.application} />}
