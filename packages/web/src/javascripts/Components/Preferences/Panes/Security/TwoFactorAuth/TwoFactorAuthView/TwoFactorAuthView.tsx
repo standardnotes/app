@@ -16,9 +16,10 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 type Props = {
   auth: TwoFactorAuth
   application: WebApplication
+  canDisable2FA: boolean
 }
 
-const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
+const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application, canDisable2FA }) => {
   const shouldShowActivationModal = auth.status !== 'fetching' && is2FAActivation(auth.status)
 
   const activationModalTitle = shouldShowActivationModal
@@ -96,7 +97,7 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
               <TwoFactorTitle auth={auth} />
               <TwoFactorDescription auth={auth} />
             </div>
-            <TwoFactorSwitch auth={auth} />
+            <TwoFactorSwitch auth={auth} canDisable2FA={canDisable2FA} />
           </div>
         </PreferencesSegment>
 
