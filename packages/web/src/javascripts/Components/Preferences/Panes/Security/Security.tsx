@@ -11,8 +11,8 @@ import ErroredItems from './ErroredItems'
 import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'
 import BiometricsLock from '@/Components/Preferences/Panes/Security/BiometricsLock'
 import MultitaskingPrivacy from '@/Components/Preferences/Panes/Security/MultitaskingPrivacy'
-import U2FWrapper from './U2F/U2FWrapper'
 import { TwoFactorAuth, is2FAEnabled as checkIf2FAIsEnabled } from './TwoFactorAuth/TwoFactorAuth'
+import U2FView from './U2F/U2FView/U2FView'
 
 interface SecurityProps {
   application: WebApplication
@@ -49,7 +49,7 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
       <Protections application={props.application} />
       <TwoFactorAuthWrapper auth={auth} application={props.application} isDisabling2FAEnabled={isDisabling2FAEnabled} />
       {isU2FFeatureAvailable && (
-        <U2FWrapper
+        <U2FView
           application={props.application}
           is2FAEnabled={is2FAEnabled}
           loadAuthenticatorsCallback={onU2FDevicesLoaded}
