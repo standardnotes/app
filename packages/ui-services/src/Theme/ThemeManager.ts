@@ -27,7 +27,9 @@ const DefaultThemeIdentifier = 'Default'
 
 export class ThemeManager extends AbstractUIService {
   private themesActiveInTheUI: ActiveThemeList
-  private lastUseDeviceThemeSettings = false
+  private lastUseDeviceThemeSettings: boolean | undefined
+  private lastAutoLightTheme: string | undefined
+  private lastAutoDarkTheme: string | undefined
 
   constructor(
     application: WebApplicationInterface,
@@ -166,15 +168,25 @@ export class ThemeManager extends AbstractUIService {
 
     this.toggleTranslucentUIColors()
 
-    const useDeviceThemeSettings = this.preferences.getLocalValue(LocalPrefKey.UseSystemColorScheme, false)
+    const useSystemColorScheme = this.preferences.getLocalValue(LocalPrefKey.UseSystemColorScheme, false)
+    const autoLightTheme = this.preferences.getLocalValue(LocalPrefKey.AutoLightThemeIdentifier, DefaultThemeIdentifier)
+    const autoDarkTheme = this.preferences.getLocalValue(
+      LocalPrefKey.AutoDarkThemeIdentifier,
+      NativeFeatureIdentifier.TYPES.DarkTheme,
+    )
 
-    const hasPreferenceChanged = useDeviceThemeSettings !== this.lastUseDeviceThemeSettings
+    const hasPreferenceChanged =
+      useSystemColorScheme !== this.lastUseDeviceThemeSettings ||
+      autoLightTheme !== this.lastAutoLightTheme ||
+      autoDarkTheme !== this.lastAutoDarkTheme
 
     if (hasPreferenceChanged) {
-      this.lastUseDeviceThemeSettings = useDeviceThemeSettings
+      this.lastUseDeviceThemeSettings = useSystemColorScheme
+      this.lastAutoLightTheme = autoLightTheme
+      this.lastAutoDarkTheme = autoDarkTheme
     }
 
-    if (hasPreferenceChanged && useDeviceThemeSettings) {
+    if (hasPreferenceChanged && useSystemColorScheme) {
       let prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 
       if (this.application.isNativeMobileWeb()) {
