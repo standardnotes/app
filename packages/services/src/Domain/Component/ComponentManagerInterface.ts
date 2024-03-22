@@ -36,7 +36,7 @@ export interface ComponentManagerInterface {
   getDefaultEditorIdentifier(currentTag?: SNTag): string
 
   isThemeActive(theme: UIFeature<ThemeFeatureDescription>): boolean
-  toggleTheme(theme: UIFeature<ThemeFeatureDescription>): Promise<void>
+  toggleTheme(theme: UIFeature<ThemeFeatureDescription>, skipEntitlementCheck?: boolean): Promise<void>
   getActiveThemes(): UIFeature<ThemeFeatureDescription>[]
   getActiveThemesIdentifiers(): { features: NativeFeatureIdentifier[]; uuids: Uuid[] }
 

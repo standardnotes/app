@@ -247,7 +247,7 @@ export class ThemeManager extends AbstractUIService {
     } else {
       const theme = themes.find((theme) => theme.featureIdentifier === themeIdentifier)
       if (theme && !this.components.isThemeActive(theme)) {
-        this.components.toggleTheme(theme).catch(console.error)
+        this.components.toggleTheme(theme, true).catch(console.error)
       }
     }
   }

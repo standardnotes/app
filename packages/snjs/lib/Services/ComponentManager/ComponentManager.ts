@@ -390,7 +390,7 @@ export class ComponentManager
     return this.viewers.find((viewer) => viewer.sessionKey === key)
   }
 
-  public async toggleTheme(uiFeature: UIFeature<ThemeFeatureDescription>): Promise<void> {
+  public async toggleTheme(uiFeature: UIFeature<ThemeFeatureDescription>, skipEntitlementCheck = false): Promise<void> {
     this.logger.info('Toggling theme', uiFeature.uniqueIdentifier)
 
     if (this.isThemeActive(uiFeature)) {
@@ -399,7 +399,7 @@ export class ComponentManager
     }
 
     const featureStatus = this.features.getFeatureStatus(uiFeature.uniqueIdentifier)
-    if (featureStatus !== FeatureStatus.Entitled) {
+    if (!skipEntitlementCheck && featureStatus !== FeatureStatus.Entitled) {
       return
     }
 
