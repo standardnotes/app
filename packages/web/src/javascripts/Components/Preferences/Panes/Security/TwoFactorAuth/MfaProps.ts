@@ -4,5 +4,5 @@ import { TwoFactorAuth } from './TwoFactorAuth'
 export interface MfaProps {
   application: WebApplication
   auth: TwoFactorAuth
-  isDisabling2FAEnabled: boolean
+  canDisable2FA: boolean
 }

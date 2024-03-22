@@ -8,7 +8,7 @@ const TwoFactorAuthWrapper: FunctionComponent<MfaProps> = (props) => {
     <TwoFactorAuthView
       auth={props.auth}
       application={props.application}
-      isDisabling2FAEnabled={props.isDisabling2FAEnabled}
+      canDisable2FA={props.canDisable2FA}
     />
   )
 }

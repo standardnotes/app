@@ -6,10 +6,10 @@ import Spinner from '@/Components/Spinner/Spinner'
 
 type Props = {
   auth: TwoFactorAuth
-  isDisabling2FAEnabled: boolean
+  canDisable2FA: boolean
 }
 
-const TwoFactorSwitch: FunctionComponent<Props> = ({ auth, isDisabling2FAEnabled }) => {
+const TwoFactorSwitch: FunctionComponent<Props> = ({ auth, canDisable2FA }) => {
   if (!auth.isLoggedIn()) {
     return null
   }
@@ -18,7 +18,7 @@ const TwoFactorSwitch: FunctionComponent<Props> = ({ auth, isDisabling2FAEnabled
     return <Spinner className="h-4 w-4" />
   }
 
-  const shouldSwitchBeDisabled = auth.status === 'two-factor-enabled' && !isDisabling2FAEnabled
+  const shouldSwitchBeDisabled = auth.status === 'two-factor-enabled' && !canDisable2FA
 
   return <Switch checked={!is2FADisabled(auth.status)} onChange={auth.toggle2FA} disabled={shouldSwitchBeDisabled} />
 }

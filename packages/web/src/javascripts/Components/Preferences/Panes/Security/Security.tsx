@@ -21,7 +21,7 @@ interface SecurityProps {
 const Security: FunctionComponent<SecurityProps> = (props) => {
   const isNativeMobileWeb = props.application.isNativeMobileWeb()
   const [is2FAEnabled, setIs2FAEnabled] = useState(false)
-  const [isDisabling2FAEnabled, setIsDisabling2FAEnabled] = useState(true)
+  const [canDisable2FA, setCanDisable2FA] = useState(true)
 
   const [auth] = useState(
     () =>
@@ -35,7 +35,7 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
   }, [auth])
 
   const onU2FDevicesLoaded = (devices: Array<{ id: string; name: string }>) => {
-    setIsDisabling2FAEnabled(devices.length === 0)
+    setCanDisable2FA(devices.length === 0)
   }
 
   const isU2FFeatureAvailable =
@@ -48,7 +48,7 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
       <Encryption />
       {props.application.items.invalidNonVaultedItems.length > 0 && <ErroredItems />}
       <Protections application={props.application} />
-      <TwoFactorAuthWrapper auth={auth} application={props.application} isDisabling2FAEnabled={isDisabling2FAEnabled} />
+      <TwoFactorAuthWrapper auth={auth} application={props.application} canDisable2FA={canDisable2FA} />
       {isU2FFeatureAvailable && (
         <U2FView
           application={props.application}
