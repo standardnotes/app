@@ -2,7 +2,6 @@ import { NativeFeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
 
 import { WebApplication } from '@/Application/WebApplication'
-import TwoFactorAuthWrapper from './TwoFactorAuth/TwoFactorAuthWrapper'
 import Encryption from './Encryption'
 import PasscodeLock from './PasscodeLock'
 import Privacy from './Privacy'
@@ -13,6 +12,7 @@ import BiometricsLock from '@/Components/Preferences/Panes/Security/BiometricsLo
 import MultitaskingPrivacy from '@/Components/Preferences/Panes/Security/MultitaskingPrivacy'
 import { TwoFactorAuth, is2FAEnabled as checkIf2FAIsEnabled } from './TwoFactorAuth/TwoFactorAuth'
 import U2FView from './U2F/U2FView/U2FView'
+import TwoFactorAuthView from './TwoFactorAuth/TwoFactorAuthView/TwoFactorAuthView'
 
 interface SecurityProps {
   application: WebApplication
@@ -48,7 +48,7 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
       <Encryption />
       {props.application.items.invalidNonVaultedItems.length > 0 && <ErroredItems />}
       <Protections application={props.application} />
-      <TwoFactorAuthWrapper auth={auth} application={props.application} canDisable2FA={canDisable2FA} />
+      <TwoFactorAuthView auth={auth} application={props.application} canDisable2FA={canDisable2FA} />
       {isU2FFeatureAvailable && (
         <U2FView
           application={props.application}
