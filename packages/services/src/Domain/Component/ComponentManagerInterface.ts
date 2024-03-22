@@ -37,6 +37,7 @@ export interface ComponentManagerInterface {
 
   isThemeActive(theme: UIFeature<ThemeFeatureDescription>): boolean
   toggleTheme(theme: UIFeature<ThemeFeatureDescription>, skipEntitlementCheck?: boolean): Promise<void>
+  toggleOtherNonLayerableThemes(uiFeature: UIFeature<ThemeFeatureDescription>): void
   getActiveThemes(): UIFeature<ThemeFeatureDescription>[]
   getActiveThemesIdentifiers(): { features: NativeFeatureIdentifier[]; uuids: Uuid[] }
 

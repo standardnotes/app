@@ -390,6 +390,19 @@ export class ComponentManager
     return this.viewers.find((viewer) => viewer.sessionKey === key)
   }
 
+  public toggleOtherNonLayerableThemes(uiFeature: UIFeature<ThemeFeatureDescription>): void {
+    const activeThemes = this.getActiveThemes()
+    for (const candidate of activeThemes) {
+      if (candidate.featureIdentifier === uiFeature.featureIdentifier) {
+        continue
+      }
+
+      if (!candidate.layerable) {
+        this.removeActiveTheme(candidate)
+      }
+    }
+  }
+
   public async toggleTheme(uiFeature: UIFeature<ThemeFeatureDescription>, skipEntitlementCheck = false): Promise<void> {
     this.logger.info('Toggling theme', uiFeature.uniqueIdentifier)
 
@@ -410,16 +423,7 @@ export class ComponentManager
     if (!uiFeature.layerable) {
       await sleep(10)
 
-      const activeThemes = this.getActiveThemes()
-      for (const candidate of activeThemes) {
-        if (candidate.featureIdentifier === uiFeature.featureIdentifier) {
-          continue
-        }
-
-        if (!candidate.layerable) {
-          this.removeActiveTheme(candidate)
-        }
-      }
+      this.toggleOtherNonLayerableThemes(uiFeature)
     }
   }
 
@@ -454,7 +458,7 @@ export class ComponentManager
     const features: NativeFeatureIdentifier[] = []
     const uuids: Uuid[] = []
 
-    const strings = this.preferences.getLocalValue(LocalPrefKey.ActiveThemes, [])
+    const strings = new Set(this.preferences.getLocalValue(LocalPrefKey.ActiveThemes, []))
     for (const string of strings) {
       const nativeIdentifier = NativeFeatureIdentifier.create(string)
       if (!nativeIdentifier.isFailed()) {

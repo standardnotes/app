@@ -217,6 +217,12 @@ export class ThemeManager extends AbstractUIService {
       }
     }
 
+    const shouldSetThemeAsPerColorScheme = this.preferences.getLocalValue(LocalPrefKey.UseSystemColorScheme, false)
+    if (shouldSetThemeAsPerColorScheme) {
+      const prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      hasChange = this.setThemeAsPerColorScheme(prefersDarkColorScheme)
+    }
+
     if (hasChange) {
       void this.cacheThemeState()
     }
@@ -230,7 +236,9 @@ export class ThemeManager extends AbstractUIService {
     }
   }
 
-  private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
+  private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean): boolean {
+    let didChangeTheme = false
+
     const preference = prefersDarkColorScheme
       ? LocalPrefKey.AutoDarkThemeIdentifier
       : LocalPrefKey.AutoLightThemeIdentifier
@@ -251,6 +259,7 @@ export class ThemeManager extends AbstractUIService {
     const toggleActiveTheme = () => {
       if (activeTheme) {
         void this.components.toggleTheme(activeTheme)
+        didChangeTheme = true
       }
     }
 
@@ -258,10 +267,17 @@ export class ThemeManager extends AbstractUIService {
       toggleActiveTheme()
     } else {
       const theme = themes.find((theme) => theme.featureIdentifier === themeIdentifier)
-      if (theme && !this.components.isThemeActive(theme)) {
-        this.components.toggleTheme(theme, true).catch(console.error)
+      if (theme) {
+        if (!this.components.isThemeActive(theme)) {
+          this.components.toggleTheme(theme, true).catch(console.error)
+        } else {
+          this.components.toggleOtherNonLayerableThemes(theme)
+        }
+        didChangeTheme = true
       }
     }
+
+    return didChangeTheme
   }
 
   private async activateCachedThemes() {
