@@ -1,5 +1,5 @@
 import { NativeFeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
-import { FunctionComponent, useState } from 'react'
+import { FunctionComponent, useEffect, useState } from 'react'
 
 import { WebApplication } from '@/Application/WebApplication'
 import TwoFactorAuthWrapper from './TwoFactorAuth/TwoFactorAuthWrapper'
@@ -29,12 +29,13 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
         setIs2FAEnabled(checkIf2FAIsEnabled(status)),
       ),
   )
-  auth.fetchStatus()
+
+  useEffect(() => {
+    auth.fetchStatus()
+  }, [auth])
 
   const onU2FDevicesLoaded = (devices: Array<{ id: string; name: string }>) => {
-    if (devices.length > 0) {
-      setIsDisabling2FAEnabled(false)
-    }
+    setIsDisabling2FAEnabled(devices.length === 0)
   }
 
   const isU2FFeatureAvailable =
