@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.7](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.37.6...@standardnotes/ui-services@1.37.7) (2024-03-26)
+
+### Bug Fixes
+
+* Fixed issue with system color scheme on mobile ([45ca99c](https://github.com/standardnotes/app/commit/45ca99c627e51b0b6b0b55e211788fa4cb0f1c70))
+
 ## [1.37.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.37.5...@standardnotes/ui-services@1.37.6) (2024-03-22)
 
 ### Bug Fixes
