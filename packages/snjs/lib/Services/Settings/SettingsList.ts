@@ -2,7 +2,6 @@ import { SettingName } from '@standardnotes/domain-core'
 import { SettingData } from '@standardnotes/responses'
 import {
   MuteSignInEmailsOption,
-  MuteFailedBackupsEmailsOption,
   EmailBackupFrequency,
   ListedAuthorSecretsData,
   LogSessionUserAgentOption,
@@ -13,7 +12,6 @@ type SettingType =
   | EmailBackupFrequency
   | ListedAuthorSecretsData
   | LogSessionUserAgentOption
-  | MuteFailedBackupsEmailsOption
   | MuteSignInEmailsOption
   | MuteMarketingEmailsOption
 
