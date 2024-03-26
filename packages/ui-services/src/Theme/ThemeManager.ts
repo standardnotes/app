@@ -91,7 +91,7 @@ export class ThemeManager extends AbstractUIService {
         break
       }
       case ApplicationEvent.FeaturesAvailabilityChanged: {
-        this.handleFeaturesAvailabilityChanged()
+        this.handleFeaturesAvailabilityChanged().catch(console.error)
         break
       }
       case ApplicationEvent.Launched: {
@@ -197,7 +197,7 @@ export class ThemeManager extends AbstractUIService {
     }
   }
 
-  private handleFeaturesAvailabilityChanged(): void {
+  private async handleFeaturesAvailabilityChanged() {
     let hasChange = false
 
     for (const theme of this.themesActiveInTheUI.asThemes()) {
@@ -219,7 +219,10 @@ export class ThemeManager extends AbstractUIService {
 
     const shouldSetThemeAsPerColorScheme = this.preferences.getLocalValue(LocalPrefKey.UseSystemColorScheme, false)
     if (shouldSetThemeAsPerColorScheme) {
-      const prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      let prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (this.application.isNativeMobileWeb()) {
+        prefersDarkColorScheme = (await this.application.mobileDevice.getColorScheme()) === 'dark'
+      }
       hasChange = this.setThemeAsPerColorScheme(prefersDarkColorScheme)
     }
 
