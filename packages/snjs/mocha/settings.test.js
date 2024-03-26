@@ -123,12 +123,12 @@ describe('settings service', function () {
       true,
     )
     await application.settings.updateSetting(
-      SettingName.create(SettingName.NAMES.MuteFailedBackupsEmails).getValue(),
-      MuteFailedBackupsEmailsOption.Muted,
+      SettingName.create(SettingName.NAMES.LogSessionUserAgent).getValue(),
+      LogSessionUserAgentOption.Enabled,
     )
     const settings = await application.settings.listSettings()
-    expect(settings.getSettingValue(SettingName.create(SettingName.NAMES.MuteFailedBackupsEmails).getValue())).to.eql(
-      MuteFailedBackupsEmailsOption.Muted,
+    expect(settings.getSettingValue(SettingName.create(SettingName.NAMES.LogSessionUserAgent).getValue())).to.eql(
+      LogSessionUserAgentOption.Enabled,
     )
     expect(settings.getSettingValue(SettingName.create(SettingName.NAMES.MfaSecret).getValue())).to.not.be.ok
   })
