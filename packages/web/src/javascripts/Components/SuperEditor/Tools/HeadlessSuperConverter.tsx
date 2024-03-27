@@ -278,7 +278,11 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     this.exportEditor.getEditorState().read(() => {
       const fileNodes = $nodesOfType(FileNode)
       fileNodes.forEach((fileNode) => {
-        ids.push(fileNode.getId())
+        const nodeId = fileNode.getId()
+        if (ids.includes(nodeId)) {
+          return
+        }
+        ids.push(nodeId)
       })
     })
 
