@@ -15,7 +15,7 @@
     "css-loader": "*",
     "eslint": "*",
     "mini-css-extract-plugin": "^2.6.1",
-    "node-sass": "^8.0.0",
+    "node-sass": "^9.0.0",
     "prettier": "*",
     "sass": "^1.56.1",
     "sass-loader": "*",
