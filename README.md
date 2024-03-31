@@ -49,11 +49,12 @@ Questions? Find answers on our [Help page](https://standardnotes.com/help).
 
 Our web app is compiled into a folder of static HTML, JS, and CSS files. You can serve these files behind a web server to get started:
 
-1. Clone the repo
-2. `cd packages/web`
-3. `yarn build`
-4. `cd dist`
-5. You can then use Python to serve this folder over http: `python -m http.server 8080`
+1. `git clone https://github.com/standardnotes/app.git`
+2. `cd app`
+3. `yarn install`
+4. `yarn build:web`
+5. `cd packages/web`
+6. You can then use Python to serve this folder over http: `python -m http.server 8080`
 
 You can now access the app at `http://localhost:8080`.
 
