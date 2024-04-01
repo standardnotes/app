@@ -110,6 +110,7 @@
   "dependencies": {
     "@ariakit/react": "^0.3.9",
     "@lexical/headless": "0.13.1",
+    "@lexical/link": "0.13.1",
     "@lexical/list": "0.13.1",
     "@lexical/rich-text": "0.13.1",
     "@lexical/utils": "0.13.1",

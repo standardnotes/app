@@ -23,6 +23,7 @@ import {
   $createParagraphNode,
   $isTextNode,
   $getNodeByKey,
+  TextNode,
 } from 'lexical'
 import {
   mergeRegister,
@@ -30,7 +31,7 @@ import {
   $getNearestNodeOfType,
   $getNearestBlockElementAncestorOrThrow,
 } from '@lexical/utils'
-import { $isLinkNode, $isAutoLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
+import { $isLinkNode, TOGGLE_LINK_COMMAND, LinkNode } from '@lexical/link'
 import { $isListNode, ListNode } from '@lexical/list'
 import { $isHeadingNode, $isQuoteNode } from '@lexical/rich-text'
 import {
@@ -61,13 +62,12 @@ import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
 import { PasswordBlock } from '../Blocks/Password'
 import { URL_REGEX } from '@/Constants/Constants'
-import { $isLinkTextNode } from './ToolbarLinkTextEditor'
 import Popover from '@/Components/Popover/Popover'
 import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem, { MenuItemProps } from '@/Components/Menu/MenuItem'
 import { debounce, remToPx } from '@/Utils'
-import FloatingLinkEditor from './FloatingLinkEditor'
+import LinkEditor, { $isLinkTextNode } from './LinkEditor'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { useStateRef } from '@/Hooks/useStateRef'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
@@ -75,6 +75,7 @@ import { getPositionedPopoverStyles } from '@/Components/Popover/GetPositionedPo
 import usePreference from '@/Hooks/usePreference'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { $isDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
+import LinkViewer from './LinkViewer'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -220,12 +221,9 @@ const ToolbarPlugin = () => {
   const [isCode, setIsCode] = useState(false)
   const [isHighlight, setIsHighlight] = useState(false)
 
-  const [isLink, setIsLink] = useState(false)
-  const [isAutoLink, setIsAutoLink] = useState(false)
-  const [isLinkText, setIsLinkText] = useState(false)
-  const [isLinkEditMode, setIsLinkEditMode] = useState(false)
-  const [linkText, setLinkText] = useState<string>('')
-  const [linkUrl, setLinkUrl] = useState<string>('')
+  const [linkNode, setLinkNode] = useState<LinkNode | null>(null)
+  const [linkTextNode, setLinkTextNode] = useState<TextNode | null>(null)
+  const [isEditingLink, setIsEditingLink] = useState(false)
 
   const [isTOCOpen, setIsTOCOpen] = useState(false)
   const tocAnchorRef = useRef<HTMLButtonElement>(null)
@@ -342,23 +340,18 @@ const ToolbarPlugin = () => {
     // Update links
     const node = getSelectedNode(selection)
     const parent = node.getParent()
-    if ($isLinkNode(parent) || $isLinkNode(node)) {
-      setIsLink(true)
+    setIsEditingLink(false)
+    if ($isLinkNode(node)) {
+      setLinkNode(node)
+    } else if ($isLinkNode(parent)) {
+      setLinkNode(parent)
     } else {
-      setIsLink(false)
-    }
-    setLinkUrl($isLinkNode(parent) ? parent.getURL() : $isLinkNode(node) ? node.getURL() : '')
-    if ($isAutoLinkNode(parent) || $isAutoLinkNode(node)) {
-      setIsAutoLink(true)
-    } else {
-      setIsAutoLink(false)
+      setLinkNode(null)
     }
     if ($isLinkTextNode(node, selection)) {
-      setIsLinkText(true)
-      setLinkText(node.getTextContent())
+      setLinkTextNode(node)
     } else {
-      setIsLinkText(false)
-      setLinkText('')
+      setLinkTextNode(null)
     }
 
     if (elementDOM !== null) {
@@ -505,13 +498,11 @@ const ToolbarPlugin = () => {
         TOGGLE_LINK_AND_EDIT_COMMAND,
         (payload) => {
           if (payload === null) {
+            setIsEditingLink(false)
             return activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
-          } else if (typeof payload === 'string') {
-            const dispatched = activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, payload)
-            setIsLink(true)
-            setLinkUrl(payload)
-            setIsLinkEditMode(true)
-            return dispatched
+          } else {
+            setIsEditingLink(true)
+            return true
           }
           return false
         },
@@ -542,11 +533,9 @@ const ToolbarPlugin = () => {
               .catch((error) => {
                 console.error(error)
                 activeEditor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
-                setIsLinkEditMode(true)
               })
           } else {
             activeEditor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
-            setIsLinkEditMode(true)
           }
           return true
         }
@@ -555,7 +544,7 @@ const ToolbarPlugin = () => {
       },
       COMMAND_PRIORITY_NORMAL,
     )
-  }, [activeEditor, isLink])
+  }, [activeEditor])
 
   const dismissButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -580,7 +569,7 @@ const ToolbarPlugin = () => {
       const elementToBeFocused = event.relatedTarget as Node
       const containerContainsElementToFocus = container?.contains(elementToBeFocused)
       const linkEditorContainsElementToFocus = document
-        .getElementById('super-link-editor')
+        .getElementById(ElementIds.SuperEditor)
         ?.contains(elementToBeFocused)
       const willFocusDismissButton = dismissButtonRef.current === elementToBeFocused
       if ((containerContainsElementToFocus || linkEditorContainsElementToFocus) && !willFocusDismissButton) {
@@ -664,16 +653,22 @@ const ToolbarPlugin = () => {
         id="super-mobile-toolbar"
         ref={containerRef}
       >
-        {isLink && (
-          <FloatingLinkEditor
-            linkUrl={linkUrl}
-            linkText={linkText}
-            isEditMode={isLinkEditMode}
-            setEditMode={setIsLinkEditMode}
-            editor={editor}
-            isAutoLink={isAutoLink}
-            isLinkText={isLinkText}
+        {linkNode && !isEditingLink && (
+          <LinkViewer
+            key={linkNode.__key}
+            linkNode={linkNode}
             isMobile={isMobile}
+            setIsEditingLink={setIsEditingLink}
+            editor={activeEditor}
+          />
+        )}
+        {isEditingLink && (
+          <LinkEditor
+            editor={activeEditor}
+            setIsEditingLink={setIsEditingLink}
+            isMobile={isMobile}
+            linkNode={linkNode}
+            linkTextNode={linkTextNode}
           />
         )}
         <div className="flex w-full flex-shrink-0 border-t border-border md:border-0">
@@ -742,7 +737,7 @@ const ToolbarPlugin = () => {
             <ToolbarButton
               name="Link"
               iconName="link"
-              active={isLink}
+              active={!!linkNode}
               onSelect={() => {
                 editor.dispatchCommand(TOGGLE_LINK_AND_EDIT_COMMAND, '')
               }}
