@@ -22,6 +22,7 @@ import {
   COMMAND_PRIORITY_LOW,
   $createParagraphNode,
   $isTextNode,
+  $getNodeByKey,
 } from 'lexical'
 import {
   mergeRegister,
@@ -816,6 +817,7 @@ const ToolbarPlugin = () => {
         className="py-1"
         disableMobileFullscreenTakeover
         disableFlip
+        disableApplyingMobileWidth
         portal={false}
         documentElement={popoverDocumentElement}
       >
@@ -837,14 +839,23 @@ const ToolbarPlugin = () => {
                     <MenuItem
                       key={key}
                       className="overflow-hidden md:py-2"
-                      onClick={() => {
-                        editor.getEditorState().read(() => {
+                      onMouseDown={(event) => {
+                        event.preventDefault()
+                        setIsTOCOpen(false)
+                        editor.update(() => {
+                          const node = $getNodeByKey(key)
+                          if (!node) {
+                            return
+                          }
+                          node.selectEnd()
+                          editor.focus()
                           const domElement = editor.getElementByKey(key)
                           if (!domElement) {
                             return
                           }
-                          domElement.scrollIntoView({ block: 'start' })
-                          setIsTOCOpen(false)
+                          setTimeout(() => {
+                            domElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                          }, 1)
                         })
                       }}
                       style={{
