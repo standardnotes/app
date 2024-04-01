@@ -141,9 +141,11 @@ const ToolbarButton = forwardRef(
             'flex select-none items-center justify-center rounded p-0.5 focus:shadow-none focus:outline-none enabled:hover:bg-default enabled:focus-visible:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]',
             className,
           )}
+          onClick={() => {
+            onSelect()
+          }}
           onMouseDown={(event) => {
             event.preventDefault()
-            onSelect()
           }}
           onContextMenu={(event) => {
             editor.focus()
@@ -185,7 +187,8 @@ const ToolbarMenuItem = ({ name, iconName, active, onClick, ...props }: ToolbarM
   return (
     <MenuItem
       className={classNames('overflow-hidden md:py-2', active ? '!bg-info !text-info-contrast' : 'hover:bg-contrast')}
-      onMouseDown={onClick}
+      onClick={onClick}
+      onMouseDown={(e) => e.preventDefault()}
       {...props}
     >
       <Icon type={iconName} className="-mt-px mr-2.5 flex-shrink-0" />
@@ -839,8 +842,7 @@ const ToolbarPlugin = () => {
                     <MenuItem
                       key={key}
                       className="overflow-hidden md:py-2"
-                      onMouseDown={(event) => {
-                        event.preventDefault()
+                      onClick={() => {
                         setIsTOCOpen(false)
                         editor.update(() => {
                           const node = $getNodeByKey(key)
@@ -858,6 +860,7 @@ const ToolbarPlugin = () => {
                           }, 1)
                         })
                       }}
+                      onMouseDown={(e) => e.preventDefault()}
                       style={{
                         paddingLeft: `${(level - 1) * remToPx(1) + remToPx(0.75)}px`,
                       }}
