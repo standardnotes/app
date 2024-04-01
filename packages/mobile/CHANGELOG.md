@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.105](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.104...@standardnotes/mobile@3.58.105) (2024-04-01)
+
+### Bug Fixes
+
+* Fixed super note "Table of contents" not working on mobile ([73eba38](https://github.com/standardnotes/app/commit/73eba38c1444e85839d771fb297e3035eabd99c8))
+
 ## [3.58.104](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.103...@standardnotes/mobile@3.58.104) (2024-03-28)
 
 **Note:** Version bump only for package @standardnotes/mobile

@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.192.9",
+      "title": "[3.192.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.8...@standardnotes/web@3.192.9) (2024-04-01)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed super note \"Table of contents\" not working on mobile ([73eba38](https://github.com/standardnotes/app/commit/73eba38c1444e85839d771fb297e3035eabd99c8))",
+      "parsed": {
+        "_": [
+          "Fixed super note \"Table of contents\" not working on mobile (73eba38)"
+        ],
+        "Bug Fixes": [
+          "Fixed super note \"Table of contents\" not working on mobile (73eba38)"
+        ]
+      }
+    },
+    {
       "version": "3.192.8",
       "title": "[3.192.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.7...@standardnotes/web@3.192.8) (2024-03-28)",
       "date": null,
