@@ -35,7 +35,6 @@ import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
-import { MergeSiblingListsPlugin } from './Plugins/MergeSiblingListsPlugin'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -117,7 +116,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       </div>
       {isMobile && <ToolbarPlugin />}
       <ListPlugin />
-      <MergeSiblingListsPlugin />
       <MarkdownShortcutPlugin transformers={MarkdownTransformers} />
       <TablePlugin hasCellMerge />
       <OnChangePlugin onChange={handleChange} ignoreSelectionChange={true} />
