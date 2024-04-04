@@ -16,6 +16,7 @@ import {
   COMMAND_PRIORITY_HIGH,
   COMMAND_PRIORITY_LOW,
   DRAGOVER_COMMAND,
+  DRAGEND_COMMAND,
   DROP_COMMAND,
   LexicalEditor,
   LexicalNode,
@@ -32,6 +33,7 @@ const DRAGGABLE_BLOCK_MENU_LEFT_SPACE = -2
 const TARGET_LINE_HALF_HEIGHT = 2
 const DRAGGABLE_BLOCK_MENU_CLASSNAME = 'draggable-block-menu'
 const DRAG_DATA_FORMAT = 'application/x-lexical-drag-block'
+let draggedNodeKey = ''
 const TEXT_BOX_HORIZONTAL_PADDING = 24
 
 const Downward = 1
@@ -283,6 +285,9 @@ function useDraggableBlockMenu(editor: LexicalEditor, anchorElem: HTMLElement, i
       if (!isHTMLElement(target)) {
         return false
       }
+      if (!draggedNodeKey) {
+        return false
+      }
       const targetBlockElem = getBlockElement(anchorElem, editor, new Point(event.pageX, pageY))
       const targetLineElem = targetLineRef.current
       if (targetBlockElem === null || targetLineElem === null) {
@@ -331,11 +336,24 @@ function useDraggableBlockMenu(editor: LexicalEditor, anchorElem: HTMLElement, i
       return true
     }
 
+    function onDragEnd(): boolean {
+      hideTargetLine(targetLineRef.current)
+      draggedNodeKey = ''
+      return true
+    }
+
     return mergeRegister(
       editor.registerCommand(
         DRAGOVER_COMMAND,
         (event) => {
           return onDragover(event)
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
+      editor.registerCommand(
+        DRAGEND_COMMAND,
+        () => {
+          return onDragEnd()
         },
         COMMAND_PRIORITY_LOW,
       ),
@@ -363,10 +381,12 @@ function useDraggableBlockMenu(editor: LexicalEditor, anchorElem: HTMLElement, i
       }
     })
     dataTransfer.setData(DRAG_DATA_FORMAT, nodeKey)
+    draggedNodeKey = nodeKey
   }
 
   function onDragEnd(): void {
     hideTargetLine(targetLineRef.current)
+    draggedNodeKey = ''
   }
 
   function onTouchStart(): void {
