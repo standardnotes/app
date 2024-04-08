@@ -98,6 +98,7 @@ import {
   SignInResponse,
   ClientDisplayableError,
   SessionListEntry,
+  MetaEndpointResponse,
 } from '@standardnotes/responses'
 import {
   SyncService,
@@ -117,7 +118,7 @@ import {
   LoggerInterface,
   canBlockDeinit,
 } from '@standardnotes/utils'
-import { UuidString, ApplicationEventPayload } from '../Types'
+import { UuidString } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
@@ -275,12 +276,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       }),
     )
 
-    const syncEventCallback = async (eventName: SyncEvent) => {
+    const syncEventCallback = async (eventName: SyncEvent, data?: unknown) => {
       const appEvent = applicationEventForSyncEvent(eventName)
       if (appEvent) {
         await encryptionService.onSyncEvent(eventName)
 
-        await this.notifyEvent(appEvent)
+        await this.notifyEvent(appEvent, data)
 
         if (appEvent === ApplicationEvent.CompletedFullSync) {
           if (!this.handledFullSyncStage) {
@@ -535,7 +536,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.addEventObserver(filteredCallback, event)
   }
 
-  private async notifyEvent(event: ApplicationEvent, data?: ApplicationEventPayload) {
+  private async notifyEvent(event: ApplicationEvent, data?: unknown) {
     if (event === ApplicationEvent.Started) {
       this.onStart()
     } else if (event === ApplicationEvent.Launched) {
@@ -768,10 +769,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   public async register(
     email: string,
     password: string,
+    hvmToken: string,
     ephemeral = false,
     mergeLocal = true,
   ): Promise<UserRegistrationResponseBody> {
-    return this.user.register(email, password, ephemeral, mergeLocal)
+    return this.user.register(email, password, hvmToken, ephemeral, mergeLocal)
   }
 
   /**
@@ -785,8 +787,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ephemeral = false,
     mergeLocal = true,
     awaitSync = false,
+    hvmToken?: string,
   ): Promise<HttpResponse<SignInResponse>> {
-    return this.user.signIn(email, password, strict, ephemeral, mergeLocal, awaitSync)
+    return this.user.signIn(email, password, strict, ephemeral, mergeLocal, awaitSync, hvmToken)
+  }
+
+  public async getCaptchaUrl(): Promise<HttpResponse<MetaEndpointResponse>> {
+    return this.legacyApi.getCaptchaUrl()
   }
 
   public async changeEmail(

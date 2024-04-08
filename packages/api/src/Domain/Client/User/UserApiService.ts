@@ -66,6 +66,7 @@ export class UserApiService implements UserApiServiceInterface {
   async register(registerDTO: {
     email: string
     serverPassword: string
+    hvmToken?: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
   }): Promise<HttpResponse<UserRegistrationResponseBody>> {
@@ -76,6 +77,7 @@ export class UserApiService implements UserApiServiceInterface {
         [ApiEndpointParam.ApiVersion]: this.apiVersion,
         password: registerDTO.serverPassword,
         email: registerDTO.email,
+        hvm_token: registerDTO.hvmToken,
         ephemeral: registerDTO.ephemeral,
         ...registerDTO.keyParams.getPortableValue(),
       })

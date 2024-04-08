@@ -6,5 +6,6 @@ export type UserRegistrationRequestParams = AnyKeyParamsContent & {
   [additionalParam: string]: unknown
   password: string
   email: string
+  hvm_token?: string
   ephemeral: boolean
 }

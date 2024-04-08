@@ -17,5 +17,6 @@ export interface AuthApiServiceInterface {
     password: string
     codeVerifier: string
     recoveryCodes: string
+    hvmToken?: string
   }): Promise<HttpResponse<SignInWithRecoveryCodesResponseBody>>
 }

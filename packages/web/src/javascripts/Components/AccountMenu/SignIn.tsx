@@ -10,8 +10,9 @@ import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
-import { getErrorFromErrorResponse, isErrorResponse } from '@standardnotes/snjs'
+import { getErrorFromErrorResponse, isErrorResponse, getCaptchaHeader } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
+import { useCaptcha } from '@/Hooks/useCaptcha'
 
 type Props = {
   setMenuPane: (pane: AccountMenuPane) => void
@@ -33,6 +34,15 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
   const [isPrivateUsername, setIsPrivateUsername] = useState(false)
 
   const [isRecoverySignIn, setIsRecoverySignIn] = useState(false)
+
+  const [captchaURL, setCaptchaURL] = useState('')
+  const [showCaptcha, setShowCaptcha] = useState(false)
+  const [hvmToken, setHVMToken] = useState('')
+  const captchaIframe = useCaptcha(captchaURL, (token) => {
+    setHVMToken(token)
+    setShowCaptcha(false)
+    setCaptchaURL('')
+  })
 
   const emailInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
@@ -95,8 +105,12 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
     passwordInputRef?.current?.blur()
 
     application
-      .signIn(email, password, isStrictSignin, isEphemeral, shouldMergeLocal)
+      .signIn(email, password, isStrictSignin, isEphemeral, shouldMergeLocal, false, hvmToken)
       .then((response) => {
+        const captchaURL = getCaptchaHeader(response)
+        if (captchaURL) {
+          setCaptchaURL(captchaURL)
+        }
         if (isErrorResponse(response)) {
           throw new Error(getErrorFromErrorResponse(response).message)
         }
@@ -106,12 +120,13 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         console.error(err)
         setError(err.message ?? err.toString())
         setPassword('')
+        setHVMToken('')
         passwordInputRef?.current?.blur()
       })
       .finally(() => {
         setIsSigningIn(false)
       })
-  }, [application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
+  }, [application, email, hvmToken, isEphemeral, isStrictSignin, password, shouldMergeLocal])
 
   const recoverySignIn = useCallback(() => {
     setIsSigningIn(true)
@@ -123,10 +138,21 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         recoveryCodes,
         username: email,
         password: password,
+        hvmToken,
       })
       .then((result) => {
         if (result.isFailed()) {
-          throw new Error(result.getError())
+          const error = result.getError()
+          try {
+            const parsed = JSON.parse(error)
+            if (parsed.captchaURL) {
+              setCaptchaURL(parsed.captchaURL)
+              return
+            }
+          } catch (e) {
+            setCaptchaURL('')
+          }
+          throw new Error(error)
         }
         application.accountMenuController.closeAccountMenu()
       })
@@ -134,12 +160,13 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         console.error(err)
         setError(err.message ?? err.toString())
         setPassword('')
+        setHVMToken('')
         passwordInputRef?.current?.blur()
       })
       .finally(() => {
         setIsSigningIn(false)
       })
-  }, [application, email, password, recoveryCodes])
+  }, [application.accountMenuController, application.signInWithRecoveryCodes, email, hvmToken, password, recoveryCodes])
 
   const onPrivateUsernameChange = useCallback(
     (newisPrivateUsername: boolean, privateUsernameIdentifier?: string) => {
@@ -151,28 +178,37 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
     [setEmail],
   )
 
+  const performSignIn = useCallback(() => {
+    if (!email || email.length === 0) {
+      emailInputRef?.current?.focus()
+      return
+    }
+
+    if (!password || password.length === 0) {
+      passwordInputRef?.current?.focus()
+      return
+    }
+
+    if (isRecoverySignIn) {
+      recoverySignIn()
+      return
+    }
+
+    signIn()
+  }, [email, isRecoverySignIn, password, recoverySignIn, signIn])
+
   const handleSignInFormSubmit = useCallback(
     (e: React.SyntheticEvent) => {
       e.preventDefault()
 
-      if (!email || email.length === 0) {
-        emailInputRef?.current?.focus()
+      if (captchaURL) {
+        setShowCaptcha(true)
         return
       }
 
-      if (!password || password.length === 0) {
-        passwordInputRef?.current?.focus()
-        return
-      }
-
-      if (isRecoverySignIn) {
-        recoverySignIn()
-        return
-      }
-
-      signIn()
+      performSignIn()
     },
-    [email, password, isRecoverySignIn, signIn, recoverySignIn],
+    [captchaURL, performSignIn],
   )
 
   const handleKeyDown: KeyboardEventHandler = useCallback(
@@ -184,19 +220,16 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
     [handleSignInFormSubmit],
   )
 
-  return (
+  useEffect(() => {
+    if (!hvmToken) {
+      return
+    }
+
+    performSignIn()
+  }, [hvmToken, performSignIn])
+
+  const signInForm = (
     <>
-      <div className="mb-3 mt-1 flex items-center px-3">
-        <IconButton
-          icon="arrow-left"
-          title="Go back"
-          className="mr-2 flex p-0 text-neutral"
-          onClick={() => setMenuPane(AccountMenuPane.GeneralMenu)}
-          focusable={true}
-          disabled={isSigningIn}
-        />
-        <div className="text-base font-bold">Sign in</div>
-      </div>
       <div className="mb-1 px-3">
         <DecoratedInput
           className={{ container: `mb-2 ${error ? 'border-danger' : null}` }}
@@ -255,6 +288,23 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         onStrictSignInChange={handleStrictSigninChange}
         onRecoveryCodesChange={onRecoveryCodesChange}
       />
+    </>
+  )
+
+  return (
+    <>
+      <div className="mb-3 mt-1 flex items-center px-3">
+        <IconButton
+          icon="arrow-left"
+          title="Go back"
+          className="mr-2 flex p-0 text-neutral"
+          onClick={() => setMenuPane(AccountMenuPane.GeneralMenu)}
+          focusable={true}
+          disabled={isSigningIn}
+        />
+        <div className="text-base font-bold">{showCaptcha ? 'Human verification' : 'Sign in'}</div>
+      </div>
+      {showCaptcha ? <div className="p-[10px]">{captchaIframe}</div> : signInForm}
     </>
   )
 }

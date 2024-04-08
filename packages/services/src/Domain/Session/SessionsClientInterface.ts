@@ -30,13 +30,14 @@ export interface SessionsClientInterface {
   revokeAllOtherSessions(): Promise<void>
 
   isCurrentSessionReadOnly(): boolean | undefined
-  register(email: string, password: string, ephemeral: boolean): Promise<UserRegistrationResponseBody>
+  register(email: string, password: string, hvmToken: string, ephemeral: boolean): Promise<UserRegistrationResponseBody>
   signIn(
     email: string,
     password: string,
     strict: boolean,
     ephemeral: boolean,
     minAllowedVersion?: ProtocolVersion,
+    hvmToken?: string,
   ): Promise<SessionManagerResponse>
   bypassChecksAndSignInWithRootKey(
     email: string,
