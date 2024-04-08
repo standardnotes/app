@@ -21,6 +21,7 @@ export interface UserServiceInterface extends AbstractService<AccountEvent, Acco
   register(
     email: string,
     password: string,
+    hvmToken: string,
     ephemeral: boolean,
     mergeLocal: boolean,
   ): Promise<UserRegistrationResponseBody>
@@ -31,6 +32,7 @@ export interface UserServiceInterface extends AbstractService<AccountEvent, Acco
     ephemeral: boolean,
     mergeLocal: boolean,
     awaitSync: boolean,
+    hvmToken?: string,
   ): Promise<HttpResponse<SignInResponse>>
   deleteAccount(): Promise<{
     error: boolean

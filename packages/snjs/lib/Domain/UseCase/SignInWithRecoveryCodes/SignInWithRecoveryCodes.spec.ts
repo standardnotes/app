@@ -166,7 +166,9 @@ describe('SignInWithRecoveryCodes', () => {
   })
 
   it('should fail if the sign in with recovery code fails', async () => {
-    authManager.signInWithRecoveryCodes = jest.fn().mockReturnValue(false)
+    authManager.signInWithRecoveryCodes = jest.fn().mockReturnValue({
+      success: false,
+    })
 
     const useCase = createUseCase()
     const result = await useCase.execute({

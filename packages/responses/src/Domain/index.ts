@@ -13,6 +13,7 @@ export * from './Auth/SignInData'
 export * from './Auth/SignInResponse'
 export * from './Auth/SignOutResponse'
 export * from './Auth/User'
+export * from './Auth/MetaEndpointResponse'
 
 /** Temps are awaiting final publish state on server repo */
 export * from './Temp/SharedVaultMoveType'

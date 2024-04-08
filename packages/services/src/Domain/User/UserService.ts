@@ -142,6 +142,7 @@ export class UserService
   public async register(
     email: string,
     password: string,
+    hvmToken: string,
     ephemeral = false,
     mergeLocal = true,
   ): Promise<UserRegistrationResponseBody> {
@@ -157,7 +158,7 @@ export class UserService
 
     try {
       this.lockSyncing()
-      const response = await this.sessions.register(email, password, ephemeral)
+      const response = await this.sessions.register(email, password, hvmToken, ephemeral)
 
       await this.notifyEventSync(AccountEvent.SignedInOrRegistered, {
         payload: {
@@ -190,6 +191,7 @@ export class UserService
     ephemeral = false,
     mergeLocal = true,
     awaitSync = false,
+    hvmToken?: string,
   ): Promise<HttpResponse<SignInResponse>> {
     if (this.encryption.hasAccount()) {
       throw Error('Tried to sign in when an account already exists.')
@@ -205,7 +207,7 @@ export class UserService
       /** Prevent a timed sync from occuring while signing in. */
       this.lockSyncing()
 
-      const { response } = await this.sessions.signIn(email, password, strict, ephemeral)
+      const { response } = await this.sessions.signIn(email, password, strict, ephemeral, undefined, hvmToken)
 
       if (!isErrorResponse(response)) {
         const notifyingFunction = awaitSync ? this.notifyEventSync.bind(this) : this.notifyEvent.bind(this)

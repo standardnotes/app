@@ -158,7 +158,7 @@ platform :android do
 
   desc 'Deploy production app'
   lane :prod do
-    version = 3_002_000 + ENV['BUILD_NUMBER'].to_i
+    version = 3_004_000 + ENV['BUILD_NUMBER'].to_i
     deploy_android 'prod', version
   end
 end

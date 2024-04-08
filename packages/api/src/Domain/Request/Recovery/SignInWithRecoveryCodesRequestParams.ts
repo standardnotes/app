@@ -4,4 +4,5 @@ export interface SignInWithRecoveryCodesRequestParams {
   password: string
   code_verifier: string
   recovery_codes: string
+  hvm_token?: string
 }

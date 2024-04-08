@@ -72,6 +72,7 @@ export class AuthApiService implements AuthApiServiceInterface {
     password: string
     codeVerifier: string
     recoveryCodes: string
+    hvmToken?: string
   }): Promise<HttpResponse<SignInWithRecoveryCodesResponseBody>> {
     if (this.operationsInProgress.get(AuthApiOperations.SignInWithRecoveryCodes)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
@@ -86,6 +87,7 @@ export class AuthApiService implements AuthApiServiceInterface {
         password: dto.password,
         recovery_codes: dto.recoveryCodes,
         username: dto.username,
+        hvm_token: dto.hvmToken,
       })
 
       return response
