@@ -73,3 +73,5 @@ You can configure the `DEFAULT_SYNC_SERVER` environment variable to set the defa
 ```
 DEFAULT_SYNC_SERVER=https://sync.myserver
 ```
+
+See package name for your system package manager at [Repology](https://repology.org/project/standartnotes/versions).
