@@ -1,13 +1,15 @@
 :root {
-  --background-norm: #16141c;
+  --background-norm: #191927;
   --background-weak: #292733;
-  --background-strong: #3f3b4c;
+  --background-strong: #13131d;
   --text-norm: #ffffff;
   --text-weak: #a7a4b5;
   --border-norm: #4a4658;
   --border-weak: #343140;
-  --primary: #8a6eff;
+  --primary: #7777f8;
   --interaction-norm: #6d4aff;
+  --warning: #ffb84d;
+  --success: #54948e;
 
   --sn-stylekit-background-color: var(--background-norm);
   --sn-stylekit-foreground-color: var(--text-norm);
@@ -23,11 +25,18 @@
   --sn-stylekit-passive-color-3: var(--background-strong);
   --sn-stylekit-passive-color-4: #3f3b4c;
   --sn-stylekit-passive-color-5: var(--background-weak);
+  --sn-stylekit-warning-color: var(--warning);
+  --sn-stylekit-success-color: var(--success);
 
-  --navigation-item-selected-background-color: var(--background-strong);
+  --navigation-column-background-color: var(--background-strong);
+  --navigation-item-selected-background-color: var(--background-weak);
 
   --sn-stylekit-paragraph-text-color: var(--text-weak);
   --sn-stylekit-scrollbar-thumb-color: var(--primary);
+
+  --sn-stylekit-accessory-tint-color-1: var(--primary);
+  --sn-stylekit-accessory-tint-color-3: var(--warning);
+  --sn-stylekit-accessory-tint-color-5: var(--success);
 }
 
 a,
