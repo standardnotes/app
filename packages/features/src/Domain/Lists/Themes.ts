@@ -98,7 +98,7 @@ export function themes(): ThemeFeatureDescription[] {
   })
 
   const proton: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
+    availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Proton',
     identifier: NativeFeatureIdentifier.TYPES.ProtonTheme,
     permission_name: PermissionName.ProtonTheme,

@@ -14,6 +14,7 @@
   --sn-stylekit-border-color: var(--border-weak);
   --sn-stylekit-contrast-background-color: var(--background-weak);
   --sn-stylekit-contrast-foreground-color: var(--text-norm);
+  --sn-stylekit-contrast-border-color: var(--border-norm);
   --sn-stylekit-secondary-background-color: var(--background-weak);
   --sn-stylekit-secondary-foreground-color: var(--text-norm);
   --sn-stylekit-info-color: var(--interaction-norm);
@@ -26,6 +27,7 @@
   --navigation-item-selected-background-color: var(--background-strong);
 
   --sn-stylekit-paragraph-text-color: var(--text-weak);
+  --sn-stylekit-scrollbar-thumb-color: var(--primary);
 }
 
 a,
