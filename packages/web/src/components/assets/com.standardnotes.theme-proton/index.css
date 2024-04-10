@@ -1,0 +1,48 @@
+:root {
+  --background-norm: #16141c;
+  --background-weak: #292733;
+  --background-strong: #3f3b4c;
+  --text-norm: #ffffff;
+  --text-weak: #a7a4b5;
+  --border-norm: #4a4658;
+  --border-weak: #343140;
+  --primary: #8a6eff;
+  --interaction-norm: #6d4aff;
+
+  --sn-stylekit-background-color: var(--background-norm);
+  --sn-stylekit-foreground-color: var(--text-norm);
+  --sn-stylekit-border-color: var(--border-weak);
+  --sn-stylekit-contrast-background-color: var(--background-weak);
+  --sn-stylekit-contrast-foreground-color: var(--text-norm);
+  --sn-stylekit-secondary-background-color: var(--background-weak);
+  --sn-stylekit-secondary-foreground-color: var(--text-norm);
+  --sn-stylekit-info-color: var(--interaction-norm);
+  --sn-stylekit-info-backdrop-color: #6e4aff0f;
+  --sn-stylekit-passive-color-0: var(--text-weak);
+  --sn-stylekit-passive-color-3: var(--background-strong);
+  --sn-stylekit-passive-color-4: #3f3b4c;
+  --sn-stylekit-passive-color-5: var(--background-weak);
+
+  --navigation-item-selected-background-color: var(--background-strong);
+
+  --sn-stylekit-paragraph-text-color: var(--text-weak);
+}
+
+a,
+.Lexical__link,
+.Lexical__textCode {
+  color: var(--primary);
+}
+
+.Collapsible__container,
+.Lexical__tableCellHeader {
+  border-color: var(--border-norm);
+}
+
+.Lexical__quote {
+  color: var(--text-weak);
+}
+
+#blocks-editor hr.selected {
+  outline-color: var(--primary);
+}

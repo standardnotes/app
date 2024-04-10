@@ -28,6 +28,7 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
     MidnightTheme: 'org.standardnotes.theme-midnight',
     SolarizedDarkTheme: 'org.standardnotes.theme-solarized-dark',
     TitaniumTheme: 'org.standardnotes.theme-titanium',
+    ProtonTheme: 'com.standardnotes.theme-proton',
 
     PlainEditor: 'com.standardnotes.plain-text',
     SuperEditor: 'com.standardnotes.super-editor',
