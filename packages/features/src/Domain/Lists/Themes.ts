@@ -99,7 +99,7 @@ export function themes(): ThemeFeatureDescription[] {
 
   const proton: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-    name: 'Proton',
+    name: 'Carbon',
     identifier: NativeFeatureIdentifier.TYPES.ProtonTheme,
     permission_name: PermissionName.ProtonTheme,
     dock_icon: {
