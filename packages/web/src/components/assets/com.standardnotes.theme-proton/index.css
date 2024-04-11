@@ -10,6 +10,7 @@
   --interaction-norm: #6d4aff;
   --warning: #ffb84d;
   --success: #54948e;
+  --danger: #f5385a;
 
   --sn-stylekit-background-color: var(--background-norm);
   --sn-stylekit-foreground-color: var(--text-norm);
@@ -27,6 +28,7 @@
   --sn-stylekit-passive-color-5: var(--background-weak);
   --sn-stylekit-warning-color: var(--warning);
   --sn-stylekit-success-color: var(--success);
+  --sn-stylekit-danger-color: var(--danger);
 
   --navigation-column-background-color: var(--background-strong);
   --navigation-item-selected-background-color: var(--background-weak);
@@ -37,6 +39,8 @@
   --sn-stylekit-accessory-tint-color-1: var(--primary);
   --sn-stylekit-accessory-tint-color-3: var(--warning);
   --sn-stylekit-accessory-tint-color-5: var(--success);
+
+  --preferences-navigation-selected-background-color: var(--background-norm);
 }
 
 a,
@@ -56,4 +60,8 @@ a,
 
 #blocks-editor hr.selected {
   outline-color: var(--primary);
+}
+
+[role='combobox'].border-passive-3 {
+  border-color: var(--border-weak);
 }
