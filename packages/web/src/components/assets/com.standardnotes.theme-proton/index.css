@@ -40,6 +40,7 @@
   --sn-stylekit-accessory-tint-color-3: var(--warning);
   --sn-stylekit-accessory-tint-color-5: var(--success);
 
+  --preferences-background-color: var(--background-strong);
   --preferences-navigation-selected-background-color: var(--background-norm);
 }
 
