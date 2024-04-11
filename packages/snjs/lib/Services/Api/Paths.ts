@@ -70,6 +70,7 @@ export const Paths = {
     ...SettingsPaths,
     ...SubscriptionPaths,
     ...UserPaths,
+    meta: '/v1/meta',
   },
   v2: {
     ...UserPathsV2,

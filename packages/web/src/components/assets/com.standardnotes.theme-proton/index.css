@@ -1,0 +1,68 @@
+:root {
+  --background-norm: #191927;
+  --background-weak: #292733;
+  --background-strong: #13131d;
+  --text-norm: #ffffff;
+  --text-weak: #a7a4b5;
+  --border-norm: #4a4658;
+  --border-weak: #343140;
+  --primary: #7777f8;
+  --interaction-norm: #6d4aff;
+  --warning: #ffb84d;
+  --success: #54948e;
+  --danger: #f5385a;
+
+  --sn-stylekit-background-color: var(--background-norm);
+  --sn-stylekit-foreground-color: var(--text-norm);
+  --sn-stylekit-border-color: var(--border-weak);
+  --sn-stylekit-contrast-background-color: var(--background-weak);
+  --sn-stylekit-contrast-foreground-color: var(--text-norm);
+  --sn-stylekit-contrast-border-color: var(--border-norm);
+  --sn-stylekit-secondary-background-color: var(--background-weak);
+  --sn-stylekit-secondary-foreground-color: var(--text-norm);
+  --sn-stylekit-info-color: var(--interaction-norm);
+  --sn-stylekit-info-backdrop-color: #6e4aff0f;
+  --sn-stylekit-passive-color-0: var(--text-weak);
+  --sn-stylekit-passive-color-3: var(--background-strong);
+  --sn-stylekit-passive-color-4: #3f3b4c;
+  --sn-stylekit-passive-color-5: var(--background-weak);
+  --sn-stylekit-warning-color: var(--warning);
+  --sn-stylekit-success-color: var(--success);
+  --sn-stylekit-danger-color: var(--danger);
+
+  --navigation-column-background-color: var(--background-strong);
+  --navigation-item-selected-background-color: var(--background-weak);
+
+  --sn-stylekit-paragraph-text-color: var(--text-weak);
+  --sn-stylekit-scrollbar-thumb-color: var(--primary);
+
+  --sn-stylekit-accessory-tint-color-1: var(--primary);
+  --sn-stylekit-accessory-tint-color-3: var(--warning);
+  --sn-stylekit-accessory-tint-color-5: var(--success);
+
+  --preferences-background-color: var(--background-strong);
+  --preferences-navigation-selected-background-color: var(--background-norm);
+}
+
+a,
+.Lexical__link,
+.Lexical__textCode {
+  color: var(--primary);
+}
+
+.Collapsible__container,
+.Lexical__tableCellHeader {
+  border-color: var(--border-norm);
+}
+
+.Lexical__quote {
+  color: var(--text-weak);
+}
+
+#blocks-editor hr.selected {
+  outline-color: var(--primary);
+}
+
+[role='combobox'].border-passive-3 {
+  border-color: var(--border-weak);
+}

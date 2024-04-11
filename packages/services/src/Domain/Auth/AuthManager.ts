@@ -1,6 +1,6 @@
 import { AuthApiServiceInterface } from '@standardnotes/api'
 import { AnyKeyParamsContent } from '@standardnotes/common'
-import { isErrorResponse, SessionBody } from '@standardnotes/responses'
+import { isErrorResponse, getCaptchaHeader } from '@standardnotes/responses'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -45,37 +45,39 @@ export class AuthManager extends AbstractService implements AuthClientInterface 
     }
   }
 
-  async signInWithRecoveryCodes(dto: {
-    username: string
-    password: string
-    codeVerifier: string
-    recoveryCodes: string
-  }): Promise<
-    | {
-        keyParams: AnyKeyParamsContent
-        session: SessionBody
-        user: {
-          uuid: string
-          email: string
-          protocolVersion: string
-        }
-      }
-    | false
-  > {
+  async signInWithRecoveryCodes(
+    dto: Parameters<AuthClientInterface['signInWithRecoveryCodes']>[0],
+  ): ReturnType<AuthClientInterface['signInWithRecoveryCodes']> {
     try {
       const result = await this.authApiService.signInWithRecoveryCodes(dto)
 
+      const captchaURL = getCaptchaHeader(result)
+
+      if (captchaURL) {
+        return {
+          success: false,
+          captchaURL,
+        }
+      }
+
       if (isErrorResponse(result)) {
-        return false
+        return {
+          success: false,
+          captchaURL: '',
+        }
       }
 
       return {
+        success: true,
         keyParams: result.data.key_params as AnyKeyParamsContent,
         session: result.data.session,
         user: result.data.user,
       }
     } catch (error) {
-      return false
+      return {
+        success: false,
+        captchaURL: '',
+      }
     }
   }
 }

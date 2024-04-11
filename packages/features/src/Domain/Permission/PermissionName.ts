@@ -40,4 +40,5 @@ export enum PermissionName {
   Clipper = 'app:clipper',
   Vaults = 'app:vaults',
   SharedVaults = 'server:shared-vaults',
+  ProtonTheme = 'theme:proton',
 }

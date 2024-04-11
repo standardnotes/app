@@ -68,6 +68,7 @@ import {
   isErrorResponse,
   MoveFileResponse,
   ValetTokenOperation,
+  MetaEndpointResponse,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpServiceInterface } from '@standardnotes/api'
@@ -290,6 +291,7 @@ export class LegacyApiService
     email: string
     serverPassword: string
     ephemeral: boolean
+    hvmToken?: string
   }): Promise<HttpResponse<SignInResponse>> {
     if (this.authenticating) {
       return this.createErrorResponse(API_MESSAGE_LOGIN_IN_PROGRESS, HttpStatusCode.BadRequest)
@@ -301,6 +303,7 @@ export class LegacyApiService
       password: dto.serverPassword,
       ephemeral: dto.ephemeral,
       code_verifier: this.inMemoryStore.getValue(StorageKey.CodeVerifier) as string,
+      hvm_token: dto.hvmToken,
     })
 
     const response = await this.request<SignInResponse>({
@@ -957,5 +960,10 @@ export class LegacyApiService
     }
 
     return this.session.accessToken
+  }
+
+  public getCaptchaUrl() {
+    const response = this.httpService.get<MetaEndpointResponse>(Paths.v1.meta)
+    return response
   }
 }

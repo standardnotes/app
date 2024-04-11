@@ -68,9 +68,18 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
       recoveryCodes: dto.recoveryCodes,
       username: dto.username,
       password: rootKey.serverPassword as string,
+      hvmToken: dto.hvmToken,
     })
 
-    if (signInResult === false) {
+    if (signInResult.success === false) {
+      if (signInResult.captchaURL) {
+        return Result.fail(
+          JSON.stringify({
+            captchaURL: signInResult.captchaURL,
+          }),
+        )
+      }
+
       return Result.fail('Could not sign in with recovery code')
     }
 

@@ -72,13 +72,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
       )}
       ref={mergeRefs([ref, setElement])}
     >
-      <div
-        id="navigation-content"
-        className={classNames(
-          'flex-grow overflow-y-auto overflow-x-hidden md:overflow-y-hidden md:hover:overflow-y-auto',
-          'md:hover:[overflow-y:_overlay] pointer-coarse:md:overflow-y-auto',
-        )}
-      >
+      <div id="navigation-content" className="flex-grow overflow-y-auto overflow-x-hidden">
         <TagSearchBar navigationController={application.navigationController} />
         <SmartViewsSection
           application={application}

@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.192.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.16...@standardnotes/web@3.192.17) (2024-04-11)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.192.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.15...@standardnotes/web@3.192.16) (2024-04-11)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.192.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.14...@standardnotes/web@3.192.15) (2024-04-10)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.192.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.13...@standardnotes/web@3.192.14) (2024-04-10)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.192.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.10...@standardnotes/web@3.192.13) (2024-04-08)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.192.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.9...@standardnotes/web@3.192.10) (2024-04-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.192.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.8...@standardnotes/web@3.192.9) (2024-04-01)
 
 ### Bug Fixes

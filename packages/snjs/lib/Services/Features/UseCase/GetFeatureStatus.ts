@@ -114,8 +114,10 @@ export class GetFeatureStatusUseCase {
   }
 
   private isFreeFeature(featureId: NativeFeatureIdentifier) {
-    return [NativeFeatureIdentifier.TYPES.DarkTheme, NativeFeatureIdentifier.TYPES.PlainEditor].includes(
-      featureId.value,
-    )
+    return [
+      NativeFeatureIdentifier.TYPES.DarkTheme,
+      NativeFeatureIdentifier.TYPES.PlainEditor,
+      NativeFeatureIdentifier.TYPES.ProtonTheme,
+    ].includes(featureId.value)
   }
 }

@@ -13,8 +13,10 @@ export interface AuthClientInterface {
     password: string
     codeVerifier: string
     recoveryCodes: string
+    hvmToken?: string
   }): Promise<
     | {
+        success: true
         keyParams: AnyKeyParamsContent
         session: SessionBody
         user: {
@@ -23,6 +25,9 @@ export interface AuthClientInterface {
           protocolVersion: string
         }
       }
-    | false
+    | {
+        success: false
+        captchaURL: string
+      }
   >
 }

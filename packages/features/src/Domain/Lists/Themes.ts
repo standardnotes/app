@@ -97,5 +97,18 @@ export function themes(): ThemeFeatureDescription[] {
     no_mobile: true,
   })
 
-  return [midnight, futura, solarizedDark, autobiography, dark, titanium, dynamic]
+  const proton: ThemeFeatureDescription = FillThemeComponentDefaults({
+    availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
+    name: 'Carbon',
+    identifier: NativeFeatureIdentifier.TYPES.ProtonTheme,
+    permission_name: PermissionName.ProtonTheme,
+    dock_icon: {
+      type: 'circle',
+      background_color: '#16141c',
+      foreground_color: '#ffffff',
+      border_color: '#4a4658',
+    },
+  })
+
+  return [midnight, futura, solarizedDark, autobiography, dark, proton, titanium, dynamic]
 }

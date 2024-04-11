@@ -24,7 +24,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
   )
 
   return (
-    <div className="border-b border-border bg-default px-5 py-2 md:border-0 md:bg-contrast md:px-0 md:py-0">
+    <div className="border-b border-border bg-default px-5 py-2 md:border-0 md:bg-[--preferences-background-color] md:px-0 md:py-0">
       <div className="hidden min-w-55 flex-col overflow-y-auto px-3 py-6 md:flex">
         {menuItems.map((pref) => (
           <PreferencesMenuItem

@@ -1,6 +1,13 @@
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { getPlatformString } from '@/Utils'
-import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  Challenge,
+  getErrorMessageFromErrorResponseBody,
+  HttpErrorResponseBody,
+  removeFromArray,
+  WebAppEvent,
+} from '@standardnotes/snjs'
 import { alertDialog, isIOS, RouteType } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/WebApplication'
 import Footer from '@/Components/Footer/Footer'
@@ -117,7 +124,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       onAppLaunch()
     }
 
-    const removeAppObserver = application.addEventObserver(async (eventName) => {
+    const removeAppObserver = application.addEventObserver(async (eventName, data?: unknown) => {
       if (eventName === ApplicationEvent.Started) {
         onAppStart()
       } else if (eventName === ApplicationEvent.Launched) {
@@ -146,6 +153,14 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
         addToast({
           type: ToastType.Error,
           message: 'Too many requests. Please try again later.',
+        })
+      } else if (eventName === ApplicationEvent.FailedSync) {
+        addToast({
+          type: ToastType.Error,
+          message: getErrorMessageFromErrorResponseBody(
+            data as HttpErrorResponseBody,
+            'Sync error. Please try again later.',
+          ),
         })
       }
     })

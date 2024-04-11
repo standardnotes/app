@@ -9,7 +9,10 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 const PreferencesCanvas: FunctionComponent<PreferencesProps & { menu: PreferencesSessionController }> = (props) => (
   <div className="flex min-h-0 flex-grow flex-col md:flex-row md:justify-between">
     <PreferencesMenuView menu={props.menu} />
-    <div className="min-h-0 flex-grow overflow-auto bg-contrast" tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}>
+    <div
+      className="min-h-0 flex-grow overflow-auto bg-[--preferences-background-color]"
+      tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+    >
       <PaneSelector {...props} />
     </div>
   </div>

@@ -11,6 +11,7 @@ export interface UserApiServiceInterface {
   register(registerDTO: {
     email: string
     serverPassword: string
+    hvmToken?: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
   }): Promise<HttpResponse<UserRegistrationResponseBody>>
