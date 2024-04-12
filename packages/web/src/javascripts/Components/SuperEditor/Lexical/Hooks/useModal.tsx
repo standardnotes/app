@@ -41,7 +41,7 @@ export default function useModal(): [
       title: string,
       // eslint-disable-next-line no-shadow
       getContent: (onClose: () => void) => JSX.Element,
-      closeOnClickOutside = false,
+      closeOnClickOutside = true,
     ) => {
       setModalContent({
         closeOnClickOutside,

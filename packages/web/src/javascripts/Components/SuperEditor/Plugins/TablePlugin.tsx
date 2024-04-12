@@ -8,12 +8,12 @@
 
 import { INSERT_TABLE_COMMAND, TableNode, TableRowNode } from '@lexical/table'
 import { $createParagraphNode, LexicalEditor } from 'lexical'
-import { useEffect, useState } from 'react'
-import Button from '../Lexical/UI/Button'
-import { DialogActions } from '../Lexical/UI/Dialog'
-import TextInput from '../Lexical/UI/TextInput'
+import { useCallback, useEffect, useState } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { mergeRegister } from '@lexical/utils'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import Button from '@/Components/Button/Button'
+import { isMobileScreen } from '../../../Utils'
 
 export function InsertTableDialog({
   activeEditor,
@@ -30,13 +30,27 @@ export function InsertTableDialog({
     onClose()
   }
 
+  const focusOnMount = useCallback((element: HTMLInputElement | null) => {
+    if (element) {
+      setTimeout(() => element.focus())
+    }
+  }, [])
+
   return (
     <>
-      <TextInput label="Number of rows" onChange={setRows} value={rows} />
-      <TextInput label="Number of columns" onChange={setColumns} value={columns} />
-      <DialogActions data-test-id="table-model-confirm-insert">
-        <Button onClick={onClick}>Confirm</Button>
-      </DialogActions>
+      <label className="mb-2.5 flex items-center justify-between gap-3">
+        Rows:
+        <DecoratedInput value={rows} onChange={setRows} ref={focusOnMount} />
+      </label>
+      <label className="mb-2.5 flex items-center justify-between gap-3">
+        Columns:
+        <DecoratedInput value={columns} onChange={setColumns} />
+      </label>
+      <div className="flex justify-end">
+        <Button onClick={onClick} small={isMobileScreen()}>
+          Confirm
+        </Button>
+      </div>
     </>
   )
 }

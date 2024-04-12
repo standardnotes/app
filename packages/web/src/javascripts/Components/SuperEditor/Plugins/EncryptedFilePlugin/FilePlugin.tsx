@@ -19,10 +19,10 @@ import { FilesControllerEvent } from '@/Controllers/FilesController'
 import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { SNNote } from '@standardnotes/snjs'
-import Button from '../../Lexical/UI/Button'
-import { DialogActions } from '../../Lexical/UI/Dialog'
 import Spinner from '../../../Spinner/Spinner'
 import Modal from '../../Lexical/UI/Modal'
+import Button from '@/Components/Button/Button'
+import { isMobileScreen } from '../../../../Utils'
 
 export const OPEN_FILE_UPLOAD_MODAL_COMMAND = createCommand('OPEN_FILE_UPLOAD_MODAL_COMMAND')
 
@@ -71,15 +71,15 @@ function UploadFileDialog({ currentNote, onClose }: { currentNote: SNNote; onClo
           }
         }}
       />
-      <DialogActions>
+      <div className="mt-1.5 flex justify-end">
         {isUploadingFile ? (
           <Spinner className="h-4 w-4" />
         ) : (
-          <Button onClick={onClick} disabled={!file}>
+          <Button onClick={onClick} disabled={!file} small={isMobileScreen()}>
             Upload
           </Button>
         )}
-      </DialogActions>
+      </div>
     </>
   )
 }

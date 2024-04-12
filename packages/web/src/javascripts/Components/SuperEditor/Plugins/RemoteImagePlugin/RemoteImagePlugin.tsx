@@ -1,12 +1,12 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $createParagraphNode, $insertNodes, $isRootOrShadowRoot, COMMAND_PRIORITY_NORMAL } from 'lexical'
-import { useEffect, useState } from 'react'
-import Button from '../../Lexical/UI/Button'
-import { DialogActions } from '../../Lexical/UI/Dialog'
-import TextInput from '../../Lexical/UI/TextInput'
+import { useCallback, useEffect, useState } from 'react'
 import { INSERT_REMOTE_IMAGE_COMMAND } from '../Commands'
 import { $createRemoteImageNode, RemoteImageNode } from './RemoteImageNode'
 import { mergeRegister, $wrapNodeInElement } from '@lexical/utils'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import Button from '@/Components/Button/Button'
+import { isMobileScreen } from '../../../../Utils'
 
 export function InsertRemoteImageDialog({ onClose }: { onClose: () => void }) {
   const [url, setURL] = useState('')
@@ -21,12 +21,23 @@ export function InsertRemoteImageDialog({ onClose }: { onClose: () => void }) {
     onClose()
   }
 
+  const focusOnMount = useCallback((element: HTMLInputElement | null) => {
+    if (element) {
+      setTimeout(() => element.focus())
+    }
+  }, [])
+
   return (
     <>
-      <TextInput label="URL:" onChange={setURL} value={url} />
-      <DialogActions>
-        <Button onClick={onClick}>Confirm</Button>
-      </DialogActions>
+      <label className="flex flex-col gap-1.5">
+        URL:
+        <DecoratedInput value={url} onChange={setURL} ref={focusOnMount} />
+      </label>
+      <div className="mt-2.5 flex justify-end">
+        <Button onClick={onClick} disabled={!url} small={isMobileScreen()}>
+          Confirm
+        </Button>
+      </div>
     </>
   )
 }
