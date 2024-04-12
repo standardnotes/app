@@ -7,7 +7,6 @@
  */
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import './Modal.css'
 
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
