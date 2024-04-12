@@ -67,16 +67,20 @@ export class DetermineKeyToUse implements SyncUseCaseInterface<AnyKey | undefine
 
     let itemsKey: ItemsKeyInterface | RootKeyInterface | KeySystemItemsKeyInterface | undefined
 
+    itemsKey = dto.recentlyDecryptedKeys.filter(isItemsKey).find((itemsKeyPayload) => {
+      return dto.payload.items_key_id === itemsKeyPayload.uuid
+    })
+
+    if (itemsKey) {
+      return Result.ok(itemsKey)
+    }
+
     if (dto.payload.items_key_id) {
       itemsKey = this.encryption.itemsKeyForEncryptedPayload(dto.payload)
       if (itemsKey) {
         return Result.ok(itemsKey)
       }
     }
-
-    itemsKey = dto.recentlyDecryptedKeys.filter(isItemsKey).find((itemsKeyPayload) => {
-      return Result.ok(dto.payload.items_key_id === itemsKeyPayload.uuid)
-    })
 
     if (itemsKey) {
       return Result.ok(itemsKey)
