@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.193.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.17...@standardnotes/web@3.193.0) (2024-04-13)
+
+### Features
+
+* Added "Upload file" option to the super note Insert menu and block picker menu ([#2869](https://github.com/standardnotes/app/issues/2869)) ([9800570](https://github.com/standardnotes/app/commit/9800570fb1773781762cfd2cac6d9f42730d4907))
+
 ## [3.192.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.16...@standardnotes/web@3.192.17) (2024-04-11)
 
 **Note:** Version bump only for package @standardnotes/web

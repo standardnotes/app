@@ -16,15 +16,16 @@ import {
   URL_MATCHER,
 } from '@lexical/react/LexicalAutoEmbedPlugin'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import * as ReactDOM from 'react-dom'
 
 import useModal from '../../Lexical/Hooks/useModal'
-import Button from '../../Lexical/UI/Button'
-import { DialogActions } from '../../Lexical/UI/Dialog'
 import { INSERT_TWEET_COMMAND } from '../TwitterPlugin'
 import { INSERT_YOUTUBE_COMMAND } from '../YouTubePlugin'
 import { classNames } from '@standardnotes/snjs'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
+import Button from '@/Components/Button/Button'
+import { isMobileScreen } from '../../../../Utils'
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
   // Human readable name of the embeded content e.g. Tweet or Google Map.
@@ -219,28 +220,31 @@ export function AutoEmbedDialog({
     }
   }
 
+  const focusOnMount = useCallback((element: HTMLInputElement | null) => {
+    if (element) {
+      setTimeout(() => element.focus())
+    }
+  }, [])
+
   return (
-    <div className="w-[600px] max-w-[90vw]">
-      <div className="Input__wrapper">
-        <input
-          type="text"
-          className="Input__input"
-          placeholder={embedConfig.exampleUrl}
+    <>
+      <label className="flex flex-col gap-1.5">
+        URL:
+        <DecoratedInput
           value={text}
-          data-test-id={`${embedConfig.type}-embed-modal-url`}
-          onChange={(e) => {
-            const { value } = e.target
-            setText(value)
-            validateText(value)
+          onChange={(text) => {
+            setText(text)
+            validateText(text)
           }}
+          ref={focusOnMount}
         />
-      </div>
-      <DialogActions>
-        <Button disabled={!embedResult} onClick={onClick} data-test-id={`${embedConfig.type}-embed-modal-submit-btn`}>
+      </label>
+      <div className="mt-2.5 flex justify-end">
+        <Button disabled={!embedResult} onClick={onClick} small={isMobileScreen()}>
           Embed
         </Button>
-      </DialogActions>
-    </div>
+      </div>
+    </>
   )
 }
 

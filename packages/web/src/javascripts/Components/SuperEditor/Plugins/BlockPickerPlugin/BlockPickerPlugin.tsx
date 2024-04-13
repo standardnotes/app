@@ -29,6 +29,7 @@ import { GetQuoteBlockOption } from '../Blocks/Quote'
 import { GetDividerBlockOption } from '../Blocks/Divider'
 import { GetCollapsibleBlockOption } from '../Blocks/Collapsible'
 import { GetEmbedsBlockOptions } from '../Blocks/Embeds'
+import { GetUploadFileOption } from '../Blocks/File'
 
 export default function BlockPickerMenuPlugin({ popoverZIndex }: { popoverZIndex?: string }): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -57,6 +58,7 @@ export default function BlockPickerMenuPlugin({ popoverZIndex }: { popoverZIndex
       GetRemoteImageBlockOption(() => {
         showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
       }),
+      GetUploadFileOption(editor),
       GetNumberedListBlockOption(editor),
       GetBulletedListBlockOption(editor),
       GetChecklistBlockOption(editor),

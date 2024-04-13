@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.193.0",
+      "title": "[3.193.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.17...@standardnotes/web@3.193.0) (2024-04-13)",
+      "date": null,
+      "body": "### Features\n\n* Added \"Upload file\" option to the super note Insert menu and block picker menu ([#2869](https://github.com/standardnotes/app/issues/2869)) ([9800570](https://github.com/standardnotes/app/commit/9800570fb1773781762cfd2cac6d9f42730d4907))",
+      "parsed": {
+        "_": [
+          "Added \"Upload file\" option to the super note Insert menu and block picker menu (#2869) (9800570)"
+        ],
+        "Features": [
+          "Added \"Upload file\" option to the super note Insert menu and block picker menu (#2869) (9800570)"
+        ]
+      }
+    },
+    {
       "version": "3.192.17",
       "title": "[3.192.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.192.16...@standardnotes/web@3.192.17) (2024-04-11)",
       "date": null,
