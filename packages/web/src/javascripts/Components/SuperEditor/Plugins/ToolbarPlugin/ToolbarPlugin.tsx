@@ -76,6 +76,7 @@ import usePreference from '@/Hooks/usePreference'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { $isDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
 import LinkViewer from './LinkViewer'
+import { OPEN_FILE_UPLOAD_MODAL_COMMAND } from '../EncryptedFilePlugin/FilePlugin'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -1047,6 +1048,11 @@ const ToolbarPlugin = () => {
             onClick={() =>
               showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />)
             }
+          />
+          <ToolbarMenuItem
+            name="Upload file"
+            iconName="file"
+            onClick={() => activeEditor.dispatchCommand(OPEN_FILE_UPLOAD_MODAL_COMMAND, undefined)}
           />
           <ToolbarMenuItem
             name="Image from URL"
