@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.70.9](https://github.com/standardnotes/app/compare/@standardnotes/services@1.70.8...@standardnotes/services@1.70.9) (2024-04-13)
+
+### Bug Fixes
+
+* Fixes an issue where importing an encrypted backup file may not successfully complete in some cases ([7f1baf5](https://github.com/standardnotes/app/commit/7f1baf52c1d2ddd5112438b936d22ad99bc403a5))
+
 ## [1.70.8](https://github.com/standardnotes/app/compare/@standardnotes/services@1.70.7...@standardnotes/services@1.70.8) (2024-04-10)
 
 **Note:** Version bump only for package @standardnotes/services
