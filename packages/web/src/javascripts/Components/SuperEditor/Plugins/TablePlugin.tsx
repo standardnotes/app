@@ -40,11 +40,11 @@ export function InsertTableDialog({
     <>
       <label className="mb-2.5 flex items-center justify-between gap-3">
         Rows:
-        <DecoratedInput value={rows} onChange={setRows} ref={focusOnMount} />
+        <DecoratedInput type="number" value={rows} onChange={setRows} ref={focusOnMount} />
       </label>
       <label className="mb-2.5 flex items-center justify-between gap-3">
         Columns:
-        <DecoratedInput value={columns} onChange={setColumns} />
+        <DecoratedInput type="number" value={columns} onChange={setColumns} />
       </label>
       <div className="flex justify-end">
         <Button onClick={onClick} small={isMobileScreen()}>
