@@ -2,7 +2,14 @@ import { WebApplication } from '@/Application/WebApplication'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
-import { ApplicationEvent, ApplicationDescriptor, WebAppEvent, StatusServiceEvent } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  ApplicationDescriptor,
+  WebAppEvent,
+  StatusServiceEvent,
+  HttpErrorResponseBody,
+  getErrorMessageFromErrorResponseBody,
+} from '@standardnotes/snjs'
 import {
   STRING_NEW_UPDATE_READY,
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
@@ -39,6 +46,7 @@ type State = {
   offline: boolean
   hasError: boolean
   arbitraryStatusMessage?: string
+  failedSyncError?: string
 }
 
 class Footer extends AbstractComponent<Props, State> {
@@ -158,7 +166,7 @@ class Footer extends AbstractComponent<Props, State> {
     this.reloadPasscodeStatus().catch(console.error)
   }
 
-  override onAppEvent(eventName: ApplicationEvent) {
+  override onAppEvent(eventName: ApplicationEvent, data?: unknown) {
     switch (eventName) {
       case ApplicationEvent.KeyStatusChanged:
         this.reloadUpgradeStatus()
@@ -186,6 +194,9 @@ class Footer extends AbstractComponent<Props, State> {
         }
         this.findErrors()
         this.updateOfflineStatus()
+        this.setState({
+          failedSyncError: undefined,
+        })
         break
       case ApplicationEvent.SyncStatusChanged:
         this.updateSyncStatus()
@@ -194,6 +205,12 @@ class Footer extends AbstractComponent<Props, State> {
         this.updateSyncStatus()
         this.findErrors()
         this.updateOfflineStatus()
+        this.setState({
+          failedSyncError: getErrorMessageFromErrorResponseBody(
+            data as HttpErrorResponseBody,
+            'Sync error. Please try again later.',
+          ),
+        })
         break
       case ApplicationEvent.LocalDataIncrementalLoad:
       case ApplicationEvent.LocalDataLoaded:
@@ -384,6 +401,11 @@ class Footer extends AbstractComponent<Props, State> {
             )}
           </div>
           <div className="right flex h-full flex-shrink-0">
+            {this.state.failedSyncError && (
+              <div className="relative z-footer-bar-item flex select-none items-center text-xs font-bold text-neutral">
+                Sync error: {this.state.failedSyncError}
+              </div>
+            )}
             {this.state.dataUpgradeAvailable && (
               <div
                 onClick={this.securityUpdateClickHandler}
