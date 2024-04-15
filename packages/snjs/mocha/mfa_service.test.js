@@ -11,7 +11,7 @@ const registerApp = async (application) => {
   const ephemeral = false
   const mergeLocal = true
 
-  await application.register(email, password, ephemeral, mergeLocal)
+  await application.register(email, password, null, ephemeral, mergeLocal)
   return application
 }
 
