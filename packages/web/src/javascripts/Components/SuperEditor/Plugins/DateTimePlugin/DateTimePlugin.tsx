@@ -5,9 +5,11 @@ import {
   $getSelection,
   $isRangeSelection,
   $createParagraphNode,
+  $isParagraphNode,
+  LexicalNode,
 } from 'lexical'
 import { useEffect } from 'react'
-import { INSERT_DATETIME_COMMAND, INSERT_TIME_COMMAND, INSERT_DATE_COMMAND } from '../Commands'
+import { INSERT_DATETIME_COMMAND } from '../Commands'
 import { mergeRegister } from '@lexical/utils'
 import { $createHeadingNode } from '@lexical/rich-text'
 import { formatDateAndTimeForNote, dateToHoursAndMinutesTimeString } from '@/Utils/DateUtils'
@@ -18,9 +20,9 @@ export default function DatetimePlugin(): JSX.Element | null {
 
   useEffect(() => {
     return mergeRegister(
-      editor.registerCommand<string>(
+      editor.registerCommand(
         INSERT_DATETIME_COMMAND,
-        () => {
+        (payload) => {
           const now = new Date()
           const selection = $getSelection()
 
@@ -28,69 +30,49 @@ export default function DatetimePlugin(): JSX.Element | null {
             return false
           }
 
-          const heading = $createHeadingNode('h1')
-          const dateString = $createTextNode(formatDateAndTimeForNote(now, false))
-          dateString.setFormat('italic')
-          heading.append(dateString)
+          const focusNode = selection.focus.getNode()
+          const focusOffset = selection.focus.offset
 
-          const timeNode = $createTextNode(dateToHoursAndMinutesTimeString(now))
-          timeNode.toggleFormat('superscript')
-          timeNode.toggleFormat('italic')
-          heading.append(timeNode)
+          const shouldAddHR = $isParagraphNode(focusNode) && focusOffset === 0
 
-          const newLineNode = $createParagraphNode()
+          const shouldAddDate = payload.includes('date')
+          const shouldAddTime = payload.includes('time')
 
-          selection.insertNodes([heading, newLineNode])
+          const nodesToInsert: LexicalNode[] = []
 
-          editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined)
+          const containingNode = shouldAddHR
+            ? $createHeadingNode(payload === 'datetime' ? 'h1' : 'h2')
+            : $createParagraphNode()
 
-          return true
-        },
-        COMMAND_PRIORITY_EDITOR,
-      ),
-      editor.registerCommand<string>(
-        INSERT_DATE_COMMAND,
-        () => {
-          const now = new Date()
-          const selection = $getSelection()
-
-          if (!$isRangeSelection(selection)) {
-            return false
+          if (shouldAddDate) {
+            const dateNode = $createTextNode(formatDateAndTimeForNote(now, false))
+            dateNode.setFormat('italic')
+            containingNode.append(dateNode)
           }
 
-          const heading = $createHeadingNode('h1')
-          const dateString = $createTextNode(formatDateAndTimeForNote(now, false))
-          dateString.setFormat('italic')
-          heading.append(dateString)
-
-          const newLineNode = $createParagraphNode()
-
-          selection.insertNodes([heading, newLineNode])
-
-          editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined)
-
-          return true
-        },
-        COMMAND_PRIORITY_EDITOR,
-      ),
-      editor.registerCommand<string>(
-        INSERT_TIME_COMMAND,
-        () => {
-          const now = new Date()
-          const selection = $getSelection()
-
-          if (!$isRangeSelection(selection)) {
-            return false
+          if (shouldAddTime) {
+            const timeNode = $createTextNode(dateToHoursAndMinutesTimeString(now))
+            timeNode.toggleFormat('italic')
+            if (shouldAddDate) {
+              timeNode.toggleFormat('superscript')
+            }
+            containingNode.append(timeNode)
           }
 
-          const heading = $createHeadingNode('h2')
-          const dateString = $createTextNode(dateToHoursAndMinutesTimeString(now))
-          dateString.setFormat('italic')
-          heading.append(dateString)
+          containingNode.append($createTextNode(' '))
+
+          nodesToInsert.push(containingNode)
 
           const newLineNode = $createParagraphNode()
+          if (shouldAddHR) {
+            nodesToInsert.push(newLineNode)
+          }
 
-          selection.insertNodes([heading, newLineNode])
+          selection.insertNodes(nodesToInsert)
+
+          if (shouldAddHR) {
+            editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined)
+          }
 
           return true
         },
