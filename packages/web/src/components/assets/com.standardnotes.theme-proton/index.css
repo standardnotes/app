@@ -2,10 +2,14 @@
   --background-norm: #191927;
   --background-weak: #292733;
   --background-strong: #13131d;
+
   --text-norm: #ffffff;
   --text-weak: #a7a4b5;
+
   --border-norm: #4a4658;
   --border-weak: #343140;
+  --border-weak: #2a2834;
+
   --primary: #7777f8;
   --interaction-norm: #6d4aff;
   --warning: #ffb84d;
@@ -32,6 +36,9 @@
 
   --navigation-column-background-color: var(--background-strong);
   --navigation-item-selected-background-color: var(--background-weak);
+
+  --items-column-background-color: var(--background-strong);
+  --items-column-items-background-color: var(--background-strong);
 
   --sn-stylekit-paragraph-text-color: var(--text-weak);
   --sn-stylekit-scrollbar-thumb-color: var(--primary);
