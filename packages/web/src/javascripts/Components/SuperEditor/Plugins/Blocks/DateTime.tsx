@@ -1,7 +1,7 @@
 import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
 import { LexicalEditor } from 'lexical'
 import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
-import { INSERT_DATETIME_COMMAND, INSERT_DATE_COMMAND, INSERT_TIME_COMMAND } from '../Commands'
+import { INSERT_DATETIME_COMMAND } from '../Commands'
 
 export function GetDatetimeBlocks(editor: LexicalEditor) {
   return [
@@ -15,13 +15,13 @@ export function GetDatetimeBlocks(editor: LexicalEditor) {
       name: 'Current time',
       iconName: 'authenticator',
       keywords: ['time', 'current'],
-      onSelect: () => editor.dispatchCommand(INSERT_TIME_COMMAND, 'datetime'),
+      onSelect: () => editor.dispatchCommand(INSERT_DATETIME_COMMAND, 'time'),
     },
     {
       name: 'Current date',
       iconName: 'authenticator',
       keywords: ['date', 'current'],
-      onSelect: () => editor.dispatchCommand(INSERT_DATE_COMMAND, 'datetime'),
+      onSelect: () => editor.dispatchCommand(INSERT_DATETIME_COMMAND, 'date'),
     },
   ]
 }

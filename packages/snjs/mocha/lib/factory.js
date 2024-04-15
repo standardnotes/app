@@ -122,7 +122,7 @@ export async function initializeApplication(application) {
 export function registerUserToApplication({ application, email, password, ephemeral, mergeLocal = true }) {
   if (!email) email = Utils.generateUuid()
   if (!password) password = Utils.generateUuid()
-  return application.register(email, password, ephemeral, mergeLocal)
+  return application.register(email, password, null, ephemeral, mergeLocal)
 }
 
 export async function setOldVersionPasscode({ application, passcode, version }) {
