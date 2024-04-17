@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.193.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.193.5...@standardnotes/web@3.193.6) (2024-04-17)
+
+### Reverts
+
+* Revert "chore: add and fix margins inside super note content [skip e2e]" ([9c2bf94](https://github.com/standardnotes/app/commit/9c2bf946ce2e9fa9bc76b1b0527eb976b68526c9))
+
 ## [3.193.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.193.4...@standardnotes/web@3.193.5) (2024-04-17)
 
 **Note:** Version bump only for package @standardnotes/web
