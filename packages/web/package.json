@@ -3,7 +3,7 @@
   "version": "3.193.5",
   "license": "AGPL-3.0",
   "main": "dist/app.js",
-  "author": "Standard Notes.",
+  "author": "Standard Notes",
   "private": true,
   "files": [
     "dist"
