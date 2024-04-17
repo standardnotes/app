@@ -70,6 +70,10 @@ a,
   outline-color: var(--primary);
 }
 
+#blocks-editor hr::after {
+  background-color: var(--border-norm);
+}
+
 [role='combobox'].border-passive-3 {
   border-color: var(--border-weak);
 }
