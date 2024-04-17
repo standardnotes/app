@@ -552,7 +552,7 @@ function TableCellActionMenuContainer({
   }, [prevTableCellDOM, tableCellNode])
 
   return (
-    <div className="table-cell-action-button-container" ref={menuButtonRef}>
+    <div className="absolute left-0 top-0 will-change-transform" ref={menuButtonRef}>
       {tableCellNode != null && (
         <>
           <RoundIconButton
