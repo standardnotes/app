@@ -23,7 +23,7 @@
   hr {
     padding: 2px 0px;
     border: none;
-    margin: 1em 0;
+    margin: 0.825em 0;
     cursor: pointer;
   }
 
@@ -38,5 +38,25 @@
   hr.selected {
     outline: 2px solid var(--sn-stylekit-info-color);
     user-select: none;
+  }
+}
+
+.ContentEditable__root,
+.Collapsible__content {
+  > *:not(:first-child) {
+    margin-block-start: 0.825em;
+  }
+
+  // Remove extra margin around empty paragraphs
+  .Lexical__paragraph:has(br:first-child) {
+    margin-block-start: 0;
+
+    & + * {
+      margin-block-start: 0;
+    }
+  }
+
+  .Lexical__listItem {
+    margin-block-end: 0.325em;
   }
 }

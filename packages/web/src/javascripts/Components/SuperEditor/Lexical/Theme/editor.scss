@@ -7,13 +7,10 @@
   text-align: right;
 }
 .Lexical__paragraph {
-  margin: 0;
   position: relative;
 }
 .Lexical__quote {
-  margin: 0;
   margin-left: 20px;
-  margin-bottom: 10px;
   color: var(--sn-stylekit-passive-color-1);
   border-left-color: var(--sn-stylekit-passive-color-1);
   border-left-width: 4px;
@@ -31,21 +28,18 @@
   }
 }
 .Lexical__h1 {
-  font-size: 26px;
+  font-size: 1.75em;
   color: var(--sn-stylekit-editor-foreground-color);
   font-weight: 700;
-  margin: 0;
 }
 .Lexical__h2 {
-  font-size: 22px;
+  font-size: 1.5em;
   color: var(--sn-stylekit-editor-foreground-color);
   font-weight: 700;
-  margin: 0;
 }
 .Lexical__h3 {
-  font-size: 19px;
+  font-size: 1.3em;
   font-weight: 700;
-  margin: 0;
 }
 .Lexical__textBold {
   font-weight: bold;
@@ -94,7 +88,6 @@
   font-family: var(--sn-stylekit-monospace-font), monospace;
   display: block;
   padding: 1.25rem 1.35rem;
-  margin: 0.5rem 0;
   tab-size: 2;
   overflow-x: auto;
   position: relative;
@@ -112,7 +105,6 @@
   overflow-y: scroll;
   table-layout: fixed;
   width: calc(100% - 25px);
-  margin: 0.5rem 0;
   color: var(--sn-stylekit-contrast-foreground-color);
 }
 .Lexical__tableSelection *::selection {
