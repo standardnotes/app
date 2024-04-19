@@ -75,13 +75,15 @@ export class EvernoteConverter implements Converter {
           .filter(Boolean) as EvernoteResource[]
 
         const contentNode = xmlNote.getElementsByTagName('content')[0]
-        const contentXmlString = this.getXmlStringFromContentElement(contentNode)
+        let contentXmlString = this.getXmlStringFromContentElement(contentNode)
         if (!contentXmlString) {
           continue
         }
-        const contentXml = this.loadXMLString(contentXmlString, 'html')
+        // Convert any en-media self-closing tags to normal closing tags
+        contentXmlString = contentXmlString.replace(/<((en-media)[^<>]+)\/>/g, '<$1></$2>')
+        const content = this.loadXMLString(contentXmlString, 'html')
 
-        const noteElement = contentXml.getElementsByTagName('en-note')[0] as HTMLElement
+        const noteElement = content.getElementsByTagName('en-note')[0] as HTMLElement
 
         const unorderedLists = Array.from(noteElement.getElementsByTagName('ul'))
 
@@ -92,16 +94,7 @@ export class EvernoteConverter implements Converter {
         }
 
         this.removeEmptyAndOrphanListElements(noteElement)
-        this.removeUnnecessaryTopLevelBreaks(noteElement)
-
-        const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
-        const { uploadedFiles } = await this.replaceMediaElementsWithResources(
-          mediaElements,
-          resources,
-          canUploadFiles,
-          uploadFile,
-        )
-        filesToPotentiallyCleanup.push(...uploadedFiles)
+        this.unwrapTopLevelBreaks(noteElement)
 
         // Some notes have <font> tags that contain separate <span> tags with text
         // which causes broken paragraphs in the note.
@@ -113,13 +106,26 @@ export class EvernoteConverter implements Converter {
           fontElement.innerText = fontElement.textContent || ''
         }
 
+        const mediaElements = Array.from(noteElement.getElementsByTagName('en-media'))
+        const { uploadedFiles } = await this.replaceMediaElementsWithResources(
+          mediaElements,
+          resources,
+          canUploadFiles,
+          uploadFile,
+        )
+        filesToPotentiallyCleanup.push(...uploadedFiles)
+
         let contentHTML = noteElement.innerHTML
         if (!canUseSuper) {
           contentHTML = contentHTML.replace(/<\/div>/g, '</div>\n')
           contentHTML = contentHTML.replace(/<li[^>]*>/g, '\n')
           contentHTML = contentHTML.trim()
         }
-        const text = !canUseSuper ? this.stripHTML(contentHTML) : convertHTMLToSuper(contentHTML)
+        const text = !canUseSuper
+          ? this.stripHTML(contentHTML)
+          : convertHTMLToSuper(contentHTML, {
+              addLineBreaks: false,
+            })
 
         const createdAtDate = created ? dayjs.utc(created, dateFormat).toDate() : new Date()
         const updatedAtDate = updated ? dayjs.utc(updated, dateFormat).toDate() : createdAtDate
@@ -285,11 +291,13 @@ export class EvernoteConverter implements Converter {
     })
   }
 
-  removeUnnecessaryTopLevelBreaks(noteElement: HTMLElement) {
-    Array.from(noteElement.querySelectorAll('* > p > br')).forEach((br) => {
+  unwrapTopLevelBreaks(noteElement: HTMLElement) {
+    Array.from(noteElement.querySelectorAll('* > p > br, * > div > br')).forEach((br) => {
       const parent = br.parentElement!
-      if (parent.children.length === 1) {
-        parent.remove()
+      const children = Array.from(parent.children)
+      const isEveryChildBR = children.every((child) => child.tagName === 'BR')
+      if (isEveryChildBR) {
+        parent.replaceWith(children[0])
       }
     })
   }

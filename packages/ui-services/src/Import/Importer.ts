@@ -27,7 +27,7 @@ import { HTMLConverter } from './HTMLConverter/HTMLConverter'
 import { SuperConverter } from './SuperConverter/SuperConverter'
 import { CleanupItemsFn, Converter, InsertNoteFn, InsertTagFn, LinkItemsFn, UploadFileFn } from './Converter'
 import { ConversionResult } from './ConversionResult'
-import { FilesClientInterface, SuperConverterServiceInterface } from '@standardnotes/files'
+import { FilesClientInterface, SuperConverterHTMLOptions, SuperConverterServiceInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/domain-core'
 
 const BytesInOneMegabyte = 1_000_000
@@ -207,12 +207,14 @@ export class Importer {
     )
   }
 
-  convertHTMLToSuper = (html: string): string => {
+  convertHTMLToSuper = (html: string, options?: SuperConverterHTMLOptions): string => {
     if (!this.canUseSuper()) {
       return html
     }
 
-    return this.superConverterService.convertOtherFormatToSuperString(html, 'html')
+    return this.superConverterService.convertOtherFormatToSuperString(html, 'html', {
+      html: options,
+    })
   }
 
   convertMarkdownToSuper = (markdown: string): string => {

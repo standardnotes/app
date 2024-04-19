@@ -1,5 +1,9 @@
 import { FileItem, PrefKey, PrefValue } from '@standardnotes/models'
 
+export type SuperConverterHTMLOptions = {
+  addLineBreaks?: boolean
+}
+
 export interface SuperConverterServiceInterface {
   isValidSuperString(superString: string): boolean
   convertSuperStringToOtherFormat: (
@@ -18,9 +22,7 @@ export interface SuperConverterServiceInterface {
     otherFormatString: string,
     fromFormat: 'txt' | 'md' | 'html' | 'json',
     options?: {
-      html?: {
-        addLineBreaks?: boolean
-      }
+      html?: SuperConverterHTMLOptions
     },
   ) => string
   getEmbeddedFileIDsFromSuperString(superString: string): string[]

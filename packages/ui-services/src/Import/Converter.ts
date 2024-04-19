@@ -1,6 +1,7 @@
 import { NoteType } from '@standardnotes/features'
 import { DecryptedItemInterface, FileItem, ItemContent, NoteContent, SNNote, SNTag } from '@standardnotes/models'
 import { ConversionResult } from './ConversionResult'
+import { SuperConverterHTMLOptions } from '@standardnotes/snjs'
 
 export interface Converter {
   getImportType(): string
@@ -18,7 +19,7 @@ export interface Converter {
       canUploadFiles: boolean
       uploadFile: UploadFileFn
       canUseSuper: boolean
-      convertHTMLToSuper: (html: string) => string
+      convertHTMLToSuper: (html: string, options?: SuperConverterHTMLOptions) => string
       convertMarkdownToSuper: (markdown: string) => string
       readFileAsText: (file: File) => Promise<string>
       linkItems(
