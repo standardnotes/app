@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.13](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.37.12...@standardnotes/ui-services@1.37.13) (2024-04-20)
+
+### Bug Fixes
+
+* Fixed issue with Keep HTML imports not working ([10c9acf](https://github.com/standardnotes/app/commit/10c9acf0611ae34aa8ce86384d15c9f7ccc6dceb))
+
 ## [1.37.12](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.37.11...@standardnotes/ui-services@1.37.12) (2024-04-19)
 
 ### Bug Fixes
