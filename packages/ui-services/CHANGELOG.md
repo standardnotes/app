@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.12](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.37.11...@standardnotes/ui-services@1.37.12) (2024-04-19)
+
+### Bug Fixes
+
+* Fixed issue with some Evernote imports getting cut-off ([2bc7d57](https://github.com/standardnotes/app/commit/2bc7d572356b285160cf5b811e6b38064f4f7f1b))
+
 ## [1.37.11](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.37.10...@standardnotes/ui-services@1.37.11) (2024-04-13)
 
 **Note:** Version bump only for package @standardnotes/ui-services
