@@ -7,6 +7,7 @@ import MD5 from 'crypto-js/md5'
 import Base64 from 'crypto-js/enc-base64'
 import { Converter, UploadFileFn } from '../Converter'
 import { ConversionResult } from '../ConversionResult'
+import { getBlobFromBase64 } from '../Utils'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
@@ -330,8 +331,7 @@ export class EvernoteConverter implements Converter {
   }
 
   async getFileFromResource(resource: EvernoteResource): Promise<File> {
-    const response = await fetch(resource.data)
-    const blob = await response.blob()
+    const blob = getBlobFromBase64(resource.data, resource.mimeType)
     return new File([blob], resource.fileName, { type: resource.mimeType })
   }
 
