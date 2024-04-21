@@ -4,6 +4,7 @@ import {
   ApplicationEvent,
   FileDownloadProgress,
   FileItem,
+  LocalPrefKey,
   fileProgressToHumanReadableString,
 } from '@standardnotes/snjs'
 import { useEffect, useMemo, useState } from 'react'
@@ -14,6 +15,8 @@ import PreviewComponent from './PreviewComponent'
 import Button from '../Button/Button'
 import { ProtectedIllustration } from '@standardnotes/icons'
 import { ImageZoomLevelProps } from './ImageZoomLevelProps'
+import { useLocalPreference } from '../../Hooks/usePreference'
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
 
 type Props = {
   application: WebApplication
@@ -22,13 +25,25 @@ type Props = {
 } & ImageZoomLevelProps
 
 const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLevel, setImageZoomLevel }: Props) => {
+  const [alwaysAutoDownload] = useLocalPreference(LocalPrefKey.AlwaysAutoDownloadSuperEmbeds)
+  const [autoDownloadLimit] = useLocalPreference(LocalPrefKey.SuperEmbedAutoDownloadLimit)
+  const isOverLimit = file.decryptedSize > autoDownloadLimit
+
+  const [shouldDownload, setShouldDownload] = useState(isEmbeddedInSuper ? alwaysAutoDownload || !isOverLimit : true)
+  useEffect(() => {
+    if (!isEmbeddedInSuper) {
+      return
+    }
+    setShouldDownload(alwaysAutoDownload || !isOverLimit)
+  }, [alwaysAutoDownload, isEmbeddedInSuper, isOverLimit])
+
   const [isAuthorized, setIsAuthorized] = useState(application.isAuthorizedToRenderItem(file))
 
   const isFilePreviewable = useMemo(() => {
     return isFileTypePreviewable(file.mimeType)
   }, [file.mimeType])
 
-  const [isDownloading, setIsDownloading] = useState(true)
+  const [isDownloading, setIsDownloading] = useState(shouldDownload)
   const [downloadProgress, setDownloadProgress] = useState<FileDownloadProgress | undefined>()
   const [downloadedBytes, setDownloadedBytes] = useState<Uint8Array>()
 
@@ -49,6 +64,10 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
   }, [application, file])
 
   useEffect(() => {
+    if (!shouldDownload) {
+      return
+    }
+
     if (!isFilePreviewable || !isAuthorized) {
       setIsDownloading(false)
       setDownloadProgress(undefined)
@@ -85,7 +104,7 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
     }
 
     void downloadFileForPreview()
-  }, [application.files, downloadedBytes, file, isFilePreviewable, isAuthorized])
+  }, [application.files, downloadedBytes, file, isFilePreviewable, isAuthorized, shouldDownload])
 
   if (!isAuthorized) {
     const hasProtectionSources = application.hasProtectionSources()
@@ -107,6 +126,31 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
           )}
           <Button primary onClick={() => application.protections.authorizeItemAccess(file)}>
             {hasProtectionSources ? 'Authenticate' : 'View file'}
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!shouldDownload && !isDownloading && !downloadedBytes) {
+    return (
+      <div className="flex flex-grow flex-col items-center justify-center p-1.5">
+        <div className="mb-2 text-center text-base font-bold">{file.name}</div>
+        <p className="mb-2 text-center text-sm text-passive-0">
+          This file was not automatically downloaded because it was larger (
+          {formatSizeToReadableString(file.decryptedSize)}) than the set limit for auto-downloading embedded files (
+          {formatSizeToReadableString(autoDownloadLimit)})
+        </p>
+        <div className="mb-2 flex flex-wrap gap-3">
+          <Button primary onClick={() => setShouldDownload(true)}>
+            Download
+          </Button>
+          <Button
+            onClick={() => {
+              /* open preferences */
+            }}
+          >
+            Change limit
           </Button>
         </div>
       </div>

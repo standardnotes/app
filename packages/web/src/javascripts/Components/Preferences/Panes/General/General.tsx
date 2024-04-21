@@ -10,6 +10,7 @@ import SmartViews from './SmartViews/SmartViews'
 import Moments from './Moments'
 import NewNoteDefaults from './NewNoteDefaults'
 import { useApplication } from '@/Components/ApplicationProvider'
+import SuperNotes from './SuperNotes'
 
 const General: FunctionComponent = () => {
   const application = useApplication()
@@ -18,6 +19,7 @@ const General: FunctionComponent = () => {
     <PreferencesPane>
       <Persistence application={application} />
       <Defaults application={application} />
+      <SuperNotes application={application} />
       <NewNoteDefaults />
       <Tools application={application} />
       <SmartViews application={application} featuresController={application.featuresController} />
