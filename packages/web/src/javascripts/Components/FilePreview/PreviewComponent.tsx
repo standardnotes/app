@@ -90,7 +90,14 @@ const PreviewComponent: FunctionComponent<Props> = ({
   }
 
   if (file.mimeType.startsWith('video/')) {
-    return <VideoPreview file={file} filesController={application.filesController} objectUrl={objectUrl} />
+    return (
+      <VideoPreview
+        file={file}
+        filesController={application.filesController}
+        objectUrl={objectUrl}
+        isEmbeddedInSuper={isEmbeddedInSuper}
+      />
+    )
   }
 
   if (file.mimeType.startsWith('audio/')) {
