@@ -17,6 +17,7 @@ import { ProtectedIllustration } from '@standardnotes/icons'
 import { ImageZoomLevelProps } from './ImageZoomLevelProps'
 import { useLocalPreference } from '../../Hooks/usePreference'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type Props = {
   application: WebApplication
@@ -147,7 +148,35 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
           </Button>
           <Button
             onClick={() => {
-              /* open preferences */
+              const preferences = application.preferencesController
+              preferences.openPreferences('general')
+              setTimeout(() => {
+                const prefElement = document.getElementById(ElementIds.AutoDownloadLimitPreference)
+                if (prefElement) {
+                  prefElement.scrollIntoView({
+                    block: 'center',
+                  })
+                  prefElement.querySelector('button')?.focus()
+                  setTimeout(() => {
+                    prefElement.animate(
+                      [
+                        {
+                          transform: 'scale(1)',
+                        },
+                        {
+                          transform: 'scale(1.05)',
+                        },
+                        {
+                          transform: 'scale(1)',
+                        },
+                      ],
+                      {
+                        duration: 350,
+                      },
+                    )
+                  }, 100)
+                }
+              }, 50)
             }}
           >
             Change limit

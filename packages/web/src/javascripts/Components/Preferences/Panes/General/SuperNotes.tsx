@@ -9,6 +9,7 @@ import { WebApplication } from '../../../../Application/WebApplication'
 import HorizontalSeparator from '../../../Shared/HorizontalSeparator'
 import Dropdown from '../../../Dropdown/Dropdown'
 import { useMemo } from 'react'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 const SuperNotes = ({ application }: { application: WebApplication }) => {
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
@@ -103,7 +104,7 @@ const SuperNotes = ({ application }: { application: WebApplication }) => {
           />
         </div>
         <HorizontalSeparator classes="my-4" />
-        <div>
+        <div id={ElementIds.AutoDownloadLimitPreference}>
           <Subtitle>Auto-download limit for embedded files</Subtitle>
           <Text>Only embedded files below the set limit be automatically downloaded</Text>
           <div className="mt-2">

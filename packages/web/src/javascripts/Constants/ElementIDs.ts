@@ -15,4 +15,5 @@ export const ElementIds = {
   SearchBar: 'search-bar',
   ConflictResolutionButton: 'conflict-resolution-button',
   SuperEditor: 'super-editor',
+  AutoDownloadLimitPreference: 'auto-download-limit-pref',
 } as const

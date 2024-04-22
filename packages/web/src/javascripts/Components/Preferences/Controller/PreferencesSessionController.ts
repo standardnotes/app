@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable } from 'mobx'
+import { action, autorun, makeAutoObservable, observable } from 'mobx'
 import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from '../Panes/Plugins/PackageProvider'
 import { securityPrefsHasBubble } from '../Panes/Security/securityPrefsHasBubble'
@@ -58,6 +58,10 @@ export class PreferencesSessionController {
       if (event === StatusServiceEvent.PreferencesBubbleCountChanged) {
         this.updateMenuBubbleCounts()
       }
+    })
+
+    autorun(() => {
+      this.selectPane(application.preferencesController.currentPane)
     })
   }
 
