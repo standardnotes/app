@@ -121,7 +121,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
 
                     if (filenameCounts[name] > 0) {
                       const { name: _name, ext } = parseFileName(name)
-                      name = `${_name} - ${fileItem.uuid}.${ext}`
+                      name = `${_name}-${fileItem.uuid}.${ext}`
                     }
 
                     const fileExportNode = $createFileExportNode(name, fileItem.mimeType)

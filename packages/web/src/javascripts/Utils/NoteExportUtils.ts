@@ -172,7 +172,7 @@ const addEmbeddedFilesToFolder = async (application: WebApplication, note: SNNot
       let name = fileItem.title
       if (filenameCounts[fileItem.title] > 0) {
         const { name: _name, ext } = parseFileName(fileItem.title)
-        name = `${_name} - ${fileItem.uuid}.${ext}`
+        name = `${_name}-${fileItem.uuid}.${ext}`
       }
       folder.addBlob(parseAndCreateZippableFileName(name), embeddedFileBlob)
     }
