@@ -156,6 +156,7 @@ const noteRequiresFolder = (
 
 const addEmbeddedFilesToFolder = async (application: WebApplication, note: SNNote, folder: ZipDirectoryEntry) => {
   try {
+    const filenameCounts: Record<string, number> = {}
     const embeddedFileIDs = headlessSuperConverter.getEmbeddedFileIDsFromSuperString(note.text)
     for (const embeddedFileID of embeddedFileIDs) {
       const fileItem = application.items.findItem<FileItem>(embeddedFileID)
@@ -166,7 +167,14 @@ const addEmbeddedFilesToFolder = async (application: WebApplication, note: SNNot
       if (!embeddedFileBlob) {
         continue
       }
-      folder.addBlob(parseAndCreateZippableFileName(fileItem.title), embeddedFileBlob)
+      filenameCounts[fileItem.title] =
+        filenameCounts[fileItem.title] == undefined ? 0 : filenameCounts[fileItem.title] + 1
+      let name = fileItem.title
+      if (filenameCounts[fileItem.title] > 0) {
+        const { name: _name, ext } = parseFileName(fileItem.title)
+        name = `${_name}-${fileItem.uuid}.${ext}`
+      }
+      folder.addBlob(parseAndCreateZippableFileName(name), embeddedFileBlob)
     }
   } catch (error) {
     console.error(error)

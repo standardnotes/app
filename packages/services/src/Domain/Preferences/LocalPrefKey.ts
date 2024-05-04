@@ -1,4 +1,4 @@
-import { AutoDownloadLimit, PrefDefaults } from '@standardnotes/models'
+import { AutoDownloadLimit, PrefDefaults, EditorFontSize, EditorLineHeight, EditorLineWidth } from '@standardnotes/models'
 
 export enum LocalPrefKey {
   ActiveThemes = 'activeThemes',
@@ -9,6 +9,11 @@ export enum LocalPrefKey {
 
   AlwaysAutoDownloadSuperEmbeds = 'alwaysAutoDownloadSuperEmbeds',
   SuperEmbedAutoDownloadLimit = 'superEmbedAutoDownloadLimit',
+
+  EditorMonospaceEnabled = 'monospaceFont',
+  EditorLineHeight = 'editorLineHeight',
+  EditorLineWidth = 'editorLineWidth',
+  EditorFontSize = 'editorFontSize',
 }
 
 export type LocalPrefValue = {
@@ -20,6 +25,11 @@ export type LocalPrefValue = {
 
   [LocalPrefKey.AlwaysAutoDownloadSuperEmbeds]: boolean
   [LocalPrefKey.SuperEmbedAutoDownloadLimit]: AutoDownloadLimit
+  
+  [LocalPrefKey.EditorMonospaceEnabled]: boolean
+  [LocalPrefKey.EditorLineHeight]: EditorLineHeight
+  [LocalPrefKey.EditorLineWidth]: EditorLineWidth
+  [LocalPrefKey.EditorFontSize]: EditorFontSize
 }
 
 export const LocalPrefDefaults = {
