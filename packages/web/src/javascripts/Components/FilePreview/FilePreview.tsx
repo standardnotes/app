@@ -136,15 +136,14 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
   if (!shouldDownload && !isDownloading && !downloadedBytes) {
     return (
       <div className="flex flex-grow flex-col items-center justify-center p-1.5">
-        <div className="mb-2 text-center text-base font-bold">{file.name}</div>
-        <p className="mb-2 text-center text-sm text-passive-0">
-          This file was not automatically downloaded because it was larger (
-          {formatSizeToReadableString(file.decryptedSize)}) than the set limit for auto-downloading embedded files (
-          {formatSizeToReadableString(autoDownloadLimit)})
+        <div className="mb-1.5 text-center text-base font-bold">{file.name}</div>
+        <p className="mb-2.5 max-w-[65ch] text-center text-sm text-passive-0">
+          This file was not automatically loaded because it was larger ({formatSizeToReadableString(file.decryptedSize)}
+          ) than the set limit for auto-downloading embedded files ({formatSizeToReadableString(autoDownloadLimit)})
         </p>
         <div className="mb-2 flex flex-wrap gap-3">
           <Button primary onClick={() => setShouldDownload(true)}>
-            Download
+            Load file
           </Button>
           <Button
             onClick={() => {
