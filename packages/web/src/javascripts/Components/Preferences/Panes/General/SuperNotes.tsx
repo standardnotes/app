@@ -106,7 +106,7 @@ const SuperNotes = ({ application }: { application: WebApplication }) => {
         <HorizontalSeparator classes="my-4" />
         <div id={ElementIds.AutoDownloadLimitPreference}>
           <Subtitle>Auto-download limit for embedded files</Subtitle>
-          <Text>Only embedded files below the set limit be automatically downloaded</Text>
+          <Text>Only embedded files below the set limit will be automatically downloaded</Text>
           <div className="mt-2">
             <Dropdown
               label="Select the line height for plaintext notes"
