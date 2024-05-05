@@ -121,7 +121,7 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
                   mutator.protected = note.protected
                 })
               } else {
-                fileNode?.remove()
+                editor.update(() => fileNode?.remove())
               }
             })
             .catch(console.error)
