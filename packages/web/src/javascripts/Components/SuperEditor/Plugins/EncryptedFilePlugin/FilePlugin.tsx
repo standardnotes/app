@@ -149,20 +149,6 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
         },
         COMMAND_PRIORITY_NORMAL,
       ),
-      editor.registerNodeTransform(FileNode, (node) => {
-        /**
-         * When adding the node we wrap it with a paragraph to avoid insertion errors,
-         * however that causes issues with selection. We unwrap the node to fix that.
-         */
-        const parent = node.getParent()
-        if (!parent) {
-          return
-        }
-        if (parent.getChildrenSize() === 1) {
-          parent.insertBefore(node)
-          parent.remove()
-        }
-      }),
     )
   }, [application, currentNote, editor, filesController, linkingController])
 
