@@ -158,9 +158,6 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
         if (!parent) {
           return
         }
-        // if ($isRootOrShadowRoot(parent)) {
-        //   return
-        // }
         if (parent.getChildrenSize() === 1) {
           parent.insertBefore(node)
           parent.remove()
@@ -174,6 +171,18 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
       if (event === FilesControllerEvent.FileUploadedToNote && data[FilesControllerEvent.FileUploadedToNote]) {
         const fileUuid = data[FilesControllerEvent.FileUploadedToNote].uuid
         editor.dispatchCommand(INSERT_FILE_COMMAND, fileUuid)
+      } else if (event === FilesControllerEvent.UploadAndInsertFile && data[FilesControllerEvent.UploadAndInsertFile]) {
+        const { fileOrHandle } = data[FilesControllerEvent.UploadAndInsertFile]
+        if (fileOrHandle instanceof FileSystemFileHandle) {
+          fileOrHandle
+            .getFile()
+            .then((file) => {
+              editor.dispatchCommand(UPLOAD_AND_INSERT_FILE_COMMAND, file)
+            })
+            .catch(console.error)
+        } else {
+          editor.dispatchCommand(UPLOAD_AND_INSERT_FILE_COMMAND, fileOrHandle)
+        }
       }
     })
 

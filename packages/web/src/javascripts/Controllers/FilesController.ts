@@ -53,6 +53,12 @@ const NonMutatingFileActions = [FileItemActionType.DownloadFile, FileItemActionT
 
 type FileContextMenuLocation = { x: number; y: number }
 
+export enum FilesControllerEvent {
+  FileUploadedToNote = 'FileUploadedToNote',
+  FileUploadFinished = 'FileUploadFinished',
+  UploadAndInsertFile = 'UploadAndInsertFile',
+}
+
 export type FilesControllerEventData = {
   [FilesControllerEvent.FileUploadedToNote]?: {
     uuid: string
@@ -60,11 +66,9 @@ export type FilesControllerEventData = {
   [FilesControllerEvent.FileUploadFinished]?: {
     uploadedFile: FileItem
   }
-}
-
-export enum FilesControllerEvent {
-  FileUploadedToNote = 'FileUploadedToNote',
-  FileUploadFinished = 'FileUploadFinished',
+  [FilesControllerEvent.UploadAndInsertFile]?: {
+    fileOrHandle: File | FileSystemFileHandle
+  }
 }
 
 export class FilesController extends AbstractViewController<FilesControllerEvent, FilesControllerEventData> {
@@ -677,6 +681,12 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   notifyObserversOfUploadedFileLinkingToCurrentNote(fileUuid: string) {
     this.notifyEvent(FilesControllerEvent.FileUploadedToNote, {
       [FilesControllerEvent.FileUploadedToNote]: { uuid: fileUuid },
+    })
+  }
+
+  uploadAndInsertFileToCurrentNote(fileOrHandle: File | FileSystemFileHandle) {
+    this.notifyEvent(FilesControllerEvent.UploadAndInsertFile, {
+      [FilesControllerEvent.UploadAndInsertFile]: { fileOrHandle },
     })
   }
 
