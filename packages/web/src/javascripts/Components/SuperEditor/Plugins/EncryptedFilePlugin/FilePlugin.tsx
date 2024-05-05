@@ -88,6 +88,7 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
         const newLineNode = $createParagraphNode()
         fileNode.getParentOrThrow().insertAfter(newLineNode)
         newLineNode.selectEnd()
+        editor.focus()
         if (onInsert) {
           onInsert(fileNode)
         }
