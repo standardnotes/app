@@ -18,7 +18,7 @@ import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
 import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 import { $convertFromMarkdownString } from '../Lexical/Utils/MarkdownImport'
 import { $convertToMarkdownString } from '../Lexical/Utils/MarkdownExport'
-import { parseFileName } from '@standardnotes/filepicker'
+import { parseFileName } from '@standardnotes/utils'
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor

@@ -11,18 +11,12 @@ import {
   ArchiveManager,
   confirmDialog,
   IsNativeMobileWeb,
-  parseAndCreateZippableFileName,
   VaultDisplayServiceInterface,
 } from '@standardnotes/ui-services'
 import { Strings, StringUtils } from '@/Constants/Strings'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
-import {
-  ClassicFileReader,
-  StreamingFileReader,
-  StreamingFileSaver,
-  ClassicFileSaver,
-  parseFileName,
-} from '@standardnotes/filepicker'
+import { ClassicFileReader, StreamingFileReader, StreamingFileSaver, ClassicFileSaver } from '@standardnotes/filepicker'
+import { parseAndCreateZippableFileName, parseFileName } from '@standardnotes/utils'
 import {
   AlertService,
   ChallengeReason,
