@@ -15,10 +15,8 @@ export class GetBackupFileType implements SyncUseCaseInterface<BackupFileType> {
 
     if (hasEncryptedItem && hasDecryptedItemsKey) {
       return Result.ok(BackupFileType.EncryptedWithNonEncryptedItemsKey)
-    } else if (!hasEncryptedItem) {
-      return Result.ok(BackupFileType.FullyDecrypted)
-    } else {
-      return Result.ok(BackupFileType.Corrupt)
     }
+
+    return Result.ok(BackupFileType.FullyDecrypted)
   }
 }
