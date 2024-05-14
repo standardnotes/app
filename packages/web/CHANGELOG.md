@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.194.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.194.5...@standardnotes/web@3.194.6) (2024-05-14)
+
+### Reverts
+
+* Revert "chore: upgrade lexical version & patches [skip e2e]" ([e784300](https://github.com/standardnotes/app/commit/e7843005e2354ec1257e08d051ee2a7407dad678))
+
 ## [3.194.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.194.4...@standardnotes/web@3.194.5) (2024-05-12)
 
 **Note:** Version bump only for package @standardnotes/web
