@@ -2,7 +2,7 @@
   "name": "@standardnotes/app-monorepo",
   "version": "0.0.1",
   "private": true,
-  "author": "Standard Notes.",
+  "author": "Standard Notes",
   "repository": {
     "type": "git",
     "url": "git://github.com/standardnotes/app"
