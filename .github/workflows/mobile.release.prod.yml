@@ -82,7 +82,11 @@ jobs:
         with:
           working-directory: 'packages/mobile'
       - name: Install dependencies
-        run: yarn install --immutable && bundle install && yarn install:pods
+        run: yarn install --immutable 
+      - name: Bundle install
+        run: bundle install
+      - name: Install pods
+        run: yarn install:pods
       - run: yarn build:mobile
       - name: Set ssh connection to Github
         uses: webfactory/ssh-agent@v0.4.1
