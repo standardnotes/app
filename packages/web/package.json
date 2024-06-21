@@ -80,7 +80,7 @@
     "minimatch": "^5.1.1",
     "mobx": "^6.8.0",
     "mobx-react-lite": "^3.4.2",
-    "node-sass": "^8.0.0",
+    "node-sass": "^9.0.0",
     "npm-check-updates": "*",
     "postcss": "^8.4.19",
     "postcss-loader": "^7.0.2",
