@@ -44,7 +44,7 @@
     "decrypt": "github:standardnotes/decrypt#master",
     "dotenv": "^16.3.1",
     "electron": "27.0.0",
-    "electron-log": "^4.4.8",
+    "electron-log": "^5.1.1",
     "electron-updater": "^6.1.4",
     "fs-extra": "^11.1.1",
     "lodash": "^4.17.21",
