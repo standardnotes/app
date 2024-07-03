@@ -3023,12 +3023,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/remote@npm:^2.0.12":
-  version: 2.0.12
-  resolution: "@electron/remote@npm:2.0.12"
+"@electron/remote@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@electron/remote@npm:2.1.2"
   peerDependencies:
     electron: ">= 13.0.0"
-  checksum: 63b5c729bb6c8c19e323016ea883a38ec1b8e5817ceba0faef9332e85252a4e5742b2ca5b41d7659714cce83698c5b122a6c7247edf3dbe9d031db60c8c91806
+  checksum: 24d49aa494b12f1f791b322850f4e29ac69ec57b318d01f1b9e216807886ba1c3dcf9dc1508a18b8daf3ea3c58f8131e1dcf863ba246cfe3554c8ec872a50d10
   languageName: node
   linkType: hard
 
@@ -6909,7 +6909,7 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@electron/notarize": ^2.1.0
-    "@electron/remote": ^2.0.12
+    "@electron/remote": ^2.1.2
     "@standardnotes/domain-core": ^1.40.0
     "@standardnotes/electron-clear-data": 1.1.1
     "@standardnotes/web": "workspace:*"
@@ -6926,7 +6926,7 @@ __metadata:
     copy-webpack-plugin: ^11.0.0
     decrypt: "github:standardnotes/decrypt#master"
     dotenv: ^16.3.1
-    electron: 27.0.0
+    electron: 31.1.0
     electron-builder: ^24.9.1
     electron-log: ^4.4.8
     electron-rebuild: ^3.2.9
@@ -8608,10 +8608,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.11.18":
-  version: 18.18.4
-  resolution: "@types/node@npm:18.18.4"
-  checksum: 4901e91c4cc479bb58acbcd79236a97a0ad6db4a53cb1f4ba4cf32af15324c61b16faa6e31c1b09bf538a20feb5f5274239157ce5237f5741db0b9ab71e69c52
+"@types/node@npm:^20.9.0":
+  version: 20.14.9
+  resolution: "@types/node@npm:20.14.9"
+  dependencies:
+    undici-types: ~5.26.4
+  checksum: 5e9eda1ac8c6cc6bcd1063903ae195eaede9aad1bdad00408a919409cfbcdd2d6535aa3d50346f0d385528f9e03dafc7d1b3bad25aedb1dcd79a6ad39d06c35d
   languageName: node
   linkType: hard
 
@@ -13627,16 +13629,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:27.0.0":
-  version: 27.0.0
-  resolution: "electron@npm:27.0.0"
+"electron@npm:31.1.0":
+  version: 31.1.0
+  resolution: "electron@npm:31.1.0"
   dependencies:
     "@electron/get": ^2.0.0
-    "@types/node": ^18.11.18
+    "@types/node": ^20.9.0
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 4a84cb894d5f626fe7a2b5171693e903ce82a7673aabc419e5d3d0d2f9cc8441e5088524ecd86a046beab4ba7dd13820b7a94c361c3e7bc2f0959d1a1a860df5
+  checksum: 697fe7530680cda23619b81972cc3b613fdf23c191fbe3a6e4abbc932453601bdd21942e59379e0bd171307bfedd3a03ac759877ebc0ea2b7ccd3db8cf748e4b
   languageName: node
   linkType: hard
 
