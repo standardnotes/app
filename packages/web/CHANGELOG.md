@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.195.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.194.13...@standardnotes/web@3.195.0) (2024-07-14)
+
+### Features
+
+* Added keyboard shortcut to toggle checklist item and fixed issue with pressing Space inside checklist toggling it ([e807c9d](https://github.com/standardnotes/app/commit/e807c9d5584c6320f728b8b34e60bcb8eefd921e))
+
 ## [3.194.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.194.12...@standardnotes/web@3.194.13) (2024-07-04)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.195.0",
+      "title": "[3.195.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.194.13...@standardnotes/web@3.195.0) (2024-07-14)",
+      "date": null,
+      "body": "### Features\n\n* Added keyboard shortcut to toggle checklist item and fixed issue with pressing Space inside checklist toggling it ([e807c9d](https://github.com/standardnotes/app/commit/e807c9d5584c6320f728b8b34e60bcb8eefd921e))",
+      "parsed": {
+        "_": [
+          "Added keyboard shortcut to toggle checklist item and fixed issue with pressing Space inside checklist toggling it (e807c9d)"
+        ],
+        "Features": [
+          "Added keyboard shortcut to toggle checklist item and fixed issue with pressing Space inside checklist toggling it (e807c9d)"
+        ]
+      }
+    },
+    {
       "version": "3.194.13",
       "title": "[3.194.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.194.12...@standardnotes/web@3.194.13) (2024-07-04)",
       "date": null,
