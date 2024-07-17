@@ -1,4 +1,4 @@
-import { $isListItemNode, $isListNode, INSERT_CHECK_LIST_COMMAND, insertList, ListNode } from '@lexical/list'
+import { $isListItemNode, INSERT_CHECK_LIST_COMMAND, insertList, ListNode } from '@lexical/list'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { calculateZoomLevel, isHTMLElement, mergeRegister } from '@lexical/utils'
 import {
@@ -47,38 +47,36 @@ export function CheckListPlugin(): null {
             return
           }
 
-          editor.update(() => {
-            const targetNode = $getNearestNodeFromDOMNode(target)
+          editor.getRootElement()?.focus()
 
-            const parentNode = targetNode?.getParent()
+          const parentNode = target.parentNode
+          // @ts-expect-error internal field
+          if (!parentNode || parentNode.__lexicalListType !== 'check') {
+            return
+          }
 
-            if (!$isListNode(parentNode) || parentNode.getListType() !== 'check') {
-              return
-            }
+          const rect = target.getBoundingClientRect()
 
-            const rect = target.getBoundingClientRect()
+          const listItemElementStyles = getComputedStyle(target)
+          const paddingLeft = parseFloat(listItemElementStyles.paddingLeft) || 0
+          const paddingRight = parseFloat(listItemElementStyles.paddingRight) || 0
+          const lineHeight = parseFloat(listItemElementStyles.lineHeight) || 0
 
-            const listItemElementStyles = getComputedStyle(target)
-            const paddingLeft = parseFloat(listItemElementStyles.paddingLeft) || 0
-            const paddingRight = parseFloat(listItemElementStyles.paddingRight) || 0
-            const lineHeight = parseFloat(listItemElementStyles.lineHeight) || 0
+          const checkStyles = getComputedStyle(target, ':before')
+          const checkWidth = parseFloat(checkStyles.width) || 0
 
-            const checkStyles = getComputedStyle(target, ':before')
-            const checkWidth = parseFloat(checkStyles.width) || 0
+          const pageX = event.pageX / calculateZoomLevel(target)
 
-            const pageX = event.pageX / calculateZoomLevel(target)
+          const isWithinHorizontalThreshold =
+            target.dir === 'rtl'
+              ? pageX < rect.right && pageX > rect.right - paddingRight
+              : pageX > rect.left && pageX < rect.left + (checkWidth || paddingLeft)
 
-            const isWithinHorizontalThreshold =
-              target.dir === 'rtl'
-                ? pageX < rect.right && pageX > rect.right - paddingRight
-                : pageX > rect.left && pageX < rect.left + (checkWidth || paddingLeft)
+          const isWithinVerticalThreshold = event.clientY > rect.top && event.clientY < rect.top + lineHeight
 
-            const isWithinVerticalThreshold = event.clientY > rect.top && event.clientY < rect.top + lineHeight
-
-            if (isWithinHorizontalThreshold && isWithinVerticalThreshold) {
-              callback()
-            }
-          })
+          if (isWithinHorizontalThreshold && isWithinVerticalThreshold) {
+            callback()
+          }
         }
 
         function handleClick(event: Event) {
@@ -100,7 +98,6 @@ export function CheckListPlugin(): null {
                 return
               }
 
-              domNode.focus()
               node.toggleChecked()
             })
           })
