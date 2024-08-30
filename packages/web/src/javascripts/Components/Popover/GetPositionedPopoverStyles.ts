@@ -95,7 +95,7 @@ const getStylesFromRect = (options: {
     '--translate-x': `${xTranslation}px`,
     '--translate-y': `${yTranslation}px`,
     '--offset': `${options.offset}px`,
-    transform: 'translate(var(--translate-x), var(--translate-y))',
+    transform: 'translate3d(var(--translate-x), var(--translate-y), 0)',
     '--transform-origin': getTransformOrigin(options.side, options.align),
     visibility: 'visible',
     ...(canApplyMaxHeight && {
