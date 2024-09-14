@@ -47,13 +47,13 @@ export function CheckListPlugin(): null {
             return
           }
 
-          editor.getRootElement()?.focus()
-
           const parentNode = target.parentNode
           // @ts-expect-error internal field
           if (!parentNode || parentNode.__lexicalListType !== 'check') {
             return
           }
+
+          editor.getRootElement()?.focus()
 
           const rect = target.getBoundingClientRect()
 
