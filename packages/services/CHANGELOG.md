@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.71.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.71.2...@standardnotes/services@1.71.3) (2024-09-20)
+
+### Bug Fixes
+
+* trim/lowercase email on email change ([#2886](https://github.com/standardnotes/app/issues/2886)) ([98304cc](https://github.com/standardnotes/app/commit/98304cc57df59f3d18061f97427f811f336b268f))
+
 ## [1.71.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.71.1...@standardnotes/services@1.71.2) (2024-05-07)
 
 **Note:** Version bump only for package @standardnotes/services

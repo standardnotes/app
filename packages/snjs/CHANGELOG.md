@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.209.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.209.4...@standardnotes/snjs@2.209.5) (2024-09-20)
+
+### Bug Fixes
+
+* trim/lowercase email on email change ([#2886](https://github.com/standardnotes/app/issues/2886)) ([98304cc](https://github.com/standardnotes/app/commit/98304cc57df59f3d18061f97427f811f336b268f))
+
 ## [2.209.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.209.3...@standardnotes/snjs@2.209.4) (2024-09-09)
 
 **Note:** Version bump only for package @standardnotes/snjs
