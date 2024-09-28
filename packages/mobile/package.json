@@ -59,7 +59,7 @@
     "react-native-fingerprint-scanner": "standardnotes/react-native-fingerprint-scanner#b55d1c0ca627a87a130f758603f12911fbac200f",
     "react-native-flag-secure-android": "standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852",
     "react-native-fs": "^2.20.0",
-    "react-native-iap": "^12.15.4",
+    "react-native-iap": "^12.7.4",
     "react-native-keychain": "standardnotes/react-native-keychain#4fd687461cecfa26d482d820ee43c0de61b964d4",
     "react-native-mmkv": "^2.6.2",
     "react-native-privacy-snapshot": "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe",
