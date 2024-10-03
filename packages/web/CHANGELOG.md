@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.195.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.6...@standardnotes/web@3.195.7) (2024-10-03)
+
+### Reverts
+
+* Revert "chore: update play billing version to fix android build [skip e2e]" ([3796df5](https://github.com/standardnotes/app/commit/3796df5159282b78f4a59f22451cc7ca1136d862))
+
 ## [3.195.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.5...@standardnotes/web@3.195.6) (2024-09-28)
 
 **Note:** Version bump only for package @standardnotes/web
