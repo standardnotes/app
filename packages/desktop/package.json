@@ -123,7 +123,7 @@
       "certificateSubjectName": "Standard Notes Ltd.",
       "publisherName": "Standard Notes Ltd.",
       "signDlls": true,
-      "sign": "scripts/windowsSign.js"
+      "sign": "./scripts/windowsSign.js"
     },
     "nsis": {
       "deleteAppDataOnUninstall": true

@@ -254,6 +254,9 @@ jobs:
         working-directory: packages/desktop
 
     steps:
+      - name: Code signing with Software Trust Manager
+        uses: digicert/ssm-code-signing@v1.0.0
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -289,13 +292,21 @@ jobs:
       - name: Set variables
         id: variables
         run: |
+          export DEBUG='electron-builder'
+
           echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
           echo "KEYPAIR_NAME=snkeypair" >> $GITHUB_OUTPUT
           echo "CERTIFICATE_NAME=sncertificate" >> $GITHUB_OUTPUT
+
+          echo "::set-output name=version::${GITHUB_REF#refs/tags/v}"
+          echo "::set-output name=KEYPAIR_NAME::snkeypair"
+          echo "::set-output name=CERTIFICATE_NAME::sncertificate"
+
           echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV"
           echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
           echo "SM_CLIENT_CERT_FILE=D:\\Certificate_pkcs12.p12" >> "$GITHUB_ENV"
           echo "SM_CLIENT_CERT_PASSWORD=${{ secrets.SM_CLIENT_CERT_PASSWORD }}" >> "$GITHUB_ENV"
+
           echo "C:\Program Files (x86)\Windows Kits\10\App Certification Kit" >> $GITHUB_PATH
           echo "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools" >> $GITHUB_PATH
           echo "C:\Program Files\DigiCert\DigiCert Keylocker Tools" >> $GITHUB_PATH
