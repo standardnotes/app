@@ -84,7 +84,7 @@ platform :ios do
   end
 
   desc 'Deploy prod app to tesflight'
-  lane :testflight do
+  lane :testflight_beta do
     deploy_ios 'StandardNotes', true
   end
 
