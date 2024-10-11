@@ -248,6 +248,8 @@ jobs:
 
   Windows:
     runs-on: windows-latest
+    env:
+      SM_KEYPAIR_ALIAS: ${{ secrets.SM_KEYPAIR_ALIAS }}
 
     defaults:
       run:
@@ -293,14 +295,6 @@ jobs:
         id: variables
         run: |
           export DEBUG='electron-builder'
-
-          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-          echo "KEYPAIR_NAME=snkeypair" >> $GITHUB_OUTPUT
-          echo "CERTIFICATE_NAME=sncertificate" >> $GITHUB_OUTPUT
-
-          echo "::set-output name=version::${GITHUB_REF#refs/tags/v}"
-          echo "::set-output name=KEYPAIR_NAME::snkeypair"
-          echo "::set-output name=CERTIFICATE_NAME::sncertificate"
 
           echo "SM_HOST=${{ secrets.SM_HOST }}" >> "$GITHUB_ENV"
           echo "SM_API_KEY=${{ secrets.SM_API_KEY }}" >> "$GITHUB_ENV"
