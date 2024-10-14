@@ -1534,7 +1534,7 @@ PODS:
     - React-Core
   - RNFS (2.20.0):
     - React-Core
-  - RNIap (12.10.5):
+  - RNIap (12.15.4):
     - React-Core
   - RNKeychain (8.1.2):
     - React-Core
@@ -1800,10 +1800,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 4cb898d0bf20404aab1850c656dcea009429d6c1
-  DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
+  DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 7b438dceb9f904bd85ca3c31d64cce32a035472b
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
-  glog: 69ef571f3de08433d766d614c73a9838a06bf7eb
+  glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 8d2103d6c0176779aea4e25df6bb1410f9946680
   MMKV: 817ba1eea17421547e01e087285606eb270a8dcb
   MMKVCore: af055b00e27d88cd92fad301c5fecd1ff9b26dd9
@@ -1869,7 +1869,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: c913ede1fa163a71cea118ed4670bbaaa4b511bb
   RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNIap: c397f49db45af3b10dca64b2325f21bb8078ad21
+  RNIap: 38776f86996edea5837ba2a0dfc1e35427191327
   RNKeychain: a65256b6ca6ba6976132cc4124b238a5b13b3d9c
   RNNotifee: f3c01b391dd8e98e67f539f9a35a9cbcd3bae744
   RNPrivacySnapshot: 8eaf571478a353f2e5184f5c803164f22428b023

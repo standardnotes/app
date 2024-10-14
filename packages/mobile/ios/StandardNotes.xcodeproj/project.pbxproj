@@ -15,7 +15,7 @@
 		07CAB7702A618385008FE1EF /* ReceiveSharingIntent.m in Sources */ = {isa = PBXBuildFile; fileRef = 07CAB76F2A618385008FE1EF /* ReceiveSharingIntent.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1C2EEB3B45F4EB07AC795C77 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		1C2EEB3B45F4EB07AC795C77 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		33BB1B14071EBE5978EBF3A8 /* libPods-StandardNotes-StandardNotesTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FCB5A3A3387CA3CFC82AA3 /* libPods-StandardNotes-StandardNotesTests.a */; };
 		5FB9A6EA9223324D4CE9D0C3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F540DFA7EB538943EA0AD69C /* PrivacyInfo.xcprivacy */; };
 		A2E3A367424A7C15B6A3D31C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E4B39B04304950EBF35F355F /* PrivacyInfo.xcprivacy */; };
@@ -127,7 +127,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD6592A9291EEFCC00C09DC6 /* StoreKit.framework in Frameworks */,
-				1C2EEB3B45F4EB07AC795C77 /* (null) in Frameworks */,
+				1C2EEB3B45F4EB07AC795C77 /* BuildFile in Frameworks */,
 				DD3D1CE428EC1C8BA0C49211 /* libPods-StandardNotes.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
