@@ -207,7 +207,7 @@ const PanesSystemComponent = () => {
             }
           } else {
             return {
-              gridTemplateColumns: `${itemsPanelWidth}px auto`,
+              gridTemplateColumns: `${itemsPanelWidth || ITEMS_PANEL_DEFAULT_WIDTH}px auto`,
             }
           }
         }
@@ -219,7 +219,7 @@ const PanesSystemComponent = () => {
           }
         }
         return {
-          gridTemplateColumns: `${navigationPanelWidth}px ${itemsPanelWidth}px 2fr`,
+          gridTemplateColumns: `${navigationPanelWidth}px ${itemsPanelWidth || ITEMS_PANEL_DEFAULT_WIDTH}px 2fr`,
         }
       }
       default:
