@@ -42,8 +42,8 @@ export class PaneController extends AbstractViewController implements InternalEv
   currentItemsPanelWidth = 0
   focusModeEnabled = false
 
-  listPaneExplicitelyCollapsed = false
-  navigationPaneExplicitelyCollapsed = false
+  listPaneExplicitelyCollapsed = localStorage.getItem("listPaneCollapsed")=="true"
+  navigationPaneExplicitelyCollapsed = localStorage.getItem("navPaneCollapsed")=="true"
 
   constructor(
     private preferences: PreferenceServiceInterface,
@@ -86,9 +86,17 @@ export class PaneController extends AbstractViewController implements InternalEv
 
     const screen = this._isTabletOrMobileScreen.execute().getValue()
 
-    this.panes = screen.isTabletOrMobile
-      ? [AppPaneId.Navigation, AppPaneId.Items]
-      : [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
+    if (screen.isTabletOrMobile) {
+      this.panes = [AppPaneId.Navigation, AppPaneId.Items]
+    } else {
+      if (!this.listPaneExplicitelyCollapsed && !this.navigationPaneExplicitelyCollapsed) {
+        this.panes = [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
+      } else if (this.listPaneExplicitelyCollapsed) {
+        this.panes = [AppPaneId.Navigation, AppPaneId.Editor]
+      } else {
+        this.panes = [AppPaneId.Items, AppPaneId.Editor]
+      }
+    }
 
     const mediaQuery = window.matchMedia(MediaQueryBreakpoints.md)
     if (mediaQuery?.addEventListener != undefined) {
@@ -251,6 +259,7 @@ export class PaneController extends AbstractViewController implements InternalEv
     if (this.panes.includes(AppPaneId.Items)) {
       this.removePane(AppPaneId.Items)
       this.listPaneExplicitelyCollapsed = true
+      localStorage.setItem("listPaneCollapsed", "true")
     } else {
       if (this.panes.includes(AppPaneId.Navigation)) {
         this.insertPaneAtIndex(AppPaneId.Items, 1)
@@ -258,6 +267,7 @@ export class PaneController extends AbstractViewController implements InternalEv
         this.insertPaneAtIndex(AppPaneId.Items, 0)
       }
       this.listPaneExplicitelyCollapsed = false
+      localStorage.setItem("listPaneCollapsed", "false")
     }
   }
 
@@ -265,9 +275,11 @@ export class PaneController extends AbstractViewController implements InternalEv
     if (this.panes.includes(AppPaneId.Navigation)) {
       this.removePane(AppPaneId.Navigation)
       this.navigationPaneExplicitelyCollapsed = true
+      localStorage.setItem("navPaneCollapsed", "true")
     } else {
       this.insertPaneAtIndex(AppPaneId.Navigation, 0)
       this.navigationPaneExplicitelyCollapsed = false
+      localStorage.setItem("navPaneCollapsed", "false")
     }
   }
 
