@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.195.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.12...@standardnotes/web@3.195.13) (2024-11-10)
+
+### Bug Fixes
+
+* Fix issue with toggling notes panel back on when it has been turned off ([7516aae](https://github.com/standardnotes/app/commit/7516aae885f3ba7512c1da44212ea9afb8036550)), closes [standardnotes/forum#3754](https://github.com/standardnotes/forum/issues/3754)
+
 ## [3.195.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.11...@standardnotes/web@3.195.12) (2024-10-14)
 
 **Note:** Version bump only for package @standardnotes/web
