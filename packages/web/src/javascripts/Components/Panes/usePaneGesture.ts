@@ -269,5 +269,5 @@ export const usePaneSwipeGesture = (
     }
   }, [direction, element, isMobileScreen, onSwipeEndRef, isEnabled, adjustedGesture, requiresStartFromEdge])
 
-  return [setElement]
+  return [setElement] as const
 }
