@@ -17,10 +17,6 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
     [application],
   )
 
-  useEffect(() => {
-    menu.selectPane(application.preferencesController.currentPane)
-  }, [menu, application.preferencesController.currentPane])
-
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const addAndroidBackHandler = useAndroidBackHandler()
