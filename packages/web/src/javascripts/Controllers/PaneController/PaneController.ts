@@ -2,6 +2,8 @@ import { PanesForLayout } from './../../Application/UseCase/PanesForLayout'
 import {
   InternalEventHandlerInterface,
   InternalEventInterface,
+  LocalPrefDefaults,
+  LocalPrefKey,
   PreferenceServiceInterface,
 } from '@standardnotes/services'
 import {
@@ -42,8 +44,8 @@ export class PaneController extends AbstractViewController implements InternalEv
   currentItemsPanelWidth = 0
   focusModeEnabled = false
 
-  listPaneExplicitelyCollapsed = localStorage.getItem("listPaneCollapsed")=="true"
-  navigationPaneExplicitelyCollapsed = localStorage.getItem("navPaneCollapsed")=="true"
+  listPaneExplicitelyCollapsed = this.preferences.getLocalValue(LocalPrefKey.ListPaneCollapsed, LocalPrefDefaults[LocalPrefKey.ListPaneCollapsed])
+  navigationPaneExplicitelyCollapsed = this.preferences.getLocalValue(LocalPrefKey.NavigationPaneCollapsed, LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed])
 
   constructor(
     private preferences: PreferenceServiceInterface,
@@ -106,6 +108,7 @@ export class PaneController extends AbstractViewController implements InternalEv
     }
 
     eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
+    eventBus.addEventHandler(this, ApplicationEvent.LocalPreferencesChanged)
 
     this.disposers.push(
       keyboardService.addCommandHandler({
@@ -143,6 +146,10 @@ export class PaneController extends AbstractViewController implements InternalEv
     if (event.type === ApplicationEvent.PreferencesChanged) {
       this.setCurrentNavPanelWidth(this.preferences.getValue(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
       this.setCurrentItemsPanelWidth(this.preferences.getValue(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
+    }
+    if(event.type === ApplicationEvent.LocalPreferencesChanged){
+      this.listPaneExplicitelyCollapsed = this.preferences.getLocalValue(LocalPrefKey.ListPaneCollapsed, LocalPrefDefaults[LocalPrefKey.ListPaneCollapsed])
+      this.navigationPaneExplicitelyCollapsed = this.preferences.getLocalValue(LocalPrefKey.NavigationPaneCollapsed, LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed])
     }
   }
 
@@ -258,28 +265,24 @@ export class PaneController extends AbstractViewController implements InternalEv
   toggleListPane = () => {
     if (this.panes.includes(AppPaneId.Items)) {
       this.removePane(AppPaneId.Items)
-      this.listPaneExplicitelyCollapsed = true
-      localStorage.setItem("listPaneCollapsed", "true")
+      this.preferences.setLocalValue(LocalPrefKey.ListPaneCollapsed, true)
     } else {
       if (this.panes.includes(AppPaneId.Navigation)) {
         this.insertPaneAtIndex(AppPaneId.Items, 1)
       } else {
         this.insertPaneAtIndex(AppPaneId.Items, 0)
       }
-      this.listPaneExplicitelyCollapsed = false
-      localStorage.setItem("listPaneCollapsed", "false")
+      this.preferences.setLocalValue(LocalPrefKey.ListPaneCollapsed, false)
     }
   }
 
   toggleNavigationPane = () => {
     if (this.panes.includes(AppPaneId.Navigation)) {
       this.removePane(AppPaneId.Navigation)
-      this.navigationPaneExplicitelyCollapsed = true
-      localStorage.setItem("navPaneCollapsed", "true")
+      this.preferences.setLocalValue(LocalPrefKey.NavigationPaneCollapsed, true)
     } else {
       this.insertPaneAtIndex(AppPaneId.Navigation, 0)
-      this.navigationPaneExplicitelyCollapsed = false
-      localStorage.setItem("navPaneCollapsed", "false")
+      this.preferences.setLocalValue(LocalPrefKey.NavigationPaneCollapsed, false)
     }
   }
 
