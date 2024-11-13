@@ -44,8 +44,14 @@ export class PaneController extends AbstractViewController implements InternalEv
   currentItemsPanelWidth = 0
   focusModeEnabled = false
 
-  listPaneExplicitelyCollapsed = this.preferences.getLocalValue(LocalPrefKey.ListPaneCollapsed, LocalPrefDefaults[LocalPrefKey.ListPaneCollapsed])
-  navigationPaneExplicitelyCollapsed = this.preferences.getLocalValue(LocalPrefKey.NavigationPaneCollapsed, LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed])
+  listPaneExplicitelyCollapsed = this.preferences.getLocalValue(
+    LocalPrefKey.ListPaneCollapsed,
+    LocalPrefDefaults[LocalPrefKey.ListPaneCollapsed],
+  )
+  navigationPaneExplicitelyCollapsed = this.preferences.getLocalValue(
+    LocalPrefKey.NavigationPaneCollapsed,
+    LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed],
+  )
 
   constructor(
     private preferences: PreferenceServiceInterface,
@@ -147,9 +153,15 @@ export class PaneController extends AbstractViewController implements InternalEv
       this.setCurrentNavPanelWidth(this.preferences.getValue(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
       this.setCurrentItemsPanelWidth(this.preferences.getValue(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
     }
-    if(event.type === ApplicationEvent.LocalPreferencesChanged){
-      this.listPaneExplicitelyCollapsed = this.preferences.getLocalValue(LocalPrefKey.ListPaneCollapsed, LocalPrefDefaults[LocalPrefKey.ListPaneCollapsed])
-      this.navigationPaneExplicitelyCollapsed = this.preferences.getLocalValue(LocalPrefKey.NavigationPaneCollapsed, LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed])
+    if (event.type === ApplicationEvent.LocalPreferencesChanged) {
+      this.listPaneExplicitelyCollapsed = this.preferences.getLocalValue(
+        LocalPrefKey.ListPaneCollapsed,
+        LocalPrefDefaults[LocalPrefKey.ListPaneCollapsed],
+      )
+      this.navigationPaneExplicitelyCollapsed = this.preferences.getLocalValue(
+        LocalPrefKey.NavigationPaneCollapsed,
+        LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed],
+      )
     }
   }
 

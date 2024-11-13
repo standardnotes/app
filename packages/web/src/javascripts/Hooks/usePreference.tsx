@@ -1,5 +1,12 @@
 import { useApplication } from '@/Components/ApplicationProvider'
-import { ApplicationEvent, PrefKey, PrefDefaults, LocalPrefKey, LocalPrefValue, LocalPrefDefaults } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  PrefKey,
+  PrefDefaults,
+  LocalPrefKey,
+  LocalPrefValue,
+  LocalPrefDefaults,
+} from '@standardnotes/snjs'
 import { useCallback, useEffect, useState } from 'react'
 
 export function useLocalPreference<Key extends LocalPrefKey>(preference: Key) {

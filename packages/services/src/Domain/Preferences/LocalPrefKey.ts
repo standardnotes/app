@@ -43,7 +43,7 @@ export const LocalPrefDefaults = {
   [LocalPrefKey.EditorMonospaceEnabled]: false,
   [LocalPrefKey.EditorLineHeight]: EditorLineHeight.Normal,
   [LocalPrefKey.EditorLineWidth]: EditorLineWidth.FullWidth,
-  [LocalPrefKey.EditorFontSize]: EditorFontSize.Normal
+  [LocalPrefKey.EditorFontSize]: EditorFontSize.Normal,
 } satisfies {
   [key in LocalPrefKey]: LocalPrefValue[key]
 }
