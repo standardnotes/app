@@ -1,4 +1,5 @@
 import { EditorFontSize, EditorLineHeight, EditorLineWidth } from '@standardnotes/models'
+import { NativeFeatureIdentifier } from '@standardnotes/features'
 
 export enum LocalPrefKey {
   ListPaneCollapsed = 'listPaneCollapsed',
@@ -31,6 +32,18 @@ export type LocalPrefValue = {
 }
 
 export const LocalPrefDefaults = {
-  listPaneCollapsed: false,
-  navigationPaneCollapsed: false
+  [LocalPrefKey.ListPaneCollapsed]: false,
+  [LocalPrefKey.NavigationPaneCollapsed]: false,
+  [LocalPrefKey.ActiveThemes]: [],
+  [LocalPrefKey.UseSystemColorScheme]: false,
+  [LocalPrefKey.UseTranslucentUI]: true,
+  [LocalPrefKey.AutoLightThemeIdentifier]: 'Default',
+  [LocalPrefKey.AutoDarkThemeIdentifier]: NativeFeatureIdentifier.TYPES.DarkTheme,
+
+  [LocalPrefKey.EditorMonospaceEnabled]: false,
+  [LocalPrefKey.EditorLineHeight]: EditorLineHeight.Normal,
+  [LocalPrefKey.EditorLineWidth]: EditorLineWidth.FullWidth,
+  [LocalPrefKey.EditorFontSize]: EditorFontSize.Normal
+} satisfies {
+  [key in LocalPrefKey]: LocalPrefValue[key]
 }
