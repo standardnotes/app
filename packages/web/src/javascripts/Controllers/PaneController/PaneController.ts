@@ -92,19 +92,6 @@ export class PaneController extends AbstractViewController implements InternalEv
     this.setCurrentNavPanelWidth(preferences.getValue(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
     this.setCurrentItemsPanelWidth(preferences.getValue(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
 
-    const screen = this._isTabletOrMobileScreen.execute().getValue()
-
-    if (screen.isTabletOrMobile) {
-      this.panes = [AppPaneId.Navigation, AppPaneId.Items]
-    } else {
-      if (!this.listPaneExplicitelyCollapsed && !this.navigationPaneExplicitelyCollapsed) {
-        this.panes = [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
-      } else if (this.listPaneExplicitelyCollapsed) {
-        this.panes = [AppPaneId.Navigation, AppPaneId.Editor]
-      } else {
-        this.panes = [AppPaneId.Items, AppPaneId.Editor]
-      }
-    }
 
     const mediaQuery = window.matchMedia(MediaQueryBreakpoints.md)
     if (mediaQuery?.addEventListener != undefined) {
@@ -162,6 +149,20 @@ export class PaneController extends AbstractViewController implements InternalEv
         LocalPrefKey.NavigationPaneCollapsed,
         LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed],
       )
+      const screen = this._isTabletOrMobileScreen.execute().getValue()
+      if (screen.isTabletOrMobile) {
+        this.panes = [AppPaneId.Navigation, AppPaneId.Items]
+      } else {
+        if (!this.listPaneExplicitelyCollapsed && !this.navigationPaneExplicitelyCollapsed) {
+          this.panes = [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
+        } else if (this.listPaneExplicitelyCollapsed && this.navigationPaneExplicitelyCollapsed) {
+          this.panes = [AppPaneId.Editor]
+        } else if (this.listPaneExplicitelyCollapsed) {
+          this.panes = [AppPaneId.Navigation, AppPaneId.Editor]
+        } else {
+          this.panes = [AppPaneId.Items, AppPaneId.Editor]
+        }
+      }
     }
   }
 
