@@ -43,6 +43,7 @@ export class PaneController extends AbstractViewController implements InternalEv
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0
   focusModeEnabled = false
+  isTabletOrMobile = this._isTabletOrMobileScreen.execute().getValue().isTabletOrMobile
 
   listPaneExplicitelyCollapsed = this.preferences.getLocalValue(
     LocalPrefKey.ListPaneCollapsed,
@@ -149,8 +150,8 @@ export class PaneController extends AbstractViewController implements InternalEv
         LocalPrefKey.NavigationPaneCollapsed,
         LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed],
       )
-      const screen = this._isTabletOrMobileScreen.execute().getValue()
-      if (screen.isTabletOrMobile) {
+
+      if (this.isTabletOrMobile) {
         this.panes = [AppPaneId.Navigation, AppPaneId.Items]
       } else {
         if (!this.listPaneExplicitelyCollapsed && !this.navigationPaneExplicitelyCollapsed) {
