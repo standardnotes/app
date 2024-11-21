@@ -43,7 +43,7 @@ export class PaneController extends AbstractViewController implements InternalEv
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0
   focusModeEnabled = false
-  isTabletOrMobile = this._isTabletOrMobileScreen.execute().getValue().isTabletOrMobile
+  hasPaneInitializationLogicRun = false
 
   listPaneExplicitelyCollapsed = this.preferences.getLocalValue(
     LocalPrefKey.ListPaneCollapsed,
@@ -151,18 +151,22 @@ export class PaneController extends AbstractViewController implements InternalEv
         LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed],
       )
 
-      if (this.isTabletOrMobile) {
-        this.panes = [AppPaneId.Navigation, AppPaneId.Items]
-      } else {
-        if (!this.listPaneExplicitelyCollapsed && !this.navigationPaneExplicitelyCollapsed) {
-          this.panes = [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
-        } else if (this.listPaneExplicitelyCollapsed && this.navigationPaneExplicitelyCollapsed) {
-          this.panes = [AppPaneId.Editor]
-        } else if (this.listPaneExplicitelyCollapsed) {
-          this.panes = [AppPaneId.Navigation, AppPaneId.Editor]
+      if(!this.hasPaneInitializationLogicRun) {
+        const screen = this._isTabletOrMobileScreen.execute().getValue()
+        if (screen.isTabletOrMobile) {
+          this.panes = [AppPaneId.Navigation, AppPaneId.Items]
         } else {
-          this.panes = [AppPaneId.Items, AppPaneId.Editor]
+          if (!this.listPaneExplicitelyCollapsed && !this.navigationPaneExplicitelyCollapsed) {
+            this.panes = [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
+          } else if (this.listPaneExplicitelyCollapsed && this.navigationPaneExplicitelyCollapsed) {
+            this.panes = [AppPaneId.Editor]
+          } else if (this.listPaneExplicitelyCollapsed) {
+            this.panes = [AppPaneId.Navigation, AppPaneId.Editor]
+          } else {
+            this.panes = [AppPaneId.Items, AppPaneId.Editor]
+          }
         }
+        this.hasPaneInitializationLogicRun = true
       }
     }
   }
