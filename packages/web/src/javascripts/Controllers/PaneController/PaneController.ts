@@ -2,6 +2,8 @@ import { PanesForLayout } from './../../Application/UseCase/PanesForLayout'
 import {
   InternalEventHandlerInterface,
   InternalEventInterface,
+  LocalPrefDefaults,
+  LocalPrefKey,
   PreferenceServiceInterface,
 } from '@standardnotes/services'
 import {
@@ -41,9 +43,16 @@ export class PaneController extends AbstractViewController implements InternalEv
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0
   focusModeEnabled = false
+  hasPaneInitializationLogicRun = false
 
-  listPaneExplicitelyCollapsed = false
-  navigationPaneExplicitelyCollapsed = false
+  listPaneExplicitelyCollapsed = this.preferences.getLocalValue(
+    LocalPrefKey.ListPaneCollapsed,
+    LocalPrefDefaults[LocalPrefKey.ListPaneCollapsed],
+  )
+  navigationPaneExplicitelyCollapsed = this.preferences.getLocalValue(
+    LocalPrefKey.NavigationPaneCollapsed,
+    LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed],
+  )
 
   constructor(
     private preferences: PreferenceServiceInterface,
@@ -84,12 +93,6 @@ export class PaneController extends AbstractViewController implements InternalEv
     this.setCurrentNavPanelWidth(preferences.getValue(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
     this.setCurrentItemsPanelWidth(preferences.getValue(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
 
-    const screen = this._isTabletOrMobileScreen.execute().getValue()
-
-    this.panes = screen.isTabletOrMobile
-      ? [AppPaneId.Navigation, AppPaneId.Items]
-      : [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
-
     const mediaQuery = window.matchMedia(MediaQueryBreakpoints.md)
     if (mediaQuery?.addEventListener != undefined) {
       mediaQuery.addEventListener('change', this.mediumScreenMQHandler)
@@ -98,6 +101,7 @@ export class PaneController extends AbstractViewController implements InternalEv
     }
 
     eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
+    eventBus.addEventHandler(this, ApplicationEvent.LocalPreferencesChanged)
 
     this.disposers.push(
       keyboardService.addCommandHandler({
@@ -135,6 +139,34 @@ export class PaneController extends AbstractViewController implements InternalEv
     if (event.type === ApplicationEvent.PreferencesChanged) {
       this.setCurrentNavPanelWidth(this.preferences.getValue(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
       this.setCurrentItemsPanelWidth(this.preferences.getValue(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
+    }
+    if (event.type === ApplicationEvent.LocalPreferencesChanged) {
+      this.listPaneExplicitelyCollapsed = this.preferences.getLocalValue(
+        LocalPrefKey.ListPaneCollapsed,
+        LocalPrefDefaults[LocalPrefKey.ListPaneCollapsed],
+      )
+      this.navigationPaneExplicitelyCollapsed = this.preferences.getLocalValue(
+        LocalPrefKey.NavigationPaneCollapsed,
+        LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed],
+      )
+
+      if (!this.hasPaneInitializationLogicRun) {
+        const screen = this._isTabletOrMobileScreen.execute().getValue()
+        if (screen.isTabletOrMobile) {
+          this.panes = [AppPaneId.Navigation, AppPaneId.Items]
+        } else {
+          if (!this.listPaneExplicitelyCollapsed && !this.navigationPaneExplicitelyCollapsed) {
+            this.panes = [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
+          } else if (this.listPaneExplicitelyCollapsed && this.navigationPaneExplicitelyCollapsed) {
+            this.panes = [AppPaneId.Editor]
+          } else if (this.listPaneExplicitelyCollapsed) {
+            this.panes = [AppPaneId.Navigation, AppPaneId.Editor]
+          } else {
+            this.panes = [AppPaneId.Items, AppPaneId.Editor]
+          }
+        }
+        this.hasPaneInitializationLogicRun = true
+      }
     }
   }
 
@@ -250,24 +282,24 @@ export class PaneController extends AbstractViewController implements InternalEv
   toggleListPane = () => {
     if (this.panes.includes(AppPaneId.Items)) {
       this.removePane(AppPaneId.Items)
-      this.listPaneExplicitelyCollapsed = true
+      this.preferences.setLocalValue(LocalPrefKey.ListPaneCollapsed, true)
     } else {
       if (this.panes.includes(AppPaneId.Navigation)) {
         this.insertPaneAtIndex(AppPaneId.Items, 1)
       } else {
         this.insertPaneAtIndex(AppPaneId.Items, 0)
       }
-      this.listPaneExplicitelyCollapsed = false
+      this.preferences.setLocalValue(LocalPrefKey.ListPaneCollapsed, false)
     }
   }
 
   toggleNavigationPane = () => {
     if (this.panes.includes(AppPaneId.Navigation)) {
       this.removePane(AppPaneId.Navigation)
-      this.navigationPaneExplicitelyCollapsed = true
+      this.preferences.setLocalValue(LocalPrefKey.NavigationPaneCollapsed, true)
     } else {
       this.insertPaneAtIndex(AppPaneId.Navigation, 0)
-      this.navigationPaneExplicitelyCollapsed = false
+      this.preferences.setLocalValue(LocalPrefKey.NavigationPaneCollapsed, false)
     }
   }
 
