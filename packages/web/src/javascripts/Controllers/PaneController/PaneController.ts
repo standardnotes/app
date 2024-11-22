@@ -93,7 +93,6 @@ export class PaneController extends AbstractViewController implements InternalEv
     this.setCurrentNavPanelWidth(preferences.getValue(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
     this.setCurrentItemsPanelWidth(preferences.getValue(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
 
-
     const mediaQuery = window.matchMedia(MediaQueryBreakpoints.md)
     if (mediaQuery?.addEventListener != undefined) {
       mediaQuery.addEventListener('change', this.mediumScreenMQHandler)
@@ -151,7 +150,7 @@ export class PaneController extends AbstractViewController implements InternalEv
         LocalPrefDefaults[LocalPrefKey.NavigationPaneCollapsed],
       )
 
-      if(!this.hasPaneInitializationLogicRun) {
+      if (!this.hasPaneInitializationLogicRun) {
         const screen = this._isTabletOrMobileScreen.execute().getValue()
         if (screen.isTabletOrMobile) {
           this.panes = [AppPaneId.Navigation, AppPaneId.Items]
