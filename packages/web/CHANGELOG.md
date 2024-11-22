@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.195.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.13...@standardnotes/web@3.195.14) (2024-11-22)
+
+### Bug Fixes
+
+* Pane visibility settings will be persisted locally ([#2888](https://github.com/standardnotes/app/issues/2888)) ([f179631](https://github.com/standardnotes/app/commit/f1796312deccf78f58a46af900e9f37f2c751aba))
+
 ## [3.195.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.12...@standardnotes/web@3.195.13) (2024-11-10)
 
 ### Bug Fixes
