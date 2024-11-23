@@ -46,7 +46,7 @@ jobs:
           yarn web-ext sign --source-dir dist --api-key $WEB_EXT_API_KEY --api-secret $WEB_EXT_API_SECRET --channel=listed --use-submission-api
           mv web-ext-artifacts/*.xpi standard-notes-clipper-$PACKAGE_VERSION.firefox.xpi
       - name: Upload
-        uses: actions/upload-artifact@v3.0.0
+        uses: actions/upload-artifact@v4.3.1
         with:
           name: assets
           path: |
