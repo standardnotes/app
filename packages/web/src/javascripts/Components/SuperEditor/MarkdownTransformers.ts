@@ -7,6 +7,7 @@ import {
   TextMatchTransformer,
   $convertToMarkdownString,
   $convertFromMarkdownString,
+  MULTILINE_ELEMENT_TRANSFORMERS,
 } from '@lexical/markdown'
 import {
   $createTableCellNode,
@@ -247,6 +248,7 @@ export const MarkdownTransformers = [
   IMAGE,
   INLINE_FILE,
   ...ELEMENT_TRANSFORMERS,
+  ...MULTILINE_ELEMENT_TRANSFORMERS,
   ...TEXT_FORMAT_TRANSFORMERS,
   ...TEXT_MATCH_TRANSFORMERS,
   HorizontalRule,

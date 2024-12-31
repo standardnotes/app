@@ -2,9 +2,9 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { useEffect } from 'react'
 import { $createCodeNode } from '@lexical/code'
 import { $createTextNode, $getRoot, $isParagraphNode } from 'lexical'
-import { $convertToMarkdownString } from '@lexical/markdown'
 import { MarkdownTransformers } from '../../MarkdownTransformers'
 import { $dfs } from '@lexical/utils'
+import { $convertToMarkdownString } from '../../Lexical/Utils/MarkdownExport'
 
 type Props = {
   onMarkdown: (markdown: string) => void
