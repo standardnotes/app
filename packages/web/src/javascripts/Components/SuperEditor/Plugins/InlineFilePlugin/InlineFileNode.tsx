@@ -1,5 +1,14 @@
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
-import { DOMConversionMap, DOMExportOutput, EditorConfig, LexicalEditor, LexicalNode, Spread } from 'lexical'
+import {
+  DOMConversionMap,
+  DOMExportOutput,
+  EditorConfig,
+  ElementFormatType,
+  LexicalEditor,
+  LexicalNode,
+  NodeKey,
+  Spread,
+} from 'lexical'
 import InlineFileComponent from './InlineFileComponent'
 
 type SerializedInlineFileNode = Spread<
@@ -22,15 +31,15 @@ export class InlineFileNode extends DecoratorBlockNode {
     return 'inline-file'
   }
 
-  constructor(src: string, mimeType: string, fileName: string | undefined) {
-    super()
+  constructor(src: string, mimeType: string, fileName: string | undefined, format?: ElementFormatType, key?: NodeKey) {
+    super(format, key)
     this.__src = src
     this.__mimeType = mimeType
     this.__fileName = fileName
   }
 
   static clone(node: InlineFileNode): InlineFileNode {
-    return new InlineFileNode(node.__src, node.__mimeType, node.__fileName)
+    return new InlineFileNode(node.__src, node.__mimeType, node.__fileName, node.__format, node.__key)
   }
 
   static importJSON(serializedNode: SerializedInlineFileNode): InlineFileNode {

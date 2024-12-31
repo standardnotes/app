@@ -72,6 +72,11 @@ export class YouTubeNode extends DecoratorBlockNode {
     return 'youtube'
   }
 
+  constructor(id: string, format?: ElementFormatType, key?: NodeKey) {
+    super(format, key)
+    this.__id = id
+  }
+
   static clone(node: YouTubeNode): YouTubeNode {
     return new YouTubeNode(node.__id, node.__format, node.__key)
   }
@@ -119,11 +124,6 @@ export class YouTubeNode extends DecoratorBlockNode {
         }
       },
     }
-  }
-
-  constructor(id: string, format?: ElementFormatType, key?: NodeKey) {
-    super(format, key)
-    this.__id = id
   }
 
   updateDOM(): false {

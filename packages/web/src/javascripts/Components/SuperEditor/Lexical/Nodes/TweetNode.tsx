@@ -127,6 +127,11 @@ export class TweetNode extends DecoratorBlockNode {
     return 'tweet'
   }
 
+  constructor(id: string, format?: ElementFormatType, key?: NodeKey) {
+    super(format, key)
+    this.__id = id
+  }
+
   static override clone(node: TweetNode): TweetNode {
     return new TweetNode(node.__id, node.__format, node.__key)
   }
@@ -166,11 +171,6 @@ export class TweetNode extends DecoratorBlockNode {
     const text = document.createTextNode(this.getTextContent())
     element.append(text)
     return { element }
-  }
-
-  constructor(id: string, format?: ElementFormatType, key?: NodeKey) {
-    super(format, key)
-    this.__id = id
   }
 
   getId(): string {
