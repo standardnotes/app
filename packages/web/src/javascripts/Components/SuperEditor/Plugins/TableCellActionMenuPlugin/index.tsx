@@ -190,7 +190,7 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
 
         const tableSelection = getTableObserverFromTableElement(tableElement)
         if (tableSelection !== null) {
-          tableSelection.clearHighlight()
+          tableSelection.$clearHighlight()
         }
 
         tableNode.markDirty()
