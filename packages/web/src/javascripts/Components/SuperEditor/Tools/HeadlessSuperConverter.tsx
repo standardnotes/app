@@ -1,24 +1,17 @@
 import { createHeadlessEditor } from '@lexical/headless'
 import { FileItem, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
-import {
-  $createParagraphNode,
-  $getRoot,
-  $insertNodes,
-  $nodesOfType,
-  LexicalEditor,
-  LexicalNode,
-  ParagraphNode,
-} from 'lexical'
+import { $createParagraphNode, $getRoot, $insertNodes, $isParagraphNode, LexicalEditor, LexicalNode } from 'lexical'
 import BlocksEditorTheme from '../Lexical/Theme/Theme'
 import { BlockEditorNodes, SuperExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
-import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
 import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 import { $convertFromMarkdownString } from '../Lexical/Utils/MarkdownImport'
 import { $convertToMarkdownString } from '../Lexical/Utils/MarkdownExport'
 import { parseFileName } from '@standardnotes/utils'
+import { $dfs } from '@lexical/utils'
+import { $isFileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileUtils'
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
@@ -90,10 +83,12 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
             resolve()
             return
           }
-          const fileNodes = $nodesOfType(FileNode)
           const filenameCounts: Record<string, number> = {}
           Promise.all(
-            fileNodes.map(async (fileNode) => {
+            $dfs().map(async ({ node: fileNode }) => {
+              if (!$isFileNode(fileNode)) {
+                return
+              }
               const fileItem = getFileItem(fileNode.getId())
               if (!fileItem) {
                 return
@@ -145,8 +140,10 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
           switch (toFormat) {
             case 'txt':
             case 'md': {
-              const paragraphs = $nodesOfType(ParagraphNode)
-              for (const paragraph of paragraphs) {
+              for (const { node: paragraph } of $dfs()) {
+                if (!$isParagraphNode(paragraph)) {
+                  continue
+                }
                 if (paragraph.isEmpty()) {
                   paragraph.remove()
                 }
@@ -288,14 +285,16 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     const ids: string[] = []
 
     this.exportEditor.getEditorState().read(() => {
-      const fileNodes = $nodesOfType(FileNode)
-      fileNodes.forEach((fileNode) => {
+      for (const { node: fileNode } of $dfs()) {
+        if (!$isFileNode(fileNode)) {
+          continue
+        }
         const nodeId = fileNode.getId()
         if (ids.includes(nodeId)) {
-          return
+          continue
         }
         ids.push(nodeId)
-      })
+      }
     })
 
     return ids
