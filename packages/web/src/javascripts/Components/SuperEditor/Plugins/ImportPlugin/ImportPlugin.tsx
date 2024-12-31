@@ -5,7 +5,7 @@ import { handleEditorChange } from '../../Utils'
 import { SuperNotePreviewCharLimit } from '../../SuperEditor'
 import { $generateNodesFromDOM } from '@lexical/html'
 import { MarkdownTransformers } from '../../MarkdownTransformers'
-import { $convertFromMarkdownString } from '../../Lexical/Utils/MarkdownImport'
+import { $convertFromMarkdownString } from '@lexical/markdown'
 
 /** Note that markdown conversion does not insert new lines. See: https://github.com/facebook/lexical/issues/2815 */
 export default function ImportPlugin({
