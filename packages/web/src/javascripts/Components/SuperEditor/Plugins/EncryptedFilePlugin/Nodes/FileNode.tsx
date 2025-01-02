@@ -13,6 +13,12 @@ export class FileNode extends DecoratorBlockNode implements ItemNodeInterface {
     return 'snfile'
   }
 
+  constructor(id: string, format?: ElementFormatType, key?: NodeKey, zoomLevel?: number) {
+    super(format, key)
+    this.__id = id
+    this.__zoomLevel = zoomLevel || 100
+  }
+
   static clone(node: FileNode): FileNode {
     return new FileNode(node.__id, node.__format, node.__key, node.__zoomLevel)
   }
@@ -54,12 +60,6 @@ export class FileNode extends DecoratorBlockNode implements ItemNodeInterface {
     const text = document.createTextNode(this.getTextContent())
     element.append(text)
     return { element }
-  }
-
-  constructor(id: string, format?: ElementFormatType, key?: NodeKey, zoomLevel?: number) {
-    super(format, key)
-    this.__id = id
-    this.__zoomLevel = zoomLevel || 100
   }
 
   getId(): string {

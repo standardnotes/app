@@ -1,6 +1,6 @@
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
 import { parseAndCreateZippableFileName } from '@standardnotes/utils'
-import { DOMExportOutput, Spread } from 'lexical'
+import { DOMExportOutput, ElementFormatType, NodeKey, Spread } from 'lexical'
 
 type SerializedFileExportNode = Spread<
   {
@@ -20,14 +20,14 @@ export class FileExportNode extends DecoratorBlockNode {
     return 'file-export'
   }
 
-  constructor(name: string, mimeType: string) {
-    super()
+  constructor(name: string, mimeType: string, format?: ElementFormatType, key?: NodeKey) {
+    super(format, key)
     this.__name = name
     this.__mimeType = mimeType
   }
 
   static clone(node: FileExportNode): FileExportNode {
-    return new FileExportNode(node.__name, node.__mimeType)
+    return new FileExportNode(node.__name, node.__mimeType, node.__format, node.__key)
   }
 
   static importJSON(serializedNode: SerializedFileExportNode): FileExportNode {

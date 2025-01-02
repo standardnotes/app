@@ -1,24 +1,17 @@
 import { createHeadlessEditor } from '@lexical/headless'
 import { FileItem, PrefKey, PrefValue, SuperConverterServiceInterface } from '@standardnotes/snjs'
-import {
-  $createParagraphNode,
-  $getRoot,
-  $insertNodes,
-  $nodesOfType,
-  LexicalEditor,
-  LexicalNode,
-  ParagraphNode,
-} from 'lexical'
+import { $createParagraphNode, $getRoot, $insertNodes, $isParagraphNode, LexicalEditor, LexicalNode } from 'lexical'
 import BlocksEditorTheme from '../Lexical/Theme/Theme'
 import { BlockEditorNodes, SuperExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
-import { FileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
 import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
-import { $convertFromMarkdownString } from '../Lexical/Utils/MarkdownImport'
+import { $convertFromMarkdownString } from '@lexical/markdown'
 import { $convertToMarkdownString } from '../Lexical/Utils/MarkdownExport'
 import { parseFileName } from '@standardnotes/utils'
+import { $dfs } from '@lexical/utils'
+import { $isFileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileUtils'
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
@@ -80,103 +73,103 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     let content: string | undefined
 
     await new Promise<void>((resolve) => {
-      this.exportEditor.update(
-        () => {
-          if (embedBehavior === 'reference') {
-            resolve()
-            return
-          }
-          if (!getFileItem) {
-            resolve()
-            return
-          }
-          const fileNodes = $nodesOfType(FileNode)
-          const filenameCounts: Record<string, number> = {}
-          Promise.all(
-            fileNodes.map(async (fileNode) => {
-              const fileItem = getFileItem(fileNode.getId())
-              if (!fileItem) {
+      const handleFileNodes = () => {
+        if (embedBehavior === 'reference') {
+          resolve()
+          return
+        }
+        if (!getFileItem) {
+          resolve()
+          return
+        }
+        const filenameCounts: Record<string, number> = {}
+        Promise.all(
+          $dfs().map(async ({ node: fileNode }) => {
+            if (!$isFileNode(fileNode)) {
+              return
+            }
+            const fileItem = getFileItem(fileNode.getId())
+            if (!fileItem) {
+              return
+            }
+            const canInlineFileType = toFormat === 'pdf' ? fileItem.mimeType.startsWith('image/') : true
+            if (embedBehavior === 'inline' && getFileBase64 && canInlineFileType) {
+              const fileBase64 = await getFileBase64(fileNode.getId())
+              if (!fileBase64) {
                 return
               }
-              const canInlineFileType = toFormat === 'pdf' ? fileItem.mimeType.startsWith('image/') : true
-              if (embedBehavior === 'inline' && getFileBase64 && canInlineFileType) {
-                const fileBase64 = await getFileBase64(fileNode.getId())
-                if (!fileBase64) {
-                  return
-                }
-                this.exportEditor.update(
-                  () => {
-                    const inlineFileNode = $createInlineFileNode(fileBase64, fileItem.mimeType, fileItem.name)
-                    fileNode.replace(inlineFileNode)
-                  },
-                  { discrete: true },
-                )
-              } else {
-                this.exportEditor.update(
-                  () => {
-                    filenameCounts[fileItem.name] =
-                      filenameCounts[fileItem.name] == undefined ? 0 : filenameCounts[fileItem.name] + 1
+              this.exportEditor.update(
+                () => {
+                  const inlineFileNode = $createInlineFileNode(fileBase64, fileItem.mimeType, fileItem.name)
+                  fileNode.replace(inlineFileNode)
+                },
+                { discrete: true },
+              )
+            } else {
+              this.exportEditor.update(
+                () => {
+                  filenameCounts[fileItem.name] =
+                    filenameCounts[fileItem.name] == undefined ? 0 : filenameCounts[fileItem.name] + 1
 
-                    let name = fileItem.name
+                  let name = fileItem.name
 
-                    if (filenameCounts[name] > 0) {
-                      const { name: _name, ext } = parseFileName(name)
-                      name = `${_name}-${fileItem.uuid}.${ext}`
-                    }
+                  if (filenameCounts[name] > 0) {
+                    const { name: _name, ext } = parseFileName(name)
+                    name = `${_name}-${fileItem.uuid}.${ext}`
+                  }
 
-                    const fileExportNode = $createFileExportNode(name, fileItem.mimeType)
-                    fileNode.replace(fileExportNode)
-                  },
-                  { discrete: true },
-                )
-              }
-            }),
-          )
-            .then(() => resolve())
-            .catch(console.error)
-        },
-        { discrete: true },
-      )
+                  const fileExportNode = $createFileExportNode(name, fileItem.mimeType)
+                  fileNode.replace(fileExportNode)
+                },
+                { discrete: true },
+              )
+            }
+          }),
+        )
+          .then(() => resolve())
+          .catch(console.error)
+      }
+      this.exportEditor.update(handleFileNodes, { discrete: true })
     })
 
     await new Promise<void>((resolve) => {
-      this.exportEditor.update(
-        () => {
-          switch (toFormat) {
-            case 'txt':
-            case 'md': {
-              const paragraphs = $nodesOfType(ParagraphNode)
-              for (const paragraph of paragraphs) {
-                if (paragraph.isEmpty()) {
-                  paragraph.remove()
-                }
+      const convertToFormat = () => {
+        switch (toFormat) {
+          case 'txt':
+          case 'md': {
+            for (const { node: paragraph } of $dfs()) {
+              if (!$isParagraphNode(paragraph)) {
+                continue
               }
-              content = $convertToMarkdownString(MarkdownTransformers)
-              resolve()
-              break
+              if (paragraph.isEmpty()) {
+                paragraph.remove()
+              }
             }
-            case 'html':
-              content = $generateHtmlFromNodes(this.exportEditor)
-              resolve()
-              break
-            case 'pdf': {
-              void import('../Lexical/Utils/PDFExport/PDFExport').then(({ $generatePDFFromNodes }): void => {
-                void $generatePDFFromNodes(this.exportEditor, config?.pdf?.pageSize || 'A4').then((pdf) => {
-                  content = pdf
-                  resolve()
-                })
-              })
-              break
-            }
-            case 'json':
-            default:
-              content = superString
-              resolve()
-              break
+            content = $convertToMarkdownString(MarkdownTransformers)
+            resolve()
+            break
           }
-        },
-        { discrete: true },
-      )
+          case 'html':
+            content = $generateHtmlFromNodes(this.exportEditor)
+            resolve()
+            break
+          case 'pdf': {
+            void import('../Lexical/Utils/PDFExport/PDFExport').then(({ $generatePDFFromNodes }): void => {
+              void $generatePDFFromNodes(this.exportEditor, config?.pdf?.pageSize || 'A4').then((pdf) => {
+                content = pdf
+                resolve()
+              })
+            })
+            break
+          }
+          case 'json':
+          default:
+            content = superString
+            resolve()
+            break
+        }
+      }
+      this.exportEditor.update(convertToFormat, { discrete: true })
     })
 
     if (typeof content !== 'string') {
@@ -288,14 +281,16 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     const ids: string[] = []
 
     this.exportEditor.getEditorState().read(() => {
-      const fileNodes = $nodesOfType(FileNode)
-      fileNodes.forEach((fileNode) => {
+      for (const { node: fileNode } of $dfs()) {
+        if (!$isFileNode(fileNode)) {
+          continue
+        }
         const nodeId = fileNode.getId()
         if (ids.includes(nodeId)) {
-          return
+          continue
         }
         ids.push(nodeId)
-      })
+      }
     })
 
     return ids

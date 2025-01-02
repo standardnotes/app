@@ -89,9 +89,10 @@ export const SearchPlugin = () => {
 
   const handleSearch = useCallback(
     (query: string, isCaseSensitive: boolean) => {
-      document.querySelectorAll('.search-highlight').forEach((element) => {
+      const currentHighlights = document.querySelectorAll('.search-highlight')
+      for (const element of currentHighlights) {
         element.remove()
-      })
+      }
 
       if (!query) {
         dispatch({ type: 'clear-results' })
@@ -109,7 +110,7 @@ export const SearchPlugin = () => {
 
         const results: SuperSearchResult[] = []
 
-        textNodes.forEach((node) => {
+        for (const node of textNodes) {
           const text = node.textContent || ''
 
           const indices: number[] = []
@@ -122,7 +123,7 @@ export const SearchPlugin = () => {
             indices.push(index)
           }
 
-          indices.forEach((index) => {
+          for (const index of indices) {
             const startIndex = index
             const endIndex = startIndex + query.length
 
@@ -131,8 +132,8 @@ export const SearchPlugin = () => {
               startIndex,
               endIndex,
             })
-          })
-        })
+          }
+        }
 
         dispatch({
           type: 'set-results',
@@ -205,7 +206,10 @@ export const SearchPlugin = () => {
           }
           replaceResult(result, true)
         } else if (type === 'all') {
-          resultsRef.current.forEach((result) => replaceResult(result))
+          const results = resultsRef.current
+          for (const result of results) {
+            replaceResult(result)
+          }
         }
 
         void handleSearch(queryRef.current, isCaseSensitiveRef.current)
@@ -214,9 +218,10 @@ export const SearchPlugin = () => {
   }, [addReplaceEventListener, currentResultIndexRef, editor, handleSearch, isCaseSensitiveRef, queryRef, resultsRef])
 
   useEffect(() => {
-    document.querySelectorAll('.search-highlight').forEach((element) => {
+    const currentHighlights = document.querySelectorAll('.search-highlight')
+    for (const element of currentHighlights) {
       element.remove()
-    })
+    }
     if (currentResultIndex === -1) {
       return
     }

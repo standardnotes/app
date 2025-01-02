@@ -44,12 +44,12 @@ export class CollapsibleContainerNode extends ElementNode {
     this.__open = open ?? false
   }
 
-  static override getType(): string {
-    return 'collapsible-container'
-  }
-
   static override clone(node: CollapsibleContainerNode): CollapsibleContainerNode {
     return new CollapsibleContainerNode(node.__open, node.__key)
+  }
+
+  static override getType(): string {
+    return 'collapsible-container'
   }
 
   override createDOM(_: EditorConfig, editor: LexicalEditor): HTMLElement {
