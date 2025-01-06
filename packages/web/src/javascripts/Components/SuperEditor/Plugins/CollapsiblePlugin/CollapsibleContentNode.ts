@@ -65,8 +65,8 @@ export class CollapsibleContentNode extends ElementNode {
     }
   }
 
-  static override importJSON(_serializedNode: SerializedCollapsibleContentNode): CollapsibleContentNode {
-    return $createCollapsibleContentNode()
+  static override importJSON(serializedNode: SerializedCollapsibleContentNode): CollapsibleContentNode {
+    return $createCollapsibleContentNode().updateFromJSON(serializedNode)
   }
 
   override isShadowRoot(): boolean {

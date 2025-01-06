@@ -13,8 +13,6 @@ import RemoteImageComponent from './RemoteImageComponent'
 
 type SerializedRemoteImageNode = Spread<
   {
-    version: 1
-    type: 'unencrypted-image'
     alt: string | undefined
     src: string
   },
@@ -40,8 +38,7 @@ export class RemoteImageNode extends DecoratorBlockNode {
   }
 
   static importJSON(serializedNode: SerializedRemoteImageNode): RemoteImageNode {
-    const node = $createRemoteImageNode(serializedNode.src, serializedNode.alt)
-    return node
+    return $createRemoteImageNode(serializedNode.src, serializedNode.alt).updateFromJSON(serializedNode)
   }
 
   exportJSON(): SerializedRemoteImageNode {
@@ -49,8 +46,6 @@ export class RemoteImageNode extends DecoratorBlockNode {
       ...super.exportJSON(),
       src: this.__src,
       alt: this.__alt,
-      version: 1,
-      type: 'unencrypted-image',
     }
   }
 

@@ -12,10 +12,8 @@ import {
   DOMConversionMap,
   DOMConversionOutput,
   DOMExportOutput,
-  ElementFormatType,
   ElementNode,
   LexicalNode,
-  NodeKey,
   RangeSelection,
   SerializedElementNode,
   Spread,
@@ -44,15 +42,8 @@ export class CollapsibleTitleNode extends ElementNode {
     return 'collapsible-title'
   }
 
-  constructor({ formatType, key }: { formatType?: ElementFormatType; key?: NodeKey }) {
-    super(key)
-    if (formatType) {
-      super.setFormat(formatType)
-    }
-  }
-
   static override clone(node: CollapsibleTitleNode): CollapsibleTitleNode {
-    return new CollapsibleTitleNode({ key: node.__key })
+    return new CollapsibleTitleNode(node.__key)
   }
 
   override createDOM(): HTMLElement {
@@ -79,20 +70,12 @@ export class CollapsibleTitleNode extends ElementNode {
   }
 
   static override importJSON(serializedNode: SerializedCollapsibleTitleNode): CollapsibleTitleNode {
-    return $createCollapsibleTitleNode(serializedNode.format)
+    return $createCollapsibleTitleNode().updateFromJSON(serializedNode)
   }
 
   exportDOM(): DOMExportOutput {
     const element = document.createElement('summary')
     return { element }
-  }
-
-  override exportJSON(): SerializedCollapsibleTitleNode {
-    return {
-      ...super.exportJSON(),
-      type: 'collapsible-title',
-      version: 1,
-    }
   }
 
   override collapseAtStart(_selection: RangeSelection): boolean {
@@ -129,10 +112,8 @@ export class CollapsibleTitleNode extends ElementNode {
   }
 }
 
-export function $createCollapsibleTitleNode(formatType?: ElementFormatType): CollapsibleTitleNode {
-  return new CollapsibleTitleNode({
-    formatType,
-  })
+export function $createCollapsibleTitleNode(): CollapsibleTitleNode {
+  return new CollapsibleTitleNode()
 }
 
 export function $isCollapsibleTitleNode(node: LexicalNode | null | undefined): node is CollapsibleTitleNode {

@@ -13,8 +13,6 @@ import InlineFileComponent from './InlineFileComponent'
 
 type SerializedInlineFileNode = Spread<
   {
-    version: 1
-    type: 'inline-file'
     fileName: string | undefined
     mimeType: string
     src: string
@@ -43,7 +41,11 @@ export class InlineFileNode extends DecoratorBlockNode {
   }
 
   static importJSON(serializedNode: SerializedInlineFileNode): InlineFileNode {
-    const node = $createInlineFileNode(serializedNode.src, serializedNode.mimeType, serializedNode.fileName)
+    const node = $createInlineFileNode(
+      serializedNode.src,
+      serializedNode.mimeType,
+      serializedNode.fileName,
+    ).updateFromJSON(serializedNode)
     return node
   }
 
@@ -53,8 +55,6 @@ export class InlineFileNode extends DecoratorBlockNode {
       src: this.__src,
       mimeType: this.__mimeType,
       fileName: this.__fileName,
-      version: 1,
-      type: 'inline-file',
     }
   }
 

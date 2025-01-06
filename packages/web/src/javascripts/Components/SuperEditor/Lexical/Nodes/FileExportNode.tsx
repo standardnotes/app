@@ -4,8 +4,6 @@ import { DOMExportOutput, ElementFormatType, NodeKey, Spread } from 'lexical'
 
 type SerializedFileExportNode = Spread<
   {
-    version: 1
-    type: 'file-export'
     name: string
     mimeType: string
   },
@@ -31,7 +29,7 @@ export class FileExportNode extends DecoratorBlockNode {
   }
 
   static importJSON(serializedNode: SerializedFileExportNode): FileExportNode {
-    const node = new FileExportNode(serializedNode.name, serializedNode.mimeType)
+    const node = $createFileExportNode(serializedNode.name, serializedNode.mimeType).updateFromJSON(serializedNode)
     return node
   }
 
@@ -40,8 +38,6 @@ export class FileExportNode extends DecoratorBlockNode {
       ...super.exportJSON(),
       name: this.__name,
       mimeType: this.__mimeType,
-      version: 1,
-      type: 'file-export',
     }
   }
 

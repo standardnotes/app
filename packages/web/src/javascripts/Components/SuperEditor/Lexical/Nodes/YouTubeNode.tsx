@@ -50,8 +50,6 @@ function YouTubeComponent({ className, format, nodeKey, videoID }: YouTubeCompon
 export type SerializedYouTubeNode = Spread<
   {
     videoID: string
-    type: 'youtube'
-    version: 1
   },
   SerializedDecoratorBlockNode
 >
@@ -82,16 +80,12 @@ export class YouTubeNode extends DecoratorBlockNode {
   }
 
   static importJSON(serializedNode: SerializedYouTubeNode): YouTubeNode {
-    const node = $createYouTubeNode(serializedNode.videoID)
-    node.setFormat(serializedNode.format)
-    return node
+    return $createYouTubeNode(serializedNode.videoID).updateFromJSON(serializedNode)
   }
 
   exportJSON(): SerializedYouTubeNode {
     return {
       ...super.exportJSON(),
-      type: 'youtube',
-      version: 1,
       videoID: this.__id,
     }
   }

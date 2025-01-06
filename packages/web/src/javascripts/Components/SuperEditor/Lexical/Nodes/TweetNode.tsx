@@ -114,8 +114,6 @@ function TweetComponent({
 export type SerializedTweetNode = Spread<
   {
     id: string
-    type: 'tweet'
-    version: 1
   },
   SerializedDecoratorBlockNode
 >
@@ -137,17 +135,13 @@ export class TweetNode extends DecoratorBlockNode {
   }
 
   static override importJSON(serializedNode: SerializedTweetNode): TweetNode {
-    const node = $createTweetNode(serializedNode.id)
-    node.setFormat(serializedNode.format)
-    return node
+    return $createTweetNode(serializedNode.id).updateFromJSON(serializedNode)
   }
 
   override exportJSON(): SerializedTweetNode {
     return {
       ...super.exportJSON(),
       id: this.getId(),
-      type: 'tweet',
-      version: 1,
     }
   }
 

@@ -16,15 +16,13 @@ export class BubbleNode extends DecoratorNode<JSX.Element> implements ItemNodeIn
   }
 
   static importJSON(serializedNode: SerializedBubbleNode): BubbleNode {
-    const node = $createBubbleNode(serializedNode.itemUuid)
-    return node
+    return $createBubbleNode(serializedNode.itemUuid).updateFromJSON(serializedNode)
   }
 
   override exportJSON(): SerializedBubbleNode {
     return {
+      ...super.exportJSON(),
       itemUuid: this.getId(),
-      version: 1,
-      type: 'snbubble',
     }
   }
 
