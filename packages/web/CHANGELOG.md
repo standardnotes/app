@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.195.21](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.20...@standardnotes/web@3.195.21) (2025-01-09)
+
+### Reverts
+
+* Revert "chore: fix github actions [skip e2e]" ([7e83f24](https://github.com/standardnotes/app/commit/7e83f24373b810916654b5fa5809ac1d2f132ca1))
+
 ## [3.195.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.19...@standardnotes/web@3.195.20) (2025-01-09)
 
 **Note:** Version bump only for package @standardnotes/web
