@@ -46,7 +46,7 @@ jobs:
           yarn web-ext sign --source-dir dist --api-key $WEB_EXT_API_KEY --api-secret $WEB_EXT_API_SECRET --channel=listed --use-submission-api
           mv web-ext-artifacts/*.xpi standard-notes-clipper-$PACKAGE_VERSION.firefox.xpi
       - name: Upload
-        uses: actions/upload-artifact@v3.0.0
+        uses: actions/upload-artifact@v4.0.0
         with:
           name: assets
           path: |
@@ -73,7 +73,7 @@ jobs:
       - name: Export version from package.json
         run:
           echo "PACKAGE_VERSION=$(grep '"version"' ./package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: assets
           path: packages/clipper/artifacts
