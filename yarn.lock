@@ -3362,7 +3362,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/rebuild@npm:^3.7.1":
+"@electron/rebuild@npm:^3.6.0":
   version: 3.7.1
   resolution: "@electron/rebuild@npm:3.7.1"
   dependencies:
@@ -7424,7 +7424,7 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@electron/notarize": ^2.1.0
-    "@electron/rebuild": ^3.7.1
+    "@electron/rebuild": ^3.6.0
     "@electron/remote": ^2.1.2
     "@standardnotes/domain-core": ^1.40.0
     "@standardnotes/electron-clear-data": 1.1.1
@@ -7442,7 +7442,7 @@ __metadata:
     copy-webpack-plugin: ^11.0.0
     decrypt: "github:standardnotes/decrypt#master"
     dotenv: ^16.3.1
-    electron: 32.2.7
+    electron: 31.1.0
     electron-builder: ^24.9.1
     electron-log: ^4.4.8
     electron-updater: ^6.1.4
@@ -14250,16 +14250,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:32.2.7":
-  version: 32.2.7
-  resolution: "electron@npm:32.2.7"
+"electron@npm:31.1.0":
+  version: 31.1.0
+  resolution: "electron@npm:31.1.0"
   dependencies:
     "@electron/get": ^2.0.0
     "@types/node": ^20.9.0
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: bdd1230f6fcef7c5064d15de22fea816310335d36641e7daf58de47bfaab09c90918bbc2bf8177ba37c74b5762b343b90eab0b82b45d89a99dfeb9c0e19cdda7
+  checksum: 697fe7530680cda23619b81972cc3b613fdf23c191fbe3a6e4abbc932453601bdd21942e59379e0bd171307bfedd3a03ac759877ebc0ea2b7ccd3db8cf748e4b
   languageName: node
   linkType: hard
 
