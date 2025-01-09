@@ -358,6 +358,7 @@ jobs:
         with:
           pattern: dist-*
           path: packages/desktop/dist
+          merge-multiple: true
 
       - name: Generate Checksums
         run: node scripts/sums.mjs
