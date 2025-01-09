@@ -48,7 +48,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: assets
+          name: mac-assets
           path: |
             packages/desktop/dist/*.dmg
             packages/desktop/dist/*.zip
@@ -97,7 +97,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: assets
+          name: linux-appimage-assets
           path: |
             packages/desktop/dist/*.AppImage
             packages/desktop/dist/*.yml
@@ -187,7 +187,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: assets
+          name: linux-deb-assets
           path: |
             packages/desktop/dist/*.deb
             packages/desktop/dist/*.yml
@@ -240,7 +240,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: assets
+          name: linux-snap-assets
           path: |
             packages/desktop/dist/*.snap
             packages/desktop/dist/*.yml
@@ -326,7 +326,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: assets
+          name: windows-assets
           path: |
             packages/desktop/dist/*.blockmap
             packages/desktop/dist/*.exe
@@ -356,8 +356,8 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: assets
           path: packages/desktop/dist
+          pattern: *-assets
 
       - name: Generate Checksums
         run: node scripts/sums.mjs
