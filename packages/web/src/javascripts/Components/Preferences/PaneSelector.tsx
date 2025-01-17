@@ -13,39 +13,40 @@ import WhatsNew from './Panes/WhatsNew/WhatsNew'
 import HomeServer from './Panes/HomeServer/HomeServer'
 import Vaults from './Panes/Vaults/Vaults'
 import PluginsPane from './Panes/Plugins/PluginsPane'
+import { PreferencePaneId } from '@standardnotes/snjs'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesSessionController }> = ({
   menu,
   application,
 }) => {
   switch (menu.selectedPaneId) {
-    case 'general':
+    case PreferencePaneId.General:
       return <General />
-    case 'account':
+    case PreferencePaneId.Account:
       return <AccountPreferences application={application} />
-    case 'appearance':
+    case PreferencePaneId.Appearance:
       return <Appearance application={application} />
-    case 'home-server':
+    case PreferencePaneId.HomeServer:
       return <HomeServer />
-    case 'security':
+    case PreferencePaneId.Security:
       return <Security application={application} />
-    case 'vaults':
+    case PreferencePaneId.Vaults:
       return <Vaults />
-    case 'backups':
+    case PreferencePaneId.Backups:
       return <Backups application={application} />
-    case 'listed':
+    case PreferencePaneId.Listed:
       return <Listed application={application} />
-    case 'shortcuts':
+    case PreferencePaneId.Shortcuts:
       return null
-    case 'plugins':
+    case PreferencePaneId.Plugins:
       return <PluginsPane pluginsLatestVersions={menu.extensionsLatestVersions} />
-    case 'accessibility':
+    case PreferencePaneId.Accessibility:
       return null
-    case 'get-free-month':
+    case PreferencePaneId.GetFreeMonth:
       return null
-    case 'help-feedback':
+    case PreferencePaneId.HelpFeedback:
       return <HelpAndFeedback application={application} />
-    case 'whats-new':
+    case PreferencePaneId.WhatsNew:
       return <WhatsNew application={application} />
     default:
       return <General />

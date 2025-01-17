@@ -1,18 +1,16 @@
-const PREFERENCE_PANE_IDS = [
-  'general',
-  'account',
-  'security',
-  'home-server',
-  'vaults',
-  'appearance',
-  'backups',
-  'listed',
-  'plugins',
-  'shortcuts',
-  'accessibility',
-  'get-free-month',
-  'help-feedback',
-  'whats-new',
-] as const
-
-export type PreferencePaneId = (typeof PREFERENCE_PANE_IDS)[number]
+export enum PreferencePaneId {
+  General = 'general',
+  Account = 'account',
+  Security = 'security',
+  HomeServer = 'home-server',
+  Vaults = 'vaults',
+  Appearance = 'appearance',
+  Backups = 'backups',
+  Listed = 'listed',
+  Plugins = 'plugins',
+  Shortcuts = 'shortcuts',
+  Accessibility = 'accessibility',
+  GetFreeMonth = 'get-free-month',
+  HelpFeedback = 'help-feedback',
+  WhatsNew = 'whats-new',
+}
