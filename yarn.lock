@@ -7819,7 +7819,7 @@ __metadata:
     react-native-keychain: "standardnotes/react-native-keychain#4fd687461cecfa26d482d820ee43c0de61b964d4"
     react-native-mmkv: ^2.6.2
     react-native-privacy-snapshot: "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe"
-    react-native-share: ^9.4.1
+    react-native-share: ^10.0.0
     react-native-store-review: ^0.4.1
     react-native-version-info: ^1.1.1
     react-native-webview: 13.12.2
@@ -23673,10 +23673,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-share@npm:^9.4.1":
-  version: 9.4.1
-  resolution: "react-native-share@npm:9.4.1"
-  checksum: 22b0f38b79bfa791b105c3c809ed0199d233c0ccddb5060546ade710767cab68812e5c9456ce858141dd0218bbbd946180c97e74132389996e00fdef4fbc355b
+"react-native-share@npm:^10.0.0":
+  version: 10.2.1
+  resolution: "react-native-share@npm:10.2.1"
+  checksum: 9dd4e0329b344668e04ff5421ab982e319dc3ba988d0b7990a619bd1c551beb6012623abe238a80e427f86f2bb03dd21b7afc0e957ee7348e0bd9fb39956912e
   languageName: node
   linkType: hard
 
