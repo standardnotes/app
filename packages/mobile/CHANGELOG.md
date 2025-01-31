@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.163](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.162...@standardnotes/mobile@3.58.163) (2025-01-31)
+
+### Bug Fixes
+
+* Fix "Share" option not working on Android ([e525db6](https://github.com/standardnotes/app/commit/e525db61d39dc6df331822bdd8874d8d067a46ad))
+
 ## [3.58.162](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.161...@standardnotes/mobile@3.58.162) (2025-01-21)
 
 **Note:** Version bump only for package @standardnotes/mobile

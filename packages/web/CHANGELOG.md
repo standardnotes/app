@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.195.25](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.24...@standardnotes/web@3.195.25) (2025-01-31)
+
+### Bug Fixes
+
+* Fix downloads silently failing on Android ([42aedcd](https://github.com/standardnotes/app/commit/42aedcdf84503a57946ad0e5faf65adc55bc0008))
+
 ## [3.195.24](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.23...@standardnotes/web@3.195.24) (2025-01-21)
 
 **Note:** Version bump only for package @standardnotes/web

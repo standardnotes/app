@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.28.126](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.28.125...@standardnotes/filepicker@1.28.126) (2025-01-31)
+
+### Bug Fixes
+
+* Fix downloads silently failing on Android ([42aedcd](https://github.com/standardnotes/app/commit/42aedcdf84503a57946ad0e5faf65adc55bc0008))
+
 ## [1.28.125](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.28.124...@standardnotes/filepicker@1.28.125) (2024-05-07)
 
 **Note:** Version bump only for package @standardnotes/filepicker
