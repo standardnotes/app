@@ -313,15 +313,18 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
 
     try {
-      const saver = this.shouldUseStreamingAPI ? new StreamingFileSaver(file.name) : new ClassicFileSaver()
+      let saver = this.shouldUseStreamingAPI ? new StreamingFileSaver(file.name) : new ClassicFileSaver()
+      let didSelectFileToStreamTo = false
 
-      const isUsingStreamingSaver = saver instanceof StreamingFileSaver
-
-      if (isUsingStreamingSaver) {
+      if (isUsingStreamingSaver(saver)) {
         const fileHandle = directoryHandle
           ? await directoryHandle.getFileHandle(file.name, { create: true })
           : undefined
-        await saver.selectFileToSaveTo(fileHandle)
+        didSelectFileToStreamTo = await saver.selectFileToSaveTo(fileHandle)
+      }
+
+      if (isUsingStreamingSaver(saver) && !didSelectFileToStreamTo) {
+        saver = new ClassicFileSaver()
       }
 
       if (this.mobileDevice && canShowProgressNotification) {
@@ -345,7 +348,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       let lastProgress: FileDownloadProgress | undefined
 
       const result = await this.files.downloadFile(file, async (decryptedBytes, progress) => {
-        if (isUsingStreamingSaver) {
+        if (isUsingStreamingSaver(saver)) {
           await saver.pushBytes(decryptedBytes)
         } else {
           decryptedBytesArray.push(decryptedBytes)
@@ -378,7 +381,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         throw new Error(result.text)
       }
 
-      if (isUsingStreamingSaver) {
+      if (isUsingStreamingSaver(saver)) {
         await saver.finish()
       } else {
         const finalBytes = concatenateUint8Arrays(decryptedBytesArray)
@@ -849,4 +852,8 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       message: `Successfully downloaded ${files.length} files as archive`,
     })
   }
+}
+
+function isUsingStreamingSaver(saver: StreamingFileSaver | ClassicFileSaver): saver is StreamingFileSaver {
+  return saver instanceof StreamingFileSaver
 }

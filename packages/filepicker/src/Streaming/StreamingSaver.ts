@@ -21,17 +21,30 @@ export class StreamingFileSaver {
     return window.showSaveFilePicker != undefined
   }
 
-  /** This function must be called in response to a user interaction, otherwise, it will be rejected by the browser. */
-  async selectFileToSaveTo(handle?: FileSystemFileHandle): Promise<void> {
+  /**
+   * This function must be called in response to a user interaction, otherwise, it will be rejected by the browser.
+   * @returns Whether file was successfully selected or not.
+   */
+  async selectFileToSaveTo(handle?: FileSystemFileHandle): Promise<boolean> {
     this.log('Showing save file picker')
 
-    const downloadHandle = handle
-      ? handle
-      : await window.showSaveFilePicker({
-          suggestedName: this.name,
-        })
+    try {
+      const downloadHandle = handle
+        ? handle
+        : await window.showSaveFilePicker({
+            suggestedName: this.name,
+          })
 
-    this.writableStream = await downloadHandle.createWritable()
+      if (!downloadHandle) {
+        return false
+      }
+
+      this.writableStream = await downloadHandle.createWritable()
+
+      return true
+    } catch {
+      return false
+    }
   }
 
   async pushBytes(bytes: Uint8Array): Promise<void> {
