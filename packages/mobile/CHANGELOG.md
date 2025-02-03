@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.164](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.163...@standardnotes/mobile@3.58.164) (2025-02-03)
+
+### Bug Fixes
+
+* Fix PDF export not working on Android ([a0467e7](https://github.com/standardnotes/app/commit/a0467e7c4db27d27dc17f588bbaaebbb6f22d259))
+
 ## [3.58.163](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.162...@standardnotes/mobile@3.58.163) (2025-01-31)
 
 ### Bug Fixes
