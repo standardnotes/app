@@ -19,7 +19,8 @@ import { $isRemoteImageNode } from '../../../Plugins/RemoteImagePlugin/RemoteIma
 import { $isCollapsibleContainerNode } from '../../../Plugins/CollapsiblePlugin/CollapsibleContainerNode'
 import { $isCollapsibleContentNode } from '../../../Plugins/CollapsiblePlugin/CollapsibleContentNode'
 import { $isCollapsibleTitleNode } from '../../../Plugins/CollapsiblePlugin/CollapsibleTitleNode'
-import { PDFDataNode, PDFWorker } from './PDFWorker'
+// @ts-expect-error TS thinks there's no default export but that is added by the webpack loader.
+import PDFWorker, { PDFDataNode, PDFWorkerInterface } from './PDFWorker.worker'
 import { wrap } from 'comlink'
 import { PrefKey, PrefValue } from '@standardnotes/snjs'
 
@@ -417,7 +418,8 @@ const getPDFDataNodesFromLexicalNodes = (nodes: LexicalNode[]): PDFDataNode[] =>
   return nodes.map(getPDFDataNodeFromLexicalNode)
 }
 
-const PDFWorkerComlink = wrap<PDFWorker>(new Worker(new URL('./PDFWorker.tsx', import.meta.url)))
+const pdfWorker = new PDFWorker()
+const PDFWorkerComlink = wrap<PDFWorkerInterface>(pdfWorker)
 
 /**
  * @returns The PDF as an object url

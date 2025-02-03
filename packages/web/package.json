@@ -99,7 +99,8 @@
     "webextension-polyfill": "^0.10.0",
     "webpack": "*",
     "webpack-dev-server": "*",
-    "webpack-merge": "*"
+    "webpack-merge": "*",
+    "worker-loader": "^3.0.8"
   },
   "lint-staged": {
     "app/**/*.{js,ts,jsx,tsx}": "eslint --cache --fix",

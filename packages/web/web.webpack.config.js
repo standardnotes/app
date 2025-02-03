@@ -93,6 +93,13 @@ module.exports = (env) => {
     module: {
       rules: [
         {
+          test: /\.worker\.tsx?$/,
+          loader: 'worker-loader',
+          options: {
+            inline: 'fallback',
+          },
+        },
+        {
           test: /\.(js|tsx?)$/,
           /**
            * Exclude all node_modules, except for those we need to run through our babel rules because

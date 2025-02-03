@@ -1545,7 +1545,7 @@ PODS:
     - React-Core
   - RNPrivacySnapshot (1.0.0):
     - React-Core
-  - RNShare (9.4.1):
+  - RNShare (10.2.1):
     - React-Core
   - RNStoreReview (0.4.1):
     - React-Core
@@ -1873,7 +1873,7 @@ SPEC CHECKSUMS:
   RNKeychain: a65256b6ca6ba6976132cc4124b238a5b13b3d9c
   RNNotifee: f3c01b391dd8e98e67f539f9a35a9cbcd3bae744
   RNPrivacySnapshot: 8eaf571478a353f2e5184f5c803164f22428b023
-  RNShare: 32e97adc8d8c97d4a26bcdd3c45516882184f8b6
+  RNShare: 0fad69ae2d71de9d1f7b9a43acf876886a6cb99c
   RNStoreReview: 923b1c888c13469925bf0256dc2c046eab557ce5
   SNReactNative: b5e9e529c175c13f3a618e27c76cf3071213d5e1
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d

@@ -102,6 +102,6 @@ expose({
   renderPDF,
 })
 
-export type PDFWorker = {
+export type PDFWorkerInterface = {
   renderPDF: typeof renderPDF
 }
