@@ -7,20 +7,20 @@ import { PreferencePaneId } from '../Preferences/PreferenceId'
 
 export class StatusService extends AbstractService<StatusServiceEvent, string> implements StatusServiceInterface {
   private preferencesBubbleCounts: Record<PreferencePaneId, number> = {
-    general: 0,
-    account: 0,
-    security: 0,
-    'home-server': 0,
-    vaults: 0,
-    appearance: 0,
-    backups: 0,
-    listed: 0,
-    shortcuts: 0,
-    plugins: 0,
-    accessibility: 0,
-    'get-free-month': 0,
-    'help-feedback': 0,
-    'whats-new': 0,
+    [PreferencePaneId.General]: 0,
+    [PreferencePaneId.Account]: 0,
+    [PreferencePaneId.Security]: 0,
+    [PreferencePaneId.HomeServer]: 0,
+    [PreferencePaneId.Vaults]: 0,
+    [PreferencePaneId.Appearance]: 0,
+    [PreferencePaneId.Backups]: 0,
+    [PreferencePaneId.Listed]: 0,
+    [PreferencePaneId.Shortcuts]: 0,
+    [PreferencePaneId.Plugins]: 0,
+    [PreferencePaneId.Accessibility]: 0,
+    [PreferencePaneId.GetFreeMonth]: 0,
+    [PreferencePaneId.HelpFeedback]: 0,
+    [PreferencePaneId.WhatsNew]: 0,
   }
 
   getPreferencesBubbleCount(preferencePaneId: PreferencePaneId): number {
