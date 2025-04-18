@@ -62,7 +62,7 @@ public class CustomWebViewManager extends RNCWebViewManager {
 
 	@Override
 	public RNCWebViewWrapper createViewInstance(ThemedReactContext reactContext) {
-		return super.createViewInstance(reactContext, new CustomWebView(reactContext));
+		return super.createViewInstance(reactContext);
 	}
 
 	@Override

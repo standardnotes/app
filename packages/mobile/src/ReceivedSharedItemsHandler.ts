@@ -58,7 +58,7 @@ export class ReceivedSharedItemsHandler {
   private receivedItemsQueue: ReceivedItem[] = []
   private isApplicationLaunched = false
 
-  constructor(private webViewRef: RefObject<WebView>) {
+  constructor(private webViewRef: RefObject<WebView | null>) {
     this.registerNativeEventSub()
   }
 
