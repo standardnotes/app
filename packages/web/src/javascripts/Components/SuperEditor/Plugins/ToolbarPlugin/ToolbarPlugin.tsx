@@ -63,7 +63,7 @@ import { Toolbar, ToolbarItem, useToolbarStore } from '@ariakit/react'
 import { PasswordBlock } from '../Blocks/Password'
 import { URL_REGEX } from '@/Constants/Constants'
 import Popover from '@/Components/Popover/Popover'
-import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents'
+import { TableOfContentsPlugin } from '@lexical/react/LexicalTableOfContentsPlugin'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem, { MenuItemProps } from '@/Components/Menu/MenuItem'
 import { debounce, remToPx } from '@/Utils'
@@ -823,7 +823,7 @@ const ToolbarPlugin = () => {
         documentElement={popoverDocumentElement}
       >
         <div className="mb-1.5 mt-1 px-3 text-sm font-semibold uppercase text-text">Table of Contents</div>
-        <LexicalTableOfContents>
+        <TableOfContentsPlugin>
           {(tableOfContents) => {
             if (!tableOfContents.length) {
               return <div className="py-2 text-center">No headings found</div>
@@ -871,7 +871,7 @@ const ToolbarPlugin = () => {
               </Menu>
             )
           }}
-        </LexicalTableOfContents>
+        </TableOfContentsPlugin>
       </Popover>
       <Popover
         title="Text formatting options"
