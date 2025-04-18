@@ -188,14 +188,15 @@ class ShareViewController: SLComposeServiceViewController {
     userDefaults?.synchronize()
     
     let url = URL(string: "\(shareProtocol)://dataUrl=\(sharedKey)")
-    var responder = self as UIResponder?
-    let selectorOpenURL = sel_registerName("openURL:")
-    
-    while (responder != nil) {
-      if (responder?.responds(to: selectorOpenURL))! {
-        let _ = responder?.perform(selectorOpenURL, with: url)
+    var responder: UIResponder? = self
+    while let currentResponder = responder {
+      if let application = currentResponder as? UIApplication {
+        if let url = url {
+          application.open(url, options: [:], completionHandler: nil)
+        }
+        break
       }
-      responder = responder!.next
+      responder = currentResponder.next
     }
     
     extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
@@ -288,7 +289,7 @@ class ShareViewController: SLComposeServiceViewController {
     
     // Debug method to print out SharedMediaFile details in the console
     func toString() {
-      print("[SharedMediaFile] \n\tpath: \(self.path)\n\tthumbnail: \(self.thumbnail)\n\tduration: \(self.duration)\n\ttype: \(self.type)")
+      print("[SharedMediaFile] \n\tpath: \(self.path)\n\tthumbnail: \(String(describing: self.thumbnail))\n\tduration: \(String(describing: self.duration))\n\ttype: \(self.type)")
     }
   }
   
