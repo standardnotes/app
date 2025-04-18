@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+#import <ReactAppDependencyProvider/RCTAppDependencyProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <WebKit/WKWebsiteDataStore.h>
 #import <TrustKit/TrustKit.h>
@@ -25,6 +26,7 @@
   [self clearWebEditorCache];
   
   self.moduleName = @"StandardNotes";
+  self.dependencyProvider = [RCTAppDependencyProvider new];
   self.initialProps = @{};
   
   BOOL success = [super application:application didFinishLaunchingWithOptions:launchOptions];
