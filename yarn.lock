@@ -5125,12 +5125,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@notifee/react-native@npm:^7.8.0":
-  version: 7.8.0
-  resolution: "@notifee/react-native@npm:7.8.0"
+"@notifee/react-native@npm:^9.1.8":
+  version: 9.1.8
+  resolution: "@notifee/react-native@npm:9.1.8"
   peerDependencies:
     react-native: "*"
-  checksum: 800233c9505195046e918ee42a4b11d8e84cf1846ea4a0b52599e1a40181b2bbfcab09c64b445b5a7eed98c38556c97550bce32ed24a51ce05ccd8b65047548d
+  checksum: a144f7c5aa54a7e774c95b3a91341653865dfa4c8540b34ead3f281edd733830975c4f86bdfe422467d18ae97879b75be09ca25bb1818ba2ecfc56808cb570b1
   languageName: node
   linkType: hard
 
@@ -6273,14 +6273,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:1.19.3":
-  version: 1.19.3
-  resolution: "@react-native-async-storage/async-storage@npm:1.19.3"
+"@react-native-async-storage/async-storage@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@react-native-async-storage/async-storage@npm:2.1.2"
   dependencies:
     merge-options: ^3.0.4
   peerDependencies:
-    react-native: ^0.0.0-0 || 0.60 - 0.72 || 1000.0.0
-  checksum: d849e5c8bb08d2130d95cc246749dae820cc1996b6b31defa063a1b67070524d72aed5a0e57ce2fafe3c3726712c09a5a3babaed1358182060ce7cfd8bd2c1a3
+    react-native: ^0.0.0-0 || >=0.65 <1.0
+  checksum: a5c4d486e7e64067ab523b980b76cc2de5bf4b86ed410de09f2a95c3410e0c5b5be46c638a74cf5b7ed6dce10031ebac54350b498a2cb17f1a1c59347e671a73
   languageName: node
   linkType: hard
 
@@ -8236,8 +8236,8 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-typescript": ^7.18.6
     "@babel/runtime": ^7.25.0
-    "@notifee/react-native": ^7.8.0
-    "@react-native-async-storage/async-storage": 1.19.3
+    "@notifee/react-native": ^9.1.8
+    "@react-native-async-storage/async-storage": 2.1.2
     "@react-native-community/cli": 15.0.1
     "@react-native-community/cli-platform-android": 15.0.1
     "@react-native-community/cli-platform-ios": 15.0.1
@@ -8249,7 +8249,7 @@ __metadata:
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/web": "workspace:*"
     "@tsconfig/react-native": ^3.0.2
-    "@types/react": ^18.2.39
+    "@types/react": ^19.1.2
     "@types/react-native": ^0.72.3
     "@typescript-eslint/eslint-plugin": "*"
     "@typescript-eslint/parser": "*"
@@ -8259,7 +8259,7 @@ __metadata:
     eslint-plugin-prettier: "*"
     get-yarn-workspaces: ^1.0.2
     npm-check-updates: "*"
-    pod-install: ^0.2.0
+    pod-install: ^0.3.5
     prettier: "*"
     prettier-plugin-organize-imports: ^3.2.0
     react: 19.0.0
@@ -8268,14 +8268,14 @@ __metadata:
     react-native-fingerprint-scanner: "standardnotes/react-native-fingerprint-scanner#b55d1c0ca627a87a130f758603f12911fbac200f"
     react-native-flag-secure-android: "standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852"
     react-native-fs: ^2.20.0
-    react-native-iap: ^12.15.4
+    react-native-iap: ^12.16.2
     react-native-keychain: "standardnotes/react-native-keychain#4fd687461cecfa26d482d820ee43c0de61b964d4"
     react-native-mmkv: ^3.2.0
     react-native-privacy-snapshot: "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe"
     react-native-share: ^12.0.9
-    react-native-store-review: ^0.4.1
+    react-native-store-review: ^0.4.3
     react-native-version-info: ^1.1.1
-    react-native-webview: 13.12.2
+    react-native-webview: 13.13.5
     typescript: "*"
   languageName: unknown
   linkType: soft
@@ -9643,6 +9643,15 @@ __metadata:
     "@types/prop-types": "*"
     csstype: ^3.0.2
   checksum: a5198857165feddcbfc7d33e3322460ac62b8894d702414496a825b0c82272911ec33a42ef7c9d623a59308070eef4dfee6ff834b0674aa3f87eeb644196ee3b
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^19.1.2":
+  version: 19.1.2
+  resolution: "@types/react@npm:19.1.2"
+  dependencies:
+    csstype: ^3.0.2
+  checksum: 5a911a2c84be0c9451bb8a7c75c907af1f52afbb4d51b0d62e7516a9b0b1e63c3c1cdc35b79bfc6e66176c76cfff9d43023a781cd3dc59e2744715ced7d7e7c4
   languageName: node
   linkType: hard
 
@@ -23365,12 +23374,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pod-install@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "pod-install@npm:0.2.0"
+"pod-install@npm:^0.3.5":
+  version: 0.3.7
+  resolution: "pod-install@npm:0.3.7"
   bin:
     pod-install: build/index.js
-  checksum: ecfe94d1285b42dd56fb03b9d1850d805f5626b8030acd32f2cb9ea6902e678deaefbb8475d2e307d0a6311159c6b5deea173adcc045c5ff6d58b377b0dcf1b8
+  checksum: a52fb5ff0e62c22d70b0979c9c8d8705b44407c717543d835930a17dc6e31ef94d6ccd6dcaeb7688927f2098d4611f4d76deeb22ff307dae64892fdc867bcc84
   languageName: node
   linkType: hard
 
@@ -24224,9 +24233,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-iap@npm:^12.15.4":
-  version: 12.15.4
-  resolution: "react-native-iap@npm:12.15.4"
+"react-native-iap@npm:^12.16.2":
+  version: 12.16.2
+  resolution: "react-native-iap@npm:12.16.2"
   peerDependencies:
     expo: ">=47.0.0"
     react: ">=16.13.1"
@@ -24234,7 +24243,7 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: ba91ac5dbe15b016b860c43bd896f52be6bf48b731c985300244c3211bbb8fe2897f8615a5d9b0dfe49745c66838bf0ae2e58b79b8613e125562714d78f637be
+  checksum: 8d107815f3e352da9bed3aabed8fee519864b25393bfc63c5c6a6ff9ab0d7e0fd187484218279a57f579ebae977072c9674cec322cfba2e46935e14a7cae84d9
   languageName: node
   linkType: hard
 
@@ -24272,10 +24281,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-store-review@npm:^0.4.1":
-  version: 0.4.1
-  resolution: "react-native-store-review@npm:0.4.1"
-  checksum: e6bbd133ba43903f21bc5b9787dd82c62b07ad9bc492a5b60cf4db86cba64d8bf83571696f83d4ef8d37a8d81ef26bfd00962a0490b22f664778e62a18ebf1d9
+"react-native-store-review@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "react-native-store-review@npm:0.4.3"
+  checksum: e889a922ccc5a055748430b6c7872d191fbffa61126c075fd5b861e450e6e1ad7ebf2248bc92884cefd3f58dbd0fa07b36ea2ea547f3b7b2c594a0fbe9ab18d5
   languageName: node
   linkType: hard
 
@@ -24288,16 +24297,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-webview@npm:13.12.2":
-  version: 13.12.2
-  resolution: "react-native-webview@npm:13.12.2"
+"react-native-webview@npm:13.13.5":
+  version: 13.13.5
+  resolution: "react-native-webview@npm:13.13.5"
   dependencies:
     escape-string-regexp: ^4.0.0
     invariant: 2.2.4
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: d84b2e2e75dc484eb40f8e285607b9686693f2d31e95802e2b358dc0820bcc294b438a77174eba157c31d95675c962c61c94885629af999416ad1355e9618fe0
+  checksum: 7f3bce1b37d6be9b2f07f0f7481181d5344f9e58022645b0d20dc58cd66056bb6efecacb231963959db6283cc66d977593db62a403c7c151f83568f83041c2eb
   languageName: node
   linkType: hard
 

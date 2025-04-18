@@ -47,7 +47,6 @@ PODS:
     - React-RCTText (= 0.78.1)
     - React-RCTVibration (= 0.78.1)
   - React-callinvoker (0.78.1)
-  - React-Codegen (0.1.0)
   - React-Core (0.78.1):
     - glog
     - hermes-engine
@@ -1264,7 +1263,7 @@ PODS:
     - Yoga
   - react-native-version-info (1.1.1):
     - React-Core
-  - react-native-webview (13.12.2):
+  - react-native-webview (13.13.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1572,7 +1571,7 @@ PODS:
     - React-logger (= 0.78.1)
     - React-perflogger (= 0.78.1)
     - React-utils (= 0.78.1)
-  - RNCAsyncStorage (1.19.3):
+  - RNCAsyncStorage (2.1.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1597,19 +1596,18 @@ PODS:
     - React-Core
   - RNFS (2.20.0):
     - React-Core
-  - RNIap (12.15.4):
+  - RNIap (12.16.2):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
-    - React-Codegen
     - React-Core
     - ReactCommon/turbomodule/core
   - RNKeychain (8.1.2):
     - React-Core
-  - RNNotifee (7.8.0):
+  - RNNotifee (9.1.8):
     - React-Core
-    - RNNotifee/NotifeeCore (= 7.8.0)
-  - RNNotifee/NotifeeCore (7.8.0):
+    - RNNotifee/NotifeeCore (= 9.1.8)
+  - RNNotifee/NotifeeCore (9.1.8):
     - React-Core
   - RNPrivacySnapshot (1.0.0):
     - React-Core
@@ -1634,7 +1632,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNStoreReview (0.4.1):
+  - RNStoreReview (0.4.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1748,7 +1746,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - React-Codegen
     - SocketRocket
     - TrustKit
 
@@ -1929,7 +1926,6 @@ SPEC CHECKSUMS:
   RCTTypeSafety: 2f0bc11f9584fde4c7e6d8b26577c97681051c00
   React: e6035d3a639f6668a18429aaf2fdc0c12b1e7a81
   React-callinvoker: 3740fb1716428dabd205486c818ce6a5999e7f11
-  React-Codegen: 4b8b4817cea7a54b83851d4c1f91f79aa73de30a
   React-Core: d12b31b149ff71e5054dec137d651a9955569321
   React-CoreModules: e392c711449f260d9ba7556a264ef5cfacdab3f9
   React-cxxreact: dcb3c48b13b298a270edefb24d2a9211809ff147
@@ -1957,7 +1953,7 @@ SPEC CHECKSUMS:
   react-native-fingerprint-scanner: 562585260768cad51ae48e4b505d28c8731aecfa
   react-native-mmkv: 24917f0685641ccfd37c9b7004b26c00551128be
   react-native-version-info: f0b04e16111c4016749235ff6d9a757039189141
-  react-native-webview: 23fcf9ef6e6d59c457b50c05ad3b09d9d802f5d4
+  react-native-webview: 5095dd03fc98a529e44a6bb81aed21062b5f879e
   React-NativeModulesApple: af0571ac115d09c9a669ed45ce6a4ca960598a2d
   React-perflogger: 26d07766b033f84559bd520e949453dba8bf1cd8
   React-performancetimeline: 0f3e0b6e2152951257bd8c90f95d527cf4316fa8
@@ -1986,15 +1982,15 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 5da0393968ce2767e79f9fda7caa108592b9b63e
   ReactCodegen: 82d5bc3e3ad2c8496848554cb2d3b64b03b53420
   ReactCommon: 269d0d36423fad044eaea49900e88684ac670a16
-  RNCAsyncStorage: 44f2e3f1d579168e910be35e00fda74f701e9664
+  RNCAsyncStorage: 62fdbd7e63312228d4868779026248c2677911e1
   RNFileViewer: 4b5d83358214347e4ab2d4ca8d5c1c90d869e251
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
-  RNIap: 5928184ff16db28ca308b071403c54cf0d462f74
+  RNIap: d73cedfb73b396cad75f90f4ed7d64352d6381cf
   RNKeychain: df33ae4d27df06622fc14190b790ba8749f6be76
-  RNNotifee: c29575665bc5af1a664c1459560d082a04b8cf79
+  RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNPrivacySnapshot: ccad3a548338c2f526bb7b1789af3fb0618b7d1d
   RNShare: 56b5431c60e1e9ee167191f4f327471af1c2941a
-  RNStoreReview: f8461ee7658e714eb2788326183a891317b31cb3
+  RNStoreReview: f1df4978ae22ec08d9c62d59437a1d5f056d0ccf
   SNReactNative: faef9f5eaf0a5ddb64dd5a82e7aa8792d0ee050e
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   TrustKit: 073855e3adecd317417bda4ac9e9ac54a2e3b9f2
