@@ -1,6 +1,6 @@
-import Desktop from '../../desktop/package.json' assert { type: 'json' }
-import Mobile from '../../mobile/package.json' assert { type: 'json' }
-import Web from '../../web/package.json' assert { type: 'json' }
+import Desktop from '../../desktop/package.json' with { type: 'json' }
+import Mobile from '../../mobile/package.json' with { type: 'json' }
+import Web from '../../web/package.json' with { type: 'json' }
 import { writeJson, ensureDirExists } from '../../../scripts/ScriptUtils.mjs'
 
 const CdnUrl = 'https://github.com/standardnotes/app/releases/download/'

@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/desktop",
   "main": "./app/dist/index.js",
-  "version": "3.110.109",
+  "version": "3.110.111",
   "license": "AGPL-3.0",
   "author": "Standard Notes.",
   "private": true,
@@ -43,7 +43,7 @@
     "compare-versions": "^6.1.0",
     "decrypt": "github:standardnotes/decrypt#master",
     "dotenv": "^16.3.1",
-    "electron": "31.1.0",
+    "electron": "35.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
     "fs-extra": "^11.1.1",
@@ -54,8 +54,8 @@
   "devDependencies": {
     "@babel/core": "*",
     "@babel/preset-env": "*",
-    "@electron/notarize": "^2.1.0",
-    "@electron/rebuild": "3.6.0",
+    "@electron/notarize": "^3.0.0",
+    "@electron/rebuild": "3.7.2",
     "@types/fs-extra": "^11.0.1",
     "@types/lodash": "^4.14.189",
     "@types/mime-types": "^2.1.1",
