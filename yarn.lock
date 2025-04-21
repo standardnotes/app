@@ -3314,7 +3314,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/notarize@npm:2.1.0, @electron/notarize@npm:^2.1.0":
+"@electron/notarize@npm:2.1.0":
   version: 2.1.0
   resolution: "@electron/notarize@npm:2.1.0"
   dependencies:
@@ -3322,6 +3322,16 @@ __metadata:
     fs-extra: ^9.0.1
     promise-retry: ^2.0.1
   checksum: ac58f39f4b2370ea929837cef50ebeedb4108ed9bd2a3fef0b89254891014a745da2db703b18b8e0d097a17000cc8fa984bcff3f087368986cb4a59753365a2f
+  languageName: node
+  linkType: hard
+
+"@electron/notarize@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "@electron/notarize@npm:3.0.1"
+  dependencies:
+    debug: ^4.4.0
+    promise-retry: ^2.0.1
+  checksum: c47a1d973748a97e64609ca5cf880d748f178125b57bd5af521b950f042c2fc0435af1f96f6b3a5eec0653c843b703315a37437bd710b6b20ab1488efc8dc545
   languageName: node
   linkType: hard
 
@@ -7382,7 +7392,7 @@ __metadata:
   dependencies:
     "@babel/core": "*"
     "@babel/preset-env": "*"
-    "@electron/notarize": ^2.1.0
+    "@electron/notarize": ^3.0.0
     "@electron/rebuild": 3.6.0
     "@electron/remote": ^2.1.2
     "@standardnotes/domain-core": ^1.40.0
@@ -7401,7 +7411,7 @@ __metadata:
     copy-webpack-plugin: ^11.0.0
     decrypt: "github:standardnotes/decrypt#master"
     dotenv: ^16.3.1
-    electron: 31.1.0
+    electron: 35.2.0
     electron-builder: ^24.9.1
     electron-log: ^4.4.8
     electron-updater: ^6.1.4
@@ -9092,12 +9102,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.9.0":
-  version: 20.14.9
-  resolution: "@types/node@npm:20.14.9"
+"@types/node@npm:^22.7.7":
+  version: 22.14.1
+  resolution: "@types/node@npm:22.14.1"
   dependencies:
-    undici-types: ~5.26.4
-  checksum: 5e9eda1ac8c6cc6bcd1063903ae195eaede9aad1bdad00408a919409cfbcdd2d6535aa3d50346f0d385528f9e03dafc7d1b3bad25aedb1dcd79a6ad39d06c35d
+    undici-types: ~6.21.0
+  checksum: e22363f40ac8290da2bb5261c2b348241fd93b000908cefd3c56575df9d4f6b8d102fc8631275eac7ec4a9e0ac4f38f01c9d8104ebbda76c936aef96fd1e55f3
   languageName: node
   linkType: hard
 
@@ -13380,6 +13390,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"debug@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "debug@npm:4.4.0"
+  dependencies:
+    ms: ^2.1.3
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: fb42df878dd0e22816fc56e1fdca9da73caa85212fbe40c868b1295a6878f9101ae684f4eeef516c13acfc700f5ea07f1136954f43d4cd2d477a811144136479
+  languageName: node
+  linkType: hard
+
 "decamelize-keys@npm:^1.1.0":
   version: 1.1.1
   resolution: "decamelize-keys@npm:1.1.1"
@@ -14184,16 +14206,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:31.1.0":
-  version: 31.1.0
-  resolution: "electron@npm:31.1.0"
+"electron@npm:35.2.0":
+  version: 35.2.0
+  resolution: "electron@npm:35.2.0"
   dependencies:
     "@electron/get": ^2.0.0
-    "@types/node": ^20.9.0
+    "@types/node": ^22.7.7
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 697fe7530680cda23619b81972cc3b613fdf23c191fbe3a6e4abbc932453601bdd21942e59379e0bd171307bfedd3a03ac759877ebc0ea2b7ccd3db8cf748e4b
+  checksum: 15227e20e1a62408e165717b278b0bca8324da5f7bc2424fe171a9259adc098b51650a4e24ef90f787b1fa52ec404635233cabc9a2ed73543576d051ae29ecdd
   languageName: node
   linkType: hard
 
@@ -27122,6 +27144,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 3192ef6f3fd5df652f2dc1cd782b49d6ff14dc98e5dced492aa8a8c65425227da5da6aafe22523c67f035a272c599bb89cfe803c1db6311e44bed3042fc25487
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: 46331c7d6016bf85b3e8f20c159d62f5ae471aba1eb3dc52fff35a0259d58dcc7d592d4cc4f00c5f9243fa738a11cfa48bd20203040d4a9e6bc25e807fab7ab3
   languageName: node
   linkType: hard
 
