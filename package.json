@@ -43,7 +43,7 @@
     "@types/styled-components-react-native/@types/react": "17.0.2",
     "@types/react-native-vector-icons/@types/react": "17.0.2",
     "@types/react-native/@types/react": "17.0.2",
-    "@types/hoist-non-react-statics/@types/react": "17.0.2"
+    "@types/hoist-non-react-statics/@types/react": "17.0.2",
     "node-abi": "^4.2.0"
   },
   "dependencies": {
