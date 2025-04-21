@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.509](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.508...@standardnotes/clipper@1.1.509) (2025-04-21)
+
+**Note:** Version bump only for package @standardnotes/clipper
+
 ## [1.1.508](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.507...@standardnotes/clipper@1.1.508) (2025-04-21)
 
 **Note:** Version bump only for package @standardnotes/clipper
