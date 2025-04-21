@@ -43,7 +43,7 @@
     "compare-versions": "^6.1.0",
     "decrypt": "github:standardnotes/decrypt#master",
     "dotenv": "^16.3.1",
-    "electron": "35.2.0",
+    "electron": "34.1.1",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
     "fs-extra": "^11.1.1",
