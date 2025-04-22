@@ -24,14 +24,6 @@ export function NoteFromSelectionPlugin({ currentNote }: { currentNote: SNNote }
           json,
         )
         await application.linkingController.linkItems(currentNote, insertedNote)
-        // editor.update(
-        //   () => {
-        //     ed
-        //   },
-        //   {
-        //     discrete: true,
-        //   },
-        // )
         editor.dispatchCommand(INSERT_BUBBLE_COMMAND, insertedNote.uuid)
       } catch (error) {
         console.error(error)
