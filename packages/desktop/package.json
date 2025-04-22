@@ -55,7 +55,7 @@
     "@babel/core": "*",
     "@babel/preset-env": "*",
     "@electron/notarize": "^3.0.0",
-    "@electron/rebuild": "3.7.2",
+    "@electron/rebuild": "3.6.0",
     "@types/fs-extra": "^11.0.1",
     "@types/lodash": "^4.14.189",
     "@types/mime-types": "^2.1.1",
