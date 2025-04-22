@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.195.31",
+  "version": "3.195.32",
   "license": "AGPL-3.0",
   "main": "dist/app.js",
   "author": "Standard Notes",
