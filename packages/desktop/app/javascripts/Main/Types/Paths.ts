@@ -6,9 +6,9 @@ import index from '../../../index.html'
 
 function url(fileName: string): string {
   if ('APP_RELATIVE_PATH' in process.env) {
-    return path.join('file://', __dirname, process.env.APP_RELATIVE_PATH as string, fileName)
+    return 'file://' + path.resolve(__dirname, process.env.APP_RELATIVE_PATH as string, fileName)
   }
-  return path.join('file://', __dirname, fileName)
+  return 'file://' + path.resolve(__dirname, fileName)
 }
 
 function filePath(fileName: string): string {
