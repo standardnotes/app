@@ -28,6 +28,9 @@ import {
   AlertService,
   ProtectionsClientInterface,
   LocalPrefKey,
+  NoteContent,
+  noteTypeForEditorIdentifier,
+  ContentReference,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
@@ -407,5 +410,28 @@ export class NotesController
 
   private getSelectedNotesList(): SNNote[] {
     return Object.values(this.selectedNotes)
+  }
+
+  async createNoteWithContent(
+    editorIdentifier: string,
+    title: string,
+    text: string,
+    references: ContentReference[] = [],
+  ): Promise<SNNote> {
+    const noteType = noteTypeForEditorIdentifier(editorIdentifier)
+    const selectedTag = this.navigationController.selected
+    const templateNote = this.items.createTemplateItem<NoteContent, SNNote>(ContentType.TYPES.Note, {
+      title,
+      text,
+      references,
+      noteType,
+      editorIdentifier,
+    })
+    const note = await this.mutator.insertItem<SNNote>(templateNote)
+    if (selectedTag instanceof SNTag) {
+      const shouldAddTagHierarchy = this.preferences.getValue(PrefKey.NoteAddToParentFolders, true)
+      await this.mutator.addTagToNote(templateNote, selectedTag, shouldAddTagHierarchy)
+    }
+    return note
   }
 }

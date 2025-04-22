@@ -800,6 +800,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   triggerSyncOnAction = () => {
+    if (!this.controller) {
+      // component might've already unmounted
+      return
+    }
     this.controller.syncNow()
   }
 
