@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.196.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.33...@standardnotes/web@3.196.0) (2025-04-23)
+
+### Features
+
+* Add toolbar option to create new note from selection in a Super note ([#2896](https://github.com/standardnotes/app/issues/2896)) (skip e2e) ([b32a866](https://github.com/standardnotes/app/commit/b32a866f33c17cd46fc832a63d318767930f3b05))
+
 ## [3.195.33](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.32...@standardnotes/web@3.195.33) (2025-04-23)
 
 **Note:** Version bump only for package @standardnotes/web
