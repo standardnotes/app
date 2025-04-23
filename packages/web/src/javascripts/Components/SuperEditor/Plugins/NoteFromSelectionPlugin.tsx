@@ -1,6 +1,6 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useApplication } from '../../ApplicationProvider'
 import { NativeFeatureIdentifier, SNNote } from '@standardnotes/snjs'
 import { $generateJSONFromSelectedNodes } from '@lexical/clipboard'
@@ -12,7 +12,6 @@ export const CREATE_NOTE_FROM_SELECTION_COMMAND = createCommand<void>('CREATE_NO
 export function NoteFromSelectionPlugin({ currentNote }: { currentNote: SNNote }) {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
-  const [converter] = useState(() => new HeadlessSuperConverter())
 
   useEffect(() => {
     async function insertAndLinkNewNoteFromJSON(json: string) {
@@ -40,20 +39,14 @@ export function NoteFromSelectionPlugin({ currentNote }: { currentNote: SNNote }
           return true
         }
         const { nodes } = $generateJSONFromSelectedNodes(editor, selection)
+        const converter = new HeadlessSuperConverter()
         const json = converter.getStringifiedJSONFromSerializedNodes(nodes)
         insertAndLinkNewNoteFromJSON(json).catch(console.error)
         return true
       },
       COMMAND_PRIORITY_EDITOR,
     )
-  }, [
-    application.itemListController,
-    application.linkingController,
-    application.notesController,
-    converter,
-    currentNote,
-    editor,
-  ])
+  }, [application.itemListController, application.linkingController, application.notesController, currentNote, editor])
 
   return null
 }
