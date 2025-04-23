@@ -77,6 +77,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { $isDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
 import LinkViewer from './LinkViewer'
 import { OPEN_FILE_UPLOAD_MODAL_COMMAND } from '../EncryptedFilePlugin/FilePlugin'
+import { CREATE_NOTE_FROM_SELECTION_COMMAND } from '../NoteFromSelectionPlugin'
 
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
@@ -110,8 +111,8 @@ const blockTypeToIconName = {
   quote: 'quote',
 }
 
-interface ToolbarButtonProps extends ComponentPropsWithoutRef<'button'> {
-  name: string
+interface ToolbarButtonProps extends Omit<ComponentPropsWithoutRef<'button'>, 'name'> {
+  name: NonNullable<ReactNode>
   active?: boolean
   iconName?: string
   children?: ReactNode
@@ -222,6 +223,8 @@ const ToolbarPlugin = () => {
   const [isCode, setIsCode] = useState(false)
   const [isHighlight, setIsHighlight] = useState(false)
 
+  const [hasNonCollapsedSelection, setHasNonCollapsedSelection] = useState(false)
+
   const [linkNode, setLinkNode] = useState<LinkNode | null>(null)
   const [linkTextNode, setLinkTextNode] = useState<TextNode | null>(null)
   const [isEditingLink, setIsEditingLink] = useState(false)
@@ -311,6 +314,8 @@ const ToolbarPlugin = () => {
     if (!$isRangeSelection(selection)) {
       return
     }
+
+    setHasNonCollapsedSelection(!selection.isCollapsed())
 
     const anchorNode = selection.anchor.getNode()
     const focusNode = selection.focus.getNode()
@@ -795,6 +800,23 @@ const ToolbarPlugin = () => {
                 <Icon type="add" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
                 <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
               </ToolbarButton>
+            )}
+            {hasNonCollapsedSelection && (
+              <ToolbarButton
+                name={
+                  <>
+                    <div className="mb-1 font-semibold">Create new note from selection</div>
+                    <div className="max-w-[35ch] text-xs">
+                      Creates a new note containing the current selection and replaces the selection with a link to the
+                      new note.
+                    </div>
+                  </>
+                }
+                iconName="notes"
+                onSelect={() => {
+                  editor.dispatchCommand(CREATE_NOTE_FROM_SELECTION_COMMAND, undefined)
+                }}
+              />
             )}
           </Toolbar>
           {isMobile && (

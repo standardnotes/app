@@ -40,6 +40,7 @@ import { useLocalPreference } from '@/Hooks/usePreference'
 import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
 import { EditorEventSource } from '@/Types/EditorEventSource'
 import { ElementIds } from '@/Constants/ElementIDs'
+import { NoteFromSelectionPlugin } from './Plugins/NoteFromSelectionPlugin'
 
 export const SuperNotePreviewCharLimit = 160
 
@@ -171,6 +172,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
     (itemUuid: string) => {
       const item = application.items.findItem(itemUuid)
       if (item) {
+        // TODO: We should only unlink item if all link bubbles to that item have been removed from the note
         linkingController.unlinkItemFromSelectedItem(item).catch(console.error)
       }
     },
@@ -272,6 +274,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 {readonly === undefined && <ReadonlyPlugin note={note.current} />}
                 <AutoFocusPlugin isEnabled={controller.isTemplateNote} />
                 <BlockPickerMenuPlugin />
+                <NoteFromSelectionPlugin currentNote={note.current} />
               </BlocksEditor>
             </BlocksEditorComposer>
           </FilesControllerProvider>

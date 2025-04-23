@@ -111,7 +111,7 @@ export class NoteViewController implements ItemViewControllerInterface {
 
     this.needsInit = false
 
-    const addTagHierarchy = this.preferences.getValue(PrefKey.NoteAddToParentFolders, true)
+    const shouldAddTagHierarchy = this.preferences.getValue(PrefKey.NoteAddToParentFolders, true)
 
     if (!this.item) {
       log(LoggingDomain.NoteView, 'Initializing as template note')
@@ -141,7 +141,7 @@ export class NoteViewController implements ItemViewControllerInterface {
 
       if (this.defaultTagUuid) {
         const tag = this.items.findItem(this.defaultTagUuid) as SNTag
-        await this.mutator.addTagToNote(note, tag, addTagHierarchy)
+        await this.mutator.addTagToNote(note, tag, shouldAddTagHierarchy)
       }
 
       this.notifyObservers(this.item, PayloadEmitSource.InitialObserverRegistrationPush)
