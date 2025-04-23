@@ -15,6 +15,7 @@ platform :ios do
   end
 
   def build_ios(scheme)
+    xcversion(version: "16.1")
     increment_version_number(
       version_number: ENV['PACKAGE_VERSION'],
       xcodeproj: 'ios/StandardNotes.xcodeproj'

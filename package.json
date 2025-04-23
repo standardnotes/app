@@ -44,8 +44,6 @@
     "@types/react-native-vector-icons/@types/react": "17.0.2",
     "@types/react-native/@types/react": "17.0.2",
     "@types/hoist-non-react-statics/@types/react": "17.0.2",
-    "@lexical/clipboard@0.23.1": "patch:@lexical/clipboard@npm:0.23.1#.yarn/patches/@lexical-clipboard-npm-0.23.1-961671e399.patch",
-    "@lexical/rich-text@0.23.1": "patch:@lexical/rich-text@npm:0.23.1#.yarn/patches/@lexical-rich-text-npm-0.23.1-a9f13154ae.patch",
     "node-abi": "^4.2.0"
   },
   "dependencies": {

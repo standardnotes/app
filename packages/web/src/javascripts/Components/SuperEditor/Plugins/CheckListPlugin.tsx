@@ -1,4 +1,4 @@
-import { $isListItemNode, INSERT_CHECK_LIST_COMMAND, insertList, ListNode } from '@lexical/list'
+import { $insertList, $isListItemNode, INSERT_CHECK_LIST_COMMAND, ListNode } from '@lexical/list'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { calculateZoomLevel, isHTMLElement, mergeRegister } from '@lexical/utils'
 import {
@@ -23,7 +23,7 @@ export function CheckListPlugin(): null {
       editor.registerCommand(
         INSERT_CHECK_LIST_COMMAND,
         () => {
-          insertList(editor, 'check')
+          $insertList('check')
           return true
         },
         COMMAND_PRIORITY_LOW,
