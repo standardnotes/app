@@ -801,23 +801,22 @@ const ToolbarPlugin = () => {
                 <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
               </ToolbarButton>
             )}
-            {hasNonCollapsedSelection && (
-              <ToolbarButton
-                name={
-                  <>
-                    <div className="mb-1 font-semibold">Create new note from selection</div>
-                    <div className="max-w-[35ch] text-xs">
-                      Creates a new note containing the current selection and replaces the selection with a link to the
-                      new note.
-                    </div>
-                  </>
-                }
-                iconName="notes"
-                onSelect={() => {
-                  editor.dispatchCommand(CREATE_NOTE_FROM_SELECTION_COMMAND, undefined)
-                }}
-              />
-            )}
+            <ToolbarButton
+              name={
+                <>
+                  <div className="mb-1 font-semibold">Create new note from selection</div>
+                  <div className="max-w-[35ch] text-xs">
+                    Creates a new note containing the current selection and replaces the selection with a link to the
+                    new note.
+                  </div>
+                </>
+              }
+              iconName="notes"
+              onSelect={() => {
+                editor.dispatchCommand(CREATE_NOTE_FROM_SELECTION_COMMAND, undefined)
+              }}
+              disabled={!hasNonCollapsedSelection}
+            />
           </Toolbar>
           {isMobile && (
             <button
