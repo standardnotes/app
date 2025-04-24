@@ -19,6 +19,7 @@ const StyledTooltip = ({
   type = 'label',
   side,
   documentElement,
+  closeOnClick = true,
   ...props
 }: {
   children: ReactNode
@@ -30,6 +31,7 @@ const StyledTooltip = ({
   type?: TooltipStoreProps['type']
   side?: PopoverSide
   documentElement?: HTMLElement
+  closeOnClick?: boolean
 } & Partial<TooltipOptions>) => {
   const [forceOpen, setForceOpen] = useState<boolean | undefined>()
 
@@ -69,7 +71,11 @@ const StyledTooltip = ({
   const clickProps = isMobile
     ? {}
     : {
-        onClick: () => tooltip.hide(),
+        onClick: () => {
+          if (closeOnClick) {
+            tooltip.hide()
+          }
+        },
       }
 
   useEffect(() => {

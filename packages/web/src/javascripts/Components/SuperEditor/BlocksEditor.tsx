@@ -29,7 +29,6 @@ import ToolbarPlugin from './Plugins/ToolbarPlugin/ToolbarPlugin'
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import RemoteImagePlugin from './Plugins/RemoteImagePlugin/RemoteImagePlugin'
 import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
-import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
@@ -134,9 +133,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <RemoveBrokenTablesPlugin />
       <RemoteImagePlugin />
       <CodeOptionsPlugin />
-      <SuperSearchContextProvider>
-        <SearchPlugin />
-      </SuperSearchContextProvider>
+      <SearchPlugin />
       <DatetimePlugin />
       <PasswordPlugin />
       <AutoLinkPlugin />
