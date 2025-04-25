@@ -105,20 +105,20 @@ export function searchInElement(element: HTMLElement, searchQuery: string, isCas
       }
 
       // we have a potential start but query is not fully matched yet
-      if (queryCharIndex < indexOfLastCharOfQuery && startContainer && startOffset > -1) {
+      if (queryCharIndex < indexOfLastCharOfQuery) {
         queryCharIndex++
       }
 
       // we dont have an end yet so we keep the latest query index so that it
       // can be carried forward to the next node.
-      if (queryCharIndex > -1 && startContainer && !endContainer) {
+      if (queryCharIndex > -1 && !endContainer) {
         queryCharIndexToContinueFrom = queryCharIndex
       } else {
         // reset query index since we found the end
         queryCharIndexToContinueFrom = -1
       }
 
-      if (startContainer && startOffset > -1 && endContainer && endOffset > -1) {
+      if (endContainer && endOffset > -1) {
         // create range since we have a full match
         const range = new Range()
         range.setStart(startContainer, startOffset)
