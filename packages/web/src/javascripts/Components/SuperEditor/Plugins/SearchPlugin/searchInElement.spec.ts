@@ -51,7 +51,7 @@ describe('searchInElement', () => {
   })
 
   describe('basic search', () => {
-    test('scenario 1', () => {
+    test('search for word in single node, case-insensitive', () => {
       const div = singularSpanInDiv()
       const span = div.children[0]
       const results = searchInElement(div, 'hello', false)
@@ -60,7 +60,7 @@ describe('searchInElement', () => {
       expectRange(results[0], [node, 0, node, 5])
     })
 
-    test('scenario 2', () => {
+    test('search for char in single node, case-insensitive', () => {
       const div = createElement('div')
       const span = createElement('span', { text: 'l' })
       div.append(span)
@@ -89,7 +89,7 @@ describe('searchInElement', () => {
   })
 
   describe('multiple in one node', () => {
-    test('scenario 1', () => {
+    test('search for l in single node which has multiple occurances of it, case-insensitive', () => {
       const span = createElement('span', { text: 'Elelelo' })
       const node = span.childNodes[0]
 
@@ -100,7 +100,7 @@ describe('searchInElement', () => {
       expectRange(results[2], [node, 5, node, 6])
     })
 
-    test('scenario 2', () => {
+    test('search for e in single node which has multiple occurances of it, case-sensitive', () => {
       const span = createElement('span', { text: 'Elelelo' })
       const node = span.childNodes[0]
 
@@ -110,7 +110,7 @@ describe('searchInElement', () => {
       expectRange(results[1], [node, 4, node, 5])
     })
 
-    test('scenario 3', () => {
+    test('search for e in single node where all chars are e but varying case, case-insensitive', () => {
       const span = createElement('span', { text: 'EeEeEe' })
       const node = span.childNodes[0]
 
@@ -124,7 +124,7 @@ describe('searchInElement', () => {
       expectRange(results[5], [node, 5, node, 6])
     })
 
-    test('scenario 4', () => {
+    test('search for e in single node where all chars are e but varying case, case-sensitive', () => {
       const span = createElement('span', { text: 'EeEeEe' })
       const node = span.childNodes[0]
 
@@ -136,7 +136,7 @@ describe('searchInElement', () => {
     })
   })
 
-  test('multiple in multiple nodes', () => {
+  test('search for e in multiple nodes which have multiple occurances of it, case-insensitive', () => {
     const div = createElement('div')
     const span1 = createElement('span', { text: 'Elloello' })
     const span2 = createElement('span', { text: 'Olleolle' })
@@ -153,7 +153,7 @@ describe('searchInElement', () => {
   })
 
   describe('Single across multiple nodes', () => {
-    test('scenario 1', () => {
+    test('search for "Hello World" across 2 nodes, where they combine to make up the whole query, case-insensitive', () => {
       const div = createElement('div')
       const span1 = createElement('span', { text: 'Hello ' })
       const span2 = createElement('span', { text: 'World' })
@@ -164,7 +164,7 @@ describe('searchInElement', () => {
       expectRange(results[0], [span1.childNodes[0], 0, span2.childNodes[0], 5])
     })
 
-    test('scenario 2', () => {
+    test('search for "lo wo" across 3 nodes, case-insensitive', () => {
       const div = createElement('div')
       const span1 = createElement('span', { text: 'Hello' })
       const span2 = createElement('span', { text: ' ' })
@@ -176,7 +176,7 @@ describe('searchInElement', () => {
       expectRange(results[0], [span1.childNodes[0], 3, span3.childNodes[0], 2])
     })
 
-    test('scenario 3', () => {
+    test('search for "lo wo" across 5 nodes with varying case, case-insensitive', () => {
       const div = createElement('div')
       const span1 = createElement('span', { text: 'Hel' })
       const span2 = createElement('span', { text: 'lo' })
@@ -190,7 +190,7 @@ describe('searchInElement', () => {
       expectRange(results[0], [span2.childNodes[0], 0, span4.childNodes[0], 2])
     })
 
-    test('scenario 4', () => {
+    test('search for "lo wo" across 5 nodes with varying case, case-sensitive', () => {
       const div = createElement('div')
       const span1 = createElement('span', { text: 'Hel' })
       const span2 = createElement('span', { text: 'lo' })
@@ -205,7 +205,7 @@ describe('searchInElement', () => {
   })
 
   describe('Multiple across multiple nodes', () => {
-    test('scenario 1', () => {
+    test('search for "Hello" across 5 nodes where some combine to make up the whole query, case-insensitive', () => {
       const div = createElement('div')
       const span1 = createElement('span', { text: 'Hel' })
       const span2 = createElement('span', { text: 'lo' })
@@ -220,7 +220,7 @@ describe('searchInElement', () => {
       expectRange(results[1], [span4.childNodes[0], 0, span5.childNodes[0], 3])
     })
 
-    test('scenario 2', () => {
+    test('search for "Hello" across 5 nodes where one node has the whole query and some combine to make up the whole query, case-insensitive', () => {
       const div = createElement('div')
       const span1 = createElement('span', { text: 'Hello' })
       const span2 = createElement('span', { text: ' ' })
@@ -234,7 +234,7 @@ describe('searchInElement', () => {
       expectRange(results[1], [span3.childNodes[0], 0, span4.childNodes[0], 3])
     })
 
-    test('scenario 3', () => {
+    test('search for "Hello" across 5 nodes where one node has the whole query and some combine to make up the whole query, case-sensitive', () => {
       const div = createElement('div')
       const span1 = createElement('span', { text: 'hello' })
       const span2 = createElement('span', { text: ' ' })
@@ -249,15 +249,28 @@ describe('searchInElement', () => {
   })
 
   describe('Repeating characters', () => {
-    test('scenario 1', () => {
-      const span = createElement('span', { text: 'ttest' })
+    test('search for word in 1 node where it is preceding by the same char as the start of the query, case-insensitive', () => {
+      let span = createElement('span', { text: 'ttest' })
 
-      const results = searchInElement(span, 'test', false)
+      let results = searchInElement(span, 'test', false)
+      expect(results.length).toBe(1)
+      expectRange(results[0], [span.childNodes[0], 1, span.childNodes[0], 5])
+
+      span = createElement('span', { text: 'ffast' })
+
+      results = searchInElement(span, 'fast', false)
       expect(results.length).toBe(1)
       expectRange(results[0], [span.childNodes[0], 1, span.childNodes[0], 5])
     })
 
-    test('scenario 2', () => {
+    test('search for word in 1 node where it is preceding by the same char as the start of the query, case-sensitive', () => {
+      const span = createElement('span', { text: 'tTest' })
+
+      const results = searchInElement(span, 'test', true)
+      expect(results.length).toBe(0)
+    })
+
+    test('search for word in 1 node where it is preceding by the same char as the start of the query multiple times, case-insensitive', () => {
       const span = createElement('span', { text: 'ttestttest' })
 
       const results = searchInElement(span, 'test', false)
@@ -266,7 +279,7 @@ describe('searchInElement', () => {
       expectRange(results[1], [span.childNodes[0], 6, span.childNodes[0], 10])
     })
 
-    test('scenario 3', () => {
+    test('search for word in 1 node where it is preceding by the same char as the start of the query multiple times, case-insensitive', () => {
       const span = createElement('span', { text: 'ttesttTest' })
 
       const results = searchInElement(span, 'test', true)
@@ -274,7 +287,7 @@ describe('searchInElement', () => {
       expectRange(results[0], [span.childNodes[0], 1, span.childNodes[0], 5])
     })
 
-    test('scenario 4', () => {
+    test('search for word across 2 nodes where it is preceding by the same char as the start of the query, case-insensitive', () => {
       const div = createElement('div')
       const span1 = createElement('span', { text: 'tte' })
       const span2 = createElement('span', { text: 'stt' })
@@ -285,7 +298,17 @@ describe('searchInElement', () => {
       expectRange(results[0], [span1.childNodes[0], 1, span2.childNodes[0], 2])
     })
 
-    test('scenario 5', () => {
+    test('search for word across 2 nodes where it is preceding by the same char as the start of the query, case-sensitive', () => {
+      const div = createElement('div')
+      const span1 = createElement('span', { text: 'tTe' })
+      const span2 = createElement('span', { text: 'stt' })
+      div.append(span1, span2)
+
+      const results = searchInElement(div, 'test', true)
+      expect(results.length).toBe(0)
+    })
+
+    test('search for word in 2 nodes where the last char of 1st node is the same char as the start of the query and the word starts in the 2nd node, case-sensitive', () => {
       const div = createElement('div')
       const span1 = createElement('span', { text: 'stt' })
       const span2 = createElement('span', { text: 'testt' })
