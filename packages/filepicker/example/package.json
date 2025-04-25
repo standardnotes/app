@@ -27,7 +27,7 @@
     "babel-loader": "^8.2.3",
     "html-webpack-plugin": "^5.5.0",
     "ts-loader": "^9.2.6",
-    "typescript": "^4.0.5",
+    "typescript": "*",
     "typescript-eslint": "0.0.1-alpha.0",
     "webpack": "*",
     "webpack-cli": "*",
