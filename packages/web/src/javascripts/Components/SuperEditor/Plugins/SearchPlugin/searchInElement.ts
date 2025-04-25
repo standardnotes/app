@@ -54,6 +54,7 @@ export function searchInElement(element: HTMLElement, searchQuery: string, isCas
   while (node) {
     let nodeText = node.textContent
     if (!nodeText) {
+      node = walk.nextNode()
       continue
     }
 
@@ -100,7 +101,7 @@ export function searchInElement(element: HTMLElement, searchQuery: string, isCas
       if (isLastCharOfQuery) {
         endContainer = node
         const nextIdx = textCharIndex + 1
-        endOffset = nextIdx <= nodeTextLength ? nextIdx : nodeTextLength
+        endOffset = nextIdx
       }
 
       // we have a potential start but query is not fully matched yet
