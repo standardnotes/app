@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.196.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.1...@standardnotes/web@3.196.2) (2025-04-25)
+
+### Bug Fixes
+
+* Fix issue where searching across formatted text would not work in Super note ([#2897](https://github.com/standardnotes/app/issues/2897)) (skip e2e) ([bdf6be3](https://github.com/standardnotes/app/commit/bdf6be38d241a5c35be56a50e239591294383f95))
+
 ## [3.196.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.0...@standardnotes/web@3.196.1) (2025-04-23)
 
 ### Bug Fixes
