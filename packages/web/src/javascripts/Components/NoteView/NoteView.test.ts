@@ -2,6 +2,9 @@
  * @jest-environment jsdom
  */
 
+// @ts-expect-error CSS is not defined in jsdom env
+global.CSS = {}
+
 import { WebApplication } from '@/Application/WebApplication'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import {
