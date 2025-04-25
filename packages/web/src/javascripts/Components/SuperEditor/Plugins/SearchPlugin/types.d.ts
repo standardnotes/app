@@ -3,5 +3,5 @@ declare class Highlight extends Set<AbstractRange> {
 }
 
 declare namespace CSS {
-  var highlights: Map<string, Highlight>
+  const highlights: Map<string, Highlight>
 }
