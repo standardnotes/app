@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.196.1",
+      "title": "[3.196.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.0...@standardnotes/web@3.196.1) (2025-04-23)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Always show \"note from selection\" option in toolbar to prevent layout shift on smaller widths (skip e2e) ([b228114](https://github.com/standardnotes/app/commit/b2281141f825ae614dbeeb3545e21f0554fc2ebe))",
+      "parsed": {
+        "_": [
+          "Always show \"note from selection\" option in toolbar to prevent layout shift on smaller widths (skip e2e) (b228114)"
+        ],
+        "Bug Fixes": [
+          "Always show \"note from selection\" option in toolbar to prevent layout shift on smaller widths (skip e2e) (b228114)"
+        ]
+      }
+    },
+    {
       "version": "3.196.0",
       "title": "[3.196.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.33...@standardnotes/web@3.196.0) (2025-04-23)",
       "date": null,

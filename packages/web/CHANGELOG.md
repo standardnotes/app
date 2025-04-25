@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.196.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.0...@standardnotes/web@3.196.1) (2025-04-23)
+
+### Bug Fixes
+
+* Always show "note from selection" option in toolbar to prevent layout shift on smaller widths (skip e2e) ([b228114](https://github.com/standardnotes/app/commit/b2281141f825ae614dbeeb3545e21f0554fc2ebe))
+
 # [3.196.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.195.33...@standardnotes/web@3.196.0) (2025-04-23)
 
 ### Features
