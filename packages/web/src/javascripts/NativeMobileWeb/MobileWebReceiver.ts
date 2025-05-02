@@ -73,15 +73,13 @@ export class MobileWebReceiver {
       case ReactNativeToWebEvent.ColorSchemeChanged:
         void this.application.handleMobileColorSchemeChangeEvent()
         break
-      case ReactNativeToWebEvent.KeyboardFrameWillChange:
+      case ReactNativeToWebEvent.KeyboardSizeChanged:
         void this.application.handleMobileKeyboardWillChangeFrameEvent(
           messageData as { height: number; contentHeight: number; isFloatingKeyboard: boolean },
         )
         break
-      case ReactNativeToWebEvent.KeyboardFrameDidChange:
-        void this.application.handleMobileKeyboardDidChangeFrameEvent(
-          messageData as { height: number; contentHeight: number },
-        )
+      case ReactNativeToWebEvent.KeyboardDidHide:
+        void this.application.handleMobileKeyboardDidHideEvent()
         break
       case ReactNativeToWebEvent.ReceivedFile:
         void this.application.handleReceivedFileEvent(
