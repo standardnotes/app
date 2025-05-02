@@ -15,6 +15,7 @@ import { IsDev } from './Lib/Utils'
 import { ReceivedSharedItemsHandler } from './ReceivedSharedItemsHandler'
 import { ReviewService } from './ReviewService'
 import notifee, { EventType } from '@notifee/react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const LoggingEnabled = IsDev
 
@@ -96,6 +97,12 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       // iOS handles this using the `willChangeFrame` event instead
       if (Platform.OS === 'android') {
         fireKeyboardSizeChangeEvent(e)
+        webViewRef.current?.postMessage(
+          JSON.stringify({
+            reactNativeEvent: ReactNativeToWebEvent.KeyboardDidShow,
+            messageType: 'event',
+          }),
+        )
       }
       device.reloadStatusBarStyle(false)
     })
@@ -344,13 +351,30 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       receivedSharedItemsHandlerInstance.deinit()
     }
   }, [])
+
+  const [didAppLaunch, setDidAppLaunch] = useState(false)
   useEffect(() => {
     return device.addApplicationEventReceiver((event) => {
       if (event === ApplicationEvent.Launched) {
         receivedSharedItemsHandler.current.setIsApplicationLaunched(true)
+        setDidAppLaunch(true)
       }
     })
   }, [device])
+
+  const insets = useSafeAreaInsets()
+  useEffect(() => {
+    if (!didAppLaunch) {
+      return
+    }
+    webViewRef.current?.postMessage(
+      JSON.stringify({
+        reactNativeEvent: ReactNativeToWebEvent.UpdateSafeAreaInsets,
+        messageType: 'event',
+        messageData: insets,
+      }),
+    )
+  }, [didAppLaunch, insets])
 
   const [didLoadEnd, setDidLoadEnd] = useState(false)
 

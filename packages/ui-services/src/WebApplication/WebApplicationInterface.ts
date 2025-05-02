@@ -21,6 +21,7 @@ export interface WebApplicationInterface extends ApplicationInterface {
     isFloatingKeyboard: boolean
   }): void
   handleMobileKeyboardDidHideEvent(): void
+  handleUpdateSafeAreaInsets(insets: { top: number; bottom: number; left: number; right: number }): void
   handleReceivedFileEvent(file: { name: string; mimeType: string; data: string }): void
   handleReceivedTextEvent(item: { text: string; title?: string }): Promise<void>
   handleReceivedLinkEvent(item: { link: string; title: string }): Promise<void>

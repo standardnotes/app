@@ -76,6 +76,7 @@
   },
   "dependencies": {
     "@notifee/react-native": "^9.1.8",
+    "react-native-safe-area-context": "^5.4.0",
     "react-native-store-review": "^0.4.3"
   }
 }

@@ -361,6 +361,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     setCustomViewportHeight(100, 'vh', true)
   }
 
+  handleUpdateSafeAreaInsets(insets: { top: number; bottom: number; left: number; right: number }) {
+    for (const [key, value] of Object.entries(insets)) {
+      document.documentElement.style.setProperty(`--safe-area-inset-${key}`, `${value}px`)
+    }
+  }
+
   handleOpenFilePreviewEvent({ id }: { id: string }): void {
     const file = this.items.findItem<FileItem>(id)
     if (!file) {

@@ -1,6 +1,7 @@
 import { classNames } from '@standardnotes/snjs'
 import { ButtonStyle, getColorsForPrimaryVariant } from '../Button/Button'
 import Icon from '../Icon/Icon'
+import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 
 type Props = {
   label: string
@@ -14,12 +15,15 @@ const PropertiesRequiredForFixedPositioningToWorkOnIOSSafari: React.CSSPropertie
 
 const FloatingAddButton = ({ label, style, onClick }: Props) => {
   const buttonClasses = getColorsForPrimaryVariant(style)
+  const { hasBottomInset } = useAvailableSafeAreaPadding()
+
   return (
     <button
       className={classNames(
-        'fixed bottom-6 right-6 z-editor-title-bar ml-3 flex h-15 w-15 cursor-pointer items-center',
+        'fixed right-6 z-editor-title-bar ml-3 flex h-15 w-15 cursor-pointer items-center',
         `justify-center rounded-full border border-solid border-transparent ${buttonClasses}`,
         'hover:brightness-125',
+        hasBottomInset ? 'bottom-[calc(var(--safe-area-inset-bottom)+0.5rem)]' : 'bottom-6',
       )}
       title={label}
       aria-label={label}

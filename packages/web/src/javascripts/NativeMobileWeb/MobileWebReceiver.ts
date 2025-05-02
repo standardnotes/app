@@ -81,6 +81,11 @@ export class MobileWebReceiver {
       case ReactNativeToWebEvent.KeyboardDidHide:
         void this.application.handleMobileKeyboardDidHideEvent()
         break
+      case ReactNativeToWebEvent.UpdateSafeAreaInsets:
+        void this.application.handleUpdateSafeAreaInsets(
+          messageData as { top: number; left: number; bottom: number; right: number },
+        )
+        break
       case ReactNativeToWebEvent.ReceivedFile:
         void this.application.handleReceivedFileEvent(
           messageData as {

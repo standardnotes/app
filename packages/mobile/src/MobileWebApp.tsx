@@ -1,10 +1,11 @@
 import React from 'react'
 import { MobileWebAppContainer } from './MobileWebAppContainer'
-
-const AppComponent: React.FC = () => {
-  return <MobileWebAppContainer />
-}
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 export const MobileWebApp = () => {
-  return <AppComponent />
+  return (
+    <SafeAreaProvider>
+      <MobileWebAppContainer />
+    </SafeAreaProvider>
+  )
 }
