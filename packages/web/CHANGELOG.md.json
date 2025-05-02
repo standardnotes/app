@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.196.3",
+      "title": "[3.196.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.2...@standardnotes/web@3.196.3) (2025-05-02)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue with keyboard on Android covering content ([#2899](https://github.com/standardnotes/app/issues/2899)) ([c4e0138](https://github.com/standardnotes/app/commit/c4e0138ce3ef9bc0adb75dae08aec2203473552d))",
+      "parsed": {
+        "_": [
+          "Fixed issue with keyboard on Android covering content (#2899) (c4e0138)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue with keyboard on Android covering content (#2899) (c4e0138)"
+        ]
+      }
+    },
+    {
       "version": "3.196.2",
       "title": "[3.196.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.1...@standardnotes/web@3.196.2) (2025-04-25)",
       "date": null,

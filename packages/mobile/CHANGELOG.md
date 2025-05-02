@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.176](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.175...@standardnotes/mobile@3.58.176) (2025-05-02)
+
+### Bug Fixes
+
+* Fixed issue with keyboard on Android covering content ([#2899](https://github.com/standardnotes/app/issues/2899)) ([c4e0138](https://github.com/standardnotes/app/commit/c4e0138ce3ef9bc0adb75dae08aec2203473552d))
+
 ## [3.58.175](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.174...@standardnotes/mobile@3.58.175) (2025-04-25)
 
 **Note:** Version bump only for package @standardnotes/mobile

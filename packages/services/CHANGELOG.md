@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.71.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.71.4...@standardnotes/services@1.71.5) (2025-05-02)
+
+### Bug Fixes
+
+* Fixed issue with keyboard on Android covering content ([#2899](https://github.com/standardnotes/app/issues/2899)) ([c4e0138](https://github.com/standardnotes/app/commit/c4e0138ce3ef9bc0adb75dae08aec2203473552d))
+
 ## [1.71.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.71.3...@standardnotes/services@1.71.4) (2024-11-22)
 
 ### Bug Fixes

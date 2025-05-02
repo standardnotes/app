@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.38.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.4...@standardnotes/ui-services@1.38.5) (2025-05-02)
+
+### Bug Fixes
+
+* Fixed issue with keyboard on Android covering content ([#2899](https://github.com/standardnotes/app/issues/2899)) ([c4e0138](https://github.com/standardnotes/app/commit/c4e0138ce3ef9bc0adb75dae08aec2203473552d))
+
 ## [1.38.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.3...@standardnotes/ui-services@1.38.4) (2025-04-25)
 
 **Note:** Version bump only for package @standardnotes/ui-services

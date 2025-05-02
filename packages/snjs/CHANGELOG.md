@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.209.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.209.6...@standardnotes/snjs@2.209.7) (2025-05-02)
+
+### Bug Fixes
+
+* Fixed issue with keyboard on Android covering content ([#2899](https://github.com/standardnotes/app/issues/2899)) ([c4e0138](https://github.com/standardnotes/app/commit/c4e0138ce3ef9bc0adb75dae08aec2203473552d))
+
 ## [2.209.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.209.5...@standardnotes/snjs@2.209.6) (2024-11-22)
 
 **Note:** Version bump only for package @standardnotes/snjs
