@@ -6,6 +6,5 @@ export enum WebAppEvent {
   PanelResized = 'PanelResized',
   WindowDidFocus = 'WindowDidFocus',
   WindowDidBlur = 'WindowDidBlur',
-  MobileKeyboardDidChangeFrame = 'MobileKeyboardDidChangeFrame',
   MobileKeyboardWillChangeFrame = 'MobileKeyboardWillChangeFrame',
 }

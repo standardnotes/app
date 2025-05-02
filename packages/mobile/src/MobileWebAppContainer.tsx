@@ -2,7 +2,7 @@
 
 import { ApplicationEvent, ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Dimensions, Keyboard, Platform, Text, View } from 'react-native'
+import { Button, Dimensions, Keyboard, KeyboardEvent, Platform, Text, View } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import { OnShouldStartLoadWithRequest, WebViewNativeConfig } from 'react-native-webview/lib/WebViewTypes'
@@ -58,7 +58,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       webViewRef.current?.postMessage(JSON.stringify({ reactNativeEvent: event, messageType: 'event' }))
     })
 
-    const keyboardShowListener = Keyboard.addListener('keyboardWillShow', () => {
+    const keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => {
       device.reloadStatusBarStyle(false)
       webViewRef.current?.postMessage(
         JSON.stringify({
@@ -78,43 +78,54 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       )
     })
 
-    const keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      device.reloadStatusBarStyle(false)
-    })
-
-    const keyboardWillChangeFrame = Keyboard.addListener('keyboardWillChangeFrame', (e) => {
+    const fireKeyboardSizeChangeEvent = (e: KeyboardEvent) => {
       webViewRef.current?.postMessage(
         JSON.stringify({
-          reactNativeEvent: ReactNativeToWebEvent.KeyboardFrameWillChange,
+          reactNativeEvent: ReactNativeToWebEvent.KeyboardSizeChanged,
           messageType: 'event',
           messageData: {
             height: e.endCoordinates.height,
             contentHeight: e.endCoordinates.screenY,
-            isFloatingKeyboard: e.endCoordinates.width !== Dimensions.get('window').width,
+            isFloatingKeyboard: Math.floor(e.endCoordinates.width) !== Math.floor(Dimensions.get('window').width),
           },
         }),
       )
+    }
+
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
+      // iOS handles this using the `willChangeFrame` event instead
+      if (Platform.OS === 'android') {
+        fireKeyboardSizeChangeEvent(e)
+      }
+      device.reloadStatusBarStyle(false)
     })
 
-    const keyboardDidChangeFrame = Keyboard.addListener('keyboardDidChangeFrame', (e) => {
-      webViewRef.current?.postMessage(
-        JSON.stringify({
-          reactNativeEvent: ReactNativeToWebEvent.KeyboardFrameDidChange,
-          messageType: 'event',
-          messageData: { height: e.endCoordinates.height, contentHeight: e.endCoordinates.screenY },
-        }),
-      )
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      // iOS handles this using the `willChangeFrame` event instead
+      if (Platform.OS === 'android') {
+        webViewRef.current?.postMessage(
+          JSON.stringify({
+            reactNativeEvent: ReactNativeToWebEvent.KeyboardDidHide,
+            messageType: 'event',
+          }),
+        )
+      }
+      device.reloadStatusBarStyle(false)
+    })
+
+    const keyboardWillChangeFrame = Keyboard.addListener('keyboardWillChangeFrame', (e) => {
+      fireKeyboardSizeChangeEvent(e)
     })
 
     return () => {
       removeStateServiceListener()
       removeBackHandlerServiceListener()
       removeColorSchemeServiceListener()
-      keyboardShowListener.remove()
-      keyboardHideListener.remove()
-      keyboardWillChangeFrame.remove()
-      keyboardDidChangeFrame.remove()
+      keyboardWillShowListener.remove()
       keyboardWillHideListener.remove()
+      keyboardDidShowListener.remove()
+      keyboardDidHideListener.remove()
+      keyboardWillChangeFrame.remove()
     }
   }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService])
 
