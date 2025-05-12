@@ -955,7 +955,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           </div>
         )}
 
-        <EditorContentWithSafeAreaPadding editorLineWidth={this.state.editorLineWidth} ref={this.editorContentRef}>
+        <EditorContentWithSafeAreaPadding
+          isNoteLocked={this.state.noteLocked}
+          editorLineWidth={this.state.editorLineWidth}
+          ref={this.editorContentRef}
+        >
           {editorMode === 'component' && this.state.editorComponentViewer && (
             <div className="component-view relative flex-grow">
               {this.state.paneGestureEnabled && <div className="absolute left-0 top-0 h-full w-[20px] md:hidden" />}

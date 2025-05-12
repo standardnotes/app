@@ -6,9 +6,11 @@ import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 
 export const EditorContentWithSafeAreaPadding = forwardRef(function EditorContentWithSafeAreaPadding(
   {
+    isNoteLocked,
     editorLineWidth,
     children,
   }: {
+    isNoteLocked: boolean
     editorLineWidth: EditorLineWidth
     children: NonNullable<ReactNode>
   },
@@ -22,7 +24,7 @@ export const EditorContentWithSafeAreaPadding = forwardRef(function EditorConten
       className={classNames(
         ElementIds.EditorContent,
         'z-editor-content overflow-auto sm:[&>*]:mx-[var(--editor-margin)] sm:[&>*]:max-w-[var(--editor-max-width)]',
-        hasBottomInset && 'pb-safe-bottom',
+        hasBottomInset && isNoteLocked && 'pb-safe-bottom',
       )}
       style={
         {
