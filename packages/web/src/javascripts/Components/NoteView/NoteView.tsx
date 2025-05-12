@@ -30,7 +30,7 @@ import {
   LocalPrefKey,
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
-import { ChangeEventHandler, createRef, CSSProperties, FocusEvent, KeyboardEventHandler, RefObject } from 'react'
+import { ChangeEventHandler, createRef, FocusEvent, KeyboardEventHandler, RefObject } from 'react'
 import { SuperEditor } from '../SuperEditor/SuperEditor'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
@@ -47,13 +47,13 @@ import {
 import { SuperEditorContentId } from '../SuperEditor/Constants'
 import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
-import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import CollaborationInfoHUD from './CollaborationInfoHUD'
 import Button from '../Button/Button'
 import ModalOverlay from '../Modal/ModalOverlay'
 import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
 import Icon from '../Icon/Icon'
+import { EditorContentWithSafeAreaPadding } from './EditorContentWithSafeAreaPadding'
 
 function sortAlphabetically(array: ComponentInterface[]): ComponentInterface[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
@@ -955,20 +955,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           </div>
         )}
 
-        <div
-          id={ElementIds.EditorContent}
-          className={classNames(
-            ElementIds.EditorContent,
-            'z-editor-content overflow-auto sm:[&>*]:mx-[var(--editor-margin)] sm:[&>*]:max-w-[var(--editor-max-width)]',
-          )}
-          style={
-            {
-              '--editor-margin': EditorMargins[this.state.editorLineWidth],
-              '--editor-max-width': EditorMaxWidths[this.state.editorLineWidth],
-            } as CSSProperties
-          }
-          ref={this.editorContentRef}
-        >
+        <EditorContentWithSafeAreaPadding editorLineWidth={this.state.editorLineWidth} ref={this.editorContentRef}>
           {editorMode === 'component' && this.state.editorComponentViewer && (
             <div className="component-view relative flex-grow">
               {this.state.paneGestureEnabled && <div className="absolute left-0 top-0 h-full w-[20px] md:hidden" />}
@@ -1009,7 +996,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               />
             </div>
           )}
-        </div>
+        </EditorContentWithSafeAreaPadding>
 
         <div id="editor-pane-component-stack">
           {this.state.availableStackComponents.length > 0 && (

@@ -44,6 +44,8 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
   const [showAndroidWebviewUpdatePrompt, setShowAndroidWebviewUpdatePrompt] = useState(false)
 
+  const insets = useSafeAreaInsets()
+
   useEffect(() => {
     const removeStateServiceListener = stateService.addEventObserver((event: ReactNativeToWebEvent) => {
       webViewRef.current?.postMessage(JSON.stringify({ reactNativeEvent: event, messageType: 'event' }))
@@ -95,7 +97,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
       // iOS handles this using the `willChangeFrame` event instead
-      if (Platform.OS === 'android') {
+      if (Platform.OS === 'android' && insets.bottom > 0) {
         fireKeyboardSizeChangeEvent(e)
         webViewRef.current?.postMessage(
           JSON.stringify({
@@ -109,7 +111,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       // iOS handles this using the `willChangeFrame` event instead
-      if (Platform.OS === 'android') {
+      if (Platform.OS === 'android' && insets.bottom > 0) {
         webViewRef.current?.postMessage(
           JSON.stringify({
             reactNativeEvent: ReactNativeToWebEvent.KeyboardDidHide,
@@ -362,7 +364,6 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     })
   }, [device])
 
-  const insets = useSafeAreaInsets()
   useEffect(() => {
     if (!didAppLaunch) {
       return
