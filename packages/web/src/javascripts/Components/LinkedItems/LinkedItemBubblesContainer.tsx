@@ -16,6 +16,8 @@ import RoundIconButton from '../Button/RoundIconButton'
 import VaultNameBadge from '../Vaults/VaultNameBadge'
 import LastEditedByBadge from '../Vaults/LastEditedByBadge'
 import { useItemVaultInfo } from '@/Hooks/useItemVaultInfo'
+import LinkedItemModalView from './LinkedItemModalView'
+import Icon from '../Icon/Icon'
 
 type Props = {
   linkingController: LinkingController
@@ -124,6 +126,7 @@ const LinkedItemBubblesContainer = ({
     )
   }
 
+  const [showAllItemsModal, setShowAllItemsModal] = useState(false)
   const itemsToDisplay = allItemsLinkedToItem.concat(notesLinkingToItem).concat(filesLinkingToItem)
   const ItemsToShowWhenCollapsed = 5
   const [isCollapsed, setIsCollapsed] = useState(
@@ -206,7 +209,22 @@ const LinkedItemBubblesContainer = ({
             readonly={readonly}
           />
         ))}
-        {isCollapsed && nonVisibleItems > 0 && <span className="flex-shrink-0">and {nonVisibleItems} more...</span>}
+        {isCollapsed && nonVisibleItems > 0 && (
+          <button 
+            onClick={() => setShowAllItemsModal(true)}
+            className={classNames(
+              'group h-6 cursor-pointer items-center rounded bg-passive-4-opacity-variant py-2 pl-1 pr-2 align-middle text-sm',
+              'text-text hover:bg-contrast focus:bg-contrast lg:text-xs', 'inline-flex'
+            )}
+          >
+            <Icon type="more" className={classNames('mr-1 flex-shrink-0', 'text-info')} size="small" />
+            <span className="flex items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
+              <span className="flex items-center gap-1">
+                More ({itemsToDisplay.length})
+              </span>
+            </span>
+          </button>
+        )}
         {!readonly && (
           <ItemLinkAutocompleteInput
             focusedId={focusedId}
@@ -228,6 +246,18 @@ const LinkedItemBubblesContainer = ({
           icon={isCollapsed ? 'chevron-down' : 'chevron-left'}
         />
       )}
+
+      <LinkedItemModalView
+        items={itemsToDisplay}
+        readonly={readonly}
+        isOpen={showAllItemsModal}
+        onClose={() => setShowAllItemsModal(false)}
+        onUnlink={unlinkItem}
+        onActivate={async (item) => {
+          await activateItemAndTogglePane(item)
+          setShowAllItemsModal(false)
+        }}
+      />
     </div>
   )
 }
