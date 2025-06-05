@@ -1668,8 +1668,27 @@ PODS:
     - RCTTypeSafety
     - React-Core
     - ReactCommon/turbomodule/core
-  - RNKeychain (8.1.2):
+  - RNKeychain (10.0.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNNotifee (9.1.8):
     - React-Core
     - RNNotifee/NotifeeCore (= 9.1.8)
@@ -2056,7 +2075,7 @@ SPEC CHECKSUMS:
   RNFileViewer: 4b5d83358214347e4ab2d4ca8d5c1c90d869e251
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
   RNIap: d73cedfb73b396cad75f90f4ed7d64352d6381cf
-  RNKeychain: df33ae4d27df06622fc14190b790ba8749f6be76
+  RNKeychain: 455cc7002480eac3d24f67b4329ec80c7d901edc
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNPrivacySnapshot: ccad3a548338c2f526bb7b1789af3fb0618b7d1d
   RNShare: 56b5431c60e1e9ee167191f4f327471af1c2941a
