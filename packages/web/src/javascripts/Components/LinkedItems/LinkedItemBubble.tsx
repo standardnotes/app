@@ -121,7 +121,7 @@ const LinkedItemBubble = ({
         title={tagTitle ? tagTitle.longTitle : link.item.title}
         onKeyDown={onKeyDown}
       >
-        <Icon type={icon} className={classNames('mr-1 inline h-4 align-text-top', iconClassName)} size="small" />
+        <Icon type={icon} className={classNames('mr-1 inline align-text-top', iconClassName)} size="small" />
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
         {link.type === 'linked-by' && link.item.content_type !== ContentType.TYPES.Tag && (
           <span className={!isBidirectional ? 'hidden group-focus:inline' : ''}>Linked By:</span>
