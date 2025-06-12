@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.182](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.181...@standardnotes/mobile@3.58.182) (2025-06-12)
+
+### Bug Fixes
+
+* revert keychain dependency back to fork ([#2901](https://github.com/standardnotes/app/issues/2901)) (skip e2e) ([f8223a8](https://github.com/standardnotes/app/commit/f8223a884caae97ac3f5ae8981c114c11f0c2a5b))
+
 ## [3.58.181](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.180...@standardnotes/mobile@3.58.181) (2025-06-05)
 
 **Note:** Version bump only for package @standardnotes/mobile
