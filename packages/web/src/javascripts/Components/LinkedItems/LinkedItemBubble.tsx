@@ -109,7 +109,7 @@ const LinkedItemBubble = ({
         ref={(el) => (ref.current = el as HTMLElement)}
         tabIndex={0}
         className={classNames(
-          'group cursor-pointer rounded align-middle [&>*]:align-middle',
+          'group cursor-pointer rounded ',
           'bg-passive-4-opacity-variant outline-1 outline-info hover:bg-contrast focus:bg-contrast focus:outline',
           'whitespace-pre-wrap text-left text-sm text-text hover:no-underline focus:no-underline lg:text-xs',
           'py-1 pl-1 pr-2',
@@ -121,7 +121,7 @@ const LinkedItemBubble = ({
         title={tagTitle ? tagTitle.longTitle : link.item.title}
         onKeyDown={onKeyDown}
       >
-        <Icon type={icon} className={classNames('mr-1 inline', iconClassName)} size="small" />
+        <Icon type={icon} className={classNames('mr-1 inline h-[1.15em] align-text-top', iconClassName)} size="small" />
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
         {link.type === 'linked-by' && link.item.content_type !== ContentType.TYPES.Tag && (
           <span className={!isBidirectional ? 'hidden group-focus:inline' : ''}>Linked By:</span>
@@ -131,7 +131,7 @@ const LinkedItemBubble = ({
           <button
             ref={(el) => (unlinkButtonRef.current = el as HTMLElement)}
             role="button"
-            className="-mr-1 ml-2 inline-flex cursor-pointer border-0 bg-transparent p-0"
+            className="-mr-1 ml-2 inline-flex cursor-pointer border-0 bg-transparent p-0 h-[1.15em] align-middle"
             onClick={onUnlinkClick}
           >
             <Icon type="close" className="text-neutral hover:text-info" size="small" />
