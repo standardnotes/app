@@ -11,6 +11,7 @@ import Icon from '@/Components/Icon/Icon'
 import Spinner from '@/Components/Spinner/Spinner'
 import usePreference from '@/Hooks/usePreference'
 import { getCSSValueFromAlignment, ImageAlignmentOptions } from '@/Components/FilePreview/ImageAlignmentOptions'
+import { getOverflows } from '@/Components/Popover/Utils/Collisions'
 
 type Props = {
   fileName: string | undefined
@@ -84,7 +85,21 @@ const InlineFileComponent = ({ className, src, mimeType, fileName, format, setFo
           }}
         >
           <img alt={fileName} src={src} />
-          <div className="invisible absolute bottom-full left-1/2 z-10 -translate-x-1/2 px-1 pb-1 focus-within:visible group-hover:visible [.embedBlockFocused_&]:visible">
+          <div
+            className="invisible absolute bottom-full left-1/2 z-10 w-max -translate-x-1/2 px-1 pb-1 focus-within:visible group-hover:visible [.embedBlockFocused_&]:visible"
+            ref={(popover) => {
+              const editorRoot = editor.getRootElement()
+              if (!popover || !editorRoot) {
+                return
+              }
+              const editorRootRect = editorRoot.getBoundingClientRect()
+              const popoverRect = popover.getBoundingClientRect()
+              const overflows = getOverflows(popoverRect, editorRootRect)
+              if (overflows.top > 0) {
+                popover.style.setProperty('--tw-translate-y', `${overflows.top}px`)
+              }
+            }}
+          >
             <div className="flex gap-1 rounded border border-border bg-default px-1 py-0.5">
               <ImageAlignmentOptions alignment={finalAlignment} changeAlignment={changeAlignment} />
             </div>
