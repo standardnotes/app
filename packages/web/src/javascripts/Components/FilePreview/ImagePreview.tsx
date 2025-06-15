@@ -134,7 +134,14 @@ const ImagePreview: FunctionComponent<Props> = ({
   const justifyContent = isEmbeddedInSuper ? getCSSValueFromAlignment(finalAlignment) : 'center'
 
   return (
-    <div className="group relative flex h-full min-h-0 w-full items-center" style={{ justifyContent }}>
+    <div
+      className="group relative flex h-full min-h-0 w-full items-center"
+      style={{ justifyContent }}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+      }}
+    >
       <div
         className="relative flex h-full w-full items-center justify-center overflow-auto"
         style={{

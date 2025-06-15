@@ -109,7 +109,15 @@ const RemoteImageComponent = ({ className, src, alt, node, format, nodeKey, setF
 
   return (
     <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
-      <div ref={ref} className="group relative flex min-h-[2rem] flex-col gap-2.5" style={{ alignItems }}>
+      <div
+        ref={ref}
+        className="group relative flex min-h-[2rem] flex-col gap-2.5"
+        style={{ alignItems }}
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+        }}
+      >
         <img
           alt={alt}
           src={src}

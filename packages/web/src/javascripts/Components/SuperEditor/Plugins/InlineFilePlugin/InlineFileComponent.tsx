@@ -75,7 +75,14 @@ const InlineFileComponent = ({ className, src, mimeType, fileName, format, setFo
   return (
     <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
       {mimeType.startsWith('image') ? (
-        <div className="group relative flex min-h-[2rem] flex-col gap-2.5" style={{ alignItems }}>
+        <div
+          className="group relative flex min-h-[2rem] flex-col gap-2.5"
+          style={{ alignItems }}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+        >
           <img alt={fileName} src={src} />
           <div className="invisible absolute bottom-full left-1/2 z-10 -translate-x-1/2 px-1 pb-1 focus-within:visible group-hover:visible [.embedBlockFocused_&]:visible">
             <div className="flex gap-1 rounded border border-border bg-default px-1 py-0.5">
