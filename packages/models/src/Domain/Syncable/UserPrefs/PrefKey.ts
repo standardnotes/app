@@ -36,6 +36,7 @@ export enum PrefKey {
   SuperNoteExportEmbedBehavior = 'superNoteExportEmbedBehavior',
   SuperNoteExportUseMDFrontmatter = 'superNoteExportUseMDFrontmatter',
   SuperNoteExportPDFPageSize = 'superNoteExportPDFPageSize',
+  SuperNoteImageAlignment = 'superNoteImageAlignment',
   AuthenticatorNames = 'authenticatorNames',
   PaneGesturesEnabled = 'paneGesturesEnabled',
   ComponentPreferences = 'componentPreferences',
@@ -101,4 +102,5 @@ export type PrefValue = {
   [PrefKey.AddImportsToTag]: boolean
   [PrefKey.AlwaysCreateNewTagForImports]: boolean
   [PrefKey.ExistingTagForImports]: string | undefined
+  [PrefKey.SuperNoteImageAlignment]: 'left' | 'center' | 'right'
 }

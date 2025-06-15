@@ -1,12 +1,14 @@
-import { PrefKey, Platform } from '@standardnotes/snjs'
+import { PrefKey, Platform, PrefValue } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/WebApplication'
-import { FunctionComponent, useState } from 'react'
+import { FunctionComponent, useMemo, useState } from 'react'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import usePreference from '@/Hooks/usePreference'
+import Dropdown from '@/Components/Dropdown/Dropdown'
+import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
@@ -27,6 +29,27 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
   const addNoteToParentFolders = usePreference(PrefKey.NoteAddToParentFolders)
 
   const alwaysShowSuperToolbar = usePreference(PrefKey.AlwaysShowSuperToolbar)
+  const defaultSuperImageAlignment = usePreference(PrefKey.SuperNoteImageAlignment)
+  const imageAlignmentOptions = useMemo(
+    (): DropdownItem[] => [
+      {
+        icon: 'format-align-left',
+        label: 'Left align',
+        value: 'left',
+      },
+      {
+        icon: 'format-align-center',
+        label: 'Center align',
+        value: 'center',
+      },
+      {
+        icon: 'format-align-right',
+        label: 'Right align',
+        value: 'right',
+      },
+    ],
+    [],
+  )
 
   const toggleSpellcheck = () => {
     application.toggleGlobalSpellcheck().catch(console.error)
@@ -79,23 +102,46 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
         </div>
         <HorizontalSeparator classes="my-4" />
         {!isMobile && (
-          <div className="flex justify-between gap-2 md:items-center">
-            <div className="flex flex-col">
-              <Subtitle>Use always-visible toolbar in Super notes</Subtitle>
-              <Text>
-                When enabled, the Super toolbar will always be shown at the top of the note. It can be temporarily
-                toggled using Cmd/Ctrl+Shift+K. When disabled, the Super toolbar will only be shown as a floating
-                toolbar when text is selected.
-              </Text>
+          <>
+            <div className="flex justify-between gap-2 md:items-center">
+              <div className="flex flex-col">
+                <Subtitle>Use always-visible toolbar in Super notes</Subtitle>
+                <Text>
+                  When enabled, the Super toolbar will always be shown at the top of the note. It can be temporarily
+                  toggled using Cmd/Ctrl+Shift+K. When disabled, the Super toolbar will only be shown as a floating
+                  toolbar when text is selected.
+                </Text>
+              </div>
+              <Switch
+                onChange={() => {
+                  application
+                    .setPreference(PrefKey.AlwaysShowSuperToolbar, !alwaysShowSuperToolbar)
+                    .catch(console.error)
+                }}
+                checked={alwaysShowSuperToolbar}
+              />
             </div>
-            <Switch
-              onChange={() => {
-                application.setPreference(PrefKey.AlwaysShowSuperToolbar, !alwaysShowSuperToolbar).catch(console.error)
+            <HorizontalSeparator classes="my-4" />
+          </>
+        )}
+        <div>
+          <Subtitle>Default image alignment in Super notes</Subtitle>
+          <div className="mt-2">
+            <Dropdown
+              label="Default image alignment in super notes"
+              items={imageAlignmentOptions}
+              value={defaultSuperImageAlignment}
+              onChange={(alignment) => {
+                application
+                  .setPreference(
+                    PrefKey.SuperNoteImageAlignment,
+                    alignment as PrefValue[PrefKey.SuperNoteImageAlignment],
+                  )
+                  .catch(console.error)
               }}
-              checked={alwaysShowSuperToolbar}
             />
           </div>
-        )}
+        </div>
       </PreferencesSegment>
     </PreferencesGroup>
   )

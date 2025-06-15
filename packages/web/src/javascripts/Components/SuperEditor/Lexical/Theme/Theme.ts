@@ -38,7 +38,7 @@ const BlocksEditorTheme: EditorThemeClasses = {
   },
   embedBlock: {
     base: 'Lexical__embedBlock',
-    focus: 'Lexical__embedBlockFocus',
+    focus: 'embedBlockFocused',
   },
   hashtag: 'Lexical__hashtag',
   heading: {

@@ -5,7 +5,7 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'reac
 import Button from '../Button/Button'
 import { createObjectURLWithRef } from './CreateObjectURLWithRef'
 import ImagePreview from './ImagePreview'
-import { ImageZoomLevelProps } from './ImageZoomLevelProps'
+import { OptionalSuperEmbeddedImageProps } from './OptionalSuperEmbeddedImageProps'
 import { PreviewableTextFileTypes, RequiresNativeFilePreview } from './isFilePreviewable'
 import TextPreview from './TextPreview'
 import { parseFileName, sanitizeFileName } from '@standardnotes/utils'
@@ -16,7 +16,7 @@ type Props = {
   file: FileItem
   bytes: Uint8Array
   isEmbeddedInSuper: boolean
-} & ImageZoomLevelProps
+} & OptionalSuperEmbeddedImageProps
 
 const PreviewComponent: FunctionComponent<Props> = ({
   application,
@@ -25,6 +25,8 @@ const PreviewComponent: FunctionComponent<Props> = ({
   isEmbeddedInSuper,
   imageZoomLevel,
   setImageZoomLevel,
+  alignment,
+  changeAlignment,
 }) => {
   const objectUrlRef = useRef<string>()
 
@@ -84,6 +86,8 @@ const PreviewComponent: FunctionComponent<Props> = ({
         isEmbeddedInSuper={isEmbeddedInSuper}
         imageZoomLevel={imageZoomLevel}
         setImageZoomLevel={setImageZoomLevel}
+        alignment={alignment}
+        changeAlignment={changeAlignment}
       />
     )
   }
