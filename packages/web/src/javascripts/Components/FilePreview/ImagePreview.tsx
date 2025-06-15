@@ -70,6 +70,9 @@ const ImagePreview: FunctionComponent<Props> = ({
             setImageZoom(imageZoomPercent)
           }
         }}
+        onMouseDown={(e) => {
+          e.preventDefault()
+        }}
       />
       {isZoomInputVisible ? (
         <div className="mx-2">
@@ -118,6 +121,9 @@ const ImagePreview: FunctionComponent<Props> = ({
           e.preventDefault()
           e.stopPropagation()
           setImageZoom(imageZoomPercent + ZoomPercentModifier)
+        }}
+        onMouseDown={(e) => {
+          e.preventDefault()
         }}
       />
     </>
