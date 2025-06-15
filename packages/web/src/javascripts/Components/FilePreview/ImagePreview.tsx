@@ -1,8 +1,9 @@
-import { classNames, IconType } from '@standardnotes/snjs'
+import { IconType, PrefKey } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
-import IconButton from '../Button/IconButton'
+import IconButton from '@/Components/Button/IconButton'
 import { OptionalSuperEmbeddedImageProps } from './OptionalSuperEmbeddedImageProps'
-import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import usePreference from '@/Hooks/usePreference'
+import { getCSSValueFromAlignment, ImageAlignmentOptions } from './ImageAlignmentOptions'
 
 type Props = {
   objectUrl: string
@@ -114,21 +115,9 @@ const ImagePreview: FunctionComponent<Props> = ({
     </>
   )
 
-  let justifyContent: 'start' | 'center' | 'end' = 'center'
-  if (alignment) {
-    switch (alignment) {
-      case 'start':
-      case 'left':
-        justifyContent = 'start'
-        break
-      case 'right':
-      case 'end':
-        justifyContent = 'end'
-        break
-      default:
-        break
-    }
-  }
+  const defaultSuperImageAlignment = usePreference(PrefKey.SuperNoteImageAlignment)
+  const finalAlignment = alignment || defaultSuperImageAlignment
+  const justifyContent = isEmbeddedInSuper ? getCSSValueFromAlignment(finalAlignment) : 'center'
 
   return (
     <div className="group relative flex h-full min-h-0 w-full items-center" style={{ justifyContent }}>
@@ -170,33 +159,7 @@ const ImagePreview: FunctionComponent<Props> = ({
           <div className="flex divide-x divide-border rounded border border-border bg-default">
             {changeAlignment && (
               <div className="flex items-center gap-1 px-1 py-0.5">
-                <StyledTooltip label="Left align">
-                  <IconButton
-                    className={classNames(justifyContent === 'start' && '!bg-info', 'rounded p-1 hover:bg-contrast')}
-                    icon="format-align-left"
-                    title="Left align"
-                    focusable={true}
-                    onClick={() => changeAlignment('left')}
-                  />
-                </StyledTooltip>
-                <StyledTooltip label="Center align">
-                  <IconButton
-                    className={classNames(justifyContent === 'center' && '!bg-info', 'rounded p-1 hover:bg-contrast')}
-                    icon="format-align-center"
-                    title="Center align"
-                    focusable={true}
-                    onClick={() => changeAlignment('center')}
-                  />
-                </StyledTooltip>
-                <StyledTooltip label="Right align">
-                  <IconButton
-                    className={classNames(justifyContent === 'end' && '!bg-info', 'rounded p-1 hover:bg-contrast')}
-                    icon="format-align-right"
-                    title="Right align"
-                    focusable={true}
-                    onClick={() => changeAlignment('right')}
-                  />
-                </StyledTooltip>
+                <ImageAlignmentOptions alignment={finalAlignment} changeAlignment={changeAlignment} />
               </div>
             )}
             <div className="flex items-center px-2 py-0.5 text-sm">{imageResizer}</div>
