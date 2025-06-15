@@ -1,4 +1,4 @@
-import { classNames } from '@standardnotes/snjs'
+import { classNames, IconType } from '@standardnotes/snjs'
 import IconButton from '@/Components/Button/IconButton'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import { ElementFormatType } from 'lexical'
@@ -16,42 +16,49 @@ export function getCSSValueFromAlignment(format: ElementFormatType) {
   }
 }
 
+const Options = [
+  {
+    alignment: 'left',
+    label: 'Left align',
+  },
+  {
+    alignment: 'center',
+    label: 'Center align',
+  },
+  {
+    alignment: 'right',
+    label: 'Right align',
+  },
+]
+
 export function ImageAlignmentOptions({
-  alignment,
+  alignment: currentAlignment,
   changeAlignment,
 }: {
   alignment: ElementFormatType
   changeAlignment: (format: ElementFormatType) => void
 }) {
-  return (
-    <>
-      <StyledTooltip label="Left align">
-        <IconButton
-          className={classNames(alignment === 'left' && '!bg-info', 'rounded p-1 hover:bg-contrast')}
-          icon="format-align-left"
-          title="Left align"
-          focusable={true}
-          onClick={() => changeAlignment('left')}
-        />
-      </StyledTooltip>
-      <StyledTooltip label="Center align">
-        <IconButton
-          className={classNames(alignment === 'center' && '!bg-info', 'rounded p-1 hover:bg-contrast')}
-          icon="format-align-center"
-          title="Center align"
-          focusable={true}
-          onClick={() => changeAlignment('center')}
-        />
-      </StyledTooltip>
-      <StyledTooltip label="Right align">
-        <IconButton
-          className={classNames(alignment === 'right' && '!bg-info', 'rounded p-1 hover:bg-contrast')}
-          icon="format-align-right"
-          title="Right align"
-          focusable={true}
-          onClick={() => changeAlignment('right')}
-        />
-      </StyledTooltip>
-    </>
-  )
+  return Options.map(({ alignment, label }) => (
+    <StyledTooltip label={label} key={alignment}>
+      <IconButton
+        className={classNames(
+          alignment === currentAlignment && '!bg-info text-info-contrast',
+          'rounded p-1 hover:bg-contrast',
+        )}
+        icon={`format-align-${alignment}` as IconType}
+        title={label}
+        focusable={true}
+        onClick={(e) => {
+          // the preventDefault and stopPropagation for these events are required
+          // so that the keyboard doesn't jump when you select another option
+          e.preventDefault()
+          e.stopPropagation()
+          changeAlignment(alignment as ElementFormatType)
+        }}
+        onMouseDown={(e) => {
+          e.preventDefault()
+        }}
+      />
+    </StyledTooltip>
+  ))
 }

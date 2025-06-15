@@ -60,7 +60,9 @@ const ImagePreview: FunctionComponent<Props> = ({
         icon={'subtract' as IconType}
         title={isEmbeddedInSuper ? 'Decrease size' : 'Zoom Out'}
         focusable={true}
-        onClick={() => {
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
           const newPercent = imageZoomPercent - ZoomPercentModifier
           if (newPercent >= ZoomPercentModifier) {
             setImageZoom(newPercent)
@@ -98,7 +100,11 @@ const ImagePreview: FunctionComponent<Props> = ({
       ) : (
         <button
           className="mx-1 rounded px-1.5 py-1 hover:bg-contrast"
-          onClick={() => setIsZoomInputVisible((visible) => !visible)}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            setIsZoomInputVisible((visible) => !visible)
+          }}
         >
           {imageZoomPercent}%
         </button>
@@ -108,7 +114,9 @@ const ImagePreview: FunctionComponent<Props> = ({
         icon="add"
         title={isEmbeddedInSuper ? 'Increase size' : 'Zoom In'}
         focusable={true}
-        onClick={() => {
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
           setImageZoom(imageZoomPercent + ZoomPercentModifier)
         }}
       />
@@ -155,7 +163,7 @@ const ImagePreview: FunctionComponent<Props> = ({
         </div>
       )}
       {isEmbeddedInSuper && (
-        <div className="invisible absolute bottom-full left-1/2 z-10 -translate-x-1/2 px-1 pb-1 focus-within:visible group-hover:visible [.embedBlockFocused_&]:visible">
+        <div className="invisible absolute bottom-full left-1/2 z-10 w-max -translate-x-1/2 px-1 pb-1 focus-within:visible group-hover:visible [.embedBlockFocused_&]:visible">
           <div className="flex divide-x divide-border rounded border border-border bg-default">
             {changeAlignment && (
               <div className="flex items-center gap-1 px-1 py-0.5">

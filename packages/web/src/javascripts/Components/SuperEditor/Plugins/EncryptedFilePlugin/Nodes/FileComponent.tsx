@@ -1,6 +1,13 @@
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { $getNodeByKey, CLICK_COMMAND, COMMAND_PRIORITY_LOW, ElementFormatType, NodeKey } from 'lexical'
+import {
+  $getNodeByKey,
+  CLICK_COMMAND,
+  COMMAND_PRIORITY_LOW,
+  ElementFormatType,
+  NodeKey,
+  SKIP_DOM_SELECTION_TAG,
+} from 'lexical'
 import { useApplication } from '@/Components/ApplicationProvider'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileItem } from '@standardnotes/snjs'
@@ -82,9 +89,14 @@ function FileComponent({
 
   const changeAlignment = useCallback(
     (alignment: ElementFormatType) =>
-      editor.update(() => {
-        setFormat(alignment)
-      }),
+      editor.update(
+        () => {
+          setFormat(alignment)
+        },
+        {
+          tag: SKIP_DOM_SELECTION_TAG,
+        },
+      ),
     [editor, setFormat],
   )
 
