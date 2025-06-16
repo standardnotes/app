@@ -1,8 +1,8 @@
-import { FunctionComponent, MouseEventHandler } from 'react'
+import { ComponentPropsWithoutRef, ForwardedRef, forwardRef, MouseEventHandler } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { IconType } from '@standardnotes/snjs'
 
-type Props = {
+interface Props extends ComponentPropsWithoutRef<'button'> {
   onClick: MouseEventHandler<HTMLButtonElement>
   className?: string
   icon: IconType
@@ -12,32 +12,31 @@ type Props = {
   disabled?: boolean
 }
 
-const IconButton: FunctionComponent<Props> = ({
-  onClick,
-  className = '',
-  icon,
-  title,
-  focusable,
-  iconClassName = '',
-  disabled = false,
-}) => {
-  const click: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault()
-    onClick(e)
-  }
-  const focusableClass = focusable ? '' : 'focus:shadow-none'
-  return (
-    <button
-      type="button"
-      title={title}
-      className={`no-border flex cursor-pointer flex-row items-center bg-transparent ${focusableClass} ${className}`}
-      onClick={click}
-      disabled={disabled}
-      aria-label={title}
-    >
-      <Icon type={icon} className={iconClassName} />
-    </button>
-  )
-}
+const IconButton = forwardRef(
+  (
+    { onClick, className = '', icon, title, focusable, iconClassName = '', disabled = false, ...rest }: Props,
+    ref: ForwardedRef<HTMLButtonElement>,
+  ) => {
+    const click: MouseEventHandler<HTMLButtonElement> = (e) => {
+      e.preventDefault()
+      onClick(e)
+    }
+    const focusableClass = focusable ? '' : 'focus:shadow-none'
+    return (
+      <button
+        {...rest}
+        type="button"
+        title={title}
+        className={`no-border flex cursor-pointer flex-row items-center bg-transparent ${focusableClass} ${className}`}
+        onClick={click}
+        disabled={disabled}
+        aria-label={title}
+        ref={ref}
+      >
+        <Icon type={icon} className={iconClassName} />
+      </button>
+    )
+  },
+)
 
 export default IconButton
