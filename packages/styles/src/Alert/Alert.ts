@@ -105,14 +105,14 @@ export class SKAlert {
     }
     const titleTemplate = this.title
       ? `<div class='mb-1 font-bold text-lg flex items-center justify-between'>
-          ${this.title}
+          <span id="title"></span>
           <button id="close-button" class="rounded p-1 font-bold hover:bg-contrast" onClick={closeDialog}>
             <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.2459 5.92925C15.5704 5.60478 15.5704 5.07872 15.2459 4.75425C14.9214 4.42978 14.3954 4.42978 14.0709 4.75425L10.0001 8.82508L5.92925 4.75425C5.60478 4.42978 5.07872 4.42978 4.75425 4.75425C4.42978 5.07872 4.42978 5.60478 4.75425 5.92925L8.82508 10.0001L4.75425 14.0709C4.42978 14.3954 4.42978 14.9214 4.75425 15.2459C5.07872 15.5704 5.60478 15.5704 5.92925 15.2459L10.0001 11.1751L14.0709 15.2459C14.3954 15.5704 14.9214 15.5704 15.2459 15.2459C15.5704 14.9214 15.5704 14.3954 15.2459 14.0709L11.1751 10.0001L15.2459 5.92925Z" /></svg>
           </button>
          </div>`
       : ''
     const messageTemplate = this.text
-      ? `<p class='sk-p text-base lg:text-sm' style="max-width: 100%; overflow: hidden; text-overflow: ellipsis;">${this.text}</p>`
+      ? `<p id="message" class='sk-p text-base lg:text-sm' style="max-width: 100%; overflow: hidden; text-overflow: ellipsis;"></p>`
       : ''
 
     const template = `
@@ -163,6 +163,17 @@ export class SKAlert {
     this.element = document.createElement('div')
     this.element.className = 'sn-component'
     this.element.innerHTML = this.templateString().trim()
+
+    const titleElement = this.element.querySelector('#title')
+    const messageElement = this.element.querySelector('#message')
+
+    if (titleElement) {
+      titleElement.textContent = this.title || ''
+    }
+
+    if (messageElement) {
+      messageElement.textContent = this.text || ''
+    }
 
     onElement.appendChild(this.element)
 
