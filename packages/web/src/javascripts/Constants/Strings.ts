@@ -161,4 +161,11 @@ export const StringUtils = {
       ? "This note has editing disabled. If you'd like to delete it, enable editing, and try again."
       : "One or more of these notes have editing disabled. If you'd like to delete them, make sure editing is enabled on all of them, and try again."
   },
+  deleteTag(title: string): string {
+    const escapedTitle = escapeHtmlString(title)
+    return `Delete tag "${escapedTitle}"?`
+  },
+  cannotUploadFile(name: string): string {
+    const escapedName = escapeHtmlString(name)
+    return `Cannot upload file "${escapedName}"`}
 }
