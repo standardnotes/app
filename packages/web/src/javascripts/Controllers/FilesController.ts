@@ -16,7 +16,7 @@ import {
 import { Strings, StringUtils } from '@/Constants/Strings'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { ClassicFileReader, StreamingFileReader, StreamingFileSaver, ClassicFileSaver } from '@standardnotes/filepicker'
-import { parseAndCreateZippableFileName, parseFileName } from '@standardnotes/utils'
+import { escapeHtmlString, parseAndCreateZippableFileName, parseFileName } from '@standardnotes/utils'
 import {
   AlertService,
   ChallengeReason,
@@ -168,7 +168,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   deleteFile = async (file: FileItem) => {
     const shouldDelete = await confirmDialog({
-      text: `Are you sure you want to permanently delete "${file.name}"?`,
+      text: StringUtils.deleteFile(file.name),
       confirmButtonStyle: 'danger',
     })
     if (shouldDelete) {
@@ -440,7 +440,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           `This file exceeds the limits supported in this browser. To upload files greater than ${
             this.maxFileSize / BYTES_IN_ONE_MEGABYTE
           }MB, please use the desktop application or the Chrome browser.`,
-          `Cannot upload file "${file.name}"`,
+          `Cannot upload file "${escapeHtmlString(file.name)}"`,
         )
         .catch(console.error)
       return true

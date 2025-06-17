@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { sanitize } from 'dompurify'
-import { find, isArray, mergeWith, remove, uniq, uniqWith } from 'lodash'
+import { escape, find, isArray, mergeWith, remove, uniq, uniqWith } from 'lodash'
 import { AnyRecord } from '@standardnotes/common'
 
 const collator = typeof Intl !== 'undefined' ? new Intl.Collator('en', { numeric: true }) : undefined
@@ -610,6 +610,10 @@ export function convertTimestampToMilliseconds(timestamp: number): number {
 
 export function sanitizeHtmlString(html: string): string {
   return sanitize(html)
+}
+
+export function escapeHtmlString(html: string): string {
+  return escape(html)
 }
 
 let sharedDateFormatter: unknown
