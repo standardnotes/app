@@ -167,5 +167,6 @@ export const StringUtils = {
   },
   cannotUploadFile(name: string): string {
     const escapedName = escapeHtmlString(name)
-    return `Cannot upload file "${escapedName}"`}
+    return `Cannot upload file "${escapedName}"`
+  },
 }
