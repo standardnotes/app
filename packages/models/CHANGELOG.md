@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.57.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.56.1...@standardnotes/models@1.57.0) (2025-06-16)
+
+### Features
+
+* Added image alignment options and preference in Super notes ([#2903](https://github.com/standardnotes/app/issues/2903)) ([7bce025](https://github.com/standardnotes/app/commit/7bce025efbab6d57c4dabb8354d400c87eb90032))
+
 ## [1.56.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.56.0...@standardnotes/models@1.56.1) (2024-05-07)
 
 **Note:** Version bump only for package @standardnotes/models

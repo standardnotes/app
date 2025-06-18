@@ -15,4 +15,5 @@ export const ElementIds = {
   SearchBar: 'search-bar',
   ConflictResolutionButton: 'conflict-resolution-button',
   SuperEditor: 'super-editor',
+  SuperEditorContent: 'super-editor-content',
 } as const

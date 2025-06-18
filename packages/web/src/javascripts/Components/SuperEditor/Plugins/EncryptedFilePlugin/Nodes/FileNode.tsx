@@ -94,6 +94,7 @@ export class FileNode extends DecoratorBlockNode implements ItemNodeInterface {
       <FileComponent
         className={className}
         format={this.__format}
+        setFormat={this.setFormat.bind(this)}
         nodeKey={this.getKey()}
         fileUuid={this.__id}
         zoomLevel={this.__zoomLevel}

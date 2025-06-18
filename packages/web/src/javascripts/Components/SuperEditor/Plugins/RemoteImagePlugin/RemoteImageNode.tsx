@@ -94,6 +94,7 @@ export class RemoteImageNode extends DecoratorBlockNode {
       <RemoteImageComponent
         className={className}
         format={this.__format}
+        setFormat={this.setFormat.bind(this)}
         nodeKey={this.getKey()}
         node={this}
         src={this.__src}

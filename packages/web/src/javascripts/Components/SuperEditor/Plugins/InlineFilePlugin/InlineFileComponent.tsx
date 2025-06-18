@@ -1,5 +1,5 @@
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
-import { Platform, classNames } from '@standardnotes/snjs'
+import { Platform, PrefKey, classNames } from '@standardnotes/snjs'
 import { ElementFormatType, NodeKey } from 'lexical'
 import { InlineFileNode } from './InlineFileNode'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
@@ -9,6 +9,9 @@ import { $createFileNode } from '../EncryptedFilePlugin/Nodes/FileUtils'
 import { isIOS } from '@standardnotes/ui-services'
 import Icon from '@/Components/Icon/Icon'
 import Spinner from '@/Components/Spinner/Spinner'
+import usePreference from '@/Hooks/usePreference'
+import { getCSSValueFromAlignment, ImageAlignmentOptions } from '@/Components/FilePreview/ImageAlignmentOptions'
+import { getOverflows } from '@/Components/Popover/Utils/Collisions'
 
 type Props = {
   fileName: string | undefined
@@ -19,11 +22,12 @@ type Props = {
     focus: string
   }>
   format: ElementFormatType | null
+  setFormat: (format: ElementFormatType) => void
   node: InlineFileNode
   nodeKey: NodeKey
 }
 
-const InlineFileComponent = ({ className, src, mimeType, fileName, format, node, nodeKey }: Props) => {
+const InlineFileComponent = ({ className, src, mimeType, fileName, format, setFormat, node, nodeKey }: Props) => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
 
@@ -57,11 +61,49 @@ const InlineFileComponent = ({ className, src, mimeType, fileName, format, node,
 
   const isPDF = mimeType === 'application/pdf'
 
+  const defaultSuperImageAlignment = usePreference(PrefKey.SuperNoteImageAlignment)
+  const finalAlignment = format || defaultSuperImageAlignment
+  const alignItems: 'start' | 'center' | 'end' = getCSSValueFromAlignment(finalAlignment)
+  const changeAlignment = useCallback(
+    (format: ElementFormatType) => {
+      editor.update(() => {
+        setFormat(format)
+      })
+    },
+    [editor, setFormat],
+  )
+
   return (
     <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
       {mimeType.startsWith('image') ? (
-        <div className="relative flex min-h-[2rem] flex-col items-center gap-2.5">
+        <div
+          className="group relative flex min-h-[2rem] flex-col gap-2.5"
+          style={{ alignItems }}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+        >
           <img alt={fileName} src={src} />
+          <div
+            className="invisible absolute bottom-full left-1/2 z-10 w-max -translate-x-1/2 px-1 pb-1 focus-within:visible group-hover:visible [.embedBlockFocused_&]:visible"
+            ref={(popover) => {
+              const editorRoot = editor.getRootElement()
+              if (!popover || !editorRoot) {
+                return
+              }
+              const editorRootRect = editorRoot.getBoundingClientRect()
+              const popoverRect = popover.getBoundingClientRect()
+              const overflows = getOverflows(popoverRect, editorRootRect)
+              if (overflows.top > 0) {
+                popover.style.setProperty('--tw-translate-y', `${overflows.top}px`)
+              }
+            }}
+          >
+            <div className="flex gap-1 rounded border border-border bg-default px-1 py-0.5">
+              <ImageAlignmentOptions alignment={finalAlignment} changeAlignment={changeAlignment} />
+            </div>
+          </div>
         </div>
       ) : mimeType.startsWith('video') ? (
         <video className="h-full w-full" controls autoPlay>
