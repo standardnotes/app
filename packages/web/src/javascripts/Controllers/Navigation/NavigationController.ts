@@ -6,7 +6,7 @@ import {
   VaultDisplayService,
   VaultDisplayServiceEvent,
 } from '@standardnotes/ui-services'
-import { STRING_DELETE_TAG } from '@/Constants/Strings'
+import { STRING_DELETE_TAG, StringUtils } from '@/Constants/Strings'
 import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import {
   ContentType,
@@ -604,7 +604,7 @@ export class NavigationController
     let shouldDelete = !userTriggered
     if (userTriggered) {
       shouldDelete = await confirmDialog({
-        title: `Delete tag "${tag.title}"?`,
+        title: StringUtils.deleteTag(tag.title),
         text: STRING_DELETE_TAG,
         confirmButtonStyle: 'danger',
       })
