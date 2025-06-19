@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.187](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.186...@standardnotes/mobile@3.58.187) (2025-06-19)
+
+### Bug Fixes
+
+* Fixed issue where Android app would crash on screen rotation ([#2905](https://github.com/standardnotes/app/issues/2905)) ([9c1bb35](https://github.com/standardnotes/app/commit/9c1bb353550c0256b4e6dcbee1e087cc9ffdd628))
+
 ## [3.58.186](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.185...@standardnotes/mobile@3.58.186) (2025-06-19)
 
 **Note:** Version bump only for package @standardnotes/mobile

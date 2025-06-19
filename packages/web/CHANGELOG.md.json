@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.197.3",
+      "title": "[3.197.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.197.2...@standardnotes/web@3.197.3) (2025-06-19)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where Android app would crash on screen rotation ([#2905](https://github.com/standardnotes/app/issues/2905)) ([9c1bb35](https://github.com/standardnotes/app/commit/9c1bb353550c0256b4e6dcbee1e087cc9ffdd628))",
+      "parsed": {
+        "_": [
+          "Fixed issue where Android app would crash on screen rotation (#2905) (9c1bb35)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where Android app would crash on screen rotation (#2905) (9c1bb35)"
+        ]
+      }
+    },
+    {
       "version": "3.197.2",
       "title": "[3.197.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.197.1...@standardnotes/web@3.197.2) (2025-06-19)",
       "date": null,
