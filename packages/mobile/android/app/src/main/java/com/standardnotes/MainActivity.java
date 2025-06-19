@@ -37,13 +37,6 @@ public class MainActivity extends ReactActivity {
         DefaultNewArchitectureEntryPoint.getFabricEnabled());
     }
 
-    // Fix for Dark theme subscriptions https://github.com/facebook/react-native/issues/28823#issuecomment-642032481
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        getReactInstanceManager().onConfigurationChanged(this, newConfig);
-    }
-
     /*
      On back button press, background app instead of quitting it
      https://github.com/facebook/react-native/issues/13775
