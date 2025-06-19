@@ -1,6 +1,64 @@
 {
   "versions": [
     {
+      "version": "3.197.1",
+      "title": "[3.197.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.197.0...@standardnotes/web@3.197.1) (2025-06-18)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.197.0",
+      "title": "[3.197.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.9...@standardnotes/web@3.197.0) (2025-06-16)",
+      "date": null,
+      "body": "### Features\n\n* Added image alignment options and preference in Super notes ([#2903](https://github.com/standardnotes/app/issues/2903)) ([7bce025](https://github.com/standardnotes/app/commit/7bce025efbab6d57c4dabb8354d400c87eb90032))",
+      "parsed": {
+        "_": [
+          "Added image alignment options and preference in Super notes (#2903) (7bce025)"
+        ],
+        "Features": [
+          "Added image alignment options and preference in Super notes (#2903) (7bce025)"
+        ]
+      }
+    },
+    {
+      "version": "3.196.9",
+      "title": "[3.196.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.8...@standardnotes/web@3.196.9) (2025-06-12)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.196.8",
+      "title": "[3.196.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.7...@standardnotes/web@3.196.8) (2025-06-05)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.196.7",
+      "title": "[3.196.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.6...@standardnotes/web@3.196.7) (2025-05-22)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.196.6",
       "title": "[3.196.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.5...@standardnotes/web@3.196.6) (2025-05-12)",
       "date": null,

@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.197.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.197.0...@standardnotes/web@3.197.1) (2025-06-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.197.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.9...@standardnotes/web@3.197.0) (2025-06-16)
+
+### Features
+
+* Added image alignment options and preference in Super notes ([#2903](https://github.com/standardnotes/app/issues/2903)) ([7bce025](https://github.com/standardnotes/app/commit/7bce025efbab6d57c4dabb8354d400c87eb90032))
+
+## [3.196.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.8...@standardnotes/web@3.196.9) (2025-06-12)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.196.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.7...@standardnotes/web@3.196.8) (2025-06-05)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.196.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.6...@standardnotes/web@3.196.7) (2025-05-22)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.196.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.196.5...@standardnotes/web@3.196.6) (2025-05-12)
 
 **Note:** Version bump only for package @standardnotes/web

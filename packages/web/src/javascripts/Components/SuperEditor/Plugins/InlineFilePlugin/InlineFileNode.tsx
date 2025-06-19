@@ -172,6 +172,7 @@ export class InlineFileNode extends DecoratorBlockNode {
       <InlineFileComponent
         className={className}
         format={this.__format}
+        setFormat={this.setFormat.bind(this)}
         node={this}
         nodeKey={this.getKey()}
         src={this.__src}

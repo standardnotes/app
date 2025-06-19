@@ -1,4 +1,4 @@
-import { Platform, SNApplication } from '@standardnotes/snjs'
+import { escapeHtmlString, Platform, SNApplication } from '@standardnotes/snjs'
 import { getPlatform, isDesktopApplication } from '../Utils'
 
 /** @generic */
@@ -39,9 +39,10 @@ export const STRING_EDIT_LOCKED_ATTEMPT =
 export const STRING_RESTORE_LOCKED_ATTEMPT =
   "This note has editing disabled. If you'd like to restore it to a previous revision, enable editing and try again."
 export function StringDeleteNote(title: string, permanently: boolean) {
+  const escapedTitle = escapeHtmlString(title)
   return permanently
-    ? `Are you sure you want to permanently delete ${title}?`
-    : `Are you sure you want to move ${title} to the trash?`
+    ? `Are you sure you want to permanently delete ${escapedTitle}?`
+    : `Are you sure you want to move ${escapedTitle} to the trash?`
 }
 export function StringEmptyTrash(count: number) {
   return `Are you sure you want to permanently delete ${count} note(s)?`
@@ -135,9 +136,10 @@ export const StringUtils = {
   },
   deleteNotes(permanently: boolean, notesCount = 1, title?: string): string {
     if (notesCount === 1) {
+      const escapedTitle = escapeHtmlString(title || '')
       return permanently
-        ? `Are you sure you want to permanently delete ${title}?`
-        : `Are you sure you want to move ${title} to the trash?`
+        ? `Are you sure you want to permanently delete ${escapedTitle}?`
+        : `Are you sure you want to move ${escapedTitle} to the trash?`
     } else {
       return permanently
         ? 'Are you sure you want to permanently delete these notes?'
@@ -145,7 +147,8 @@ export const StringUtils = {
     }
   },
   deleteFile(title: string): string {
-    return `Are you sure you want to permanently delete ${title}?`
+    const escapedTitle = escapeHtmlString(title)
+    return `Are you sure you want to permanently delete ${escapedTitle}?`
   },
   archiveLockedNotesAttempt(archive: boolean, notesCount = 1): string {
     const archiveString = archive ? 'archive' : 'unarchive'
@@ -157,5 +160,13 @@ export const StringUtils = {
     return notesCount === 1
       ? "This note has editing disabled. If you'd like to delete it, enable editing, and try again."
       : "One or more of these notes have editing disabled. If you'd like to delete them, make sure editing is enabled on all of them, and try again."
+  },
+  deleteTag(title: string): string {
+    const escapedTitle = escapeHtmlString(title)
+    return `Delete tag "${escapedTitle}"?`
+  },
+  cannotUploadFile(name: string): string {
+    const escapedName = escapeHtmlString(name)
+    return `Cannot upload file "${escapedName}"`
   },
 }
