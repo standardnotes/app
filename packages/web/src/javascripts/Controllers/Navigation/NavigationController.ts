@@ -484,8 +484,9 @@ export class NavigationController
   public async setSelectedTag(
     tag: AnyTag | undefined,
     location: TagListSectionType,
-    { userTriggered, scrollIntoView } = { userTriggered: false, scrollIntoView: false },
+    options?: { userTriggered: boolean; scrollIntoView?: boolean },
   ) {
+    const { userTriggered = false, scrollIntoView = false } = options || {}
     if (tag && tag.conflictOf) {
       this._changeAndSaveItem
         .execute(tag, (mutator) => {
