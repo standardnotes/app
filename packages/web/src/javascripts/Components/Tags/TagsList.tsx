@@ -6,16 +6,26 @@ import { TagListSectionType } from './TagListSection'
 import { TagsListItem } from './TagsListItem'
 import { useApplication } from '../ApplicationProvider'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 
 type Props = {
   type: TagListSectionType
 }
 
+function getAllTagsForType(controller: NavigationController, type: TagListSectionType) {
+  if (type === 'all') {
+    if (controller.isSearching) {
+      return controller.tags
+    }
+    return controller.allLocalRootTags
+  }
+  return controller.starredTags
+}
+
 const TagsList: FunctionComponent<Props> = ({ type }: Props) => {
   const application = useApplication()
 
-  const allTags =
-    type === 'all' ? application.navigationController.allLocalRootTags : application.navigationController.starredTags
+  const allTags = getAllTagsForType(application.navigationController, type)
 
   const openTagContextMenu = useCallback(
     (x: number, y: number) => {

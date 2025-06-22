@@ -5,6 +5,7 @@ import { SearchableItem } from './SearchableItem'
 export type SearchQuery = {
   query: string
   includeProtectedNoteText: boolean
+  shouldCheckForSomeTagMatches?: boolean
 }
 
 export interface ReferenceLookupCollection {
