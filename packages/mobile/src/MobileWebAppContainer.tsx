@@ -43,6 +43,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const _reviewService = useRef(new ReviewService(device))
 
   const [showAndroidWebviewUpdatePrompt, setShowAndroidWebviewUpdatePrompt] = useState(false)
+  const [didLoadEnd, setDidLoadEnd] = useState(false)
 
   const insets = useSafeAreaInsets()
 
@@ -136,7 +137,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       keyboardDidHideListener.remove()
       keyboardWillChangeFrame.remove()
     }
-  }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService])
+  }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService, insets.bottom])
 
   useEffect(() => {
     return notifee.onForegroundEvent(({ type, detail }) => {
@@ -354,30 +355,22 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     }
   }, [])
 
-  const [didAppLaunch, setDidAppLaunch] = useState(false)
   useEffect(() => {
     return device.addApplicationEventReceiver((event) => {
       if (event === ApplicationEvent.Launched) {
         receivedSharedItemsHandler.current.setIsApplicationLaunched(true)
-        setDidAppLaunch(true)
       }
     })
   }, [device])
 
-  useEffect(() => {
-    if (!didAppLaunch) {
-      return
-    }
-    webViewRef.current?.postMessage(
-      JSON.stringify({
-        reactNativeEvent: ReactNativeToWebEvent.UpdateSafeAreaInsets,
-        messageType: 'event',
-        messageData: insets,
-      }),
-    )
-  }, [didAppLaunch, insets])
-
-  const [didLoadEnd, setDidLoadEnd] = useState(false)
+  const injectJS = `
+    document.documentElement.style.setProperty('--safe-area-inset-top', '${insets.top}px');
+    document.documentElement.style.setProperty('--safe-area-inset-bottom', '${insets.bottom}px');
+    document.documentElement.style.setProperty('--safe-area-inset-left', '${insets.left}px');
+    document.documentElement.style.setProperty('--safe-area-inset-right', '${insets.right}px');
+    true;
+  `
+  webViewRef.current?.injectJavaScript(injectJS)
 
   if (showAndroidWebviewUpdatePrompt) {
     return (
@@ -465,7 +458,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
             component: CustomAndroidWebView,
           } as WebViewNativeConfig,
         })}
-        webviewDebuggingEnabled
+        webviewDebuggingEnabled={true}
       />
     </View>
   )

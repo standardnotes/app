@@ -10,7 +10,6 @@ export enum ReactNativeToWebEvent {
   KeyboardWillHide = 'KeyboardWillHide',
   KeyboardDidShow = 'KeyboardDidShow',
   KeyboardDidHide = 'KeyboardDidHide',
-  UpdateSafeAreaInsets = 'UpdateSafeAreaInsets',
   ReceivedFile = 'ReceivedFile',
   ReceivedLink = 'ReceivedLink',
   ReceivedText = 'ReceivedText',
