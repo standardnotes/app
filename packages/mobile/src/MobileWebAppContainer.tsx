@@ -458,7 +458,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
             component: CustomAndroidWebView,
           } as WebViewNativeConfig,
         })}
-        webviewDebuggingEnabled={true}
+        webviewDebuggingEnabled
       />
     </View>
   )
