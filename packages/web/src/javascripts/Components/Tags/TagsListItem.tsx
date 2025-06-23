@@ -27,6 +27,7 @@ import { NoteDragDataFormat, TagDragDataFormat } from './DragNDrop'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { useApplication } from '../ApplicationProvider'
 import { mergeRefs } from '../../Hooks/mergeRefs'
+import { getTitleForLinkedTag } from '../../Utils/Items/Display/getTitleForLinkedTag'
 
 type Props = {
   tag: SNTag
@@ -77,6 +78,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const [hadChildren, setHadChildren] = useState(hasChildren)
 
     const [isBeingDraggedOver, setIsBeingDraggedOver] = useState(false)
+
+    const tagHierarchyPrefix = navigationController.isSearching && getTitleForLinkedTag(tag, application)?.titlePrefix
 
     useEffect(() => {
       if (!hadChildren && hasChildren) {
@@ -369,11 +372,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             {!isEditing && (
               <>
                 <div
-                  className={
-                    'title overflow-hidden text-left text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
-                  }
+                  className="title overflow-hidden text-left text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item"
                   id={`react-tag-${tag.uuid}-${type}`}
                 >
+                  {tagHierarchyPrefix && <span className="opacity-50">{tagHierarchyPrefix}</span>}
                   {title}
                 </div>
               </>
