@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.58.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.57.1...@standardnotes/models@1.58.0) (2025-06-24)
+
+### Features
+
+* Tag search will now only show the direct tag results instead of also showing the parent and siblings ([#2906](https://github.com/standardnotes/app/issues/2906)) ([caa8eff](https://github.com/standardnotes/app/commit/caa8eff216b2d7a47f849f85f1eb2248eea10c62))
+
 ## [1.57.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.57.0...@standardnotes/models@1.57.1) (2025-06-18)
 
 **Note:** Version bump only for package @standardnotes/models

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.189](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.188...@standardnotes/mobile@3.58.189) (2025-06-24)
+
+### Bug Fixes
+
+* Fixed issue with UI sometimes getting shifted up on iOS ([c050a2c](https://github.com/standardnotes/app/commit/c050a2cd339bb7a8fd482904216de1db2b8fe568))
+
 ## [3.58.188](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.187...@standardnotes/mobile@3.58.188) (2025-06-22)
 
 **Note:** Version bump only for package @standardnotes/mobile

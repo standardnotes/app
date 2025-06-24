@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.209.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.209.10...@standardnotes/snjs@2.209.11) (2025-06-24)
+
+### Bug Fixes
+
+* Fixed issue with UI sometimes getting shifted up on iOS ([c050a2c](https://github.com/standardnotes/app/commit/c050a2cd339bb7a8fd482904216de1db2b8fe568))
+
 ## [2.209.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.209.9...@standardnotes/snjs@2.209.10) (2025-06-18)
 
 **Note:** Version bump only for package @standardnotes/snjs

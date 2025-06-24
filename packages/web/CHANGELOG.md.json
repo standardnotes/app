@@ -1,6 +1,24 @@
 {
   "versions": [
     {
+      "version": "3.198.0",
+      "title": "[3.198.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.197.4...@standardnotes/web@3.198.0) (2025-06-24)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue with UI sometimes getting shifted up on iOS ([c050a2c](https://github.com/standardnotes/app/commit/c050a2cd339bb7a8fd482904216de1db2b8fe568))\n\n### Features\n\n* Tag search will now only show the direct tag results instead of also showing the parent and siblings ([#2906](https://github.com/standardnotes/app/issues/2906)) ([caa8eff](https://github.com/standardnotes/app/commit/caa8eff216b2d7a47f849f85f1eb2248eea10c62))",
+      "parsed": {
+        "_": [
+          "Fixed issue with UI sometimes getting shifted up on iOS (c050a2c)",
+          "Tag search will now only show the direct tag results instead of also showing the parent and siblings (#2906) (caa8eff)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue with UI sometimes getting shifted up on iOS (c050a2c)"
+        ],
+        "Features": [
+          "Tag search will now only show the direct tag results instead of also showing the parent and siblings (#2906) (caa8eff)"
+        ]
+      }
+    },
+    {
       "version": "3.197.4",
       "title": "[3.197.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.197.3...@standardnotes/web@3.197.4) (2025-06-22)",
       "date": null,

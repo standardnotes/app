@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.38.9](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.8...@standardnotes/ui-services@1.38.9) (2025-06-24)
+
+### Bug Fixes
+
+* Fixed issue with UI sometimes getting shifted up on iOS ([c050a2c](https://github.com/standardnotes/app/commit/c050a2cd339bb7a8fd482904216de1db2b8fe568))
+
 ## [1.38.8](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.7...@standardnotes/ui-services@1.38.8) (2025-06-18)
 
 **Note:** Version bump only for package @standardnotes/ui-services
