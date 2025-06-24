@@ -7770,12 +7770,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/classic-code-editor@npm:^1.5.7":
-  version: 1.5.7
-  resolution: "@standardnotes/classic-code-editor@npm:1.5.7"
+"@standardnotes/classic-code-editor@npm:^1.6.2":
+  version: 1.6.2
+  resolution: "@standardnotes/classic-code-editor@npm:1.6.2"
   dependencies:
     "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
-  checksum: 6f08260d7414bcf04070ed0c77436b98c95feae3d51f3a2e6dce39d6684beb7b78c6eceff9f5055cb5fa177f173c8a6db6ac9a383873d4fc5ef3474533858075
+  checksum: 42192f8e4539b219000ccc73ee572955164a6ce7025d3407a24ef606e2b72ed811a1b842360bae4ec7fdbab9762410923118e6987e8c47a81818ca3b6ced51d3
   languageName: node
   linkType: hard
 
@@ -8815,7 +8815,7 @@ __metadata:
     "@standardnotes/authenticator": ^2.4.0
     "@standardnotes/autobiography-theme": ^1.2.7
     "@standardnotes/bold-editor": ^1.6.4
-    "@standardnotes/classic-code-editor": ^1.5.7
+    "@standardnotes/classic-code-editor": ^1.6.2
     "@standardnotes/dynamic-theme": ^1.2.8
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/focus-theme": ^1.4.6

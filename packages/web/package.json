@@ -33,7 +33,7 @@
     "@standardnotes/authenticator": "^2.4.0",
     "@standardnotes/autobiography-theme": "^1.2.7",
     "@standardnotes/bold-editor": "^1.6.4",
-    "@standardnotes/classic-code-editor": "^1.5.7",
+    "@standardnotes/classic-code-editor": "^1.6.2",
     "@standardnotes/dynamic-theme": "^1.2.8",
     "@standardnotes/filepicker": "workspace:*",
     "@standardnotes/focus-theme": "^1.4.6",
