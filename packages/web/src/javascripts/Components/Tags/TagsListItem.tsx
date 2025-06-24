@@ -26,6 +26,8 @@ import { log, LoggingDomain } from '@/Logging'
 import { NoteDragDataFormat, TagDragDataFormat } from './DragNDrop'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { useApplication } from '../ApplicationProvider'
+import { mergeRefs } from '../../Hooks/mergeRefs'
+import { getTitleForLinkedTag } from '../../Utils/Items/Display/getTitleForLinkedTag'
 
 type Props = {
   tag: SNTag
@@ -46,6 +48,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const [title, setTitle] = useState(tag.title || '')
     const [subtagTitle, setSubtagTitle] = useState('')
+
+    const tagRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
     const subtagInputRef = useRef<HTMLInputElement>(null)
     const menuButtonRef = useRef<HTMLAnchorElement>(null)
@@ -74,6 +78,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const [hadChildren, setHadChildren] = useState(hasChildren)
 
     const [isBeingDraggedOver, setIsBeingDraggedOver] = useState(false)
+
+    const tagHierarchyPrefix = navigationController.isSearching && getTitleForLinkedTag(tag, application)?.titlePrefix
 
     useEffect(() => {
       if (!hadChildren && hasChildren) {
@@ -117,6 +123,18 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const selectCurrentTag = useCallback(async () => {
       await navigationController.setSelectedTag(tag, type, {
         userTriggered: true,
+        scrollIntoView: false,
+      })
+    }, [navigationController, tag, type])
+
+    const clearSearchAndSelectCurrentTag = useCallback(async () => {
+      if (!navigationController.isSearching) {
+        return
+      }
+      navigationController.setSearchQuery('')
+      await navigationController.setSelectedTag(tag, type, {
+        userTriggered: true,
+        scrollIntoView: true,
       })
     }, [navigationController, tag, type])
 
@@ -195,8 +213,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       },
       [navigationController, onContextMenu, tag, type],
     )
-
-    const tagRef = useRef<HTMLDivElement>(null)
 
     const { addDragTarget, removeDragTarget } = useFileDragNDrop()
 
@@ -292,6 +308,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             isBeingDraggedOver && 'is-drag-over',
           )}
           onClick={selectCurrentTag}
+          onDoubleClick={clearSearchAndSelectCurrentTag}
           onKeyDown={(event) => {
             if (event.key === KeyboardKey.Enter || event.key === KeyboardKey.Space) {
               selectCurrentTag().catch(console.error)
@@ -301,7 +318,18 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               setTagExpanded(true)
             }
           }}
-          ref={tagRef}
+          ref={mergeRefs([
+            tagRef,
+            function scrollIntoViewIfNeeded(el) {
+              if (!el || navigationController.tagToScrollIntoView !== tag) {
+                return
+              }
+              el.scrollIntoView({
+                block: 'center',
+              })
+              navigationController.tagToScrollIntoView = undefined
+            },
+          ])}
           style={{
             paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
           }}
@@ -330,9 +358,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
             {isEditing && (
               <input
-                className={
-                  'title editing overflow-hidden text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
-                }
+                className="title editing min-w-0 overflow-hidden text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item"
                 id={`react-tag-${tag.uuid}-${type}`}
                 onBlur={onBlur}
                 onInput={onInput}
@@ -346,11 +372,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             {!isEditing && (
               <>
                 <div
-                  className={
-                    'title overflow-hidden text-left text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
-                  }
+                  className="title overflow-hidden text-left text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item"
                   id={`react-tag-${tag.uuid}-${type}`}
                 >
+                  {tagHierarchyPrefix && <span className="opacity-50">{tagHierarchyPrefix}</span>}
                   {title}
                 </div>
               </>

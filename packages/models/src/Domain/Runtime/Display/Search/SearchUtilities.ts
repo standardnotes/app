@@ -38,8 +38,11 @@ export function itemMatchesQuery(
   searchQuery: SearchQuery,
   collection: ReferenceLookupCollection,
 ): boolean {
+  const shouldCheckForSomeTagMatches = searchQuery.shouldCheckForSomeTagMatches ?? true
   const itemTags = collection.elementsReferencingElement(itemToMatch, ContentType.TYPES.Tag) as SNTag[]
-  const someTagsMatches = itemTags.some((tag) => matchResultForStringQuery(tag, searchQuery.query) !== MatchResult.None)
+  const someTagsMatches =
+    shouldCheckForSomeTagMatches &&
+    itemTags.some((tag) => matchResultForStringQuery(tag, searchQuery.query) !== MatchResult.None)
 
   if (itemToMatch.protected && !searchQuery.includeProtectedNoteText) {
     const match = matchResultForStringQuery(itemToMatch, searchQuery.query)

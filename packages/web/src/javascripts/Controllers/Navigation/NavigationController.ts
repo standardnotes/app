@@ -59,6 +59,7 @@ export class NavigationController
   previouslySelected_: AnyTag | undefined = undefined
   editing_: SNTag | SmartView | undefined = undefined
   addingSubtagTo: SNTag | undefined = undefined
+  tagToScrollIntoView: AnyTag | undefined = undefined
 
   contextMenuOpen = false
   contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 }
@@ -390,10 +391,14 @@ export class NavigationController
       return []
     }
 
+    if (this.isSearching) {
+      return []
+    }
+
     const children = this.items.getTagChildren(tag)
 
     const childrenUuids = children.map((childTag) => childTag.uuid)
-    const childrenTags = this.isSearching ? children : this.tags.filter((tag) => childrenUuids.includes(tag.uuid))
+    const childrenTags = this.tags.filter((tag) => childrenUuids.includes(tag.uuid))
     return childrenTags
   }
 
@@ -479,8 +484,9 @@ export class NavigationController
   public async setSelectedTag(
     tag: AnyTag | undefined,
     location: TagListSectionType,
-    { userTriggered } = { userTriggered: false },
+    options?: { userTriggered: boolean; scrollIntoView?: boolean },
   ) {
+    const { userTriggered = false, scrollIntoView = false } = options || {}
     if (tag && tag.conflictOf) {
       this._changeAndSaveItem
         .execute(tag, (mutator) => {
@@ -512,6 +518,9 @@ export class NavigationController
         },
         InternalEventPublishStrategy.SEQUENCE,
       )
+      if (userTriggered && scrollIntoView) {
+        this.tagToScrollIntoView = tag
+      }
     })
   }
 
@@ -678,6 +687,7 @@ export class NavigationController
       searchQuery: {
         query: this.searchQuery,
         includeProtectedNoteText: false,
+        shouldCheckForSomeTagMatches: false,
       },
     })
     this.reloadTags()
