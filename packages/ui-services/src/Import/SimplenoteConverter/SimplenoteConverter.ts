@@ -50,10 +50,10 @@ export class SimplenoteConverter implements Converter {
     return false
   }
 
-  convert: Converter['convert'] = async (file, { insertNote: createNote, readFileAsText }) => {
+  convert: Converter['convert'] = async (file, { insertNote: createNote, convertMarkdownToSuper, readFileAsText }) => {
     const content = await readFileAsText(file)
 
-    const notes = await this.parse(content, createNote)
+    const notes = await this.parse(content, createNote, convertMarkdownToSuper)
 
     if (!notes) {
       throw new Error('Could not parse notes')
@@ -65,13 +65,18 @@ export class SimplenoteConverter implements Converter {
     }
   }
 
-  createNoteFromItem(item: SimplenoteItem, trashed: boolean, createNote: InsertNoteFn): ReturnType<InsertNoteFn> {
+  createNoteFromItem(
+    item: SimplenoteItem,
+    trashed: boolean,
+    createNote: InsertNoteFn,
+    convertMarkdownToSuper: (markdown: string) => string,
+  ): ReturnType<InsertNoteFn> {
     const createdAtDate = new Date(item.creationDate)
     const updatedAtDate = new Date(item.lastModified)
 
     const splitContent = splitAtFirst(item.content, '\r\n')
     const title = splitContent[0] ?? createdAtDate.toLocaleString()
-    const text = splitContent[1] ?? item.content
+    const text = convertMarkdownToSuper(splitContent[1] ?? item.content)
 
     return createNote({
       createdAt: createdAtDate,
@@ -83,14 +88,18 @@ export class SimplenoteConverter implements Converter {
     })
   }
 
-  async parse(data: string, createNote: InsertNoteFn) {
+  async parse(data: string, createNote: InsertNoteFn, convertMarkdownToSuper: (markdown: string) => string) {
     try {
       const parsed = JSON.parse(data) as SimplenoteData
       const activeNotes = await Promise.all(
-        parsed.activeNotes.reverse().map((item) => this.createNoteFromItem(item, false, createNote)),
+        parsed.activeNotes
+          .reverse()
+          .map((item) => this.createNoteFromItem(item, false, createNote, convertMarkdownToSuper)),
       )
       const trashedNotes = await Promise.all(
-        parsed.trashedNotes.reverse().map((item) => this.createNoteFromItem(item, true, createNote)),
+        parsed.trashedNotes
+          .reverse()
+          .map((item) => this.createNoteFromItem(item, true, createNote, convertMarkdownToSuper)),
       )
 
       return [...activeNotes, ...trashedNotes]
