@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.38.10](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.9...@standardnotes/ui-services@1.38.10) (2025-06-26)
+
+### Bug Fixes
+
+* fix simplenote converter ([f776cb3](https://github.com/standardnotes/app/commit/f776cb30d488d70994afdc174bb8035cf100b810))
+
 ## [1.38.9](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.8...@standardnotes/ui-services@1.38.9) (2025-06-24)
 
 ### Bug Fixes
