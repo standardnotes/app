@@ -22,7 +22,7 @@ describe('SimplenoteConverter', () => {
   it('should parse', async () => {
     const converter = new SimplenoteConverter()
 
-    const result = await converter.parse(data, createNote)
+    const result = await converter.parse(data, createNote, (markdown) => markdown)
 
     expect(result).not.toBeNull()
     expect(result?.length).toBe(3)
