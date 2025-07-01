@@ -8289,7 +8289,7 @@ __metadata:
     react-native-keychain: "standardnotes/react-native-keychain#618c3e1f253e6980866ee02a80c3ea66fa6f5bad"
     react-native-mmkv: ^3.2.0
     react-native-privacy-snapshot: "standardnotes/react-native-privacy-snapshot#653e904c90fc6f2b578da59138f2bfe5d7f942fe"
-    react-native-safe-area-context: ^5.4.0
+    react-native-safe-area-context: ^5.5.1
     react-native-share: ^12.0.9
     react-native-store-review: ^0.4.3
     react-native-version-info: ^1.1.1
@@ -24295,13 +24295,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-safe-area-context@npm:^5.4.0":
-  version: 5.4.0
-  resolution: "react-native-safe-area-context@npm:5.4.0"
+"react-native-safe-area-context@npm:^5.5.1":
+  version: 5.5.1
+  resolution: "react-native-safe-area-context@npm:5.5.1"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 7d7f9a8278048650fd207d436798bd062d6f78d771cb0665b92aef69dba870251339e6812e1d669fd1958345288bd0f9ac98fbfe353c13958d18b58dc946c341
+  checksum: 57d27eac29288a906e97055512cde656369fe3bdc2bc9f26ca078bd0b340e5535d7619d6bcc0f10b68630fe7e721099fcd64d15eb8101b146ddb660ae36e1d64
   languageName: node
   linkType: hard
 
