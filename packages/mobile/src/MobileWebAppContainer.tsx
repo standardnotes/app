@@ -370,7 +370,9 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     document.documentElement.style.setProperty('--safe-area-inset-right', '${insets.right}px');
     true;
   `
-  webViewRef.current?.injectJavaScript(injectJS)
+  if (Platform.OS === 'android') {
+    webViewRef.current?.injectJavaScript(injectJS)
+  }
 
   if (showAndroidWebviewUpdatePrompt) {
     return (
