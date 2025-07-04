@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.198.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.3...@standardnotes/web@3.198.4) (2025-07-04)
+
+### Bug Fixes
+
+* Fixed issue where safe area insets were not always applying properly on iOS, causing a UI shift ([#2912](https://github.com/standardnotes/app/issues/2912)) ([117781b](https://github.com/standardnotes/app/commit/117781bb3655a2bd6b9b0ca5a4d12f7bbefd164e))
+
 ## [3.198.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.2...@standardnotes/web@3.198.3) (2025-07-01)
 
 **Note:** Version bump only for package @standardnotes/web
