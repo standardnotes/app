@@ -65,7 +65,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.updated_at = new Date(rawPayload.updated_at || 0)
     this.updated_at_timestamp = rawPayload.updated_at_timestamp || 0
 
-    if (this.updated_at_timestamp < 0) {
+    if (this.updated_at < new Date(0) || this.updated_at_timestamp < 0) {
       this.updated_at_timestamp = 0
       this.updated_at = new Date(0)
     }
@@ -73,7 +73,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.created_at = new Date(rawPayload.created_at || new Date())
     this.created_at_timestamp = rawPayload.created_at_timestamp || 0
 
-    if (this.created_at_timestamp < 0) {
+    if (this.created_at < new Date(0) || this.created_at_timestamp < 0) {
       this.created_at_timestamp = this.updated_at_timestamp
       this.created_at = this.updated_at
     }
