@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.58.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.58.0...@standardnotes/models@1.58.1) (2025-07-15)
+
+### Bug Fixes
+
+* Prevent setting negative item created_at_timestamp values ([#2913](https://github.com/standardnotes/app/issues/2913)) ([2459e06](https://github.com/standardnotes/app/commit/2459e06b19f54a5a35b6dde11f361dc5c60ab7f5))
+
 # [1.58.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.57.1...@standardnotes/models@1.58.0) (2025-06-24)
 
 ### Features

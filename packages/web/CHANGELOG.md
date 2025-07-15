@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.198.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.4...@standardnotes/web@3.198.5) (2025-07-15)
+
+### Bug Fixes
+
+* Prevent text from hiding behind navbar in Android ([#2914](https://github.com/standardnotes/app/issues/2914)) ([d02e5ca](https://github.com/standardnotes/app/commit/d02e5cab7462ea4754a3e650be571a16f6c9c7b4))
+
 ## [3.198.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.3...@standardnotes/web@3.198.4) (2025-07-04)
 
 ### Bug Fixes
