@@ -6,8 +6,8 @@
   "license": "AGPL-3.0",
   "scripts": {
     "android-dev": "react-native run-android --mode devDebug --appIdSuffix dev",
-    "android-prod-debug": "react-native run-android --variant prodDebug",
-    "android-prod-release": "yarn run android:bundle && react-native run-android --variant prodRelease",
+    "android-prod-debug": "react-native run-android --mode prodDebug",
+    "android-prod-release": "yarn run android:bundle && react-native run-android --mode prodRelease",
     "android:bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/",
     "build": "yarn bundle:web && yarn install:pods && yarn android:bundle",
     "clear-cache": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* && rm -rf $TMPDIR/metro-bundler-cache-*",
