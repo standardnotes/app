@@ -53,7 +53,7 @@ platform :ios do
       groups: ['Public'],
       notify_external_testers: is_prod,
       submit_beta_review: is_prod,
-      release_notes: 'Fixes and improvements.'
+      changelog: 'Fixes and improvements.'
     )
 
     if is_prod && !is_testflight
