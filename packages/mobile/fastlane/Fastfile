@@ -68,7 +68,7 @@ platform :ios do
         run_precheck_before_submit: false,
         submission_information: { add_id_info_uses_idfa: false },
         release_notes: {
-          'default': 'Fixes and improvements.'
+          'en-US': 'Fixes and improvements.'
         }
       )
     end
