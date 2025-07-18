@@ -53,7 +53,7 @@ platform :ios do
       groups: ['Public'],
       notify_external_testers: is_prod,
       submit_beta_review: is_prod,
-      changelog: 'Fixes and improvements.'
+      release_notes: 'Fixes and improvements.'
     )
 
     if is_prod && !is_testflight
@@ -68,7 +68,7 @@ platform :ios do
         run_precheck_before_submit: false,
         submission_information: { add_id_info_uses_idfa: false },
         release_notes: {
-          'default': 'Fixes and improvements.'
+          'en-US': 'Fixes and improvements.'
         }
       )
     end
