@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.198.6",
+      "title": "[3.198.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.5...@standardnotes/web@3.198.6) (2025-07-19)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Remove extra bottom padding on Android ([#2915](https://github.com/standardnotes/app/issues/2915)) ([c52030a](https://github.com/standardnotes/app/commit/c52030a525eaf3c8488c19beb84229911bcda8fc))",
+      "parsed": {
+        "_": [
+          "Remove extra bottom padding on Android (#2915) (c52030a)"
+        ],
+        "Bug Fixes": [
+          "Remove extra bottom padding on Android (#2915) (c52030a)"
+        ]
+      }
+    },
+    {
       "version": "3.198.5",
       "title": "[3.198.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.4...@standardnotes/web@3.198.5) (2025-07-15)",
       "date": null,

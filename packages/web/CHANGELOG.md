@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.198.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.5...@standardnotes/web@3.198.6) (2025-07-19)
+
+### Bug Fixes
+
+* Remove extra bottom padding on Android ([#2915](https://github.com/standardnotes/app/issues/2915)) ([c52030a](https://github.com/standardnotes/app/commit/c52030a525eaf3c8488c19beb84229911bcda8fc))
+
 ## [3.198.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.4...@standardnotes/web@3.198.5) (2025-07-15)
 
 ### Bug Fixes

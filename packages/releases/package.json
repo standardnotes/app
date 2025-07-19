@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/releases",
-  "version": "1.4.834",
+  "version": "1.4.835",
   "license": "AGPL-3.0",
   "main": "dist/releases.json",
   "types": "dist/index.d.ts",
