@@ -134,9 +134,7 @@ const LinkedItemBubble = ({
             ref={(el) => (unlinkButtonRef.current = el as HTMLElement)}
             role="button"
             className="-mr-1 ml-2 inline-flex h-[1.15em] cursor-pointer border-0 bg-transparent p-0 align-middle"
-            onClick={(event) => {
-              onUnlinkClick(event)
-            }}
+            onClick={onUnlinkClick}
           >
             <Icon type="close" className="text-neutral hover:text-info" size="small" />
           </button>
