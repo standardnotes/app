@@ -32,13 +32,7 @@ export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouse
       onClick={onClick}
     >
       {option.item && <LinkedItemMeta item={option.item} searchQuery={searchQuery} />}
-      {!option.item && (
-        <LinkedItemSearchResultsAddTagOption
-          searchQuery={searchQuery}
-          onClickCallback={onClick}
-          isFocused={isSelected}
-        />
-      )}
+      {!option.item && <LinkedItemSearchResultsAddTagOption searchQuery={searchQuery} isFocused={isSelected} />}
     </li>
   )
 }

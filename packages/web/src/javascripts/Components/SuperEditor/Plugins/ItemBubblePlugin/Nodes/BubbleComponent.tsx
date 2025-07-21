@@ -30,15 +30,11 @@ export function BubbleComponent({ itemUuid, node }: BubbleComponentProps) {
     [toggleAppPane, linkingController],
   )
 
-  const unlinkPressed = useCallback(
-    async (itemToUnlink: LinkableItem) => {
-      linkingController.unlinkItemFromSelectedItem(itemToUnlink).catch(console.error)
-      editor.update(() => {
-        node.remove()
-      })
-    },
-    [linkingController, node, editor],
-  )
+  const unlinkPressed = useCallback(async () => {
+    editor.update(() => {
+      node.remove()
+    })
+  }, [linkingController, node, editor])
 
   if (!item) {
     return <div>Unable to find item {itemUuid}</div>
