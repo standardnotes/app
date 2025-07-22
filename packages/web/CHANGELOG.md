@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.198.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.6...@standardnotes/web@3.198.7) (2025-07-22)
+
+### Bug Fixes
+
+* Fixed issues with embedded linked items in Super editor ([#2918](https://github.com/standardnotes/app/issues/2918)) ([43d31d8](https://github.com/standardnotes/app/commit/43d31d8bb44644b0d78d8a7f543da790b30e1eea))
+
 ## [3.198.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.5...@standardnotes/web@3.198.6) (2025-07-19)
 
 ### Bug Fixes
