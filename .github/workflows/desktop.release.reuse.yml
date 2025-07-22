@@ -78,21 +78,25 @@ jobs:
 
       - run: yarn install --immutable
 
-      - name: Rebuild Electron Native Modules
-        run: yarn workspace @standardnotes/desktop rebuild:home-server
-
-      - run: yarn build:desktop
-
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
-
-      - name: Compile for AppImage
-        run: yarn run webpack --config desktop.webpack.prod.js
       - name: AppImage
-        run: yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+        run: |
+          yarn workspace @standardnotes/desktop rebuild:home-server
+          yarn run webpack --config desktop.webpack.prod.js
+          yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+
       - name: AppImageX64
-        run: yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+        run: |
+          yarn workspace @standardnotes/desktop rebuild:home-server
+          yarn run webpack --config desktop.webpack.prod.js
+          yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: AppImageArm64
-        run: yarn run electron-builder --linux --arm64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+        run: |
+          yarn workspace @standardnotes/desktop rebuild:home-server --arch arm64
+          yarn run webpack --config desktop.webpack.prod.js
+          yarn run electron-builder --linux --arm64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+        env:
+          npm_config_target_arch: 'arm64'
 
       - name: Upload
         uses: actions/upload-artifact@v4.0.0
@@ -125,19 +129,16 @@ jobs:
 
       - run: yarn install --immutable
 
-      - name: Rebuild Electron Native Modules
-        run: yarn workspace @standardnotes/desktop rebuild:home-server
-
-      - run: yarn build:desktop
-
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
 
       - name: Dir
         run: |
+          yarn workspace @standardnotes/desktop rebuild:home-server
           yarn run webpack --config desktop.webpack.prod.js
           yarn run electron-builder --linux --x64 -c.linux.target=dir --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: DirArm64
         run: |
+          yarn workspace @standardnotes/desktop rebuild:home-server --arch arm64
           yarn run webpack --config desktop.webpack.prod.js
           yarn run electron-builder --linux --arm64 -c.linux.target=dir --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
         env:
@@ -165,15 +166,11 @@ jobs:
 
       - run: yarn install --immutable
 
-      - name: Rebuild Electron Native Modules
-        run: yarn workspace @standardnotes/desktop rebuild:home-server
-
-      - run: yarn build:desktop
-
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
 
       - name: Deb
         run: |
+          yarn workspace @standardnotes/desktop rebuild:home-server
           yarn run webpack --config desktop.webpack.prod.js --env deb
           yarn run electron-builder --linux --x64 -c.linux.target=deb --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: DebArm64
@@ -181,6 +178,7 @@ jobs:
           npm_config_target_arch: 'arm64'
           USE_SYSTEM_FPM: 'true'
         run: |
+          yarn workspace @standardnotes/desktop rebuild:home-server --arch arm64
           yarn run webpack --config desktop.webpack.prod.js --env deb
           yarn run electron-builder --linux --arm64 -c.linux.target=deb --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
@@ -317,7 +315,7 @@ jobs:
 
       - name: Certificates Sync
         run: |
-           smctl windows certsync
+          smctl windows certsync
         shell: cmd
 
       - name: Build & Sign With Electron Builder
@@ -373,8 +371,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
-          tag_name: "@standardnotes/desktop@${{ env.APP_VERSION }}"
-          name: "Desktop ${{ env.APP_VERSION }}"
+          tag_name: '@standardnotes/desktop@${{ env.APP_VERSION }}'
+          name: 'Desktop ${{ env.APP_VERSION }}'
           body: ${{ steps.release-notes.outputs.result }}
           prerelease: true
           draft: false
@@ -395,5 +393,3 @@ jobs:
           token: ${{ secrets.CI_PAT_TOKEN }}
           repository: ${{ secrets.RELEASES_EVENT_RECEIVING_REPO }}
           event-type: releases-updated-event
-
-
