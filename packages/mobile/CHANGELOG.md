@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.198](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.197...@standardnotes/mobile@3.58.198) (2025-07-22)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.58.197](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.196...@standardnotes/mobile@3.58.197) (2025-07-22)
 
 **Note:** Version bump only for package @standardnotes/mobile
