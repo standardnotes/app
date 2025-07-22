@@ -14,9 +14,9 @@ export const useAvailableSafeAreaPadding = () => {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false)
   useEffect(() => {
     return application.addNativeMobileEventListener((event) => {
-      if (event === ReactNativeToWebEvent.KeyboardWillShow) {
+      if (event === ReactNativeToWebEvent.KeyboardWillShow || event === ReactNativeToWebEvent.KeyboardDidShow) {
         setIsKeyboardVisible(true)
-      } else if (event === ReactNativeToWebEvent.KeyboardWillHide) {
+      } else if (event === ReactNativeToWebEvent.KeyboardWillHide || event === ReactNativeToWebEvent.KeyboardDidHide) {
         setIsKeyboardVisible(false)
       }
     })

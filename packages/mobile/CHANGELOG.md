@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.196](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.195...@standardnotes/mobile@3.58.196) (2025-07-22)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.195](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.194...@standardnotes/mobile@3.58.195) (2025-07-19)
+
+### Bug Fixes
+
+* Remove extra bottom padding on Android ([#2915](https://github.com/standardnotes/app/issues/2915)) ([c52030a](https://github.com/standardnotes/app/commit/c52030a525eaf3c8488c19beb84229911bcda8fc))
+
 ## [3.58.194](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.193...@standardnotes/mobile@3.58.194) (2025-07-15)
 
 **Note:** Version bump only for package @standardnotes/mobile

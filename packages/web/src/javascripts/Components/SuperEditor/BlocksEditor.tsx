@@ -12,9 +12,6 @@ import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin'
 import { ListPlugin } from '@lexical/react/LexicalListPlugin'
 import { EditorState, LexicalEditor } from 'lexical'
 import HorizontalRulePlugin from './Plugins/HorizontalRulePlugin'
-import TwitterPlugin from './Plugins/TwitterPlugin'
-import YouTubePlugin from './Plugins/YouTubePlugin'
-import AutoEmbedPlugin from './Plugins/AutoEmbedPlugin'
 import CollapsiblePlugin from './Plugins/CollapsiblePlugin'
 import DraggableBlockPlugin from './Plugins/DraggableBlockPlugin'
 import CodeHighlightPlugin from './Plugins/CodeHighlightPlugin'
@@ -125,9 +122,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <CodeHighlightPlugin />
       <LinkPlugin />
       <HashtagPlugin />
-      <AutoEmbedPlugin />
-      <TwitterPlugin />
-      <YouTubePlugin />
       <CollapsiblePlugin />
       <TabIndentationPlugin />
       <RemoveBrokenTablesPlugin />

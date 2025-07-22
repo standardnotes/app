@@ -56,8 +56,10 @@ const LinkedItemBubble = ({
     setShowUnlinkButton(true)
   }
 
-  const onBlur = () => {
-    setShowUnlinkButton(false)
+  const onBlur: React.FocusEventHandler<HTMLButtonElement | HTMLAnchorElement> = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setShowUnlinkButton(false)
+    }
     setWasClicked(false)
   }
 
@@ -131,7 +133,7 @@ const LinkedItemBubble = ({
           <button
             ref={(el) => (unlinkButtonRef.current = el as HTMLElement)}
             role="button"
-            className="-mr-1 ml-2 inline-flex cursor-pointer border-0 bg-transparent p-0 h-[1.15em] align-middle"
+            className="-mr-1 ml-2 inline-flex h-[1.15em] cursor-pointer border-0 bg-transparent p-0 align-middle"
             onClick={onUnlinkClick}
           >
             <Icon type="close" className="text-neutral hover:text-info" size="small" />

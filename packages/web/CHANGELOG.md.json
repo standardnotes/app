@@ -1,6 +1,34 @@
 {
   "versions": [
     {
+      "version": "3.198.7",
+      "title": "[3.198.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.6...@standardnotes/web@3.198.7) (2025-07-22)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issues with embedded linked items in Super editor ([#2918](https://github.com/standardnotes/app/issues/2918)) ([43d31d8](https://github.com/standardnotes/app/commit/43d31d8bb44644b0d78d8a7f543da790b30e1eea))",
+      "parsed": {
+        "_": [
+          "Fixed issues with embedded linked items in Super editor (#2918) (43d31d8)"
+        ],
+        "Bug Fixes": [
+          "Fixed issues with embedded linked items in Super editor (#2918) (43d31d8)"
+        ]
+      }
+    },
+    {
+      "version": "3.198.6",
+      "title": "[3.198.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.5...@standardnotes/web@3.198.6) (2025-07-19)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Remove extra bottom padding on Android ([#2915](https://github.com/standardnotes/app/issues/2915)) ([c52030a](https://github.com/standardnotes/app/commit/c52030a525eaf3c8488c19beb84229911bcda8fc))",
+      "parsed": {
+        "_": [
+          "Remove extra bottom padding on Android (#2915) (c52030a)"
+        ],
+        "Bug Fixes": [
+          "Remove extra bottom padding on Android (#2915) (c52030a)"
+        ]
+      }
+    },
+    {
       "version": "3.198.5",
       "title": "[3.198.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.4...@standardnotes/web@3.198.5) (2025-07-15)",
       "date": null,
