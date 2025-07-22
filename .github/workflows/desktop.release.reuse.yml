@@ -78,6 +78,11 @@ jobs:
 
       - run: yarn install --immutable
 
+      - name: Rebuild Electron Native Modules
+        run: yarn workspace @standardnotes/desktop rebuild:home-server
+
+      - run: yarn build:desktop
+
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
 
       - name: Compile for AppImage
