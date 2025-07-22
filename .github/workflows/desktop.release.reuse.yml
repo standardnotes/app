@@ -79,21 +79,19 @@ jobs:
       - run: yarn install --immutable
 
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
+
+      - name: Compile for AppImage
+        run: yarn run webpack --config desktop.webpack.prod.js
       - name: AppImage
         run: |
-          yarn workspace @standardnotes/desktop rebuild:home-server
-          yarn run webpack --config desktop.webpack.prod.js
           yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: AppImageX64
         run: |
-          yarn workspace @standardnotes/desktop rebuild:home-server
-          yarn run webpack --config desktop.webpack.prod.js
           yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: AppImageArm64
         run: |
           yarn workspace @standardnotes/desktop rebuild:home-server --arch arm64
-          yarn run webpack --config desktop.webpack.prod.js
           yarn run electron-builder --linux --arm64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
         env:
           npm_config_target_arch: 'arm64'
@@ -138,7 +136,6 @@ jobs:
 
       - name: Dir
         run: |
-          yarn workspace @standardnotes/desktop rebuild:home-server
           yarn run webpack --config desktop.webpack.prod.js
           yarn run electron-builder --linux --x64 -c.linux.target=dir --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: DirArm64
@@ -171,11 +168,15 @@ jobs:
 
       - run: yarn install --immutable
 
+      - name: Rebuild Electron Native Modules
+        run: yarn workspace @standardnotes/desktop rebuild:home-server
+
+      - run: yarn build:desktop
+
       - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
 
       - name: Deb
         run: |
-          yarn workspace @standardnotes/desktop rebuild:home-server
           yarn run webpack --config desktop.webpack.prod.js --env deb
           yarn run electron-builder --linux --x64 -c.linux.target=deb --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: DebArm64
