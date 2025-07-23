@@ -247,8 +247,8 @@ export class ProtectionService
     })
   }
 
-  async authorizeMfaDisable(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.DisableMfa, {
+  async authorizeMfaDisable(): Promise<{ success: boolean; challengeResponse?: ChallengeResponse }> {
+    return this.authorizeActionWithChallengeResponse(ChallengeReason.DisableMfa, {
       fallBackToAccountPassword: true,
       requireAccountPassword: true,
       forcePrompt: false,

@@ -1231,6 +1231,7 @@ export class Dependencies {
         this.get<PureCryptoInterface>(TYPES.Crypto),
         this.get<FeaturesService>(TYPES.FeaturesService),
         this.get<ProtectionsClientInterface>(TYPES.ProtectionService),
+        this.get<EncryptionService>(TYPES.EncryptionService),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })

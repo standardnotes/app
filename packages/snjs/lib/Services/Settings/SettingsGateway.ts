@@ -109,8 +109,8 @@ export class SettingsGateway {
     }
   }
 
-  async deleteSetting(name: SettingName): Promise<void> {
-    const response = await this.settingsApi.deleteSetting(this.userUuid, name.value)
+  async deleteSetting(name: SettingName, serverPassword?: string): Promise<void> {
+    const response = await this.settingsApi.deleteSetting(this.userUuid, name.value, serverPassword)
     if (isErrorResponse(response)) {
       throw new Error(getErrorFromErrorResponse(response).message)
     }

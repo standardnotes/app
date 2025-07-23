@@ -28,5 +28,5 @@ export interface SettingsServerInterface {
     sensitive: boolean,
   ): Promise<HttpResponse<UpdateSettingResponse>>
 
-  deleteSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<DeleteSettingResponse>>
+  deleteSetting(userUuid: UuidString, settingName: string, serverPassword?: string): Promise<HttpResponse<DeleteSettingResponse>>
 }

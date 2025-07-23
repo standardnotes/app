@@ -40,7 +40,7 @@ export interface ProtectionsClientInterface extends ApplicationServiceInterface<
   authorizeAutolockIntervalChange(): Promise<boolean>
   authorizeSearchingProtectedNotesText(): Promise<boolean>
   authorizeBackupCreation(): Promise<boolean>
-  authorizeMfaDisable(): Promise<boolean>
+  authorizeMfaDisable(): Promise<{ success: boolean; challengeResponse?: ChallengeResponseInterface }>
   authorizeAccountDeletion(): Promise<{ success: boolean; challengeResponse?: ChallengeResponseInterface }>
 
   protectItems<I extends DecryptedItemInterface>(items: I[]): Promise<I[]>
