@@ -251,7 +251,7 @@ export class ProtectionService
     return this.authorizeActionWithChallengeResponse(ChallengeReason.DisableMfa, {
       fallBackToAccountPassword: true,
       requireAccountPassword: true,
-      forcePrompt: false,
+      forcePrompt: true,
     })
   }
 
