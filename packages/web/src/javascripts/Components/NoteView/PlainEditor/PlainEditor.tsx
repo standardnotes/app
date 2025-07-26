@@ -190,8 +190,11 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     useEffect(() => {
       reloadPreferences()
 
-      return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-        reloadPreferences()
+      return application.addEventObserver(async (event) => {
+        const events = [ApplicationEvent.PreferencesChanged, ApplicationEvent.LocalPreferencesChanged]
+        if (events.includes(event)) {
+          reloadPreferences()
+        }
       })
     }, [reloadPreferences, application])
 
