@@ -326,13 +326,7 @@ export class FeaturesService
   }
 
   public hasFirstPartyOfflineSubscription(): boolean {
-    const offlineRepo = this.getOfflineRepo()
-    if (!offlineRepo || !offlineRepo.content.offlineFeaturesUrl) {
-      return false
-    }
-
-    const hasFirstPartyOfflineSubscription = offlineRepo.content.offlineFeaturesUrl === this.PROD_OFFLINE_FEATURES_URL
-    return hasFirstPartyOfflineSubscription || new URL(offlineRepo.content.offlineFeaturesUrl).hostname === 'localhost'
+    return true
   }
 
   async updateOnlineRolesWithNewValues(roles: string[]): Promise<void> {
