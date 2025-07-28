@@ -347,7 +347,7 @@ jobs:
     env:
       SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
     if: ${{ always() }}
-    needs: [Windows, Mac, Linux-AppImage, Linux-Dir, Linux-Deb, Linux-Snap]
+    needs: [Linux-AppImage, Linux-Dir, Linux-Deb, Linux-Snap]
     defaults:
       run:
         working-directory: packages/desktop
@@ -389,11 +389,6 @@ jobs:
           draft: false
           files: packages/desktop/dist/*
 
-      - name: Publish Snap
-        run: |
-          sudo snap install snapcraft --classic
-          snapcraft upload dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap --release stable,candidate,beta,edge
-
   Notify:
     runs-on: ubuntu-latest
     needs: [Publish]
@@ -401,6 +396,5 @@ jobs:
       - name: Notify Release Update
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.CI_PAT_TOKEN }}
-          repository: ${{ secrets.RELEASES_EVENT_RECEIVING_REPO }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           event-type: releases-updated-event
