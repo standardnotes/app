@@ -369,7 +369,11 @@ export class ProtectionService
     reason: ChallengeReason,
     { fallBackToAccountPassword = true, requireAccountPassword = false, forcePrompt = false } = {},
   ): Promise<boolean> {
-    const response = await this.validateOrRenewSessionWithChallengeResponse(reason, { fallBackToAccountPassword, requireAccountPassword, forcePrompt })
+    const response = await this.validateOrRenewSessionWithChallengeResponse(reason, {
+      fallBackToAccountPassword,
+      requireAccountPassword,
+      forcePrompt,
+    })
     return response.success
   }
 
@@ -405,7 +409,7 @@ export class ProtectionService
         return { success: true }
       }
     }
-    
+
     const lastSessionLength = this.getLastSessionLength()
     const chosenSessionLength = isValidProtectionSessionLength(lastSessionLength)
       ? lastSessionLength

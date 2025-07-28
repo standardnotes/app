@@ -616,7 +616,11 @@ export class LegacyApiService
     })
   }
 
-  async deleteSetting(userUuid: UuidString, settingName: string, serverPassword?: string): Promise<HttpResponse<DeleteSettingResponse>> {
+  async deleteSetting(
+    userUuid: UuidString,
+    settingName: string,
+    serverPassword?: string,
+  ): Promise<HttpResponse<DeleteSettingResponse>> {
     return this.tokenRefreshableRequest<DeleteSettingResponse>({
       verb: HttpVerb.Delete,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName)),

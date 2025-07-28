@@ -60,7 +60,7 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
 
   async disableMfa(): Promise<void> {
     const { success, challengeResponse } = await this.protections.authorizeMfaDisable()
-    
+
     if (!success) {
       return
     }
@@ -72,7 +72,10 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
     )
     const serverPassword = currentRootKey.serverPassword
 
-    return await this.settingsService.deleteSetting(SettingName.create(SettingName.NAMES.MfaSecret).getValue(), serverPassword)
+    return await this.settingsService.deleteSetting(
+      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
+      serverPassword,
+    )
   }
 
   override deinit(): void {
