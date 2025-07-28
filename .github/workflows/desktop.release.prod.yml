@@ -9,7 +9,7 @@ on:
 
 jobs:
   Build:
-    uses: standardnotes/app/.github/workflows/desktop.release.reuse.yml@main
+    uses: TobiWan54/standardnotes-app/.github/workflows/desktop.release.reuse.yml@main
     secrets: inherit
     with:
       channel: prod
