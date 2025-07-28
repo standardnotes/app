@@ -26,29 +26,9 @@ jobs:
           echo "PACKAGE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
       - name: Setup react-native kernel and increase watchers
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-      - name: Decode Production Android keystore
-        run: |
-          echo "${{ secrets.ANDROID_KEYSTORE }}" > keystore.keystore.asc
-          gpg -d --passphrase "${{ secrets.KEYSTORE_PASSPHRASE }}" --batch keystore.keystore.asc > android/app/keystore.keystore
       - name: Install dependencies
         run: yarn install --immutable
       - run: yarn build:mobile
-      - name: Ruby Setup for Fastlane
-        uses: ruby/setup-ruby@v1
-        with:
-          working-directory: 'packages/mobile'
-      - name: fastlane
-        uses: maierj/fastlane-action@v1.4.0
-        env:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-          BUILD_NUMBER: ${{ github.run_number }}
-          ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
-          ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          GOOGLE_PLAY_JSON_KEY_DATA: ${{ secrets.GOOGLE_PLAY_JSON_KEY_DATA }}
-        with:
-          lane: 'android prod'
-          subdirectory: 'packages/mobile'
 
       - name: Generate Release Notes
         uses: ./actions/release-notes
@@ -69,61 +49,3 @@ jobs:
           files: |
             packages/mobile/android/app/build/outputs/bundle/prodRelease/app-prod-release.aab
             packages/mobile/android/app/build/outputs/apk/prod/release/app-prod-release.apk
-
-  ios:
-    defaults:
-      run:
-        working-directory: packages/mobile
-    runs-on: macos-latest
-    timeout-minutes: 90
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Export version from package.json
-        run:
-          echo "PACKAGE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
-      - name: Ruby Setup for Fastlane
-        uses: ruby/setup-ruby@v1
-        with:
-          working-directory: 'packages/mobile'
-      - name: Install dependencies
-        run: yarn install --immutable 
-      - name: Bundle install
-        run: bundle install
-      - name: Install pods
-        run: yarn install:pods
-      - run: yarn build:mobile
-      - name: Set ssh connection to Github
-        uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Export Apple AppStore Connect API key
-        run: echo "${{ secrets.APPSTORE_CONNECT_KEY }}" > ios/Authkey.p8
-      - name: Setup fastlane
-        uses: maierj/fastlane-action@v1.4.0
-        env:
-          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        with:
-          lane: 'ios setup'
-          subdirectory: 'packages/mobile'
-      - name: fastlane
-        uses: maierj/fastlane-action@v1.4.0
-        env:
-          APPLE_APP_ID: ${{ secrets.APP_APPLE_ID }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APPSTORE_CONNECT_KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
-          APPSTORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ISSUER_ID }}
-          BUILD_NUMBER: ${{ github.run_number }}
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
-          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-          MATCH_CERTIFICATES_URL: ${{ secrets.MATCH_CERTIFICATES_URL }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-        with:
-          lane: 'ios prod'
-          subdirectory: 'packages/mobile'
-
