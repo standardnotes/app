@@ -40,7 +40,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          token: ${{ secrets.CI_PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: "@standardnotes/mobile@${{ env.PACKAGE_VERSION }}"
           name: "Mobile ${{ env.PACKAGE_VERSION }}"
           body: ${{ steps.release-notes.outputs.result }}
