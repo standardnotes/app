@@ -381,7 +381,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          token: ${{ secrets.CI_PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: '@standardnotes/desktop@${{ env.APP_VERSION }}'
           name: 'Desktop ${{ env.APP_VERSION }}'
           body: ${{ steps.release-notes.outputs.result }}
