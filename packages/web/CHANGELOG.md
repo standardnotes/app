@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.198.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.11...@standardnotes/web@3.198.12) (2025-07-29)
+
+### Bug Fixes
+
+* Fixed font size not updating on plain editor when changing it from Preferences ([#2920](https://github.com/standardnotes/app/issues/2920)) ([0d17961](https://github.com/standardnotes/app/commit/0d17961570cdadbbb909709075bdef3b8d77434b))
+* Fixes extra bottom padding in account modal ([63d8472](https://github.com/standardnotes/app/commit/63d84725d2084d014de6aa73e74ba77a7e343484))
+* Fixes quick type suggestions showing up in iOS for password field ([9583d0d](https://github.com/standardnotes/app/commit/9583d0db44ba315e125fbc36b50a8da527ae3a89))
+
 ## [3.198.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.10...@standardnotes/web@3.198.11) (2025-07-23)
 
 **Note:** Version bump only for package @standardnotes/web
