@@ -1,11 +1,11 @@
 {
-  "name": "@standardnotes/snjs",
+  "name": "snjs",
   "version": "2.209.12",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "main": "dist/snjs.js",
-  "author": "Standard Notes",
+  "author": "tobiwan54",
   "types": "dist/@types",
   "files": [
     "dist",
@@ -33,23 +33,23 @@
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "*",
     "@babel/preset-env": "*",
-    "@standardnotes/api": "workspace:*",
-    "@standardnotes/common": "^1.50.0",
+    "api": "*",
+    "@standardnotes/common": "1.52.4",
     "@standardnotes/domain-core": "^1.40.0",
     "@standardnotes/domain-events": "^2.138.1",
-    "@standardnotes/encryption": "workspace:*",
-    "@standardnotes/features": "workspace:*",
-    "@standardnotes/files": "workspace:*",
-    "@standardnotes/models": "workspace:*",
-    "@standardnotes/responses": "workspace:*",
-    "@standardnotes/services": "workspace:*",
+    "encryption": "*",
+    "features": "*",
+    "files": "*",
+    "models": "*",
+    "responses": "*",
+    "services": "*",
     "@standardnotes/settings": "^1.22.0",
-    "@standardnotes/sncrypto-common": "workspace:*",
-    "@standardnotes/sncrypto-web": "workspace:*",
-    "@standardnotes/utils": "workspace:*",
+    "sncrypto-common": "*",
+    "sncrypto-web": "*",
+    "utils": "*",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.2.3",
     "@types/jsdom": "^20.0.1",

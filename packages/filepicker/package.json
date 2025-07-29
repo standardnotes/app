@@ -1,12 +1,12 @@
 {
-  "name": "@standardnotes/filepicker",
+  "name": "filepicker",
   "version": "1.28.131",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "description": "Web filepicker for Standard Notes projects",
   "main": "./src/index.ts",
-  "author": "Standard Notes",
+  "author": "tobiwan54",
   "types": "./src/index.ts",
   "private": true,
   "license": "AGPL-3.0",
@@ -26,9 +26,9 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.50.0",
-    "@standardnotes/files": "workspace:*",
-    "@standardnotes/utils": "workspace:*",
+    "@standardnotes/common": "1.52.4",
+    "files": "*",
+    "utils": "*",
     "@types/wicg-file-system-access": "^2023.10.4",
     "reflect-metadata": "^0.1.13"
   }

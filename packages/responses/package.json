@@ -1,8 +1,8 @@
 {
-  "name": "@standardnotes/responses",
+  "name": "responses",
   "version": "1.13.56",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "description": "Common http responses used between Standard Notes clients and servers",
   "main": "dist/index.js",
@@ -33,8 +33,8 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.50.0",
-    "@standardnotes/features": "workspace:*",
+    "@standardnotes/common": "1.52.4",
+    "features": "*",
     "reflect-metadata": "^0.1.13"
   }
 }

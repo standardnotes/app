@@ -1,8 +1,8 @@
 {
-  "name": "@standardnotes/files",
+  "name": "files",
   "version": "1.20.14",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "description": "Client-side files library",
   "main": "./src/index.ts",
@@ -28,12 +28,12 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.50.0",
-    "@standardnotes/encryption": "workspace:*",
-    "@standardnotes/models": "workspace:*",
-    "@standardnotes/responses": "workspace:*",
-    "@standardnotes/sncrypto-common": "workspace:*",
-    "@standardnotes/utils": "workspace:*",
+    "@standardnotes/common": "1.52.4",
+    "encryption": "*",
+    "models": "*",
+    "responses": "*",
+    "sncrypto-common": "*",
+    "utils": "*",
     "reflect-metadata": "^0.1.13"
   }
 }

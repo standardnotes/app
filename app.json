@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "131bc1b8-3044-43fc-ba58-2f4248e4edd7"
+      }
+    },
+    "android": {
+      "package": "com.tobiwan54.standardnotesapp"
+    }
+  }
+}

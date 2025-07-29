@@ -1,11 +1,11 @@
 {
-  "name": "@standardnotes/models",
+  "name": "models",
   "version": "1.58.1",
   "publishConfig": {
     "access": "public"
   },
   "description": "Models used in SNJS library",
-  "author": "Standard Notes",
+  "author": "tobiwan54",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "AGPL-3.0",
@@ -19,12 +19,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.50.0",
+    "@standardnotes/common": "1.52.4",
     "@standardnotes/domain-core": "^1.40.0",
-    "@standardnotes/features": "workspace:*",
-    "@standardnotes/responses": "workspace:*",
-    "@standardnotes/sncrypto-common": "workspace:^",
-    "@standardnotes/utils": "workspace:^",
+    "features": "*",
+    "responses": "*",
+    "sncrypto-common": "*",
+    "utils": "*",
     "lodash": "^4.17.21"
   },
   "devDependencies": {

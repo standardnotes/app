@@ -1,8 +1,8 @@
 {
-  "name": "@standardnotes/services",
+  "name": "services",
   "version": "1.71.9",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "description": "Services for Standard Notes SNJS library",
   "main": "./src/index.ts",
@@ -16,16 +16,16 @@
     "test": "jest"
   },
   "dependencies": {
-    "@standardnotes/api": "workspace:^",
-    "@standardnotes/common": "^1.50.0",
+    "api": "*",
+    "@standardnotes/common": "1.52.4",
     "@standardnotes/domain-core": "^1.40.0",
-    "@standardnotes/encryption": "workspace:^",
-    "@standardnotes/features": "workspace:^",
-    "@standardnotes/files": "workspace:^",
-    "@standardnotes/models": "workspace:^",
-    "@standardnotes/responses": "workspace:*",
-    "@standardnotes/sncrypto-common": "workspace:^",
-    "@standardnotes/utils": "workspace:*",
+    "encryption": "*",
+    "features": "*",
+    "files": "*",
+    "models": "*",
+    "responses": "*",
+    "sncrypto-common": "*",
+    "utils": "*",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {

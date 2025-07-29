@@ -1,5 +1,5 @@
 {
-  "name": "@standardnotes/releases",
+  "name": "releases",
   "version": "1.4.840",
   "license": "AGPL-3.0",
   "main": "dist/releases.json",
@@ -7,19 +7,19 @@
   "publishConfig": {
     "access": "public"
   },
-  "author": "Standard Notes.",
+  "author": "tobiwan54",
   "description": "Standard Notes client release versions",
   "engines": {
-    "node": ">=12.19.0 <17.0.0"
+    "node": ">=12.19.0"
   },
   "scripts": {
     "build": "yarn tsc && node src/build-json.mjs",
     "version": "yarn build"
   },
-  "devDependencies": {
-    "@standardnotes/desktop": "workspace:*",
-    "@standardnotes/mobile": "workspace:*",
-    "@standardnotes/web": "workspace:*",
+  "dependencies": {
+    "desktop": "*",
+    "mobile": "*",
+    "web": "*",
     "@types/node": "*",
     "typescript": "*"
   }

@@ -1,33 +1,31 @@
 {
-  "name": "@standardnotes/app-monorepo",
+  "name": "standardnotes-app",
   "version": "0.0.1",
   "private": true,
-  "author": "Standard Notes.",
+  "author": "TobiWan54",
   "repository": {
     "type": "git",
-    "url": "git://github.com/standardnotes/app"
+    "url": "git://github.com/tobiwan54/standardnotes-app"
   },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "engines": {
-    "node": ">=12.19.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "lint": "yarn workspaces foreach -t --verbose run lint",
     "test": "yarn workspaces foreach -pt --jobs 10 --verbose run test",
     "clean": "lerna run clean",
-    "build:all": "yarn workspaces foreach -pt --topological-dev --verbose --exclude '{@standardnotes/docs}' run build",
-    "build:web": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/web run build",
-    "build:desktop": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/desktop run build",
-    "build:mobile": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/mobile run build",
-    "build:snjs": "yarn workspaces foreach -p --topological-dev --verbose -R --from @standardnotes/snjs run build",
-    "build:services": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/services run build",
-    "build:api": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/api run build",
-    "start:web": "yarn workspace @standardnotes/web start",
-    "e2e": "lerna run start:test-server --scope=@standardnotes/snjs",
+    "build:all": "yarn workspaces foreach -pt --topological-dev --verbose --exclude '{docs}' run build",
+    "build:web": "yarn workspaces foreach -pt --topological-dev --verbose -R --from web run build",
+    "build:desktop": "yarn workspaces foreach -pt --topological-dev --verbose -R --from desktop run build",
+    "build:mobile": "yarn workspaces foreach -pt --topological-dev --verbose -R --from mobile run build",
+    "build:snjs": "yarn workspaces foreach -p --topological-dev --verbose -R --from snjs run build",
+    "build:services": "yarn workspaces foreach -pt --topological-dev --verbose -R --from services run build",
+    "build:api": "yarn workspaces foreach -pt --topological-dev --verbose -R --from api run build",
+    "start:web": "yarn workspace @tobiwan54/web start",
+    "e2e": "lerna run start:test-server --scope=@tobiwan54/snjs",
     "e2e:test": "yarn dlx mocha-headless-chrome --timeout 3600000 -f http://localhost:9001/mocha/test.html",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",
     "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
@@ -36,7 +34,7 @@
     "changelog:json": "node scripts/ChangelogToJson.js && git add .",
     "postversion": "./scripts/push-tags-one-by-one.sh",
     "workspace:list": " yarn lerna list -all",
-    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run upgrade:snjs"
+    "upgrade:snjs": "ncu -u '@tobiwan54/*' && yarn workspaces foreach --verbose run upgrade:snjs"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",
@@ -47,9 +45,6 @@
     "node-abi": "^4.2.0"
   },
   "dependencies": {
-    "@standardnotes/snjs": "workspace:*"
-  },
-  "devDependencies": {
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
     "@commitlint/cli": "^17.6.7",
@@ -68,11 +63,12 @@
     "npm-check-updates": "^16.10.17",
     "prettier": "3.0.0",
     "sass-loader": "^13.3.2",
+    "snjs": "*",
     "typescript": "5.8.3",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
     "webpack-merge": "^5.9.0"
   },
-  "packageManager": "yarn@3.2.1"
+  "packageManager": "yarn@4.9.2"
 }

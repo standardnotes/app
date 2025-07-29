@@ -1,8 +1,8 @@
 {
-  "name": "@standardnotes/utils",
+  "name": "utils",
   "version": "1.17.14",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "description": "Common utilities for Standard Notes projects",
   "main": "dist/index.js",
@@ -25,7 +25,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.50.0",
+    "@standardnotes/common": "1.52.4",
     "dompurify": "^2.4.1",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13"

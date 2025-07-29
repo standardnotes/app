@@ -1,12 +1,12 @@
 {
-  "name": "@standardnotes/api",
+  "name": "api",
   "version": "1.26.93",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "description": "Interfaces for dealing with SN server-side API",
   "main": "dist/index.js",
-  "author": "Standard Notes",
+  "author": "tobiwan54",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -35,11 +35,11 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.50.0",
+    "@standardnotes/common": "1.52.4",
     "@standardnotes/domain-core": "^1.40.0",
-    "@standardnotes/models": "workspace:*",
-    "@standardnotes/responses": "workspace:*",
-    "@standardnotes/utils": "workspace:*",
+    "models": "*",
+    "responses": "*",
+    "utils": "*",
     "reflect-metadata": "^0.1.13"
   }
 }

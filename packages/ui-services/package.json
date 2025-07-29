@@ -1,8 +1,8 @@
 {
-  "name": "@standardnotes/ui-services",
+  "name": "ui-services",
   "version": "1.38.11",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "description": "UI Services for Standard Notes clients",
   "main": "./src/index.ts",
@@ -15,15 +15,15 @@
     "test": "jest"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.50.0",
+    "@standardnotes/common": "1.52.4",
     "@standardnotes/domain-core": "^1.40.0",
-    "@standardnotes/features": "workspace:^",
-    "@standardnotes/filepicker": "workspace:^",
-    "@standardnotes/models": "workspace:^",
-    "@standardnotes/services": "workspace:^",
-    "@standardnotes/styles": "workspace:^",
-    "@standardnotes/toast": "workspace:^",
-    "@standardnotes/utils": "workspace:^",
+    "features": "*",
+    "filepicker": "*",
+    "models": "*",
+    "services": "*",
+    "styles": "*",
+    "toast": "*",
+    "utils": "*",
     "mobx": "^6.8.0",
     "mobx-react-lite": "^3.4.2"
   },

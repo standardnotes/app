@@ -1,7 +1,7 @@
 {
-  "name": "@standardnotes/mobile",
+  "name": "mobile",
   "version": "3.58.200",
-  "author": "Standard Notes.",
+  "author": "TobiWan54",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -21,13 +21,13 @@
     "pods": "yarn install:pods",
     "start": "react-native start",
     "tsc": "tsc --noEmit",
-    "upgrade:snjs": "ncu -u '@standardnotes/*'",
+    "upgrade:snjs": "ncu -u '@tobiwan54/*'",
     "bundle:web": "mkdir -p html/Web.bundle/src/web-src/ && cp -r ../web/dist/. html/Web.bundle/src/web-src/"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
   },
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "*",
     "@babel/preset-typescript": "^7.18.6",
     "@babel/runtime": "^7.25.0",
@@ -40,8 +40,8 @@
     "@react-native/metro-config": "0.78.1",
     "@standardnotes/config": "^2.4.3",
     "@standardnotes/react-native-utils": "1.0.1",
-    "@standardnotes/snjs": "workspace:*",
-    "@standardnotes/web": "workspace:*",
+    "snjs": "*",
+    "web": "*",
     "@tsconfig/react-native": "^3.0.2",
     "@types/react": "^19.1.2",
     "@types/react-native": "^0.72.3",
@@ -69,14 +69,12 @@
     "react-native-share": "^12.0.9",
     "react-native-version-info": "^1.1.1",
     "react-native-webview": "13.13.5",
-    "typescript": "*"
+    "typescript": "*",
+    "@notifee/react-native": "9.1.8",
+    "react-native-safe-area-context": "^5.5.1",
+    "react-native-store-review": "^0.4.3"
   },
   "engines": {
     "node": ">=16"
-  },
-  "dependencies": {
-    "@notifee/react-native": "^9.1.8",
-    "react-native-safe-area-context": "^5.5.1",
-    "react-native-store-review": "^0.4.3"
   }
 }

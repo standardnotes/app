@@ -1,12 +1,12 @@
 {
-  "name": "@standardnotes/features",
+  "name": "features",
   "version": "1.61.3",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "description": "Features SDK for Standard Notes projects",
   "main": "dist/index.js",
-  "author": "Standard Notes.",
+  "author": "tobiwan54",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -25,7 +25,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.50.0",
+    "@standardnotes/common": "1.52.4",
     "@standardnotes/domain-core": "^1.40.0",
     "reflect-metadata": "^0.1.13"
   },

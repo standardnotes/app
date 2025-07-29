@@ -1,5 +1,5 @@
 {
-  "name": "@standardnotes/clipper",
+  "name": "clipper",
   "description": "Web clipper browser extension for Standard Notes",
   "version": "1.1.538",
   "private": true,
@@ -19,7 +19,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "@standardnotes/web": "workspace:*",
+    "web": "*",
     "@types/webextension-polyfill": "^0.10.0",
     "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "11.0.0",
@@ -33,6 +33,6 @@
   },
   "dependencies": {
     "@mozilla/readability": "^0.4.2",
-    "@standardnotes/snjs": "workspace:^"
+    "snjs": "*"
   }
 }

@@ -1,8 +1,8 @@
 {
-  "name": "@standardnotes/encryption",
+  "name": "encryption",
   "version": "1.21.111",
   "engines": {
-    "node": ">=16.0.0 <17.0.0"
+    "node": ">=16.0.0"
   },
   "description": "Payload encryption used in SNJS library",
   "main": "./src/index.ts",
@@ -28,12 +28,12 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.50.0",
+    "@standardnotes/common": "1.52.4",
     "@standardnotes/domain-core": "^1.40.0",
-    "@standardnotes/models": "workspace:*",
-    "@standardnotes/responses": "workspace:*",
-    "@standardnotes/sncrypto-common": "workspace:*",
-    "@standardnotes/utils": "workspace:*",
+    "models": "*",
+    "responses": "*",
+    "sncrypto-common": "*",
+    "utils": "*",
     "reflect-metadata": "^0.1.13"
   }
 }
