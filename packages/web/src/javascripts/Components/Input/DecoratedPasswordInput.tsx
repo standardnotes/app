@@ -30,6 +30,8 @@ const DecoratedPasswordInput = forwardRef((props: DecoratedInputProps, ref: Ref<
       {...props}
       ref={ref}
       type={isToggled ? 'text' : 'password'}
+      autocomplete={false}
+      spellcheck={false}
       right={[...rightSideDecorations, <Toggle isToggled={isToggled} setIsToggled={setIsToggled} />]}
     />
   )

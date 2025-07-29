@@ -11,6 +11,7 @@ import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/u
 import { SupportsPassiveListeners } from '@/Constants/Constants'
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import { getScrollParent } from '@/Utils'
+import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 
 const DisableScroll = () => {
   useDisableBodyScrollOnMobile()
@@ -62,6 +63,8 @@ const MobilePopoverContent = ({
       options: MobileModalAnimationOptions,
     },
   })
+
+  const { hasBottomInset } = useAvailableSafeAreaPadding()
 
   useEffect(() => {
     if (!element) {
@@ -181,7 +184,8 @@ const MobilePopoverContent = ({
         <div
           ref={mergeRefs([setPopoverElement, addCloseMethod])}
           className={classNames(
-            'z-1 absolute bottom-0 flex max-h-[calc(100%_-_max(var(--safe-area-inset-top),2rem))] min-h-[40%] w-full flex-col rounded-t-xl bg-passive-5 pb-safe-bottom',
+            'z-1 absolute bottom-0 flex max-h-[calc(100%_-_max(var(--safe-area-inset-top),2rem))] min-h-[40%] w-full flex-col rounded-t-xl bg-passive-5',
+            hasBottomInset && 'pb-safe-bottom',
             forceFullHeightOnMobile && 'h-full',
           )}
           style={{
