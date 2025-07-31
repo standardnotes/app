@@ -75,6 +75,8 @@ const DecoratedInput = forwardRef(
 
         <input
           autoComplete={autocomplete ? 'on' : 'off'}
+          autoCorrect={autocomplete ? 'on' : 'off'}
+          autoCapitalize={autocomplete ? 'on' : 'off'}
           autoFocus={autofocus}
           className={`${computedClassNames.input} ${disabled ? computedClassNames.disabled : ''} ${className?.input}`}
           data-lpignore={type !== 'password' ? true : false}
