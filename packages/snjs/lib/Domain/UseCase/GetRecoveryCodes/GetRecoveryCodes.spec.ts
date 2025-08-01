@@ -19,6 +19,7 @@ describe('GetRecoveryCodes', () => {
 
     encryption = {} as jest.Mocked<EncryptionService>
     encryption.computeRootKey = jest.fn().mockResolvedValue({ serverPassword: 'test-server-password' })
+    encryption.getRootKeyParams = jest.fn().mockReturnValue({ algorithm: 'test-algorithm' })
   })
 
   it('should return existing recovery code if they exist', async () => {
