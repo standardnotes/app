@@ -1,4 +1,4 @@
-import { AuthClientInterface } from '@standardnotes/services'
+import { AuthClientInterface, EncryptionService } from '@standardnotes/services'
 import { SettingsClientInterface } from '@Lib/Services/Settings/SettingsClientInterface'
 
 import { GetRecoveryCodes } from './GetRecoveryCodes'
@@ -6,8 +6,9 @@ import { GetRecoveryCodes } from './GetRecoveryCodes'
 describe('GetRecoveryCodes', () => {
   let authClient: AuthClientInterface
   let settingsClient: SettingsClientInterface
+  let encryption: EncryptionService
 
-  const createUseCase = () => new GetRecoveryCodes(authClient, settingsClient)
+  const createUseCase = () => new GetRecoveryCodes(authClient, settingsClient, encryption)
 
   beforeEach(() => {
     authClient = {} as jest.Mocked<AuthClientInterface>
@@ -15,12 +16,15 @@ describe('GetRecoveryCodes', () => {
 
     settingsClient = {} as jest.Mocked<SettingsClientInterface>
     settingsClient.getSetting = jest.fn().mockResolvedValue('existing-recovery-codes')
+
+    encryption = {} as jest.Mocked<EncryptionService>
+    encryption.computeRootKey = jest.fn().mockResolvedValue({ serverPassword: 'test-server-password' })
   })
 
   it('should return existing recovery code if they exist', async () => {
     const useCase = createUseCase()
 
-    const result = await useCase.execute()
+    const result = await useCase.execute({ password: 'test-password' })
 
     expect(result.getValue()).toBe('existing-recovery-codes')
   })
@@ -30,7 +34,7 @@ describe('GetRecoveryCodes', () => {
 
     const useCase = createUseCase()
 
-    const result = await useCase.execute()
+    const result = await useCase.execute({ password: 'test-password' })
 
     expect(result.getValue()).toBe('recovery-codes')
   })
@@ -41,7 +45,7 @@ describe('GetRecoveryCodes', () => {
 
     const useCase = createUseCase()
 
-    const result = await useCase.execute()
+    const result = await useCase.execute({ password: 'test-password' })
 
     expect(result.isFailed()).toBe(true)
   })

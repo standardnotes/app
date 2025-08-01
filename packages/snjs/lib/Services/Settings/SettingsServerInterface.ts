@@ -17,7 +17,11 @@ export interface SettingsServerInterface {
     sensitive: boolean,
   ): Promise<HttpResponse<UpdateSettingResponse>>
 
-  getSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<GetSettingResponse>>
+  getSetting(
+    userUuid: UuidString,
+    settingName: string,
+    serverPassword?: string,
+  ): Promise<HttpResponse<GetSettingResponse>>
 
   getSubscriptionSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<GetSettingResponse>>
 

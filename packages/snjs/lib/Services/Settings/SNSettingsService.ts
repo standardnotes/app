@@ -30,8 +30,8 @@ export class SettingsService extends AbstractService implements SettingsClientIn
     return this.provider.listSettings()
   }
 
-  async getSetting(name: SettingName) {
-    return this.provider.getSetting(name)
+  async getSetting(name: SettingName, serverPassword?: string) {
+    return this.provider.getSetting(name, serverPassword)
   }
 
   async getSubscriptionSetting(name: SettingName) {

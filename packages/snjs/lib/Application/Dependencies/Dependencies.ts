@@ -1026,6 +1026,7 @@ export class Dependencies {
       return new GetRecoveryCodes(
         this.get<AuthManager>(TYPES.AuthManager),
         this.get<SettingsService>(TYPES.SettingsService),
+        this.get<EncryptionService>(TYPES.EncryptionService),
       )
     })
 

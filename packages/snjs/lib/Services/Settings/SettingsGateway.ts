@@ -45,8 +45,8 @@ export class SettingsGateway {
     return settings
   }
 
-  async getSetting(name: SettingName): Promise<string | undefined> {
-    const response = await this.settingsApi.getSetting(this.userUuid, name.value)
+  async getSetting(name: SettingName, serverPassword?: string): Promise<string | undefined> {
+    const response = await this.settingsApi.getSetting(this.userUuid, name.value, serverPassword)
 
     if (response.status === HttpStatusCode.BadRequest) {
       return undefined
