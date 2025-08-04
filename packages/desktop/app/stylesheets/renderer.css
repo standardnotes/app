@@ -70,10 +70,17 @@
 
 /* https://github.com/electron/electron/issues/37789 */
 .mac-desktop #navigation,
+.mac-desktop #items-column,
+.mac-desktop #editor-column,
 .mac-desktop #items-title-bar,
 .mac-desktop #editor-title-bar,
 .mac-desktop [data-preferences-header] {
   -webkit-app-region: drag;
+}
+
+.mac-desktop #items-column > *:not(#items-title-bar),
+.mac-desktop #editor-column > *:not(#editor-title-bar) {
+  -webkit-app-region: no-drag;
 }
 
 .mac-desktop.focus-mode #editor-title-bar {
