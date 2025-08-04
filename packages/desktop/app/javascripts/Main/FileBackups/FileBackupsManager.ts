@@ -17,6 +17,7 @@ import { FileReadOperation } from './FileReadOperation'
 import { Paths } from '../Types/Paths'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
 import { FilesManagerInterface } from '../File/FilesManagerInterface'
+import { sanitizeFileName } from '@standardnotes/utils'
 
 const TextBackupFileExtension = '.txt'
 
@@ -316,7 +317,8 @@ export class FilesBackupManager implements FileBackupsDevice {
 
       const relativePath = forTag ?? ''
       const filenameWithSlashesEscaped = filename.replace(/\//g, '\u2215')
-      const fileAbsolutePath = path.join(absolutePath, relativePath, filenameWithSlashesEscaped)
+      const sanitizedFilename = sanitizeFileName(filenameWithSlashesEscaped)
+      const fileAbsolutePath = path.join(absolutePath, relativePath, sanitizedFilename)
       await this.filesManager.writeFile(fileAbsolutePath, data)
 
       const existingRecord = findMappingRecord(forTag)
