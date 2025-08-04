@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.198.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.12...@standardnotes/web@3.198.13) (2025-08-04)
+
+### Bug Fixes
+
+* Prevents quick type suggestions on iOS for password input ([ff80775](https://github.com/standardnotes/app/commit/ff80775cd6f09863429f053e590a054c6e45722c))
+
 ## [3.198.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.11...@standardnotes/web@3.198.12) (2025-07-29)
 
 ### Bug Fixes
