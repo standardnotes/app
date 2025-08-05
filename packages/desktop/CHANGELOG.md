@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.110.146](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.198.13...@standardnotes/desktop@3.110.146) (2025-08-05)
+
+### Bug Fixes
+
+* Fixes issue where plaintext backups would use invalid special characters for filenames ([#2924](https://github.com/standardnotes/app/issues/2924)) ([45bcc0e](https://github.com/standardnotes/app/commit/45bcc0e0b1541558ecf410e9a92bc2db192cfe93))
+* Fixes portions of window not being draggable on desktop ([#2925](https://github.com/standardnotes/app/issues/2925)) ([2b41c83](https://github.com/standardnotes/app/commit/2b41c8337b1408209dc4903cacbc701b73c590b0))
+
 ## [3.110.145](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.198.12...@standardnotes/desktop@3.110.145) (2025-08-04)
 
 **Note:** Version bump only for package @standardnotes/desktop

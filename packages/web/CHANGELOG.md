@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.198.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.13...@standardnotes/web@3.198.14) (2025-08-05)
+
+### Bug Fixes
+
+* Fixes Back and Navigation buttons not working on mobile view when panels explicitly collapsed ([#2926](https://github.com/standardnotes/app/issues/2926)) ([0108648](https://github.com/standardnotes/app/commit/010864881d0c056e88dae2394fb398c0f1e822a5))
+
 ## [3.198.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.12...@standardnotes/web@3.198.13) (2025-08-04)
 
 ### Bug Fixes
