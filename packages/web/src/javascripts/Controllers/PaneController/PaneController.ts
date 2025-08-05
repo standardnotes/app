@@ -213,11 +213,15 @@ export class PaneController extends AbstractViewController implements InternalEv
 
     const panes = this._panesForLayout.execute(layout).getValue()
 
-    if (panes.includes(AppPaneId.Items) && this.listPaneExplicitelyCollapsed) {
+    if (panes.includes(AppPaneId.Items) && this.listPaneExplicitelyCollapsed && layout !== PaneLayout.ItemSelection) {
       removeFromArray(panes, AppPaneId.Items)
     }
 
-    if (panes.includes(AppPaneId.Navigation) && this.navigationPaneExplicitelyCollapsed) {
+    if (
+      panes.includes(AppPaneId.Navigation) &&
+      this.navigationPaneExplicitelyCollapsed &&
+      layout !== PaneLayout.TagSelection
+    ) {
       removeFromArray(panes, AppPaneId.Navigation)
     }
 
