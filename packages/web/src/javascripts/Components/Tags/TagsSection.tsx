@@ -1,6 +1,6 @@
 import TagsList from '@/Components/Tags/TagsList'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { FunctionComponent } from 'react'
 import TagsSectionAddButton from './TagsSectionAddButton'
 import TagsSectionTitle from './TagsSectionTitle'
 import { useApplication } from '../ApplicationProvider'
