@@ -7,11 +7,9 @@ import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
   features: FeaturesController
-  hasMigration: boolean
-  onClickMigration: () => void
 }
 
-const TagsSectionTitle: FunctionComponent<Props> = ({ features, hasMigration, onClickMigration }) => {
+const TagsSectionTitle: FunctionComponent<Props> = ({ features }) => {
   const entitledToFolders = features.hasFolders
   const modal = usePremiumModal()
 
@@ -24,11 +22,6 @@ const TagsSectionTitle: FunctionComponent<Props> = ({ features, hasMigration, on
       <>
         <div className="title text-base md:text-sm">
           <span className="font-bold">Folders</span>
-          {hasMigration && (
-            <label className="ml-1 cursor-pointer font-bold text-info" onClick={onClickMigration}>
-              Migration Available
-            </label>
-          )}
         </div>
       </>
     )
