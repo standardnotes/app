@@ -27,12 +27,16 @@ export class UserApiService implements UserApiServiceInterface {
     this.operationsInProgress = new Map()
   }
 
-  async deleteAccount(userUuid: string): Promise<HttpResponse<UserDeletionResponseBody>> {
+  async deleteAccount(dto: {
+    userUuid: string
+    serverPassword: string
+  }): Promise<HttpResponse<UserDeletionResponseBody>> {
     this.lockOperation(UserApiOperations.DeletingAccount)
 
     try {
       const response = await this.userServer.deleteAccount({
-        userUuid: userUuid,
+        userUuid: dto.userUuid,
+        serverPassword: dto.serverPassword,
       })
 
       this.unlockOperation(UserApiOperations.DeletingAccount)
