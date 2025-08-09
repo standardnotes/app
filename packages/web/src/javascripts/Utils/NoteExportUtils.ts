@@ -10,7 +10,7 @@ import snColorsCSS from '!css-loader?{"sourceMap":false}!sass-loader!@standardno
 // @ts-expect-error Using inline loaders to load CSS as string
 import exportOverridesCSS from '!css-loader?{"sourceMap":false}!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
 import { getBase64FromBlob } from './Utils'
-import { parseFileName, parseAndCreateZippableFileName } from '@standardnotes/utils'
+import { parseFileName, parseAndCreateZippableFileName, sanitizeFileName } from '@standardnotes/utils'
 
 export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {
   if (note.noteType === NoteType.Super) {
@@ -28,7 +28,8 @@ export const getNoteFormat = (application: WebApplicationInterface, note: SNNote
 
 export const getNoteFileName = (application: WebApplicationInterface, note: SNNote): string => {
   const format = getNoteFormat(application, note)
-  return `${note.title}.${format}`
+  const filename = sanitizeFileName(note.title)
+  return `${filename}.${format}`
 }
 
 const headlessSuperConverter = new HeadlessSuperConverter()
