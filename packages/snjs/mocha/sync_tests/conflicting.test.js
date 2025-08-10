@@ -660,7 +660,7 @@ describe('online conflict handling', function () {
     await sharedFinalAssertions()
   })
 
-  it('succesful server side saving but dropped packet response should not create sync conflict', async () => {
+  it('successful server side saving but dropped packet response should not create sync conflict', async () => {
     /**
      * 1. Initiate a change locally that is successfully saved by the server, but the client
      * drops the server response.
