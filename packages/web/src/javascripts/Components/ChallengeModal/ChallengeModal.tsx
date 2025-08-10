@@ -92,7 +92,7 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
     setIsProcessing(processingPrompts.length > 0)
     setProcessingPrompts(processingPrompts)
     /**
-     * Unfortunately neccessary to wait 50ms so that the above setState call completely
+     * Unfortunately necessary to wait 50ms so that the above setState call completely
      * updates the UI to change processing state, before we enter into UI blocking operation
      * (crypto key generation)
      */

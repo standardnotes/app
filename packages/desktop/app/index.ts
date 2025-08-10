@@ -93,7 +93,7 @@ function migrateSnapStorage() {
         })
       } catch (error) {
         console.error(
-          `Migration: error occured while moving ${fullFilePath} to ${dest}:`,
+          `Migration: error occurred while moving ${fullFilePath} to ${dest}:`,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (error as any)?.message ?? error,
         )
@@ -121,7 +121,7 @@ function migrateSnapStorage() {
           fs.copySync(store.data.backupsLocation, newLocation)
         } catch (error) {
           console.error(
-            `Migration: error occured while moving ${store.data.backupsLocation} to ${documentsDir}:`,
+            `Migration: error occurred while moving ${store.data.backupsLocation} to ${documentsDir}:`,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (error as any)?.message ?? error,
           )
