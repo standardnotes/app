@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.198.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.14...@standardnotes/web@3.198.15) (2025-08-11)
+
+### Bug Fixes
+
+* Fixes Share note option not working on Android for note titles with special characters ([#2928](https://github.com/standardnotes/app/issues/2928)) ([d135e09](https://github.com/standardnotes/app/commit/d135e09bda39814585a3d76b0544ed8b5834b4d0))
+
 ## [3.198.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.13...@standardnotes/web@3.198.14) (2025-08-05)
 
 ### Bug Fixes
