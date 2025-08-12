@@ -237,13 +237,9 @@ export class UserService
     error: boolean
     message?: string
   }> {
-    if (
-      !(await this.protections.authorizeAction(ChallengeReason.DeleteAccount, {
-        fallBackToAccountPassword: true,
-        requireAccountPassword: true,
-        forcePrompt: false,
-      }))
-    ) {
+    const { success, challengeResponse } = await this.protections.authorizeAccountDeletion()
+
+    if (!success) {
       return {
         error: true,
         message: Messages.INVALID_PASSWORD,
@@ -251,7 +247,13 @@ export class UserService
     }
 
     const uuid = this.sessions.getSureUser().uuid
-    const response = await this.userApi.deleteAccount(uuid)
+    const password = challengeResponse?.getValueForType(ChallengeValidation.AccountPassword).value as string
+    const currentRootKey = await this.encryption.computeRootKey(
+      password,
+      this.encryption.getRootKeyParams() as SNRootKeyParams,
+    )
+    const serverPassword = currentRootKey.serverPassword
+    const response = await this.userApi.deleteAccount({ userUuid: uuid, serverPassword: serverPassword })
     if (isErrorResponse(response)) {
       return {
         error: true,

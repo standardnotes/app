@@ -22,7 +22,9 @@ export class AuthApiService implements AuthApiServiceInterface {
     this.operationsInProgress = new Map()
   }
 
-  async generateRecoveryCodes(): Promise<HttpResponse<GenerateRecoveryCodesResponseBody>> {
+  async generateRecoveryCodes(dto: {
+    serverPassword: string
+  }): Promise<HttpResponse<GenerateRecoveryCodesResponseBody>> {
     if (this.operationsInProgress.get(AuthApiOperations.GenerateRecoveryCodes)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -30,7 +32,7 @@ export class AuthApiService implements AuthApiServiceInterface {
     this.operationsInProgress.set(AuthApiOperations.GenerateRecoveryCodes, true)
 
     try {
-      const response = await this.authServer.generateRecoveryCodes()
+      const response = await this.authServer.generateRecoveryCodes({ serverPassword: dto.serverPassword })
 
       return response
     } catch (error) {

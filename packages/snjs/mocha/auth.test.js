@@ -549,6 +549,24 @@ describe('basic auth', function () {
       expect(sendChallengeSpy.callCount).to.equal(1)
     }).timeout(Factory.TenSecondTimeout)
 
+    it('should send server password when deleting account', async function () {
+      Factory.handlePasswordChallenges(context.application, context.password)
+
+      const userApiService = context.application.dependencies.get(TYPES.UserApiService)
+      const deleteAccountSpy = sinon.spy(userApiService, 'deleteAccount')
+
+      await context.application.user.deleteAccount()
+
+      expect(deleteAccountSpy.callCount).to.equal(1)
+      const deleteAccountCall = deleteAccountSpy.getCall(0)
+      const callArgs = deleteAccountCall.args[0]
+      
+      expect(callArgs).to.have.property('serverPassword')
+      expect(callArgs.serverPassword).to.not.be.undefined
+      expect(typeof callArgs.serverPassword).to.equal('string')
+      expect(callArgs.serverPassword.length).to.be.above(0)
+    }).timeout(Factory.TenSecondTimeout)
+
     it('deleting account should sign out current user', async function () {
       Factory.handlePasswordChallenges(context.application, context.password)
 
@@ -567,12 +585,40 @@ describe('basic auth', function () {
 
       const response = await context.application.dependencies
         .get(TYPES.UserApiService)
-        .deleteAccount(registerResponse.user.uuid)
+        .deleteAccount({
+          userUuid: registerResponse.user.uuid,
+          serverPassword: 'dummy-password'
+        })
 
       expect(response.status).to.equal(401)
       expect(response.data.error.message).to.equal('Operation not allowed.')
 
       await secondContext.deinit()
     })
+
+    it('should not allow deleting account if server password is not sent', async function () {
+      Factory.handlePasswordChallenges(context.application, context.password)
+
+      const response = await context.application.dependencies
+        .get(TYPES.UserApiService)
+        .deleteAccount({
+          userUuid: context.application.user.uuid,
+        })
+
+      expect(response.status).to.equal(400)
+    }).timeout(Factory.TenSecondTimeout)
+
+    it('should not allow deleting account if server password is incorrect', async function () {
+      Factory.handlePasswordChallenges(context.application, context.password)
+
+      const response = await context.application.dependencies
+        .get(TYPES.UserApiService)
+        .deleteAccount({
+          userUuid: context.application.user.uuid,
+          serverPassword: 'wrong-password'
+        })
+
+      expect(response.status).to.equal(400)
+    }).timeout(Factory.TenSecondTimeout)
   })
 })

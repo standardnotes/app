@@ -14,9 +14,9 @@ export class AuthManager extends AbstractService implements AuthClientInterface 
     super(internalEventBus)
   }
 
-  async generateRecoveryCodes(): Promise<string | false> {
+  async generateRecoveryCodes(dto: { serverPassword: string }): Promise<string | false> {
     try {
-      const result = await this.authApiService.generateRecoveryCodes()
+      const result = await this.authApiService.generateRecoveryCodes(dto)
 
       if (isErrorResponse(result)) {
         return false
