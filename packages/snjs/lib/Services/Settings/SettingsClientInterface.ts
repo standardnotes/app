@@ -9,9 +9,13 @@ export interface SettingsClientInterface {
 
   getDoesSensitiveSettingExist(name: SettingName): Promise<boolean>
 
-  updateSetting(name: SettingName, payload: string, sensitive?: boolean): Promise<void>
+  updateSetting(name: SettingName, payload: string, sensitive?: boolean, totpToken?: string): Promise<void>
 
   deleteSetting(name: SettingName): Promise<void>
+
+  generateMfaSecret(): Promise<string>
+
+  updateMfaSetting(secret: string, totpToken: string): Promise<void>
 
   getEmailBackupFrequencyOptionLabel(frequency: EmailBackupFrequency): string
 }

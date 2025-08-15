@@ -102,8 +102,8 @@ export class SettingsGateway {
     return response.data?.success ?? false
   }
 
-  async updateSetting(name: SettingName, payload: string, sensitive: boolean): Promise<void> {
-    const response = await this.settingsApi.updateSetting(this.userUuid, name.value, payload, sensitive)
+  async updateSetting(name: SettingName, payload: string, sensitive: boolean, totpToken?: string): Promise<void> {
+    const response = await this.settingsApi.updateSetting(this.userUuid, name.value, payload, sensitive, totpToken)
     if (isErrorResponse(response)) {
       throw new Error(getErrorFromErrorResponse(response).message)
     }
@@ -114,6 +114,14 @@ export class SettingsGateway {
     if (isErrorResponse(response)) {
       throw new Error(getErrorFromErrorResponse(response).message)
     }
+  }
+
+  async getMfaSecret(): Promise<string> {
+    const response = await this.settingsApi.getMfaSecret(this.userUuid)
+    if (isErrorResponse(response)) {
+      throw new Error(getErrorFromErrorResponse(response).message)
+    }
+    return response.data.secret
   }
 
   deinit() {

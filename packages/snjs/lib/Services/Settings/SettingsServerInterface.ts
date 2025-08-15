@@ -7,6 +7,10 @@ import {
 } from '@standardnotes/responses'
 import { UuidString } from '@Lib/Types/UuidString'
 
+export interface MfaSecretResponse {
+  secret: string
+}
+
 export interface SettingsServerInterface {
   listSettings(userUuid: UuidString): Promise<HttpResponse<ListSettingsResponse>>
 
@@ -15,6 +19,7 @@ export interface SettingsServerInterface {
     settingName: string,
     settingValue: string,
     sensitive: boolean,
+    totpToken?: string,
   ): Promise<HttpResponse<UpdateSettingResponse>>
 
   getSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<GetSettingResponse>>
@@ -29,4 +34,6 @@ export interface SettingsServerInterface {
   ): Promise<HttpResponse<UpdateSettingResponse>>
 
   deleteSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<DeleteSettingResponse>>
+
+  getMfaSecret(userUuid: UuidString): Promise<HttpResponse<MfaSecretResponse>>
 }

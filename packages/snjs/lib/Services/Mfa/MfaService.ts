@@ -6,7 +6,6 @@ import {
   InternalEventBusInterface,
   MfaServiceInterface,
   ProtectionsClientInterface,
-  SignInStrings,
 } from '@standardnotes/services'
 import { SettingName } from '@standardnotes/domain-core'
 
@@ -21,14 +20,6 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
     super(internalEventBus)
   }
 
-  private async saveMfaSetting(secret: string): Promise<void> {
-    return await this.settingsService.updateSetting(
-      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
-      secret,
-      true,
-    )
-  }
-
   async isMfaActivated(): Promise<boolean> {
     const mfaSetting = await this.settingsService.getDoesSensitiveSettingExist(
       SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
@@ -37,7 +28,7 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
   }
 
   async generateMfaSecret(): Promise<string> {
-    return this.crypto.generateOtpSecret()
+    return this.settingsService.generateMfaSecret()
   }
 
   async getOtpToken(secret: string): Promise<string> {
@@ -45,13 +36,7 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
   }
 
   async enableMfa(secret: string, otpToken: string): Promise<void> {
-    const otpTokenValid = otpToken != undefined && otpToken === (await this.getOtpToken(secret))
-
-    if (!otpTokenValid) {
-      throw new Error(SignInStrings.IncorrectMfa)
-    }
-
-    return this.saveMfaSetting(secret)
+    return this.settingsService.updateMfaSetting(secret, otpToken)
   }
 
   async disableMfa(): Promise<void> {
