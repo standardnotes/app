@@ -1,5 +1,4 @@
 import { SettingsService } from '../Settings'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { FeaturesService } from '../Features/FeaturesService'
 import {
   AbstractService,
@@ -12,7 +11,6 @@ import { SettingName } from '@standardnotes/domain-core'
 export class MfaService extends AbstractService implements MfaServiceInterface {
   constructor(
     private settingsService: SettingsService,
-    private crypto: PureCryptoInterface,
     private featuresService: FeaturesService,
     private protections: ProtectionsClientInterface,
     protected override internalEventBus: InternalEventBusInterface,
@@ -31,10 +29,6 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
     return this.settingsService.generateMfaSecret()
   }
 
-  async getOtpToken(secret: string): Promise<string> {
-    return this.crypto.totpToken(secret, Date.now(), 6, 30)
-  }
-
   async enableMfa(secret: string, otpToken: string): Promise<void> {
     return this.settingsService.updateMfaSetting(secret, otpToken)
   }
@@ -49,7 +43,6 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
 
   override deinit(): void {
     ;(this.settingsService as unknown) = undefined
-    ;(this.crypto as unknown) = undefined
     ;(this.featuresService as unknown) = undefined
     super.deinit()
   }
