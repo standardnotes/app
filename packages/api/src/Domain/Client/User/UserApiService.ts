@@ -34,10 +34,12 @@ export class UserApiService implements UserApiServiceInterface {
     this.lockOperation(UserApiOperations.DeletingAccount)
 
     try {
-      const response = await this.userServer.deleteAccount({
-        userUuid: dto.userUuid,
-        serverPassword: dto.serverPassword,
-      })
+      const response = await this.userServer.deleteAccount(
+        {
+          userUuid: dto.userUuid,
+        },
+        { headers: [{ key: 'x-server-password', value: dto.serverPassword }] },
+      )
 
       this.unlockOperation(UserApiOperations.DeletingAccount)
 

@@ -583,14 +583,13 @@ export class LegacyApiService
     settingName: string,
     serverPassword?: string,
   ): Promise<HttpResponse<GetSettingResponse>> {
+    const customHeaders = serverPassword ? [{ key: 'x-server-password', value: serverPassword }] : undefined
     return await this.tokenRefreshableRequest<GetSettingResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName.toLowerCase())),
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
-      params: {
-        serverPassword,
-      },
+      customHeaders,
     })
   }
 
@@ -628,14 +627,13 @@ export class LegacyApiService
     settingName: string,
     serverPassword?: string,
   ): Promise<HttpResponse<DeleteSettingResponse>> {
+    const customHeaders = serverPassword ? [{ key: 'x-server-password', value: serverPassword }] : undefined
     return this.tokenRefreshableRequest<DeleteSettingResponse>({
       verb: HttpVerb.Delete,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName)),
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
-      params: {
-        serverPassword,
-      },
+      customHeaders,
     })
   }
 
