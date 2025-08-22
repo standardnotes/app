@@ -441,7 +441,7 @@ export class SNWebCrypto implements PureCryptoInterface {
   /**
    * Generates a random secret for TOTP authentication
    *
-   * RFC4226 reccomends a length of at least 160 bits = 32 b32 chars
+   * RFC4226 recommends a length of at least 160 bits = 32 b32 chars
    * https://datatracker.ietf.org/doc/html/rfc4226#section-4
    */
   public async generateOtpSecret(): Promise<string> {

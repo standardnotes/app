@@ -37,7 +37,7 @@ function useSessions(
         if (response.data?.error?.message) {
           setErrorMessage(response.data?.error.message)
         } else {
-          setErrorMessage('An unknown error occured while loading sessions.')
+          setErrorMessage('An unknown error occurred while loading sessions.')
         }
       } else {
         const sessions = response.data as SessionListEntry[]
@@ -71,7 +71,7 @@ function useSessions(
       setSessions(sessionsBeforeRevoke)
     } else if (isErrorResponse(response)) {
       setErrorMessage(
-        getErrorFromErrorResponse(response).message || 'An unknown error occured while revoking the session.',
+        getErrorFromErrorResponse(response).message || 'An unknown error occurred while revoking the session.',
       )
 
       setSessions(sessionsBeforeRevoke)

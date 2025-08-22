@@ -522,7 +522,7 @@ describe('protections', function () {
   })
 
   describe('unprotect notes', function () {
-    it('prompts for password and unprotects all notes if challenge is succesful', async function () {
+    it('prompts for password and unprotects all notes if challenge is successful', async function () {
       let challengePrompts = 0
       application = await Factory.createApplicationWithFakeCrypto(Factory.randomString())
       const passcode = 'passcode'
@@ -559,7 +559,7 @@ describe('protections', function () {
       expect(challengePrompts).to.equal(1)
     })
 
-    it('prompts for passcode and unprotects all notes if challenge is succesful', async function () {
+    it('prompts for passcode and unprotects all notes if challenge is successful', async function () {
       let challengePrompts = 0
       application = await Factory.createApplicationWithFakeCrypto(Factory.randomString())
       const passcode = 'passcode'
