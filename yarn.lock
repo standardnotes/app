@@ -36,36 +36,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/core@npm:0.3.8":
-  version: 0.3.8
-  resolution: "@ariakit/core@npm:0.3.8"
-  checksum: e416596efe7783cba033efcf212119e228b3707006f294745d8beedb09388f4ceebe70d7e936362979d2ff98ec50a16ecc24c988b0825abd68d3a2367e96c1e0
+"@ariakit/core@npm:0.4.15":
+  version: 0.4.15
+  resolution: "@ariakit/core@npm:0.4.15"
+  checksum: add800c855c04f94a26e223ccb50f4c390182062848fb69717130ab25c33d755e4137ef5dd334194e4594c5852d64d52cd96b0d288ad9ade84bd24562cb97922
   languageName: node
   linkType: hard
 
-"@ariakit/react-core@npm:0.3.9":
-  version: 0.3.9
-  resolution: "@ariakit/react-core@npm:0.3.9"
+"@ariakit/react-core@npm:0.4.18":
+  version: 0.4.18
+  resolution: "@ariakit/react-core@npm:0.4.18"
   dependencies:
-    "@ariakit/core": 0.3.8
+    "@ariakit/core": 0.4.15
     "@floating-ui/dom": ^1.0.0
     use-sync-external-store: ^1.2.0
   peerDependencies:
-    react: ^17.0.0 || ^18.0.0
-    react-dom: ^17.0.0 || ^18.0.0
-  checksum: ef44543aecf10d69ea63cb4c68d340f88a8f17a4e0b0dc25a508665a7591126a42731522f97a984268c1d0927738ad2002d702f6bfd40f272090174d56a5ffb4
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 53a012f087c20ccd3d36e13af2fceb8928f280cf57c1c0e6e79088e81c53475f3ec8330be8ee465d3e270c089f80d3a98950bd103645190889f565f0184d2221
   languageName: node
   linkType: hard
 
-"@ariakit/react@npm:^0.3.9":
-  version: 0.3.9
-  resolution: "@ariakit/react@npm:0.3.9"
+"@ariakit/react@npm:^0.4.18":
+  version: 0.4.18
+  resolution: "@ariakit/react@npm:0.4.18"
   dependencies:
-    "@ariakit/react-core": 0.3.9
+    "@ariakit/react-core": 0.4.18
   peerDependencies:
-    react: ^17.0.0 || ^18.0.0
-    react-dom: ^17.0.0 || ^18.0.0
-  checksum: 901424a4e47d36c97a35cab016249b22bfe20519cc87ffa0420c14b3547751ca282cfaa9e770937af413c96776106f1f3d2c4b08434f15abca08abd2ab94d73e
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: e8bc2df82f74dab00a0d950fb3236c78838af4f6c814ce459145c37457716133c924ccb302f29a4106ccbf04b9b0e2156e9490e641925a0465d4a6813f652491
   languageName: node
   linkType: hard
 
@@ -8795,7 +8795,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/web@workspace:packages/web"
   dependencies:
-    "@ariakit/react": ^0.3.9
+    "@ariakit/react": ^0.4.18
     "@babel/core": "*"
     "@babel/plugin-proposal-class-properties": ^7.18.6
     "@babel/plugin-transform-react-jsx": ^7.19.0

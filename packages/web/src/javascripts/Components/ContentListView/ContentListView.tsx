@@ -267,6 +267,16 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         : `Create a new note in the selected tag (${shortcutForCreate && keyboardStringForShortcut(shortcutForCreate)})`
     }, [isFilesSmartView, shortcutForCreate])
 
+    useEffect(
+      () =>
+        application.commands.addCommand(
+          isFilesSmartView ? 'Upload file' : 'Create new note',
+          () => void addNewItem(),
+          isFilesSmartView ? 'upload' : 'add',
+        ),
+      [addNewItem, application.commands, isFilesSmartView],
+    )
+
     const dailyMode = selectedAsTag?.isDailyEntry
 
     const handleDailyListSelection = useCallback(

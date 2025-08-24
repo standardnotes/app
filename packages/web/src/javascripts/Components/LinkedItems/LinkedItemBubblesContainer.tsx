@@ -10,7 +10,7 @@ import { ContentType, DecryptedItemInterface } from '@standardnotes/snjs'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
-import { useCommandService } from '../CommandProvider'
+import { useKeyboardService } from '../KeyboardServiceProvider'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import RoundIconButton from '../Button/RoundIconButton'
 import VaultNameBadge from '../Vaults/VaultNameBadge'
@@ -39,7 +39,7 @@ const LinkedItemBubblesContainer = ({
 }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
-  const commandService = useCommandService()
+  const keyboardService = useKeyboardService()
 
   const { unlinkItems, activateItem } = linkingController
   const unlinkItem = useCallback(
@@ -58,7 +58,7 @@ const LinkedItemBubblesContainer = ({
   )
 
   useEffect(() => {
-    return commandService.addCommandHandler({
+    return keyboardService.addCommandHandler({
       command: FOCUS_TAGS_INPUT_COMMAND,
       category: 'Current note',
       description: 'Link tags, notes, files',
@@ -69,11 +69,11 @@ const LinkedItemBubblesContainer = ({
         }
       },
     })
-  }, [commandService])
+  }, [keyboardService])
 
   const shortcut = useMemo(
-    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(FOCUS_TAGS_INPUT_COMMAND)),
-    [commandService],
+    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(FOCUS_TAGS_INPUT_COMMAND)),
+    [keyboardService],
   )
 
   const [focusedId, setFocusedId] = useState<string>()

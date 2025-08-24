@@ -43,6 +43,7 @@ import { TagListSectionType } from '@/Components/Tags/TagListSection'
 import { PaneLayout } from '../PaneController/PaneLayout'
 import { TagsCountsState } from './TagsCountsState'
 import { PaneController } from '../PaneController/PaneController'
+import { RecentItemsState } from '../../Application/Recents'
 
 export class NavigationController
   extends AbstractViewController
@@ -81,6 +82,7 @@ export class NavigationController
     private preferences: PreferenceServiceInterface,
     private alerts: AlertService,
     private _changeAndSaveItem: ChangeAndSaveItem,
+    private recents: RecentItemsState,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -509,6 +511,10 @@ export class NavigationController
 
       if (tag && this.items.isTemplateItem(tag)) {
         return
+      }
+
+      if (tag) {
+        this.recents.add(tag)
       }
 
       await this.eventBus.publishSync(

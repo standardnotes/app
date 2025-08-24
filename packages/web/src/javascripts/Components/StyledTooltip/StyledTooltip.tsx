@@ -41,7 +41,6 @@ const StyledTooltip = ({
     hideTimeout: 0,
     skipTimeout: 0,
     open: forceOpen,
-    animated: true,
     type,
   })
 

@@ -3,7 +3,7 @@ import { UIFeature, GetDarkThemeFeature } from '@standardnotes/snjs'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/utils'
 import { useEffect, useRef, useState } from 'react'
-import { useCommandService } from '../CommandProvider'
+import { useKeyboardService } from '../KeyboardServiceProvider'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import QuickSettingsMenu from '../QuickSettingsMenu/QuickSettingsMenu'
@@ -17,7 +17,7 @@ type Props = {
 
 const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const commandService = useCommandService()
+  const keyboardService = useKeyboardService()
 
   const [isOpen, setIsOpen] = useState(false)
   const toggleMenu = () => setIsOpen(!isOpen)
@@ -25,7 +25,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
   useEffect(() => {
     const darkThemeFeature = new UIFeature(GetDarkThemeFeature())
 
-    return commandService.addCommandHandler({
+    return keyboardService.addCommandHandler({
       command: TOGGLE_DARK_MODE_COMMAND,
       category: 'General',
       description: 'Toggle dark mode',
@@ -34,7 +34,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
         return true
       },
     })
-  }, [application, commandService])
+  }, [application, keyboardService])
 
   return (
     <>

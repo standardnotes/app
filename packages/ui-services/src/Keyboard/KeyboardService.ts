@@ -1,4 +1,4 @@
-import { Environment, Platform } from '@standardnotes/snjs'
+import { Environment, Platform, UuidGenerator } from '@standardnotes/snjs'
 import { eventMatchesKeyAndModifiers } from './eventMatchesKeyAndModifiers'
 import { KeyboardCommand } from './KeyboardCommands'
 import { KeyboardKeyEvent } from './KeyboardKeyEvent'
@@ -26,6 +26,20 @@ export class KeyboardService {
     for (const shortcut of shortcuts) {
       this.registerShortcut(shortcut)
     }
+  }
+
+  private isDisabled = false
+  /**
+   * When called, the service will stop triggering command handlers
+   * on keydown/keyup events. Useful when you need to handle events
+   * yourself while keeping the rest of behaviours inert.
+   * Make sure to call {@link enableEventHandling} once done.
+   */
+  public disableEventHandling() {
+    this.isDisabled = true
+  }
+  public enableEventHandling() {
+    this.isDisabled = false
   }
 
   get isMac() {
@@ -116,6 +130,9 @@ export class KeyboardService {
   }
 
   private handleKeyboardEvent(event: KeyboardEvent, keyEvent: KeyboardKeyEvent): void {
+    if (this.isDisabled) {
+      return
+    }
     for (const command of this.commandMap.keys()) {
       const shortcut = this.commandMap.get(command)
       if (!shortcut) {
@@ -243,6 +260,7 @@ export class KeyboardService {
       ...shortcut,
       category: handler.category,
       description: handler.description,
+      id: UuidGenerator.GenerateUuid(),
     }
   }
 
@@ -250,11 +268,12 @@ export class KeyboardService {
    * Register help item for a keyboard shortcut that is handled outside of the KeyboardService,
    * for example by a library like Lexical.
    */
-  registerExternalKeyboardShortcutHelpItem(item: KeyboardShortcutHelpItem): () => void {
-    this.keyboardShortcutHelpItems.add(item)
+  registerExternalKeyboardShortcutHelpItem(item: Omit<KeyboardShortcutHelpItem, 'id'>): () => void {
+    const itemWithId = { ...item, id: UuidGenerator.GenerateUuid() }
+    this.keyboardShortcutHelpItems.add(itemWithId)
 
     return () => {
-      this.keyboardShortcutHelpItems.delete(item)
+      this.keyboardShortcutHelpItems.delete(itemWithId)
     }
   }
 
@@ -262,7 +281,7 @@ export class KeyboardService {
    * Register help item for a keyboard shortcut that is handled outside of the KeyboardService,
    * for example by a library like Lexical.
    */
-  registerExternalKeyboardShortcutHelpItems(items: KeyboardShortcutHelpItem[]): () => void {
+  registerExternalKeyboardShortcutHelpItems(items: Omit<KeyboardShortcutHelpItem, 'id'>[]): () => void {
     const disposers = items.map((item) => this.registerExternalKeyboardShortcutHelpItem(item))
 
     return () => {

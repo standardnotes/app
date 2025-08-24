@@ -93,11 +93,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   onEditorComponentLoad?: () => void
 
-  private removeTrashKeyObserver?: () => void
-  private removeNoteStreamObserver?: () => void
-  private removeComponentManagerObserver?: () => void
-  private removeInnerNoteObserver?: () => void
-  private removeVaultUsersEventHandler?: () => void
+  #observers: (() => void)[] = []
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null
   private noteViewElementRef: RefObject<HTMLDivElement>
@@ -147,20 +143,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     super.deinit()
     ;(this.controller as unknown) = undefined
 
-    this.removeNoteStreamObserver?.()
-    ;(this.removeNoteStreamObserver as unknown) = undefined
-
-    this.removeInnerNoteObserver?.()
-    ;(this.removeInnerNoteObserver as unknown) = undefined
-
-    this.removeComponentManagerObserver?.()
-    ;(this.removeComponentManagerObserver as unknown) = undefined
-
-    this.removeTrashKeyObserver?.()
-    this.removeTrashKeyObserver = undefined
-
-    this.removeVaultUsersEventHandler?.()
-    this.removeVaultUsersEventHandler = undefined
+    for (let i = 0; i < this.#observers.length; i++) {
+      const cleanup = this.#observers[i]
+      cleanup()
+    }
+    this.#observers.length = 0
+    ;(this.#observers as unknown) = undefined
 
     this.clearNoteProtectionInactivityTimer()
     ;(this.ensureNoteIsInsertedBeforeUIAction as unknown) = undefined
@@ -213,23 +201,27 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   override componentDidMount(): void {
     super.componentDidMount()
 
-    this.removeVaultUsersEventHandler = this.application.vaultUsers.addEventObserver((event, data) => {
-      if (event === VaultUserServiceEvent.InvalidatedUserCacheForVault) {
-        const vault = this.application.vaults.getItemVault(this.note)
-        if ((data as string) !== vault?.sharing?.sharedVaultUuid) {
-          return
+    this.#observers.push(
+      this.application.vaultUsers.addEventObserver((event, data) => {
+        if (event === VaultUserServiceEvent.InvalidatedUserCacheForVault) {
+          const vault = this.application.vaults.getItemVault(this.note)
+          if ((data as string) !== vault?.sharing?.sharedVaultUuid) {
+            return
+          }
+          this.setState({
+            readonly: vault ? this.application.vaultUsers.isCurrentUserReadonlyVaultMember(vault) : undefined,
+          })
         }
-        this.setState({
-          readonly: vault ? this.application.vaultUsers.isCurrentUserReadonlyVaultMember(vault) : undefined,
-        })
-      }
-    })
+      }),
+    )
 
     this.registerKeyboardShortcuts()
 
-    this.removeInnerNoteObserver = this.controller.addNoteInnerValueChangeObserver((note, source) => {
-      this.onNoteInnerChange(note, source)
-    })
+    this.#observers.push(
+      this.controller.addNoteInnerValueChangeObserver((note, source) => {
+        this.onNoteInnerChange(note, source)
+      }),
+    )
 
     this.autorun(() => {
       const syncStatus = this.controller.syncStatus
@@ -463,15 +455,17 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   streamItems() {
-    this.removeNoteStreamObserver = this.application.items.streamItems<SNNote>(ContentType.TYPES.Note, async () => {
-      if (!this.note) {
-        return
-      }
+    this.#observers.push(
+      this.application.items.streamItems<SNNote>(ContentType.TYPES.Note, async () => {
+        if (!this.note) {
+          return
+        }
 
-      this.setState({
-        conflictedNotes: this.application.items.conflictsOf(this.note.uuid) as SNNote[],
-      })
-    })
+        this.setState({
+          conflictedNotes: this.application.items.conflictsOf(this.note.uuid) as SNNote[],
+        })
+      }),
+    )
   }
 
   private createComponentViewer(component: UIFeature<IframeComponentFeatureDescription>) {
@@ -766,14 +760,34 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   registerKeyboardShortcuts() {
-    this.removeTrashKeyObserver = this.application.keyboardService.addCommandHandler({
-      command: DELETE_NOTE_KEYBOARD_COMMAND,
-      notTags: ['INPUT', 'TEXTAREA'],
-      notElementIds: [SuperEditorContentId],
-      onKeyDown: () => {
-        this.deleteNote(false).catch(console.error)
-      },
-    })
+    const moveNoteToTrash = () => {
+      this.deleteNote(false).catch(console.error)
+    }
+
+    this.#observers.push(
+      this.application.keyboardService.addCommandHandler({
+        command: DELETE_NOTE_KEYBOARD_COMMAND,
+        notTags: ['INPUT', 'TEXTAREA'],
+        notElementIds: [SuperEditorContentId],
+        onKeyDown: moveNoteToTrash,
+      }),
+    )
+
+    this.#observers.push(
+      this.application.commands.addCommand(
+        'Pin/unpin current note',
+        () => this.application.notesController.togglePinSelectedNotes(),
+        'trash',
+      ),
+    )
+    this.#observers.push(
+      this.application.commands.addCommand(
+        'Star/unstar current note',
+        () => this.application.notesController.toggleStarSelectedNotes(),
+        'trash',
+      ),
+    )
+    this.#observers.push(this.application.commands.addCommand('Move current note to trash', moveNoteToTrash, 'trash'))
   }
 
   ensureNoteIsInsertedBeforeUIAction = async () => {

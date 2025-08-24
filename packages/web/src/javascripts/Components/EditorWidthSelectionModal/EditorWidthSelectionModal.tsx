@@ -178,6 +178,9 @@ const EditorWidthSelectionModalWrapper = () => {
   }, [])
 
   useEffect(() => {
+    return application.commands.addCommand('Change editor width', toggle, 'line-width')
+  }, [application.commands, toggle])
+  useEffect(() => {
     return application.keyboardService.addCommandHandler({
       command: CHANGE_EDITOR_WIDTH_COMMAND,
       category: 'Current note',

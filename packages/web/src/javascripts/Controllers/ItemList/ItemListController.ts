@@ -61,6 +61,7 @@ import { Persistable } from '../Abstract/Persistable'
 import { PaneController } from '../PaneController/PaneController'
 import { requestCloseAllOpenModalsAndPopovers } from '@/Utils/CloseOpenModalsAndPopovers'
 import { PaneLayout } from '../PaneController/PaneLayout'
+import { RecentItemsState } from '../../Application/Recents'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -129,6 +130,7 @@ export class ItemListController
     private options: FullyResolvedApplicationOptions,
     private _isNativeMobileWeb: IsNativeMobileWeb,
     private _changeAndSaveItem: ChangeAndSaveItem,
+    private recents: RecentItemsState,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -1150,6 +1152,7 @@ export class ItemListController
       } else if (item.content_type === ContentType.TYPES.File) {
         await this.openFile(item.uuid)
       }
+      this.recents.add(item)
 
       if (!this.paneController.isInMobileView || userTriggered) {
         void this.paneController.setPaneLayout(PaneLayout.Editing)
@@ -1165,21 +1168,13 @@ export class ItemListController
     this.isMultipleSelectionMode = true
   }
 
-  selectItem = async (
-    uuid: UuidString,
+  selectItemUsingInstance = async (
+    item: ListableContentItem,
     userTriggered?: boolean,
-  ): Promise<{
-    didSelect: boolean
-  }> => {
-    const item = this.itemManager.findItem<ListableContentItem>(uuid)
+  ): Promise<{ didSelect: boolean }> => {
+    const uuid = item.uuid
 
-    if (!item) {
-      return {
-        didSelect: false,
-      }
-    }
-
-    log(LoggingDomain.Selection, 'Select item', item.uuid)
+    log(LoggingDomain.Selection, 'Select item', uuid)
 
     const hasShift = this.keyboardService.activeModifiers.has(KeyboardModifier.Shift)
     const hasMoreThanOneSelected = this.selectedItemsCount > 1
@@ -1206,6 +1201,23 @@ export class ItemListController
     return {
       didSelect: this.selectedUuids.has(uuid),
     }
+  }
+
+  selectItem = async (
+    uuid: UuidString,
+    userTriggered?: boolean,
+  ): Promise<{
+    didSelect: boolean
+  }> => {
+    const item = this.itemManager.findItem<ListableContentItem>(uuid)
+
+    if (!item) {
+      return {
+        didSelect: false,
+      }
+    }
+
+    return this.selectItemUsingInstance(item, userTriggered)
   }
 
   selectItemWithScrollHandling = async (

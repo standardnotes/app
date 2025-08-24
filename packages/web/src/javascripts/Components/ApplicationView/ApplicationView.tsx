@@ -23,7 +23,7 @@ import ResponsivePaneProvider from '../Panes/ResponsivePaneProvider'
 import AndroidBackHandlerProvider from '@/NativeMobileWeb/useAndroidBackHandler'
 import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
 import ApplicationProvider from '../ApplicationProvider'
-import CommandProvider from '../CommandProvider'
+import KeyboardServiceProvider from '../KeyboardServiceProvider'
 import PanesSystemComponent from '../Panes/PanesSystemComponent'
 import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
@@ -32,6 +32,7 @@ import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
 import EditorWidthSelectionModalWrapper from '../EditorWidthSelectionModal/EditorWidthSelectionModal'
 import { ProtectionEvent } from '@standardnotes/services'
 import KeyboardShortcutsModal from '../KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal'
+import CommandPalette from '../CommandPalette/CommandPalette'
 
 type Props = {
   application: WebApplication
@@ -212,7 +213,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'extension') {
     return (
       <ApplicationProvider application={application}>
-        <CommandProvider service={application.keyboardService}>
+        <KeyboardServiceProvider service={application.keyboardService}>
           <AndroidBackHandlerProvider application={application}>
             <ResponsivePaneProvider paneController={application.paneController}>
               <PremiumModalProvider application={application}>
@@ -227,14 +228,14 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
               </PremiumModalProvider>
             </ResponsivePaneProvider>
           </AndroidBackHandlerProvider>
-        </CommandProvider>
+        </KeyboardServiceProvider>
       </ApplicationProvider>
     )
   }
 
   return (
     <ApplicationProvider application={application}>
-      <CommandProvider service={application.keyboardService}>
+      <KeyboardServiceProvider service={application.keyboardService}>
         <AndroidBackHandlerProvider application={application}>
           <ResponsivePaneProvider paneController={application.paneController}>
             <PremiumModalProvider application={application}>
@@ -269,6 +270,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <ConfirmDeleteAccountContainer application={application} />
                     <ImportModal importModalController={application.importModalController} />
                     <KeyboardShortcutsModal keyboardService={application.keyboardService} />
+                    <CommandPalette />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}
                   {isIOS() && <IosKeyboardClose />}
@@ -277,7 +279,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
             </PremiumModalProvider>
           </ResponsivePaneProvider>
         </AndroidBackHandlerProvider>
-      </CommandProvider>
+      </KeyboardServiceProvider>
     </ApplicationProvider>
   )
 }

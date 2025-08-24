@@ -5,30 +5,30 @@ import { iconClass } from './ClassNames'
 import MenuSection from '../Menu/MenuSection'
 import { SUPER_SHOW_MARKDOWN_PREVIEW, SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useMemo, useCallback } from 'react'
-import { useCommandService } from '../CommandProvider'
+import { useKeyboardService } from '../KeyboardServiceProvider'
 
 type Props = {
   closeMenu: () => void
 }
 
 const SuperNoteOptions = ({ closeMenu }: Props) => {
-  const commandService = useCommandService()
+  const keyboardService = useKeyboardService()
 
   const markdownShortcut = useMemo(
-    () => commandService.keyboardShortcutForCommand(SUPER_SHOW_MARKDOWN_PREVIEW),
-    [commandService],
+    () => keyboardService.keyboardShortcutForCommand(SUPER_SHOW_MARKDOWN_PREVIEW),
+    [keyboardService],
   )
 
-  const findShortcut = useMemo(() => commandService.keyboardShortcutForCommand(SUPER_TOGGLE_SEARCH), [commandService])
+  const findShortcut = useMemo(() => keyboardService.keyboardShortcutForCommand(SUPER_TOGGLE_SEARCH), [keyboardService])
 
   const enableSuperMarkdownPreview = useCallback(() => {
-    commandService.triggerCommand(SUPER_SHOW_MARKDOWN_PREVIEW)
-  }, [commandService])
+    keyboardService.triggerCommand(SUPER_SHOW_MARKDOWN_PREVIEW)
+  }, [keyboardService])
 
   const findInNote = useCallback(() => {
-    commandService.triggerCommand(SUPER_TOGGLE_SEARCH)
+    keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)
     closeMenu()
-  }, [closeMenu, commandService])
+  }, [closeMenu, keyboardService])
 
   return (
     <MenuSection>

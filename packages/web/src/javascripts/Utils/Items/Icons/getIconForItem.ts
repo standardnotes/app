@@ -1,4 +1,4 @@
-import { IconType, FileItem, SNNote, SNTag, DecryptedItemInterface } from '@standardnotes/snjs'
+import { IconType, FileItem, SNNote, SNTag, DecryptedItemInterface, SmartView } from '@standardnotes/snjs'
 import { getIconAndTintForNoteType } from './getIconAndTintForNoteType'
 import { getIconForFileType } from './getIconForFileType'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
@@ -12,7 +12,7 @@ export function getIconForItem(item: DecryptedItemInterface, application: WebApp
   } else if (item instanceof FileItem) {
     const icon = getIconForFileType(item.mimeType)
     return [icon, 'text-info']
-  } else if (item instanceof SNTag) {
+  } else if (item instanceof SNTag || item instanceof SmartView) {
     return [item.iconString as IconType, 'text-info']
   }
 

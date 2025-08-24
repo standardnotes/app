@@ -28,6 +28,7 @@ import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
 import { PaneLayout } from './PaneLayout'
 import { IsTabletOrMobileScreen } from '@/Application/UseCase/IsTabletOrMobileScreen'
+import { CommandService } from '../../Components/CommandPalette/CommandService'
 
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
 const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
@@ -56,7 +57,8 @@ export class PaneController extends AbstractViewController implements InternalEv
 
   constructor(
     private preferences: PreferenceServiceInterface,
-    private keyboardService: KeyboardService,
+    keyboardService: KeyboardService,
+    commands: CommandService,
     private _isTabletOrMobileScreen: IsTabletOrMobileScreen,
     private _panesForLayout: PanesForLayout,
     eventBus: InternalEventBusInterface,
@@ -110,10 +112,11 @@ export class PaneController extends AbstractViewController implements InternalEv
         description: 'Toggle focus mode',
         onKeyDown: (event) => {
           event.preventDefault()
-          this.setFocusModeEnabled(!this.focusModeEnabled)
+          this.toggleFocusMode()
           return true
         },
       }),
+      commands.addCommand('Toggle focus mode', () => this.toggleFocusMode()),
       keyboardService.addCommandHandler({
         command: TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
         category: 'General',
@@ -123,6 +126,7 @@ export class PaneController extends AbstractViewController implements InternalEv
           this.toggleListPane()
         },
       }),
+      commands.addCommand('Toggle notes panel', () => this.toggleListPane()),
       keyboardService.addCommandHandler({
         command: TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
         category: 'General',
@@ -132,6 +136,7 @@ export class PaneController extends AbstractViewController implements InternalEv
           this.toggleNavigationPane()
         },
       }),
+      commands.addCommand('Toggle tags panel', () => this.toggleNavigationPane()),
     )
   }
 
@@ -331,5 +336,9 @@ export class PaneController extends AbstractViewController implements InternalEv
         document.body.classList.remove(DISABLING_FOCUS_MODE_CLASS_NAME)
       }, FOCUS_MODE_ANIMATION_DURATION)
     }
+  }
+
+  toggleFocusMode = () => {
+    this.setFocusModeEnabled(!this.focusModeEnabled)
   }
 }

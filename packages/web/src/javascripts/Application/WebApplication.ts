@@ -80,6 +80,8 @@ import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
 import { removeFromArray } from '@standardnotes/utils'
 import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
+import { RecentItemsState } from './Recents'
+import { CommandService } from '../Components/CommandPalette/CommandService'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -95,6 +97,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   public isSessionsModalVisible = false
 
   public devMode?: DevMode
+  public recents = new RecentItemsState()
+  public commands = new CommandService()
 
   constructor(
     deviceInterface: WebOrDesktopDevice,

@@ -4,7 +4,7 @@ import Icon from '@/Components/Icon/Icon'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { classNames } from '@standardnotes/utils'
 import { keyboardStringForShortcut, PIN_NOTE_COMMAND } from '@standardnotes/ui-services'
-import { useCommandService } from '../CommandProvider'
+import { useKeyboardService } from '../KeyboardServiceProvider'
 import { VisuallyHidden } from '@ariakit/react'
 
 type Props = {
@@ -24,11 +24,11 @@ const PinNoteButton: FunctionComponent<Props> = ({ className = '', notesControll
     notesController.togglePinSelectedNotes()
   }, [onClickPreprocessing, notesController])
 
-  const commandService = useCommandService()
+  const keyboardService = useKeyboardService()
 
   const shortcut = useMemo(
-    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(PIN_NOTE_COMMAND)),
-    [commandService],
+    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(PIN_NOTE_COMMAND)),
+    [keyboardService],
   )
 
   const label = pinned ? `Unpin note (${shortcut})` : `Pin note (${shortcut})`

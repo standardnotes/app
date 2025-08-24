@@ -4,7 +4,7 @@ import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useMemo } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo } from 'react'
 import IconButton from '../Button/IconButton'
 import EditSmartViewModal from '../Preferences/Panes/General/SmartViews/EditSmartViewModal'
 import { EditSmartViewModalController } from '../Preferences/Panes/General/SmartViews/EditSmartViewModalController'
@@ -32,6 +32,11 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
 
     addSmartViewModalController.setIsAddingSmartView(true)
   }, [addSmartViewModalController, premiumModal, featuresController.hasSmartViews])
+
+  useEffect(
+    () => application.commands.addCommand('Create a new smart view', createNewSmartView, 'add'),
+    [application.commands, createNewSmartView],
+  )
 
   return (
     <section>
