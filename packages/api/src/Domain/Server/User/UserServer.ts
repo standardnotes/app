@@ -8,12 +8,16 @@ import { UserRegistrationResponseBody } from '../../Response/User/UserRegistrati
 import { Paths } from './Paths'
 import { UserServerInterface } from './UserServerInterface'
 import { UserUpdateRequestParams } from '../../Request/User/UserUpdateRequestParams'
+import { HttpRequestOptions } from '../../Http/HttpRequestOptions'
 
 export class UserServer implements UserServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
-  async deleteAccount(params: UserDeletionRequestParams): Promise<HttpResponse<UserDeletionResponseBody>> {
-    return this.httpService.delete(Paths.v1.deleteAccount(params.userUuid), params)
+  async deleteAccount(
+    params: UserDeletionRequestParams,
+    options?: HttpRequestOptions,
+  ): Promise<HttpResponse<UserDeletionResponseBody>> {
+    return this.httpService.delete(Paths.v1.deleteAccount(params.userUuid), params, options)
   }
 
   async register(params: UserRegistrationRequestParams): Promise<HttpResponse<UserRegistrationResponseBody>> {

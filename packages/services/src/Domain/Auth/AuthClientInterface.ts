@@ -2,7 +2,7 @@ import { AnyKeyParamsContent } from '@standardnotes/common'
 import { SessionBody } from '@standardnotes/responses'
 
 export interface AuthClientInterface {
-  generateRecoveryCodes(): Promise<string | false>
+  generateRecoveryCodes(dto: { serverPassword: string }): Promise<string | false>
   recoveryKeyParams(dto: {
     username: string
     codeChallenge: string

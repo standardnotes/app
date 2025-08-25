@@ -5,9 +5,10 @@ import {
   RecoveryKeyParamsResponseBody,
   SignInWithRecoveryCodesResponseBody,
 } from '../../Response'
+import { HttpRequestOptions } from '../../Http/HttpRequestOptions'
 
 export interface AuthServerInterface {
-  generateRecoveryCodes(): Promise<HttpResponse<GenerateRecoveryCodesResponseBody>>
+  generateRecoveryCodes(options?: HttpRequestOptions): Promise<HttpResponse<GenerateRecoveryCodesResponseBody>>
   recoveryKeyParams(params: RecoveryKeyParamsRequestParams): Promise<HttpResponse<RecoveryKeyParamsResponseBody>>
   signInWithRecoveryCodes(
     params: SignInWithRecoveryCodesRequestParams,
