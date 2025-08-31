@@ -208,6 +208,19 @@ function CommandPalette() {
           itemCounts[item.section]++
         }
       } else {
+        // 10 recently opened notes, files and tags
+        const recents = application.recents.itemUuids
+        for (let i = 0; i < recents.length; i++) {
+          const decryptedItem = application.items.findItem(recents[i])
+          if (!decryptedItem) {
+            continue
+          }
+          const item = createItemForInteractableItem(decryptedItem)
+          items.push(item)
+          itemCounts[item.section]++
+        }
+
+        // 5 most recently added commands
         const commands = application.commands.getCommandDescriptions()
         for (let i = commands.length - 1; i >= commands.length - 5; i--) {
           const command = commands[i]
@@ -220,16 +233,6 @@ function CommandPalette() {
             section: 'commands',
             icon: <Icon type={command.icon} />,
           }
-          items.push(item)
-          itemCounts[item.section]++
-        }
-        const recents = application.recents.itemUuids
-        for (let i = 0; i < recents.length; i++) {
-          const decryptedItem = application.items.findItem(recents[i])
-          if (!decryptedItem) {
-            continue
-          }
-          const item = createItemForInteractableItem(decryptedItem)
           items.push(item)
           itemCounts[item.section]++
         }
@@ -259,10 +262,7 @@ function CommandPalette() {
           startTransition(() => setQuery(value))
         }}
       >
-        <TabProvider
-          selectedId={selectedTab}
-          setSelectedId={(id) => startTransition(() => setSelectedTab((id as TabId) || 'all'))}
-        >
+        <TabProvider selectedId={selectedTab} setSelectedId={(id) => setSelectedTab((id as TabId) || 'all')}>
           <div className="flex rounded-lg border border-[--popover-border-color] bg-[--popover-background-color] px-2">
             <Combobox
               autoSelect="always"
