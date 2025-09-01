@@ -156,6 +156,8 @@ export class NotesController
               () => this.deleteNotesPermanently(),
               'trash',
             ),
+            application.commands.add(`Export ${descriptionSuffix}`, this.exportSelectedNotes, 'download'),
+            application.commands.add(`Duplicate ${descriptionSuffix}`, this.duplicateSelectedNotes, 'copy'),
           )
         },
       ),
@@ -174,9 +176,6 @@ export class NotesController
         description: 'Star/unstar selected note(s)',
         onKeyDown: this.toggleStarSelectedNotes,
       }),
-      application.commands.add('Export selected note(s)', this.exportSelectedNotes, 'download'),
-      application.commands.add('Duplicate selected note(s)', this.duplicateSelectedNotes, 'copy'),
-      application.commands.add('Move selected note(s) to trash', () => this.setTrashSelectedNotes(true), 'trash'),
     )
 
     this.disposers.push(
