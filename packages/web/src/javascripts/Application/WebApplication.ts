@@ -98,7 +98,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   public devMode?: DevMode
   public recents = new RecentItemsState()
-  public commands = new CommandService()
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -599,6 +598,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get keyboardService(): KeyboardService {
     return this.deps.get<KeyboardService>(Web_TYPES.KeyboardService)
+  }
+
+  get commands(): CommandService {
+    return this.deps.get<CommandService>(Web_TYPES.CommandService)
   }
 
   get featuresController(): FeaturesController {

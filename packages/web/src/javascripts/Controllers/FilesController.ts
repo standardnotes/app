@@ -280,7 +280,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         break
       case FileItemActionType.PreviewFile:
         this.filePreviewModalController.activate(file, action.payload.otherFiles)
-        this.recents.add(file)
+        this.recents.add(file.uuid)
         break
     }
 

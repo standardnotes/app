@@ -33,6 +33,7 @@ import EditorWidthSelectionModalWrapper from '../EditorWidthSelectionModal/Edito
 import { ProtectionEvent } from '@standardnotes/services'
 import KeyboardShortcutsModal from '../KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal'
 import CommandPalette from '../CommandPalette/CommandPalette'
+import SuperExportModal from '../NotesOptions/SuperExportModal'
 
 type Props = {
   application: WebApplication
@@ -270,6 +271,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <ConfirmDeleteAccountContainer application={application} />
                     <ImportModal importModalController={application.importModalController} />
                     <KeyboardShortcutsModal keyboardService={application.keyboardService} />
+                    <SuperExportModal />
                     <CommandPalette />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}

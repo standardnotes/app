@@ -447,7 +447,6 @@ export function SearchPlugin() {
                 label="May lead to performance degradation, especially on large documents."
                 className="!z-modal"
                 showOnMobile
-                portal={false}
               >
                 <button className="cursor-default">
                   <Icon type="info" size="medium" />

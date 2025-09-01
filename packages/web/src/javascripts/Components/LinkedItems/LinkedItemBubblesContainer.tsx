@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
@@ -10,12 +10,13 @@ import { ContentType, DecryptedItemInterface } from '@standardnotes/snjs'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
-import { useKeyboardService } from '../KeyboardServiceProvider'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import RoundIconButton from '../Button/RoundIconButton'
 import VaultNameBadge from '../Vaults/VaultNameBadge'
 import LastEditedByBadge from '../Vaults/LastEditedByBadge'
 import { useItemVaultInfo } from '@/Hooks/useItemVaultInfo'
+import mergeRegister from '../../Hooks/mergeRegister'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
   linkingController: LinkingController
@@ -39,7 +40,8 @@ const LinkedItemBubblesContainer = ({
 }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
-  const keyboardService = useKeyboardService()
+  const application = useApplication()
+  const keyboardService = application.keyboardService
 
   const { unlinkItems, activateItem } = linkingController
   const unlinkItem = useCallback(
@@ -57,19 +59,24 @@ const LinkedItemBubblesContainer = ({
     [filesLinkedToItem, notesLinkedToItem, tagsLinkedToItem],
   )
 
+  const linkInputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
-    return keyboardService.addCommandHandler({
-      command: FOCUS_TAGS_INPUT_COMMAND,
-      category: 'Current note',
-      description: 'Link tags, notes, files',
-      onKeyDown: () => {
-        const input = document.getElementById(ElementIds.ItemLinkAutocompleteInput)
-        if (input) {
-          input.focus()
-        }
-      },
-    })
-  }, [keyboardService])
+    const focusInput = () => {
+      const input = linkInputRef.current
+      if (input) {
+        setTimeout(() => input.focus())
+      }
+    }
+    return mergeRegister(
+      keyboardService.addCommandHandler({
+        command: FOCUS_TAGS_INPUT_COMMAND,
+        category: 'Current note',
+        description: 'Link tags, notes, files',
+        onKeyDown: focusInput,
+      }),
+      application.commands.add('Link items to current note', focusInput, 'link'),
+    )
+  }, [application.commands, keyboardService])
 
   const shortcut = useMemo(
     () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(FOCUS_TAGS_INPUT_COMMAND)),
@@ -209,6 +216,7 @@ const LinkedItemBubblesContainer = ({
         {isCollapsed && nonVisibleItems > 0 && <span className="flex-shrink-0">and {nonVisibleItems} more...</span>}
         {!readonly && (
           <ItemLinkAutocompleteInput
+            ref={linkInputRef}
             focusedId={focusedId}
             linkingController={linkingController}
             focusPreviousItem={focusPreviousItem}

@@ -4,6 +4,8 @@ import { useKeyboardService } from '../KeyboardServiceProvider'
 import { PlatformedKeyboardShortcut, TOGGLE_COMMAND_PALETTE } from '@standardnotes/ui-services'
 import {
   Combobox,
+  ComboboxGroup,
+  ComboboxGroupLabel,
   ComboboxItem,
   ComboboxList,
   ComboboxProvider,
@@ -14,12 +16,21 @@ import {
   TabProvider,
   useDialogStore,
 } from '@ariakit/react'
-import { DecryptedItemInterface, FileItem, SmartView, SNNote, SNTag, UuidGenerator } from '@standardnotes/snjs'
+import {
+  classNames,
+  DecryptedItemInterface,
+  FileItem,
+  SmartView,
+  SNNote,
+  SNTag,
+  UuidGenerator,
+} from '@standardnotes/snjs'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import { getIconForItem } from '../../Utils/Items/Icons/getIconForItem'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
+import type { CommandService } from './CommandService'
 
 type CommandPaletteItem = {
   id: string
@@ -48,12 +59,50 @@ function ListItemDescription({ item }: { item: CommandPaletteItem }) {
 const Tabs = ['all', 'commands', 'notes', 'files', 'tags'] as const
 type TabId = (typeof Tabs)[number]
 
-// TODO: Not sure why but this is slightly laggier on Chrome whereas its pretty snappy on Firefox
+function CommandPaletteListItem({
+  item,
+  index,
+  handleClick,
+  selectedTab,
+}: {
+  item: CommandPaletteItem
+  index: number
+  handleClick: (item: CommandPaletteItem) => void
+  selectedTab: TabId
+}) {
+  if (selectedTab !== 'all' && selectedTab !== item.section) {
+    return null
+  }
+  return (
+    <ComboboxItem
+      id={item.id}
+      value={item.id}
+      hideOnClick={true}
+      focusOnHover={true}
+      blurOnHoverEnd={false}
+      className={classNames(
+        'flex scroll-m-2 items-center gap-2 whitespace-nowrap rounded-md px-2 py-2.5 text-[0.95rem] data-[active-item]:bg-info data-[active-item]:text-info-contrast [&>svg]:flex-shrink-0',
+        index === 0 && 'scroll-m-8',
+      )}
+      onClick={() => handleClick(item)}
+    >
+      {item.icon}
+      <div className="mr-auto overflow-hidden text-ellipsis whitespace-nowrap leading-none">
+        <ListItemDescription item={item} />
+      </div>
+      {item.shortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={item.shortcut} small={false} />}
+    </ComboboxItem>
+  )
+}
+
+// Future TODO, nice to have: A way to expose items like the current note's options
+// directly in the command palette rather than only having a way to open the menu
 function CommandPalette() {
   const application = useApplication()
   const keyboardService = useKeyboardService()
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const [recents, setRecents] = useState<CommandPaletteItem[]>([])
   const [items, setItems] = useState<CommandPaletteItem[]>([])
   // Storing counts as separate state to avoid iterating items multiple times
   const [itemCountsPerTab, setItemCounts] = useState({
@@ -93,6 +142,7 @@ function CommandPalette() {
     (item: CommandPaletteItem) => {
       if (item.section === 'commands') {
         application.commands.triggerCommand(item.id)
+        application.recents.add(item.id, 'command')
       } else {
         const decryptedItem = application.items.findItem<DecryptedItemInterface>(item.itemUuid)
         if (!decryptedItem) {
@@ -118,6 +168,7 @@ function CommandPalette() {
       application.itemListController,
       application.items,
       application.navigationController,
+      application.recents,
     ],
   )
 
@@ -145,6 +196,22 @@ function CommandPalette() {
     [application],
   )
 
+  const createItemForCommand = useCallback(
+    (command: ReturnType<CommandService['getCommandDescriptions']>[0]): CommandPaletteItem => {
+      const shortcut = command.shortcut_id
+        ? application.keyboardService.keyboardShortcutForCommand(command.shortcut_id)
+        : undefined
+      return {
+        id: command.id,
+        description: command.description,
+        section: 'commands',
+        icon: <Icon type={command.icon} />,
+        shortcut,
+      }
+    },
+    [application.keyboardService],
+  )
+
   useEffect(
     function updateCommandPaletteItems() {
       if (!isOpen) {
@@ -153,6 +220,7 @@ function CommandPalette() {
         return
       }
 
+      const recents: CommandPaletteItem[] = []
       const items: CommandPaletteItem[] = []
       const itemCounts: typeof itemCountsPerTab = {
         commands: 0,
@@ -178,12 +246,7 @@ function CommandPalette() {
           if (index === -1) {
             continue
           }
-          const item: CommandPaletteItem = {
-            id: command.id,
-            description: command.description,
-            section: 'commands',
-            icon: <Icon type={command.icon} />,
-          }
+          const item = createItemForCommand(command)
           item.resultRange = [index, index + searchQuery.length]
           items.push(item)
           itemCounts[item.section]++
@@ -191,12 +254,12 @@ function CommandPalette() {
 
         const interactableItems = application.items.getInteractableItems()
         for (let i = 0; i < interactableItems.length; i++) {
+          if (items.length >= 50) {
+            break
+          }
           const decryptedItem = interactableItems[i]
           if (!decryptedItem || !decryptedItem.title) {
             continue
-          }
-          if (items.length >= 50) {
-            break
           }
           const index = decryptedItem.title.toLowerCase().indexOf(searchQuery)
           if (index === -1) {
@@ -208,40 +271,45 @@ function CommandPalette() {
           itemCounts[item.section]++
         }
       } else {
-        // 10 recently opened notes, files and tags
-        const recents = application.recents.itemUuids
-        for (let i = 0; i < recents.length; i++) {
-          const decryptedItem = application.items.findItem(recents[i])
+        const recentCommands = application.recents.commandUuids
+        for (let i = 0; i < recentCommands.length; i++) {
+          const command = application.commands.getCommandDescription(recentCommands[i])
+          if (!command) {
+            continue
+          }
+          const item = createItemForCommand(command)
+          recents.push(item)
+          itemCounts[item.section]++
+        }
+        const recentItems = application.recents.itemUuids
+        for (let i = 0; i < recentItems.length; i++) {
+          const decryptedItem = application.items.findItem(recentItems[i])
           if (!decryptedItem) {
             continue
           }
           const item = createItemForInteractableItem(decryptedItem)
-          items.push(item)
+          recents.push(item)
           itemCounts[item.section]++
         }
 
-        // 5 most recently added commands
         const commands = application.commands.getCommandDescriptions()
-        for (let i = commands.length - 1; i >= commands.length - 5; i--) {
+        for (let i = 0; i < commands.length; i++) {
           const command = commands[i]
-          if (!command) {
+          if (!command || recentCommands.includes(command.id)) {
             continue
           }
-          const item: CommandPaletteItem = {
-            id: command.id,
-            description: command.description,
-            section: 'commands',
-            icon: <Icon type={command.icon} />,
-          }
+          const item = createItemForCommand(command)
           items.push(item)
           itemCounts[item.section]++
         }
+        items.sort((a, b) => (a.description.toLowerCase() < b.description.toLowerCase() ? -1 : 1))
       }
 
       setItems(items)
+      setRecents(recents)
       setItemCounts(itemCounts)
     },
-    [application, createItemForInteractableItem, isOpen, query],
+    [application, createItemForCommand, createItemForInteractableItem, isOpen, query],
   )
 
   const hasNoItemsAtAll = items.length === 0
@@ -249,7 +317,6 @@ function CommandPalette() {
 
   return (
     <Dialog
-      unmountOnHide
       store={dialog}
       className="fixed inset-3 bottom-[10vh] top-[10vh] z-modal m-auto mt-0 flex h-fit max-h-[70vh] w-[min(45rem,90vw)] flex-col gap-3 overflow-auto rounded-xl border border-[--popover-border-color] bg-[--popover-background-color] px-3 py-3 shadow-main [backdrop-filter:var(--popover-backdrop-filter)]"
       backdrop={<div className="bg-passive-5 opacity-50 transition-opacity duration-75 data-[enter]:opacity-85" />}
@@ -283,41 +350,40 @@ function CommandPalette() {
             ))}
           </TabList>
           <TabPanel className="flex flex-col gap-1.5 overflow-y-auto" tabId={selectedTab}>
-            {query.length === 0 && <div className="px-2 font-semibold opacity-75">Suggestions:</div>}
             {query.length > 0 && (hasNoItemsAtAll || hasNoItemsInSelectedTab) && (
               <div className="mx-auto px-2 text-sm font-semibold opacity-75">No items found</div>
             )}
             <ComboboxList className="focus:shadow-none focus:outline-none">
-              {items.map((item) => {
-                if (selectedTab !== 'all' && selectedTab !== item.section) {
-                  return null
-                }
-                return (
-                  <ComboboxItem
-                    key={item.id}
-                    id={item.id}
-                    value={item.id}
-                    hideOnClick={true}
-                    focusOnHover={true}
-                    blurOnHoverEnd={false}
-                    className="flex scroll-m-2 items-center gap-2 whitespace-nowrap rounded-md px-2 py-2.5 text-[0.95rem] data-[active-item]:bg-info data-[active-item]:text-info-contrast [&>svg]:flex-shrink-0"
-                    onClick={() => handleItemClick(item)}
-                  >
-                    {item.icon}
-                    <div className="mr-auto overflow-hidden text-ellipsis whitespace-nowrap leading-none">
-                      <ListItemDescription item={item} />
-                    </div>
-                    {item.shortcut && (
-                      <KeyboardShortcutIndicator
-                        className="ml-auto"
-                        shortcut={item.shortcut}
-                        small={false}
-                        dimmed={false}
-                      />
-                    )}
-                  </ComboboxItem>
-                )
-              })}
+              {recents.length > 0 && (
+                <ComboboxGroup>
+                  <ComboboxGroupLabel className="px-2 font-semibold opacity-75">Recents:</ComboboxGroupLabel>
+                  {recents.map((item, index) => (
+                    <CommandPaletteListItem
+                      key={item.id}
+                      index={index}
+                      item={item}
+                      handleClick={handleItemClick}
+                      selectedTab={selectedTab}
+                    />
+                  ))}
+                </ComboboxGroup>
+              )}
+              {!hasNoItemsAtAll && (
+                <ComboboxGroup>
+                  {recents.length > 0 && (
+                    <ComboboxGroupLabel className="mt-2 px-2 font-semibold opacity-75">Commands:</ComboboxGroupLabel>
+                  )}
+                  {items.map((item, index) => (
+                    <CommandPaletteListItem
+                      key={item.id}
+                      index={index}
+                      item={item}
+                      handleClick={handleItemClick}
+                      selectedTab={selectedTab}
+                    />
+                  ))}
+                </ComboboxGroup>
+              )}
             </ComboboxList>
           </TabPanel>
         </TabProvider>

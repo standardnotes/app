@@ -2,7 +2,6 @@ import { FunctionComponent, useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import PreferencesView from './PreferencesView'
 import { PreferencesViewWrapperProps } from './PreferencesViewWrapperProps'
-import { useKeyboardService } from '../KeyboardServiceProvider'
 import { OPEN_PREFERENCES_COMMAND } from '@standardnotes/ui-services'
 import ModalOverlay from '../Modal/ModalOverlay'
 import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
@@ -10,23 +9,15 @@ import { performSafariAnimationFix } from '../Panes/PaneAnimator'
 import { IosModalAnimationEasing } from '../Modal/useModalAnimation'
 
 const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = ({ application }) => {
-  const keyboardService = useKeyboardService()
-
   useEffect(() => {
-    return keyboardService.addCommandHandler({
-      command: OPEN_PREFERENCES_COMMAND,
-      category: 'General',
-      description: 'Open preferences',
-      onKeyDown: () => application.preferencesController.openPreferences(),
-    })
-  }, [keyboardService, application])
-  useEffect(() =>
-    application.commands.addCommand(
+    return application.commands.addWithShortcut(
+      OPEN_PREFERENCES_COMMAND,
+      'General',
       'Open preferences',
       () => application.preferencesController.openPreferences(),
       'tune',
-    ),
-  )
+    )
+  }, [application.commands, application.preferencesController])
 
   const [setElement] = usePaneSwipeGesture('right', async (element) => {
     const animation = element.animate(

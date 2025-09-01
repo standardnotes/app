@@ -55,17 +55,15 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onCl
   }, [isOpen, onClickPreprocessing, onClick])
 
   useEffect(() => {
-    return application.commands.addCommand('Change current note type', () => void toggleMenu(), 'notes')
-  }, [application.commands, toggleMenu])
-  useEffect(() => {
-    return application.keyboardService.addCommandHandler({
-      command: CHANGE_EDITOR_COMMAND,
-      category: 'Current note',
-      description: 'Change note type',
-      onKeyDown: () => {
+    return application.commands.addWithShortcut(
+      CHANGE_EDITOR_COMMAND,
+      'Current note',
+      'Change note type',
+      () => {
         void toggleMenu()
       },
-    })
+      'notes',
+    )
   }, [application, toggleMenu])
 
   const shortcut = useMemo(

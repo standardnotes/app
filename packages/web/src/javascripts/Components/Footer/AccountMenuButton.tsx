@@ -1,11 +1,12 @@
 import { classNames } from '@standardnotes/utils'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import AccountMenu, { AccountMenuProps } from '../AccountMenu/AccountMenu'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import { observer } from 'mobx-react-lite'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = AccountMenuProps & {
   controller: AccountMenuController
@@ -15,8 +16,14 @@ type Props = AccountMenuProps & {
 }
 
 const AccountMenuButton = ({ hasError, controller, mainApplicationGroup, onClickOutside, toggleMenu, user }: Props) => {
+  const application = useApplication()
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { show: isOpen } = controller
+
+  useEffect(
+    () => application.commands.add('Open account menu', toggleMenu, 'account-circle'),
+    [application.commands, toggleMenu],
+  )
 
   return (
     <>

@@ -50,6 +50,7 @@ import { GetPurchaseFlowUrl } from '../UseCase/GetPurchaseFlowUrl'
 import { OpenSubscriptionDashboard } from '../UseCase/OpenSubscriptionDashboard'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 import { WebApplication } from '../WebApplication'
+import { CommandService } from '../../Components/CommandPalette/CommandService'
 
 export class WebDependencies extends DependencyContainer {
   constructor(private application: WebApplication) {
@@ -123,6 +124,9 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.KeyboardService, () => {
       return new KeyboardService(application.platform, application.environment)
+    })
+    this.bind(Web_TYPES.CommandService, () => {
+      return new CommandService(this.get<KeyboardService>(Web_TYPES.KeyboardService))
     })
 
     this.bind(Web_TYPES.ArchiveManager, () => {
@@ -234,7 +238,7 @@ export class WebDependencies extends DependencyContainer {
       return new NavigationController(
         this.get<FeaturesController>(Web_TYPES.FeaturesController),
         this.get<VaultDisplayService>(Web_TYPES.VaultDisplayService),
-        this.get<KeyboardService>(Web_TYPES.KeyboardService),
+        this.get<CommandService>(Web_TYPES.CommandService),
         this.get<PaneController>(Web_TYPES.PaneController),
         application.sync,
         application.mutator,
@@ -249,19 +253,9 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.NotesController, () => {
       return new NotesController(
-        this.get<ItemListController>(Web_TYPES.ItemListController),
-        this.get<NavigationController>(Web_TYPES.NavigationController),
-        this.get<ItemGroupController>(Web_TYPES.ItemGroupController),
-        this.get<KeyboardService>(Web_TYPES.KeyboardService),
-        application.preferences,
-        application.items,
-        application.mutator,
-        application.sync,
-        application.protections,
-        application.alerts,
+        application,
         this.get<IsGlobalSpellcheckEnabled>(Web_TYPES.IsGlobalSpellcheckEnabled),
         this.get<GetItemTags>(Web_TYPES.GetItemTags),
-        application.events,
       )
     })
 
@@ -385,7 +379,7 @@ export class WebDependencies extends DependencyContainer {
     this.bind(Web_TYPES.HistoryModalController, () => {
       return new HistoryModalController(
         this.get<NotesController>(Web_TYPES.NotesController),
-        this.get<KeyboardService>(Web_TYPES.KeyboardService),
+        this.get<CommandService>(Web_TYPES.CommandService),
         application.events,
       )
     })

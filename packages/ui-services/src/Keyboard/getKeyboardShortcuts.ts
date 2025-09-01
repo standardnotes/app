@@ -109,7 +109,7 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
     },
     {
       command: CHANGE_EDITOR_COMMAND,
-      key: '/',
+      key: '?',
       modifiers: [primaryModifier, KeyboardModifier.Shift],
       preventDefault: true,
     },

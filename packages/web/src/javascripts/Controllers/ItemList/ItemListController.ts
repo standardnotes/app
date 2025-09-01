@@ -1152,7 +1152,7 @@ export class ItemListController
       } else if (item.content_type === ContentType.TYPES.File) {
         await this.openFile(item.uuid)
       }
-      this.recents.add(item)
+      this.recents.add(item.uuid)
 
       if (!this.paneController.isInMobileView || userTriggered) {
         void this.paneController.setPaneLayout(PaneLayout.Editing)

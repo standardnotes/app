@@ -20,6 +20,7 @@ const StyledTooltip = ({
   side,
   documentElement,
   closeOnClick = true,
+  portal = true,
   ...props
 }: {
   children: ReactNode
@@ -155,9 +156,11 @@ const StyledTooltip = ({
             return
           }
 
-          Object.assign(popoverElement.style, styles)
+          for (const [key, value] of Object.entries(styles)) {
+            popoverElement.style.setProperty(key, value)
+          }
 
-          if (!props.portal) {
+          if (!portal) {
             const adjustedStyles = getAdjustedStylesForNonPortalPopover(
               popoverElement,
               styles,

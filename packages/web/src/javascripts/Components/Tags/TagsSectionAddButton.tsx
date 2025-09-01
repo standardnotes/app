@@ -1,7 +1,7 @@
 import IconButton from '@/Components/Button/IconButton'
 import { CREATE_NEW_TAG_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useKeyboardService } from '../KeyboardServiceProvider'
 import { useApplication } from '../ApplicationProvider'
 
@@ -17,11 +17,6 @@ function TagsSectionAddButton() {
   const shortcut = useMemo(
     () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(CREATE_NEW_TAG_COMMAND)),
     [keyboardService],
-  )
-
-  useEffect(
-    () => application.commands.addCommand('Create a new tag', addNewTag, 'add'),
-    [addNewTag, application.commands],
   )
 
   return (

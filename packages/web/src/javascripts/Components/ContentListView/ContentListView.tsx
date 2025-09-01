@@ -176,15 +176,6 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
        */
       return application.keyboardService.addCommandHandlers([
         {
-          command: CREATE_NEW_NOTE_KEYBOARD_COMMAND,
-          category: 'General',
-          description: 'Create new note',
-          onKeyDown: (event) => {
-            event.preventDefault()
-            void addNewItem()
-          },
-        },
-        {
           command: NEXT_LIST_ITEM_KEYBOARD_COMMAND,
           category: 'Notes list',
           description: 'Go to next item',
@@ -262,16 +253,23 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
     )
 
     const addButtonLabel = useMemo(() => {
-      return isFilesSmartView
-        ? 'Upload file'
-        : `Create a new note in the selected tag (${shortcutForCreate && keyboardStringForShortcut(shortcutForCreate)})`
+      let shortcut = keyboardStringForShortcut(shortcutForCreate)
+      if (shortcut) {
+        shortcut = '(' + shortcut + ')'
+      }
+      return isFilesSmartView ? `Upload file ${shortcut}` : `Create a new note in the selected tag ${shortcut}`
     }, [isFilesSmartView, shortcutForCreate])
 
     useEffect(
       () =>
-        application.commands.addCommand(
+        application.commands.addWithShortcut(
+          CREATE_NEW_NOTE_KEYBOARD_COMMAND,
+          'General',
           isFilesSmartView ? 'Upload file' : 'Create new note',
-          () => void addNewItem(),
+          (event) => {
+            event?.preventDefault()
+            void addNewItem()
+          },
           isFilesSmartView ? 'upload' : 'add',
         ),
       [addNewItem, application.commands, isFilesSmartView],

@@ -106,37 +106,18 @@ export class PaneController extends AbstractViewController implements InternalEv
     eventBus.addEventHandler(this, ApplicationEvent.LocalPreferencesChanged)
 
     this.disposers.push(
-      keyboardService.addCommandHandler({
-        command: TOGGLE_FOCUS_MODE_COMMAND,
-        category: 'General',
-        description: 'Toggle focus mode',
-        onKeyDown: (event) => {
-          event.preventDefault()
-          this.toggleFocusMode()
-          return true
-        },
+      commands.addWithShortcut(TOGGLE_FOCUS_MODE_COMMAND, 'General', 'Toggle focus mode', (event) => {
+        event?.preventDefault()
+        this.toggleFocusMode()
       }),
-      commands.addCommand('Toggle focus mode', () => this.toggleFocusMode()),
-      keyboardService.addCommandHandler({
-        command: TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
-        category: 'General',
-        description: 'Toggle notes panel',
-        onKeyDown: (event) => {
-          event.preventDefault()
-          this.toggleListPane()
-        },
+      commands.addWithShortcut(TOGGLE_LIST_PANE_KEYBOARD_COMMAND, 'General', 'Toggle notes panel', (event) => {
+        event?.preventDefault()
+        this.toggleListPane()
       }),
-      commands.addCommand('Toggle notes panel', () => this.toggleListPane()),
-      keyboardService.addCommandHandler({
-        command: TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
-        category: 'General',
-        description: 'Toggle tags panel',
-        onKeyDown: (event) => {
-          event.preventDefault()
-          this.toggleNavigationPane()
-        },
+      commands.addWithShortcut(TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND, 'General', 'Toggle tags panel', (event) => {
+        event?.preventDefault()
+        this.toggleNavigationPane()
       }),
-      commands.addCommand('Toggle tags panel', () => this.toggleNavigationPane()),
     )
   }
 

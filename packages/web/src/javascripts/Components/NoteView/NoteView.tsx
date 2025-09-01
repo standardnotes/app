@@ -772,22 +772,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         onKeyDown: moveNoteToTrash,
       }),
     )
-
-    this.#observers.push(
-      this.application.commands.addCommand(
-        'Pin/unpin current note',
-        () => this.application.notesController.togglePinSelectedNotes(),
-        'trash',
-      ),
-    )
-    this.#observers.push(
-      this.application.commands.addCommand(
-        'Star/unstar current note',
-        () => this.application.notesController.toggleStarSelectedNotes(),
-        'trash',
-      ),
-    )
-    this.#observers.push(this.application.commands.addCommand('Move current note to trash', moveNoteToTrash, 'trash'))
   }
 
   ensureNoteIsInsertedBeforeUIAction = async () => {

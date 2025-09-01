@@ -2,13 +2,14 @@ import { WebApplication } from '@/Application/WebApplication'
 import { UIFeature, GetDarkThemeFeature } from '@standardnotes/snjs'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/utils'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useKeyboardService } from '../KeyboardServiceProvider'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import QuickSettingsMenu from '../QuickSettingsMenu/QuickSettingsMenu'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import RoundIconButton from '../Button/RoundIconButton'
+import mergeRegister from '../../Hooks/mergeRegister'
 
 type Props = {
   application: WebApplication
@@ -20,27 +21,34 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
   const keyboardService = useKeyboardService()
 
   const [isOpen, setIsOpen] = useState(false)
-  const toggleMenu = () => setIsOpen(!isOpen)
+  const toggleMenu = useCallback(() => setIsOpen(!isOpen), [isOpen])
 
   useEffect(() => {
+    if (isMobileNavigation) {
+      return
+    }
+
     const darkThemeFeature = new UIFeature(GetDarkThemeFeature())
 
-    return keyboardService.addCommandHandler({
-      command: TOGGLE_DARK_MODE_COMMAND,
-      category: 'General',
-      description: 'Toggle dark mode',
-      onKeyDown: () => {
+    return mergeRegister(
+      application.commands.addWithShortcut(TOGGLE_DARK_MODE_COMMAND, 'General', 'Toggle dark mode', () => {
         void application.componentManager.toggleTheme(darkThemeFeature)
         return true
-      },
-    })
-  }, [application, keyboardService])
+      }),
+      application.commands.add('Open quick settings menu', toggleMenu, 'themes'),
+    )
+  }, [application, isMobileNavigation, keyboardService, toggleMenu])
 
   return (
     <>
       <StyledTooltip label="Open quick settings menu">
         {isMobileNavigation ? (
-          <RoundIconButton className="ml-2.5 bg-default" onClick={toggleMenu} label="Go to vaults menu" icon="themes" />
+          <RoundIconButton
+            className="ml-2.5 bg-default"
+            onClick={toggleMenu}
+            label="Go to quick settings menu"
+            icon="themes"
+          />
         ) : (
           <button
             onClick={toggleMenu}
