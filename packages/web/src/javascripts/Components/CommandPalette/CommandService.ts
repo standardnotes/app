@@ -1,4 +1,4 @@
-import { IconType, UuidGenerator } from '@standardnotes/snjs'
+import { GenerateUuid, IconType } from '@standardnotes/snjs'
 import { KeyboardCommand, KeyboardService, KeyboardShortcutCategory } from '@standardnotes/ui-services'
 import mergeRegister from '../../Hooks/mergeRegister'
 
@@ -14,10 +14,13 @@ export class CommandService {
   #commandInfo = new Map<string, CommandInfo>()
   #commandHandlers = new Map<string, () => void>()
 
-  constructor(private keyboardService: KeyboardService) {}
+  constructor(
+    private keyboardService: KeyboardService,
+    private generateUuid: GenerateUuid,
+  ) {}
 
   public add(description: string, handler: () => void, icon?: IconType, shortcut_id?: KeyboardCommand) {
-    const id = UuidGenerator.GenerateUuid()
+    const id = this.generateUuid.execute().getValue()
     this.#commandInfo.set(id, { description, icon: icon ?? 'info', shortcut_id })
     this.#commandHandlers.set(id, handler)
     return () => {

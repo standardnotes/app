@@ -126,7 +126,7 @@ export class WebDependencies extends DependencyContainer {
       return new KeyboardService(application.platform, application.environment)
     })
     this.bind(Web_TYPES.CommandService, () => {
-      return new CommandService(this.get<KeyboardService>(Web_TYPES.KeyboardService))
+      return new CommandService(this.get<KeyboardService>(Web_TYPES.KeyboardService), application.generateUuid)
     })
 
     this.bind(Web_TYPES.ArchiveManager, () => {
