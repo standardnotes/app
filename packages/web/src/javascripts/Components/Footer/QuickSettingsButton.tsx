@@ -21,7 +21,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
   const keyboardService = useKeyboardService()
 
   const [isOpen, setIsOpen] = useState(false)
-  const toggleMenu = useCallback(() => setIsOpen(!isOpen), [isOpen])
+  const toggleMenu = useCallback(() => setIsOpen((isOpen) => !isOpen), [])
 
   useEffect(() => {
     if (isMobileNavigation) {
