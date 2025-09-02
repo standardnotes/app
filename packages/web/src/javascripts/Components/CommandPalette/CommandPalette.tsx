@@ -15,6 +15,7 @@ import {
   TabPanel,
   TabProvider,
   useDialogStore,
+  useTabContext,
 } from '@ariakit/react'
 import {
   classNames,
@@ -92,6 +93,29 @@ function CommandPaletteListItem({
       </div>
       {item.shortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={item.shortcut} small={false} />}
     </ComboboxItem>
+  )
+}
+
+function ComboboxInput() {
+  const tab = useTabContext()
+  return (
+    <Combobox
+      autoSelect="always"
+      className="h-10 w-full appearance-none bg-transparent px-1 text-base focus:shadow-none focus:outline-none"
+      placeholder="Search notes, files, commands, etc..."
+      onKeyDown={(event) => {
+        if (event.key !== 'Tab') {
+          return
+        }
+        const activeId = tab?.getState().selectedId
+        const options = { activeId }
+        const nextId = event.shiftKey ? tab?.previous(options) : tab?.next(options)
+        if (nextId) {
+          event.preventDefault()
+          tab?.select(nextId)
+        }
+      }}
+    />
   )
 }
 
@@ -331,11 +355,7 @@ function CommandPalette() {
       >
         <TabProvider selectedId={selectedTab} setSelectedId={(id) => setSelectedTab((id as TabId) || 'all')}>
           <div className="flex rounded-lg border border-[--popover-border-color] bg-[--popover-background-color] px-2">
-            <Combobox
-              autoSelect="always"
-              className="h-10 w-full appearance-none bg-transparent px-1 text-base focus:shadow-none focus:outline-none"
-              placeholder="Search notes, files, commands, etc..."
-            />
+            <ComboboxInput />
           </div>
           <TabList className="flex items-center gap-1">
             {Tabs.map((id) => (
