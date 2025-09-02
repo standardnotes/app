@@ -334,6 +334,7 @@ function CommandPalette() {
             <Combobox
               autoSelect="always"
               className="h-10 w-full appearance-none bg-transparent px-1 text-base focus:shadow-none focus:outline-none"
+              placeholder="Search notes, files, commands, etc..."
             />
           </div>
           <TabList className="flex items-center gap-1">
