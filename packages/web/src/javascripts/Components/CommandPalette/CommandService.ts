@@ -20,7 +20,7 @@ export class CommandService {
   ) {}
 
   public add(description: string, handler: () => void, icon?: IconType, shortcut_id?: KeyboardCommand) {
-    const id = this.generateUuid.execute().getValue()
+    const id = shortcut_id?.description ? shortcut_id.description : this.generateUuid.execute().getValue()
     this.#commandInfo.set(id, { description, icon: icon ?? 'info', shortcut_id })
     this.#commandHandlers.set(id, handler)
     return () => {
