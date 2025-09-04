@@ -1,5 +1,10 @@
 :root {
   --lexical-ordered-list-left-margin: 16px;
+
+  --checkbox-size: 16px;
+  @media screen and (max-width: 450px) {
+    --checkbox-size: 20px;
+  }
 }
 .monospace-font {
   --lexical-ordered-list-left-margin: 42px;
@@ -70,10 +75,10 @@
 }
 .Lexical__listItemUnchecked:before,
 .Lexical__listItemChecked:before {
+  /* checkbox */
   content: '';
-  --size: 16px;
-  width: var(--size);
-  height: var(--size);
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
   left: 0;
   top: calc(var(--line-height, 1) * var(--font-size) / 2);
   transform: translateY(-50%);
@@ -97,19 +102,19 @@
   background-repeat: no-repeat;
 }
 .Lexical__listItemChecked:after {
+  /* checkmark */
   content: '';
   cursor: pointer;
-  border-color: var(--sn-stylekit-info-contrast-color);
-  border-style: solid;
+  background-image: url('data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22white%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M17.5001%205.83345L7.50008%2015.8334L2.91675%2011.2501L4.09175%2010.0751L7.50008%2013.4751L16.3251%204.65845L17.5001%205.83345Z%22%2F%3E%3C%2Fsvg%3E%0A');
+  background-repeat: no-repeat;
   position: absolute;
-  display: block;
-  width: 5px;
-  height: 11px;
+  left: 0;
   --top: calc(var(--line-height, 1) * var(--font-size) / 2);
-  top: calc(var(--top) - 1px);
-  left: 5px;
-  transform: translateY(-50%) rotate(45deg);
-  border-width: 0 2px 2px 0;
+  top: var(--top);
+  transform: translateY(-50%);
+  display: block;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
 }
 .Lexical__nestedListItem {
   list-style-type: none;

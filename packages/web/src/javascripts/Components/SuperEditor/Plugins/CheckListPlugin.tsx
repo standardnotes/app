@@ -7,6 +7,7 @@ import {
   $isRangeSelection,
   COMMAND_PRIORITY_LOW,
   KEY_ENTER_COMMAND,
+  SKIP_DOM_SELECTION_TAG,
 } from 'lexical'
 import { useEffect } from 'react'
 import { useApplication } from '../../ApplicationProvider'
@@ -53,8 +54,6 @@ export function CheckListPlugin(): null {
             return
           }
 
-          editor.getRootElement()?.focus()
-
           const rect = target.getBoundingClientRect()
 
           const listItemElementStyles = getComputedStyle(target)
@@ -81,25 +80,40 @@ export function CheckListPlugin(): null {
 
         function handleClick(event: Event) {
           handleCheckItemEvent(event as PointerEvent, () => {
+            const isTouchEvent = (event as PointerEvent).pointerType === 'touch'
             if (!editor.isEditable()) {
               return
             }
 
-            editor.update(() => {
-              const domNode = event.target as HTMLElement
+            editor.update(
+              () => {
+                const domNode = event.target
+                if (!(domNode instanceof HTMLElement)) {
+                  return
+                }
 
-              if (!event.target) {
-                return
-              }
+                const node = $getNearestNodeFromDOMNode(domNode)
 
-              const node = $getNearestNodeFromDOMNode(domNode)
+                if (!$isListItemNode(node)) {
+                  return
+                }
 
-              if (!$isListItemNode(node)) {
-                return
-              }
+                const isFocusWithinEditor = editor.getRootElement()?.contains(document.activeElement)
+                if (!isTouchEvent && !isFocusWithinEditor) {
+                  // on desktop, we want to focus & select the list item so that if you then press the up or down arrow keys,
+                  // the caret moves in the editor instead of triggering the note navigation shortcuts.
+                  // however on mobile, focusing the editor brings up the keyboard even if you just want to quickly toggle
+                  // an item. the keyboard also causes a layout shift which might end up leading to an incorrect toggle.
+                  node.selectStart()
+                }
 
-              node.toggleChecked()
-            })
+                node.toggleChecked()
+              },
+              {
+                // without this lexical will reconcile the new selection to the dom and focus the editor causing the keyboard to show up
+                tag: isTouchEvent ? SKIP_DOM_SELECTION_TAG : undefined,
+              },
+            )
           })
         }
 
