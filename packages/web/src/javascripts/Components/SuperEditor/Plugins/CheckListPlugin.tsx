@@ -78,9 +78,9 @@ export function CheckListPlugin(): null {
           }
         }
 
-        function handleClick(event: PointerEvent) {
-          handleCheckItemEvent(event, () => {
-            const isTouchEvent = event.pointerType === 'touch'
+        function handleClick(event: Event) {
+          handleCheckItemEvent(event as PointerEvent, () => {
+            const isTouchEvent = (event as PointerEvent).pointerType === 'touch'
             if (!editor.isEditable()) {
               return
             }
