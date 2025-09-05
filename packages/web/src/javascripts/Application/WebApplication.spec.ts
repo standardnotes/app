@@ -2,6 +2,19 @@ import { Environment, namespacedKey, Platform, RawStorageKey, SNLog } from '@sta
 import { WebApplication } from '@/Application/WebApplication'
 import { WebOrDesktopDevice } from './Device/WebOrDesktopDevice'
 
+jest.mock('@standardnotes/sncrypto-web', () => {
+  return {
+    SNWebCrypto: class {
+      initialize() {
+        return Promise.resolve()
+      }
+      generateUUID() {
+        return 'mock-uuid'
+      }
+    },
+  }
+})
+
 describe('web application', () => {
   let application: WebApplication
 

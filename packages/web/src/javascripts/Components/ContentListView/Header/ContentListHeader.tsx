@@ -103,6 +103,11 @@ const ContentListHeader = ({
     setShowDisplayOptionsMenu((show) => !show)
   }, [])
 
+  useEffect(
+    () => application.commands.add('Open display options menu', toggleDisplayOptionsMenu, 'sort-descending'),
+    [application.commands, toggleDisplayOptionsMenu],
+  )
+
   const OptionsMenu = useMemo(() => {
     return (
       <div className="flex">

@@ -27,7 +27,6 @@ import {
   ChangeContentCallbackPlugin,
   ChangeEditorFunction,
 } from './Plugins/ChangeContentCallback/ChangeContentCallback'
-import { useCommandService } from '@/Components/CommandProvider'
 import { SUPER_SHOW_MARKDOWN_PREVIEW, getPrimaryModifier } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
@@ -83,22 +82,23 @@ export const SuperEditor: FunctionComponent<Props> = ({
     )
   }, [application.features])
 
-  const commandService = useCommandService()
+  const keyboardService = application.keyboardService
 
   useEffect(() => {
-    return commandService.addCommandHandler({
-      command: SUPER_SHOW_MARKDOWN_PREVIEW,
-      category: 'Super notes',
-      description: 'Show markdown preview for current note',
-      onKeyDown: () => setShowMarkdownPreview(true),
-    })
-  }, [commandService])
+    return application.commands.addWithShortcut(
+      SUPER_SHOW_MARKDOWN_PREVIEW,
+      'Super notes',
+      'Show markdown preview for current note',
+      () => setShowMarkdownPreview((s) => !s),
+      'markdown',
+    )
+  }, [application.commands])
 
   useEffect(() => {
     const platform = application.platform
     const primaryModifier = getPrimaryModifier(application.platform)
 
-    return commandService.registerExternalKeyboardShortcutHelpItems([
+    return keyboardService.registerExternalKeyboardShortcutHelpItems([
       {
         key: 'b',
         modifiers: [primaryModifier],
@@ -128,7 +128,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
         platform: platform,
       },
     ])
-  }, [application.platform, commandService])
+  }, [application.platform, keyboardService])
 
   const closeMarkdownPreview = useCallback(() => {
     setShowMarkdownPreview(false)

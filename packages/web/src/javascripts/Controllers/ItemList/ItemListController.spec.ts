@@ -46,6 +46,7 @@ describe('item list controller', () => {
       application.options,
       application.isNativeMobileWebUseCase,
       application.changeAndSaveItem,
+      application.recents,
       eventBus,
     )
   })

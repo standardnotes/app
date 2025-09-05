@@ -31,6 +31,7 @@ import {
   CHANGE_EDITOR_WIDTH_COMMAND,
   SUPER_TOGGLE_TOOLBAR,
   TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
+  TOGGLE_COMMAND_PALETTE,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier, getPrimaryModifier } from './KeyboardModifier'
@@ -108,7 +109,7 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
     },
     {
       command: CHANGE_EDITOR_COMMAND,
-      key: '/',
+      key: '?',
       modifiers: [primaryModifier, KeyboardModifier.Shift],
       preventDefault: true,
     },
@@ -199,6 +200,11 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       command: TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
       key: '/',
       modifiers: [primaryModifier],
+    },
+    {
+      command: TOGGLE_COMMAND_PALETTE,
+      code: 'Semicolon',
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
     },
   ]
 }

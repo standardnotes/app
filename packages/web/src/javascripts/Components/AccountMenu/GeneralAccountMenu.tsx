@@ -13,7 +13,7 @@ import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { useApplication } from '../ApplicationProvider'
 import MenuSection from '../Menu/MenuSection'
-import { TOGGLE_KEYBOARD_SHORTCUTS_MODAL, isMobilePlatform } from '@standardnotes/ui-services'
+import { TOGGLE_COMMAND_PALETTE, TOGGLE_KEYBOARD_SHORTCUTS_MODAL, isMobilePlatform } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 
 type Props = {
@@ -94,6 +94,9 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
 
   const keyboardShortcutsHelpShortcut = useMemo(() => {
     return application.keyboardService.keyboardShortcutForCommand(TOGGLE_KEYBOARD_SHORTCUTS_MODAL)
+  }, [application.keyboardService])
+  const commandPaletteShortcut = useMemo(() => {
+    return application.keyboardService.keyboardShortcutForCommand(TOGGLE_COMMAND_PALETTE)
   }, [application.keyboardService])
 
   return (
@@ -194,17 +197,30 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
             <span className="text-neutral">v{application.version}</span>
           </MenuItem>
           {!isMobilePlatform(application.platform) && (
-            <MenuItem
-              onClick={() => {
-                application.keyboardService.triggerCommand(TOGGLE_KEYBOARD_SHORTCUTS_MODAL)
-              }}
-            >
-              <Icon type="keyboard" className={iconClassName} />
-              Keyboard shortcuts
-              {keyboardShortcutsHelpShortcut && (
-                <KeyboardShortcutIndicator shortcut={keyboardShortcutsHelpShortcut} className="ml-auto" />
-              )}
-            </MenuItem>
+            <>
+              <MenuItem
+                onClick={() => {
+                  application.keyboardService.triggerCommand(TOGGLE_KEYBOARD_SHORTCUTS_MODAL)
+                }}
+              >
+                <Icon type="keyboard" className={iconClassName} />
+                Keyboard shortcuts
+                {keyboardShortcutsHelpShortcut && (
+                  <KeyboardShortcutIndicator shortcut={keyboardShortcutsHelpShortcut} className="ml-auto" />
+                )}
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  application.keyboardService.triggerCommand(TOGGLE_COMMAND_PALETTE)
+                }}
+              >
+                <Icon type="info" className={iconClassName} />
+                Command palette
+                {commandPaletteShortcut && (
+                  <KeyboardShortcutIndicator shortcut={commandPaletteShortcut} className="ml-auto" />
+                )}
+              </MenuItem>
+            </>
           )}
         </MenuSection>
         {user ? (
