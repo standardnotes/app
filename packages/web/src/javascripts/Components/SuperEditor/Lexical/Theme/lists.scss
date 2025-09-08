@@ -1,9 +1,9 @@
 :root {
   --lexical-ordered-list-left-margin: 16px;
 
-  --checkbox-size: 16px;
+  --checkbox-size: 18px;
   @media screen and (max-width: 450px) {
-    --checkbox-size: 20px;
+    --checkbox-size: 26px;
   }
 }
 .monospace-font {
@@ -64,6 +64,12 @@
   vertical-align: middle;
   --line-height: calc(var(--checkbox-size) + 0.375rem);
   line-height: var(--line-height);
+
+  @media screen and (max-width: 450px) {
+    &:not(:last-child) {
+      margin-bottom: 0.15rem;
+    }
+  }
 
   &:focus,
   &:focus-within {
