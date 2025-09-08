@@ -57,11 +57,13 @@
 .Lexical__listItemChecked,
 .Lexical__listItemUnchecked {
   position: relative;
-  padding-left: calc(var(--font-size) + 0.5rem);
-  padding-right: calc(var(--font-size) + 0.5rem);
+  padding-left: calc(var(--checkbox-size) + 0.5rem);
+  padding-right: calc(var(--checkbox-size) + 0.5rem);
   list-style-type: none;
   outline: none;
   vertical-align: middle;
+  --line-height: calc(var(--checkbox-size) + 0.375rem);
+  line-height: var(--line-height);
 
   &:focus,
   &:focus-within {
@@ -80,7 +82,7 @@
   width: var(--checkbox-size);
   height: var(--checkbox-size);
   left: 0;
-  top: calc(var(--line-height, 1) * var(--font-size) / 2);
+  top: calc(var(--line-height) / 2);
   transform: translateY(-50%);
   cursor: pointer;
   background-size: cover;
@@ -109,7 +111,7 @@
   background-repeat: no-repeat;
   position: absolute;
   left: 0;
-  --top: calc(var(--line-height, 1) * var(--font-size) / 2);
+  --top: calc(var(--line-height) / 2);
   top: var(--top);
   transform: translateY(-50%);
   display: block;
