@@ -5,14 +5,18 @@ import {
   InternalEventBusInterface,
   MfaServiceInterface,
   ProtectionsClientInterface,
+  EncryptionService,
+  ChallengeValidation,
 } from '@standardnotes/services'
 import { SettingName } from '@standardnotes/domain-core'
+import { SNRootKeyParams } from '@standardnotes/encryption'
 
 export class MfaService extends AbstractService implements MfaServiceInterface {
   constructor(
     private settingsService: SettingsService,
     private featuresService: FeaturesService,
     private protections: ProtectionsClientInterface,
+    private encryption: EncryptionService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -34,11 +38,23 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
   }
 
   async disableMfa(): Promise<void> {
-    if (!(await this.protections.authorizeMfaDisable())) {
+    const { success, challengeResponse } = await this.protections.authorizeMfaDisable()
+
+    if (!success) {
       return
     }
 
-    return await this.settingsService.deleteSetting(SettingName.create(SettingName.NAMES.MfaSecret).getValue())
+    const password = challengeResponse?.getValueForType(ChallengeValidation.AccountPassword).value as string
+    const currentRootKey = await this.encryption.computeRootKey(
+      password,
+      this.encryption.getRootKeyParams() as SNRootKeyParams,
+    )
+    const serverPassword = currentRootKey.serverPassword
+
+    return await this.settingsService.deleteSetting(
+      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
+      serverPassword,
+    )
   }
 
   override deinit(): void {

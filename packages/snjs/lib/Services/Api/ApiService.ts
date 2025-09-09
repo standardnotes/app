@@ -580,12 +580,18 @@ export class LegacyApiService
     })
   }
 
-  async getSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<GetSettingResponse>> {
+  async getSetting(
+    userUuid: UuidString,
+    settingName: string,
+    serverPassword?: string,
+  ): Promise<HttpResponse<GetSettingResponse>> {
+    const customHeaders = serverPassword ? [{ key: 'x-server-password', value: serverPassword }] : undefined
     return await this.tokenRefreshableRequest<GetSettingResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName.toLowerCase())),
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
+      customHeaders,
     })
   }
 
@@ -618,12 +624,18 @@ export class LegacyApiService
     })
   }
 
-  async deleteSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<DeleteSettingResponse>> {
+  async deleteSetting(
+    userUuid: UuidString,
+    settingName: string,
+    serverPassword?: string,
+  ): Promise<HttpResponse<DeleteSettingResponse>> {
+    const customHeaders = serverPassword ? [{ key: 'x-server-password', value: serverPassword }] : undefined
     return this.tokenRefreshableRequest<DeleteSettingResponse>({
       verb: HttpVerb.Delete,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName)),
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
+      customHeaders,
     })
   }
 

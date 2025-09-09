@@ -5,13 +5,13 @@ import { SettingName } from '@standardnotes/domain-core'
 export interface SettingsClientInterface {
   listSettings(): Promise<SettingsList>
 
-  getSetting(name: SettingName): Promise<string | undefined>
+  getSetting(name: SettingName, serverPassword?: string): Promise<string | undefined>
 
   getDoesSensitiveSettingExist(name: SettingName): Promise<boolean>
 
   updateSetting(name: SettingName, payload: string, sensitive?: boolean, totpToken?: string): Promise<void>
 
-  deleteSetting(name: SettingName): Promise<void>
+  deleteSetting(name: SettingName, serverPassword?: string): Promise<void>
 
   generateMfaSecret(): Promise<string>
 

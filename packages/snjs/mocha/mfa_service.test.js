@@ -65,6 +65,7 @@ describe('mfa service', () => {
     const token = await application.mfa.getOtpToken(secret)
 
     sinon.spy(application.challenges, 'sendChallenge')
+    
     await application.mfa.enableMfa(secret, token)
     await application.mfa.disableMfa()
 
@@ -72,5 +73,65 @@ describe('mfa service', () => {
     const challenge = spyCall.firstArg
     expect(challenge.prompts).to.have.lengthOf(2)
     expect(challenge.prompts[0].validation).to.equal(ChallengeValidation.AccountPassword)
+  }).timeout(Factory.TenSecondTimeout)
+
+  it('sends server password when disabling mfa', async () => {
+    await registerApp(application)
+
+    Factory.handlePasswordChallenges(application, accountPassword)
+    const secret = await application.mfa.generateMfaSecret()
+    const token = await application.mfa.getOtpToken(secret)
+
+    await application.mfa.enableMfa(secret, token)
+
+    sinon.spy(application.settings.settingsApi, 'deleteSetting')
+
+    await application.mfa.disableMfa()
+
+    const deleteSettingCall = application.settings.settingsApi.deleteSetting.getCall(0)    
+    const [serverPassword] = deleteSettingCall.args
+    expect(typeof serverPassword).to.equal('string')
+    expect(serverPassword.length).to.be.above(0)
+  }).timeout(Factory.TenSecondTimeout)
+
+  it('should not allow disabling mfa if server password is not sent', async function () {
+    await registerApp(application)
+    
+    Factory.handlePasswordChallenges(application, accountPassword)
+
+    const secret = await application.mfa.generateMfaSecret()
+    const token = await application.mfa.getOtpToken(secret)
+
+    await application.mfa.enableMfa(secret, token)
+    
+    const response = await application.dependencies
+      .get(TYPES.SettingsApiService)
+      .deleteSetting({
+        userUuid: application.user.uuid,
+        settingName: 'MFA_SECRET',
+      })
+
+    expect(response.status).to.equal(400)
+  }).timeout(Factory.TenSecondTimeout)
+
+  it('should not allow disabling mfa if server password is incorrect', async function () {
+    await registerApp(application)
+    
+    Factory.handlePasswordChallenges(application, accountPassword)
+
+    const secret = await application.mfa.generateMfaSecret()
+    const token = await application.mfa.getOtpToken(secret)
+
+    await application.mfa.enableMfa(secret, token)
+    
+    const response = await application.dependencies
+      .get(TYPES.SettingsApiService)
+      .deleteSetting({
+        userUuid: application.user.uuid,
+        settingName: 'MFA_SECRET',
+        serverPassword: 'wrong-password'
+      })
+
+    expect(response.status).to.equal(400)
   }).timeout(Factory.TenSecondTimeout)
 })

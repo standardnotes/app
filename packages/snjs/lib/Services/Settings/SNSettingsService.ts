@@ -30,8 +30,8 @@ export class SettingsService extends AbstractService implements SettingsClientIn
     return this.provider.listSettings()
   }
 
-  async getSetting(name: SettingName) {
-    return this.provider.getSetting(name)
+  async getSetting(name: SettingName, serverPassword?: string) {
+    return this.provider.getSetting(name, serverPassword)
   }
 
   async getSubscriptionSetting(name: SettingName) {
@@ -50,8 +50,8 @@ export class SettingsService extends AbstractService implements SettingsClientIn
     return this.provider.getDoesSensitiveSettingExist(name)
   }
 
-  async deleteSetting(name: SettingName) {
-    return this.provider.deleteSetting(name)
+  async deleteSetting(name: SettingName, serverPassword?: string) {
+    return this.provider.deleteSetting(name, serverPassword)
   }
 
   async generateMfaSecret(): Promise<string> {

@@ -1,6 +1,53 @@
 {
   "versions": [
     {
+      "version": "3.198.18",
+      "title": "[3.198.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.17...@standardnotes/web@3.198.18) (2025-09-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.198.17",
+      "title": "[3.198.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.16...@standardnotes/web@3.198.17) (2025-08-26)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.198.16",
+      "title": "[3.198.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.15...@standardnotes/web@3.198.16) (2025-08-25)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.198.15",
+      "title": "[3.198.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.14...@standardnotes/web@3.198.15) (2025-08-11)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixes Share note option not working on Android for note titles with special characters ([#2928](https://github.com/standardnotes/app/issues/2928)) ([d135e09](https://github.com/standardnotes/app/commit/d135e09bda39814585a3d76b0544ed8b5834b4d0))",
+      "parsed": {
+        "_": [
+          "Fixes Share note option not working on Android for note titles with special characters (#2928) (d135e09)"
+        ],
+        "Bug Fixes": [
+          "Fixes Share note option not working on Android for note titles with special characters (#2928) (d135e09)"
+        ]
+      }
+    },
+    {
       "version": "3.198.14",
       "title": "[3.198.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.13...@standardnotes/web@3.198.14) (2025-08-05)",
       "date": null,
