@@ -42,8 +42,8 @@ export class SettingsService extends AbstractService implements SettingsClientIn
     return this.provider.updateSubscriptionSetting(name, payload, sensitive)
   }
 
-  async updateSetting(name: SettingName, payload: string, sensitive = false) {
-    return this.provider.updateSetting(name, payload, sensitive)
+  async updateSetting(name: SettingName, payload: string, sensitive = false, totpToken?: string) {
+    return this.provider.updateSetting(name, payload, sensitive, totpToken)
   }
 
   async getDoesSensitiveSettingExist(name: SettingName) {
@@ -52,6 +52,19 @@ export class SettingsService extends AbstractService implements SettingsClientIn
 
   async deleteSetting(name: SettingName, serverPassword?: string) {
     return this.provider.deleteSetting(name, serverPassword)
+  }
+
+  async generateMfaSecret(): Promise<string> {
+    return this.provider.getMfaSecret()
+  }
+
+  async updateMfaSetting(secret: string, totpToken: string): Promise<void> {
+    return this.provider.updateSetting(
+      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
+      secret,
+      true,
+      totpToken,
+    )
   }
 
   getEmailBackupFrequencyOptionLabel(frequency: EmailBackupFrequency): string {

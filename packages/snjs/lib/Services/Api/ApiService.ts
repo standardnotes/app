@@ -77,7 +77,7 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { Paths } from './Paths'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { UuidString } from '../../Types/UuidString'
-import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
+import { SettingsServerInterface, MfaSecretResponse } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
 import { AnyFeatureDescription } from '@standardnotes/features'
 
@@ -563,11 +563,13 @@ export class LegacyApiService
     settingName: string,
     settingValue: string | null,
     sensitive: boolean,
+    totpToken?: string,
   ): Promise<HttpResponse<UpdateSettingResponse>> {
     const params = {
       name: settingName,
       value: settingValue,
       sensitive: sensitive,
+      ...(totpToken && { totpToken }),
     }
     return this.tokenRefreshableRequest<UpdateSettingResponse>({
       verb: HttpVerb.Put,
@@ -634,6 +636,15 @@ export class LegacyApiService
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
       customHeaders,
+    })
+  }
+
+  async getMfaSecret(userUuid: UuidString): Promise<HttpResponse<MfaSecretResponse>> {
+    return this.tokenRefreshableRequest<MfaSecretResponse>({
+      verb: HttpVerb.Get,
+      url: joinPaths(this.host, Paths.v1.mfaSecret(userUuid)),
+      authentication: this.getSessionAccessToken(),
+      fallbackErrorMessage: 'Failed to get MFA secret.',
     })
   }
 

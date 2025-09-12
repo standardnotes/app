@@ -1,5 +1,4 @@
 import { SettingsService } from '../Settings'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { FeaturesService } from '../Features/FeaturesService'
 import {
   AbstractService,
@@ -7,7 +6,6 @@ import {
   MfaServiceInterface,
   ProtectionsClientInterface,
   EncryptionService,
-  SignInStrings,
   ChallengeValidation,
 } from '@standardnotes/services'
 import { SettingName } from '@standardnotes/domain-core'
@@ -16,21 +14,12 @@ import { SNRootKeyParams } from '@standardnotes/encryption'
 export class MfaService extends AbstractService implements MfaServiceInterface {
   constructor(
     private settingsService: SettingsService,
-    private crypto: PureCryptoInterface,
     private featuresService: FeaturesService,
     private protections: ProtectionsClientInterface,
     private encryption: EncryptionService,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
-  }
-
-  private async saveMfaSetting(secret: string): Promise<void> {
-    return await this.settingsService.updateSetting(
-      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
-      secret,
-      true,
-    )
   }
 
   async isMfaActivated(): Promise<boolean> {
@@ -41,21 +30,11 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
   }
 
   async generateMfaSecret(): Promise<string> {
-    return this.crypto.generateOtpSecret()
-  }
-
-  async getOtpToken(secret: string): Promise<string> {
-    return this.crypto.totpToken(secret, Date.now(), 6, 30)
+    return this.settingsService.generateMfaSecret()
   }
 
   async enableMfa(secret: string, otpToken: string): Promise<void> {
-    const otpTokenValid = otpToken != undefined && otpToken === (await this.getOtpToken(secret))
-
-    if (!otpTokenValid) {
-      throw new Error(SignInStrings.IncorrectMfa)
-    }
-
-    return this.saveMfaSetting(secret)
+    return this.settingsService.updateMfaSetting(secret, otpToken)
   }
 
   async disableMfa(): Promise<void> {
@@ -80,7 +59,6 @@ export class MfaService extends AbstractService implements MfaServiceInterface {
 
   override deinit(): void {
     ;(this.settingsService as unknown) = undefined
-    ;(this.crypto as unknown) = undefined
     ;(this.featuresService as unknown) = undefined
     super.deinit()
   }
