@@ -78,7 +78,8 @@ export class GoogleKeepConverter implements Converter {
     rootElement.innerHTML = data
 
     const headingElement = rootElement.getElementsByClassName('heading')[0]
-    const date = new Date(headingElement?.textContent || '')
+    const parsedDate = new Date(headingElement?.textContent || '')
+    const date = parsedDate instanceof Date && !isNaN(parsedDate.getTime()) ? parsedDate : new Date()
     headingElement?.remove()
 
     const contentElement = rootElement.getElementsByClassName('content')[0]
