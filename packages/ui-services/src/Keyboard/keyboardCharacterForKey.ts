@@ -1,4 +1,4 @@
-export function keyboardCharacterForKeyOrCode(keyOrCode: string) {
+export function keyboardCharacterForKeyOrCode(keyOrCode: string, shiftKey = false) {
   if (keyOrCode.startsWith('Digit')) {
     return keyOrCode.replace('Digit', '')
   }
@@ -14,6 +14,8 @@ export function keyboardCharacterForKeyOrCode(keyOrCode: string) {
       return '←'
     case 'ArrowRight':
       return '→'
+    case 'Semicolon':
+      return shiftKey ? ':' : ';'
     default:
       return keyOrCode
   }

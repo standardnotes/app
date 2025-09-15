@@ -41,7 +41,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
   const inputRef = useRef<HTMLInputElement>(null)
 
   const level = 0
-  const isSelected = tagsState.selected === view
+  const isSelected = tagsState.selected?.uuid === view.uuid
   const isEditing = tagsState.editingTag === view
 
   useEffect(() => {

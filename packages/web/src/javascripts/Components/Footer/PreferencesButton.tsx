@@ -2,7 +2,7 @@ import { compareSemVersions, StatusServiceEvent } from '@standardnotes/snjs'
 import { keyboardStringForShortcut, OPEN_PREFERENCES_COMMAND } from '@standardnotes/ui-services'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
-import { useCommandService } from '../CommandProvider'
+import { useKeyboardService } from '../KeyboardServiceProvider'
 import Icon from '../Icon/Icon'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
@@ -16,10 +16,10 @@ type Props = {
 const PreferencesButton = ({ openPreferences }: Props) => {
   const application = useApplication()
 
-  const commandService = useCommandService()
+  const keyboardService = useKeyboardService()
   const shortcut = useMemo(
-    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(OPEN_PREFERENCES_COMMAND)),
-    [commandService],
+    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(OPEN_PREFERENCES_COMMAND)),
+    [keyboardService],
   )
 
   const [changelogLastReadVersion, setChangelogLastReadVersion] = useState(() =>

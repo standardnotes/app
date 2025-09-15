@@ -178,11 +178,11 @@ const EditorWidthSelectionModalWrapper = () => {
   }, [])
 
   useEffect(() => {
-    return application.keyboardService.addCommandHandler({
-      command: CHANGE_EDITOR_WIDTH_COMMAND,
-      category: 'Current note',
-      description: 'Change editor width',
-      onKeyDown: (_, data) => {
+    return application.commands.addWithShortcut(
+      CHANGE_EDITOR_WIDTH_COMMAND,
+      'Current note',
+      'Change editor width',
+      (_, data) => {
         if (typeof data === 'boolean' && data) {
           setIsGlobal(data)
         } else {
@@ -190,7 +190,8 @@ const EditorWidthSelectionModalWrapper = () => {
         }
         toggle()
       },
-    })
+      'line-width',
+    )
   }, [application, toggle])
 
   return (

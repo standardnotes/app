@@ -4,6 +4,7 @@ import {
   keyboardCharacterForModifier,
   isMobilePlatform,
   keyboardCharacterForKeyOrCode,
+  KeyboardModifier,
 } from '@standardnotes/ui-services'
 import { useMemo } from 'react'
 
@@ -20,7 +21,7 @@ export const KeyboardShortcutIndicator = ({ shortcut, small = true, dimmed = tru
     const primaryKey = shortcut.key
       ? keyboardCharacterForKeyOrCode(shortcut.key)
       : shortcut.code
-      ? keyboardCharacterForKeyOrCode(shortcut.code)
+      ? keyboardCharacterForKeyOrCode(shortcut.code, modifiers.includes(KeyboardModifier.Shift))
       : undefined
 
     const results: string[] = []

@@ -44,7 +44,6 @@ const ModalOverlay = forwardRef(
           close()
         }
       },
-      animated: !isMobileScreen,
     })
 
     const portalId = useId()

@@ -9,6 +9,7 @@ export const Web_TYPES = {
   Importer: Symbol.for('Importer'),
   ItemGroupController: Symbol.for('ItemGroupController'),
   KeyboardService: Symbol.for('KeyboardService'),
+  CommandService: Symbol.for('CommandService'),
   MobileWebReceiver: Symbol.for('MobileWebReceiver'),
   MomentsService: Symbol.for('MomentsService'),
   PersistenceService: Symbol.for('PersistenceService'),
