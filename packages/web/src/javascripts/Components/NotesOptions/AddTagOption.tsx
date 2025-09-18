@@ -92,14 +92,19 @@ const AddTagOption: FunctionComponent<Props> = ({
                   className={'ml-0.5 mr-1.5 h-7 w-7 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg'}
                 />
               )}
-              <span
-                className={classNames(
-                  'overflow-hidden overflow-ellipsis whitespace-nowrap',
-                  isTagLinkedToSelectedItems(tag) ? 'font-bold' : '',
-                )}
-              >
-                {getTitleForLinkedTag(tag, application)?.longTitle}
-              </span>
+              <div>
+                <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-passive-2">
+                  {getTitleForLinkedTag(tag, application)?.titlePrefix}
+                </p>
+                <p
+                  className={classNames(
+                    'overflow-hidden overflow-ellipsis whitespace-nowrap',
+                    isTagLinkedToSelectedItems(tag) ? 'font-bold' : '',
+                  )}
+                >
+                  {tag.title}
+                </p>
+              </div>
             </MenuItem>
           ))}
         </Menu>
