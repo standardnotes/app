@@ -93,7 +93,7 @@ const AddTagOption: FunctionComponent<Props> = ({
                 />
               )}
               <div>
-                <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-passive-2">
+                <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-neutral">
                   {getTitleForLinkedTag(tag, application)?.titlePrefix}
                 </p>
                 <p
