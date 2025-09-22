@@ -78,35 +78,38 @@ const AddTagOption: FunctionComponent<Props> = ({
         overrideZIndex="z-modal"
       >
         <Menu a11yLabel="Tag selection menu" className="!px-0">
-          {navigationController.tags.map((tag) => (
-            <MenuItem
-              key={tag.uuid}
-              onClick={() => {
-                isTagLinkedToSelectedItems(tag) ? unlinkTagFromSelectedItems(tag) : linkTagToSelectedItems(tag)
-              }}
-            >
-              {tag.iconString && (
-                <Icon
-                  type={tag.iconString as IconType}
-                  size={'custom'}
-                  className={'ml-0.5 mr-1.5 h-7 w-7 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg'}
-                />
-              )}
-              <div>
-                <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-neutral">
-                  {getTitleForLinkedTag(tag, application)?.titlePrefix}
-                </p>
-                <p
-                  className={classNames(
-                    'overflow-hidden overflow-ellipsis whitespace-nowrap',
-                    isTagLinkedToSelectedItems(tag) ? 'font-bold' : '',
+          {navigationController.tags.map((tag) => {
+            const tagTitlePrefix = getTitleForLinkedTag(tag, application)?.titlePrefix
+            return (
+              <MenuItem
+                key={tag.uuid}
+                onClick={() => {
+                  isTagLinkedToSelectedItems(tag) ? unlinkTagFromSelectedItems(tag) : linkTagToSelectedItems(tag)
+                }}
+              >
+                {tag.iconString && (
+                  <Icon
+                    type={tag.iconString as IconType}
+                    size={'custom'}
+                    className={'ml-0.5 mr-1.5 h-7 w-7 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg'}
+                  />
+                )}
+                <div>
+                  {tagTitlePrefix && (
+                    <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-neutral">{tagTitlePrefix}</p>
                   )}
-                >
-                  {tag.title}
-                </p>
-              </div>
-            </MenuItem>
-          ))}
+                  <p
+                    className={classNames(
+                      'overflow-hidden overflow-ellipsis whitespace-nowrap',
+                      isTagLinkedToSelectedItems(tag) ? 'font-bold' : '',
+                    )}
+                  >
+                    {tag.title}
+                  </p>
+                </div>
+              </MenuItem>
+            )
+          })}
         </Menu>
       </Popover>
     </div>
