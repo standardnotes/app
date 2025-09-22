@@ -95,7 +95,7 @@ const AddTagOption: FunctionComponent<Props> = ({
                   />
                 )}
                 <div>
-                  {tagTitlePrefix && (
+                  {!!tagTitlePrefix && (
                     <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-neutral">{tagTitlePrefix}</p>
                   )}
                   <p
