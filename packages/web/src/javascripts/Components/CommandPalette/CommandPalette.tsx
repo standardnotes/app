@@ -32,6 +32,7 @@ import Icon from '../Icon/Icon'
 import { getIconForItem } from '../../Utils/Items/Icons/getIconForItem'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import type { CommandService } from './CommandService'
+import { requestCloseAllOpenModalsAndPopovers } from '../../Utils/CloseOpenModalsAndPopovers'
 
 type CommandPaletteItem = {
   id: string
@@ -144,6 +145,7 @@ function CommandPalette() {
   useEffect(() => {
     if (isOpen) {
       keyboardService.disableEventHandling()
+      requestCloseAllOpenModalsAndPopovers()
     } else {
       keyboardService.enableEventHandling()
     }
