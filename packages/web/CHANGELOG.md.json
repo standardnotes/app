@@ -1,6 +1,61 @@
 {
   "versions": [
     {
+      "version": "3.198.20",
+      "title": "[3.198.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.19...@standardnotes/web@3.198.20) (2025-09-15)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.198.19",
+      "title": "[3.198.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.18...@standardnotes/web@3.198.19) (2025-09-12)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.198.18",
+      "title": "[3.198.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.17...@standardnotes/web@3.198.18) (2025-09-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.198.17",
+      "title": "[3.198.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.16...@standardnotes/web@3.198.17) (2025-08-26)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.198.16",
+      "title": "[3.198.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.15...@standardnotes/web@3.198.16) (2025-08-25)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.198.15",
       "title": "[3.198.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.14...@standardnotes/web@3.198.15) (2025-08-11)",
       "date": null,

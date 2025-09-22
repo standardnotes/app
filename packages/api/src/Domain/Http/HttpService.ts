@@ -91,6 +91,7 @@ export class HttpService implements HttpServiceInterface {
       params,
       verb: HttpVerb.Get,
       authentication: options?.authentication ?? this.getSessionAccessToken(),
+      customHeaders: options?.headers,
     })
   }
 
@@ -123,6 +124,7 @@ export class HttpService implements HttpServiceInterface {
       params,
       verb: HttpVerb.Put,
       authentication: options?.authentication ?? this.getSessionAccessToken(),
+      customHeaders: options?.headers,
     })
   }
 
@@ -141,6 +143,7 @@ export class HttpService implements HttpServiceInterface {
       params,
       verb: HttpVerb.Delete,
       authentication: options?.authentication ?? this.getSessionAccessToken(),
+      customHeaders: options?.headers,
     })
   }
 

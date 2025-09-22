@@ -10,13 +10,13 @@ const RecoveryCodeBanner = ({ application }: { application: WebApplication }) =>
   const [errorMessage, setErrorMessage] = useState<string>()
 
   const onClickShow = async () => {
-    const authorized = await application.challenges.promptForAccountPassword()
+    const password = await application.challenges.promptForAccountPassword()
 
-    if (!authorized) {
+    if (!password) {
       return
     }
 
-    const recoveryCodeOrError = await application.getRecoveryCodes.execute()
+    const recoveryCodeOrError = await application.getRecoveryCodes.execute({ password })
     if (recoveryCodeOrError.isFailed()) {
       setErrorMessage(recoveryCodeOrError.getError())
       return

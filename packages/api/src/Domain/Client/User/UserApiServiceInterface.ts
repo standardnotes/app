@@ -22,5 +22,8 @@ export interface UserApiServiceInterface {
     requestType: UserRequestType
   }): Promise<HttpResponse<UserRequestResponseBody>>
 
-  deleteAccount(userUuid: string): Promise<HttpResponse<UserDeletionResponseBody>>
+  deleteAccount(dto: {
+    userUuid: string
+    serverPassword: string | undefined
+  }): Promise<HttpResponse<UserDeletionResponseBody>>
 }

@@ -1026,6 +1026,7 @@ export class Dependencies {
       return new GetRecoveryCodes(
         this.get<AuthManager>(TYPES.AuthManager),
         this.get<SettingsService>(TYPES.SettingsService),
+        this.get<EncryptionService>(TYPES.EncryptionService),
       )
     })
 
@@ -1228,9 +1229,9 @@ export class Dependencies {
     this.factory.set(TYPES.MfaService, () => {
       return new MfaService(
         this.get<SettingsService>(TYPES.SettingsService),
-        this.get<PureCryptoInterface>(TYPES.Crypto),
         this.get<FeaturesService>(TYPES.FeaturesService),
         this.get<ProtectionsClientInterface>(TYPES.ProtectionService),
+        this.get<EncryptionService>(TYPES.EncryptionService),
         this.get<InternalEventBus>(TYPES.InternalEventBus),
       )
     })

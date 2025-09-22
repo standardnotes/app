@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.38.14](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.13...@standardnotes/ui-services@1.38.14) (2025-09-15)
+
+### Bug Fixes
+
+* Fixes Google Keep comverter failing if date format in heading is invalid ([#2935](https://github.com/standardnotes/app/issues/2935)) ([6977b7c](https://github.com/standardnotes/app/commit/6977b7c0f0a62e385e12905d463ad5d6453d7247))
+
+## [1.38.13](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.12...@standardnotes/ui-services@1.38.13) (2025-09-12)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.38.12](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.11...@standardnotes/ui-services@1.38.12) (2025-08-26)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.38.11](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.38.10...@standardnotes/ui-services@1.38.11) (2025-07-15)
 
 **Note:** Version bump only for package @standardnotes/ui-services

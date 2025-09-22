@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.198.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.19...@standardnotes/web@3.198.20) (2025-09-15)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.198.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.18...@standardnotes/web@3.198.19) (2025-09-12)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.198.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.17...@standardnotes/web@3.198.18) (2025-09-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.198.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.16...@standardnotes/web@3.198.17) (2025-08-26)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.198.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.15...@standardnotes/web@3.198.16) (2025-08-25)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.198.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.14...@standardnotes/web@3.198.15) (2025-08-11)
 
 ### Bug Fixes

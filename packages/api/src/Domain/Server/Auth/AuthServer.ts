@@ -8,12 +8,13 @@ import {
 } from '../../Response'
 import { AuthServerInterface } from './AuthServerInterface'
 import { Paths } from './Paths'
+import { HttpRequestOptions } from '../../Http/HttpRequestOptions'
 
 export class AuthServer implements AuthServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
-  async generateRecoveryCodes(): Promise<HttpResponse<GenerateRecoveryCodesResponseBody>> {
-    return this.httpService.post(Paths.v1.generateRecoveryCodes)
+  async generateRecoveryCodes(options?: HttpRequestOptions): Promise<HttpResponse<GenerateRecoveryCodesResponseBody>> {
+    return this.httpService.post(Paths.v1.generateRecoveryCodes, undefined, options)
   }
 
   async recoveryKeyParams(

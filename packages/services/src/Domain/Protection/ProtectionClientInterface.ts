@@ -1,6 +1,6 @@
 import { ApplicationServiceInterface } from './../Service/ApplicationServiceInterface'
 import { DecryptedItem, DecryptedItemInterface, FileItem, SNNote } from '@standardnotes/models'
-import { ChallengeInterface, ChallengeReason } from '../Challenge'
+import { ChallengeInterface, ChallengeReason, ChallengeResponseInterface } from '../Challenge'
 import { MobileUnlockTiming } from './MobileUnlockTiming'
 import { TimingDisplayOption } from './TimingDisplayOption'
 import { ProtectionEvent } from './ProtectionEvent'
@@ -28,6 +28,10 @@ export interface ProtectionsClientInterface extends ApplicationServiceInterface<
     reason: ChallengeReason,
     dto: { fallBackToAccountPassword: boolean; requireAccountPassword: boolean; forcePrompt: boolean },
   ): Promise<boolean>
+  authorizeActionWithChallengeResponse(
+    reason: ChallengeReason,
+    dto: { fallBackToAccountPassword: boolean; requireAccountPassword: boolean; forcePrompt: boolean },
+  ): Promise<{ success: boolean; challengeResponse?: ChallengeResponseInterface }>
   authorizeAddingPasscode(): Promise<boolean>
   authorizeRemovingPasscode(): Promise<boolean>
   authorizeChangingPasscode(): Promise<boolean>
@@ -36,7 +40,8 @@ export interface ProtectionsClientInterface extends ApplicationServiceInterface<
   authorizeAutolockIntervalChange(): Promise<boolean>
   authorizeSearchingProtectedNotesText(): Promise<boolean>
   authorizeBackupCreation(): Promise<boolean>
-  authorizeMfaDisable(): Promise<boolean>
+  authorizeMfaDisable(): Promise<{ success: boolean; challengeResponse?: ChallengeResponseInterface }>
+  authorizeAccountDeletion(): Promise<{ success: boolean; challengeResponse?: ChallengeResponseInterface }>
 
   protectItems<I extends DecryptedItemInterface>(items: I[]): Promise<I[]>
   unprotectItems<I extends DecryptedItemInterface>(items: I[], reason: ChallengeReason): Promise<I[] | undefined>
