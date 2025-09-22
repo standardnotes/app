@@ -377,7 +377,7 @@ function CommandPalette() {
             <ComboboxList className="focus:shadow-none focus:outline-none">
               {recents.length > 0 && (
                 <ComboboxGroup>
-                  <ComboboxGroupLabel className="px-2 font-semibold opacity-75">Recents:</ComboboxGroupLabel>
+                  <ComboboxGroupLabel className="px-2 font-semibold opacity-75">Recent</ComboboxGroupLabel>
                   {recents.map((item, index) => (
                     <CommandPaletteListItem
                       key={item.id}
@@ -392,7 +392,7 @@ function CommandPalette() {
               {!hasNoItemsAtAll && (
                 <ComboboxGroup>
                   {recents.length > 0 && (
-                    <ComboboxGroupLabel className="mt-2 px-2 font-semibold opacity-75">Commands:</ComboboxGroupLabel>
+                    <ComboboxGroupLabel className="mt-2 px-2 font-semibold opacity-75">All commands</ComboboxGroupLabel>
                   )}
                   {items.map((item, index) => (
                     <CommandPaletteListItem

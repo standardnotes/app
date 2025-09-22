@@ -1,7 +1,7 @@
 const MaxCommands = 5
 const MaxItems = 10
 
-export class RecentItemsState {
+export class RecentActionsState {
   #commandUuids: string[] = []
   #itemUuids: string[] = []
 
@@ -18,16 +18,16 @@ export class RecentItemsState {
     return this.#itemUuids
   }
 
-  add(id: string, type: 'item' | 'command' = 'item') {
-    const array = type === 'item' ? this.#itemUuids : this.#commandUuids
-    const existing = array.findIndex((uuid) => uuid === id)
+  add(id: string, action_type: 'item' | 'command' = 'item') {
+    const action_array = action_type === 'item' ? this.#itemUuids : this.#commandUuids
+    const existing = action_array.findIndex((uuid) => uuid === id)
     if (existing !== -1) {
-      array.splice(existing, 1)
+      action_array.splice(existing, 1)
     }
-    const max = type === 'item' ? MaxItems : MaxCommands
-    if (array.length == max) {
-      array.pop()
+    const max = action_type === 'item' ? MaxItems : MaxCommands
+    if (action_array.length == max) {
+      action_array.pop()
     }
-    array.unshift(id)
+    action_array.unshift(id)
   }
 }
