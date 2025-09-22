@@ -41,7 +41,7 @@ import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController/NotesController'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
 import { truncateString } from '@/Components/SuperEditor/Utils'
-import { RecentItemsState } from '../Application/Recents'
+import { RecentActionsState } from '../Application/Recents'
 
 const UnprotectedFileActions = [FileItemActionType.ToggleFileProtection]
 const NonMutatingFileActions = [FileItemActionType.DownloadFile, FileItemActionType.PreviewFile]
@@ -106,7 +106,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     private platform: Platform,
     private mobileDevice: MobileDeviceInterface | undefined,
     private _isNativeMobileWeb: IsNativeMobileWeb,
-    private recents: RecentItemsState,
+    private recents: RecentActionsState,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)

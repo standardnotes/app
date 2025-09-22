@@ -42,7 +42,7 @@ import { TagListSectionType } from '@/Components/Tags/TagListSection'
 import { PaneLayout } from '../PaneController/PaneLayout'
 import { TagsCountsState } from './TagsCountsState'
 import { PaneController } from '../PaneController/PaneController'
-import { RecentItemsState } from '../../Application/Recents'
+import { RecentActionsState } from '../../Application/Recents'
 import { CommandService } from '../../Components/CommandPalette/CommandService'
 
 export class NavigationController
@@ -82,7 +82,7 @@ export class NavigationController
     private preferences: PreferenceServiceInterface,
     private alerts: AlertService,
     private _changeAndSaveItem: ChangeAndSaveItem,
-    private recents: RecentItemsState,
+    private recents: RecentActionsState,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)

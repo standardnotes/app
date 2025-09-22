@@ -61,7 +61,7 @@ import { Persistable } from '../Abstract/Persistable'
 import { PaneController } from '../PaneController/PaneController'
 import { requestCloseAllOpenModalsAndPopovers } from '@/Utils/CloseOpenModalsAndPopovers'
 import { PaneLayout } from '../PaneController/PaneLayout'
-import { RecentItemsState } from '../../Application/Recents'
+import { RecentActionsState } from '../../Application/Recents'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -130,7 +130,7 @@ export class ItemListController
     private options: FullyResolvedApplicationOptions,
     private _isNativeMobileWeb: IsNativeMobileWeb,
     private _changeAndSaveItem: ChangeAndSaveItem,
-    private recents: RecentItemsState,
+    private recents: RecentActionsState,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
