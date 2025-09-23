@@ -104,7 +104,13 @@ const ContentListHeader = ({
   }, [])
 
   useEffect(
-    () => application.commands.add('Open display options menu', toggleDisplayOptionsMenu, 'sort-descending'),
+    () =>
+      application.commands.add(
+        'open-display-opts-menu',
+        'Open display options menu',
+        toggleDisplayOptionsMenu,
+        'sort-descending',
+      ),
     [application.commands, toggleDisplayOptionsMenu],
   )
 

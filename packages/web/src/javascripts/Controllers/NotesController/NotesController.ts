@@ -84,80 +84,84 @@ export class NotesController
 
     this.disposers.push(
       reaction(
-        () => this.selectedNotes,
-        (notes) => {
+        () => this.selectedNotesCount,
+        (notes_count) => {
+          console.log('hello')
           this.disposeCommandRegisters()
 
-          const descriptionSuffix = `${pluralize(notes.length, 'current', 'selected')} ${pluralize(
-            notes.length,
+          const descriptionSuffix = `${pluralize(notes_count, 'current', 'selected')} ${pluralize(
+            notes_count,
             'note',
             'note(s)',
           )}`
 
-          const { pinned, unpinned, starred, unstarred, archived, unarchived, trashed, notTrashed } =
-            this.getNotesInfo(notes)
-
-          if (pinned) {
-            this.commandRegisterDisposers.push(
-              application.commands.add(`Unpin ${descriptionSuffix}`, () => this.setPinSelectedNotes(false), 'pin'),
-            )
-          }
-          if (unpinned) {
-            this.commandRegisterDisposers.push(
-              application.commands.add(`Pin ${descriptionSuffix}`, () => this.setPinSelectedNotes(true), 'unpin'),
-            )
-          }
-          if (starred) {
-            this.commandRegisterDisposers.push(
-              application.commands.add(`Unstar ${descriptionSuffix}`, () => this.setStarSelectedNotes(false), 'star'),
-            )
-          }
-          if (unstarred) {
-            this.commandRegisterDisposers.push(
-              application.commands.add(`Star ${descriptionSuffix}`, () => this.setStarSelectedNotes(true), 'star'),
-            )
-          }
-          if (archived) {
-            this.commandRegisterDisposers.push(
-              application.commands.add(
-                `Unarchive ${descriptionSuffix}`,
-                () => this.setArchiveSelectedNotes(false),
-                'unarchive',
-              ),
-            )
-          }
-          if (unarchived) {
-            this.commandRegisterDisposers.push(
-              application.commands.add(
-                `Archive ${descriptionSuffix}`,
-                () => this.setArchiveSelectedNotes(true),
-                'archive',
-              ),
-            )
-          }
-          if (trashed) {
-            this.commandRegisterDisposers.push(
-              application.commands.add(
-                `Restore ${descriptionSuffix}`,
-                () => this.setTrashSelectedNotes(false),
-                'restore',
-              ),
-            )
-          }
-          if (notTrashed) {
-            this.commandRegisterDisposers.push(
-              application.commands.add(`Trash ${descriptionSuffix}`, () => this.setTrashSelectedNotes(true), 'trash'),
-            )
-          }
-
           this.commandRegisterDisposers.push(
             application.commands.add(
+              'pin-current',
+              `Pin ${descriptionSuffix}`,
+              () => this.setPinSelectedNotes(true),
+              'unpin',
+            ),
+            application.commands.add(
+              'unpin-current',
+              `Unpin ${descriptionSuffix}`,
+              () => this.setPinSelectedNotes(false),
+              'pin',
+            ),
+            application.commands.add(
+              'star-current',
+              `Star ${descriptionSuffix}`,
+              () => this.setStarSelectedNotes(true),
+              'star',
+            ),
+            application.commands.add(
+              'unstar-current',
+              `Unstar ${descriptionSuffix}`,
+              () => this.setStarSelectedNotes(false),
+              'star',
+            ),
+            application.commands.add(
+              'archive-current',
+              `Archive ${descriptionSuffix}`,
+              () => this.setArchiveSelectedNotes(true),
+              'archive',
+            ),
+            application.commands.add(
+              'unarchive-current',
+              `Unarchive ${descriptionSuffix}`,
+              () => this.setArchiveSelectedNotes(false),
+              'unarchive',
+            ),
+            application.commands.add(
+              'restore-current',
+              `Restore ${descriptionSuffix}`,
+              () => this.setTrashSelectedNotes(false),
+              'restore',
+            ),
+            application.commands.add(
+              'trash-current',
+              `Trash ${descriptionSuffix}`,
+              () => this.setTrashSelectedNotes(true),
+              'trash',
+            ),
+            application.commands.add(
+              'delete-current',
               `Delete ${descriptionSuffix} permanently`,
               () => this.deleteNotesPermanently(),
               'trash',
             ),
-            application.commands.add(`Export ${descriptionSuffix}`, this.exportSelectedNotes, 'download'),
-            application.commands.add(`Duplicate ${descriptionSuffix}`, this.duplicateSelectedNotes, 'copy'),
+            application.commands.add(
+              'export-current',
+              `Export ${descriptionSuffix}`,
+              this.exportSelectedNotes,
+              'download',
+            ),
+            application.commands.add(
+              'duplicate-current',
+              `Duplicate ${descriptionSuffix}`,
+              this.duplicateSelectedNotes,
+              'copy',
+            ),
           )
         },
       ),

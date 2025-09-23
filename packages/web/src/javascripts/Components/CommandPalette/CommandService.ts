@@ -19,8 +19,7 @@ export class CommandService {
     private generateUuid: GenerateUuid,
   ) {}
 
-  public add(description: string, handler: () => void, icon?: IconType, shortcut_id?: KeyboardCommand) {
-    const id = shortcut_id?.description ? shortcut_id.description : this.generateUuid.execute().getValue()
+  public add(id: string, description: string, handler: () => void, icon?: IconType, shortcut_id?: KeyboardCommand) {
     this.#commandInfo.set(id, { description, icon: icon ?? 'info', shortcut_id })
     this.#commandHandlers.set(id, handler)
     return () => {
@@ -37,7 +36,7 @@ export class CommandService {
     icon?: IconType,
   ) {
     return mergeRegister(
-      this.add(description, handler, icon, id),
+      this.add(id.description ?? this.generateUuid.execute().getValue(), description, handler, icon, id),
       this.keyboardService.addCommandHandler({ command: id, category, description, onKeyDown: handler }),
     )
   }

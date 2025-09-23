@@ -74,7 +74,7 @@ const LinkedItemBubblesContainer = ({
         description: 'Link tags, notes, files',
         onKeyDown: focusInput,
       }),
-      application.commands.add('Link items to current note', focusInput, 'link'),
+      application.commands.add('link-items-current', 'Link items to current note', focusInput, 'link'),
     )
   }, [application.commands, keyboardService])
 

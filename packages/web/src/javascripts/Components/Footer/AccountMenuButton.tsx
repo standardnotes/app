@@ -21,7 +21,7 @@ const AccountMenuButton = ({ hasError, controller, mainApplicationGroup, onClick
   const { show: isOpen } = controller
 
   useEffect(
-    () => application.commands.add('Open account menu', toggleMenu, 'account-circle'),
+    () => application.commands.add('open-acc-menu', 'Open account menu', toggleMenu, 'account-circle'),
     [application.commands, toggleMenu],
   )
 

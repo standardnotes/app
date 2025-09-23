@@ -35,7 +35,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
         void application.componentManager.toggleTheme(darkThemeFeature)
         return true
       }),
-      application.commands.add('Open quick settings menu', toggleMenu, 'themes'),
+      application.commands.add('open-quick-settings-menu', 'Open quick settings menu', toggleMenu, 'themes'),
     )
   }, [application, isMobileNavigation, keyboardService, toggleMenu])
 

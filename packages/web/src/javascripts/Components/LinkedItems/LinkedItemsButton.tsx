@@ -28,7 +28,7 @@ const LinkedItemsButton = ({ linkingController, onClick, onClickPreprocessing }:
     }
   }, [isLinkingPanelOpen, onClick, onClickPreprocessing, setIsLinkingPanelOpen])
 
-  useEffect(() => application.commands.add('Open linked items panel', toggleMenu, 'link'))
+  useEffect(() => application.commands.add('open-linked-items-panel', 'Open linked items panel', toggleMenu, 'link'))
 
   if (!activeItem) {
     return null

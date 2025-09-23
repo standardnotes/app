@@ -34,7 +34,7 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
   }, [addSmartViewModalController, premiumModal, featuresController.hasSmartViews])
 
   useEffect(
-    () => application.commands.add('Create a new smart view', createNewSmartView, 'add'),
+    () => application.commands.add('create-smart-view', 'Create a new smart view', createNewSmartView, 'add'),
     [application.commands, createNewSmartView],
   )
 
