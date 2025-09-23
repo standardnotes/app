@@ -62,11 +62,13 @@ const Tabs = ['all', 'commands', 'notes', 'files', 'tags'] as const
 type TabId = (typeof Tabs)[number]
 
 function CommandPaletteListItem({
+  id,
   item,
   index,
   handleClick,
   selectedTab,
 }: {
+  id: string
   item: CommandPaletteItem
   index: number
   handleClick: (item: CommandPaletteItem) => void
@@ -77,7 +79,7 @@ function CommandPaletteListItem({
   }
   return (
     <ComboboxItem
-      id={item.id}
+      id={id}
       value={item.id}
       hideOnClick={true}
       focusOnHover={true}
@@ -321,7 +323,7 @@ function CommandPalette() {
         const commands = application.commands.getCommandDescriptions()
         for (let i = 0; i < commands.length; i++) {
           const command = commands[i]
-          if (!command || recentCommands.includes(command.id)) {
+          if (!command) {
             continue
           }
           const item = createItemForCommand(command)
@@ -383,6 +385,10 @@ function CommandPalette() {
                   {recents.map((item, index) => (
                     <CommandPaletteListItem
                       key={item.id}
+                      id={
+                        /* ariakit doesn't like multiple items with the same id in the same combobox list */
+                        item.id + 'recent'
+                      }
                       index={index}
                       item={item}
                       handleClick={handleItemClick}
@@ -399,6 +405,7 @@ function CommandPalette() {
                   {items.map((item, index) => (
                     <CommandPaletteListItem
                       key={item.id}
+                      id={item.id}
                       index={index}
                       item={item}
                       handleClick={handleItemClick}
