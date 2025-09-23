@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.199.0",
+      "title": "[3.199.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.20...@standardnotes/web@3.199.0) (2025-09-23)",
+      "date": null,
+      "body": "### Features\n\n* Improves Add Tag dropdown UI ([#2936](https://github.com/standardnotes/app/issues/2936)) ([54ddd37](https://github.com/standardnotes/app/commit/54ddd37052c202c808d0e3bef8bd0df7fc72b148))",
+      "parsed": {
+        "_": [
+          "Improves Add Tag dropdown UI (#2936) (54ddd37)"
+        ],
+        "Features": [
+          "Improves Add Tag dropdown UI (#2936) (54ddd37)"
+        ]
+      }
+    },
+    {
       "version": "3.198.20",
       "title": "[3.198.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.19...@standardnotes/web@3.198.20) (2025-09-15)",
       "date": null,

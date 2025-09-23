@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.199.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.20...@standardnotes/web@3.199.0) (2025-09-23)
+
+### Features
+
+* Improves Add Tag dropdown UI ([#2936](https://github.com/standardnotes/app/issues/2936)) ([54ddd37](https://github.com/standardnotes/app/commit/54ddd37052c202c808d0e3bef8bd0df7fc72b148))
+
 ## [3.198.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.19...@standardnotes/web@3.198.20) (2025-09-15)
 
 **Note:** Version bump only for package @standardnotes/web
