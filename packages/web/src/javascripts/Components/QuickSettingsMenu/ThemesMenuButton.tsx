@@ -7,7 +7,7 @@ import { isMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
-import { useCommandService } from '../CommandProvider'
+import { useKeyboardService } from '../KeyboardServiceProvider'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import { useApplication } from '../ApplicationProvider'
@@ -18,7 +18,7 @@ type Props = {
 
 const ThemesMenuButton: FunctionComponent<Props> = ({ uiFeature }) => {
   const application = useApplication()
-  const commandService = useCommandService()
+  const keyboardService = useKeyboardService()
   const premiumModal = usePremiumModal()
 
   const isThirdPartyTheme = useMemo(
@@ -59,9 +59,9 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ uiFeature }) => {
 
   const darkThemeShortcut = useMemo(() => {
     if (uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.DarkTheme) {
-      return commandService.keyboardShortcutForCommand(TOGGLE_DARK_MODE_COMMAND)
+      return keyboardService.keyboardShortcutForCommand(TOGGLE_DARK_MODE_COMMAND)
     }
-  }, [commandService, uiFeature.featureIdentifier])
+  }, [keyboardService, uiFeature.featureIdentifier])
 
   if (shouldHideButton) {
     return null

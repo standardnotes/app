@@ -220,6 +220,17 @@ export class ItemManager extends Services.AbstractService implements Services.It
     this.itemCounter.setVaultDisplayOptions(options)
   }
 
+  public getInteractableItems(): Models.DecryptedItemInterface[] {
+    return (this.systemSmartViews as Models.DecryptedItemInterface[]).concat(
+      this.collection.all([
+        ContentType.TYPES.Note,
+        ContentType.TYPES.File,
+        ContentType.TYPES.Tag,
+        ContentType.TYPES.SmartView,
+      ]) as Models.DecryptedItemInterface[],
+    )
+  }
+
   public getDisplayableNotes(): Models.SNNote[] {
     assert(this.navigationDisplayController.contentTypes.length === 2)
 

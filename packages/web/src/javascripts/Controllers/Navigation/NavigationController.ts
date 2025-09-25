@@ -1,7 +1,6 @@
 import {
   confirmDialog,
   CREATE_NEW_TAG_COMMAND,
-  KeyboardService,
   NavigationControllerPersistableValue,
   VaultDisplayService,
   VaultDisplayServiceEvent,
@@ -43,6 +42,8 @@ import { TagListSectionType } from '@/Components/Tags/TagListSection'
 import { PaneLayout } from '../PaneController/PaneLayout'
 import { TagsCountsState } from './TagsCountsState'
 import { PaneController } from '../PaneController/PaneController'
+import { RecentActionsState } from '../../Application/Recents'
+import { CommandService } from '../../Components/CommandPalette/CommandService'
 
 export class NavigationController
   extends AbstractViewController
@@ -73,7 +74,7 @@ export class NavigationController
   constructor(
     private featuresController: FeaturesController,
     private vaultDisplayService: VaultDisplayService,
-    private keyboardService: KeyboardService,
+    private commands: CommandService,
     private paneController: PaneController,
     private sync: SyncServiceInterface,
     private mutator: MutatorClientInterface,
@@ -81,6 +82,7 @@ export class NavigationController
     private preferences: PreferenceServiceInterface,
     private alerts: AlertService,
     private _changeAndSaveItem: ChangeAndSaveItem,
+    private recents: RecentActionsState,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -197,14 +199,13 @@ export class NavigationController
     )
 
     this.disposers.push(
-      this.keyboardService.addCommandHandler({
-        command: CREATE_NEW_TAG_COMMAND,
-        category: 'General',
-        description: 'Create new tag',
-        onKeyDown: () => {
-          this.createNewTemplate()
-        },
-      }),
+      this.commands.addWithShortcut(
+        CREATE_NEW_TAG_COMMAND,
+        'General',
+        'Create new tag',
+        () => this.createNewTemplate(),
+        'add',
+      ),
     )
 
     this.setDisplayOptionsAndReloadTags = debounce(this.setDisplayOptionsAndReloadTags, 50)
@@ -509,6 +510,10 @@ export class NavigationController
 
       if (tag && this.items.isTemplateItem(tag)) {
         return
+      }
+
+      if (tag) {
+        this.recents.add(tag.uuid)
       }
 
       await this.eventBus.publishSync(

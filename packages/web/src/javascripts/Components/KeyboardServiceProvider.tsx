@@ -3,13 +3,13 @@ import { ReactNode, createContext, useContext, memo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { KeyboardService } from '@standardnotes/ui-services'
 
-const CommandServiceContext = createContext<KeyboardService | undefined>(undefined)
+const KeyboardServiceContext = createContext<KeyboardService | undefined>(undefined)
 
-export const useCommandService = () => {
-  const value = useContext(CommandServiceContext)
+export const useKeyboardService = () => {
+  const value = useContext(KeyboardServiceContext)
 
   if (!value) {
-    throw new Error('Component must be a child of <CommandServiceProvider />')
+    throw new Error('Component must be a child of <KeyboardServiceProvider />')
   }
 
   return value
@@ -25,12 +25,12 @@ type ProviderProps = {
 
 const MemoizedChildren = memo(({ children }: ChildrenProps) => <>{children}</>)
 
-const CommandServiceProvider = ({ service, children }: ProviderProps) => {
+const KeyboardServiceProvider = ({ service, children }: ProviderProps) => {
   return (
-    <CommandServiceContext.Provider value={service}>
+    <KeyboardServiceContext.Provider value={service}>
       <MemoizedChildren children={children} />
-    </CommandServiceContext.Provider>
+    </KeyboardServiceContext.Provider>
   )
 }
 
-export default observer(CommandServiceProvider)
+export default observer(KeyboardServiceProvider)

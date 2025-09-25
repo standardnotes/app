@@ -80,6 +80,8 @@ import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
 import { removeFromArray } from '@standardnotes/utils'
 import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
+import { RecentActionsState } from './Recents'
+import { CommandService } from '../Components/CommandPalette/CommandService'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -95,6 +97,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   public isSessionsModalVisible = false
 
   public devMode?: DevMode
+  public recents = new RecentActionsState()
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -595,6 +598,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get keyboardService(): KeyboardService {
     return this.deps.get<KeyboardService>(Web_TYPES.KeyboardService)
+  }
+
+  get commands(): CommandService {
+    return this.deps.get<CommandService>(Web_TYPES.CommandService)
   }
 
   get featuresController(): FeaturesController {

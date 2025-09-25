@@ -135,7 +135,6 @@ const ToolbarButton = forwardRef(
         showOnHover
         label={name}
         side="top"
-        portal={false}
         portalElement={isMobile ? parentElement : undefined}
         documentElement={parentElement}
       >

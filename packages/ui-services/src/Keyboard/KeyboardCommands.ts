@@ -41,3 +41,4 @@ export const OPEN_PREFERENCES_COMMAND = createKeyboardCommand('OPEN_PREFERENCES_
 export const CHANGE_EDITOR_WIDTH_COMMAND = createKeyboardCommand('CHANGE_EDITOR_WIDTH_COMMAND')
 
 export const TOGGLE_KEYBOARD_SHORTCUTS_MODAL = createKeyboardCommand('TOGGLE_KEYBOARD_SHORTCUTS_MODAL')
+export const TOGGLE_COMMAND_PALETTE = createKeyboardCommand('TOGGLE_COMMAND_PALETTE')

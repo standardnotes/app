@@ -27,9 +27,7 @@ const TagsSection: FunctionComponent = () => {
         <div className={'section-title-bar'}>
           <div className="section-title-bar-header">
             <TagsSectionTitle features={application.featuresController} />
-            {!application.navigationController.isSearching && (
-              <TagsSectionAddButton tags={application.navigationController} features={application.featuresController} />
-            )}
+            {!application.navigationController.isSearching && <TagsSectionAddButton />}
           </div>
         </div>
         <TagsList type="all" />

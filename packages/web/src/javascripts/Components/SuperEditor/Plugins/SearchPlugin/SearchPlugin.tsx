@@ -15,7 +15,7 @@ import { useLifecycleAnimation } from '../../../../Hooks/useLifecycleAnimation'
 import { classNames, debounce } from '@standardnotes/utils'
 import DecoratedInput from '../../../Input/DecoratedInput'
 import { searchInElement } from './searchInElement'
-import { useCommandService } from '../../../CommandProvider'
+import { useKeyboardService } from '../../../KeyboardServiceProvider'
 import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon, CloseIcon } from '@standardnotes/icons'
 import Button from '../../../Button/Button'
 import { canUseCSSHiglights, SearchHighlightRenderer, SearchHighlightRendererMethods } from './SearchHighlightRenderer'
@@ -272,18 +272,18 @@ export function SearchPlugin() {
     }
   }, [])
 
-  const commandService = useCommandService()
+  const keyboardService = useKeyboardService()
   const searchToggleShortcut = useMemo(
-    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(SUPER_TOGGLE_SEARCH)),
-    [commandService],
+    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(SUPER_TOGGLE_SEARCH)),
+    [keyboardService],
   )
   const toggleReplaceShortcut = useMemo(
-    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(SUPER_SEARCH_TOGGLE_REPLACE_MODE)),
-    [commandService],
+    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(SUPER_SEARCH_TOGGLE_REPLACE_MODE)),
+    [keyboardService],
   )
   const caseSensitivityShortcut = useMemo(
-    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(SUPER_SEARCH_TOGGLE_CASE_SENSITIVE)),
-    [commandService],
+    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(SUPER_SEARCH_TOGGLE_CASE_SENSITIVE)),
+    [keyboardService],
   )
 
   if (!isMounted) {
@@ -447,7 +447,6 @@ export function SearchPlugin() {
                 label="May lead to performance degradation, especially on large documents."
                 className="!z-modal"
                 showOnMobile
-                portal={false}
               >
                 <button className="cursor-default">
                   <Icon type="info" size="medium" />

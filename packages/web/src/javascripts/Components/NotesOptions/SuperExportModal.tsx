@@ -1,4 +1,4 @@
-import { PrefKey, PrefValue, SNNote } from '@standardnotes/snjs'
+import { PrefKey, PrefValue } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import Modal from '../Modal/Modal'
 import usePreference from '@/Hooks/usePreference'
@@ -6,15 +6,13 @@ import { useEffect } from 'react'
 import Switch from '../Switch/Switch'
 import { noteHasEmbeddedFiles } from '@/Utils/NoteExportUtils'
 import Dropdown from '../Dropdown/Dropdown'
+import ModalOverlay from '../Modal/ModalOverlay'
+import { observer } from 'mobx-react-lite'
 
-type Props = {
-  notes: SNNote[]
-  exportNotes: () => void
-  close: () => void
-}
-
-const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
+const ModalContent = observer(() => {
   const application = useApplication()
+  const notesController = application.notesController
+  const notes = notesController.selectedNotes
 
   const superNoteExportFormat = usePreference(PrefKey.SuperNoteExportFormat)
   const superNoteExportEmbedBehavior = usePreference(PrefKey.SuperNoteExportEmbedBehavior)
@@ -53,8 +51,8 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
           label: 'Export',
           type: 'primary',
           onClick: () => {
-            close()
-            exportNotes()
+            void notesController.downloadSelectedNotes()
+            notesController.closeSuperExportModal()
           },
           mobileSlot: 'right',
         },
@@ -157,6 +155,21 @@ const SuperExportModal = ({ notes, exportNotes, close }: Props) => {
       )}
     </Modal>
   )
+})
+
+const SuperExportModal = () => {
+  const application = useApplication()
+  const notesController = application.notesController
+
+  return (
+    <ModalOverlay
+      isOpen={notesController.shouldShowSuperExportModal}
+      close={notesController.closeSuperExportModal}
+      className="md:max-w-[25vw]"
+    >
+      <ModalContent />
+    </ModalOverlay>
+  )
 }
 
-export default SuperExportModal
+export default observer(SuperExportModal)

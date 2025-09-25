@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { NoteType, Platform, SNNote, pluralize } from '@standardnotes/snjs'
+import { NoteType, Platform } from '@standardnotes/snjs'
 import {
   CHANGE_EDITOR_WIDTH_COMMAND,
   OPEN_NOTE_HISTORY_COMMAND,
@@ -12,7 +12,6 @@ import {
 import ChangeEditorOption from './ChangeEditorOption'
 import ListedActionsOption from './Listed/ListedActionsOption'
 import AddTagOption from './AddTagOption'
-import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
@@ -27,13 +26,10 @@ import { iconClass } from './ClassNames'
 import SuperNoteOptions from './SuperNoteOptions'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuItem from '../Menu/MenuItem'
-import ModalOverlay from '../Modal/ModalOverlay'
-import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import MenuSection from '../Menu/MenuSection'
-import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
 import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
 
 const iconSize = MenuItemIconSize
@@ -43,26 +39,13 @@ const iconClassSuccess = `text-success mr-2 ${iconSize}`
 
 const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
   const application = useApplication()
+  const notesController = application.notesController
 
   const [altKeyDown, setAltKeyDown] = useState(false)
   const { toggleAppPane } = useResponsiveAppPane()
 
-  const toggleOn = (condition: (note: SNNote) => boolean) => {
-    const notesMatchingAttribute = notes.filter(condition)
-    const notesNotMatchingAttribute = notes.filter((note) => !condition(note))
-    return notesMatchingAttribute.length > notesNotMatchingAttribute.length
-  }
-
-  const hidePreviews = toggleOn((note) => note.hidePreview)
-  const locked = toggleOn((note) => note.locked)
-  const protect = toggleOn((note) => note.protected)
-  const archived = notes.some((note) => note.archived)
-  const unarchived = notes.some((note) => !note.archived)
-  const trashed = notes.some((note) => note.trashed)
-  const notTrashed = notes.some((note) => !note.trashed)
-  const pinned = notes.some((note) => note.pinned)
-  const unpinned = notes.some((note) => !note.pinned)
-  const starred = notes.some((note) => note.starred)
+  const { trashed, notTrashed, pinned, unpinned, starred, archived, unarchived, locked, protect, hidePreviews } =
+    notesController.getNotesInfo(notes)
 
   const editorForNote = useMemo(
     () => (notes[0] ? application.componentManager.editorForNote(notes[0]) : undefined),
@@ -84,55 +67,6 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
       removeAltKeyObserver()
     }
   }, [application])
-
-  const [showExportSuperModal, setShowExportSuperModal] = useState(false)
-  const closeSuperExportModal = useCallback(() => {
-    setShowExportSuperModal(false)
-  }, [])
-
-  const downloadSelectedItems = useCallback(async () => {
-    if (notes.length === 0) {
-      return
-    }
-    const toast = addToast({
-      type: ToastType.Progress,
-      message: `Exporting ${notes.length} ${pluralize(notes.length, 'note', 'notes')}...`,
-    })
-    try {
-      const result = await createNoteExport(application, notes)
-      if (!result) {
-        return
-      }
-      const { blob, fileName } = result
-      void downloadOrShareBlobBasedOnPlatform({
-        archiveService: application.archiveService,
-        platform: application.platform,
-        mobileDevice: application.mobileDevice,
-        blob: blob,
-        filename: fileName,
-        isNativeMobileWeb: application.isNativeMobileWeb(),
-      })
-      dismissToast(toast)
-    } catch (error) {
-      console.error(error)
-      addToast({
-        type: ToastType.Error,
-        message: 'Could not export notes',
-      })
-      dismissToast(toast)
-    }
-  }, [application, notes])
-
-  const exportSelectedItems = useCallback(() => {
-    const hasSuperNote = notes.some((note) => note.noteType === NoteType.Super)
-
-    if (hasSuperNote) {
-      setShowExportSuperModal(true)
-      return
-    }
-
-    downloadSelectedItems().catch(console.error)
-  }, [downloadSelectedItems, notes])
 
   const shareSelectedItems = useCallback(() => {
     createNoteExport(application, notes)
@@ -158,37 +92,14 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     closeMenu()
   }, [closeMenu, toggleAppPane])
 
-  const duplicateSelectedItems = useCallback(async () => {
-    await Promise.all(
-      notes.map((note) =>
-        application.mutator
-          .duplicateItem(note)
-          .then((duplicated) =>
-            addToast({
-              type: ToastType.Regular,
-              message: `Duplicated note "${duplicated.title}"`,
-              actions: [
-                {
-                  label: 'Open',
-                  handler: (toastId) => {
-                    application.itemListController.selectUuids([duplicated.uuid], true).catch(console.error)
-                    dismissToast(toastId)
-                  },
-                },
-              ],
-              autoClose: true,
-            }),
-          )
-          .catch(console.error),
-      ),
-    )
-    void application.sync.sync()
+  const duplicateSelectedNotes = useCallback(async () => {
+    await notesController.duplicateSelectedNotes()
     closeMenuAndToggleNotesList()
-  }, [application.mutator, application.itemListController, application.sync, closeMenuAndToggleNotesList, notes])
+  }, [closeMenuAndToggleNotesList, notesController])
 
   const openRevisionHistoryModal = useCallback(() => {
-    application.historyModalController.openModal(application.notesController.firstSelectedNote)
-  }, [application.historyModalController, application.notesController.firstSelectedNote])
+    application.historyModalController.openModal(notesController.firstSelectedNote)
+  }, [application.historyModalController, notesController.firstSelectedNote])
 
   const historyShortcut = useMemo(
     () => application.keyboardService.keyboardShortcutForCommand(OPEN_NOTE_HISTORY_COMMAND),
@@ -259,7 +170,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         <MenuSwitchButtonItem
           checked={locked}
           onChange={(locked) => {
-            application.notesController.setLockSelectedNotes(locked)
+            notesController.setLockSelectedNotes(locked)
           }}
           disabled={areSomeNotesInReadonlySharedVault}
         >
@@ -269,7 +180,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         <MenuSwitchButtonItem
           checked={!hidePreviews}
           onChange={(hidePreviews) => {
-            application.notesController.setHideSelectedNotePreviews(!hidePreviews)
+            notesController.setHideSelectedNotePreviews(!hidePreviews)
           }}
           disabled={areSomeNotesInReadonlySharedVault}
         >
@@ -279,7 +190,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         <MenuSwitchButtonItem
           checked={protect}
           onChange={(protect) => {
-            application.notesController.setProtectSelectedNotes(protect).catch(console.error)
+            notesController.setProtectSelectedNotes(protect).catch(console.error)
           }}
           disabled={areSomeNotesInReadonlySharedVault}
         >
@@ -318,7 +229,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         )}
         <MenuItem
           onClick={() => {
-            application.notesController.setStarSelectedNotes(!starred)
+            notesController.setStarSelectedNotes(!starred)
           }}
           disabled={areSomeNotesInReadonlySharedVault}
         >
@@ -330,7 +241,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         {unpinned && (
           <MenuItem
             onClick={() => {
-              application.notesController.setPinSelectedNotes(true)
+              notesController.setPinSelectedNotes(true)
             }}
             disabled={areSomeNotesInReadonlySharedVault}
           >
@@ -342,7 +253,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         {pinned && (
           <MenuItem
             onClick={() => {
-              application.notesController.setPinSelectedNotes(false)
+              notesController.setPinSelectedNotes(false)
             }}
             disabled={areSomeNotesInReadonlySharedVault}
           >
@@ -351,7 +262,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
           </MenuItem>
         )}
-        <MenuItem onClick={exportSelectedItems}>
+        <MenuItem onClick={notesController.exportSelectedNotes}>
           <Icon type="download" className={iconClass} />
           Export
         </MenuItem>
@@ -361,14 +272,14 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             Share
           </MenuItem>
         )}
-        <MenuItem onClick={duplicateSelectedItems} disabled={areSomeNotesInReadonlySharedVault}>
+        <MenuItem onClick={duplicateSelectedNotes} disabled={areSomeNotesInReadonlySharedVault}>
           <Icon type="copy" className={iconClass} />
           Duplicate
         </MenuItem>
         {unarchived && (
           <MenuItem
             onClick={async () => {
-              await application.notesController.setArchiveSelectedNotes(true).catch(console.error)
+              await notesController.setArchiveSelectedNotes(true).catch(console.error)
               closeMenuAndToggleNotesList()
             }}
             disabled={areSomeNotesInReadonlySharedVault}
@@ -380,7 +291,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         {archived && (
           <MenuItem
             onClick={async () => {
-              await application.notesController.setArchiveSelectedNotes(false).catch(console.error)
+              await notesController.setArchiveSelectedNotes(false).catch(console.error)
               closeMenuAndToggleNotesList()
             }}
             disabled={areSomeNotesInReadonlySharedVault}
@@ -394,7 +305,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             <MenuItem
               disabled={areSomeNotesInReadonlySharedVault}
               onClick={async () => {
-                await application.notesController.deleteNotesPermanently()
+                await notesController.deleteNotesPermanently()
                 closeMenuAndToggleNotesList()
               }}
             >
@@ -404,7 +315,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           ) : (
             <MenuItem
               onClick={async () => {
-                await application.notesController.setTrashSelectedNotes(true)
+                await notesController.setTrashSelectedNotes(true)
                 closeMenuAndToggleNotesList()
               }}
               disabled={areSomeNotesInReadonlySharedVault}
@@ -417,7 +328,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           <>
             <MenuItem
               onClick={async () => {
-                await application.notesController.setTrashSelectedNotes(false)
+                await notesController.setTrashSelectedNotes(false)
                 closeMenuAndToggleNotesList()
               }}
               disabled={areSomeNotesInReadonlySharedVault}
@@ -428,7 +339,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             <MenuItem
               disabled={areSomeNotesInReadonlySharedVault}
               onClick={async () => {
-                await application.notesController.deleteNotesPermanently()
+                await notesController.deleteNotesPermanently()
                 closeMenuAndToggleNotesList()
               }}
             >
@@ -437,7 +348,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             </MenuItem>
             <MenuItem
               onClick={async () => {
-                await application.notesController.emptyTrash()
+                await notesController.emptyTrash()
                 closeMenuAndToggleNotesList()
               }}
               disabled={areSomeNotesInReadonlySharedVault}
@@ -446,7 +357,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
                 <Icon type="trash-sweep" className="mr-2 text-danger" />
                 <div className="flex-row">
                   <div className="text-danger">Empty Trash</div>
-                  <div className="text-xs">{application.notesController.trashedNotesCount} notes in Trash</div>
+                  <div className="text-xs">{notesController.trashedNotesCount} notes in Trash</div>
                 </div>
               </div>
             </MenuItem>
@@ -468,7 +379,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             <MenuSection>
               <SpellcheckOptions
                 editorForNote={editorForNote}
-                notesController={application.notesController}
+                notesController={notesController}
                 note={notes[0]}
                 disabled={areSomeNotesInReadonlySharedVault}
               />
@@ -480,10 +391,6 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           <NoteSizeWarning note={notes[0]} />
         </>
       )}
-
-      <ModalOverlay isOpen={showExportSuperModal} close={closeSuperExportModal} className="md:max-w-[25vw]">
-        <SuperExportModal notes={notes} exportNotes={downloadSelectedItems} close={closeSuperExportModal} />
-      </ModalOverlay>
     </>
   )
 }
