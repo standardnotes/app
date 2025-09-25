@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.200.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.199.0...@standardnotes/web@3.200.0) (2025-09-25)
+
+### Features
+
+* Added command palette for quick actions and switching between items ([#2933](https://github.com/standardnotes/app/issues/2933)) [skip e2e] ([efba7c6](https://github.com/standardnotes/app/commit/efba7c682d81d518d02ea52aea8c022f190679eb))
+
 # [3.199.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.198.20...@standardnotes/web@3.199.0) (2025-09-23)
 
 ### Features

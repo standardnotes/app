@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.212](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.211...@standardnotes/mobile@3.58.212) (2025-09-25)
+
+### Bug Fixes
+
+* Fixes spellcheck menu unreadable text on Android dark mode ([#2938](https://github.com/standardnotes/app/issues/2938)) ([cb92c10](https://github.com/standardnotes/app/commit/cb92c10625cb4ed89102a5e92459eab970627c30))
+
 ## [3.58.211](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.210...@standardnotes/mobile@3.58.211) (2025-09-23)
 
 **Note:** Version bump only for package @standardnotes/mobile
