@@ -1,9 +1,12 @@
 {
-  "name": "@standardnotes/desktop",
+  "name": "aetherspire-notes-desktop",
+  "productName": "Aetherspire Notes",
+  "displayName": "Aetherspire Notes",
   "main": "./app/dist/index.js",
-  "version": "3.110.155",
+  "version": "0.1.0",
   "license": "AGPL-3.0",
-  "author": "Standard Notes.",
+  "author": "Aetherspire Interactive",
+  "homepage": "https://aetherspiregames.dev",
   "private": true,
   "repository": {
     "type": "git",
@@ -84,8 +87,9 @@
     "webpack-merge": "*"
   },
   "build": {
-    "appId": "org.standardnotes.standardnotes",
-    "artifactName": "standard-notes-${version}-${os}-${arch}.${ext}",
+    "productName": "Aetherspire Notes",
+    "appId": "dev.aetherspire.notes",
+    "artifactName": "Aetherspire-Notes-${version}-${os}-${arch}.${ext}",
     "afterSign": "scripts/notarizeMac.js",
     "files": [
       "compiled/**/*",
@@ -96,9 +100,9 @@
     ],
     "protocols": [
       {
-        "name": "Standard Notes",
+        "name": "Aetherspire Notes Link",
         "schemes": [
-          "standardnotes"
+          "aetherspire-notes"
         ]
       }
     ],
@@ -108,11 +112,11 @@
       "entitlements": "./build/entitlements.mac.inherit.plist",
       "entitlementsInherit": "./build/entitlements.mac.inherit.plist",
       "extendInfo": {
-        "NSCameraUsageDescription": "Standard Notes requires access to your camera to enable the Moments feature."
+        "NSCameraUsageDescription": "Aetherspire Notes requires access to your camera to enable the Moments feature."
       },
       "asarUnpack": [
         "node_modules/keytar",
-        "node_modules/@standardnotes/home-server"
+        "node_modules/aetherspire-notes/home-server"
       ],
       "target": [
         "dmg",
@@ -120,8 +124,8 @@
       ]
     },
     "win": {
-      "certificateSubjectName": "Standard Notes Ltd.",
-      "publisherName": "Standard Notes Ltd.",
+      "certificateSubjectName": "Aetherspire Notes",
+      "publisherName": "Aetherspire Interactive",
       "signDlls": true,
       "sign": "./scripts/windowsSign.js"
     },
@@ -131,9 +135,9 @@
     "linux": {
       "category": "Office",
       "icon": "build/icon/",
-      "executableName": "standard-notes",
+      "executableName": "aetherspire-notes",
       "desktop": {
-        "StartupWMClass": "standard notes"
+        "StartupWMClass": "atherspire notes"
       },
       "target": [
         "AppImage",
