@@ -1,3 +1,4 @@
+/* eslint-disable */
 const path = require('path')
 const webpack = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
@@ -13,6 +14,7 @@ module.exports = (env) => {
 
   const copyPluginPatterns = [
     { from: 'src/favicon', to: 'favicon' },
+    { from: 'src/assets', to: 'assets' },
     { from: 'src/vendor', to: 'dist' },
     { from: 'src/404.html' },
     { from: 'src/422.html' },
