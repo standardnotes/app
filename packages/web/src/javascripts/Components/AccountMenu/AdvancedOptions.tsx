@@ -170,15 +170,17 @@ const AdvancedOptions: FunctionComponent<Props> = ({
               </div>
             )}
 
-            <div className="mb-1 flex items-center justify-between">
-              <Checkbox
-                name="recovery-codes"
-                label="Use recovery code"
-                checked={isRecoveryCodes}
-                disabled={disabled}
-                onChange={handleIsRecoveryCodesChange}
-              />
-            </div>
+            {onRecoveryCodesChange && (
+              <div className="mb-1 flex items-center justify-between">
+                <Checkbox
+                  name="recovery-codes"
+                  label="Use recovery code"
+                  checked={isRecoveryCodes}
+                  disabled={disabled}
+                  onChange={handleIsRecoveryCodesChange}
+                />
+              </div>
+            )}
 
             {isRecoveryCodes && (
               <>
