@@ -86,7 +86,6 @@ export class NotesController
       reaction(
         () => this.selectedNotesCount,
         (notes_count) => {
-          console.log('hello')
           this.disposeCommandRegisters()
 
           const descriptionSuffix = `${pluralize(notes_count, 'current', 'selected')} ${pluralize(
