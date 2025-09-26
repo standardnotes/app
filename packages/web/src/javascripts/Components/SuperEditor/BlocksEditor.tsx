@@ -31,6 +31,7 @@ import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 import { CheckListPlugin } from './Plugins/CheckListPlugin'
+import GoogleDocsPastePlugin from './Plugins/GoogleDocsPastePlugin/GoogleDocsPastePlugin'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -131,6 +132,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <DatetimePlugin />
       <PasswordPlugin />
       <AutoLinkPlugin />
+      <GoogleDocsPastePlugin />
       {!readonly && floatingAnchorElem && (
         <>
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
