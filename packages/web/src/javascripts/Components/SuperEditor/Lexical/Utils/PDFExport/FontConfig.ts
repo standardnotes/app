@@ -36,7 +36,6 @@ enum UnicodeScript {
 
 export enum FontFamily {
   NotoSans = 'Noto Sans',
-  NotoSansCyrillic = 'Noto Sans Cyrillic',
   NotoSansGreek = 'Noto Sans Greek',
   NotoSansHebrew = 'Noto Sans Hebrew',
   NotoSansArabic = 'Noto Sans Arabic',
@@ -93,122 +92,99 @@ const FONT_VARIANT_TO_FONT_OPTIONS: Record<FontVariant, { fontWeight: FontWeight
   },
 }
 
-const FALLBACK_FONT_SOURCE =
-  'https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyD9A99d.ttf'
+const ASSET_FONT_BASE_PATH = '/assets/fonts'
+
+const resolveAssetUrl = (path: string) => {
+  try {
+    const workerOrigin = (self as unknown as { location?: { origin?: string } })?.location?.origin
+    const browserOrigin = typeof window !== 'undefined' ? window.location?.origin : undefined
+    const origin = workerOrigin || browserOrigin
+    return origin ? new URL(path, origin).toString() : path
+  } catch {
+    return path
+  }
+}
+
+const FALLBACK_FONT_SOURCE = `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-Regular.ttf`
 export const FALLBACK_FONT_FAMILY = FontFamily.Helvetica
 export const MONOSPACE_FONT_FAMILY = FontFamily.Courier
 
 const FONT_FAMILY_TO_FONT_SOURCES: Partial<Record<FontFamily, Partial<Record<FontVariant, string>>>> = {
   [FontFamily.NotoSans]: {
-    [FontVariant.Normal]: FALLBACK_FONT_SOURCE,
-    [FontVariant.Bold]:
-      'https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyAaBN9d.ttf',
-    [FontVariant.Italic]:
-      'https://fonts.gstatic.com/s/notosans/v42/o-0kIpQlx3QUlC5A4PNr4C5OaxRsfNNlKbCePevHtVtX57DGjDU1QDce6Vc.ttf',
-    [FontVariant.BoldItalic]:
-      'https://fonts.gstatic.com/s/notosans/v42/o-0kIpQlx3QUlC5A4PNr4C5OaxRsfNNlKbCePevHtVtX57DGjDU1QNAZ6Vc.ttf',
-  },
-  [FontFamily.NotoSansCyrillic]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyD9A99d.ttf',
-    [FontVariant.Bold]:
-      'https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyAaBN9d.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-Regular.ttf`,
+    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-Bold.ttf`,
+    [FontVariant.Italic]: `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-Italic.ttf`,
+    [FontVariant.BoldItalic]: `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-BoldItalic.ttf`,
   },
   [FontFamily.NotoSansGreek]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyD9A99d.ttf',
-    [FontVariant.Bold]:
-      'https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyAaBN9d.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-greek/NotoSansGreek-Regular.ttf`,
+    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans-greek/NotoSansGreek-Bold.ttf`,
   },
   [FontFamily.NotoSansHebrew]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosanshebrew/v50/or3HQ7v33eiDljA1IufXTtVf7V6RvEEdhQlk0LlGxCyaeNKYZC0sqk3xXGiXd4qtog.ttf',
-    [FontVariant.Bold]:
-      'https://fonts.gstatic.com/s/notosanshebrew/v50/or3HQ7v33eiDljA1IufXTtVf7V6RvEEdhQlk0LlGxCyaeNKYZC0sqk3xXGiXd4qtog.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-hebrew/NotoSansHebrew-Regular.ttf`,
+    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans-hebrew/NotoSansHebrew-Bold.ttf`,
   },
   [FontFamily.NotoSansArabic]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansarabic/v33/nwpxtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlhQ5l3sQWIHPqzCfyGyvuw.ttf',
-    [FontVariant.Bold]:
-      'https://fonts.gstatic.com/s/notosansarabic/v33/nwpxtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlhQ5l3sQWIHPqzCfL2uvuw.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-arabic/NotoSansArabic-Regular.ttf`,
+    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans-arabic/NotoSansArabic-Bold.ttf`,
   },
   [FontFamily.NotoSansDevanagari]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansdevanagari/v30/TuGoUUFzXI5FBtUq5a8bjKYTZjtRU6Sgv3NaV_SNmI0b8QQCQmHn6B2OHjbL_08AlXQly-A.ttf',
-    [FontVariant.Bold]:
-      'https://fonts.gstatic.com/s/notosansdevanagari/v30/TuGoUUFzXI5FBtUq5a8bjKYTZjtRU6Sgv3NaV_SNmI0b8QQCQmHn6B2OHjbL_08AlZMiy-A.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-devanagari/NotoSansDevanagari-Regular.ttf`,
+    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans-devanagari/NotoSansDevanagari-Bold.ttf`,
   },
   [FontFamily.NotoSansBengali]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansbengali/v32/Cn-SJsCGWQxOjaGwMQ6fIiMywrNJIky6nvd8BjzVMvJx2mcSPVFpVEqE-6KmsolLudA.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-bengali/NotoSansBengali-Regular.ttf`,
   },
   [FontFamily.NotoSansTamil]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosanstamil/v31/ieVc2YdFI3GCY6SyQy1KfStzYKZgzN1z4LKDbeZce-0429tBManUktuex7vGo70R.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-tamil/NotoSansTamil-Regular.ttf`,
   },
   [FontFamily.NotoSansTelugu]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosanstelugu/v30/0FlxVOGZlE2Rrtr-HmgkMWJNjJ5_RyT8o8c7fHkeg-esVC5dzHkHIJQqrEntezbqQQ.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-telugu/NotoSansTelugu-Regular.ttf`,
   },
   [FontFamily.NotoSansGujarati]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansgujarati/v27/wlpWgx_HC1ti5ViekvcxnhMlCVo3f5pv17ivlzsUB14gg1TMR2Gw4VceEl7MA_ypFwPM.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-gujarati/NotoSansGujarati-Regular.ttf`,
   },
   [FontFamily.NotoSansGurmukhi]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansgurmukhi/v29/w8g9H3EvQP81sInb43inmyN9zZ7hb7ATbSWo4q8dJ74a3cVrYFQ_bogT0-gPeG1Oenbx.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-gurmukhi/NotoSansGurmukhi-Regular.ttf`,
   },
   [FontFamily.NotoSansMalayalam]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansmalayalam/v29/sJoi3K5XjsSdcnzn071rL37lpAOsUThnDZIfPdbeSNzVakglNM-Qw8EaeB8Nss-_RuD9BA.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-malayalam/NotoSansMalayalam-Regular.ttf`,
   },
   [FontFamily.NotoSansSinhala]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosanssinhala/v36/yMJ2MJBya43H0SUF_WmcBEEf4rQVO2P524V5N_MxQzQtb-tf5dJbC30Fu9zUwg2a5lg.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-sinhala/NotoSansSinhala-Regular.ttf`,
   },
   [FontFamily.NotoSansThai]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansthai/v29/iJWnBXeUZi_OHPqn4wq6hQ2_hbJ1xyN9wd43SofNWcd1MKVQt_So_9CdU5RtpzE.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-thai/NotoSansThai-Regular.ttf`,
   },
   [FontFamily.NotoSansArmenian]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansarmenian/v47/ZgN0jOZKPa7CHqq0h37c7ReDUubm2SEdFXp7ig73qtTY5idb74R9UdM3y2nZLorxb60i.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-armenian/NotoSansArmenian-Regular.ttf`,
   },
   [FontFamily.NotoSansGeorgian]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansgeorgian/v48/PlIaFke5O6RzLfvNNVSitxkr76PRHBC4Ytyq-Gof7PUs4S7zWn-8YDB09HFNdpvnzFj-.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-georgian/NotoSansGeorgian-Regular.ttf`,
   },
   [FontFamily.NotoSansEthiopic]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosansethiopic/v50/7cHPv50vjIepfJVOZZgcpQ5B9FBTH9KGNfhSTgtoow1KVnIvyBoMSzUMacb-T35OK6Dj.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-ethiopic/NotoSansEthiopic-Regular.ttf`,
   },
   [FontFamily.NotoSansMyanmar]: {
-    [FontVariant.Normal]: 'https://fonts.gstatic.com/s/notosansmyanmar/v21/AlZq_y1ZtY3ymOryg38hOCSdOnFq0En2.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-myanmar/NotoSansMyanmar-Regular.ttf`,
   },
   [FontFamily.NotoSansKhmer]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosanskhmer/v29/ijw3s5roRME5LLRxjsRb-gssOenAyendxrgV2c-Zw-9vbVUti_Z_dWgtWYuNAJz4.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-khmer/NotoSansKhmer-Regular.ttf`,
   },
   [FontFamily.NotoSansLao]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosanslao/v33/bx6lNx2Ol_ixgdYWLm9BwxM3NW6BOkuf763Clj73CiQ_J1Djx9pidOt4ccbdfw.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-lao/NotoSansLao-Regular.ttf`,
   },
   [FontFamily.NotoSansTibetan]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyD9A99d.ttf',
-  },
-  [FontFamily.NotoSansVietnamese]: {
-    [FontVariant.Normal]:
-      'https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyD9A99d.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-tibetan/NotoSansTibetan-Regular.ttf`,
   },
   [FontFamily.NotoSansSC]: {
-    [FontVariant.Normal]: 'https://fonts.gstatic.com/s/notosanssc/v39/k3kCo84MPvpLmixcA63oeAL7Iqp5IZJF9bmaG9_FnYw.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-sc/NotoSansSC-Regular.ttf`,
   },
   [FontFamily.NotoSansJP]: {
-    [FontVariant.Normal]: 'https://fonts.gstatic.com/s/notosansjp/v55/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75s.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-jp/NotoSansJP-Regular.ttf`,
   },
   [FontFamily.NotoSansKR]: {
-    [FontVariant.Normal]: 'https://fonts.gstatic.com/s/notosanskr/v38/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzzuoyeLQ.ttf',
+    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-kr/NotoSansKR-Regular.ttf`,
   },
 }
 
@@ -217,14 +193,10 @@ export const getFontFamilyForUnicodeScript = (script: UnicodeScript): FontFamily
     // Common, shared scripts
     case UnicodeScript.Common:
     case UnicodeScript.Latin:
-      return FontFamily.NotoSans
-
-    // Scripts with dedicated fonts
     case UnicodeScript.Cyrillic:
-      return FontFamily.NotoSansCyrillic
-
     case UnicodeScript.Greek:
-      return FontFamily.NotoSansGreek
+    case UnicodeScript.Vietnamese:
+      return FontFamily.NotoSans
 
     case UnicodeScript.Hebrew:
       return FontFamily.NotoSansHebrew
@@ -280,9 +252,6 @@ export const getFontFamilyForUnicodeScript = (script: UnicodeScript): FontFamily
     case UnicodeScript.Tibetan:
       return FontFamily.NotoSansTibetan
 
-    case UnicodeScript.Vietnamese:
-      return FontFamily.NotoSansVietnamese
-
     case UnicodeScript.Chinese:
     case UnicodeScript.Han:
       return FontFamily.NotoSansSC
@@ -306,7 +275,7 @@ const getFontRegisterOptions = (fontFamily: FontFamily) => {
     family: fontFamily,
     fonts: Object.entries(FONT_VARIANT_TO_FONT_OPTIONS).map(([variant, fontOptions]) => ({
       ...fontOptions,
-      src: FONT_FAMILY_TO_FONT_SOURCES[fontFamily]?.[variant as FontVariant] ?? fallback,
+      src: resolveAssetUrl(FONT_FAMILY_TO_FONT_SOURCES[fontFamily]?.[variant as FontVariant] ?? fallback),
     })),
   }
 }
