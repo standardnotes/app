@@ -1,12 +1,19 @@
 {
-  "name": "@standardnotes/app-monorepo",
-  "version": "0.0.1",
+  "name": "aetherspire-notes-monorepo",
+  "productName": "Aetherspire Notes",
+  "displayName": "Aetherspire Notes",
+  "homepage": "https://aetherspiregames.dev",
+  "license": "AGPL-3.0-only",
+  "version": "0.1.0",
   "private": true,
-  "author": "Standard Notes",
+  "author": "Aetherspire Interactive",
   "repository": {
     "type": "git",
-    "url": "git://github.com/standardnotes/app"
+    "url": "git://github.com/Aetherspire-Interactive/aetherspire-notes.git"
   },
+  "bugs": {
+    "url": "https://github.com/Aetherspire-Interactive/aetherspire-notes/issues"
+},
   "workspaces": {
     "packages": [
       "packages/*"

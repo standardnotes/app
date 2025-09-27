@@ -1,9 +1,11 @@
 {
-  "name": "@standardnotes/web",
-  "version": "3.200.1",
+  "name": "aetherspire-notes-web",
+  "productName": "Aetherspire Notes",
+  "displayName": "Aetherspire Notes",
+  "version": "0.1.0",
   "license": "AGPL-3.0",
   "main": "dist/app.js",
-  "author": "Standard Notes.",
+  "author": "Aetherspire Interactive",
   "private": true,
   "files": [
     "dist"
