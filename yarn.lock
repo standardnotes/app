@@ -11386,6 +11386,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"aws-ssl-profiles@npm:^1.1.1":
+  version: 1.1.2
+  resolution: "aws-ssl-profiles@npm:1.1.2"
+  checksum: bfcf9b2cbb9788e24e4af39a1e8b4a8afbdf65773b6a1636e643c10068ffbae46b28277c4c9f9321179400b2080092db040ba4513f9143f22d1bb053a12dab2b
+  languageName: node
+  linkType: hard
+
 "aws4@npm:^1.8.0":
   version: 1.12.0
   resolution: "aws4@npm:1.12.0"
@@ -17929,12 +17936,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
+"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
   dependencies:
     safer-buffer: ">= 2.1.2 < 3.0.0"
   checksum: 3f60d47a5c8fc3313317edfd29a00a692cc87a19cac0159e2ce711d0ebc9019064108323b5e493625e25594f11c6236647d8e256fbe7a58f4a3b33b89e6d30bf
+  languageName: node
+  linkType: hard
+
+"iconv-lite@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "iconv-lite@npm:0.7.0"
+  dependencies:
+    safer-buffer: ">= 2.1.2 < 3.0.0"
+  checksum: f362a8befb95e37f29be1d1290c17e0c9d0d4ad4fa62fcfd813cc9c937ab89401abed9a011f83e10651a267abb2aa231ec7da91d843570bec873bd98489b5bf8
   languageName: node
   linkType: hard
 
@@ -20794,17 +20810,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^8.0.0":
-  version: 8.0.5
-  resolution: "lru-cache@npm:8.0.5"
-  checksum: 87d72196d8f46e8299c4ab576ed2ec8a07e3cbef517dc9874399c0b2470bd9bf62aacec3b67f84ed6d74aaa1ef31636d048edf996f76248fd17db72bfb631609
-  languageName: node
-  linkType: hard
-
 "lru-cache@npm:^9.1.1 || ^10.0.0":
   version: 10.0.0
   resolution: "lru-cache@npm:10.0.0"
   checksum: 18f101675fe283bc09cda0ef1e3cc83781aeb8373b439f086f758d1d91b28730950db785999cd060d3c825a8571c03073e8c14512b6655af2188d623031baf50
+  languageName: node
+  linkType: hard
+
+"lru.min@npm:^1.0.0":
+  version: 1.1.2
+  resolution: "lru.min@npm:1.1.2"
+  checksum: d7b0c2309072b066e13e1178130f48cfef317149389e556255844ba79ee8c0fe79e0b2f2ada78cfd975803afc30a443ac3e2f87f4ce1488d8a1782ff42a16f30
   languageName: node
   linkType: hard
 
@@ -21838,19 +21854,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mysql2@npm:^3.0.1":
-  version: 3.6.5
-  resolution: "mysql2@npm:3.6.5"
+"mysql2@npm:^3.9.8":
+  version: 3.15.1
+  resolution: "mysql2@npm:3.15.1"
   dependencies:
+    aws-ssl-profiles: ^1.1.1
     denque: ^2.1.0
     generate-function: ^2.3.1
-    iconv-lite: ^0.6.3
+    iconv-lite: ^0.7.0
     long: ^5.2.1
-    lru-cache: ^8.0.0
+    lru.min: ^1.0.0
     named-placeholders: ^1.1.3
     seq-queue: ^0.0.5
     sqlstring: ^2.3.2
-  checksum: 1fb6aef940818dc5368840459e33a2c273698b08633015c196d67df3ee47bd3806b6c428ec4ca020cb3df4dc63e7d79cc5361caa7521b2b75cfd0fc9e8301fc9
+  checksum: eaf1bcdd52bbae7b5595111db4bbce6e1ededdb17314e3e34d8828eaebd012ea51edd7a9261a61f61f53c56e0b2a5df866dfaf4bc5029d887fa60391ebf2d18b
   languageName: node
   linkType: hard
 
