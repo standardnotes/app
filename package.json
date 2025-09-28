@@ -65,6 +65,7 @@
     "@babel/traverse": "^7.28.4",
     "minimist": "^1.2.8",
     "loader-utils": "^3.3.1",
+    "electron": "^38.2.0",
     "@standardnotes/sncrypto-web": "npm:@standardnotes/sncrypto-web@^1.14.11",
     "@standardnotes/snjs": "npm:@standardnotes/snjs@^2.210.0"
   },
