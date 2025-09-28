@@ -39,6 +39,8 @@
     "regenerator-runtime": "^0.13.9"
   },
   "resolutions": {
-    "json5": "^2.2.3"
+    "json5": "^2.2.3",
+    "minimist": "^1.2.8",
+    "webpack": "^5.94.0"
   }
 }
