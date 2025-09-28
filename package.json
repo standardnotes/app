@@ -60,6 +60,7 @@
     "app-builder-lib": "^26.0.12",
     "get-func-name": "^3.0.0",
     "semver": "^7.7.2",
+    "jsonwebtoken": "^9.0.2",
     "@standardnotes/sncrypto-web": "npm:@standardnotes/sncrypto-web@^1.14.11",
     "@standardnotes/snjs": "npm:@standardnotes/snjs@^2.210.0"
   },
