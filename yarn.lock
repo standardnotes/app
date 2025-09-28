@@ -7872,7 +7872,7 @@ __metadata:
     electron: 35.2.0
     electron-builder: ^24.9.1
     electron-log: ^4.4.8
-    electron-updater: ^6.1.4
+    electron-updater: ^6.6.2
     eslint: "*"
     eslint-config-prettier: ^8.9.0
     eslint-plugin-import: ^2.26.0
@@ -8773,7 +8773,7 @@ __metadata:
     "@types/lodash": ^4.14.189
     "@types/node": ^18.11.9
     "@typescript-eslint/eslint-plugin": ^5.43.0
-    dompurify: ^2.4.1
+    dompurify: ^3.2.7
     eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^29.3.1
@@ -9782,6 +9782,13 @@ __metadata:
   version: 2.0.3
   resolution: "@types/trusted-types@npm:2.0.3"
   checksum: 4794804bc4a4a173d589841b6d26cf455ff5dc4f3e704e847de7d65d215f2e7043d8757e4741ce3a823af3f08260a8d04a1a6e9c5ec9b20b7b04586956a6b005
+  languageName: node
+  linkType: hard
+
+"@types/trusted-types@npm:^2.0.7":
+  version: 2.0.7
+  resolution: "@types/trusted-types@npm:2.0.7"
+  checksum: 8e4202766a65877efcf5d5a41b7dd458480b36195e580a3b1085ad21e948bc417d55d6f8af1fd2a7ad008015d4117d5fdfe432731157da3c68678487174e4ba3
   languageName: node
   linkType: hard
 
@@ -12060,16 +12067,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"builder-util-runtime@npm:9.2.1":
-  version: 9.2.1
-  resolution: "builder-util-runtime@npm:9.2.1"
-  dependencies:
-    debug: ^4.3.4
-    sax: ^1.2.4
-  checksum: 6933e086b8ff9902cbd6d4c08d21d4a0437663ac849bc0939ec20a59cb2b084d7ab655c4dc2c71f854e77da152ff1f8e1240372665cb70e7b954afbfbf4d525a
-  languageName: node
-  linkType: hard
-
 "builder-util-runtime@npm:9.2.3":
   version: 9.2.3
   resolution: "builder-util-runtime@npm:9.2.3"
@@ -12077,6 +12074,16 @@ __metadata:
     debug: ^4.3.4
     sax: ^1.2.4
   checksum: f25d6f12352be946785f0c6b8000902f3d8bd22921b7b0c7c9256829a4e3a6cf0c81d88e85cb73ffa00c7293b60573cacb533383d8ffce5b9b734b93d83553a8
+  languageName: node
+  linkType: hard
+
+"builder-util-runtime@npm:9.4.0":
+  version: 9.4.0
+  resolution: "builder-util-runtime@npm:9.4.0"
+  dependencies:
+    debug: ^4.3.4
+    sax: ^1.2.4
+  checksum: 0fa567d0785746c24de2c6a07274e6eb268e1a1a81bd3ca251457b5ae078d7a83356056b1c236653008527438ee790885e4fc516b1ee018122895ff28996cb7a
   languageName: node
   linkType: hard
 
@@ -14599,10 +14606,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^2.4.1":
-  version: 2.4.7
-  resolution: "dompurify@npm:2.4.7"
-  checksum: 13c047e772a1998348191554dda403950d45ef2ec75fa0b9915cc179ccea0a39ef780d283109bd72cf83a2a085af6c77664281d4d0106a737bc5f39906364efe
+"dompurify@npm:^3.2.7":
+  version: 3.2.7
+  resolution: "dompurify@npm:3.2.7"
+  dependencies:
+    "@types/trusted-types": ^2.0.7
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 15958b76e0266f463303b81bc190ab78808c20640e5211dcf7e5071e4fe4396b904c04a8cb68e149e02ab44360defa13a00147e3f23721d41a81ca4bf6d7c983
   languageName: node
   linkType: hard
 
@@ -14823,19 +14835,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-updater@npm:^6.1.4":
-  version: 6.1.5
-  resolution: "electron-updater@npm:6.1.5"
+"electron-updater@npm:^6.6.2":
+  version: 6.6.8
+  resolution: "electron-updater@npm:6.6.8"
   dependencies:
-    builder-util-runtime: 9.2.1
+    builder-util-runtime: 9.4.0
     fs-extra: ^10.1.0
     js-yaml: ^4.1.0
     lazy-val: ^1.0.5
     lodash.escaperegexp: ^4.1.2
     lodash.isequal: ^4.5.0
-    semver: ^7.3.8
+    semver: ^7.6.3
     tiny-typed-emitter: ^2.1.0
-  checksum: 07d6cf1d3da0e6a9ed852777bb5acc73cc5bae250ffd5d20e0ddc674ae1856c675b37ea48fe0ae82445fedf033ce99d4836491fed9514d1085216a7f4fad42b8
+  checksum: cba4365a27fa9136170b288541ecf90064235b7a0deb7e9472fd6116842528ef340089b6c5382fd2882c3d29d5f43cf466a79ab4930cf1f0a5acacb08f705747
   languageName: node
   linkType: hard
 
