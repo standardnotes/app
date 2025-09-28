@@ -69,6 +69,7 @@
     "@babel/runtime": "^7.28.3",
     "nanoid": "^5.1.6",
     "micromatch": "^4.0.8",
+    "@grpc/grpc-js": "^1.14.0",
     "@standardnotes/sncrypto-web": "npm:@standardnotes/sncrypto-web@^1.14.11",
     "@standardnotes/snjs": "npm:@standardnotes/snjs@^2.210.0"
   },
