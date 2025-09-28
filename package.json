@@ -72,6 +72,7 @@
     "@grpc/grpc-js": "^1.14.0",
     "ejs": "^3.1.10",
     "tar": "^7.4.3",
+    "jose": "^6.1.0",
     "@standardnotes/sncrypto-web": "npm:@standardnotes/sncrypto-web@^1.14.11",
     "@standardnotes/snjs": "npm:@standardnotes/snjs@^2.210.0"
   },
