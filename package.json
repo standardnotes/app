@@ -47,7 +47,11 @@
     "node-abi": "^4.2.0",
     "sha.js": "^2.4.12",
     "form-data": "^4.0.4",
-    "mysql2": "^3.9.8"
+    "mysql2": "^3.9.8",
+    "webpack": "^5.94.0",
+    "tar-fs": "^2.1.4",
+    "@standardnotes/sncrypto-web": "npm:@standardnotes/sncrypto-web@^1.14.11",
+    "@standardnotes/snjs": "npm:@standardnotes/snjs@^2.210.0"
   },
   "dependencies": {
     "@standardnotes/snjs": "workspace:*",
