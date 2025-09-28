@@ -50,8 +50,9 @@
     "mysql2": "^3.9.8",
     "webpack": "^5.94.0",
     "tar-fs": "^2.1.4",
-    "axios": "^1.12.0",
+    "axios": "^1.12.2",
     "crypto-js": "^4.2.0",
+    "cross-spawn": "^7.0.6",
     "@standardnotes/sncrypto-web": "npm:@standardnotes/sncrypto-web@^1.14.11",
     "@standardnotes/snjs": "npm:@standardnotes/snjs@^2.210.0"
   },
