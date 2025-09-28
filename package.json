@@ -44,10 +44,12 @@
     "@types/react-native-vector-icons/@types/react": "17.0.2",
     "@types/react-native/@types/react": "17.0.2",
     "@types/hoist-non-react-statics/@types/react": "17.0.2",
-    "node-abi": "^4.2.0"
+    "node-abi": "^4.2.0",
+    "sha.js": "^2.4.12"
   },
   "dependencies": {
-    "@standardnotes/snjs": "workspace:*"
+    "@standardnotes/snjs": "workspace:*",
+    "sha.js": "^2.4.12"
   },
   "devDependencies": {
     "@babel/core": "^7.22.9",
