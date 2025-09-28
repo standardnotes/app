@@ -16967,10 +16967,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-func-name@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "get-func-name@npm:2.0.0"
-  checksum: 8d82e69f3e7fab9e27c547945dfe5cc0c57fc0adf08ce135dddb01081d75684a03e7a0487466f478872b341d52ac763ae49e660d01ab83741f74932085f693c3
+"get-func-name@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "get-func-name@npm:3.0.0"
+  checksum: 6cfc29baa43ef7a68caddffb85b3afc02e4945f488fc49205414116cd323bb9c590eb699bba8070ec07b0b4f1fd35ed41859d6ba86784bba916fa58e413cd8e1
   languageName: node
   linkType: hard
 
