@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.200.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.1...@standardnotes/web@3.200.2) (2025-09-29)
+
+### Bug Fixes
+
+* Fixes rendering of non-Latin alphabet characters in PDF export ([#2937](https://github.com/standardnotes/app/issues/2937)) ([6b408a6](https://github.com/standardnotes/app/commit/6b408a670d05f32ebb101fb129ebcb728f11dc2d))
+* Fixes Use recovery code option being shown on account creation ([#2939](https://github.com/standardnotes/app/issues/2939)) ([0055696](https://github.com/standardnotes/app/commit/0055696c35f6016eee88ce14cfabe0e13a4e6aa6))
+
 ## [3.200.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.0...@standardnotes/web@3.200.1) (2025-09-26)
 
 **Note:** Version bump only for package @standardnotes/web
