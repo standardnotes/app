@@ -64,7 +64,6 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       }
     },
   ): Promise<string> {
-    let didThrow = false
     if (superString.length === 0) {
       return superString
     }
@@ -82,7 +81,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
 
     let content: string | undefined
 
-    await new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve) => {
       const handleFileNodes = () => {
         if (embedBehavior === 'reference') {
           resolve()
@@ -137,16 +136,12 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
           }),
         )
           .then(() => resolve())
-          .catch((error) => {
-            didThrow = true
-            console.error(error)
-            reject(error)
-          })
+          .catch(console.error)
       }
       this.exportEditor.update(handleFileNodes, { discrete: true })
     })
 
-    await new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve) => {
       const convertToFormat = () => {
         switch (toFormat) {
           case 'txt':
@@ -169,16 +164,10 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
             break
           case 'pdf': {
             void import('../Lexical/Utils/PDFExport/PDFExport').then(({ $generatePDFFromNodes }): void => {
-              void $generatePDFFromNodes(this.exportEditor, config?.pdf?.pageSize || 'A4')
-                .then((pdf) => {
-                  content = pdf
-                  resolve()
-                })
-                .catch((error) => {
-                  didThrow = true
-                  console.error(error)
-                  reject(error)
-                })
+              void $generatePDFFromNodes(this.exportEditor, config?.pdf?.pageSize || 'A4').then((pdf) => {
+                content = pdf
+                resolve()
+              })
             })
             break
           }
@@ -192,7 +181,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       this.exportEditor.update(convertToFormat, { discrete: true })
     })
 
-    if (didThrow || typeof content !== 'string') {
+    if (typeof content !== 'string') {
       throw new Error('Could not export note')
     }
 

@@ -23,7 +23,6 @@ import { $isCollapsibleTitleNode } from '../../../Plugins/CollapsiblePlugin/Coll
 import PDFWorker, { PDFDataNode, PDFWorkerInterface } from './PDFWorker.worker'
 import { wrap } from 'comlink'
 import { PrefKey, PrefValue } from '@standardnotes/snjs'
-import { FALLBACK_FONT_FAMILY, FontFamily, MONOSPACE_FONT_FAMILY, getFontFamiliesFromLexicalNode } from './FontConfig'
 
 const styles = StyleSheet.create({
   page: {
@@ -144,12 +143,6 @@ const getFontSizeForHeading = (heading: HeadingNode) => {
 }
 
 const getNodeTextAlignment = (node: ElementNode) => {
-  const direction = node.getDirection()
-
-  if (direction === 'rtl') {
-    return 'right'
-  }
-
   const formatType = node.getFormatType()
 
   if (!formatType) {
@@ -167,12 +160,7 @@ const getNodeTextAlignment = (node: ElementNode) => {
   return formatType
 }
 
-const getNodeDirection = (node: ElementNode) => {
-  const direction = node.getDirection()
-  return direction ?? 'ltr'
-}
-
-const getPDFDataNodeFromLexicalNode = (node: LexicalNode, fontFamilies: FontFamily[]): PDFDataNode => {
+const getPDFDataNodeFromLexicalNode = (node: LexicalNode): PDFDataNode => {
   const parent = node.getParent()
 
   if ($isLineBreakNode(node)) {
@@ -188,23 +176,23 @@ const getPDFDataNodeFromLexicalNode = (node: LexicalNode, fontFamilies: FontFami
     const isBold = node.hasFormat('bold')
     const isItalic = node.hasFormat('italic')
     const isHighlight = node.hasFormat('highlight')
-    const nodeFontFamilies = getFontFamiliesFromLexicalNode(node)
-    let fontFamily: FontFamily[] | FontFamily = [...nodeFontFamilies, FALLBACK_FONT_FAMILY]
 
-    if (isInlineCode && isCodeNodeText) {
-      fontFamily = MONOSPACE_FONT_FAMILY
-    } else {
-      fontFamilies.push(...nodeFontFamilies)
+    let font = isInlineCode || isCodeNodeText ? 'Courier' : 'Helvetica'
+    if (isBold || isItalic) {
+      font += '-'
+      if (isBold) {
+        font += 'Bold'
+      }
+      if (isItalic) {
+        font += 'Oblique'
+      }
     }
 
     return {
       type: 'Text',
       children: node.getTextContent(),
       style: {
-        fontFamily,
-        fontWeight: isBold ? 'bold' : 'normal',
-        fontStyle: isItalic ? 'italic' : 'normal',
-        direction: $isElementNode(parent) ? getNodeDirection(parent) : 'ltr',
+        fontFamily: font,
         textDecoration: node.hasFormat('underline')
           ? 'underline'
           : node.hasFormat('strikethrough')
@@ -248,7 +236,7 @@ const getPDFDataNodeFromLexicalNode = (node: LexicalNode, fontFamilies: FontFami
           type: 'View',
           style: [styles.row, styles.wrap],
           children: line.map((child) => {
-            return getPDFDataNodeFromLexicalNode(child, fontFamilies)
+            return getPDFDataNodeFromLexicalNode(child)
           }),
         }
       }),
@@ -278,7 +266,7 @@ const getPDFDataNodeFromLexicalNode = (node: LexicalNode, fontFamilies: FontFami
   const children =
     $isElementNode(node) || $isTableNode(node) || $isTableCellNode(node) || $isTableRowNode(node)
       ? node.getChildren().map((child) => {
-          return getPDFDataNodeFromLexicalNode(child, fontFamilies)
+          return getPDFDataNodeFromLexicalNode(child)
         })
       : undefined
 
@@ -426,8 +414,8 @@ const getPDFDataNodeFromLexicalNode = (node: LexicalNode, fontFamilies: FontFami
   }
 }
 
-const getPDFDataNodesFromLexicalNodes = (nodes: LexicalNode[], fontFamilies: FontFamily[]): PDFDataNode[] => {
-  return nodes.map((node) => getPDFDataNodeFromLexicalNode(node, fontFamilies))
+const getPDFDataNodesFromLexicalNodes = (nodes: LexicalNode[]): PDFDataNode[] => {
+  return nodes.map(getPDFDataNodeFromLexicalNode)
 }
 
 const pdfWorker = new PDFWorker()
@@ -437,21 +425,17 @@ const PDFWorkerComlink = wrap<PDFWorkerInterface>(pdfWorker)
  * @returns The PDF as an object url
  */
 export function $generatePDFFromNodes(editor: LexicalEditor, pageSize: PrefValue[PrefKey.SuperNoteExportPDFPageSize]) {
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<string>((resolve) => {
     editor.getEditorState().read(() => {
       const root = $getRoot()
       const nodes = root.getChildren()
-      const fontFamilies: FontFamily[] = []
-      const pdfDataNodes = getPDFDataNodesFromLexicalNodes(nodes, fontFamilies)
 
-      void PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize, fontFamilies)
-        .then((blob) => {
-          const url = URL.createObjectURL(blob)
-          resolve(url)
-        })
-        .catch((error) => {
-          reject(error)
-        })
+      const pdfDataNodes = getPDFDataNodesFromLexicalNodes(nodes)
+
+      void PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize).then((blob) => {
+        const url = URL.createObjectURL(blob)
+        resolve(url)
+      })
     })
   })
 }
