@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.200.4",
+      "title": "[3.200.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.3...@standardnotes/web@3.200.4) (2025-10-13)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixes pasting from Google Docs always uses bold font ([#2941](https://github.com/standardnotes/app/issues/2941)) ([bc7c792](https://github.com/standardnotes/app/commit/bc7c792570eb4ddce448f2d48aad4c9bcf9a08b9))",
+      "parsed": {
+        "_": [
+          "Fixes pasting from Google Docs always uses bold font (#2941) (bc7c792)"
+        ],
+        "Bug Fixes": [
+          "Fixes pasting from Google Docs always uses bold font (#2941) (bc7c792)"
+        ]
+      }
+    },
+    {
       "version": "3.200.3",
       "title": "[3.200.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.2...@standardnotes/web@3.200.3) (2025-09-29)",
       "date": null,

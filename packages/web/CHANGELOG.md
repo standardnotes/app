@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.200.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.3...@standardnotes/web@3.200.4) (2025-10-13)
+
+### Bug Fixes
+
+* Fixes pasting from Google Docs always uses bold font ([#2941](https://github.com/standardnotes/app/issues/2941)) ([bc7c792](https://github.com/standardnotes/app/commit/bc7c792570eb4ddce448f2d48aad4c9bcf9a08b9))
+
 ## [3.200.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.2...@standardnotes/web@3.200.3) (2025-09-29)
 
 **Note:** Version bump only for package @standardnotes/web
