@@ -326,7 +326,7 @@ jobs:
 
       - name: Certificates Sync
         run: |
-          smctl windows certsync
+          smctl windows certsync --keypair-alias=${{ secrets.SM_KEYPAIR_ALIAS }}
         shell: cmd
 
       - name: Health Check Signing Manager
