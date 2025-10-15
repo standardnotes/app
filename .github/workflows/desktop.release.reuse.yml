@@ -329,6 +329,10 @@ jobs:
           smctl windows certsync
         shell: cmd
 
+      - name: Health Check Signing Manager
+        run: smctl healthcheck
+        shell: cmd
+
       - name: Build & Sign With Electron Builder
         run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$(node -p "require('./../web/package.json').version")
 
