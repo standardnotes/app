@@ -336,32 +336,6 @@ jobs:
       - name: Build & Sign With Electron Builder
         run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$(node -p "require('./../web/package.json').version")
 
-      - name: Collect KeyLocker Logs
-        run: |
-          echo "Collecting DigiCert KeyLocker logs..."
-          echo "USERPROFILE: %USERPROFILE%"
-          echo "HOME: %HOME%"
-
-          if exist "%USERPROFILE%\.signingmanager\logs\smksp.log" (
-            echo "Found KeyLocker log file at %USERPROFILE%\.signingmanager\logs\smksp.log"
-            type "%USERPROFILE%\.signingmanager\logs\smksp.log"
-          ) else (
-            echo "KeyLocker log file not found at %USERPROFILE%\.signingmanager\logs\smksp.log"
-            echo "Checking if .signingmanager directory exists..."
-            if exist "%USERPROFILE%\.signingmanager" (
-              echo ".signingmanager directory exists, checking for logs subdirectory..."
-              if exist "%USERPROFILE%\.signingmanager\logs" (
-                echo "logs directory exists, listing contents:"
-                dir "%USERPROFILE%\.signingmanager\logs"
-              ) else (
-                echo "logs subdirectory does not exist"
-              )
-            ) else (
-              echo ".signingmanager directory does not exist"
-            )
-          )
-        shell: cmd
-
       - name: Upload
         uses: actions/upload-artifact@v4.0.0
         with:
@@ -371,7 +345,6 @@ jobs:
             packages/desktop/dist/*.exe
             packages/desktop/dist/*.yml
             packages/desktop/dist/*.yaml
-            ${{ env.USERPROFILE }}\.signingmanager\logs\smksp.log
 
   Publish:
     runs-on: ubuntu-latest
