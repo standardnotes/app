@@ -80,6 +80,7 @@ export class MobileDevice implements MobileDeviceInterface {
     private colorSchemeService?: ColorSchemeObserverService,
   ) {
     this.initializeNotifications().catch(console.error)
+    this.reloadStatusBarStyle(false)
   }
 
   async initializeNotifications() {
