@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.217](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.216...@standardnotes/mobile@3.58.217) (2025-10-22)
+
+### Bug Fixes
+
+* Fixes status bar icons not visible on app launch in Android ([#2947](https://github.com/standardnotes/app/issues/2947)) ([fb5786c](https://github.com/standardnotes/app/commit/fb5786c2e3b0150f6f8ca2cbdd765b5d8d120c12))
+
 ## [3.58.216](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.215...@standardnotes/mobile@3.58.216) (2025-10-13)
 
 **Note:** Version bump only for package @standardnotes/mobile
