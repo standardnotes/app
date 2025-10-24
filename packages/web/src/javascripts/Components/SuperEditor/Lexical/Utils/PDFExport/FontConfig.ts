@@ -92,99 +92,88 @@ const FONT_VARIANT_TO_FONT_OPTIONS: Record<FontVariant, { fontWeight: FontWeight
   },
 }
 
-const ASSET_FONT_BASE_PATH = '/assets/fonts'
+const FONT_ASSETS_BASE_PATH = 'https://assets.standardnotes.com/fonts'
+const FALLBACK_FONT_SOURCE = '/noto-sans/NotoSans-Regular.ttf'
 
-const resolveAssetUrl = (path: string) => {
-  try {
-    const workerOrigin = (self as unknown as { location?: { origin?: string } })?.location?.origin
-    const browserOrigin = typeof window !== 'undefined' ? window.location?.origin : undefined
-    const origin = workerOrigin || browserOrigin
-    return origin ? new URL(path, origin).toString() : path
-  } catch {
-    return path
-  }
-}
-
-const FALLBACK_FONT_SOURCE = `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-Regular.ttf`
 export const FALLBACK_FONT_FAMILY = FontFamily.Helvetica
 export const MONOSPACE_FONT_FAMILY = FontFamily.Courier
 
 const FONT_FAMILY_TO_FONT_SOURCES: Partial<Record<FontFamily, Partial<Record<FontVariant, string>>>> = {
   [FontFamily.NotoSans]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-Regular.ttf`,
-    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-Bold.ttf`,
-    [FontVariant.Italic]: `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-Italic.ttf`,
-    [FontVariant.BoldItalic]: `${ASSET_FONT_BASE_PATH}/noto-sans/NotoSans-BoldItalic.ttf`,
+    [FontVariant.Normal]: '/noto-sans/NotoSans-Regular.ttf',
+    [FontVariant.Bold]: '/noto-sans/NotoSans-Bold.ttf',
+    [FontVariant.Italic]: '/noto-sans/NotoSans-Italic.ttf',
+    [FontVariant.BoldItalic]: '/noto-sans/NotoSans-BoldItalic.ttf',
   },
   [FontFamily.NotoSansGreek]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-greek/NotoSansGreek-Regular.ttf`,
-    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans-greek/NotoSansGreek-Bold.ttf`,
+    [FontVariant.Normal]: '/noto-sans-greek/NotoSansGreek-Regular.ttf',
+    [FontVariant.Bold]: '/noto-sans-greek/NotoSansGreek-Bold.ttf',
   },
   [FontFamily.NotoSansHebrew]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-hebrew/NotoSansHebrew-Regular.ttf`,
-    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans-hebrew/NotoSansHebrew-Bold.ttf`,
+    [FontVariant.Normal]: '/noto-sans-hebrew/NotoSansHebrew-Regular.ttf',
+    [FontVariant.Bold]: '/noto-sans-hebrew/NotoSansHebrew-Bold.ttf',
   },
   [FontFamily.NotoSansArabic]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-arabic/NotoSansArabic-Regular.ttf`,
-    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans-arabic/NotoSansArabic-Bold.ttf`,
+    [FontVariant.Normal]: '/noto-sans-arabic/NotoSansArabic-Regular.ttf',
+    [FontVariant.Bold]: '/noto-sans-arabic/NotoSansArabic-Bold.ttf',
   },
   [FontFamily.NotoSansDevanagari]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-devanagari/NotoSansDevanagari-Regular.ttf`,
-    [FontVariant.Bold]: `${ASSET_FONT_BASE_PATH}/noto-sans-devanagari/NotoSansDevanagari-Bold.ttf`,
+    [FontVariant.Normal]: '/noto-sans-devanagari/NotoSansDevanagari-Regular.ttf',
+    [FontVariant.Bold]: '/noto-sans-devanagari/NotoSansDevanagari-Bold.ttf',
   },
   [FontFamily.NotoSansBengali]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-bengali/NotoSansBengali-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-bengali/NotoSansBengali-Regular.ttf',
   },
   [FontFamily.NotoSansTamil]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-tamil/NotoSansTamil-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-tamil/NotoSansTamil-Regular.ttf',
   },
   [FontFamily.NotoSansTelugu]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-telugu/NotoSansTelugu-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-telugu/NotoSansTelugu-Regular.ttf',
   },
   [FontFamily.NotoSansGujarati]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-gujarati/NotoSansGujarati-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-gujarati/NotoSansGujarati-Regular.ttf',
   },
   [FontFamily.NotoSansGurmukhi]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-gurmukhi/NotoSansGurmukhi-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-gurmukhi/NotoSansGurmukhi-Regular.ttf',
   },
   [FontFamily.NotoSansMalayalam]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-malayalam/NotoSansMalayalam-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-malayalam/NotoSansMalayalam-Regular.ttf',
   },
   [FontFamily.NotoSansSinhala]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-sinhala/NotoSansSinhala-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-sinhala/NotoSansSinhala-Regular.ttf',
   },
   [FontFamily.NotoSansThai]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-thai/NotoSansThai-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-thai/NotoSansThai-Regular.ttf',
   },
   [FontFamily.NotoSansArmenian]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-armenian/NotoSansArmenian-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-armenian/NotoSansArmenian-Regular.ttf',
   },
   [FontFamily.NotoSansGeorgian]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-georgian/NotoSansGeorgian-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-georgian/NotoSansGeorgian-Regular.ttf',
   },
   [FontFamily.NotoSansEthiopic]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-ethiopic/NotoSansEthiopic-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-ethiopic/NotoSansEthiopic-Regular.ttf',
   },
   [FontFamily.NotoSansMyanmar]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-myanmar/NotoSansMyanmar-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-myanmar/NotoSansMyanmar-Regular.ttf',
   },
   [FontFamily.NotoSansKhmer]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-khmer/NotoSansKhmer-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-khmer/NotoSansKhmer-Regular.ttf',
   },
   [FontFamily.NotoSansLao]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-lao/NotoSansLao-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-lao/NotoSansLao-Regular.ttf',
   },
   [FontFamily.NotoSansTibetan]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-tibetan/NotoSansTibetan-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-tibetan/NotoSansTibetan-Regular.ttf',
   },
   [FontFamily.NotoSansSC]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-sc/NotoSansSC-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-sc/NotoSansSC-Regular.ttf',
   },
   [FontFamily.NotoSansJP]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-jp/NotoSansJP-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-jp/NotoSansJP-Regular.ttf',
   },
   [FontFamily.NotoSansKR]: {
-    [FontVariant.Normal]: `${ASSET_FONT_BASE_PATH}/noto-sans-kr/NotoSansKR-Regular.ttf`,
+    [FontVariant.Normal]: '/noto-sans-kr/NotoSansKR-Regular.ttf',
   },
 }
 
@@ -275,7 +264,7 @@ const getFontRegisterOptions = (fontFamily: FontFamily) => {
     family: fontFamily,
     fonts: Object.entries(FONT_VARIANT_TO_FONT_OPTIONS).map(([variant, fontOptions]) => ({
       ...fontOptions,
-      src: resolveAssetUrl(FONT_FAMILY_TO_FONT_SOURCES[fontFamily]?.[variant as FontVariant] ?? fallback),
+      src: `${FONT_ASSETS_BASE_PATH}${FONT_FAMILY_TO_FONT_SOURCES[fontFamily]?.[variant as FontVariant] ?? fallback}`,
     })),
   }
 }
