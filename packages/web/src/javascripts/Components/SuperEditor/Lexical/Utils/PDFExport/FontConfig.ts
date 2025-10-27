@@ -36,7 +36,6 @@ enum UnicodeScript {
 
 export enum FontFamily {
   NotoSans = 'Noto Sans',
-  NotoSansGreek = 'Noto Sans Greek',
   NotoSansHebrew = 'Noto Sans Hebrew',
   NotoSansArabic = 'Noto Sans Arabic',
   NotoSansDevanagari = 'Noto Sans Devanagari',
@@ -55,7 +54,6 @@ export enum FontFamily {
   NotoSansKhmer = 'Noto Sans Khmer',
   NotoSansLao = 'Noto Sans Lao',
   NotoSansTibetan = 'Noto Sans Tibetan',
-  NotoSansVietnamese = 'Noto Sans Vietnamese',
   NotoSansSC = 'Noto Sans SC',
   NotoSansJP = 'Noto Sans JP',
   NotoSansKR = 'Noto Sans KR',
@@ -104,10 +102,6 @@ const FONT_FAMILY_TO_FONT_SOURCES: Partial<Record<FontFamily, Partial<Record<Fon
     [FontVariant.Bold]: '/noto-sans/NotoSans-Bold.ttf',
     [FontVariant.Italic]: '/noto-sans/NotoSans-Italic.ttf',
     [FontVariant.BoldItalic]: '/noto-sans/NotoSans-BoldItalic.ttf',
-  },
-  [FontFamily.NotoSansGreek]: {
-    [FontVariant.Normal]: '/noto-sans-greek/NotoSansGreek-Regular.ttf',
-    [FontVariant.Bold]: '/noto-sans-greek/NotoSansGreek-Bold.ttf',
   },
   [FontFamily.NotoSansHebrew]: {
     [FontVariant.Normal]: '/noto-sans-hebrew/NotoSansHebrew-Regular.ttf',
@@ -179,7 +173,6 @@ const FONT_FAMILY_TO_FONT_SOURCES: Partial<Record<FontFamily, Partial<Record<Fon
 
 export const getFontFamilyForUnicodeScript = (script: UnicodeScript): FontFamily => {
   switch (script) {
-    // Common, shared scripts
     case UnicodeScript.Common:
     case UnicodeScript.Latin:
     case UnicodeScript.Cyrillic:
