@@ -1,6 +1,22 @@
 {
   "versions": [
     {
+      "version": "3.200.6",
+      "title": "[3.200.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.5...@standardnotes/web@3.200.6) (2025-10-27)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixes dividers not rendered in Super PDF exports ([#2949](https://github.com/standardnotes/app/issues/2949)) ([9d79bbf](https://github.com/standardnotes/app/commit/9d79bbfeb012c854da738dac765787d19cd26513))\n* Fixes rendering of non-Latin alphabet characters in PDF export ([#2948](https://github.com/standardnotes/app/issues/2948)) ([8af986a](https://github.com/standardnotes/app/commit/8af986a0b11ed4dc3d098f070f2bf70467a3bbb2))",
+      "parsed": {
+        "_": [
+          "Fixes dividers not rendered in Super PDF exports (#2949) (9d79bbf)",
+          "Fixes rendering of non-Latin alphabet characters in PDF export (#2948) (8af986a)"
+        ],
+        "Bug Fixes": [
+          "Fixes dividers not rendered in Super PDF exports (#2949) (9d79bbf)",
+          "Fixes rendering of non-Latin alphabet characters in PDF export (#2948) (8af986a)"
+        ]
+      }
+    },
+    {
       "version": "3.200.5",
       "title": "[3.200.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.4...@standardnotes/web@3.200.5) (2025-10-22)",
       "date": null,

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.200.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.5...@standardnotes/web@3.200.6) (2025-10-27)
+
+### Bug Fixes
+
+* Fixes dividers not rendered in Super PDF exports ([#2949](https://github.com/standardnotes/app/issues/2949)) ([9d79bbf](https://github.com/standardnotes/app/commit/9d79bbfeb012c854da738dac765787d19cd26513))
+* Fixes rendering of non-Latin alphabet characters in PDF export ([#2948](https://github.com/standardnotes/app/issues/2948)) ([8af986a](https://github.com/standardnotes/app/commit/8af986a0b11ed4dc3d098f070f2bf70467a3bbb2))
+
 ## [3.200.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.4...@standardnotes/web@3.200.5) (2025-10-22)
 
 **Note:** Version bump only for package @standardnotes/web
