@@ -12,6 +12,7 @@ import {
 import { $isLinkNode } from '@lexical/link'
 import { $isHeadingNode, type HeadingNode, $isQuoteNode } from '@lexical/rich-text'
 import { $isListNode, $isListItemNode, ListType } from '@lexical/list'
+import { $isHorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode'
 import { $isTableNode, $isTableRowNode, $isTableCellNode } from '@lexical/table'
 import { $isCodeNode } from '@lexical/code'
 import { $isInlineFileNode } from '../../../Plugins/InlineFilePlugin/InlineFileNode'
@@ -391,6 +392,18 @@ const getPDFDataNodeFromLexicalNode = (node: LexicalNode, fontFamilies: FontFami
     return {
       type: 'View',
       children,
+    }
+  }
+
+  if ($isHorizontalRuleNode(node)) {
+    return {
+      type: 'View',
+      style: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#cccccc',
+        marginVertical: 10,
+        width: '100%',
+      },
     }
   }
 
