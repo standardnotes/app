@@ -29,16 +29,6 @@ module.exports = (env, argv) => {
       devMiddleware: {
         writeToDisk: argv.writeToDisk,
       },
-      proxy: {
-        '/assets': {
-          target: 'https://assets.standardnotes.com',
-          changeOrigin: true,
-          secure: false,
-          pathRewrite: {
-            '^/assets': '',
-          },
-        },
-      },
     },
   })
 }
