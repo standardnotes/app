@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.200.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.6...@standardnotes/web@3.200.7) (2025-10-28)
+
+### Reverts
+
+* Revert "fix: Fixes rendering of non-Latin alphabet characters in PDF export (#2948)" ([4956122](https://github.com/standardnotes/app/commit/4956122b9229fff4205ab04cbbd5f794f299deda)), closes [#2948](https://github.com/standardnotes/app/issues/2948)
+* Revert "chore: fix pdf fonts fetching for local development (#2950) [skip e2e]" ([e35ee74](https://github.com/standardnotes/app/commit/e35ee746169ce626c38acecbe828762cf7c5676d)), closes [#2950](https://github.com/standardnotes/app/issues/2950)
+* Revert "chore: upgrade lexical (#2951)" ([77c1847](https://github.com/standardnotes/app/commit/77c18478be896068cccdcf9ff010621321092fdd)), closes [#2951](https://github.com/standardnotes/app/issues/2951)
+
 ## [3.200.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.5...@standardnotes/web@3.200.6) (2025-10-27)
 
 ### Bug Fixes
