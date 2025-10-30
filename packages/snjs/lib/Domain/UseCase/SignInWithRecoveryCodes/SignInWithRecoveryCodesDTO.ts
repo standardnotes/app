@@ -3,4 +3,5 @@ export interface SignInWithRecoveryCodesDTO {
   username: string
   password: string
   hvmToken?: string
+  mergeLocal?: boolean
 }
