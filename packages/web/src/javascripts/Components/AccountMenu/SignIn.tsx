@@ -292,7 +292,7 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
           <MergeLocalDataCheckbox
             checked={shouldMergeLocal}
             onChange={handleShouldMergeChange}
-            disabled={isSigningIn || isRecoverySignIn}
+            disabled={isSigningIn}
             notesAndTagsCount={notesAndTagsCount}
           />
         ) : null}
