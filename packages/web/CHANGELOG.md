@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.200.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.8...@standardnotes/web@3.200.9) (2025-10-28)
+
+### Reverts
+
+* Revert "fix: Fixes rendering of non-Latin alphabet characters in PDF export (#2948)" [skip e2e] ([d9cf9f7](https://github.com/standardnotes/app/commit/d9cf9f758c529785b1af58ffe9610b945907d4c7)), closes [#2948](https://github.com/standardnotes/app/issues/2948)
+
 ## [3.200.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.7...@standardnotes/web@3.200.8) (2025-10-28)
 
 ### Bug Fixes

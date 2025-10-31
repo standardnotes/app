@@ -20,8 +20,11 @@ module.exports = {
     __WEB_VERSION__: '1.0.0',
   },
   transform: {
-    '^.+\\.(ts|tsx)?$': 'ts-jest',
+    '^.+\\.(ts|tsx|js|jsx)?$': 'ts-jest',
     '\\.svg$': 'svg-jest',
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-error-boundary)/)',
+  ],
   testEnvironment: 'jsdom',
 }
