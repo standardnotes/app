@@ -24,7 +24,13 @@ import { $isCollapsibleTitleNode } from '../../../Plugins/CollapsiblePlugin/Coll
 import PDFWorker, { PDFDataNode, PDFWorkerInterface } from './PDFWorker.worker'
 import { wrap } from 'comlink'
 import { PrefKey, PrefValue } from '@standardnotes/snjs'
-import { FALLBACK_FONT_FAMILY, FontFamily, MONOSPACE_FONT_FAMILY, getFontFamiliesFromLexicalNode } from './FontConfig'
+import {
+  FALLBACK_FONT_FAMILY,
+  FONT_ASSETS_BASE_PATH,
+  FontFamily,
+  MONOSPACE_FONT_FAMILY,
+  getFontFamiliesFromLexicalNode,
+} from './FontConfig'
 
 const styles = StyleSheet.create({
   page: {
@@ -173,7 +179,11 @@ const getNodeDirection = (node: ElementNode) => {
   return direction ?? 'ltr'
 }
 
-const getPDFDataNodeFromLexicalNode = (node: LexicalNode, fontFamilies: FontFamily[]): PDFDataNode => {
+const getPDFDataNodeFromLexicalNode = (
+  node: LexicalNode,
+  fontFamilies: FontFamily[],
+  useCustomFonts: boolean = false,
+): PDFDataNode => {
   const parent = node.getParent()
 
   if ($isLineBreakNode(node)) {
@@ -189,13 +199,16 @@ const getPDFDataNodeFromLexicalNode = (node: LexicalNode, fontFamilies: FontFami
     const isBold = node.hasFormat('bold')
     const isItalic = node.hasFormat('italic')
     const isHighlight = node.hasFormat('highlight')
-    const nodeFontFamilies = getFontFamiliesFromLexicalNode(node)
-    let fontFamily: FontFamily[] | FontFamily = [...nodeFontFamilies, FALLBACK_FONT_FAMILY]
+    let fontFamily: FontFamily[] | FontFamily = FALLBACK_FONT_FAMILY
 
     if (isInlineCode && isCodeNodeText) {
       fontFamily = MONOSPACE_FONT_FAMILY
     } else {
-      fontFamilies.push(...nodeFontFamilies)
+      if (useCustomFonts) {
+        const nodeFontFamilies = getFontFamiliesFromLexicalNode(node)
+        fontFamily = [...nodeFontFamilies, FALLBACK_FONT_FAMILY]
+        fontFamilies.push(...nodeFontFamilies)
+      }
     }
 
     return {
@@ -439,8 +452,12 @@ const getPDFDataNodeFromLexicalNode = (node: LexicalNode, fontFamilies: FontFami
   }
 }
 
-const getPDFDataNodesFromLexicalNodes = (nodes: LexicalNode[], fontFamilies: FontFamily[]): PDFDataNode[] => {
-  return nodes.map((node) => getPDFDataNodeFromLexicalNode(node, fontFamilies))
+const getPDFDataNodesFromLexicalNodes = (
+  nodes: LexicalNode[],
+  fontFamilies: FontFamily[],
+  useCustomFonts: boolean,
+): PDFDataNode[] => {
+  return nodes.map((node) => getPDFDataNodeFromLexicalNode(node, fontFamilies, useCustomFonts))
 }
 
 const pdfWorker = new PDFWorker()
@@ -455,9 +472,19 @@ export function $generatePDFFromNodes(editor: LexicalEditor, pageSize: PrefValue
       const root = $getRoot()
       const nodes = root.getChildren()
       const fontFamilies: FontFamily[] = []
-      const pdfDataNodes = getPDFDataNodesFromLexicalNodes(nodes, fontFamilies)
+      let useCustomFonts = false
+      fetch(FONT_ASSETS_BASE_PATH)
+        .then((response) => {
+          if (response.ok) {
+            useCustomFonts = true
+          }
+        })
+        .catch(() => {
+          useCustomFonts = false
+        })
+      const pdfDataNodes = getPDFDataNodesFromLexicalNodes(nodes, fontFamilies, useCustomFonts)
 
-      void PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize, fontFamilies)
+      void PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize, fontFamilies, useCustomFonts)
         .then((blob) => {
           const url = URL.createObjectURL(blob)
           resolve(url)

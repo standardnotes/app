@@ -90,7 +90,7 @@ const FONT_VARIANT_TO_FONT_OPTIONS: Record<FontVariant, { fontWeight: FontWeight
   },
 }
 
-const FONT_ASSETS_BASE_PATH = 'https://assets.standardnotes.com/fonts'
+export const FONT_ASSETS_BASE_PATH = 'https://assets.standardnotes.com/fonts'
 const FALLBACK_FONT_SOURCE = '/noto-sans/NotoSans-Regular.ttf'
 
 export const FALLBACK_FONT_FAMILY = FontFamily.Helvetica
