@@ -26,6 +26,7 @@ import { wrap } from 'comlink'
 import { PrefKey, PrefValue } from '@standardnotes/snjs'
 import {
   FALLBACK_FONT_FAMILY,
+  FALLBACK_FONT_SOURCE,
   FONT_ASSETS_BASE_PATH,
   FontFamily,
   MONOSPACE_FONT_FAMILY,
@@ -262,7 +263,7 @@ const getPDFDataNodeFromLexicalNode = (
           type: 'View',
           style: [styles.row, styles.wrap],
           children: line.map((child) => {
-            return getPDFDataNodeFromLexicalNode(child, fontFamilies)
+            return getPDFDataNodeFromLexicalNode(child, fontFamilies, useCustomFonts)
           }),
         }
       }),
@@ -292,7 +293,7 @@ const getPDFDataNodeFromLexicalNode = (
   const children =
     $isElementNode(node) || $isTableNode(node) || $isTableCellNode(node) || $isTableRowNode(node)
       ? node.getChildren().map((child) => {
-          return getPDFDataNodeFromLexicalNode(child, fontFamilies)
+          return getPDFDataNodeFromLexicalNode(child, fontFamilies, useCustomFonts)
         })
       : undefined
 
@@ -463,35 +464,41 @@ const getPDFDataNodesFromLexicalNodes = (
 const pdfWorker = new PDFWorker()
 const PDFWorkerComlink = wrap<PDFWorkerInterface>(pdfWorker)
 
+const shouldUseCustomFonts = async () => {
+  try {
+    const response = await fetch(`${FONT_ASSETS_BASE_PATH}${FALLBACK_FONT_SOURCE}`, { method: 'HEAD' })
+    return response.ok
+  } catch {
+    return false
+  }
+}
+
 /**
  * @returns The PDF as an object url
  */
 export function $generatePDFFromNodes(editor: LexicalEditor, pageSize: PrefValue[PrefKey.SuperNoteExportPDFPageSize]) {
   return new Promise<string>((resolve, reject) => {
-    editor.getEditorState().read(() => {
-      const root = $getRoot()
-      const nodes = root.getChildren()
-      const fontFamilies: FontFamily[] = []
-      let useCustomFonts = false
-      fetch(FONT_ASSETS_BASE_PATH)
-        .then((response) => {
-          if (response.ok) {
-            useCustomFonts = true
-          }
-        })
-        .catch(() => {
-          useCustomFonts = false
-        })
-      const pdfDataNodes = getPDFDataNodesFromLexicalNodes(nodes, fontFamilies, useCustomFonts)
+    shouldUseCustomFonts()
+      .then((useCustomFonts) => {
+        editor.getEditorState().read(() => {
+          const root = $getRoot()
+          const nodes = root.getChildren()
+          const fontFamilies: FontFamily[] = []
 
-      void PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize, fontFamilies, useCustomFonts)
-        .then((blob) => {
-          const url = URL.createObjectURL(blob)
-          resolve(url)
+          const pdfDataNodes = getPDFDataNodesFromLexicalNodes(nodes, fontFamilies, useCustomFonts)
+
+          void PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize, fontFamilies, useCustomFonts)
+            .then((blob) => {
+              const url = URL.createObjectURL(blob)
+              resolve(url)
+            })
+            .catch((error) => {
+              reject(error)
+            })
         })
-        .catch((error) => {
-          reject(error)
-        })
-    })
+      })
+      .catch((error) => {
+        reject(error)
+      })
   })
 }
