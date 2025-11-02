@@ -30,7 +30,7 @@ import {
   NativeFeatureIdentifier,
   GetDeprecatedEditors,
 } from '@standardnotes/features'
-import { Copy, removeFromArray, sleep, isNotUndefined, LoggerInterface } from '@standardnotes/utils'
+import { Copy, removeFromArray, sleep, isNotUndefined, LoggerInterface, blobToBase64 } from '@standardnotes/utils'
 import { ComponentViewer } from '@Lib/Services/ComponentManager/ComponentViewer'
 import {
   AbstractService,
@@ -90,6 +90,8 @@ export class ComponentManager
     this.items,
   )
 
+  private nativeThemesAsBase64: Record<string, string> = {}
+
   constructor(
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
@@ -109,6 +111,7 @@ export class ComponentManager
     this.addSyncedComponentItemObserver()
     this.registerMobileNativeComponentUrls()
     this.registerDeprecatedEditorUrlsForAndroid()
+    void this.fetchNativeThemesOnMobile()
 
     this.eventDisposers.push(
       preferences.addEventObserver((event) => {
@@ -295,6 +298,29 @@ export class ComponentManager
     }
   }
 
+  /**
+   * Gets all the native themes' CSS and stores them as `data:text/css;base64,...` URLs.
+   */
+  private async fetchNativeThemesOnMobile(): Promise<void> {
+    if (!isMobileDevice(this.device)) {
+      return
+    }
+    try {
+      for await (const theme of GetNativeThemes()) {
+        const css = await this.device.getNativeThemeCSS(theme.identifier)
+        if (css) {
+          const blob = new Blob([css], { type: 'text/css' })
+          const base64 = await blobToBase64(blob)
+          this.nativeThemesAsBase64[theme.identifier] = base64
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      this.postActiveThemesToAllViewers()
+    }
+  }
+
   private registerDeprecatedEditorUrlsForAndroid(): void {
     if (!isMobileDevice(this.device)) {
       return
@@ -367,7 +393,19 @@ export class ComponentManager
   public urlsForActiveThemes(): string[] {
     const themes = this.getActiveThemes()
     const urls = []
+    const isMobile = isMobileDevice(this.device)
     for (const theme of themes) {
+      if (isMobile && theme.isNativeFeature) {
+        /**
+         * Since native themes on mobile are stored in the app bundle and accessed as `file://` URLs,
+         * external editors cannot access them. To solve this, we store base64 encoded versions of the themes and send those to the editor instead of a file URL.
+         */
+        const base64 = this.nativeThemesAsBase64[theme.featureIdentifier]
+        if (base64) {
+          urls.push(base64)
+          continue
+        }
+      }
       const url = this.urlForFeature(theme)
       if (url) {
         urls.push(url)
