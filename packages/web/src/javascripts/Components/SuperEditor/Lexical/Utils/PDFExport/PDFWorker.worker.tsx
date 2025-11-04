@@ -17,6 +17,7 @@ import {
   PageProps,
 } from '@react-pdf/renderer'
 import { expose } from 'comlink'
+import { FontFamily, registerPDFFonts } from './FontConfig'
 
 export type PDFDataNode =
   | ((
@@ -94,7 +95,15 @@ const PDFDocument = ({ nodes, pageSize }: { nodes: PDFDataNode[]; pageSize: Page
   )
 }
 
-const renderPDF = (nodes: PDFDataNode[], pageSize: PageProps['size']) => {
+const renderPDF = (
+  nodes: PDFDataNode[],
+  pageSize: PageProps['size'],
+  fontFamilies: FontFamily[],
+  useCustomFonts: boolean = false,
+) => {
+  if (useCustomFonts) {
+    registerPDFFonts(fontFamilies)
+  }
   return pdf(<PDFDocument pageSize={pageSize} nodes={nodes} />).toBlob()
 }
 
