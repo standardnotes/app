@@ -18,6 +18,8 @@ import IconButton from '@/Components/Button/IconButton'
 import { useApplication } from '../ApplicationProvider'
 import { useCaptcha } from '@/Hooks/useCaptcha'
 import { isErrorResponse } from '@standardnotes/snjs'
+import MergeLocalDataCheckbox from './MergeLocalDataCheckbox'
+import ConfirmNoMergeDialog from './ConfirmNoMergeDialog'
 
 type Props = {
   setMenuPane: (pane: AccountMenuPane) => void
@@ -37,6 +39,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
 
   const [hvmToken, setHVMToken] = useState('')
   const [captchaURL, setCaptchaURL] = useState('')
+  const [showNoMergeConfirmation, setShowNoMergeConfirmation] = useState(false)
 
   const register = useCallback(() => {
     setIsRegistering(true)
@@ -124,9 +127,14 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
         return
       }
 
+      if (notesAndTagsCount > 0 && !shouldMergeLocal) {
+        setShowNoMergeConfirmation(true)
+        return
+      }
+
       checkIfCaptchaRequiredAndRegister()
     },
-    [checkIfCaptchaRequiredAndRegister, confirmPassword, password],
+    [checkIfCaptchaRequiredAndRegister, confirmPassword, password, notesAndTagsCount, shouldMergeLocal],
   )
 
   const handleKeyDown: KeyboardEventHandler = useCallback(
@@ -144,6 +152,15 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
   const handleGoBack = useCallback(() => {
     setMenuPane(AccountMenuPane.Register)
   }, [setMenuPane])
+
+  const closeNoMergeConfirmation = useCallback(() => {
+    setShowNoMergeConfirmation(false)
+  }, [])
+
+  const confirmRegisterWithoutMerge = useCallback(() => {
+    setShowNoMergeConfirmation(false)
+    checkIfCaptchaRequiredAndRegister()
+  }, [checkIfCaptchaRequiredAndRegister])
 
   const confirmPasswordForm = (
     <>
@@ -182,12 +199,11 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
           disabled={isRegistering}
         />
         {notesAndTagsCount > 0 ? (
-          <Checkbox
-            name="should-merge-local"
-            label={`Merge local data (${notesAndTagsCount} notes and tags)`}
+          <MergeLocalDataCheckbox
             checked={shouldMergeLocal}
             onChange={handleShouldMergeChange}
             disabled={isRegistering}
+            notesAndTagsCount={notesAndTagsCount}
           />
         ) : null}
       </form>
@@ -208,6 +224,9 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
         <div className="text-base font-bold">{captchaURL ? 'Human verification' : 'Confirm password'}</div>
       </div>
       {captchaURL ? <div className="p-[10px]">{captchaIframe}</div> : confirmPasswordForm}
+      {showNoMergeConfirmation && (
+        <ConfirmNoMergeDialog onClose={closeNoMergeConfirmation} onConfirm={confirmRegisterWithoutMerge} />
+      )}
     </>
   )
 }

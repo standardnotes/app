@@ -13,6 +13,8 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { getErrorFromErrorResponse, isErrorResponse, getCaptchaHeader } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import { useCaptcha } from '@/Hooks/useCaptcha'
+import MergeLocalDataCheckbox from './MergeLocalDataCheckbox'
+import ConfirmNoMergeDialog from './ConfirmNoMergeDialog'
 
 type Props = {
   setMenuPane: (pane: AccountMenuPane) => void
@@ -34,6 +36,7 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
   const [isPrivateUsername, setIsPrivateUsername] = useState(false)
 
   const [isRecoverySignIn, setIsRecoverySignIn] = useState(false)
+  const [showNoMergeConfirmation, setShowNoMergeConfirmation] = useState(false)
 
   const [captchaURL, setCaptchaURL] = useState('')
   const [showCaptcha, setShowCaptcha] = useState(false)
@@ -139,6 +142,7 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         username: email,
         password: password,
         hvmToken,
+        mergeLocal: shouldMergeLocal,
       })
       .then((result) => {
         if (result.isFailed()) {
@@ -166,7 +170,15 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
       .finally(() => {
         setIsSigningIn(false)
       })
-  }, [application.accountMenuController, application.signInWithRecoveryCodes, email, hvmToken, password, recoveryCodes])
+  }, [
+    application.accountMenuController,
+    application.signInWithRecoveryCodes,
+    email,
+    hvmToken,
+    password,
+    recoveryCodes,
+    shouldMergeLocal,
+  ])
 
   const onPrivateUsernameChange = useCallback(
     (newisPrivateUsername: boolean, privateUsernameIdentifier?: string) => {
@@ -189,13 +201,18 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
       return
     }
 
+    if (notesAndTagsCount > 0 && !shouldMergeLocal) {
+      setShowNoMergeConfirmation(true)
+      return
+    }
+
     if (isRecoverySignIn) {
       recoverySignIn()
       return
     }
 
     signIn()
-  }, [email, isRecoverySignIn, password, recoverySignIn, signIn])
+  }, [email, isRecoverySignIn, password, recoverySignIn, signIn, notesAndTagsCount, shouldMergeLocal])
 
   const handleSignInFormSubmit = useCallback(
     (e: React.SyntheticEvent) => {
@@ -272,12 +289,11 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
           onChange={handleEphemeralChange}
         />
         {notesAndTagsCount > 0 ? (
-          <Checkbox
-            name="should-merge-local"
-            label={`Merge local data (${notesAndTagsCount} notes and tags)`}
+          <MergeLocalDataCheckbox
             checked={shouldMergeLocal}
-            disabled={isSigningIn}
             onChange={handleShouldMergeChange}
+            disabled={isSigningIn}
+            notesAndTagsCount={notesAndTagsCount}
           />
         ) : null}
       </div>
@@ -290,6 +306,19 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
       />
     </>
   )
+
+  const closeNoMergeConfirmation = useCallback(() => {
+    setShowNoMergeConfirmation(false)
+  }, [])
+
+  const confirmSignInWithoutMerge = useCallback(() => {
+    setShowNoMergeConfirmation(false)
+    if (isRecoverySignIn) {
+      recoverySignIn()
+    } else {
+      signIn()
+    }
+  }, [signIn, isRecoverySignIn, recoverySignIn])
 
   return (
     <>
@@ -305,6 +334,9 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         <div className="text-base font-bold">{showCaptcha ? 'Human verification' : 'Sign in'}</div>
       </div>
       {showCaptcha ? <div className="p-[10px]">{captchaIframe}</div> : signInForm}
+      {showNoMergeConfirmation && (
+        <ConfirmNoMergeDialog onClose={closeNoMergeConfirmation} onConfirm={confirmSignInWithoutMerge} />
+      )}
     </>
   )
 }

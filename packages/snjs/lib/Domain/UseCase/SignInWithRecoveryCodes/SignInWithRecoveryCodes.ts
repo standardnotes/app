@@ -103,7 +103,7 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
         payload: {
           payload: {
             ephemeral: false,
-            mergeLocal: false,
+            mergeLocal: dto.mergeLocal ?? true,
             awaitSync: true,
             checkIntegrity: false,
           },
