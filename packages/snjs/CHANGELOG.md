@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.211.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.210.0...@standardnotes/snjs@2.211.0) (2025-11-04)
+
+### Features
+
+* Show warning modal when Merge local data option is unchecked ([#2953](https://github.com/standardnotes/app/issues/2953)) [skip e2e] ([531cc70](https://github.com/standardnotes/app/commit/531cc7066760732ae882e0901dafce276b17d89f))
+
 # [2.210.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.209.14...@standardnotes/snjs@2.210.0) (2025-09-25)
 
 ### Features

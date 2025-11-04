@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.201.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.9...@standardnotes/web@3.201.0) (2025-11-04)
+
+### Bug Fixes
+
+* Fixes rendering of non-Latin alphabet characters in PDF export ([#2956](https://github.com/standardnotes/app/issues/2956)) [skip e2e] ([11e36e1](https://github.com/standardnotes/app/commit/11e36e1d4cca23fa10ccaabd01877d574b62bf06)), closes [#2948](https://github.com/standardnotes/app/issues/2948) [#2950](https://github.com/standardnotes/app/issues/2950)
+
+### Features
+
+* Show warning modal when Merge local data option is unchecked ([#2953](https://github.com/standardnotes/app/issues/2953)) [skip e2e] ([531cc70](https://github.com/standardnotes/app/commit/531cc7066760732ae882e0901dafce276b17d89f))
+
 ## [3.200.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.200.8...@standardnotes/web@3.200.9) (2025-10-28)
 
 ### Reverts
