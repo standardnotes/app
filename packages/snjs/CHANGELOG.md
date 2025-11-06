@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.211.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.0...@standardnotes/snjs@2.211.1) (2025-11-06)
+
+### Bug Fixes
+
+* Fix native themes not working on external editors ([#2957](https://github.com/standardnotes/app/issues/2957)) [skip e2e] ([60e92c7](https://github.com/standardnotes/app/commit/60e92c7035a54fd60e88034ca5ee120ae23e7c1d))
+
 # [2.211.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.210.0...@standardnotes/snjs@2.211.0) (2025-11-04)
 
 ### Features

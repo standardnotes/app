@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.15](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.17.14...@standardnotes/utils@1.17.15) (2025-11-06)
+
+### Bug Fixes
+
+* Fix native themes not working on external editors ([#2957](https://github.com/standardnotes/app/issues/2957)) [skip e2e] ([60e92c7](https://github.com/standardnotes/app/commit/60e92c7035a54fd60e88034ca5ee120ae23e7c1d))
+
 ## [1.17.14](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.17.13...@standardnotes/utils@1.17.14) (2025-06-18)
 
 **Note:** Version bump only for package @standardnotes/utils
