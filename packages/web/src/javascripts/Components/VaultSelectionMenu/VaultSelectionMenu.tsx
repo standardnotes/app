@@ -7,6 +7,7 @@ import SingleVaultSelectionMenu from './SingleVaultSelectionMenu'
 import { useApplication } from '../ApplicationProvider'
 import MenuItemSeparator from '../Menu/MenuItemSeparator'
 import MenuItem from '../Menu/MenuItem'
+import { PreferencePaneId } from '@/__mocks__/@standardnotes/snjs'
 
 type SettingsMode = 'many' | 'single'
 
@@ -44,7 +45,7 @@ const VaultSelectionMenu = () => {
       <MenuItem
         icon="settings"
         onClick={() => {
-          application.preferencesController.openPreferences('vaults')
+          application.preferencesController.openPreferences(PreferencePaneId.Vaults)
         }}
       >
         Open vault settings
