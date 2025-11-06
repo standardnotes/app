@@ -699,3 +699,17 @@ export function spaceSeparatedStrings(...strings: string[]): string {
 export function pluralize(count: number, singular: string, plural: string): string {
   return count === 1 ? singular : plural
 }
+
+export function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      if (reader.result && typeof reader.result === 'string') {
+        resolve(reader.result)
+      } else {
+        reject()
+      }
+    }
+    reader.readAsDataURL(blob)
+  })
+}
