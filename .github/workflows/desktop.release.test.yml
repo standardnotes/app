@@ -24,6 +24,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+      - name: Install system dependencies (libsecret)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsecret-1-dev pkg-config
       - name: Install FPM
         run: sudo gem install fpm -f
 
