@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/desktop",
   "main": "./app/dist/index.js",
-  "version": "3.110.164",
+  "version": "3.110.152",
   "license": "AGPL-3.0",
   "author": "Standard Notes.",
   "private": true,
@@ -29,7 +29,8 @@
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
     "ava": "rimraf test/data/tmp && ava --serial",
     "rebuild:keytar": "yarn app/node_modules/keytar build ",
-    "rebuild:home-server": "electron-rebuild -f -w @standardnotes/home-server -m ./app"
+    "rebuild:home-server": "electron-rebuild -f -w @standardnotes/home-server -m ./app",
+    "rebuild:native:arm64": "electron-rebuild -f -a arm64 -m ./app && yarn rebuild:keytar && yarn rebuild:home-server --arch arm64"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
@@ -176,3 +177,4 @@
     "lint"
   ]
 }
+
