@@ -88,6 +88,12 @@
     "appId": "org.standardnotes.standardnotes",
     "artifactName": "standard-notes-${version}-${os}-${arch}.${ext}",
     "afterSign": "scripts/notarizeMac.js",
+    "asarUnpack": [
+      "**/*.node",
+      "node_modules/keytar",
+      "node_modules/@standardnotes/home-server",
+      "node_modules/microtime"
+    ],
     "files": [
       "compiled/**/*",
       "dist/**/*",
