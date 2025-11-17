@@ -852,7 +852,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.standardnotes.standardnotes.Share-To-SN";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.standardnotes.standardnotes.Share-To-SN";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.standardnotes.standardnotes.Share-To-SN 1727276153";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.standardnotes.standardnotes.Share-To-SN";
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -924,7 +924,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.standardnotes.standardnotes;
 				PRODUCT_NAME = StandardNotes;
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.standardnotes.standardnotes";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.standardnotes.standardnotes 1727276140";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.standardnotes.standardnotes";
 				SWIFT_OBJC_BRIDGING_HEADER = "StandardNotes-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
