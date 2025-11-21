@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.2...@standardnotes/web@3.201.3) (2025-11-21)
+
+### Bug Fixes
+
+* Use regular debouncing for tab indentations ([#2959](https://github.com/standardnotes/app/issues/2959)) [skip e2e] ([3190a27](https://github.com/standardnotes/app/commit/3190a278314fe788f9136528971c0a9cd0dffbf4))
+
 ## [3.201.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.1...@standardnotes/web@3.201.2) (2025-11-07)
 
 **Note:** Version bump only for package @standardnotes/web
