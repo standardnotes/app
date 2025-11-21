@@ -253,11 +253,16 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
 
             setEditorText(editor.value)
 
-            void controller.saveAndAwaitLocalPropagation({
-              text: editor.value,
-              bypassDebouncer: true,
-              isUserModified: true,
-            })
+            setIsPendingLocalPropagation(true)
+
+            void controller
+              .saveAndAwaitLocalPropagation({
+                text: editor.value,
+                isUserModified: true,
+              })
+              .then(() => {
+                setIsPendingLocalPropagation(false)
+              })
           },
         })
 
