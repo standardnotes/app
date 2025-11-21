@@ -31,12 +31,14 @@ describe('mfa service', () => {
   })
 
   it('generates 160 bit base32-encoded mfa secret', async () => {
+    await registerApp(application)
+
     const RFC4648 = /[ABCDEFGHIJKLMNOPQRSTUVWXYZ234567]/g
 
     const secret = await application.mfa.generateMfaSecret()
     expect(secret).to.have.lengthOf(32)
     expect(secret.replace(RFC4648, '')).to.have.lengthOf(0)
-  })
+  }).timeout(Factory.TenSecondTimeout)
 
   it('activates mfa, checks if enabled, deactivates mfa', async () => {
     await registerApp(application)
