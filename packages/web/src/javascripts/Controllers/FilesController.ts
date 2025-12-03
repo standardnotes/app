@@ -691,7 +691,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   deleteFilesPermanently = async (files: FileItem[]) => {
-    const title = Strings.trashItemsTitle
+    const title = Strings.deleteItemsPermanentlyTitle
     const text = files.length === 1 ? StringUtils.deleteFile(files[0].name) : Strings.deleteMultipleFiles
 
     if (
