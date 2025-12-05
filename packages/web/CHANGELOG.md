@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.3...@standardnotes/web@3.201.4) (2025-12-05)
+
+### Bug Fixes
+
+* Fix confirmation dialog title for permanently deleting files ([#2960](https://github.com/standardnotes/app/issues/2960)) ([26735b5](https://github.com/standardnotes/app/commit/26735b5e7a5ca0362b5ba185e67121382c936c88))
+
 ## [3.201.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.2...@standardnotes/web@3.201.3) (2025-11-21)
 
 ### Bug Fixes
