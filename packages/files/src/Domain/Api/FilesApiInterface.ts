@@ -26,7 +26,7 @@ export interface FilesApiInterface {
     encryptedBytes: Uint8Array,
   ): Promise<boolean>
 
-  closeUploadSession(valetToken: string, ownershipType: FileOwnershipType): Promise<boolean>
+  closeUploadSession(valetToken: string, ownershipType: FileOwnershipType): Promise<boolean | ClientDisplayableError>
 
   downloadFile(params: DownloadFileParams): Promise<ClientDisplayableError | undefined>
 

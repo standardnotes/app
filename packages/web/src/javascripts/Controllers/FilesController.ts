@@ -524,9 +524,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       if (operation instanceof ClientDisplayableError) {
         addToast({
           type: ToastType.Error,
-          message: 'Unable to start upload session',
+          message: operation.text,
         })
-        throw new Error('Unable to start upload session')
+        return undefined
       }
 
       const initialProgress = operation.getProgress().percentComplete
@@ -595,7 +595,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           type: ToastType.Error,
           message: uploadedFile.text,
         })
-        throw new Error(uploadedFile.text)
+        return undefined
       }
 
       if (onUploadFinish) {
