@@ -807,6 +807,12 @@ export class SyncService
       throw Error('Attempting to default mode sync without having completed initial.')
     }
 
+    const isReadOnlySession = this.sessionManager.isCurrentSessionReadOnly()
+    if (isReadOnlySession) {
+      this.logger.debug('Skipping upload payloads because session is read-only.')
+      return { uploadPayloads: [], syncMode: useMode }
+    }
+
     const uploadPayloads: ServerSyncPushContextualPayload[] =
       useMode === SyncMode.Default ? await this.payloadsByPreparingForServer(payloads) : []
 
@@ -901,6 +907,7 @@ export class SyncService
     const { shouldExecuteSync, releaseLock } = this.configureSyncLock(options)
 
     const { items, beginDate, frozenDirtyIndex, neverSyncedDeleted } = await this.prepareForSync(options)
+    const shouldSkipUploadsForReadOnlySession = this.sessionManager.isCurrentSessionReadOnly() === true
 
     if (options.mode === SyncMode.LocalOnly) {
       this.logger.debug('Syncing local only, skipping remote sync request')
@@ -918,7 +925,16 @@ export class SyncService
       return
     }
 
-    const latestItems = await this.prepareForSyncExecution(items, inTimeResolveQueue, beginDate, frozenDirtyIndex)
+    const latestItems = await this.prepareForSyncExecution(
+      shouldSkipUploadsForReadOnlySession ? [] : items,
+      inTimeResolveQueue,
+      beginDate,
+      frozenDirtyIndex,
+    )
+
+    if (shouldSkipUploadsForReadOnlySession && items.length > 0) {
+      this.logger.debug('Read-only session detected, skipping upload of dirty items.')
+    }
 
     const online = this.sessionManager.online()
 
