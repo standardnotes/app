@@ -26,6 +26,8 @@ build:windows:
     - yarn clean:build
     - yarn build
     - yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$(node -p "require('./../web/package.json').version")
+  after_script:
+    - rimraf ./packages/
   artifacts:
     paths:
       - out
