@@ -1,0 +1,10 @@
+---
+stages:
+  - build
+
+build:windows:
+  stage: build
+  tags:
+    - windows-drive-signer-v1
+  script:
+    - echo Hi
