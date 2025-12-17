@@ -7910,6 +7910,8 @@ __metadata:
     "@electron/remote": ^2.1.2
     "@standardnotes/domain-core": ^1.40.0
     "@standardnotes/electron-clear-data": 1.1.1
+    "@standardnotes/snjs": "workspace:*"
+    "@standardnotes/utils": "workspace:*"
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
     "@types/lodash": ^4.14.189

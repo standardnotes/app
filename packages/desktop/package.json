@@ -38,6 +38,8 @@
     "@electron/remote": "^2.1.2",
     "@standardnotes/domain-core": "^1.40.0",
     "@standardnotes/electron-clear-data": "1.1.1",
+    "@standardnotes/snjs": "workspace:*",
+    "@standardnotes/utils": "workspace:*",
     "@standardnotes/web": "workspace:*",
     "axios": "^1.4.0",
     "compare-versions": "^6.1.0",
