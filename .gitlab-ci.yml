@@ -7,4 +7,25 @@ build:windows:
   tags:
     - windows-drive-signer-v1
   script:
-    - echo Hi
+    - $env:ELECTRON_GET_USE_PROXY = '1'
+    - $env:GLOBAL_AGENT_HTTPS_PROXY = 'http://proxy.plabs.ch:3128'
+    - $env:GLOBAL_AGENT_HTTP_PROXY = 'http://proxy.plabs.ch:3128'
+    - $env:HTTP_PROXY = 'http://proxy.plabs.ch:3128'
+    - $env:HTTPS_PROXY = 'http://proxy.plabs.ch:3128'
+    - $env:TRANSFER_METER_FREQUENCY = '2s'
+    - $env:ARTIFACT_COMPRESSION_LEVEL = 'fastest'
+    - $env:CACHE_COMPRESSION_LEVEL = 'fastest'
+    - $env:SQUIRREL_SIGNTOOL_ARGS = '/a /tr "http://timestamp.sectigo.com" /fd sha256 /td sha256'
+    - $env:NODE_OPTIONS="--max-old-space-size=8192"
+    - corepack enable
+    - yarn config set httpProxy http://proxy.plabs.ch:3128
+    - yarn config set httpsProxy http://proxy.plabs.ch:3128
+    - yarn install
+    - cd packages/desktop/
+    - yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$(node -p "require('./../web/package.json').version")
+  artifacts:
+    paths:
+      - out
+    expire_in: 1 week
+  # rules:
+  #   - when: manual
