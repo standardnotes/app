@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.4...@standardnotes/web@3.201.5) (2025-12-18)
+
+### Bug Fixes
+
+* Shows informative error on UI when file upload limit is reached ([#2961](https://github.com/standardnotes/app/issues/2961)) ([844b7a7](https://github.com/standardnotes/app/commit/844b7a7a2b26bd4e74c2d8d36ddfa9e28b47f589))
+
 ## [3.201.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.3...@standardnotes/web@3.201.4) (2025-12-05)
 
 ### Bug Fixes
