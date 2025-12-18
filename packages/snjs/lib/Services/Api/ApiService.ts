@@ -821,7 +821,10 @@ export class LegacyApiService
     return response.data.success
   }
 
-  public async closeUploadSession(valetToken: string, ownershipType: FileOwnershipType): Promise<boolean> {
+  public async closeUploadSession(
+    valetToken: string,
+    ownershipType: FileOwnershipType,
+  ): Promise<boolean | ClientDisplayableError> {
     const url = joinPaths(
       this.getFilesHost(),
       ownershipType === 'user' ? Paths.v1.closeUploadSession : Paths.v1.closeSharedVaultUploadSession,
@@ -835,7 +838,7 @@ export class LegacyApiService
     })
 
     if (isErrorResponse(response)) {
-      return false
+      return ClientDisplayableError.FromNetworkError(response)
     }
 
     return response.data.success

@@ -227,7 +227,11 @@ export class FileService extends AbstractService implements FilesClientInterface
       vault && vault.isSharedVaultListing() ? 'shared-vault' : 'user',
     )
 
-    if (isErrorResponse(uploadSessionStarted) || !uploadSessionStarted.data.uploadId) {
+    if (isErrorResponse(uploadSessionStarted)) {
+      return ClientDisplayableError.FromNetworkError(uploadSessionStarted)
+    }
+
+    if (!uploadSessionStarted.data.uploadId) {
       return new ClientDisplayableError('Could not start upload session')
     }
 
@@ -258,6 +262,10 @@ export class FileService extends AbstractService implements FilesClientInterface
       operation.getValetToken(),
       operation.vault && operation.vault.isSharedVaultListing() ? 'shared-vault' : 'user',
     )
+
+    if (uploadSessionClosed instanceof ClientDisplayableError) {
+      return uploadSessionClosed
+    }
 
     if (!uploadSessionClosed) {
       return new ClientDisplayableError('Could not close upload session')
