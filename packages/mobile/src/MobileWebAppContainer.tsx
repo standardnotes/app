@@ -47,6 +47,9 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
   const insets = useSafeAreaInsets()
 
+  const screenHeight = Dimensions.get('screen').height
+  const [webViewContainerHeight, setWebViewContainerHeight] = useState(screenHeight)
+
   useEffect(() => {
     const removeStateServiceListener = stateService.addEventObserver((event: ReactNativeToWebEvent) => {
       webViewRef.current?.postMessage(JSON.stringify({ reactNativeEvent: event, messageType: 'event' }))
@@ -98,27 +101,33 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
       // iOS handles this using the `willChangeFrame` event instead
-      if (Platform.OS === 'android' && insets.bottom > 0) {
-        fireKeyboardSizeChangeEvent(e)
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            reactNativeEvent: ReactNativeToWebEvent.KeyboardDidShow,
-            messageType: 'event',
-          }),
-        )
+      if (Platform.OS === 'android') {
+        setWebViewContainerHeight(e.endCoordinates.screenY)
+        if (insets.bottom > 0) {
+          fireKeyboardSizeChangeEvent(e)
+          webViewRef.current?.postMessage(
+            JSON.stringify({
+              reactNativeEvent: ReactNativeToWebEvent.KeyboardDidShow,
+              messageType: 'event',
+            }),
+          )
+        }
       }
       device.reloadStatusBarStyle(false)
     })
 
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       // iOS handles this using the `willChangeFrame` event instead
-      if (Platform.OS === 'android' && insets.bottom > 0) {
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            reactNativeEvent: ReactNativeToWebEvent.KeyboardDidHide,
-            messageType: 'event',
-          }),
-        )
+      if (Platform.OS === 'android') {
+        setWebViewContainerHeight(screenHeight)
+        if (insets.bottom > 0) {
+          webViewRef.current?.postMessage(
+            JSON.stringify({
+              reactNativeEvent: ReactNativeToWebEvent.KeyboardDidHide,
+              messageType: 'event',
+            }),
+          )
+        }
       }
       device.reloadStatusBarStyle(false)
     })
@@ -137,7 +146,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       keyboardDidHideListener.remove()
       keyboardWillChangeFrame.remove()
     }
-  }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService, insets.bottom])
+  }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService, insets.bottom, screenHeight])
 
   useEffect(() => {
     return notifee.onForegroundEvent(({ type, detail }) => {
@@ -417,10 +426,18 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
   return (
     <View
-      style={{
-        flex: 1,
-        backgroundColor: '#000000',
-      }}
+      style={
+        Platform.OS === 'android'
+          ? {
+              height: webViewContainerHeight,
+              backgroundColor: '#000000',
+              overflow: 'hidden',
+            }
+          : {
+              flex: 1,
+              backgroundColor: '#000000',
+            }
+      }
     >
       <WebView
         ref={webViewRef}
