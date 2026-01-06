@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.229](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.228...@standardnotes/mobile@3.58.229) (2026-01-06)
+
+### Bug Fixes
+
+* fix extra bottom space when scrolling down note in android ([#2965](https://github.com/standardnotes/app/issues/2965)) ([9c73714](https://github.com/standardnotes/app/commit/9c737141f9e82ed0d50c97eb4b4f4427e30f6dda))
+
 ## [3.58.228](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.227...@standardnotes/mobile@3.58.228) (2025-12-18)
 
 **Note:** Version bump only for package @standardnotes/mobile

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.5...@standardnotes/web@3.201.6) (2026-01-06)
+
+### Bug Fixes
+
+* Fixes bottom note being hidden behind nav bar on Android ([#2966](https://github.com/standardnotes/app/issues/2966)) ([895353c](https://github.com/standardnotes/app/commit/895353ca7b2c039df26a59224f146c7f04d77f1a))
+
 ## [3.201.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.4...@standardnotes/web@3.201.5) (2025-12-18)
 
 ### Bug Fixes
