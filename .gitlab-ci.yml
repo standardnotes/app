@@ -21,7 +21,6 @@ build:windows:
     - yarn config set httpProxy http://proxy.plabs.ch:3128
     - yarn config set httpsProxy http://proxy.plabs.ch:3128
     - yarn install
-    - yarn workspace @standardnotes/desktop rebuild:home-server
     - yarn build:desktop
     - yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$(node -p "require('./../web/package.json').version")
   artifacts:
