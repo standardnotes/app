@@ -20,14 +20,10 @@ build:windows:
     - corepack enable
     - yarn config set httpProxy http://proxy.plabs.ch:3128
     - yarn config set httpsProxy http://proxy.plabs.ch:3128
-    - yarn install
-    - yarn dedupe
-    - cd packages/desktop/
-    - yarn clean:build
-    - yarn build
+    - yarn install:immutable
+    - yarn workspace @standardnotes/desktop rebuild:home-server
+    - yarn build:desktop
     - yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$(node -p "require('./../web/package.json').version")
-  after_script:
-    - rimraf ./packages/
   artifacts:
     paths:
       - out
