@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.6...@standardnotes/web@3.201.7) (2026-01-08)
+
+### Bug Fixes
+
+* Fixes Cancel button not working on Super export modal ([#2968](https://github.com/standardnotes/app/issues/2968)) [skip e2e] ([0a5cd13](https://github.com/standardnotes/app/commit/0a5cd13a96135a3365a7ed33a484edd4eb3b6105))
+* Fixes wrong header for session note history when offline ([#2967](https://github.com/standardnotes/app/issues/2967)) ([308b98d](https://github.com/standardnotes/app/commit/308b98db3d3308e5254f17efdeb5cdd385781e22))
+
 ## [3.201.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.5...@standardnotes/web@3.201.6) (2026-01-06)
 
 ### Bug Fixes
