@@ -28,9 +28,10 @@ build:windows:
     - rimraf packages/mobile/node_modules
     - rimraf packages/desktop/node_modules
     - rimraf packages/desktop/app/node_modules
+    - mv packages/desktop/dist dist
   artifacts:
     paths:
-      - out
+      - dist
     expire_in: 1 week
   # rules:
   #   - when: manual
