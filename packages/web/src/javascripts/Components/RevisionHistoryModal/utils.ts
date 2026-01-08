@@ -26,9 +26,24 @@ export const formatDateAsMonthYearString = (date: Date) => {
   })
 }
 
+const getRevisionEntryDate = (entry: RevisionEntry): Date => {
+  const createdAt = (entry as RevisionMetadata).created_at
+  if (createdAt) {
+    return new Date(createdAt)
+  }
+
+  const noteEntry = entry as NoteHistoryEntry
+
+  if (noteEntry.payload.updated_at.getTime() > 0) {
+    return noteEntry.payload.updated_at
+  }
+
+  return noteEntry.payload.created_at
+}
+
 export const getGroupIndexForEntry = (entry: RevisionEntry, groups: ListGroup<RevisionEntry>[]) => {
   const todayAsDate = new Date()
-  const entryDate = new Date((entry as RevisionMetadata).created_at ?? (entry as NoteHistoryEntry).payload.updated_at)
+  const entryDate = getRevisionEntryDate(entry)
 
   const differenceBetweenDatesInDays = calculateDifferenceBetweenDatesInDays(todayAsDate, entryDate)
 
@@ -80,9 +95,7 @@ export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(revi
       sortedGroups[groupIndex]?.entries?.push(entry)
     } else {
       addBeforeLastGroup({
-        title: formatDateAsMonthYearString(
-          new Date((entry as RevisionMetadata).created_at ?? (entry as NoteHistoryEntry).payload.updated_at),
-        ),
+        title: formatDateAsMonthYearString(getRevisionEntryDate(entry)),
         entries: [entry],
       })
     }
