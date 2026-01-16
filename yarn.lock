@@ -7802,13 +7802,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/authenticator@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "@standardnotes/authenticator@npm:2.4.0"
+"@standardnotes/authenticator@npm:^2.4.12":
+  version: 2.4.12
+  resolution: "@standardnotes/authenticator@npm:2.4.12"
   dependencies:
-    "@standardnotes/editor-kit": "github:standardnotes/editor-kit#50ffb15c935a297b082eb00ffd031adc05080d7f"
+    "@standardnotes/editor-kit": "github:standardnotes/editor-kit#80f3080594c46a84e6a1689984fbc985ddd44a8f"
     "@standardnotes/styles": 1.6.1
-  checksum: fdd468add2d0020ce9cc4101b239bffb1ddf2d9c43513de0773feab1b747805bb039e78d8dc61ac6ec01489425d89fa4516612cb0cb82cc222880fb64a0792ae
+  checksum: da56d8fc2ff62bec0ac946df027b5b5c689361172bd01a69d623e7ceda0059c493386cdd8ef4c8a6f3f81a66c8feaedc0f1dada690fcaa6f24f52550ad2dd9e5
   languageName: node
   linkType: hard
 
@@ -7819,19 +7819,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/bold-editor@npm:^1.6.4":
-  version: 1.6.4
-  resolution: "@standardnotes/bold-editor@npm:1.6.4"
-  checksum: d0a1a0ca407ca2f8ce170b52857479f5044b5cba7a76e3696cf49e45c50f0cde8b46be6d8428306eeafc040134ab74a3224feeb162d88a48872c295a553f1a36
+"@standardnotes/bold-editor@npm:^1.7.11":
+  version: 1.7.11
+  resolution: "@standardnotes/bold-editor@npm:1.7.11"
+  checksum: ca37a9eeef81642ace9f833ef43df7e1deb9c8103a41e8096db129a851c619a1d23108104a70df9a17bbb0f7bde1eb005ca90f60c59151c4b833761e6b530cb0
   languageName: node
   linkType: hard
 
-"@standardnotes/classic-code-editor@npm:^1.6.2":
-  version: 1.6.2
-  resolution: "@standardnotes/classic-code-editor@npm:1.6.2"
+"@standardnotes/classic-code-editor@npm:^1.6.12":
+  version: 1.6.12
+  resolution: "@standardnotes/classic-code-editor@npm:1.6.12"
   dependencies:
-    "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
-  checksum: 42192f8e4539b219000ccc73ee572955164a6ce7025d3407a24ef606e2b72ed811a1b842360bae4ec7fdbab9762410923118e6987e8c47a81818ca3b6ced51d3
+    "@standardnotes/component-relay": "github:standardnotes/component-relay#893561d2dc72cd3c66f071b3a509b8b7dcd721de"
+  checksum: 53e7f6b1ad5732b0d07ee2a88e9c8c65db6987a1ae5f14e534544b5aec18d6f1713b73976b9b11f829b6f8b52db332c1e0641fc42784d0dca339ee49f3b5be13
   languageName: node
   linkType: hard
 
@@ -7873,16 +7873,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/component-relay@github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d, @standardnotes/component-relay@standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d":
-  version: 2.3.0
-  resolution: "@standardnotes/component-relay@https://github.com/standardnotes/component-relay.git#commit=839ff5db9bc92db9d42cad8d202ddc4df729597d"
+"@standardnotes/component-relay@github:standardnotes/component-relay#893561d2dc72cd3c66f071b3a509b8b7dcd721de, @standardnotes/component-relay@standardnotes/component-relay#893561d2dc72cd3c66f071b3a509b8b7dcd721de":
+  version: 2.3.1
+  resolution: "@standardnotes/component-relay@https://github.com/standardnotes/component-relay.git#commit=893561d2dc72cd3c66f071b3a509b8b7dcd721de"
   dependencies:
     "@standardnotes/common": ^1.43.0
     "@standardnotes/features": 1.54.0
     "@standardnotes/models": 1.34.3
     "@standardnotes/sncrypto-common": 1.13.0
     "@standardnotes/snjs": 2.147.2
-  checksum: c8478582b49b7f4134eeee29e97385dfd92842072ccec8de7038fb51c2b90fd24f017818a35a3e0f0ea071974c36167fec96d0bdf0184d442644538796dfc257
+  checksum: f51fa8eb4be8897bb736ace2512e443ca13d0737bbd609cddc2bb0d58b729b63c788558132816cfc064190e67c89297bccd210bbee94ef3f4ec92db8cdd42ac8
   languageName: node
   linkType: hard
 
@@ -8027,14 +8027,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/editor-kit@github:standardnotes/editor-kit#50ffb15c935a297b082eb00ffd031adc05080d7f":
-  version: 2.3.0
-  resolution: "@standardnotes/editor-kit@https://github.com/standardnotes/editor-kit.git#commit=50ffb15c935a297b082eb00ffd031adc05080d7f"
+"@standardnotes/editor-kit@github:standardnotes/editor-kit#80f3080594c46a84e6a1689984fbc985ddd44a8f":
+  version: 2.3.3
+  resolution: "@standardnotes/editor-kit@https://github.com/standardnotes/editor-kit.git#commit=80f3080594c46a84e6a1689984fbc985ddd44a8f"
   dependencies:
-    "@standardnotes/component-relay": "standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
+    "@standardnotes/component-relay": "standardnotes/component-relay#893561d2dc72cd3c66f071b3a509b8b7dcd721de"
     "@standardnotes/models": 1.34.3
     "@standardnotes/snjs": 2.147.2
-  checksum: c59d160a86e9c40c10f20d15a0df8874a8305bd4ae281fad8729fbf9bd714667b3849c78e3a28f18c12127e23bb9e4834139c0501505822662b51c19c9ddf343
+  checksum: 6fea312f76da2f581cddb78cd057ef5ba98b1f962504e53ec3abaf41c52df5e1b6316fe69bff9b1b73f9b7efd439386c1670db84b56c6259fc36e08aca29a352
   languageName: node
   linkType: hard
 
@@ -8257,43 +8257,43 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/markdown-basic@npm:^1.6.2":
-  version: 1.6.2
-  resolution: "@standardnotes/markdown-basic@npm:1.6.2"
-  checksum: ba9d49958a0e687fd52bb7deebf169bfdb601d5cdeb3c27f68954d5345e6f1775ebb0a4b91c3cb1a1f36f972a85f1a1bc670b606d46d43cebfdd3a19c9488525
+"@standardnotes/markdown-basic@npm:^1.7.12":
+  version: 1.7.12
+  resolution: "@standardnotes/markdown-basic@npm:1.7.12"
+  checksum: 61fdfe83bc58939fa178ff48e3089148331796dde091b4b91d7546fda0a4f3cdea4e121063f2d066f012d737ee2818536f1952c06f832af7e77d91b4684ed25b
   languageName: node
   linkType: hard
 
-"@standardnotes/markdown-hybrid@npm:^1.7.7":
-  version: 1.7.7
-  resolution: "@standardnotes/markdown-hybrid@npm:1.7.7"
+"@standardnotes/markdown-hybrid@npm:^1.8.11":
+  version: 1.8.11
+  resolution: "@standardnotes/markdown-hybrid@npm:1.8.11"
   dependencies:
-    "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
-  checksum: 81b08e1d6be1b982bb63b779c55bf87554a3e8ee50215bea117fae6c29272f1b4af9281a8f76550de8cb4c1181d927100c4833be442e4b7b31f4c46f3ccafcdd
+    "@standardnotes/component-relay": "github:standardnotes/component-relay#893561d2dc72cd3c66f071b3a509b8b7dcd721de"
+  checksum: c6c9aea18d5cfdb840d2eb67bc03df046e4b64f392d192400308138e0e8c9543522588a1f5533d4dc2678dd753638709f35245164319e61cb6fd119236e10e05
   languageName: node
   linkType: hard
 
-"@standardnotes/markdown-math@npm:^1.4.2":
-  version: 1.4.2
-  resolution: "@standardnotes/markdown-math@npm:1.4.2"
-  checksum: 430a07146cbc357c0b2083f1aab166130e1576460d00af3e07ae0213d5fd2281bb59b463d5311d6f8d7a0c6e1494cdbce4c92cb70968a301393b80319534f676
+"@standardnotes/markdown-math@npm:^1.5.12":
+  version: 1.5.12
+  resolution: "@standardnotes/markdown-math@npm:1.5.12"
+  checksum: 286190f5a2fcde5e379e47b7c075581411f74279ea37e862b3c3b65230e4ba478cea7507d7fc1cbe56147918fa412d1bd421d132f3a0bbd0686a71b02de95e39
   languageName: node
   linkType: hard
 
-"@standardnotes/markdown-minimal@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@standardnotes/markdown-minimal@npm:1.3.0"
-  checksum: 2618a187e328b12939a496053f83cbe1a0098ac9d22fa6f5ba26c6cccb3851bb4cd1024833b5bf40f54f789b9b23ea68c6b2eb82a47b6d96c23a5a3990c27e17
+"@standardnotes/markdown-minimal@npm:^1.4.12":
+  version: 1.4.12
+  resolution: "@standardnotes/markdown-minimal@npm:1.4.12"
+  checksum: 203ee9e147d00aeccb76eb7d10e3c0708da2e132d3b215776674b6f6ae3e6f499597fbbe5c7aadc0e7ce4477205483a03df996674b9d9c89a18f6bc9ea17e84f
   languageName: node
   linkType: hard
 
-"@standardnotes/markdown-visual@npm:^1.3.2":
-  version: 1.3.2
-  resolution: "@standardnotes/markdown-visual@npm:1.3.2"
+"@standardnotes/markdown-visual@npm:^1.4.15":
+  version: 1.4.15
+  resolution: "@standardnotes/markdown-visual@npm:1.4.15"
   dependencies:
-    "@standardnotes/editor-kit": "github:standardnotes/editor-kit#50ffb15c935a297b082eb00ffd031adc05080d7f"
+    "@standardnotes/editor-kit": "github:standardnotes/editor-kit#80f3080594c46a84e6a1689984fbc985ddd44a8f"
     "@standardnotes/styles": 1.6.1
-  checksum: 1c97c0baead932688ba01c0446a2995cd7c304aba7d00a0de280b87ad027c31c84b3be19199ed4779632767fcd16271db304c083dfe886f28864c32d3386c187
+  checksum: 680c48e3264cf3ec2340455ea65e87fde66b8ab8834a5341acab5756cc8424813f5ce70ebb936c427a410993eac6b976f14af526c81566dc5df14aa549ba2331
   languageName: node
   linkType: hard
 
@@ -8459,12 +8459,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/rich-text@npm:^1.8.7":
-  version: 1.8.7
-  resolution: "@standardnotes/rich-text@npm:1.8.7"
+"@standardnotes/rich-text@npm:^1.9.12":
+  version: 1.9.12
+  resolution: "@standardnotes/rich-text@npm:1.9.12"
   dependencies:
-    "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
-  checksum: 81286625b5d28628f0e962d59868d85dec051ca176fbe66a051e06f8a124a1648ec4b3d986203b0b83eb99fe2a088ac8fe49a11bb635d7ff009a96070ea44951
+    "@standardnotes/component-relay": "github:standardnotes/component-relay#893561d2dc72cd3c66f071b3a509b8b7dcd721de"
+  checksum: e363d7b7dc467270485e9a3103bb250277d7e95cf836051699648296f62a8ac5a6033425681841c7f0f3f3052c7f227cb652e161df1e8111e68b528561e8883e
   languageName: node
   linkType: hard
 
@@ -8545,12 +8545,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/simple-task-editor@npm:^1.5.8":
-  version: 1.5.8
-  resolution: "@standardnotes/simple-task-editor@npm:1.5.8"
+"@standardnotes/simple-task-editor@npm:^1.6.14":
+  version: 1.6.14
+  resolution: "@standardnotes/simple-task-editor@npm:1.6.14"
   dependencies:
-    "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
-  checksum: f41fa51414160f1aaaab87e130f1b92cbbc22ca18d70b8b58c9bc186e209c938ecd53c23926a740e098b7767f31ed691e7f46b07d5caaeb818f2a7ada5f6be52
+    "@standardnotes/component-relay": "github:standardnotes/component-relay#893561d2dc72cd3c66f071b3a509b8b7dcd721de"
+  checksum: 168a1cc10d273b05aa0ba1f553cd88f8f460b18c2066a226dc00d29a7f33250e50eaf2289020bde5a887ee6cd35f014425acb7c8f13b251e62bd873a7833c07d
   languageName: node
   linkType: hard
 
@@ -8691,12 +8691,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/spreadsheets@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "@standardnotes/spreadsheets@npm:1.8.1"
+"@standardnotes/spreadsheets@npm:^1.8.13":
+  version: 1.8.13
+  resolution: "@standardnotes/spreadsheets@npm:1.8.13"
   dependencies:
-    "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
-  checksum: d3c66eda2ae8d35215cdfb3c275ae9da23b8114cc03586793cd24985db5394b2e42fdaf9bf9088efb1d0b7e5703aadc2dde8962e0c3da6c244701f99ce5b6b87
+    "@standardnotes/component-relay": "github:standardnotes/component-relay#893561d2dc72cd3c66f071b3a509b8b7dcd721de"
+  checksum: 318abfedb7edcc7ea13cd7ad5d0e89f111b412e4716fad5f9f0fb1928215615552181c784ede45f80493dea85b6c2149aa76f0e896bfe4f00caa27c346ce7813
   languageName: node
   linkType: hard
 
@@ -8870,27 +8870,27 @@ __metadata:
     "@radix-ui/react-slot": ^1.0.1
     "@react-pdf/renderer": ^4.3.0
     "@simplewebauthn/browser": ^8.0.2
-    "@standardnotes/authenticator": ^2.4.0
+    "@standardnotes/authenticator": ^2.4.12
     "@standardnotes/autobiography-theme": ^1.2.7
-    "@standardnotes/bold-editor": ^1.6.4
-    "@standardnotes/classic-code-editor": ^1.6.2
+    "@standardnotes/bold-editor": ^1.7.11
+    "@standardnotes/classic-code-editor": ^1.6.12
     "@standardnotes/dynamic-theme": ^1.2.8
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/focus-theme": ^1.4.6
     "@standardnotes/futura-theme": ^1.4.6
     "@standardnotes/icons": "workspace:*"
-    "@standardnotes/markdown-basic": ^1.6.2
-    "@standardnotes/markdown-hybrid": ^1.7.7
-    "@standardnotes/markdown-math": ^1.4.2
-    "@standardnotes/markdown-minimal": ^1.3.0
-    "@standardnotes/markdown-visual": ^1.3.2
+    "@standardnotes/markdown-basic": ^1.7.12
+    "@standardnotes/markdown-hybrid": ^1.8.11
+    "@standardnotes/markdown-math": ^1.5.12
+    "@standardnotes/markdown-minimal": ^1.4.12
+    "@standardnotes/markdown-visual": ^1.4.15
     "@standardnotes/midnight-theme": ^1.4.6
-    "@standardnotes/rich-text": ^1.8.7
-    "@standardnotes/simple-task-editor": ^1.5.8
+    "@standardnotes/rich-text": ^1.9.12
+    "@standardnotes/simple-task-editor": ^1.6.14
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/snjs": "workspace:*"
     "@standardnotes/solarized-dark-theme": ^1.4.6
-    "@standardnotes/spreadsheets": ^1.8.1
+    "@standardnotes/spreadsheets": ^1.8.13
     "@standardnotes/styles": "workspace:*"
     "@standardnotes/titanium-theme": ^1.4.7
     "@standardnotes/toast": "workspace:*"
