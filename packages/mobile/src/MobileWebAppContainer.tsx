@@ -48,6 +48,8 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const insets = useSafeAreaInsets()
 
   const screenHeight = Dimensions.get('screen').height
+  const androidVersion = Platform.OS === 'android' ? Platform.Version : 0
+  const useFlexLayout = Platform.OS === 'ios' || androidVersion < 34
   const [webViewContainerHeight, setWebViewContainerHeight] = useState(screenHeight)
 
   useEffect(() => {
@@ -427,15 +429,15 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   return (
     <View
       style={
-        Platform.OS === 'android'
+        useFlexLayout
           ? {
+              flex: 1,
+              backgroundColor: '#000000',
+            }
+          : {
               height: webViewContainerHeight,
               backgroundColor: '#000000',
               overflow: 'hidden',
-            }
-          : {
-              flex: 1,
-              backgroundColor: '#000000',
             }
       }
     >
