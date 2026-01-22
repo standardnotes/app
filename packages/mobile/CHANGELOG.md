@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.232](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.231...@standardnotes/mobile@3.58.232) (2026-01-22)
+
+### Bug Fixes
+
+* Fixes UI layout regression on earlier Android versions ([#2970](https://github.com/standardnotes/app/issues/2970)) ([cb85b32](https://github.com/standardnotes/app/commit/cb85b32e14bfa4f66eb965fc6bbca0cafe8a4662))
+
 ## [3.58.231](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.230...@standardnotes/mobile@3.58.231) (2026-01-16)
 
 **Note:** Version bump only for package @standardnotes/mobile
