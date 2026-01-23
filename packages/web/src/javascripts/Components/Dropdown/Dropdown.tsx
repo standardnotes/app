@@ -4,11 +4,11 @@ import { classNames } from '@standardnotes/snjs'
 import { Select, SelectItem, SelectLabel, SelectPopover, SelectStoreProps, useSelectStore } from '@ariakit/react'
 import { KeyboardKey } from '@standardnotes/ui-services'
 
-type DropdownProps = {
+type DropdownProps<T extends string> = {
   label: string
-  items: DropdownItem[]
-  value: string
-  onChange: (value: string) => void
+  items: DropdownItem<T>[]
+  value: T
+  onChange: (value: T) => void
   disabled?: boolean
   classNameOverride?: {
     wrapper?: string
@@ -20,7 +20,7 @@ type DropdownProps = {
   showLabel?: boolean
 }
 
-const Dropdown = ({
+const Dropdown = <T extends string>({
   label,
   value,
   onChange,
@@ -30,7 +30,7 @@ const Dropdown = ({
   classNameOverride = {},
   popoverPlacement,
   showLabel,
-}: DropdownProps) => {
+}: DropdownProps<T>) => {
   const select = useSelectStore({
     value,
     setValue: onChange,

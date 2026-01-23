@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import Icon from '@/Components/Icon/Icon'
-import { SyncQueueStrategy } from '@standardnotes/snjs'
+import { PreferencePaneId, SyncQueueStrategy } from '@standardnotes/snjs'
 import { STRING_GENERIC_SYNC_ERROR } from '@/Constants/Strings'
 import { useCallback, useMemo, useState, FunctionComponent } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
@@ -57,13 +57,13 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
 
   const openPreferences = useCallback(() => {
     application.accountMenuController.closeAccountMenu()
-    application.preferencesController.setCurrentPane('account')
+    application.preferencesController.setCurrentPane(PreferencePaneId.Account)
     application.preferencesController.openPreferences()
   }, [application])
 
   const openHelp = useCallback(() => {
     application.accountMenuController.closeAccountMenu()
-    application.preferencesController.setCurrentPane('help-feedback')
+    application.preferencesController.setCurrentPane(PreferencePaneId.HelpFeedback)
     application.preferencesController.openPreferences()
   }, [application])
 

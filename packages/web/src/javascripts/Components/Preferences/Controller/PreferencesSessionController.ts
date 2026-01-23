@@ -13,7 +13,7 @@ import { PREFERENCES_MENU_ITEMS, READY_PREFERENCES_MENU_ITEMS } from './MenuItem
  * Preferences menu. It is created and destroyed each time the menu is opened and closed.
  */
 export class PreferencesSessionController {
-  private _selectedPane: PreferencePaneId = 'account'
+  private _selectedPane: PreferencePaneId = PreferencePaneId.Account
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 
@@ -26,11 +26,11 @@ export class PreferencesSessionController {
       : READY_PREFERENCES_MENU_ITEMS.slice()
 
     if (application.featuresController.isVaultsEnabled()) {
-      menuItems.push({ id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
+      menuItems.push({ id: PreferencePaneId.Vaults, label: 'Vaults', icon: 'safe-square', order: 5 })
     }
 
     if (isDesktopApplication()) {
-      menuItems.push({ id: 'home-server', label: 'Home Server', icon: 'server', order: 5 })
+      menuItems.push({ id: PreferencePaneId.HomeServer, label: 'Home Server', icon: 'server', order: 5 })
     }
 
     this._menu = menuItems.sort((a, b) => a.order - b.order)
@@ -107,7 +107,7 @@ export class PreferencesSessionController {
       return this.selectedMenuItem.id
     }
 
-    return 'account'
+    return PreferencePaneId.Account
   }
 
   selectPane = (key: PreferencePaneId) => {
@@ -115,7 +115,7 @@ export class PreferencesSessionController {
   }
 
   sectionHasBubble(id: PreferencePaneId): boolean {
-    if (id === 'security') {
+    if (id === PreferencePaneId.Security) {
       return securityPrefsHasBubble(this.application)
     }
 

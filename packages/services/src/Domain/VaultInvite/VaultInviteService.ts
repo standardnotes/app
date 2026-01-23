@@ -41,6 +41,7 @@ import { StatusServiceInterface } from '../Status/StatusServiceInterface'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
 import { WebSocketsServiceEvent } from '../Api/WebSocketsServiceEvent'
 import { NotificationServiceEvent, NotificationServiceEventPayload } from '../UserEvent/NotificationServiceEvent'
+import { PreferencePaneId } from '@standardnotes/snjs'
 
 export class VaultInviteService
   extends AbstractService<VaultInviteServiceEvent>
@@ -101,7 +102,7 @@ export class VaultInviteService
   }
 
   updatePendingInviteCount() {
-    this.status.setPreferencesBubbleCount('vaults', Object.keys(this.pendingInvites).length)
+    this.status.setPreferencesBubbleCount(PreferencePaneId.Vaults, Object.keys(this.pendingInvites).length)
   }
 
   addPendingInvite(invite: InviteRecord): void {
