@@ -39,12 +39,12 @@ const ModalContent = observer(() => {
     <Modal
       title="Export notes"
       className="p-4"
-      close={close}
+      close={notesController.closeSuperExportModal}
       actions={[
         {
           label: 'Cancel',
           type: 'cancel',
-          onClick: close,
+          onClick: notesController.closeSuperExportModal,
           mobileSlot: 'left',
         },
         {

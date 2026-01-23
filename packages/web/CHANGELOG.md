@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.8...@standardnotes/web@3.201.9) (2026-01-22)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.201.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.7...@standardnotes/web@3.201.8) (2026-01-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.201.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.6...@standardnotes/web@3.201.7) (2026-01-08)
+
+### Bug Fixes
+
+* Fixes Cancel button not working on Super export modal ([#2968](https://github.com/standardnotes/app/issues/2968)) [skip e2e] ([0a5cd13](https://github.com/standardnotes/app/commit/0a5cd13a96135a3365a7ed33a484edd4eb3b6105))
+* Fixes wrong header for session note history when offline ([#2967](https://github.com/standardnotes/app/issues/2967)) ([308b98d](https://github.com/standardnotes/app/commit/308b98db3d3308e5254f17efdeb5cdd385781e22))
+
+## [3.201.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.5...@standardnotes/web@3.201.6) (2026-01-06)
+
+### Bug Fixes
+
+* Fixes bottom note being hidden behind nav bar on Android ([#2966](https://github.com/standardnotes/app/issues/2966)) ([895353c](https://github.com/standardnotes/app/commit/895353ca7b2c039df26a59224f146c7f04d77f1a))
+
 ## [3.201.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.4...@standardnotes/web@3.201.5) (2025-12-18)
 
 ### Bug Fixes
