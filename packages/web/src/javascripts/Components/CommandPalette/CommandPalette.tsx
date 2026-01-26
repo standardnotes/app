@@ -177,6 +177,7 @@ function CommandPalette() {
           return
         }
         if (decryptedItem instanceof SNNote) {
+          void application.navigationController.selectHomeNavigationView()
           void application.itemListController.selectItemUsingInstance(decryptedItem, true)
         } else if (decryptedItem instanceof FileItem) {
           void application.filesController.handleFileAction({
