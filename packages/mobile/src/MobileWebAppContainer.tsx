@@ -49,7 +49,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
   const screenHeight = Dimensions.get('screen').height
   const androidVersion = Platform.OS === 'android' ? Platform.Version : 0
-  const useFlexLayout = Platform.OS === 'ios' || androidVersion < 34
+  const useFlexLayout = Platform.OS === 'ios' || androidVersion < 35
   const [webViewContainerHeight, setWebViewContainerHeight] = useState(screenHeight)
 
   useEffect(() => {
