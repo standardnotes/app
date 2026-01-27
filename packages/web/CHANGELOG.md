@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.9...@standardnotes/web@3.201.10) (2026-01-27)
+
+### Bug Fixes
+
+* Fixes issue where accessing a note from the command palette when not on the home list view causes view to switch to a different note when syncing ([#2972](https://github.com/standardnotes/app/issues/2972)) ([dd014c8](https://github.com/standardnotes/app/commit/dd014c850868d2294a05c45ca01ff711f3939780))
+* Fixes UI layout regression on Android 14 ([#2971](https://github.com/standardnotes/app/issues/2971)) ([ef56933](https://github.com/standardnotes/app/commit/ef56933667cdc13a9148798babd4ffabdfa012fd))
+
 ## [3.201.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.8...@standardnotes/web@3.201.9) (2026-01-22)
 
 **Note:** Version bump only for package @standardnotes/web
