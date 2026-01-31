@@ -35,8 +35,8 @@ yarn install && yarn install:pods && yarn build:mobile
 
 We have two flavors of the app:
 
-- `dev` which runs connects to development syncing server. To run locally use `yarn ios-dev` or `yarn android-dev` for Android.
-- `prod` which is the equivalent of our production application. To run local use `yarn ios-prod` or `yarn android-prod-release` for Android.
+- `dev` which runs connects to development syncing server. To run locally, use `yarn ios-dev` or `yarn android-dev` for Android.
+- `prod` which is the equivalent of our production application. To run locally, use `yarn ios-prod` or `yarn android-prod-release` for Android.
 
 If you would like to run the application on your iOS device, you'll need to do so using Xcode.
 
