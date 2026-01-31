@@ -17,7 +17,7 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "rm -fr dist",
+    "clean": "del-cli dist",
     "prebuild": "yarn clean",
     "build": "webpack --mode production && tsc",
     "watch": "webpack --mode production --watch",
@@ -41,6 +41,7 @@
     "babel-loader": "^9.1.0",
     "chai": "^4.3.7",
     "connect": "^3.7.0",
+    "del-cli": "^7.0.0",
     "eslint": "*",
     "eslint-plugin-prettier": "*",
     "regenerator-runtime": "^0.13.10",

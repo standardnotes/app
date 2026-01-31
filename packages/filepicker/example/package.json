@@ -10,7 +10,7 @@
   },
   "license": "AGPL-3.0",
   "scripts": {
-    "clean": "rm -fr dist",
+    "clean": "del-cli dist",
     "prestart": "yarn clean",
     "start": "webpack-dev-server --config webpack.config.js",
     "watch": "webpack -w --config webpack.config.js",
@@ -25,6 +25,7 @@
     "@standardnotes/config": "^2.2.0",
     "@types/wicg-native-file-system": "^2020.6.0",
     "babel-loader": "^8.2.3",
+    "del-cli": "^7.0.0",
     "html-webpack-plugin": "^5.5.0",
     "ts-loader": "^9.2.6",
     "typescript": "*",
