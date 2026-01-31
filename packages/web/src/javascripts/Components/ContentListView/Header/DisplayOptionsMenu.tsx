@@ -27,6 +27,7 @@ import { Pill } from '@/Components/Preferences/PreferencesComponents/Content'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import MenuSection from '@/Components/Menu/MenuSection'
+import usePreference from '@/Hooks/usePreference'
 
 const DailyEntryModeEnabled = true
 
@@ -99,6 +100,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   const [preferences, setPreferences] = useState<TagPreferences>({})
   const controlsDisabled = currentMode === 'tag' && !hasSubscription
   const isDailyEntry = selectedTagPreferences?.entryMode === 'daily'
+  const notesListLayout = usePreference(PrefKey.NotesListLayout)
 
   const reloadPreferences = useCallback(() => {
     const globalValues: TagPreferences = {
@@ -281,6 +283,11 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     }
   }, [preferences.useTableView, changePreferences, paneController])
 
+  const toggleNotesListLayout = useCallback(() => {
+    const nextLayout = notesListLayout === 'tiles' ? 'rows' : 'tiles'
+    application.setPreference(PrefKey.NotesListLayout, nextLayout).catch(console.error)
+  }, [application, notesListLayout])
+
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const isTableViewEnabled = Boolean(isFilesSmartView || preferences.useTableView)
   const shouldHideNonApplicableOptions = isTableViewEnabled && !isMobileScreen
@@ -389,6 +396,14 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           onChange={toggleEditorIcon}
         >
           Show icon
+        </MenuSwitchButtonItem>
+        <MenuSwitchButtonItem
+          disabled={controlsDisabled}
+          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+          checked={notesListLayout === 'tiles'}
+          onChange={toggleNotesListLayout}
+        >
+          Tiled list layout
         </MenuSwitchButtonItem>
       </MenuSection>
 

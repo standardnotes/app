@@ -94,6 +94,7 @@ export class ItemListController
     hideDate: false,
     hideNotePreview: false,
     hideEditorIcon: false,
+    notesListLayout: 'rows',
   }
   isTableViewEnabled = false
   private reloadItemsPromise?: Promise<unknown>
@@ -709,6 +710,11 @@ export class ItemListController
     newWebDisplayOptions.hideEditorIcon = useBoolean(
       selectedTagPreferences?.hideEditorIcon,
       this.preferences.getValue(PrefKey.NotesHideEditorIcon, PrefDefaults[PrefKey.NotesHideEditorIcon]),
+    )
+
+    newWebDisplayOptions.notesListLayout = this.preferences.getValue(
+      PrefKey.NotesListLayout,
+      PrefDefaults[PrefKey.NotesListLayout],
     )
 
     const displayOptionsChanged =
