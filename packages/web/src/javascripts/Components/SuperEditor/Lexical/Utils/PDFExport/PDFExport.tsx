@@ -33,6 +33,9 @@ import {
   getFontFamiliesFromLexicalNode,
 } from './FontConfig'
 
+const PDF_SUPERSUBSCRIPT_FONT_SIZE = 9
+const PDF_HEADING_SUPERSUBSCRIPT_SCALE = 0.75
+
 const styles = StyleSheet.create({
   page: {
     paddingVertical: 35,
@@ -200,6 +203,8 @@ const getPDFDataNodeFromLexicalNode = (
     const isBold = node.hasFormat('bold')
     const isItalic = node.hasFormat('italic')
     const isHighlight = node.hasFormat('highlight')
+    const isSuperscript = node.hasFormat('superscript')
+    const isSubscript = node.hasFormat('subscript')
     let fontFamily: FontFamily[] | FontFamily = FALLBACK_FONT_FAMILY
 
     if (isInlineCode && isCodeNodeText) {
@@ -211,6 +216,15 @@ const getPDFDataNodeFromLexicalNode = (
         fontFamilies.push(...nodeFontFamilies)
       }
     }
+
+    const baseFontSize = isInlineCode || isCodeNodeText ? 11 : undefined
+    const headingFontSize = $isHeadingNode(parent) ? getFontSizeForHeading(parent) : undefined
+    const fontSize =
+      isSuperscript || isSubscript
+        ? headingFontSize
+          ? Math.max(PDF_SUPERSUBSCRIPT_FONT_SIZE, Math.round(headingFontSize * PDF_HEADING_SUPERSUBSCRIPT_SCALE))
+          : PDF_SUPERSUBSCRIPT_FONT_SIZE
+        : baseFontSize
 
     return {
       type: 'Text',
@@ -226,8 +240,9 @@ const getPDFDataNodeFromLexicalNode = (
           ? 'line-through'
           : undefined,
         backgroundColor: isInlineCode ? '#f1f1f1' : isHighlight ? 'rgb(255,255,0)' : undefined,
-        fontSize: isInlineCode || isCodeNodeText ? 11 : undefined,
+        fontSize,
         textAlign: $isElementNode(parent) ? getNodeTextAlignment(parent) : 'left',
+        verticalAlign: isSuperscript ? 'super' : isSubscript ? 'sub' : undefined,
       },
     }
   }
