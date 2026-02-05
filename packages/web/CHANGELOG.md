@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.10...@standardnotes/web@3.201.11) (2026-02-05)
+
+### Bug Fixes
+
+* Add support for hiragana and katakana on Super pdf export ([#2977](https://github.com/standardnotes/app/issues/2977)) ([fafd15e](https://github.com/standardnotes/app/commit/fafd15ec96b3961c4c87004ed59ad84b9209fb83))
+* Adds support for superscript and subscript on Super pdf exports ([#2978](https://github.com/standardnotes/app/issues/2978)) [skip e2e] ([f5a721b](https://github.com/standardnotes/app/commit/f5a721bae0522a2286902b323ee3392964f51295))
+
 ## [3.201.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.9...@standardnotes/web@3.201.10) (2026-01-27)
 
 ### Bug Fixes
