@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.11...@standardnotes/web@3.201.12) (2026-02-05)
+
+### Bug Fixes
+
+* Keeps note active even if it's not on the current view when coming from command palette ([#2979](https://github.com/standardnotes/app/issues/2979)) [skip e2e] ([e63be04](https://github.com/standardnotes/app/commit/e63be048f491ecf5d216b50548032b339df33199))
+
 ## [3.201.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.10...@standardnotes/web@3.201.11) (2026-02-05)
 
 ### Bug Fixes
