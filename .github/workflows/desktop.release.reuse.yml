@@ -362,7 +362,6 @@ jobs:
     if: ${{ always() }}
     needs:
       [
-        Windows,
         Mac,
         Linux-AppImage-X64,
         Linux-AppImage-ARM64,
