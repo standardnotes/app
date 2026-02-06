@@ -146,7 +146,7 @@ jobs:
 
   publish:
     name: Publish to NPM
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == true }}"
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
