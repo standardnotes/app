@@ -155,6 +155,10 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
           cache: 'yarn'
+      - name: Upgrade npm (trusted publishing requirement)
+        run: npm install -g npm@^11.5.1
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
       - name: Setup git config
         run: |
           git config --global user.name "standardci"
@@ -178,6 +182,7 @@ jobs:
   publish-docker:
     name: Publish to Docker Hub
     needs: build-docker
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
