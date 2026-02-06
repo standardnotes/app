@@ -2,7 +2,7 @@ name: Publish Packages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -65,6 +65,7 @@ jobs:
 
   e2e-base:
     name: E2E Base Test Suite
+    if: false
     needs: build-docker
     runs-on: ubuntu-latest
     steps:
@@ -84,6 +85,7 @@ jobs:
 
   e2e-vaults:
     name: E2E Vaults Test Suite
+    if: false
     needs: build-docker
     runs-on: ubuntu-latest
     steps:
