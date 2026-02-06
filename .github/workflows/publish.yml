@@ -174,11 +174,10 @@ jobs:
         run: yarn release:prod
       - name: Publish
         run: yarn publish:prod
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
 
   publish-docker:
     name: Publish to Docker Hub
+    needs: build-docker
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
