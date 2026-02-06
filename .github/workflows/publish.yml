@@ -105,7 +105,6 @@ jobs:
 
   publish-web-docker:
     name: Build and publish Docker Image for Web App
-    needs: [e2e-base, e2e-vaults]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
