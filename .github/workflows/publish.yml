@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  id-token: write
+
 jobs:
   build:
     name: Build & Test
@@ -105,6 +108,7 @@ jobs:
 
   publish-web-docker:
     name: Build and publish Docker Image for Web App
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -142,6 +146,7 @@ jobs:
 
   publish:
     name: Publish to NPM
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == true }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
