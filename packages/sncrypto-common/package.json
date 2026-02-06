@@ -16,7 +16,7 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "rm -fr dist",
+    "clean": "del-cli dist",
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "watch": "tsc -p tsconfig.json --watch",
@@ -26,6 +26,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
+    "del-cli": "^7.0.0",
     "eslint": "*",
     "eslint-plugin-prettier": "*",
     "typescript": "*"

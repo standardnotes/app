@@ -20,7 +20,7 @@
   "scripts": {
     "start": "webpack -w --config webpack.dev.js",
     "start:test-server": "yarn node e2e-server.js",
-    "clean": "rm -fr dist",
+    "clean": "del-cli dist",
     "prebuild": "yarn clean",
     "build": "yarn tsc && webpack --config webpack.prod.js",
     "watch": "webpack --config webpack.prod.js --watch",
@@ -60,6 +60,7 @@
     "babel-loader": "^9.1.0",
     "circular-dependency-plugin": "^5.2.2",
     "crypto-js": "^4.1.1",
+    "del-cli": "^7.0.0",
     "docdash": "^2.0.0",
     "dom-storage": "^2.1.0",
     "eslint": "*",

@@ -15,7 +15,7 @@
   },
   "license": "AGPL-3.0",
   "scripts": {
-    "clean": "rm -fr dist",
+    "clean": "del-cli dist",
     "prestart": "yarn clean",
     "start": "tsc -p tsconfig.json --watch",
     "prebuild": "yarn clean",
@@ -26,6 +26,7 @@
   "devDependencies": {
     "@types/jest": "^29.2.3",
     "@typescript-eslint/eslint-plugin": "*",
+    "del-cli": "^7.0.0",
     "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^29.3.1",
