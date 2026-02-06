@@ -1,0 +1,15 @@
+name: Notify Marketing Releases Update
+
+on:
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Release Update
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          repository: ${{ secrets.RELEASES_EVENT_RECEIVING_REPO }}
+          event-type: releases-updated-event
