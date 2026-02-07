@@ -89,6 +89,7 @@ export class ItemListController
     includeTrashed: false,
     includeProtected: true,
   }
+  private keepActiveItemOpenUuid: UuidString | undefined
   webDisplayOptions: WebDisplayOptions = {
     hideTags: true,
     hideDate: false,
@@ -499,6 +500,10 @@ export class ItemListController
       !activeItemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
 
     if (closeBecauseActiveItemDoesntExistInCurrentSystemView) {
+      if (activeItem && activeItem.uuid === this.keepActiveItemOpenUuid) {
+        log(LoggingDomain.Selection, 'shouldCloseActiveItem false due to keepActiveItemOpenUuid')
+        return false
+      }
       log(LoggingDomain.Selection, 'shouldCloseActiveItem closePreviousItemWhenSwitchingToFilesBasedView')
       return true
     }
@@ -941,6 +946,7 @@ export class ItemListController
   }
 
   handleTagChange = async (userTriggered: boolean) => {
+    this.clearKeepActiveItemOpenUuid()
     const activeNoteController = this.getActiveItemController()
     if (activeNoteController instanceof NoteViewController && activeNoteController.isTemplateNote) {
       this.closeItemController(activeNoteController)
@@ -1196,9 +1202,21 @@ export class ItemListController
       }
     }
 
+    if (this.keepActiveItemOpenUuid && uuid !== this.keepActiveItemOpenUuid) {
+      this.clearKeepActiveItemOpenUuid()
+    }
+
     return {
       didSelect: this.selectedUuids.has(uuid),
     }
+  }
+
+  keepActiveItemOpenForSystemView = (noteUuid: UuidString): void => {
+    this.keepActiveItemOpenUuid = noteUuid
+  }
+
+  private clearKeepActiveItemOpenUuid(): void {
+    this.keepActiveItemOpenUuid = undefined
   }
 
   selectItem = async (

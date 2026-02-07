@@ -32,6 +32,8 @@ enum UnicodeScript {
   Japanese = 'Japanese',
   Korean = 'Korean',
   Hangul = 'Hangul',
+  Hiragana = 'Hiragana',
+  Katakana = 'Katakana',
 }
 
 export enum FontFamily {
@@ -242,6 +244,8 @@ export const getFontFamilyForUnicodeScript = (script: UnicodeScript): FontFamily
       return FontFamily.NotoSansSC
 
     case UnicodeScript.Japanese:
+    case UnicodeScript.Hiragana:
+    case UnicodeScript.Katakana:
       return FontFamily.NotoSansJP
 
     case UnicodeScript.Korean:

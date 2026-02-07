@@ -106,7 +106,7 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
       </PreferencesGroup>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Community groups</Title>
+          <Title>Discord server</Title>
           <Text>
             Want to meet other passionate note-takers and privacy enthusiasts? Want to share your feedback with us? Join
             the Standard Notes Discord for discussions on security, themes, editors and more.

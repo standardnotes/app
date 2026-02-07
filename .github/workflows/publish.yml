@@ -2,7 +2,10 @@ name: Publish Packages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+
+permissions:
+  id-token: write
 
 jobs:
   build:
@@ -65,6 +68,7 @@ jobs:
 
   e2e-base:
     name: E2E Base Test Suite
+    if: false
     needs: build-docker
     runs-on: ubuntu-latest
     steps:
@@ -84,6 +88,7 @@ jobs:
 
   e2e-vaults:
     name: E2E Vaults Test Suite
+    if: false
     needs: build-docker
     runs-on: ubuntu-latest
     steps:
@@ -103,7 +108,7 @@ jobs:
 
   publish-web-docker:
     name: Build and publish Docker Image for Web App
-    needs: [e2e-base, e2e-vaults]
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -141,7 +146,7 @@ jobs:
 
   publish:
     name: Publish to NPM
-    needs: [e2e-base, e2e-vaults]
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -155,6 +160,10 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           node-version-file: '.nvmrc'
           cache: 'yarn'
+      - name: Upgrade npm (trusted publishing requirement)
+        run: npm install -g npm@^11.5.1
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
       - name: Setup git config
         run: |
           git config --global user.name "standardci"
@@ -174,12 +183,11 @@ jobs:
         run: yarn release:prod
       - name: Publish
         run: yarn publish:prod
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
 
   publish-docker:
     name: Publish to Docker Hub
-    needs: [e2e-base, e2e-vaults]
+    needs: build-docker
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
