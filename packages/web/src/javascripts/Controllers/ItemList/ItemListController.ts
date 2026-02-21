@@ -269,10 +269,9 @@ export class ItemListController
     this.disposers.push(
       reaction(
         () => this.selectedItemsCount,
-        (count, prevCount) => {
+        (count) => {
           const hasNoSelectedItem = count === 0
-          const onlyOneSelectedItemAfterChange = prevCount > count && count === 1
-          if (hasNoSelectedItem || onlyOneSelectedItemAfterChange) {
+          if (hasNoSelectedItem) {
             this.cancelMultipleSelection()
           }
         },
