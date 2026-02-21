@@ -33,6 +33,7 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
       .then(() => {
         application.accountMenuController.closeAccountMenu()
         application.accountMenuController.setCurrentPane(AccountMenuPane.GeneralMenu)
+        application.purchaseFlowController.closePurchaseFlow()
       })
       .catch((err) => {
         console.error(err)
