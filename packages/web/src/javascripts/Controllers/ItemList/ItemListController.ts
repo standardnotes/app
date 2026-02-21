@@ -1186,7 +1186,7 @@ export class ItemListController
     if (userTriggered && hasShift && !isMobileScreen()) {
       await this.selectItemsRange({ selectedItem: item })
     } else if (userTriggered && this.isMultipleSelectionMode) {
-      if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
+      if (this.selectedUuids.has(uuid)) {
         this.removeSelectedItem(uuid)
       } else if (isAuthorizedForAccess) {
         this.selectedUuids.add(uuid)
