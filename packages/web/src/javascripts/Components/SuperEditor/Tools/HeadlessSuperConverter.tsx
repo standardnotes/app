@@ -4,7 +4,6 @@ import {
   $createParagraphNode,
   $getRoot,
   $insertNodes,
-  $isParagraphNode,
   LexicalEditor,
   LexicalNode,
   SerializedLexicalNode,
