@@ -513,6 +513,10 @@ export class ItemListController
   }
 
   private shouldSelectNextItemOrCreateNewNote = (activeItem: SNNote | FileItem | undefined) => {
+    if (activeItem?.uuid === this.keepActiveItemOpenUuid) {
+      return false
+    }
+
     const selectedView = this.navigationController.selected
 
     const isActiveItemTrashed = activeItem?.trashed
