@@ -4,7 +4,6 @@ import {
   $createParagraphNode,
   $getRoot,
   $insertNodes,
-  $isParagraphNode,
   LexicalEditor,
   LexicalNode,
   SerializedLexicalNode,
@@ -151,14 +150,6 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
         switch (toFormat) {
           case 'txt':
           case 'md': {
-            for (const { node: paragraph } of $dfs()) {
-              if (!$isParagraphNode(paragraph)) {
-                continue
-              }
-              if (paragraph.isEmpty()) {
-                paragraph.remove()
-              }
-            }
             content = $convertToMarkdownString(MarkdownTransformers)
             resolve()
             break
