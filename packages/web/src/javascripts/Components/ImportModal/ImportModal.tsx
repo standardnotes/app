@@ -46,7 +46,7 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
         onClick: parseAndImport,
         hidden: !isReadyToImport,
         mobileSlot: 'right',
-        disabled: !isReadyToImport || (!shouldCreateTag && !existingTagForImports),
+        disabled: !isReadyToImport || (addImportsToTag && !shouldCreateTag && !existingTagForImports),
       },
       {
         label: importSuccessOrError ? 'Close' : 'Cancel',
@@ -55,7 +55,15 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
         mobileSlot: 'left',
       },
     ],
-    [close, existingTagForImports, importSuccessOrError, isReadyToImport, parseAndImport, shouldCreateTag],
+    [
+      addImportsToTag,
+      close,
+      existingTagForImports,
+      importSuccessOrError,
+      isReadyToImport,
+      parseAndImport,
+      shouldCreateTag,
+    ],
   )
 
   const selectFiles = useCallback(

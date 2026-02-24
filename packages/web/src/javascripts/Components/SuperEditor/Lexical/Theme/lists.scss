@@ -1,24 +1,27 @@
 :root {
-  --lexical-ordered-list-left-margin: 16px;
+  --lexical-list-left-margin: 16px;
 
   --checkbox-size: 18px;
   @media screen and (max-width: 450px) {
     --checkbox-size: 26px;
   }
+  @media screen and (max-width: 768px) {
+    --lexical-list-left-margin: 20px;
+  }
 }
 .monospace-font {
-  --lexical-ordered-list-left-margin: 42px;
+  --lexical-list-left-margin: 42px;
 }
 @for $i from 1 through 5 {
   .Lexical__ol#{$i} {
     padding: 0;
     margin: 0;
-    margin-left: var(--lexical-ordered-list-left-margin);
+    margin-left: var(--lexical-list-left-margin);
     list-style-position: outside;
 
     &.Lexical__rtl {
       margin-left: 0;
-      margin-right: var(--lexical-ordered-list-left-margin);
+      margin-right: var(--lexical-list-left-margin);
     }
   }
 }
@@ -37,12 +40,12 @@
 .Lexical__ul {
   padding: 0;
   margin: 0;
-  margin-left: 16px;
+  margin-left: var(--lexical-list-left-margin);
   list-style-position: outside;
 
   &.Lexical__rtl {
     margin-left: 0;
-    margin-right: 16px;
+    margin-right: var(--lexical-list-left-margin);
   }
 }
 .Lexical__checkList {
