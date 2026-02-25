@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.18...@standardnotes/web@3.201.19) (2026-02-24)
+
+### Bug Fixes
+
+* Fixes Import button staying disabled after untoggling option to add notes to a tag ([#2981](https://github.com/standardnotes/app/issues/2981)) ([75c3e2e](https://github.com/standardnotes/app/commit/75c3e2e6fd2e992d6e1e8c82e52678b0c750e623))
+* Fixes lists left margin on Super editor on mobile ([#2983](https://github.com/standardnotes/app/issues/2983)) ([0c4ce38](https://github.com/standardnotes/app/commit/0c4ce38aa4caf8cbfd23a339e5bffff771e877f7))
+* Fixes multiple selection checkbox not working when only one note is selected ([99c7cb9](https://github.com/standardnotes/app/commit/99c7cb92b5e5d08000e24908e735ef02f9059990))
+* Fixes unselecting note deactivating multiple selection note when there is only one selected note left ([36f973a](https://github.com/standardnotes/app/commit/36f973aa3fdd7f79767d4da8e443dd3504e24f8f))
+* Prevents note list from switching to a different note when opening a note not in the current folder from the command palette ([#2986](https://github.com/standardnotes/app/issues/2986)) ([ff58de3](https://github.com/standardnotes/app/commit/ff58de30fb4d8093f5056b5c4789163e81edf632))
+* Redirect to app after creating account ([#2984](https://github.com/standardnotes/app/issues/2984)) ([f4c64b8](https://github.com/standardnotes/app/commit/f4c64b8db2e5a51547182b67436aff7c2a23c3ad))
+* Render line breaks properly on Super editor Show markdown ([#2982](https://github.com/standardnotes/app/issues/2982)) ([6b15118](https://github.com/standardnotes/app/commit/6b151187189a88774d439e6cfd7204207e26c3f8))
+
 ## [3.201.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.17...@standardnotes/web@3.201.18) (2026-02-07)
 
 **Note:** Version bump only for package @standardnotes/web
