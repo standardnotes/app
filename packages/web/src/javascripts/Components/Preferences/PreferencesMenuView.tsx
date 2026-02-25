@@ -4,7 +4,6 @@ import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import PreferencesMenuItem from './PreferencesComponents/MenuItem'
 import { PreferencesSessionController } from './Controller/PreferencesSessionController'
-import { PreferencePaneId } from '@standardnotes/services'
 
 type Props = {
   menu: PreferencesSessionController
@@ -45,9 +44,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
           items={dropdownMenuItems}
           label="Preferences Menu"
           value={selectedPaneId}
-          onChange={(paneId) => {
-            selectPane(paneId as PreferencePaneId)
-          }}
+          onChange={selectPane}
           classNameOverride={{
             wrapper: 'relative',
             button: 'focus:outline-none focus:shadow-none focus:ring-none',
