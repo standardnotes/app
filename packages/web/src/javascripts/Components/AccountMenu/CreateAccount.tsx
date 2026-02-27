@@ -16,6 +16,7 @@ import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
+import { c } from 'ttag'
 
 type Props = {
   setMenuPane: (pane: AccountMenuPane) => void
@@ -101,12 +102,12 @@ const CreateAccount: FunctionComponent<Props> = ({ setMenuPane, email, setEmail,
       <div className="mb-3 mt-1 flex items-center px-3">
         <IconButton
           icon="arrow-left"
-          title="Go back"
+          title={c('Action').t`Go back`}
           className="mr-2 flex p-0 text-neutral"
           onClick={handleClose}
           focusable={true}
         />
-        <div className="text-base font-bold">Create account</div>
+        <div className="text-base font-bold">{c('Title').t`Create account`}</div>
       </div>
       <form onSubmit={handleRegisterFormSubmit} className="mb-1 px-3">
         <DecoratedInput
@@ -115,7 +116,7 @@ const CreateAccount: FunctionComponent<Props> = ({ setMenuPane, email, setEmail,
           left={[<Icon type="email" className="text-neutral" />]}
           onChange={handleEmailChange}
           onKeyDown={handleKeyDown}
-          placeholder="Email"
+          placeholder={c('Label').t`Email`}
           ref={emailInputRef}
           type="email"
           value={email}
@@ -126,11 +127,17 @@ const CreateAccount: FunctionComponent<Props> = ({ setMenuPane, email, setEmail,
           left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}
           onKeyDown={handleKeyDown}
-          placeholder="Password"
+          placeholder={c('Label').t`Password`}
           ref={passwordInputRef}
           value={password}
         />
-        <Button className="mt-1" label="Next" primary onClick={handleRegisterFormSubmit} fullWidth={true} />
+        <Button
+          className="mt-1"
+          label={c('Action').t`Next`}
+          primary
+          onClick={handleRegisterFormSubmit}
+          fullWidth={true}
+        />
       </form>
       <HorizontalSeparator classes="my-2" />
       <AdvancedOptions onPrivateUsernameModeChange={onPrivateUsernameChange} />

@@ -15,6 +15,7 @@ import { useApplication } from '../ApplicationProvider'
 import MenuSection from '../Menu/MenuSection'
 import { TOGGLE_COMMAND_PALETTE, TOGGLE_KEYBOARD_SHORTCUTS_MODAL, isMobilePlatform } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
+import { c } from 'ttag'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
@@ -138,12 +139,11 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         <>
           <div className="mb-1 px-4 md:px-3">
             <div className="mb-3 text-base text-foreground lg:text-sm">
-              You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
-              encryption.
+              {c('Info').t`You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.`}
             </div>
             <div className="flex items-center text-passive-1">
               <Icon type="cloud-off" className={`mr-2 ${MenuItemIconSize}`} />
-              <span className="text-lg font-semibold lg:text-sm">Offline</span>
+              <span className="text-lg font-semibold lg:text-sm">{c('Status').t`Offline`}</span>
             </div>
           </div>
         </>
@@ -166,11 +166,11 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
             <>
               <MenuItem onClick={activateRegisterPane}>
                 <Icon type="user" className={iconClassName} />
-                Create free account
+                {c('Action').t`Create free account`}
               </MenuItem>
               <MenuItem onClick={activateSignInPane}>
                 <Icon type="signIn" className={iconClassName} />
-                Sign in
+                {c('Action').t`Sign in`}
               </MenuItem>
             </>
           )}

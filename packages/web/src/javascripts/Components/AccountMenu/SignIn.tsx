@@ -15,6 +15,7 @@ import { useApplication } from '../ApplicationProvider'
 import { useCaptcha } from '@/Hooks/useCaptcha'
 import MergeLocalDataCheckbox from './MergeLocalDataCheckbox'
 import ConfirmNoMergeDialog from './ConfirmNoMergeDialog'
+import { c } from 'ttag'
 
 type Props = {
   setMenuPane: (pane: AccountMenuPane) => void
@@ -252,7 +253,7 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
           className={{ container: `mb-2 ${error ? 'border-danger' : null}` }}
           left={[<Icon type="email" className="text-neutral" />]}
           type="email"
-          placeholder="Email"
+          placeholder={c('Label').t`Email`}
           value={email}
           onChange={handleEmailChange}
           onFocus={resetInvalid}
@@ -268,14 +269,14 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
           onChange={handlePasswordChange}
           onFocus={resetInvalid}
           onKeyDown={handleKeyDown}
-          placeholder="Password"
+          placeholder={c('Label').t`Password`}
           ref={passwordInputRef}
           value={password}
         />
         {error ? <div className="my-2 text-danger">{error}</div> : null}
         <Button
           className="mb-3 mt-1"
-          label={isSigningIn ? 'Signing in...' : 'Sign in'}
+          label={isSigningIn ? c('Action').t`Signing in...` : c('Action').t`Sign in`}
           primary
           onClick={handleSignInFormSubmit}
           disabled={isSigningIn}
@@ -283,7 +284,7 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         />
         <Checkbox
           name="is-ephemeral"
-          label="Stay signed in"
+          label={c('Option').t`Stay signed in`}
           checked={!isEphemeral}
           disabled={isSigningIn || isRecoverySignIn}
           onChange={handleEphemeralChange}
@@ -325,13 +326,15 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
       <div className="mb-3 mt-1 flex items-center px-3">
         <IconButton
           icon="arrow-left"
-          title="Go back"
+          title={c('Action').t`Go back`}
           className="mr-2 flex p-0 text-neutral"
           onClick={() => setMenuPane(AccountMenuPane.GeneralMenu)}
           focusable={true}
           disabled={isSigningIn}
         />
-        <div className="text-base font-bold">{showCaptcha ? 'Human verification' : 'Sign in'}</div>
+        <div className="text-base font-bold">
+          {showCaptcha ? c('Title').t`Human verification` : c('Title').t`Sign in`}
+        </div>
       </div>
       {showCaptcha ? <div className="p-[10px]">{captchaIframe}</div> : signInForm}
       {showNoMergeConfirmation && (
