@@ -30,18 +30,14 @@ import {
   Transformer,
 } from '@lexical/markdown'
 
-import { isEmptyParagraph, TRANSFORMERS, transformersByType } from './MarkdownImportExportUtils'
+import { TRANSFORMERS, transformersByType } from './MarkdownImportExportUtils'
 
 /**
  * Renders string from markdown. The selection is moved to the start after the operation.
  */
-function createMarkdownExport(
-  transformers: Array<Transformer>,
-  shouldPreserveNewLines: boolean = false,
-): (node?: ElementNode) => string {
+function createMarkdownExport(transformers: Array<Transformer>): (node?: ElementNode) => string {
   const byType = transformersByType(transformers)
   const elementTransformers = [...byType.multilineElement, ...byType.element]
-  const isNewlineDelimited = !shouldPreserveNewLines
 
   // Export only uses text formats that are responsible for single format
   // e.g. it will filter out *** (bold, italic) and instead use separate ** and *
@@ -56,16 +52,9 @@ function createMarkdownExport(
       const result = exportTopLevelElements(child, elementTransformers, textFormatTransformers, byType.textMatch)
 
       if (result != null) {
-        output.push(
-          // separate consecutive group of texts with a line break: eg. ["hello", "world"] -> ["hello", "/nworld"]
-          isNewlineDelimited && i > 0 && !isEmptyParagraph(child) && !isEmptyParagraph(children[i - 1])
-            ? '\n'.concat(result)
-            : result,
-        )
+        output.push(result)
       }
     }
-    // Ensure consecutive groups of texts are at least \n\n apart while each empty paragraph render as a newline.
-    // Eg. ["hello", "", "", "hi", "\nworld"] -> "hello\n\n\nhi\n\nworld"
     return output.join('\n')
   }
 }
@@ -277,11 +266,7 @@ function hasFormat(node: LexicalNode | null | undefined, format: TextFormatType)
   return $isTextNode(node) && node.hasFormat(format)
 }
 
-export function $convertToMarkdownString(
-  transformers: Array<Transformer> = TRANSFORMERS,
-  node?: ElementNode,
-  shouldPreserveNewLines: boolean = false,
-): string {
-  const exportMarkdown = createMarkdownExport(transformers, shouldPreserveNewLines)
+export function $convertToMarkdownString(transformers: Array<Transformer> = TRANSFORMERS, node?: ElementNode): string {
+  const exportMarkdown = createMarkdownExport(transformers)
   return exportMarkdown(node)
 }
