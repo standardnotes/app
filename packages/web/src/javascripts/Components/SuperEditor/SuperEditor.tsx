@@ -1,5 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import {
+  ApplicationEvent,
   isPayloadSourceRetrieved,
   NativeFeatureIdentifier,
   FeatureStatus,
@@ -71,7 +72,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const getMarkdownPlugin = useRef<GetMarkdownPluginInterface | null>(null)
   const [featureStatus, setFeatureStatus] = useState<FeatureStatus>(FeatureStatus.Entitled)
 
-  useEffect(() => {
+  const reloadFeatureStatus = useCallback(() => {
     setFeatureStatus(
       application.features.getFeatureStatus(
         NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SuperEditor).getValue(),
@@ -82,7 +83,24 @@ export const SuperEditor: FunctionComponent<Props> = ({
     )
   }, [application.features])
 
+  useEffect(() => {
+    reloadFeatureStatus()
+  }, [reloadFeatureStatus])
+
+  useEffect(() => {
+    return application.addEventObserver(async (event) => {
+      switch (event) {
+        case ApplicationEvent.FeaturesAvailabilityChanged:
+        case ApplicationEvent.UserRolesChanged:
+        case ApplicationEvent.LocalDataLoaded:
+          reloadFeatureStatus()
+          break
+      }
+    })
+  }, [application, reloadFeatureStatus])
+
   const keyboardService = application.keyboardService
+  const isEditorReadonly = note.current.locked || Boolean(readonly) || featureStatus !== FeatureStatus.Entitled
 
   useEffect(() => {
     return application.commands.addWithShortcut(
@@ -155,6 +173,9 @@ export const SuperEditor: FunctionComponent<Props> = ({
         ignoreNextChange.current = false
         return
       }
+      if (isEditorReadonly) {
+        return
+      }
 
       void controller.saveAndAwaitLocalPropagation({
         text: value,
@@ -165,7 +186,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
         },
       })
     },
-    [controller],
+    [controller, isEditorReadonly],
   )
 
   const handleBubbleRemove = useCallback(
@@ -252,13 +273,13 @@ export const SuperEditor: FunctionComponent<Props> = ({
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
-            <BlocksEditorComposer readonly={note.current.locked || readonly} initialValue={note.current.text}>
+            <BlocksEditorComposer readonly={isEditorReadonly} initialValue={note.current.text}>
               <BlocksEditor
                 onChange={handleChange}
                 className="blocks-editor h-full resize-none"
                 previewLength={SuperNotePreviewCharLimit}
                 spellcheck={spellcheck}
-                readonly={note.current.locked || readonly}
+                readonly={isEditorReadonly}
                 onFocus={handleFocus}
                 onBlur={onBlur}
               >
@@ -271,7 +292,9 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 />
                 <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
-                {readonly === undefined && <ReadonlyPlugin note={note.current} />}
+                {readonly === undefined && (
+                  <ReadonlyPlugin note={note.current} forceReadonly={featureStatus !== FeatureStatus.Entitled} />
+                )}
                 <AutoFocusPlugin isEnabled={controller.isTemplateNote} />
                 <BlockPickerMenuPlugin />
                 <NoteFromSelectionPlugin currentNote={note.current} />
