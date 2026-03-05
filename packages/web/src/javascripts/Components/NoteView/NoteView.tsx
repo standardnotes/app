@@ -761,7 +761,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   registerKeyboardShortcuts() {
     const moveNoteToTrash = () => {
-      this.deleteNote(false).catch(console.error)
+      this.deleteNote(this.note.trashed).catch(console.error)
     }
 
     this.#observers.push(
