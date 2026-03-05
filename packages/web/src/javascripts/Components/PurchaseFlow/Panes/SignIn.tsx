@@ -168,14 +168,14 @@ const SignIn: FunctionComponent<Props> = ({ application }) => {
         <div className="mb-4 text-sm font-medium">{c('Info').t`to continue to Standard Notes.`}</div>
         {showCaptcha ? captchaIframe : signInForm}
         <div className="text-sm font-medium text-passive-1">
-          {c('Info').jt`Don’t have an account yet? ${
+          {c('Info').jt`Don’t have an account yet? ${(
             <a
               className={`text-info ${isSigningIn ? 'cursor-not-allowed' : 'cursor-pointer '}`}
               onClick={handleCreateAccountInstead}
             >
               {c('Action').t`Create account`}
             </a>
-          }`}
+          )}`}
         </div>
       </div>
     </div>

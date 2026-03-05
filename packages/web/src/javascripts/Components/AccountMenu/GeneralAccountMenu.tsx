@@ -139,7 +139,8 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         <>
           <div className="mb-1 px-4 md:px-3">
             <div className="mb-3 text-base text-foreground lg:text-sm">
-              {c('Info').t`You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.`}
+              {c('Info')
+                .t`You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.`}
             </div>
             <div className="flex items-center text-passive-1">
               <Icon type="cloud-off" className={`mr-2 ${MenuItemIconSize}`} />
