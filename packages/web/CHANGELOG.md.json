@@ -1,6 +1,26 @@
 {
   "versions": [
     {
+      "version": "3.201.20",
+      "title": "[3.201.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.19...@standardnotes/web@3.201.20) (2026-03-06)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Adjusts lists items left marin on iOS ([#2991](https://github.com/standardnotes/app/issues/2991)) ([e2f9f63](https://github.com/standardnotes/app/commit/e2f9f636ae61929101ac778fde4a388e48f89179))\n* Fixes dropdowns styling when labels are too long ([#2989](https://github.com/standardnotes/app/issues/2989)) ([bdc43d6](https://github.com/standardnotes/app/commit/bdc43d6d5496b10fbcefd501420bd79cea7db39e))\n* Fixes prompt for Cmd/Ctrl+Backspace command on trashed note ([#2990](https://github.com/standardnotes/app/issues/2990)) ([8a845df](https://github.com/standardnotes/app/commit/8a845df38c98f774e52e968a94ec40dba64ad8cd))\n* Renders single line breaks properly on Super editor Show markdown ([#2988](https://github.com/standardnotes/app/issues/2988)) ([ac07cea](https://github.com/standardnotes/app/commit/ac07cea06efa041957d1ac227dd6e9ff2190b613))",
+      "parsed": {
+        "_": [
+          "Adjusts lists items left marin on iOS (#2991) (e2f9f63)",
+          "Fixes dropdowns styling when labels are too long (#2989) (bdc43d6)",
+          "Fixes prompt for Cmd/Ctrl+Backspace command on trashed note (#2990) (8a845df)",
+          "Renders single line breaks properly on Super editor Show markdown (#2988) (ac07cea)"
+        ],
+        "Bug Fixes": [
+          "Adjusts lists items left marin on iOS (#2991) (e2f9f63)",
+          "Fixes dropdowns styling when labels are too long (#2989) (bdc43d6)",
+          "Fixes prompt for Cmd/Ctrl+Backspace command on trashed note (#2990) (8a845df)",
+          "Renders single line breaks properly on Super editor Show markdown (#2988) (ac07cea)"
+        ]
+      }
+    },
+    {
       "version": "3.201.19",
       "title": "[3.201.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.18...@standardnotes/web@3.201.19) (2026-02-24)",
       "date": null,
