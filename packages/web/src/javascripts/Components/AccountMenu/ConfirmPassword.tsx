@@ -166,9 +166,22 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
   const confirmPasswordForm = (
     <>
       <div className="mb-3 px-3 text-sm">
-        {c('Info').jt`Because your notes are encrypted using your password, ${(
-          <span className="text-danger">Standard Notes does not have a password reset option</span>
-        )}. If you forget your password, you will permanently lose access to your data.`}
+        {
+          // translator: Full sentence: "Because your notes are encrypted using your password, Standard Notes does not have a password reset option. If you forget your password, you will permanently lose access to your data."
+          c('Info').t`Because your notes are encrypted using your password,`
+        }{' '}
+        {
+          <span className="text-danger">
+            {
+              // translator: Full sentence: "Because your notes are encrypted using your password, Standard Notes does not have a password reset option. If you forget your password, you will permanently lose access to your data."
+              c('Info').t`Standard Notes does not have a password reset option`
+            }
+          </span>
+        }
+        {
+          // translator: Full sentence: "Because your notes are encrypted using your password, Standard Notes does not have a password reset option. If you forget your password, you will permanently lose access to your data."
+          c('Info').t`. If you forget your password, you will permanently lose access to your data.`
+        }
       </div>
       <form onSubmit={handleConfirmFormSubmit} className="mb-1 px-3">
         {!isRegistering && (

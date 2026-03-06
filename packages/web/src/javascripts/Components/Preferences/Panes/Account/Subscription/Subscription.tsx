@@ -6,12 +6,12 @@ import { FunctionComponent, useEffect, useState } from 'react'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { SubscriptionManagerEvent, Subscription } from '@standardnotes/snjs'
+import { SubscriptionManagerEvent, Subscription as SubscriptionType } from '@standardnotes/snjs'
 
 const Subscription: FunctionComponent = () => {
   const application = useApplication()
 
-  const [onlineSubscription, setOnlineSubscription] = useState<Subscription | undefined>(
+  const [onlineSubscription, setOnlineSubscription] = useState<SubscriptionType | undefined>(
     application.subscriptionController.onlineSubscription,
   )
 
