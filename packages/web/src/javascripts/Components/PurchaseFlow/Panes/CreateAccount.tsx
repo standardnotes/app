@@ -198,10 +198,14 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
       <DiamondIcon className="absolute -right-2 top-0 -z-[1] h-18 w-18 translate-x-1/2" />
 
       <div className="mr-0 lg:mr-12">
-        // translator: Full sentence: "Create your free account"
-        <h1 className="mb-2 mt-0 text-2xl font-bold">{c('Title').t`Create your free account`}</h1>
-        // translator: Full sentence: "Create your free account to continue to Standard Notes."
-        <div className="mb-4 text-sm font-medium">{c('Info').t`to continue to Standard Notes.`}</div>
+        {
+          // translator: Full sentence: "Create your free account"
+          <h1 className="mb-2 mt-0 text-2xl font-bold">{c('Title').t`Create your free account`}</h1>
+        }
+        {
+          // translator: Full sentence: "Create your free account to continue to Standard Notes."
+          <div className="mb-4 text-sm font-medium">{c('Info').t`to continue to Standard Notes.`}</div>
+        }
         {captchaURL ? captchaIframe : CreateAccountForm}
         <div className="flex flex-col-reverse items-start justify-between md:flex-row md:items-center">
           <div className="flex flex-col">
@@ -210,8 +214,10 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
               disabled={isCreatingAccount}
               className="mb-2 flex cursor-pointer items-start border-0 bg-default p-0 font-medium text-info hover:underline"
             >
-              // translator: "Instead" here refers to "instead of creating an account"
-              {c('Action').t`Sign in instead`}
+              {
+                // translator: "Instead" here refers to "instead of creating an account"
+                c('Action').t`Sign in instead`
+              }
             </button>
             {!application.isNativeIOS() && (
               <button
