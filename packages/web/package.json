@@ -120,6 +120,7 @@
     "comlink": "^4.4.1",
     "fast-diff": "^1.3.0",
     "lexical": "0.38.1",
+    "ttag": "^1.8.12",
     "unicode-script": "^1.2.0"
   }
 }
