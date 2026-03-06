@@ -3,26 +3,26 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { SNNote, ContentType } from '@standardnotes/snjs'
 import { useState, useEffect } from 'react'
 
-const ReadonlyPlugin = ({ note }: { note: SNNote }) => {
+const ReadonlyPlugin = ({ note, forceReadonly = false }: { note: SNNote; forceReadonly?: boolean }) => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
-  const [readOnly, setReadOnly] = useState(note.locked)
+  const [noteLocked, setNoteLocked] = useState(note.locked)
 
   useEffect(() => {
     return application.items.streamItems<SNNote>(ContentType.TYPES.Note, ({ changed }) => {
       const changedNoteItem = changed.find((changedItem) => changedItem.uuid === note.uuid)
 
       if (changedNoteItem) {
-        setReadOnly(changedNoteItem.locked)
+        setNoteLocked(changedNoteItem.locked)
       }
     })
   }, [application, note.uuid])
 
   useEffect(() => {
     editor.update(() => {
-      editor.setEditable(!readOnly)
+      editor.setEditable(!(noteLocked || forceReadonly))
     })
-  }, [editor, readOnly])
+  }, [editor, noteLocked, forceReadonly])
 
   return null
 }
