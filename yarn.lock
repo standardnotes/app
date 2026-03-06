@@ -9239,6 +9239,7 @@ __metadata:
     tailwindcss: ^3.4.0
     ts-jest: ^29.0.3
     ts-loader: ^9.4.2
+    ttag: ^1.8.12
     typescript: "*"
     unicode-script: ^1.2.0
     webextension-polyfill: ^0.10.0
@@ -14481,6 +14482,18 @@ __metadata:
     "@standardnotes/sncrypto-web": ^1.6.1
     "@standardnotes/snjs": ^2.41.1
   checksum: 868e763833fb49475ed2cfc58b51e6244b67e26a5b346af333b03d4134707983d973fdcaa62f5eaa31fb3eba1196371c60a27b7e1c5832907e5784434a8863ea
+  languageName: node
+  linkType: hard
+
+"dedent@npm:1.5.1":
+  version: 1.5.1
+  resolution: "dedent@npm:1.5.1"
+  peerDependencies:
+    babel-plugin-macros: ^3.1.0
+  peerDependenciesMeta:
+    babel-plugin-macros:
+      optional: true
+  checksum: c3c300a14edf1bdf5a873f9e4b22e839d62490bc5c8d6169c1f15858a1a76733d06a9a56930e963d677a2ceeca4b6b0894cc5ea2f501aa382ca5b92af3413c2a
   languageName: node
   linkType: hard
 
@@ -24214,6 +24227,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"plural-forms@npm:^0.5.3":
+  version: 0.5.5
+  resolution: "plural-forms@npm:0.5.5"
+  checksum: 97e1ff5bb63c6aaad1150a7118a5d17dcbe19aa194be464b5384f5aad6480e299edc40afa22784ebbd2a7265790eab91872d633eddd53d866d47e3d721107a43
+  languageName: node
+  linkType: hard
+
 "pod-install@npm:^0.3.5":
   version: 0.3.7
   resolution: "pod-install@npm:0.3.7"
@@ -28391,6 +28411,16 @@ __metadata:
   peerDependencies:
     typescript: ">=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta"
   checksum: 1843f4c1b2e0f975e08c4c21caa4af4f7f65a12ac1b81b3b8489366826259323feb3fc7a243123453d2d1a02314205a7634e048d4a8009921da19f99755cdc48
+  languageName: node
+  linkType: hard
+
+"ttag@npm:^1.8.12":
+  version: 1.8.12
+  resolution: "ttag@npm:1.8.12"
+  dependencies:
+    dedent: 1.5.1
+    plural-forms: ^0.5.3
+  checksum: 7bb7713fdcd846c69884eadb28cf27df0043a2f91a0350a8270d55da2c87f362a1406d8ffae890b99f0fec7691e8955c47ac95a2e6c89f6dac3154a380ff71ca
   languageName: node
   linkType: hard
 

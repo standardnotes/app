@@ -7,6 +7,7 @@ import { AccountIllustration } from '@standardnotes/icons'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -25,22 +26,24 @@ const Authentication: FunctionComponent<Props> = ({ application }) => {
     application.accountMenuController.setShow(true)
   }
 
+  const loginLink = (
+    <button className="cursor-pointer border-0 bg-default p-0 text-info underline" onClick={clickSignIn}>
+      {c('Action').t`Sign in`}
+    </button>
+  )
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <div className="flex flex-col items-center px-4 md:px-12">
           <AccountIllustration className="mb-3" />
-          <Title>You're not signed in</Title>
+          <Title>{c('Title').t`You're not signed in`}</Title>
           <div className="mb-3 text-center text-base lg:text-sm">
-            Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.
+            {c('Info')
+              .t`Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.`}
           </div>
-          <Button primary label="Create free account" onClick={clickRegister} className="mb-3" />
-          <div className="text-base lg:text-sm">
-            Already have an account?{' '}
-            <button className="cursor-pointer border-0 bg-default p-0 text-info underline" onClick={clickSignIn}>
-              Sign in
-            </button>
-          </div>
+          <Button primary label={c('Action').t`Create free account`} onClick={clickRegister} className="mb-3" />
+          <div className="text-base lg:text-sm">{c('Info').jt`Already have an account? ${loginLink}`}</div>
         </div>
       </PreferencesSegment>
     </PreferencesGroup>

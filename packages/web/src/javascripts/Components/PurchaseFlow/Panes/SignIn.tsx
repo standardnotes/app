@@ -8,6 +8,7 @@ import { isEmailValid } from '@/Utils'
 import { BlueDotIcon, CircleIcon, DiamondIcon } from '@standardnotes/icons'
 import { isErrorResponse, getCaptchaHeader } from '@standardnotes/snjs'
 import { useCaptcha } from '@/Hooks/useCaptcha'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -102,7 +103,7 @@ const SignIn: FunctionComponent<Props> = ({ application }) => {
       if ((err as Error).toString().includes('Invalid email or password')) {
         setIsEmailInvalid(true)
         setIsPasswordInvalid(true)
-        setOtherErrorMessage('Invalid email or password.')
+        setOtherErrorMessage(c('Error').t`Invalid email or password.`)
         setPassword('')
       } else {
         application.alerts.alert(err as string).catch(console.error)
@@ -119,7 +120,7 @@ const SignIn: FunctionComponent<Props> = ({ application }) => {
           className={`min-w-auto sm:min-w-90 ${isEmailInvalid && !otherErrorMessage ? 'mb-2' : 'mb-4'}`}
           id="purchase-sign-in-email"
           type="email"
-          label="Email"
+          label={c('Label').t`Email`}
           value={email}
           onChange={handleEmailChange}
           ref={emailInputRef}
@@ -127,13 +128,13 @@ const SignIn: FunctionComponent<Props> = ({ application }) => {
           isInvalid={isEmailInvalid}
         />
         {isEmailInvalid && !otherErrorMessage ? (
-          <div className="mb-4 text-danger">Please provide a valid email.</div>
+          <div className="mb-4 text-danger">{c('Error').t`Please provide a valid email.`}</div>
         ) : null}
         <FloatingLabelInput
           className={`min-w-auto sm:min-w-90 ${otherErrorMessage ? 'mb-2' : 'mb-4'}`}
           id="purchase-sign-in-password"
           type="password"
-          label="Password"
+          label={c('Label').t`Password`}
           value={password}
           onChange={handlePasswordChange}
           ref={passwordInputRef}
@@ -145,7 +146,7 @@ const SignIn: FunctionComponent<Props> = ({ application }) => {
       <Button
         className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} mb-5 py-2.5`}
         primary
-        label={isSigningIn ? 'Signing in...' : 'Sign in'}
+        label={isSigningIn ? c('Action').t`Signing in...` : c('Action').t`Sign in`}
         onClick={handleSignIn}
         disabled={isSigningIn}
       />
@@ -163,17 +164,18 @@ const SignIn: FunctionComponent<Props> = ({ application }) => {
       <DiamondIcon className="absolute -right-2 top-0 -z-[1] h-18 w-18 translate-x-1/2" />
 
       <div>
-        <h1 className="mb-2 mt-0 text-2xl font-bold">Sign in</h1>
-        <div className="mb-4 text-sm font-medium">to continue to Standard Notes.</div>
+        <h1 className="mb-2 mt-0 text-2xl font-bold">{c('Title').t`Sign in`}</h1>
+        <div className="mb-4 text-sm font-medium">{c('Info').t`to continue to Standard Notes.`}</div>
         {showCaptcha ? captchaIframe : signInForm}
         <div className="text-sm font-medium text-passive-1">
-          Don’t have an account yet?{' '}
-          <a
-            className={`text-info ${isSigningIn ? 'cursor-not-allowed' : 'cursor-pointer '}`}
-            onClick={handleCreateAccountInstead}
-          >
-            Create account
-          </a>
+          {c('Info').jt`Don’t have an account yet? ${(
+            <a
+              className={`text-info ${isSigningIn ? 'cursor-not-allowed' : 'cursor-pointer '}`}
+              onClick={handleCreateAccountInstead}
+            >
+              {c('Action').t`Create account`}
+            </a>
+          )}`}
         </div>
       </div>
     </div>

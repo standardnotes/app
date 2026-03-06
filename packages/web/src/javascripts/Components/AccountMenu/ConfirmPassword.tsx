@@ -20,6 +20,7 @@ import { useCaptcha } from '@/Hooks/useCaptcha'
 import { isErrorResponse } from '@standardnotes/snjs'
 import MergeLocalDataCheckbox from './MergeLocalDataCheckbox'
 import ConfirmNoMergeDialog from './ConfirmNoMergeDialog'
+import { c } from 'ttag'
 
 type Props = {
   setMenuPane: (pane: AccountMenuPane) => void
@@ -165,9 +166,9 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
   const confirmPasswordForm = (
     <>
       <div className="mb-3 px-3 text-sm">
-        Because your notes are encrypted using your password,{' '}
-        <span className="text-danger">Standard Notes does not have a password reset option</span>. If you forget your
-        password, you will permanently lose access to your data.
+        {c('Info').jt`Because your notes are encrypted using your password, ${(
+          <span className="text-danger">Standard Notes does not have a password reset option</span>
+        )}. If you forget your password, you will permanently lose access to your data.`}
       </div>
       <form onSubmit={handleConfirmFormSubmit} className="mb-1 px-3">
         {!isRegistering && (
@@ -177,7 +178,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
             left={[<Icon type="password" className="text-neutral" />]}
             onChange={handlePasswordChange}
             onKeyDown={handleKeyDown}
-            placeholder="Confirm password"
+            placeholder={c('Label').t`Confirm password`}
             ref={passwordInputRef}
             value={confirmPassword}
           />
@@ -187,13 +188,13 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
           primary
           fullWidth
           className="mb-3 mt-1"
-          label={isRegistering ? 'Creating account...' : 'Create account & sign in'}
+          label={isRegistering ? c('Action').t`Creating account...` : c('Action').t`Create account & sign in`}
           onClick={handleConfirmFormSubmit}
           disabled={isRegistering}
         />
         <Checkbox
           name="is-ephemeral"
-          label="Stay signed in"
+          label={c('Option').t`Stay signed in`}
           checked={!isEphemeral}
           onChange={handleEphemeralChange}
           disabled={isRegistering}
@@ -215,13 +216,15 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
       <div className="mb-3 mt-1 flex items-center px-3">
         <IconButton
           icon="arrow-left"
-          title="Go back"
+          title={c('Action').t`Go back`}
           className="mr-2 flex p-0 text-neutral"
           onClick={handleGoBack}
           focusable={true}
           disabled={isRegistering}
         />
-        <div className="text-base font-bold">{captchaURL ? 'Human verification' : 'Confirm password'}</div>
+        <div className="text-base font-bold">
+          {captchaURL ? c('Title').t`Human verification` : c('Title').t`Confirm password`}
+        </div>
       </div>
       {captchaURL ? <div className="p-[10px]">{captchaIframe}</div> : confirmPasswordForm}
       {showNoMergeConfirmation && (

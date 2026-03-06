@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.20](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.19...@standardnotes/web@3.201.20) (2026-03-06)
+
+### Bug Fixes
+
+* Adjusts lists items left marin on iOS ([#2991](https://github.com/standardnotes/app/issues/2991)) ([e2f9f63](https://github.com/standardnotes/app/commit/e2f9f636ae61929101ac778fde4a388e48f89179))
+* Fixes dropdowns styling when labels are too long ([#2989](https://github.com/standardnotes/app/issues/2989)) ([bdc43d6](https://github.com/standardnotes/app/commit/bdc43d6d5496b10fbcefd501420bd79cea7db39e))
+* Fixes prompt for Cmd/Ctrl+Backspace command on trashed note ([#2990](https://github.com/standardnotes/app/issues/2990)) ([8a845df](https://github.com/standardnotes/app/commit/8a845df38c98f774e52e968a94ec40dba64ad8cd))
+* Renders single line breaks properly on Super editor Show markdown ([#2988](https://github.com/standardnotes/app/issues/2988)) ([ac07cea](https://github.com/standardnotes/app/commit/ac07cea06efa041957d1ac227dd6e9ff2190b613))
+
 ## [3.201.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.18...@standardnotes/web@3.201.19) (2026-02-24)
 
 ### Bug Fixes
