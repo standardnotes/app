@@ -56,7 +56,7 @@ const Dropdown = ({
       </SelectLabel>
       <Select
         className={classNames(
-          'flex w-full min-w-55 items-center justify-between rounded border border-passive-3 bg-default px-3.5 py-1.5 text-sm text-foreground md:translucent-ui:bg-transparent',
+          'flex w-full min-w-55 max-w-full items-center justify-between rounded border border-passive-3 bg-default px-3.5 py-1.5 text-sm text-foreground md:translucent-ui:bg-transparent',
           disabled && 'opacity-50',
           classNameOverride.button,
           !fullWidth && 'md:w-fit',
@@ -64,13 +64,13 @@ const Dropdown = ({
         store={select}
         disabled={disabled}
       >
-        <div className="flex items-center">
+        <div className="flex min-w-0 items-center overflow-hidden">
           {currentItem?.icon ? (
-            <div className="mr-2 flex">
+            <div className="mr-2 flex shrink-0">
               <Icon type={currentItem.icon} className={currentItem.iconClassName ?? ''} size="small" />
             </div>
           ) : null}
-          <div className="text-base lg:text-sm">{currentItem?.label}</div>
+          <div className="truncate text-base lg:text-sm">{currentItem?.label}</div>
         </div>
         <Icon type="chevron-down" size="normal" className={isExpanded ? 'rotate-180' : ''} />
       </Select>
@@ -84,17 +84,17 @@ const Dropdown = ({
       >
         {items.map((item) => (
           <SelectItem
-            className="group flex cursor-pointer items-center bg-transparent px-3 py-1.5 text-sm text-text hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info [&[data-active-item]]:text-info-contrast"
+            className="group flex min-w-0 cursor-pointer items-center overflow-hidden bg-transparent px-3 py-1.5 text-sm text-text hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info [&[data-active-item]]:text-info-contrast"
             key={item.value}
             value={item.value}
             disabled={item.disabled}
           >
             {item.icon ? (
-              <div className="mr-3 flex">
+              <div className="mr-3 flex shrink-0">
                 <Icon type={item.icon} className={item.iconClassName ?? ''} size="small" />
               </div>
             ) : null}
-            <div className="text-base lg:text-sm">{item.label}</div>
+            <div className="truncate text-base lg:text-sm">{item.label}</div>
           </SelectItem>
         ))}
       </SelectPopover>
