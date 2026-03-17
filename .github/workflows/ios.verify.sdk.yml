@@ -1,0 +1,44 @@
+name: iOS SDK Verify
+
+on: workflow_dispatch
+
+jobs:
+  verify-ios-sdk:
+    defaults:
+      run:
+        working-directory: packages/mobile
+    runs-on: macos-15
+    timeout-minutes: 90
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Select Xcode 26
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "26.0"
+
+      - name: Verify Xcode and available iOS SDKs
+        run: |
+          xcodebuild -version
+          xcodebuild -showsdks | rg iphoneos
+
+      - name: Install dependencies
+        run: yarn install --immutable && yarn install:pods
+
+      - name: Archive app without signing or upload
+        run: |
+          xcodebuild \
+            -workspace ios/StandardNotes.xcworkspace \
+            -scheme StandardNotes \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/StandardNotes.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            archive
+
+      - name: Validate archive SDK metadata
+        run: |
+          plutil -p build/StandardNotes.xcarchive/Info.plist | rg DTSDKName
+          plutil -p build/StandardNotes.xcarchive/Info.plist | rg "iphoneos26\\."
