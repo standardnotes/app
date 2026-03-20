@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable && yarn install:pods
 
+      - name: Build mobile workspace dependencies
+        run: yarn build:mobile
+
       - name: Archive app without signing or upload
         run: |
           xcodebuild \

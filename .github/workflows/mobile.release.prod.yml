@@ -74,11 +74,15 @@ jobs:
     defaults:
       run:
         working-directory: packages/mobile
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 90
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Select Xcode 26
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.0'
       - name: Export version from package.json
         run:
           echo "PACKAGE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
