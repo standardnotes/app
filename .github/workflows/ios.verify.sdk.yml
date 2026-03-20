@@ -21,7 +21,7 @@ jobs:
       - name: Verify Xcode and available iOS SDKs
         run: |
           xcodebuild -version
-          xcodebuild -showsdks | rg iphoneos
+          xcodebuild -showsdks | grep -E "iphoneos"
 
       - name: Install dependencies
         run: yarn install --immutable && yarn install:pods
@@ -40,5 +40,5 @@ jobs:
 
       - name: Validate archive SDK metadata
         run: |
-          plutil -p build/StandardNotes.xcarchive/Info.plist | rg DTSDKName
-          plutil -p build/StandardNotes.xcarchive/Info.plist | rg "iphoneos26\\."
+          plutil -p build/StandardNotes.xcarchive/Info.plist | grep -E "DTSDKName"
+          plutil -p build/StandardNotes.xcarchive/Info.plist | grep -E "iphoneos26\\."
