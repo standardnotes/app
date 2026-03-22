@@ -104,6 +104,17 @@ export function getLinkingSearchResults(
       unlinkedFiles.push(item)
       continue
     }
+
+    // at capacity, don't be greedy
+    if (
+      enforceResultLimit &&
+      unlinkedTags.length >= limitPerContentType &&
+      unlinkedNotes.length >= limitPerContentType &&
+      unlinkedFiles.length >= limitPerContentType &&
+      linkedResults.length >= MaxLinkedResults
+    ) {
+      break
+    }
   }
 
   unlinkedItems = naturalSort([...unlinkedTags, ...unlinkedNotes, ...unlinkedFiles], 'title')
