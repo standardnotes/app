@@ -89,12 +89,14 @@ function matchResultForStringQuery(item: SearchableItem, searchString: string): 
   return (matchesTitle ? MatchResult.Title : 0) + (matchesBody ? MatchResult.Text : 0)
 }
 
+const QUOTED_STRING_RE = /"(.*?)"/
+const UUID_RE = /\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/
+
 function stringBetweenQuotes(text: string) {
-  const matches = text.match(/"(.*?)"/)
+  const matches = text.match(QUOTED_STRING_RE)
   return matches ? matches[1] : null
 }
 
 function stringIsUuid(text: string) {
-  const matches = text.match(/\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/)
-  return matches ? true : false
+  return UUID_RE.test(text)
 }
