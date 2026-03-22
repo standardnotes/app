@@ -48,10 +48,7 @@ export function getLinkingSearchResults(
     return defaultReturnValue
   }
 
-  const searchableItems = naturalSort(
-    application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.File, ContentType.TYPES.Tag]),
-    'title',
-  )
+  const searchableItems = application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.File, ContentType.TYPES.Tag])
 
   const unlinkedTags: LinkableItem[] = []
   const unlinkedNotes: LinkableItem[] = []
@@ -110,7 +107,7 @@ export function getLinkingSearchResults(
     }
   }
 
-  unlinkedItems = [...unlinkedTags, ...unlinkedNotes, ...unlinkedFiles]
+  unlinkedItems = naturalSort([...unlinkedTags, ...unlinkedNotes, ...unlinkedFiles], 'title')
 
   shouldShowCreateTag =
     !linkedResults.find((link) => isSearchResultExistingTag(link.item, searchQuery)) &&
