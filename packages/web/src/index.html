@@ -45,5 +45,14 @@
     <link rel="stylesheet" media="all" href="./app.css" debug="false" />
   </head>
   <body>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js').catch(function(err) {
+            console.log('SW registration failed:', err)
+          })
+        })
+      }
+    </script>
   </body>
 </html>
