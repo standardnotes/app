@@ -50,4 +50,36 @@ describe('item display options', () => {
     const collection = collectionWithNotes(['hello', 'foobar'], ['foo', 'fobar'])
     expect(notesAndFilesMatchingOptions(options, collection.all() as SNNote[], collection)).toHaveLength(2)
   })
+
+  it('multi-word query matches when all words present', () => {
+    const options: NotesAndFilesDisplayOptions = {
+      searchQuery: { query: 'meeting notes', includeProtectedNoteText: true },
+    } as jest.Mocked<NotesAndFilesDisplayOptions>
+    const collection = collectionWithNotes(['Meeting Notes Monday', 'Notes', 'Meeting Agenda', 'notes from meeting'])
+    expect(notesAndFilesMatchingOptions(options, collection.all() as SNNote[], collection)).toHaveLength(2)
+  })
+
+  it('quoted query matches exact phrase only', () => {
+    const options: NotesAndFilesDisplayOptions = {
+      searchQuery: { query: '"foo bar"', includeProtectedNoteText: true },
+    } as jest.Mocked<NotesAndFilesDisplayOptions>
+    const collection = collectionWithNotes(['foo bar', 'bar foo', 'foo baz bar', 'foo bar baz'])
+    expect(notesAndFilesMatchingOptions(options, collection.all() as SNNote[], collection)).toHaveLength(2)
+  })
+
+  it('case insensitive matching', () => {
+    const options: NotesAndFilesDisplayOptions = {
+      searchQuery: { query: 'HELLO', includeProtectedNoteText: true },
+    } as jest.Mocked<NotesAndFilesDisplayOptions>
+    const collection = collectionWithNotes(['hello world', 'Hello', 'goodbye'])
+    expect(notesAndFilesMatchingOptions(options, collection.all() as SNNote[], collection)).toHaveLength(2)
+  })
+
+  it('empty query returns all items', () => {
+    const options: NotesAndFilesDisplayOptions = {
+      searchQuery: { query: '', includeProtectedNoteText: true },
+    } as jest.Mocked<NotesAndFilesDisplayOptions>
+    const collection = collectionWithNotes(['one', 'two', 'three'])
+    expect(notesAndFilesMatchingOptions(options, collection.all() as SNNote[], collection)).toHaveLength(3)
+  })
 })
