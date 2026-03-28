@@ -13,10 +13,10 @@ export const CodeBlock = {
       const selection = $getSelection()
       if ($isRangeSelection(selection)) {
         if (selection.isCollapsed()) {
-          $setBlocksType(selection, () => $createCodeNode())
+          $setBlocksType(selection, () => $createCodeNode('plain'))
         } else {
           const textContent = selection.getTextContent()
-          const codeNode = $createCodeNode()
+          const codeNode = $createCodeNode('plain')
           selection.insertNodes([codeNode])
           selection.insertRawText(textContent)
         }
