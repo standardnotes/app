@@ -15,6 +15,7 @@ export class NativeFeatureIdentifier extends ValueObject<NativeFeatureIdentifier
     NoteHistory365Days: 'org.standardnotes.note-history-365',
     NoteHistoryUnlimited: 'org.standardnotes.note-history-unlimited',
     SignInAlerts: 'com.standardnotes.sign-in-alerts',
+    UniversalSearch: 'org.standardnotes.universal-search',
     SmartFilters: 'org.standardnotes.smart-filters',
     TagNesting: 'org.standardnotes.tag-nesting',
     TwoFactorAuth: 'org.standardnotes.two-factor-auth',

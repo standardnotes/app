@@ -160,6 +160,26 @@ describe('GetFeatureStatusUseCase', () => {
     })
   })
 
+  describe('UniversalSearch', () => {
+    const universalSearchFeatureId = () =>
+      NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.UniversalSearch).getValue()
+
+    beforeEach(() => {
+      items.getDisplayableComponents.mockReturnValue([])
+    })
+
+    it('returns NoUserSubscription when not in feature catalog and not a free feature', () => {
+      expect(
+        usecase.execute({
+          featureId: universalSearchFeatureId(),
+          hasPaidAnyPartyOnlineOrOfflineSubscription: false,
+          firstPartyOnlineSubscription: undefined,
+          firstPartyRoles: undefined,
+        }),
+      ).toEqual(FeatureStatus.NoUserSubscription)
+    })
+  })
+
   describe('third party features', () => {
     it('should return Entitled for third-party features', () => {
       const mockComponent = {
