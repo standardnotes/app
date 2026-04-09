@@ -44,6 +44,8 @@
       MainRegistry.VaultTests.exclusive = true;
     } else if (testSuite === 'base') {
       MainRegistry.BaseTests.exclusive = true;
+    } else if (testSuite === 'session') {
+      MainRegistry.SessionTests.exclusive = true;
     }
 
     const loadTest = (fileName) => {
@@ -70,9 +72,12 @@
       await loadTests(MainRegistry.VaultTests.files);
     } else if (MainRegistry.BaseTests.exclusive) {
       await loadTests(MainRegistry.BaseTests.files);
+    } else if (MainRegistry.SessionTests.exclusive) {
+      await loadTests(MainRegistry.SessionTests.files);
     } else {
       await loadTests([
         ...MainRegistry.BaseTests.files,
+        ...MainRegistry.SessionTests.files,
         ...MainRegistry.VaultTests.files
       ]);
     }

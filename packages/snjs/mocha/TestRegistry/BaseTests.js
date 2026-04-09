@@ -55,8 +55,6 @@ export const BaseTests = {
     'actions.test.js',
     'preferences.test.js',
     'files.test.js',
-    'session.test.js',
-    'session-invalidation.test.js',
     'subscriptions.test.js',
     'recovery.test.js',
   ]
