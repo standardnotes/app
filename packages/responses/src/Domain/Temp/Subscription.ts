@@ -4,4 +4,5 @@ export type Subscription = {
   createdAt: number
   updatedAt: number
   cancelled: boolean
+  subscriptionType?: 'regular' | 'shared'
 }

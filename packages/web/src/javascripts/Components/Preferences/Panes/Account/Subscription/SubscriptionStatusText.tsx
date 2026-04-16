@@ -11,8 +11,17 @@ const SubscriptionStatusText = () => {
     isUserSubscriptionExpired,
     isUserSubscriptionCanceled,
   } = application.subscriptions
+  const onlineSubscription = application.subscriptionController.onlineSubscription
+  const isSharedSubscription = onlineSubscription?.subscriptionType === 'shared'
 
   const expirationDateString = userSubscriptionExpirationDate?.toLocaleString()
+  const sharedMessage = isSharedSubscription ? (
+    <>
+      <br />
+      <br />
+      This subscription has been shared with you and can only be managed by the owner.
+    </>
+  ) : null
 
   if (isUserSubscriptionCanceled) {
     return (
@@ -29,6 +38,7 @@ const SubscriptionStatusText = () => {
           <span className="font-bold">but will remain valid until {expirationDateString}</span>
         )}
         . You may resubscribe below if you wish.
+        {sharedMessage}
       </Text>
     )
   }
@@ -43,6 +53,7 @@ const SubscriptionStatusText = () => {
         </span>{' '}
         subscription <span className="font-bold">expired on {expirationDateString}</span>. You may resubscribe below if
         you wish.
+        {sharedMessage}
       </Text>
     )
   }
@@ -54,7 +65,7 @@ const SubscriptionStatusText = () => {
         Standard Notes{userSubscriptionName ? ' ' : ''}
         {userSubscriptionName}
       </span>{' '}
-      subscription will be <span className="font-bold">renewed on {expirationDateString}</span>.
+      subscription will be <span className="font-bold">renewed on {expirationDateString}</span>.{sharedMessage}
     </Text>
   )
 }

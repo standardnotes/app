@@ -5,6 +5,8 @@ import { useApplication } from '@/Components/ApplicationProvider'
 
 const SubscriptionInformation = () => {
   const application = useApplication()
+  const onlineSubscription = application.subscriptionController.onlineSubscription
+  const isSharedSubscription = onlineSubscription?.subscriptionType === 'shared'
 
   const manageSubscription = async () => {
     void application.openSubscriptionDashboard.execute()
@@ -13,7 +15,9 @@ const SubscriptionInformation = () => {
   return (
     <>
       <SubscriptionStatusText />
-      <Button className="mr-3 mt-3 min-w-20" label="Manage subscription" onClick={manageSubscription} />
+      {!isSharedSubscription && (
+        <Button className="mr-3 mt-3 min-w-20" label="Manage subscription" onClick={manageSubscription} />
+      )}
     </>
   )
 }

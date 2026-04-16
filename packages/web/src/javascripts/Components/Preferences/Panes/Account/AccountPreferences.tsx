@@ -18,6 +18,8 @@ type Props = {
 
 const AccountPreferences = ({ application }: Props) => {
   const isUsingThirdPartyServer = !application.sessions.isSignedIntoFirstPartyServer()
+  const onlineSubscription = application.subscriptionController.onlineSubscription
+  const isSharedSubscription = onlineSubscription?.subscriptionType === 'shared'
 
   return (
     <PreferencesPane>
@@ -30,7 +32,7 @@ const AccountPreferences = ({ application }: Props) => {
         </>
       )}
       <Subscription />
-      <SubscriptionSharing application={application} />
+      {!isSharedSubscription && <SubscriptionSharing application={application} />}
       {application.hasAccount() && application.featuresController.entitledToFiles && (
         <FilesSection application={application} />
       )}
