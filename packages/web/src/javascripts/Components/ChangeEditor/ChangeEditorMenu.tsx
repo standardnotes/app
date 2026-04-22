@@ -301,7 +301,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                           {menuItem.uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.SuperEditor &&
                             !isSelected(menuItem) &&
                             recommendSuper && (
-                              <Pill className="px-1.5 py-0.5 text-[9px]" style="info">
+                              <Pill className="px-1.5 py-0.5 text-[0.5625rem]" style="info">
                                 Recommended
                               </Pill>
                             )}
