@@ -4937,6 +4937,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lexical/code-prism@npm:0.43.0":
+  version: 0.43.0
+  resolution: "@lexical/code-prism@npm:0.43.0"
+  dependencies:
+    "@lexical/code-core": 0.43.0
+    lexical: 0.43.0
+    prismjs: ^1.30.0
+  checksum: c8fcbd2541d7bc5f2bd1b7c595c58742d535bd7976f0620541e5730495113e4ffa74850b092106258fc63cbb7c3a475059226f786818e10fafbb99f3777a5f8b
+  languageName: node
+  linkType: hard
+
+"@lexical/code@npm:0.43.0":
+  version: 0.43.0
+  resolution: "@lexical/code@npm:0.43.0"
+  dependencies:
+    "@lexical/code-core": 0.43.0
+    "@lexical/code-prism": 0.43.0
+    lexical: 0.43.0
+  checksum: f756ff54dba8c2791d72e03c1eb0a23f7e9c1e86d39d19e3288a9a7ad9c6fb18143066eb24aa7b03fdf573aa884f5e1cde630b60c052d5fea34314738b40d3d3
+  languageName: node
+  linkType: hard
+
 "@lexical/devtools-core@npm:0.43.0":
   version: 0.43.0
   resolution: "@lexical/devtools-core@npm:0.43.0"
@@ -9157,6 +9179,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@babel/preset-typescript": ^7.21.5
     "@lexical/clipboard": 0.43.0
+    "@lexical/code": 0.43.0
     "@lexical/headless": 0.43.0
     "@lexical/link": 0.43.0
     "@lexical/list": 0.43.0
@@ -24620,6 +24643,13 @@ __metadata:
   bin:
     prettyjson: bin/prettyjson
   checksum: e36e8ae4f77065160028fea33c6ae8e91936f86a4fd1751ceb19f88f336bc54e6f7d232ece38d4da3f7734e5c5e1fc3114a0d92da1987e7cf1515dcb29d447d1
+  languageName: node
+  linkType: hard
+
+"prismjs@npm:^1.30.0":
+  version: 1.30.0
+  resolution: "prismjs@npm:1.30.0"
+  checksum: a68eddd4c5f1c506badb5434b0b28a7cc2479ed1df91bc4218e6833c7971ef40c50ec481ea49749ac964256acb78d8b66a6bd11554938e8998e46c18b5f9a580
   languageName: node
   linkType: hard
 
