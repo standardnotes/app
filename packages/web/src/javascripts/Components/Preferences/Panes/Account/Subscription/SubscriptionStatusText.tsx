@@ -11,8 +11,7 @@ const SubscriptionStatusText = () => {
     isUserSubscriptionExpired,
     isUserSubscriptionCanceled,
   } = application.subscriptions
-  const onlineSubscription = application.subscriptionController.onlineSubscription
-  const isSharedSubscription = onlineSubscription?.subscriptionType === 'shared'
+  const isSharedSubscription = application.subscriptionController.isSharedSubscription
 
   const expirationDateString = userSubscriptionExpirationDate?.toLocaleString()
   const sharedMessage = isSharedSubscription ? (

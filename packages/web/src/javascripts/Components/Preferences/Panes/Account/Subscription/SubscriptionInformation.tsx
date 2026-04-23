@@ -5,8 +5,7 @@ import { useApplication } from '@/Components/ApplicationProvider'
 
 const SubscriptionInformation = () => {
   const application = useApplication()
-  const onlineSubscription = application.subscriptionController.onlineSubscription
-  const isSharedSubscription = onlineSubscription?.subscriptionType === 'shared'
+  const isSharedSubscription = application.subscriptionController.isSharedSubscription
 
   const manageSubscription = async () => {
     void application.openSubscriptionDashboard.execute()

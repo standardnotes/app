@@ -18,8 +18,7 @@ type Props = {
 
 const AccountPreferences = ({ application }: Props) => {
   const isUsingThirdPartyServer = !application.sessions.isSignedIntoFirstPartyServer()
-  const onlineSubscription = application.subscriptionController.onlineSubscription
-  const isSharedSubscription = onlineSubscription?.subscriptionType === 'shared'
+  const isSharedSubscription = application.subscriptionController.isSharedSubscription
 
   return (
     <PreferencesPane>
