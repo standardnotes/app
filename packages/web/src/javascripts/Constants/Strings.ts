@@ -64,7 +64,7 @@ export const STRING_LOCAL_ENC_ENABLED =
   'Encryption is enabled. Your data is encrypted using your passcode before it is saved to your device storage.'
 export const STRING_ENC_NOT_ENABLED =
   'Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.'
-export const STRING_IMPORT_SUCCESS = 'Your data has been successfully imported.'
+export const STRING_IMPORT_SUCCESS = () => c('Info').t`Your data has been successfully imported.`
 export const STRING_REMOVE_PASSCODE_CONFIRMATION = 'Are you sure you want to remove your application passcode?'
 export const STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM = ' This will remove encryption from your local data.'
 export const STRING_NON_MATCHING_PASSCODES = 'The two passcodes you entered do not match. Please try again.'
@@ -72,14 +72,18 @@ export const STRING_NON_MATCHING_PASSWORDS = () =>
   c('Error').t`The two passwords you entered do not match. Please try again.`
 export const STRING_GENERATING_LOGIN_KEYS = 'Generating Login Keys...'
 export const STRING_GENERATING_REGISTER_KEYS = 'Generating Account Keys...'
-export const STRING_INVALID_IMPORT_FILE = 'Unable to open file. Ensure it is a proper JSON file and try again.'
-export const STRING_IMPORTING_ZIP_FILE =
-  'The file you selected is not a valid backup file. Please extract the contents of the zip file, then upload the contained .txt file.'
+export const STRING_INVALID_IMPORT_FILE = () =>
+  c('Error').t`Unable to open file. Ensure it is a proper JSON file and try again.`
+export const STRING_IMPORTING_ZIP_FILE = () =>
+  c('Error')
+    .t`The file you selected is not a valid backup file. Please extract the contents of the zip file, then upload the contained .txt file.`
 export function StringImportError(errorCount: number) {
-  return `Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`
+  return c('Info')
+    .t`Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`
 }
-export const STRING_UNSUPPORTED_BACKUP_FILE_VERSION =
-  'This backup file was created using an unsupported version of the application and cannot be imported here. Please update your application and try again.'
+export const STRING_UNSUPPORTED_BACKUP_FILE_VERSION = () =>
+  c('Error')
+    .t`This backup file was created using an unsupported version of the application and cannot be imported here. Please update your application and try again.`
 
 /** @password_change */
 export const STRING_FAILED_PASSWORD_CHANGE =
