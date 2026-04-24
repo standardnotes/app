@@ -68,7 +68,8 @@ export const STRING_IMPORT_SUCCESS = 'Your data has been successfully imported.'
 export const STRING_REMOVE_PASSCODE_CONFIRMATION = 'Are you sure you want to remove your application passcode?'
 export const STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM = ' This will remove encryption from your local data.'
 export const STRING_NON_MATCHING_PASSCODES = 'The two passcodes you entered do not match. Please try again.'
-export const STRING_NON_MATCHING_PASSWORDS = 'The two passwords you entered do not match. Please try again.'
+export const STRING_NON_MATCHING_PASSWORDS = () =>
+  c('Error').t`The two passwords you entered do not match. Please try again.`
 export const STRING_GENERATING_LOGIN_KEYS = 'Generating Login Keys...'
 export const STRING_GENERATING_REGISTER_KEYS = 'Generating Account Keys...'
 export const STRING_INVALID_IMPORT_FILE = 'Unable to open file. Ensure it is a proper JSON file and try again.'
@@ -84,8 +85,9 @@ export const STRING_UNSUPPORTED_BACKUP_FILE_VERSION =
 export const STRING_FAILED_PASSWORD_CHANGE =
   'There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.'
 
-export const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE =
-  'The encryption upgrade is in progress. You may lose data if you quit the app. ' + 'Are you sure you want to quit?'
+export const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE = () =>
+  c('Info')
+    .t`The encryption upgrade is in progress. You may lose data if you quit the app. Are you sure you want to quit?`
 
 export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE =
   'A passcode change is in progress. You may lose data if you quit the app. ' + 'Are you sure you want to quit?'
@@ -93,13 +95,11 @@ export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE =
 export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL =
   'A passcode removal is in progress. You may lose data if you quit the app. ' + 'Are you sure you want to quit?'
 
-export const STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE = 'Encryption upgrade available'
-export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT =
-  'Encryption version 004 is available. ' +
-  'This version strengthens the encryption algorithms your account and ' +
-  'local storage use. To learn more about this upgrade, visit our ' +
-  '<a href="https://standardnotes.com/help/security" target="_blank">Security Upgrade page.</a>'
-export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade'
+export const STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE = () => c('Title').t`Encryption upgrade available`
+export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT = () =>
+  c('Info')
+    .t`Encryption version 004 is available. This version strengthens the encryption algorithms your account and local storage use. To learn more about this upgrade, visit our <a href="https://standardnotes.com/help/security" target="_blank">Security Upgrade page.</a>`
+export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = () => c('Action').t`Upgrade`
 
 export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION = 'This will delete the previously saved offline key.'
 
