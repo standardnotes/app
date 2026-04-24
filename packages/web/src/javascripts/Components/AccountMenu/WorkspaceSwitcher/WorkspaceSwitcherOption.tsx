@@ -7,6 +7,7 @@ import WorkspaceSwitcherMenu from './WorkspaceSwitcherMenu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import Popover from '@/Components/Popover/Popover'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
+import { c } from 'ttag'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
@@ -25,12 +26,12 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
       <MenuItem tabIndex={FOCUSABLE_BUT_NOT_TABBABLE} ref={buttonRef} onClick={toggleMenu} className="justify-between">
         <div className="flex items-center">
           <Icon type="user-switch" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-          Switch workspace
+          {c('Action').t`Switch workspace`}
         </div>
         <Icon type="chevron-right" className={`text-neutral ${MenuItemIconSize}`} />
       </MenuItem>
       <Popover
-        title="Switch workspace"
+        title={c('Action').t`Switch workspace`}
         align="end"
         anchorElement={buttonRef}
         className="pb-2"

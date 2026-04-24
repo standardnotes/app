@@ -1,13 +1,15 @@
 import { escapeHtmlString, Platform, SNApplication } from '@standardnotes/snjs'
 import { getPlatform, isDesktopApplication } from '../Utils'
+import { c } from 'ttag'
 
 /** @generic */
-export const STRING_SESSION_EXPIRED =
-  'Your session has expired. New changes will not be pulled in. Please sign in to refresh your session.'
-export const STRING_DEFAULT_FILE_ERROR =
-  'Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.com/filesafe.'
-export const STRING_GENERIC_SYNC_ERROR =
-  'There was an error syncing. Please try again. If all else fails, try signing out and signing back in.'
+export const STRING_SESSION_EXPIRED = () =>
+  c('Error').t`Your session has expired. New changes will not be pulled in. Please sign in to refresh your session.`
+export const STRING_DEFAULT_FILE_ERROR = () =>
+  c('Error')
+    .t`Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.com/filesafe.`
+export const STRING_GENERIC_SYNC_ERROR = () =>
+  c('Error').t`There was an error syncing. Please try again. If all else fails, try signing out and signing back in.`
 export function StringSyncException(data: unknown) {
   return `There was an error while trying to save your items. Please contact support and share this message: ${JSON.stringify(
     data,
@@ -51,8 +53,9 @@ export function StringEmptyTrash(count: number) {
 /** @account */
 export const STRING_ACCOUNT_MENU_UNCHECK_MERGE =
   'Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?'
-export const STRING_SIGN_OUT_CONFIRMATION =
-  'This action will remove this workspace and its related data from this device. Your synced data will not be affected.'
+export const STRING_SIGN_OUT_CONFIRMATION = () =>
+  c('Info')
+    .t`This action will remove this workspace and its related data from this device. Your synced data will not be affected.`
 export const STRING_ERROR_DECRYPTING_IMPORT =
   'There was an error decrypting your items. Make sure the password you entered is correct and try again.'
 export const STRING_E2E_ENABLED =
@@ -100,11 +103,12 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade'
 
 export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION = 'This will delete the previously saved offline key.'
 
-export const STRING_DELETE_ACCOUNT_CONFIRMATION =
-  "Are you sure you want to permanently delete your account? You will be asked to confirm your account password in the next step. If you have an active paid subscription, cancel the subscription first. Otherwise, if you'd like to keep the subscription, you can re-register with the same email after deletion, and your subscription will be linked back up with your account."
+export const STRING_DELETE_ACCOUNT_CONFIRMATION = () =>
+  c('Info')
+    .t`Are you sure you want to permanently delete your account? You will be asked to confirm your account password in the next step. If you have an active paid subscription, cancel the subscription first. Otherwise, if you'd like to keep the subscription, you can re-register with the same email after deletion, and your subscription will be linked back up with your account.`
 
-export const STRING_FAILED_TO_UPDATE_USER_SETTING =
-  'There was an error while trying to update your settings. Please try again.'
+export const STRING_FAILED_TO_UPDATE_USER_SETTING = () =>
+  c('Error').t`There was an error while trying to update your settings. Please try again.`
 
 export const Strings = {
   protectingNoteWithoutProtectionSources:
