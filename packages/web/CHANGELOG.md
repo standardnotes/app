@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.27](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.26...@standardnotes/web@3.201.27) (2026-04-29)
+
+### Bug Fixes
+
+* Fixes Super search highlights styling ([#3009](https://github.com/standardnotes/app/issues/3009)) ([a39bb82](https://github.com/standardnotes/app/commit/a39bb824f7b6d4f761abb27df9b7c7ba4818ce14))
+* Switches back to note list on mobile when active note is deleted from a different device ([#3008](https://github.com/standardnotes/app/issues/3008)) ([f4a9481](https://github.com/standardnotes/app/commit/f4a94811848ea19550703d5dcd2b446091bf9536))
+
 ## [3.201.26](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.25...@standardnotes/web@3.201.26) (2026-04-24)
 
 ### Bug Fixes
