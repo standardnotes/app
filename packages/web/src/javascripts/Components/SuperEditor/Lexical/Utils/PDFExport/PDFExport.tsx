@@ -35,13 +35,13 @@ import {
 
 const PDF_SUPERSUBSCRIPT_FONT_SIZE = 9
 const PDF_HEADING_SUPERSUBSCRIPT_SCALE = 0.75
+const BASE_FONT_SIZE = 12
 
 const styles = StyleSheet.create({
   page: {
     paddingVertical: 35,
     paddingHorizontal: 35,
-    lineHeight: 1.5,
-    fontSize: 12,
+    fontSize: BASE_FONT_SIZE,
     gap: 14,
   },
   block: {
@@ -145,13 +145,11 @@ const getListItemNode = ({
   }
 }
 
-const MinimumHeadingFontSize = 13
-const MaxHeadingLevel = 6
+const HEADING_FONT_SIZES = [1.625, 1.375, 1.125, 0.875, 0.625, 0.375]
+
 const getFontSizeForHeading = (heading: HeadingNode) => {
   const level = parseInt(heading.getTag().slice(1))
-  const multiplier = (MaxHeadingLevel - level) * 2
-
-  return MinimumHeadingFontSize + multiplier
+  return (HEADING_FONT_SIZES[level - 1] ?? 1) * BASE_FONT_SIZE
 }
 
 const getNodeTextAlignment = (node: ElementNode) => {
@@ -205,6 +203,8 @@ const getPDFDataNodeFromLexicalNode = (
     const isHighlight = node.hasFormat('highlight')
     const isSuperscript = node.hasFormat('superscript')
     const isSubscript = node.hasFormat('subscript')
+    const isHeading = $isHeadingNode(parent)
+
     let fontFamily: FontFamily[] | FontFamily = FALLBACK_FONT_FAMILY
 
     if (isInlineCode && isCodeNodeText) {
@@ -218,7 +218,7 @@ const getPDFDataNodeFromLexicalNode = (
     }
 
     const baseFontSize = isInlineCode || isCodeNodeText ? 11 : undefined
-    const headingFontSize = $isHeadingNode(parent) ? getFontSizeForHeading(parent) : undefined
+    const headingFontSize = isHeading ? getFontSizeForHeading(parent) : undefined
     const fontSize =
       isSuperscript || isSubscript
         ? headingFontSize
@@ -231,9 +231,8 @@ const getPDFDataNodeFromLexicalNode = (
       children: node.getTextContent(),
       style: {
         fontFamily,
-        fontWeight: isBold ? 'bold' : 'normal',
+        fontWeight: isBold || isHeading ? 'bold' : 'normal',
         fontStyle: isItalic ? 'italic' : 'normal',
-        direction: $isElementNode(parent) ? getNodeDirection(parent) : 'ltr',
         textDecoration: node.hasFormat('underline')
           ? 'underline'
           : node.hasFormat('strikethrough')
@@ -241,7 +240,6 @@ const getPDFDataNodeFromLexicalNode = (
           : undefined,
         backgroundColor: isInlineCode ? '#f1f1f1' : isHighlight ? 'rgb(255,255,0)' : undefined,
         fontSize,
-        textAlign: $isElementNode(parent) ? getNodeTextAlignment(parent) : 'left',
         verticalAlign: isSuperscript ? 'super' : isSubscript ? 'sub' : undefined,
       },
     }
@@ -392,6 +390,7 @@ const getPDFDataNodeFromLexicalNode = (
   }
 
   if ($isParagraphNode(node) && node.getTextContent().length === 0) {
+    return {
     return null
   }
 
