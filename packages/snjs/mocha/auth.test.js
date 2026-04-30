@@ -602,7 +602,7 @@ describe('basic auth', function () {
       const response = await context.application.dependencies
         .get(TYPES.UserApiService)
         .deleteAccount({
-          userUuid: context.application.user.uuid,
+          userUuid: context.application.user.getUserUuid(),
         })
 
       expect(response.status).to.equal(400)
@@ -614,7 +614,7 @@ describe('basic auth', function () {
       const response = await context.application.dependencies
         .get(TYPES.UserApiService)
         .deleteAccount({
-          userUuid: context.application.user.uuid,
+          userUuid: context.application.user.getUserUuid(),
           serverPassword: 'wrong-password'
         })
 

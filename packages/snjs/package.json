@@ -1,6 +1,11 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.211.2",
+  "version": "2.211.7",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/standardnotes/app",
+    "directory": "packages/snjs"
+  },
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },

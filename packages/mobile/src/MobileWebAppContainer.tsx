@@ -2,7 +2,7 @@
 
 import { ApplicationEvent, ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Dimensions, Keyboard, KeyboardEvent, Platform, Text, View } from 'react-native'
+import { AppState, Button, Dimensions, Keyboard, KeyboardEvent, Platform, Text, View } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import { OnShouldStartLoadWithRequest, WebViewNativeConfig } from 'react-native-webview/lib/WebViewTypes'
@@ -51,6 +51,18 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const androidVersion = Platform.OS === 'android' ? Platform.Version : 0
   const useFlexLayout = Platform.OS === 'ios' || androidVersion < 35
   const [webViewContainerHeight, setWebViewContainerHeight] = useState(screenHeight)
+
+  const applyDynamicTypeFontScale = useCallback((fontScale?: number) => {
+    if (Platform.OS !== 'ios') {
+      return
+    }
+
+    const scale = fontScale ?? Dimensions.get('window').fontScale
+    webViewRef.current?.injectJavaScript(`
+      document.documentElement.style.fontSize = 'calc(1rem * ${scale})';
+      true;
+    `)
+  }, [])
 
   useEffect(() => {
     const removeStateServiceListener = stateService.addEventObserver((event: ReactNativeToWebEvent) => {
@@ -149,6 +161,27 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       keyboardWillChangeFrame.remove()
     }
   }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService, insets.bottom, screenHeight])
+
+  useEffect(() => {
+    if (Platform.OS !== 'ios') {
+      return
+    }
+
+    const dimensionsListener = Dimensions.addEventListener('change', ({ window }) => {
+      applyDynamicTypeFontScale(window.fontScale)
+    })
+
+    const appStateListener = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        applyDynamicTypeFontScale()
+      }
+    })
+
+    return () => {
+      dimensionsListener.remove()
+      appStateListener.remove()
+    }
+  }, [applyDynamicTypeFontScale])
 
   useEffect(() => {
     return notifee.onForegroundEvent(({ type, detail }) => {
@@ -305,6 +338,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     }
     if (message === 'appLoaded') {
       setDidLoadEnd(true)
+      applyDynamicTypeFontScale()
       return
     }
     try {

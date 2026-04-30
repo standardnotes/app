@@ -388,15 +388,23 @@ export class EvernoteConverter implements Converter {
   }
 
   stripHTML(html: string) {
-    const tmp = document.createElement('html')
-    tmp.innerHTML = html
-    return tmp.textContent || tmp.innerText || ''
+    const doc = new DOMParser().parseFromString(html, 'text/html')
+    return doc.body.textContent || ''
   }
 }
 
 function changeElementTag(element: HTMLElement, newTag: string) {
-  const attributes = Array.prototype.slice.call(element.attributes)
-  element.outerHTML = `<${newTag} ${attributes.map((attr) => attr.name + '="' + attr.value + '"').join(' ')}>${
-    element.innerHTML
-  }</${newTag}>`
+  const doc = element.ownerDocument
+  const parent = element.parentElement
+  if (!parent) {
+    return
+  }
+  const replacement = doc.createElement(newTag)
+  for (const attr of Array.from(element.attributes)) {
+    replacement.setAttribute(attr.name, attr.value)
+  }
+  while (element.firstChild) {
+    replacement.appendChild(element.firstChild)
+  }
+  parent.replaceChild(replacement, element)
 }

@@ -15,6 +15,10 @@ const registerApp = async (application) => {
   return application
 }
 
+const getOtpTokenForSecret = async (application, secret) => {
+  return application.options.crypto.totpToken(secret, Date.now(), 6, 30)
+}
+
 describe('mfa service', () => {
   let application
 
@@ -31,6 +35,8 @@ describe('mfa service', () => {
   })
 
   it('generates 160 bit base32-encoded mfa secret', async () => {
+    await registerApp(application)
+
     const RFC4648 = /[ABCDEFGHIJKLMNOPQRSTUVWXYZ234567]/g
 
     const secret = await application.mfa.generateMfaSecret()
@@ -46,7 +52,7 @@ describe('mfa service', () => {
     expect(await application.mfa.isMfaActivated()).to.equal(false)
 
     const secret = await application.mfa.generateMfaSecret()
-    const token = await application.mfa.getOtpToken(secret)
+    const token = await getOtpTokenForSecret(application, secret)
 
     await application.mfa.enableMfa(secret, token)
 
@@ -62,7 +68,7 @@ describe('mfa service', () => {
 
     Factory.handlePasswordChallenges(application, accountPassword)
     const secret = await application.mfa.generateMfaSecret()
-    const token = await application.mfa.getOtpToken(secret)
+    const token = await getOtpTokenForSecret(application, secret)
 
     sinon.spy(application.challenges, 'sendChallenge')
     
@@ -80,58 +86,49 @@ describe('mfa service', () => {
 
     Factory.handlePasswordChallenges(application, accountPassword)
     const secret = await application.mfa.generateMfaSecret()
-    const token = await application.mfa.getOtpToken(secret)
+    const token = await getOtpTokenForSecret(application, secret)
 
     await application.mfa.enableMfa(secret, token)
 
-    sinon.spy(application.settings.settingsApi, 'deleteSetting')
+    sinon.spy(application.settings, 'deleteSetting')
 
     await application.mfa.disableMfa()
 
-    const deleteSettingCall = application.settings.settingsApi.deleteSetting.getCall(0)    
-    const [serverPassword] = deleteSettingCall.args
+    const deleteSettingCall = application.settings.deleteSetting.getCall(0)
+    const serverPassword = deleteSettingCall.args[1]
     expect(typeof serverPassword).to.equal('string')
     expect(serverPassword.length).to.be.above(0)
   }).timeout(Factory.TenSecondTimeout)
 
   it('should not allow disabling mfa if server password is not sent', async function () {
     await registerApp(application)
-    
+
     Factory.handlePasswordChallenges(application, accountPassword)
 
     const secret = await application.mfa.generateMfaSecret()
-    const token = await application.mfa.getOtpToken(secret)
+    const token = await getOtpTokenForSecret(application, secret)
 
     await application.mfa.enableMfa(secret, token)
-    
-    const response = await application.dependencies
-      .get(TYPES.SettingsApiService)
-      .deleteSetting({
-        userUuid: application.user.uuid,
-        settingName: 'MFA_SECRET',
-      })
 
-    expect(response.status).to.equal(400)
+    const mfaSettingName = SettingName.create(SettingName.NAMES.MfaSecret).getValue()
+    await expect(application.settings.deleteSetting(mfaSettingName, undefined)).to.be.rejectedWith(
+      'Please update your application to the latest version.',
+    )
   }).timeout(Factory.TenSecondTimeout)
 
   it('should not allow disabling mfa if server password is incorrect', async function () {
     await registerApp(application)
-    
+
     Factory.handlePasswordChallenges(application, accountPassword)
 
     const secret = await application.mfa.generateMfaSecret()
-    const token = await application.mfa.getOtpToken(secret)
+    const token = await getOtpTokenForSecret(application, secret)
 
     await application.mfa.enableMfa(secret, token)
-    
-    const response = await application.dependencies
-      .get(TYPES.SettingsApiService)
-      .deleteSetting({
-        userUuid: application.user.uuid,
-        settingName: 'MFA_SECRET',
-        serverPassword: 'wrong-password'
-      })
 
-    expect(response.status).to.equal(400)
+    const mfaSettingName = SettingName.create(SettingName.NAMES.MfaSecret).getValue()
+    await expect(application.settings.deleteSetting(mfaSettingName, 'wrong-password')).to.be.rejectedWith(
+      'The password you entered is incorrect. Please try again.',
+    )
   }).timeout(Factory.TenSecondTimeout)
 })

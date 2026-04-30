@@ -1,5 +1,18 @@
+function createTotpCrypto() {
+  const g = globalThis
+  const SNWebCryptoClass = g.SNWebCrypto || (g.SNCrypto && g.SNCrypto.SNWebCrypto)
+  if (!SNWebCryptoClass) {
+    throw new Error(
+      'SNWebCrypto is not available. Mocha test.html must load sncrypto-web (see script before snjs.js).',
+    )
+  }
+  return new SNWebCryptoClass()
+}
+
 export default class FakeWebCrypto {
-  constructor() {}
+  constructor() {
+    this._totpCrypto = createTotpCrypto()
+  }
 
   deinit() {}
 
@@ -198,6 +211,6 @@ export default class FakeWebCrypto {
   }
 
   totpToken(secret, timestamp, tokenLength, step) {
-    return '123456'
+    return this._totpCrypto.totpToken(secret, timestamp, tokenLength, step)
   }
 }

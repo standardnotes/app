@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.211.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.6...@standardnotes/snjs@2.211.7) (2026-04-24)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.211.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.5...@standardnotes/snjs@2.211.6) (2026-04-23)
+
+### Reverts
+
+* Revert "chore: split snjs session tests and increase token ttl [snjs docker only] (#3001)" ([cc1f16c](https://github.com/standardnotes/app/commit/cc1f16c70e6ccfc5d43c0d4e7af6c65d5fd51104)), closes [#3001](https://github.com/standardnotes/app/issues/3001)
+
+## [2.211.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.4...@standardnotes/snjs@2.211.5) (2026-04-07)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.211.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.3...@standardnotes/snjs@2.211.4) (2026-04-07)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.211.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.2...@standardnotes/snjs@2.211.3) (2026-04-07)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.211.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.1...@standardnotes/snjs@2.211.2) (2025-12-18)
 
 ### Bug Fixes

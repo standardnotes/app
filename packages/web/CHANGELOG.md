@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.27](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.26...@standardnotes/web@3.201.27) (2026-04-29)
+
+### Bug Fixes
+
+* Fixes Super search highlights styling ([#3009](https://github.com/standardnotes/app/issues/3009)) ([a39bb82](https://github.com/standardnotes/app/commit/a39bb824f7b6d4f761abb27df9b7c7ba4818ce14))
+* Switches back to note list on mobile when active note is deleted from a different device ([#3008](https://github.com/standardnotes/app/issues/3008)) ([f4a9481](https://github.com/standardnotes/app/commit/f4a94811848ea19550703d5dcd2b446091bf9536))
+
+## [3.201.26](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.25...@standardnotes/web@3.201.26) (2026-04-24)
+
+### Bug Fixes
+
+* Shows info on UI and hides Manage button for shared subs ([#3002](https://github.com/standardnotes/app/issues/3002)) ([073db14](https://github.com/standardnotes/app/commit/073db143144bf88007010e4f44003198b327b4da))
+
+## [3.201.25](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.24...@standardnotes/web@3.201.25) (2026-04-23)
+
+### Bug Fixes
+
+* Adds dynamic type support for iOS ([#3005](https://github.com/standardnotes/app/issues/3005)) ([6261fd8](https://github.com/standardnotes/app/commit/6261fd8241b36be0e73dd84b39d31059d6077c16))
+* Fixes Super sections drag and drop issues on mobile ([#3003](https://github.com/standardnotes/app/issues/3003)) ([b330890](https://github.com/standardnotes/app/commit/b33089029f5979adf0c8e80a65c29a38945cf899))
+* Prevents unhandled error when attempting to import a blank note ([#3004](https://github.com/standardnotes/app/issues/3004)) ([90ca0c2](https://github.com/standardnotes/app/commit/90ca0c2cfb648d34c97d58b332a10c61daa20fa4))
+
+## [3.201.24](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.23...@standardnotes/web@3.201.24) (2026-04-07)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.201.23](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.22...@standardnotes/web@3.201.23) (2026-04-07)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.201.22](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.21...@standardnotes/web@3.201.22) (2026-04-07)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.201.21](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.20...@standardnotes/web@3.201.21) (2026-03-06)
 
 **Note:** Version bump only for package @standardnotes/web

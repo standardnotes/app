@@ -598,6 +598,9 @@ export class ItemListController
 
         log(LoggingDomain.Selection, 'Selecting next item after closing active one')
         this.selectNextItem({ userTriggered: false })
+      } else if (this.paneController.isInMobileView && !this.itemManager.findItem(activeItem.uuid)) {
+        log(LoggingDomain.Selection, 'Navigating back to item list because active note was deleted remotely')
+        void this.paneController.setPaneLayout(PaneLayout.ItemSelection)
       }
     } else if (activeItem && this.shouldSelectActiveItem(activeItem)) {
       log(LoggingDomain.Selection, 'Selecting active item')

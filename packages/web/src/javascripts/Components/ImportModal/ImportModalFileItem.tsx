@@ -126,9 +126,14 @@ const ImportModalFileItem = ({
   useEffect(() => {
     const detect = async () => {
       setIsDetectingService(true)
-      const detectedService = await importer.detectService(file.file)
-      void setFileService(detectedService)
-      setIsDetectingService(false)
+      try {
+        const detectedService = await importer.detectService(file.file)
+        void setFileService(detectedService)
+      } catch {
+        void setFileService(null)
+      } finally {
+        setIsDetectingService(false)
+      }
     }
     if (file.service === undefined) {
       void detect()

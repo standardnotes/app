@@ -5,6 +5,10 @@ import * as Events from './lib/Events.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
+const getOtpTokenForSecret = async (application, secret) => {
+  return application.options.crypto.totpToken(secret, Date.now(), 6, 30)
+}
+
 describe('settings service', function () {
   this.timeout(Factory.ThirtySecondTimeout)
 
@@ -105,23 +109,19 @@ describe('settings service', function () {
   })
 
   it('creates and reads a sensitive setting', async () => {
-    await application.settings.updateSetting(
-      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
-      'fake_secret',
-      true,
-    )
-    const setting = await application.settings.getDoesSensitiveSettingExist(
-      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
-    )
+    const mfaSettingName = SettingName.create(SettingName.NAMES.MfaSecret).getValue()
+    const secret = await application.mfa.generateMfaSecret()
+    const totp = await getOtpTokenForSecret(application, secret)
+    await application.settings.updateSetting(mfaSettingName, secret, true, totp)
+    const setting = await application.settings.getDoesSensitiveSettingExist(mfaSettingName)
     expect(setting).to.equal(true)
   })
 
   it('creates and lists a sensitive setting', async () => {
-    await application.settings.updateSetting(
-      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
-      'fake_secret',
-      true,
-    )
+    const mfaSettingName = SettingName.create(SettingName.NAMES.MfaSecret).getValue()
+    const secret = await application.mfa.generateMfaSecret()
+    const totp = await getOtpTokenForSecret(application, secret)
+    await application.settings.updateSetting(mfaSettingName, secret, true, totp)
     await application.settings.updateSetting(
       SettingName.create(SettingName.NAMES.LogSessionUserAgent).getValue(),
       LogSessionUserAgentOption.Enabled,

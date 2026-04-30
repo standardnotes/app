@@ -4,13 +4,15 @@ on:
   push:
     branches: [main]
 
+# Use commit message "[snjs docker only]" to build/push only standardnotes/snjs (:sha + :latest) for E2E; skips full build, web image, and NPM.
+
 permissions:
   id-token: write
 
 jobs:
   build:
     name: Build & Test
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false && contains(github.event.head_commit.message, '[snjs docker only]') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -108,7 +110,7 @@ jobs:
 
   publish-web-docker:
     name: Build and publish Docker Image for Web App
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false && contains(github.event.head_commit.message, '[snjs docker only]') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -146,7 +148,7 @@ jobs:
 
   publish:
     name: Publish to NPM
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false && contains(github.event.head_commit.message, '[snjs docker only]') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
