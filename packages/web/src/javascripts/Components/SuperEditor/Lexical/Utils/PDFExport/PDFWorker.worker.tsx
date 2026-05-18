@@ -18,6 +18,7 @@ import {
 } from '@react-pdf/renderer'
 import { expose } from 'comlink'
 import { FontFamily, registerPDFFonts } from './FontConfig'
+import { PDF_BASE_FONT_SIZE, PDF_BLOCK_GAP } from './PDFLayoutConstants'
 
 export type PDFDataNode =
   | ((
@@ -82,9 +83,8 @@ const PDFDocument = ({ nodes, pageSize }: { nodes: PDFDataNode[]; pageSize: Page
         style={{
           paddingVertical: 35,
           paddingHorizontal: 35,
-          lineHeight: 1.5,
-          fontSize: 12,
-          gap: 14,
+          fontSize: PDF_BASE_FONT_SIZE,
+          gap: PDF_BLOCK_GAP,
         }}
       >
         {nodes.map((node, index) => {
