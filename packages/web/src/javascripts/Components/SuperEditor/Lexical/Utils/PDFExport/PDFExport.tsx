@@ -8,6 +8,7 @@ import {
   LexicalEditor,
   LexicalNode,
   ElementNode,
+  TextNode,
 } from 'lexical'
 import { $isLinkNode } from '@lexical/link'
 import { $isHeadingNode, type HeadingNode, $isQuoteNode } from '@lexical/rich-text'
@@ -32,20 +33,20 @@ import {
   MONOSPACE_FONT_FAMILY,
   getFontFamiliesFromLexicalNode,
 } from './FontConfig'
+import {
+  PDF_BASE_FONT_SIZE,
+  PDF_BLOCK_GAP,
+  PDF_LINE_HEIGHT_MULTIPLIER,
+  PDF_LIST_ITEM_GAP,
+  PDF_QUOTE_INNER_GAP,
+} from './PDFLayoutConstants'
 
 const PDF_SUPERSUBSCRIPT_FONT_SIZE = 9
 const PDF_HEADING_SUPERSUBSCRIPT_SCALE = 0.75
-const BASE_FONT_SIZE = 12
 
 const styles = StyleSheet.create({
-  page: {
-    paddingVertical: 35,
-    paddingHorizontal: 35,
-    fontSize: BASE_FONT_SIZE,
-    gap: 14,
-  },
   block: {
-    gap: 14,
+    gap: PDF_BLOCK_GAP,
   },
   wrap: {
     flexWrap: 'wrap',
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#72767e',
     paddingLeft: 12,
     paddingVertical: 4,
-    gap: 4,
+    gap: PDF_QUOTE_INNER_GAP,
   },
 })
 
@@ -138,6 +139,7 @@ const getListItemNode = ({
         type: 'Text',
         style: {
           flex: 1,
+          lineHeight: PDF_BASE_FONT_SIZE * PDF_LINE_HEIGHT_MULTIPLIER,
         },
         children,
       },
@@ -149,7 +151,94 @@ const HEADING_FONT_SIZES = [1.625, 1.375, 1.125, 0.875, 0.625, 0.375]
 
 const getFontSizeForHeading = (heading: HeadingNode) => {
   const level = parseInt(heading.getTag().slice(1))
-  return (HEADING_FONT_SIZES[level - 1] ?? 1) * BASE_FONT_SIZE
+  return (HEADING_FONT_SIZES[level - 1] ?? 1) * PDF_BASE_FONT_SIZE
+}
+
+const getPDFTextFontFamily = (
+  node: TextNode,
+  fontFamilies: FontFamily[],
+  useCustomFonts: boolean,
+  isInlineCode: boolean,
+  isCodeNodeText: boolean,
+): FontFamily | FontFamily[] => {
+  if (isInlineCode && isCodeNodeText) {
+    return MONOSPACE_FONT_FAMILY
+  }
+
+  if (useCustomFonts) {
+    const nodeFontFamilies = getFontFamiliesFromLexicalNode(node)
+    fontFamilies.push(...nodeFontFamilies)
+    return [...nodeFontFamilies, FALLBACK_FONT_FAMILY]
+  }
+
+  return FALLBACK_FONT_FAMILY
+}
+
+const getPDFTextFontSize = (
+  isInlineCode: boolean,
+  isCodeNodeText: boolean,
+  isSuperscript: boolean,
+  isSubscript: boolean,
+  headingFontSize: number | undefined,
+): number | undefined => {
+  const baseFontSize = isInlineCode || isCodeNodeText ? 11 : undefined
+
+  if (isSuperscript || isSubscript) {
+    if (headingFontSize) {
+      return Math.max(PDF_SUPERSUBSCRIPT_FONT_SIZE, Math.round(headingFontSize * PDF_HEADING_SUPERSUBSCRIPT_SCALE))
+    }
+    return PDF_SUPERSUBSCRIPT_FONT_SIZE
+  }
+
+  return baseFontSize
+}
+
+const getPDFTextLineHeight = (isHeading: boolean, headingFontSize: number | undefined): string => {
+  const size =
+    isHeading && headingFontSize
+      ? headingFontSize * PDF_LINE_HEIGHT_MULTIPLIER
+      : PDF_BASE_FONT_SIZE * PDF_LINE_HEIGHT_MULTIPLIER
+
+  return `${size}px`
+}
+
+const getPDFTextDecoration = (node: TextNode): 'underline' | 'line-through' | undefined => {
+  if (node.hasFormat('underline')) {
+    return 'underline'
+  }
+  if (node.hasFormat('strikethrough')) {
+    return 'line-through'
+  }
+  return undefined
+}
+
+const getPDFTextDataNodeFromLexicalTextNode = (
+  node: TextNode,
+  parent: LexicalNode | null,
+  fontFamilies: FontFamily[],
+  useCustomFonts: boolean,
+): PDFDataNode => {
+  const isInlineCode = node.hasFormat('code')
+  const isCodeNodeText = $isCodeNode(parent)
+  const isHeading = $isHeadingNode(parent)
+  const isSuperscript = node.hasFormat('superscript')
+  const isSubscript = node.hasFormat('subscript')
+  const headingFontSize = isHeading ? getFontSizeForHeading(parent) : undefined
+
+  return {
+    type: 'Text',
+    children: node.getTextContent(),
+    style: {
+      fontFamily: getPDFTextFontFamily(node, fontFamilies, useCustomFonts, isInlineCode, isCodeNodeText),
+      fontWeight: node.hasFormat('bold') || isHeading ? 'bold' : 'normal',
+      fontStyle: node.hasFormat('italic') ? 'italic' : 'normal',
+      textDecoration: getPDFTextDecoration(node),
+      backgroundColor: isInlineCode ? '#f1f1f1' : node.hasFormat('highlight') ? 'rgb(255,255,0)' : undefined,
+      fontSize: getPDFTextFontSize(isInlineCode, isCodeNodeText, isSuperscript, isSubscript, headingFontSize),
+      verticalAlign: isSuperscript ? 'super' : isSubscript ? 'sub' : undefined,
+      lineHeight: getPDFTextLineHeight(isHeading, headingFontSize),
+    },
+  }
 }
 
 const getNodeTextAlignment = (node: ElementNode) => {
@@ -196,53 +285,7 @@ const getPDFDataNodeFromLexicalNode = (
   }
 
   if ($isTextNode(node)) {
-    const isInlineCode = node.hasFormat('code')
-    const isCodeNodeText = $isCodeNode(parent)
-    const isBold = node.hasFormat('bold')
-    const isItalic = node.hasFormat('italic')
-    const isHighlight = node.hasFormat('highlight')
-    const isSuperscript = node.hasFormat('superscript')
-    const isSubscript = node.hasFormat('subscript')
-    const isHeading = $isHeadingNode(parent)
-
-    let fontFamily: FontFamily[] | FontFamily = FALLBACK_FONT_FAMILY
-
-    if (isInlineCode && isCodeNodeText) {
-      fontFamily = MONOSPACE_FONT_FAMILY
-    } else {
-      if (useCustomFonts) {
-        const nodeFontFamilies = getFontFamiliesFromLexicalNode(node)
-        fontFamily = [...nodeFontFamilies, FALLBACK_FONT_FAMILY]
-        fontFamilies.push(...nodeFontFamilies)
-      }
-    }
-
-    const baseFontSize = isInlineCode || isCodeNodeText ? 11 : undefined
-    const headingFontSize = isHeading ? getFontSizeForHeading(parent) : undefined
-    const fontSize =
-      isSuperscript || isSubscript
-        ? headingFontSize
-          ? Math.max(PDF_SUPERSUBSCRIPT_FONT_SIZE, Math.round(headingFontSize * PDF_HEADING_SUPERSUBSCRIPT_SCALE))
-          : PDF_SUPERSUBSCRIPT_FONT_SIZE
-        : baseFontSize
-
-    return {
-      type: 'Text',
-      children: node.getTextContent(),
-      style: {
-        fontFamily,
-        fontWeight: isBold || isHeading ? 'bold' : 'normal',
-        fontStyle: isItalic ? 'italic' : 'normal',
-        textDecoration: node.hasFormat('underline')
-          ? 'underline'
-          : node.hasFormat('strikethrough')
-          ? 'line-through'
-          : undefined,
-        backgroundColor: isInlineCode ? '#f1f1f1' : isHighlight ? 'rgb(255,255,0)' : undefined,
-        fontSize,
-        verticalAlign: isSuperscript ? 'super' : isSubscript ? 'sub' : undefined,
-      },
-    }
+    return getPDFTextDataNodeFromLexicalTextNode(node, parent, fontFamilies, useCustomFonts)
   }
 
   if ($isCodeNode(node)) {
@@ -354,7 +397,7 @@ const getPDFDataNodeFromLexicalNode = (
       style: [
         styles.column,
         {
-          gap: 7,
+          gap: PDF_LIST_ITEM_GAP,
         },
       ],
       children,
@@ -391,7 +434,11 @@ const getPDFDataNodeFromLexicalNode = (
 
   if ($isParagraphNode(node) && node.getTextContent().length === 0) {
     return {
-    return null
+      type: 'View',
+      style: {
+        height: PDF_BASE_FONT_SIZE * 1.5,
+      },
+    }
   }
 
   if ($isTableCellNode(node)) {
@@ -452,7 +499,8 @@ const getPDFDataNodeFromLexicalNode = (
         {
           type: 'Text',
           style: {
-            lineHeight: $isHeadingNode(node) ? 1 : 1.5,
+            textAlign: getNodeTextAlignment(node),
+            direction: getNodeDirection(node),
           },
           children,
         },
