@@ -232,6 +232,12 @@ const getPDFTextDecoration = (node: TextNode): 'underline' | 'line-through' | un
   return undefined
 }
 
+const isInsideTableHeaderCell = (node: LexicalNode): boolean => {
+  return node.getParents().some((parent) => {
+    return $isTableCellNode(parent) && parent.hasHeader()
+  })
+}
+
 const getPDFTextDataNodeFromLexicalTextNode = (
   node: TextNode,
   parent: LexicalNode | null,
@@ -250,7 +256,7 @@ const getPDFTextDataNodeFromLexicalTextNode = (
     children: getPDFTextContent(node, isCodeNodeText),
     style: {
       fontFamily: getPDFTextFontFamily(node, fontFamilies, useCustomFonts, isInlineCode, isCodeNodeText),
-      fontWeight: node.hasFormat('bold') || isHeading ? 'bold' : 'normal',
+      fontWeight: node.hasFormat('bold') || isHeading || isInsideTableHeaderCell(node) ? 'bold' : 'normal',
       fontStyle: node.hasFormat('italic') ? 'italic' : 'normal',
       textDecoration: getPDFTextDecoration(node),
       backgroundColor: isInlineCode ? '#f1f1f1' : node.hasFormat('highlight') ? 'rgb(255,255,0)' : undefined,
@@ -474,7 +480,8 @@ const getPDFDataNodeFromLexicalNode = (
         borderColor: '#e3e3e3',
         borderWidth: 1,
         flex: 1,
-        padding: 2,
+        paddingHorizontal: 8,
+        paddingVertical: 6,
       },
       children,
     }
