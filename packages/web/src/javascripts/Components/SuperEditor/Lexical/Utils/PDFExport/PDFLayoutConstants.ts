@@ -5,3 +5,4 @@ export const PDF_CODE_TAB_SIZE = 2
 export const PDF_BLOCK_GAP = 4
 export const PDF_LIST_ITEM_GAP = 0
 export const PDF_QUOTE_INNER_GAP = 4
+export const PDF_PAGE_PADDING = 35
