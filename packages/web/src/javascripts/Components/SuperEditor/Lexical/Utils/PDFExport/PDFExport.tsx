@@ -42,6 +42,7 @@ import {
   PDF_CODE_TAB_SIZE,
   PDF_LINE_HEIGHT_MULTIPLIER,
   PDF_LIST_ITEM_GAP,
+  PDF_PAGE_PADDING,
   PDF_QUOTE_INNER_GAP,
 } from './PDFLayoutConstants'
 
@@ -555,6 +556,95 @@ const getPDFDataNodesFromLexicalNodes = (
   return nodes.map((node) => getPDFDataNodeFromLexicalNode(node, fontFamilies, useCustomFonts))
 }
 
+/**
+ * Page widths in points (72dpi) sourced from PAGE_SIZES in
+ * @react-pdf/layout/lib/index.js — verify against that file when upgrading the library.
+ */
+const PDF_PAGE_WIDTHS_PT: Record<PrefValue[PrefKey.SuperNoteExportPDFPageSize], number> = {
+  A3: 841.89,
+  A4: 595.28,
+  LETTER: 612,
+  LEGAL: 612,
+  TABLOID: 792,
+}
+
+const getPDFContentWidth = (pageSize: PrefValue[PrefKey.SuperNoteExportPDFPageSize]): number => {
+  return PDF_PAGE_WIDTHS_PT[pageSize] - 2 * PDF_PAGE_PADDING
+}
+
+type PDFImageNaturalDimensions = {
+  width: number
+  height: number
+}
+
+const walkPDFDataNodes = (nodes: PDFDataNode[], visitor: (node: NonNullable<PDFDataNode>) => void): void => {
+  const visit = (node: PDFDataNode) => {
+    if (!node) {
+      return
+    }
+    visitor(node)
+    if (Array.isArray(node.children)) {
+      node.children.forEach(visit)
+    }
+  }
+  nodes.forEach(visit)
+}
+
+const collectPDFImageSources = (nodes: PDFDataNode[]): string[] => {
+  const sources = new Set<string>()
+  walkPDFDataNodes(nodes, (node) => {
+    if (node.type === 'Image' && typeof node.src === 'string') {
+      sources.add(node.src)
+    }
+  })
+  return [...sources]
+}
+
+const loadPDFImageDimensions = (src: string): Promise<PDFImageNaturalDimensions | null> => {
+  return new Promise((resolve) => {
+    const image = new window.Image()
+    image.onload = () => {
+      if (image.naturalWidth <= 0 || image.naturalHeight <= 0) {
+        resolve(null)
+        return
+      }
+      resolve({ width: image.naturalWidth, height: image.naturalHeight })
+    }
+    image.onerror = () => resolve(null)
+    image.src = src
+  })
+}
+
+const loadPDFImageDimensionsMap = async (sources: string[]): Promise<Map<string, PDFImageNaturalDimensions>> => {
+  const entries = await Promise.all(sources.map(async (src) => [src, await loadPDFImageDimensions(src)] as const))
+
+  const map = new Map<string, PDFImageNaturalDimensions>()
+  for (const [src, dimensions] of entries) {
+    if (dimensions) {
+      map.set(src, dimensions)
+    }
+  }
+  return map
+}
+
+const patchPDFImageStyles = (
+  nodes: PDFDataNode[],
+  contentWidth: number,
+  imageDimensions: Map<string, PDFImageNaturalDimensions>,
+): void => {
+  walkPDFDataNodes(nodes, (node) => {
+    if (node.type === 'Image' && typeof node.src === 'string') {
+      const natural = imageDimensions.get(node.src)
+      if (natural && natural.width > 0 && natural.height > 0) {
+        const displayWidth = Math.min(natural.width, contentWidth)
+        node.style = { width: displayWidth, height: displayWidth * (natural.height / natural.width) }
+      } else {
+        node.style = { width: contentWidth }
+      }
+    }
+  })
+}
+
 const pdfWorker = new PDFWorker()
 const PDFWorkerComlink = wrap<PDFWorkerInterface>(pdfWorker)
 
@@ -578,10 +668,15 @@ export function $generatePDFFromNodes(editor: LexicalEditor, pageSize: PrefValue
           const root = $getRoot()
           const nodes = root.getChildren()
           const fontFamilies: FontFamily[] = []
-
+          const contentWidth = getPDFContentWidth(pageSize)
           const pdfDataNodes = getPDFDataNodesFromLexicalNodes(nodes, fontFamilies, useCustomFonts)
+          const imageSources = collectPDFImageSources(pdfDataNodes)
 
-          void PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize, fontFamilies, useCustomFonts)
+          void loadPDFImageDimensionsMap(imageSources)
+            .then((imageDimensions) => {
+              patchPDFImageStyles(pdfDataNodes, contentWidth, imageDimensions)
+              return PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize, fontFamilies, useCustomFonts)
+            })
             .then((blob) => {
               const url = URL.createObjectURL(blob)
               resolve(url)
