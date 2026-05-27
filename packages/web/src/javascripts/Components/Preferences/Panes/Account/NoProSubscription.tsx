@@ -18,6 +18,8 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
     try {
       if (application.isNativeIOS()) {
         application.showPremiumModal()
+      } else if (application.hasValidFirstPartySubscription()) {
+        void application.openSubscriptionDashboard.execute()
       } else {
         void application.openPurchaseFlow()
       }
