@@ -1,6 +1,7 @@
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import { Dispatch, SetStateAction, FunctionComponent } from 'react'
+import { c } from 'ttag'
 
 type Props = {
   setNewEmail: Dispatch<SetStateAction<string>>
@@ -14,7 +15,7 @@ const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPass
     <div className="flex w-full flex-col">
       <div className="mb-3">
         <label className={labelClassName} htmlFor="change-email-email-input">
-          New Email
+          {c('Label').t`New Email`}
         </label>
         <DecoratedInput
           type="email"
@@ -26,7 +27,7 @@ const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPass
       </div>
       <div className="mb-2">
         <label className={labelClassName} htmlFor="change-email-password-input">
-          Current Password
+          {c('Label').t`Current Password`}
         </label>
         <DecoratedPasswordInput
           id="change-email-password-input"

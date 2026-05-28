@@ -287,12 +287,12 @@ class Footer extends AbstractComponent<Props, State> {
   securityUpdateClickHandler = async () => {
     if (
       await confirmDialog({
-        title: STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE,
-        text: STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
-        confirmButtonText: STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
+        title: STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE(),
+        text: STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT(),
+        confirmButtonText: STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON(),
       })
     ) {
-      preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE, async () => {
+      preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE(), async () => {
         await this.application.upgradeProtocolVersion()
       }).catch(console.error)
     }

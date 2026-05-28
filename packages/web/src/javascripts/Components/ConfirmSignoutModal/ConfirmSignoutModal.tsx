@@ -8,6 +8,7 @@ import Button from '@/Components/Button/Button'
 import Icon from '../Icon/Icon'
 import AlertDialog from '../AlertDialog/AlertDialog'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -37,22 +38,21 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
   return (
     <AlertDialog closeDialog={closeDialog}>
       <div className="flex items-center justify-between text-lg font-bold">
-        Sign out workspace?
+        {c('Title').t`Sign out workspace?`}
         <button className="rounded p-1 font-bold hover:bg-contrast" onClick={closeDialog}>
           <Icon type="close" />
         </button>
       </div>
       <div className="sk-panel-row">
         <div>
-          <p className="text-base text-foreground lg:text-sm">{STRING_SIGN_OUT_CONFIRMATION}</p>
+          <p className="text-base text-foreground lg:text-sm">{STRING_SIGN_OUT_CONFIRMATION()}</p>
           {showWorkspaceWarning && (
             <>
               <br />
               <p className="text-base text-foreground lg:text-sm">
-                <strong>Note: </strong>
-                Because you have other workspaces signed in, this sign out may leave logs and other metadata of your
-                session on this device. For a more robust sign out that performs a hard clear of all app-related data,
-                use the <i>Sign out all workspaces</i> option under <i>Switch workspace</i>.
+                <strong>{c('Label').t`Note:`} </strong>
+                {c('Info')
+                  .t`Because you have other workspaces signed in, this sign out may leave logs and other metadata of your session on this device. For a more robust sign out that performs a hard clear of all app-related data, use the "Sign out all workspaces" option under "Switch workspace".`}
               </p>
             </>
           )}
@@ -66,7 +66,8 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
             <div className="sk-panel-row"></div>
             <div>
               <p className="text-base text-foreground lg:text-sm">
-                Local backups are enabled for this workspace. Review your backup files manually to decide what to keep.
+                {c('Info')
+                  .t`Local backups are enabled for this workspace. Review your backup files manually to decide what to keep.`}
               </p>
               <button
                 className="sk-a mt-2 cursor-pointer rounded p-0 capitalize lg:text-sm"
@@ -74,7 +75,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
                   void application.fileBackups?.openAllDirectoriesContainingBackupFiles()
                 }}
               >
-                View backup files
+                {c('Action').t`View backup files`}
               </button>
             </div>
           </div>
@@ -83,10 +84,10 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
 
       <div className="mt-4 flex justify-end gap-2">
         <Button ref={cancelRef} onClick={closeDialog}>
-          Cancel
+          {c('Action').t`Cancel`}
         </Button>
         <Button primary colorStyle="danger" onClick={confirm}>
-          {application.hasAccount() ? 'Sign Out' : 'Delete Workspace'}
+          {application.hasAccount() ? c('Action').t`Sign Out` : c('Action').t`Delete Workspace`}
         </Button>
       </div>
     </AlertDialog>
