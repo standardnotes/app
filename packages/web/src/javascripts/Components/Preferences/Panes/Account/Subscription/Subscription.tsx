@@ -1,4 +1,5 @@
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { c } from 'ttag'
 import SubscriptionInformation from './SubscriptionInformation'
 import NoSubscription from './NoSubscription'
 import { observer } from 'mobx-react-lite'
@@ -32,7 +33,7 @@ const Subscription: FunctionComponent = () => {
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title>Subscription</Title>
+            <Title>{c('Title').t`Subscription`}</Title>
             {onlineSubscription ? <SubscriptionInformation /> : <NoSubscription application={application} />}
           </div>
         </div>

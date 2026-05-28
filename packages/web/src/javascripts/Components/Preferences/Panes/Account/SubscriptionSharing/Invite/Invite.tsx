@@ -7,12 +7,7 @@ import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionC
 import InviteForm from './InviteForm'
 import InviteSuccess from './InviteSuccess'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
-
-enum SubmitButtonTitles {
-  Default = 'Invite',
-  Sending = 'Sending...',
-  Finish = 'Finish',
-}
+import { c } from 'ttag'
 
 enum Steps {
   InitialStep,
@@ -26,7 +21,7 @@ type Props = {
 }
 
 const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscriptionState }) => {
-  const [submitButtonTitle, setSubmitButtonTitle] = useState(SubmitButtonTitles.Default)
+  const [submitButtonTitle, setSubmitButtonTitle] = useState(() => c('Action').t`Invite`)
   const [inviteeEmail, setInviteeEmail] = useState('')
   const [isContinuing, setIsContinuing] = useState(false)
   const [lockContinue, setLockContinue] = useState(false)
@@ -35,7 +30,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   const validateInviteeEmail = useCallback(async () => {
     if (!isEmailValid(inviteeEmail)) {
       application.alerts
-        .alert('The email you entered has an invalid format. Please review your input and try again.')
+        .alert(c('Error').t`The email you entered has an invalid format. Please review your input and try again.`)
         .catch(console.error)
 
       return false
@@ -46,14 +41,14 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
 
   const handleDialogClose = useCallback(() => {
     if (lockContinue) {
-      application.alerts.alert('Cannot close window until pending tasks are complete.').catch(console.error)
+      application.alerts.alert(c('Info').t`Cannot close window until pending tasks are complete.`).catch(console.error)
     } else {
       onCloseDialog()
     }
   }, [application.alerts, lockContinue, onCloseDialog])
 
   const resetProgressState = () => {
-    setSubmitButtonTitle(SubmitButtonTitles.Default)
+    setSubmitButtonTitle(c('Action').t`Invite`)
     setIsContinuing(false)
   }
 
@@ -79,7 +74,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     }
 
     setIsContinuing(true)
-    setSubmitButtonTitle(SubmitButtonTitles.Sending)
+    setSubmitButtonTitle(c('Action').t`Sending...`)
 
     const valid = await validateInviteeEmail()
 
@@ -92,7 +87,10 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     const success = await processInvite()
     if (!success) {
       application.alerts
-        .alert('An error occurred while sending the invite. Please try again or contact support if the issue persists.')
+        .alert(
+          c('Error')
+            .t`An error occurred while sending the invite. Please try again or contact support if the issue persists.`,
+        )
         .catch(console.error)
 
       resetProgressState()
@@ -101,7 +99,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     }
 
     setIsContinuing(false)
-    setSubmitButtonTitle(SubmitButtonTitles.Finish)
+    setSubmitButtonTitle(c('Action').t`Finish`)
     setCurrentStep(Steps.FinishStep)
   }, [
     application.alerts,
@@ -123,7 +121,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
         disabled: lockContinue,
       },
       {
-        label: 'Cancel',
+        label: c('Action').t`Cancel`,
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
@@ -134,7 +132,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   )
 
   return (
-    <Modal title="Share Your Subscription" close={handleDialogClose} actions={modalActions}>
+    <Modal title={c('Title').t`Share Your Subscription`} close={handleDialogClose} actions={modalActions}>
       <div className="px-4.5 py-4">
         {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
         {currentStep === Steps.FinishStep && <InviteSuccess />}

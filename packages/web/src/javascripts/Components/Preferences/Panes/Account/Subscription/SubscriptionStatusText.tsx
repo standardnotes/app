@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { c } from 'ttag'
 
 const SubscriptionStatusText = () => {
   const application = useApplication()
@@ -18,25 +19,28 @@ const SubscriptionStatusText = () => {
     <>
       <br />
       <br />
-      This subscription has been shared with you and can only be managed by the owner.
+      {c('Info').t`This subscription has been shared with you and can only be managed by the owner.`}
     </>
   ) : null
 
+  const planName = `Standard Notes${userSubscriptionName ? ` ${userSubscriptionName}` : ''}`
+  const planNameSpan = <span className="font-bold">{planName}</span>
+  const dateSpan = <span className="font-bold">{expirationDateString}</span>
+
   if (isUserSubscriptionCanceled) {
+    if (isUserSubscriptionExpired) {
+      return (
+        <Text className="mt-1">
+          {c('Info')
+            .jt`Your ${planNameSpan} subscription has been canceled and expired on ${dateSpan}. You may resubscribe below if you wish.`}
+          {sharedMessage}
+        </Text>
+      )
+    }
     return (
       <Text className="mt-1">
-        Your{' '}
-        <span className="font-bold">
-          Standard Notes{userSubscriptionName ? ' ' : ''}
-          {userSubscriptionName}
-        </span>{' '}
-        subscription has been canceled{' '}
-        {isUserSubscriptionExpired ? (
-          <span className="font-bold">and expired on {expirationDateString}</span>
-        ) : (
-          <span className="font-bold">but will remain valid until {expirationDateString}</span>
-        )}
-        . You may resubscribe below if you wish.
+        {c('Info')
+          .jt`Your ${planNameSpan} subscription has been canceled but will remain valid until ${dateSpan}. You may resubscribe below if you wish.`}
         {sharedMessage}
       </Text>
     )
@@ -45,13 +49,7 @@ const SubscriptionStatusText = () => {
   if (isUserSubscriptionExpired) {
     return (
       <Text className="mt-1">
-        Your{' '}
-        <span className="font-bold">
-          Standard Notes{userSubscriptionName ? ' ' : ''}
-          {userSubscriptionName}
-        </span>{' '}
-        subscription <span className="font-bold">expired on {expirationDateString}</span>. You may resubscribe below if
-        you wish.
+        {c('Info').jt`Your ${planNameSpan} subscription expired on ${dateSpan}. You may resubscribe below if you wish.`}
         {sharedMessage}
       </Text>
     )
@@ -59,12 +57,8 @@ const SubscriptionStatusText = () => {
 
   return (
     <Text className="mt-1">
-      Your{' '}
-      <span className="font-bold">
-        Standard Notes{userSubscriptionName ? ' ' : ''}
-        {userSubscriptionName}
-      </span>{' '}
-      subscription will be <span className="font-bold">renewed on {expirationDateString}</span>.{sharedMessage}
+      {c('Info').jt`Your ${planNameSpan} subscription will be renewed on ${dateSpan}.`}
+      {sharedMessage}
     </Text>
   )
 }
