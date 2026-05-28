@@ -73,7 +73,7 @@ def enableProguardInReleaseBuilds = false
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 def appVersionCode = project.hasProperty('versionCode') ? Integer.valueOf(project.property('versionCode')) : 1
-def appVersionName = project.hasProperty('versionName') ? project.property('versionName') : "1.0"
+def appVersionName = project.hasProperty('versionName') ? project.property('versionName') : "1.0.0"
 
 android {
     ndkVersion rootProject.ext.ndkVersion

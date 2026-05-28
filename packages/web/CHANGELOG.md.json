@@ -1,6 +1,30 @@
 {
   "versions": [
     {
+      "version": "3.201.28",
+      "title": "[3.201.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.27...@standardnotes/web@3.201.28) (2026-05-27)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixes cell padding and bold font within table cells in Super pdf export ([c81589b](https://github.com/standardnotes/app/commit/c81589b945b04b6f2b6842f193495d562c132bc8))\n* Fixes images rendering too small on Super pdf export ([80fa337](https://github.com/standardnotes/app/commit/80fa337afba85bada70b4ddacb6e5ad391978f28))\n* Fixes Super pdf export code block formatting issues ([bd3cf60](https://github.com/standardnotes/app/commit/bd3cf600e7a766c2fd980fbc01924e59664184b8))\n* Fixes Super pdf export headings font sizes and weights ([6daf58c](https://github.com/standardnotes/app/commit/6daf58c92893a6cfa93596a2429ed3e0697222e0))\n* Fixes Super pdf export line height ([e22e6fc](https://github.com/standardnotes/app/commit/e22e6fce7936a9b425f90e7363f274bce3b3b841))\n* Fixes Upgrade button in Settings leading to purchase page ([#3011](https://github.com/standardnotes/app/issues/3011)) ([eda1bfe](https://github.com/standardnotes/app/commit/eda1bfe0bd5b2be762dadf840f49034a2c659816))",
+      "parsed": {
+        "_": [
+          "Fixes cell padding and bold font within table cells in Super pdf export (c81589b)",
+          "Fixes images rendering too small on Super pdf export (80fa337)",
+          "Fixes Super pdf export code block formatting issues (bd3cf60)",
+          "Fixes Super pdf export headings font sizes and weights (6daf58c)",
+          "Fixes Super pdf export line height (e22e6fc)",
+          "Fixes Upgrade button in Settings leading to purchase page (#3011) (eda1bfe)"
+        ],
+        "Bug Fixes": [
+          "Fixes cell padding and bold font within table cells in Super pdf export (c81589b)",
+          "Fixes images rendering too small on Super pdf export (80fa337)",
+          "Fixes Super pdf export code block formatting issues (bd3cf60)",
+          "Fixes Super pdf export headings font sizes and weights (6daf58c)",
+          "Fixes Super pdf export line height (e22e6fc)",
+          "Fixes Upgrade button in Settings leading to purchase page (#3011) (eda1bfe)"
+        ]
+      }
+    },
+    {
       "version": "3.201.27",
       "title": "[3.201.27](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.26...@standardnotes/web@3.201.27) (2026-04-29)",
       "date": null,
