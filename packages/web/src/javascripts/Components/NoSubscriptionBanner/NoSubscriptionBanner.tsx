@@ -3,6 +3,7 @@ import { classNames } from '@standardnotes/utils'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
+import { c } from 'ttag'
 
 const NoSubscriptionBanner = ({
   application,
@@ -31,7 +32,7 @@ const NoSubscriptionBanner = ({
       </div>
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">{message}</p>
       <Button primary small className="col-start-1 col-end-3 mt-3 justify-self-start uppercase" onClick={onClick}>
-        Upgrade Features
+        {c('Action').t`Upgrade Features`}
       </Button>
     </div>
   )
