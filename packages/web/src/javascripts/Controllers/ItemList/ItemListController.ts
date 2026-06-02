@@ -371,8 +371,8 @@ export class ItemListController
     return this.getActiveItemController()?.item
   }
 
-  async openNote(uuid: string): Promise<void> {
-    if (this.activeControllerItem?.uuid === uuid) {
+  async openNote(uuid: string, openInNewTab?: boolean): Promise<void> {
+    if (!openInNewTab && this.activeControllerItem?.uuid === uuid) {
       return
     }
 
@@ -382,13 +382,13 @@ export class ItemListController
       return
     }
 
-    await this.itemControllerGroup.createItemController({ note })
+    await this.itemControllerGroup.createItemController({ note }, { openInNewTab })
 
     await this.publishCrossControllerEventSync(CrossControllerEvent.ActiveEditorChanged)
   }
 
-  async openFile(fileUuid: string): Promise<void> {
-    if (this.getActiveItemController()?.item.uuid === fileUuid) {
+  async openFile(fileUuid: string, openInNewTab?: boolean): Promise<void> {
+    if (!openInNewTab && this.getActiveItemController()?.item.uuid === fileUuid) {
       return
     }
 
@@ -398,7 +398,7 @@ export class ItemListController
       return
     }
 
-    await this.itemControllerGroup.createItemController({ file })
+    await this.itemControllerGroup.createItemController({ file }, { openInNewTab })
   }
 
   setCompletedFullSync = (completed: boolean) => {
@@ -1157,10 +1157,14 @@ export class ItemListController
     if (this.selectedItemsCount === 1) {
       const item = this.firstSelectedItem
 
+      const hasMeta = this.keyboardService.activeModifiers.has(KeyboardModifier.Meta)
+      const hasCtrl = this.keyboardService.activeModifiers.has(KeyboardModifier.Ctrl)
+      const openInNewTab = userTriggered && (hasMeta || hasCtrl)
+
       if (item.content_type === ContentType.TYPES.Note) {
-        await this.openNote(item.uuid)
+        await this.openNote(item.uuid, openInNewTab)
       } else if (item.content_type === ContentType.TYPES.File) {
-        await this.openFile(item.uuid)
+        await this.openFile(item.uuid, openInNewTab)
       }
       this.recents.add(item.uuid)
 
