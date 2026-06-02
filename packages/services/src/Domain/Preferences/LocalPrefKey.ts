@@ -1,4 +1,4 @@
-import { EditorFontSize, EditorLineHeight, EditorLineWidth } from '@standardnotes/models'
+import { EditorFontSize, EditorLineHeight, EditorLineWidth, EditorFontFamily } from '@standardnotes/models'
 import { NativeFeatureIdentifier } from '@standardnotes/features'
 
 export enum LocalPrefKey {
@@ -14,6 +14,7 @@ export enum LocalPrefKey {
   EditorLineHeight = 'editorLineHeight',
   EditorLineWidth = 'editorLineWidth',
   EditorFontSize = 'editorFontSize',
+  EditorFontFamily = 'editorFontFamily',
 }
 
 export type LocalPrefValue = {
@@ -29,6 +30,7 @@ export type LocalPrefValue = {
   [LocalPrefKey.EditorLineHeight]: EditorLineHeight
   [LocalPrefKey.EditorLineWidth]: EditorLineWidth
   [LocalPrefKey.EditorFontSize]: EditorFontSize
+  [LocalPrefKey.EditorFontFamily]: EditorFontFamily
 }
 
 export const LocalPrefDefaults = {
@@ -44,6 +46,7 @@ export const LocalPrefDefaults = {
   [LocalPrefKey.EditorLineHeight]: EditorLineHeight.Normal,
   [LocalPrefKey.EditorLineWidth]: EditorLineWidth.FullWidth,
   [LocalPrefKey.EditorFontSize]: EditorFontSize.Normal,
+  [LocalPrefKey.EditorFontFamily]: EditorFontFamily.SansSerif,
 } satisfies {
   [key in LocalPrefKey]: LocalPrefValue[key]
 }
