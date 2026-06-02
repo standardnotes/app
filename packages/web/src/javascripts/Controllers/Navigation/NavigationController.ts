@@ -687,6 +687,36 @@ export class NavigationController
     }
   }
 
+  public collapseAllTags() {
+    const tagsToCollapse = this.tags.filter((tag) => this.getChildren(tag).length > 0 && tag.expanded)
+    if (tagsToCollapse.length === 0) {
+      return
+    }
+    this.mutator
+      .changeItems<TagMutator>(tagsToCollapse, (mutator) => {
+        mutator.expanded = false
+      })
+      .then(() => {
+        this.sync.sync().catch(console.error)
+      })
+      .catch(console.error)
+  }
+
+  public expandAllTags() {
+    const tagsToExpand = this.tags.filter((tag) => this.getChildren(tag).length > 0 && !tag.expanded)
+    if (tagsToExpand.length === 0) {
+      return
+    }
+    this.mutator
+      .changeItems<TagMutator>(tagsToExpand, (mutator) => {
+        mutator.expanded = true
+      })
+      .then(() => {
+        this.sync.sync().catch(console.error)
+      })
+      .catch(console.error)
+  }
+
   private setDisplayOptionsAndReloadTags = () => {
     this.items.setTagsAndViewsDisplayOptions({
       searchQuery: {
