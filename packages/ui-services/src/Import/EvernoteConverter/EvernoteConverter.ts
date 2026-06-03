@@ -298,7 +298,7 @@ export class EvernoteConverter implements Converter {
       const children = Array.from(parent.children)
       const isEveryChildBR = children.every((child) => child.tagName === 'BR')
       if (isEveryChildBR) {
-        parent.replaceWith(children[0])
+        parent.replaceChildren()
       }
     })
   }
