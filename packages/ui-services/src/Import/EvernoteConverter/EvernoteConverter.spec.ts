@@ -5,7 +5,7 @@
 import { ContentType } from '@standardnotes/domain-core'
 import { SNNote, SNTag } from '@standardnotes/models'
 import { EvernoteConverter, EvernoteResource } from './EvernoteConverter'
-import { createTestResourceElement, enex } from './testData'
+import { createTestResourceElement, emptyLineEnex, enex } from './testData'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { GenerateUuid } from '@standardnotes/services'
 import { Converter } from '../Converter'
@@ -130,6 +130,25 @@ describe('EvernoteConverter', () => {
     expect(listItem1.getAttribute('aria-checked')).toBe('true')
     expect(listItem2.getAttribute('aria-checked')).toBe('false')
     expect(unorderedList2.getAttribute('__lexicallisttype')).toBeFalsy()
+  })
+
+  it('should preserve single empty lines from Evernote br-only divs', async () => {
+    const converter = new EvernoteConverter(generateUuid)
+
+    const { successful } = await converter.convert(emptyLineEnex as unknown as File, dependencies)
+
+    expect((successful?.[0] as SNNote).content.text).toBe('line1\n\nline2')
+  })
+
+  it('should convert Evernote br-only divs to empty paragraphs for Super', async () => {
+    const converter = new EvernoteConverter(generateUuid)
+
+    const { successful } = await converter.convert(emptyLineEnex as unknown as File, {
+      ...dependencies,
+      canUseSuper: true,
+    })
+
+    expect((successful?.[0] as SNNote).content.text).toBe('<p>line1</p><p></p><p>line2</p>')
   })
 
   it('should replace media elements with resources', async () => {

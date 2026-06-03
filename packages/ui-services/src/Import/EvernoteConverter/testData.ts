@@ -36,6 +36,20 @@ export const enex = `<?xml version="1.0" encoding="UTF-8"?>
   </note>
 </en-export>`
 
+export const emptyLineEnex = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export3.dtd">
+<en-export export-date="20210408T052957Z" application="Evernote" version="10.8.5">
+  <note>
+    <title>Empty line test</title>
+    <created>20210308T051614Z</created>
+    <updated>20210308T051855Z</updated>
+    <content>
+      <![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note><div>line1</div><div><br/></div><div>line2</div></en-note>]]>
+    </content>
+  </note>
+</en-export>`
+
 export function createTestResourceElement(
   shouldHaveMimeType = true,
   shouldHaveSourceUrl = false,
