@@ -2,6 +2,11 @@ export type UniversalSearchStatus = 'idle' | 'loading' | 'ready' | 'error'
 
 export type UniversalSearchResultPayload = unknown
 
+export type TextRange = {
+  start: number
+  end: number
+}
+
 export interface UniversalSearchQuery {
   query: string
   isCaseSensitive: boolean
@@ -28,7 +33,10 @@ export interface UniversalSearchProvider<TPayload = UniversalSearchResultPayload
   id: string
   capabilities: UniversalSearchProviderCapabilities
   search(query: UniversalSearchQuery): Promise<UniversalSearchResult<TPayload>[]> | UniversalSearchResult<TPayload>[]
-  selectResult(result: UniversalSearchResult<TPayload>): Promise<void> | void
+  selectResult(
+    result: UniversalSearchResult<TPayload>,
+    options?: { scrollIntoView?: boolean },
+  ): Promise<void> | void
   clear(): Promise<void> | void
   replaceCurrentResult?(
     result: UniversalSearchResult<TPayload>,

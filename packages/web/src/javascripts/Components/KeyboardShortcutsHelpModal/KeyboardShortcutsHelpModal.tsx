@@ -21,6 +21,7 @@ const createGroupedItems = (items: KeyboardShortcutHelpItem[]): GroupedItems => 
     'Super notes': [],
     'Notes list': [],
     General: [],
+    Search: [],
   }
   return items.reduce((acc, item) => {
     acc[item.category].push(item)

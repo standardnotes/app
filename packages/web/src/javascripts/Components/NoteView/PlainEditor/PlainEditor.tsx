@@ -27,6 +27,10 @@ import {
   FocusEvent,
 } from 'react'
 import { NoteViewController } from '../Controller/NoteViewController'
+import { applyTextReplacements } from '../UniversalSearch/applyTextReplacements'
+import { PlainEditorSearchBackdrop } from './search/PlainEditorSearchBackdrop'
+import { scrollPlainTextareaToOffset } from './search/scrollPlainTextareaToOffset'
+import { TextRange } from '../UniversalSearch/types'
 
 type Props = {
   application: WebApplication
@@ -35,14 +39,26 @@ type Props = {
   locked: boolean
   onFocus: () => void
   onBlur: (event: FocusEvent) => void
+  onTextChange?: () => void
+  isSearchMode?: boolean
+  searchHighlightHtml?: string | null
 }
 
 export type PlainEditorInterface = {
   focus: () => void
+  getText: () => string
+  getTextarea: () => HTMLTextAreaElement | null
+  setSelection: (start: number, end: number, options?: { focus?: boolean; scrollIntoView?: boolean }) => void
+  replaceRange: (start: number, end: number, replacement: string) => Promise<void>
+  replaceAllRanges: (ranges: TextRange[], replacement: string) => Promise<void>
+  onTextChange: (callback: () => void) => Disposer
 }
 
 export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
-  ({ application, spellcheck, controller, locked, onFocus, onBlur }, ref) => {
+  (
+    { application, spellcheck, controller, locked, onFocus, onBlur, onTextChange, isSearchMode, searchHighlightHtml },
+    ref,
+  ) => {
     const [editorText, setEditorText] = useState<string | undefined>()
     const [textareaUnloading, setTextareaUnloading] = useState(false)
     const [lineHeight, setLineHeight] = useState<EditorLineHeight | undefined>()
@@ -59,12 +75,109 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
 
     const tabObserverDisposer = useRef<Disposer>()
     const mutationObserver = useRef<MutationObserver | null>(null)
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+    const textChangeObservers = useRef(new Set<() => void>())
 
-    useImperativeHandle(ref, () => ({
-      focus() {
-        focusEditor()
+    const notifyTextChange = useCallback(() => {
+      onTextChange?.()
+      textChangeObservers.current.forEach((observer) => observer())
+    }, [onTextChange])
+
+    const persistText = useCallback(
+      (text: string, options?: { bypassDebouncer?: boolean }) => {
+        setEditorText(text)
+        setIsPendingLocalPropagation(true)
+
+        return controller
+          .saveAndAwaitLocalPropagation({
+            text,
+            isUserModified: true,
+            bypassDebouncer: options?.bypassDebouncer,
+          })
+          .then(() => {
+            setIsPendingLocalPropagation(false)
+          })
       },
-    }))
+      [controller],
+    )
+
+    const focusEditor = useCallback(() => {
+      const element = document.getElementById(ElementIds.NoteTextEditor)
+      if (element) {
+        lastEditorFocusEventSource.current = EditorEventSource.Script
+        element.focus()
+      }
+    }, [])
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        focus() {
+          focusEditor()
+        },
+        getText() {
+          return textareaRef.current?.value ?? editorText ?? ''
+        },
+        getTextarea() {
+          return textareaRef.current
+        },
+        setSelection(start, end, options) {
+          const textarea = textareaRef.current
+          if (!textarea) {
+            return
+          }
+
+          const scrollTopBefore = textarea.scrollTop
+
+          textarea.setSelectionRange(start, end)
+
+          if (options?.scrollIntoView !== false) {
+            scrollPlainTextareaToOffset(textarea, start, end)
+          } else {
+            textarea.scrollTop = scrollTopBefore
+          }
+
+          if (options?.focus) {
+            lastEditorFocusEventSource.current = EditorEventSource.Script
+            textarea.focus()
+          }
+        },
+        async replaceRange(start, end, replacement) {
+          const textarea = textareaRef.current
+          if (!textarea || locked) {
+            return
+          }
+
+          const nextText = textarea.value.slice(0, start) + replacement + textarea.value.slice(end)
+          textarea.value = nextText
+          const nextSelection = start + replacement.length
+          textarea.setSelectionRange(nextSelection, nextSelection)
+
+          await persistText(nextText)
+          notifyTextChange()
+        },
+        async replaceAllRanges(ranges, replacement) {
+          const textarea = textareaRef.current
+          if (!textarea || locked || ranges.length < 1) {
+            return
+          }
+
+          const nextText = applyTextReplacements(textarea.value, ranges, replacement)
+          textarea.value = nextText
+          textarea.setSelectionRange(nextText.length, nextText.length)
+
+          await persistText(nextText, { bypassDebouncer: true })
+          notifyTextChange()
+        },
+        onTextChange(callback) {
+          textChangeObservers.current.add(callback)
+          return () => {
+            textChangeObservers.current.delete(callback)
+          }
+        },
+      }),
+      [editorText, focusEditor, locked, notifyTextChange, persistText],
+    )
 
     useEffect(() => {
       return () => {
@@ -89,6 +202,7 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
             updatedNote.noteType !== note.current.noteType
           ) {
             setEditorText(updatedNote.text)
+            notifyTextChange()
           }
         }
 
@@ -103,17 +217,14 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
       controller.item.editorIdentifier,
       controller.item.noteType,
       isPendingLocalPropagation,
+      notifyTextChange,
     ])
 
     const onTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = ({ currentTarget }) => {
       const text = currentTarget.value
 
-      setEditorText(text)
-
-      setIsPendingLocalPropagation(true)
-
-      void controller.saveAndAwaitLocalPropagation({ text: text, isUserModified: true }).then(() => {
-        setIsPendingLocalPropagation(false)
+      void persistText(text).then(() => {
+        notifyTextChange()
       })
     }
 
@@ -156,14 +267,6 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
       })
       return disposer
     }, [application, scrollMobileCursorIntoViewAfterWebviewResize])
-
-    const focusEditor = useCallback(() => {
-      const element = document.getElementById(ElementIds.NoteTextEditor)
-      if (element) {
-        lastEditorFocusEventSource.current = EditorEventSource.Script
-        element.focus()
-      }
-    }, [])
 
     useEffect(() => {
       const shouldFocus = controller.isTemplateNote && controller.templateNoteOptions?.autofocusBehavior === 'editor'
@@ -212,8 +315,10 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     }, [spellcheck, previousSpellcheck])
 
     const onRef = useCallback(
-      (ref: HTMLTextAreaElement | null) => {
-        if (tabObserverDisposer.current || !ref) {
+      (element: HTMLTextAreaElement | null) => {
+        textareaRef.current = element
+
+        if (tabObserverDisposer.current || !element) {
           return
         }
 
@@ -251,18 +356,9 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
               editor.selectionStart = editor.selectionEnd = start + 4
             }
 
-            setEditorText(editor.value)
-
-            setIsPendingLocalPropagation(true)
-
-            void controller
-              .saveAndAwaitLocalPropagation({
-                text: editor.value,
-                isUserModified: true,
-              })
-              .then(() => {
-                setIsPendingLocalPropagation(false)
-              })
+            void persistText(editor.value).then(() => {
+              notifyTextChange()
+            })
           },
         })
 
@@ -282,14 +378,26 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
 
         mutationObserver.current = observer
       },
-      [application.keyboardService, controller],
+      [application.keyboardService, notifyTextChange, persistText],
     )
 
     if (textareaUnloading) {
       return null
     }
 
-    return (
+    const editorTypographyClassName = classNames(
+      lineHeight && `leading-${lineHeight.toLowerCase()}`,
+      responsiveFontSize,
+    )
+
+    const textareaClassName = classNames(
+      'editable font-editor flex-grow',
+      editorTypographyClassName,
+      searchHighlightHtml != null && 'plain-editor-with-search-highlights',
+      isIOS() && '!pb-12',
+    )
+
+    const textareaElement = (
       <textarea
         autoComplete="off"
         dir="auto"
@@ -301,15 +409,26 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         ref={onRef}
         spellCheck={spellcheck}
         value={editorText}
-        className={classNames(
-          'editable font-editor flex-grow',
-          lineHeight && `leading-${lineHeight.toLowerCase()}`,
-          responsiveFontSize,
-          // Extra bottom padding is added on iOS so that text
-          // doesn't get hidden by the floating "Close keyboard" button
-          isIOS() && '!pb-12',
-        )}
+        className={textareaClassName}
       ></textarea>
+    )
+
+    if (!isSearchMode) {
+      return textareaElement
+    }
+
+    return (
+      <div className="plain-editor-search-container relative flex min-h-0 flex-grow flex-col">
+        {searchHighlightHtml != null && (
+          <PlainEditorSearchBackdrop
+            html={searchHighlightHtml}
+            textareaRef={textareaRef}
+            typographyClassName={editorTypographyClassName}
+            syncDependency={editorText}
+          />
+        )}
+        {textareaElement}
+      </div>
     )
   },
 )

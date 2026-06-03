@@ -121,6 +121,20 @@ $heading-height: 75px;
   padding: 15px;
   resize: none;
 }
+// Mirror-backdrop search: textarea text must be transparent so highlights show through.
+.editor-content .plain-editor-search-container textarea.editable.plain-editor-with-search-highlights,
+#editor-content .plain-editor-search-container textarea.editable.plain-editor-with-search-highlights {
+  background-color: transparent;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  caret-color: var(--editor-pane-editor-foreground-color);
+
+  &::selection {
+    background-color: var(--text-selection-background-color);
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
 
 #editor-pane-component-stack {
   width: 100%;

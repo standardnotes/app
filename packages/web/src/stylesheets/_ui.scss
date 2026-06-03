@@ -2,6 +2,46 @@
   font-family: var(--sn-stylekit-editor-font-family);
 }
 
+.plain-editor-search-container {
+  background-color: var(--editor-pane-editor-background-color);
+  flex: 1 1 auto;
+  min-height: 0;
+
+  .plain-editor-search-backdrop-scroll {
+    overflow: hidden;
+  }
+
+  .plain-editor-search-backdrop {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    color: var(--editor-pane-editor-foreground-color);
+    tab-size: 2;
+    min-height: 100%;
+  }
+
+  mark.plain-search-highlight,
+  mark.plain-search-highlight-active {
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .plain-search-highlight {
+    background-color: color-mix(in srgb, var(--sn-stylekit-info-color), transparent 60%);
+    color: var(--text-norm);
+  }
+
+  .plain-search-highlight-active {
+    background-color: var(--sn-stylekit-info-color);
+    color: var(--text-norm);
+  }
+
+  .plain-editor-with-search-highlights {
+    position: relative;
+    z-index: 1;
+  }
+}
+
 .wrap {
   word-wrap: break-word;
   word-break: break-all;

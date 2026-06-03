@@ -1,7 +1,7 @@
 import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon, CloseIcon } from '@standardnotes/icons'
 import { classNames } from '@standardnotes/utils'
 import { observer } from 'mobx-react-lite'
-import { KeyboardEvent, useCallback } from 'react'
+import { KeyboardEvent, useEffect, useRef } from 'react'
 import Button from '../../Button/Button'
 import Icon from '../../Icon/Icon'
 import DecoratedInput from '../../Input/DecoratedInput'
@@ -48,11 +48,26 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
   replaceShortcut,
   caseSensitivityShortcut,
 }: UniversalSearchShellProps<TPayload>) {
-  const focusOnMount = useCallback((node: HTMLInputElement | null) => {
-    if (node) {
-      node.focus()
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
+  const replaceInputRef = useRef<HTMLInputElement | null>(null)
+  const wasOpenRef = useRef(false)
+  const wasReplaceModeRef = useRef(false)
+
+  useEffect(() => {
+    if (controller.isOpen && !wasOpenRef.current) {
+      searchInputRef.current?.focus()
     }
-  }, [])
+
+    wasOpenRef.current = controller.isOpen
+  }, [controller.isOpen])
+
+  useEffect(() => {
+    if (controller.isOpen && controller.isReplaceMode && !wasReplaceModeRef.current) {
+      replaceInputRef.current?.focus()
+    }
+
+    wasReplaceModeRef.current = controller.isReplaceMode
+  }, [controller.isOpen, controller.isReplaceMode])
 
   const canReplace = controller.provider.capabilities.supportsReplace
   const canHighlightAll = controller.provider.capabilities.supportsHighlightAll
@@ -135,7 +150,7 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
             value={controller.query}
             onChange={controller.setQuery}
             onKeyDown={handleSearchKeyDown}
-            ref={focusOnMount}
+            ref={searchInputRef}
             right={[
               <div
                 className="min-w-[7ch] max-w-[7ch] flex-shrink-0 whitespace-nowrap text-right"
@@ -200,7 +215,7 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
               }}
               onKeyDown={handleReplaceKeyDown}
               className="rounded border border-border bg-default p-1 px-2"
-              ref={focusOnMount}
+              ref={replaceInputRef}
               disabled={!canReplace}
               aria-label="Replace"
             />

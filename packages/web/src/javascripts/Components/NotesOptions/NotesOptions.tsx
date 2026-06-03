@@ -24,6 +24,7 @@ import { SpellcheckOptions } from './SpellcheckOptions'
 import { NoteSizeWarning } from './NoteSizeWarning'
 import { iconClass } from './ClassNames'
 import SuperNoteOptions from './SuperNoteOptions'
+import PlainNoteOptions from './PlainNoteOptions'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuItem from '../Menu/MenuItem'
 import { useApplication } from '../ApplicationProvider'
@@ -368,6 +369,10 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
       {notes.length === 1 && (
         <>
           {notes[0].noteType === NoteType.Super && <SuperNoteOptions closeMenu={closeMenu} />}
+
+          {notes[0].noteType === NoteType.Plain && application.featuresController.isUniversalSearchEnabled() && (
+            <PlainNoteOptions closeMenu={closeMenu} />
+          )}
 
           {!areSomeNotesInSharedVault && (
             <MenuSection>

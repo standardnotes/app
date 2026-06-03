@@ -46,7 +46,8 @@ import {
 } from './TransactionFunctions'
 import { SuperEditorContentId } from '../SuperEditor/Constants'
 import { NoteViewController } from './Controller/NoteViewController'
-import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
+import { PlainEditorInterface } from './PlainEditor/PlainEditor'
+import { PlainEditorSearchContainer } from './PlainEditor/search/PlainEditorSearchContainer'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import CollaborationInfoHUD from './CollaborationInfoHUD'
 import Button from '../Button/Button'
@@ -968,7 +969,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           )}
 
           {editorMode === 'plain' && (
-            <PlainEditor
+            <PlainEditorSearchContainer
               application={this.application}
               spellcheck={this.state.spellcheck}
               ref={this.setPlainEditorRef}

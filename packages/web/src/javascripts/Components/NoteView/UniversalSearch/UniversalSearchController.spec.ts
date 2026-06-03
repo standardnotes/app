@@ -7,6 +7,8 @@ import {
 import { UniversalSearchProvider } from './types'
 import { NoOpUniversalSearchProvider } from './providers/NoOpUniversalSearchProvider'
 
+const immediateSearchOptions = { searchDebounceMs: 0, contentSearchDebounceMs: 0 }
+
 describe('UniversalSearchController', () => {
   async function flushSearch() {
     await Promise.resolve()
@@ -26,7 +28,7 @@ describe('UniversalSearchController', () => {
       documents: [{ id: 'one', text: 'hello hello' }],
       onSelectResult,
     })
-    const controller = new UniversalSearchController(provider)
+    const controller = new UniversalSearchController(provider, immediateSearchOptions)
 
     controller.open()
     controller.setQuery('hello')
@@ -36,13 +38,16 @@ describe('UniversalSearchController', () => {
     expect(controller.status).toBe('ready')
     expect(controller.results).toHaveLength(2)
     expect(controller.currentResultIndex).toBe(0)
+    expect(onSelectResult).toHaveBeenCalledWith(expect.objectContaining({ id: 'one-0' }))
 
     controller.goToNextResult()
+    await flushSearch()
 
     expect(controller.currentResultIndex).toBe(1)
     expect(onSelectResult).toHaveBeenLastCalledWith(expect.objectContaining({ id: 'one-6' }))
 
     controller.goToNextResult()
+    await flushSearch()
 
     expect(controller.currentResultIndex).toBe(0)
 
@@ -52,6 +57,38 @@ describe('UniversalSearchController', () => {
     expect(controller.query).toBe('')
     expect(controller.results).toEqual([])
     expect(controller.currentResultIndex).toBe(-1)
+  })
+
+  it('debounces query changes before searching', async () => {
+    jest.useFakeTimers()
+    const search = jest.fn(() => [])
+    const provider: UniversalSearchProvider = {
+      id: 'debounced',
+      capabilities: {
+        supportsSearch: true,
+        supportsReplace: false,
+        supportsHighlightAll: false,
+      },
+      search,
+      selectResult: jest.fn(),
+      clear: jest.fn(),
+    }
+    const controller = new UniversalSearchController(provider, { searchDebounceMs: 30, contentSearchDebounceMs: 250 })
+
+    controller.open()
+    controller.setQuery('h')
+    controller.setQuery('he')
+    controller.setQuery('hel')
+
+    expect(search).not.toHaveBeenCalled()
+
+    jest.advanceTimersByTime(30)
+    await flushSearch()
+
+    expect(search).toHaveBeenCalledTimes(1)
+    expect(search).toHaveBeenCalledWith({ query: 'hel', isCaseSensitive: false })
+
+    jest.useRealTimers()
   })
 
   it('handles provider errors', async () => {
@@ -68,7 +105,7 @@ describe('UniversalSearchController', () => {
       selectResult: jest.fn(),
       clear: jest.fn(),
     }
-    const controller = new UniversalSearchController(provider)
+    const controller = new UniversalSearchController(provider, immediateSearchOptions)
 
     controller.open()
     controller.setQuery('hello')
@@ -83,7 +120,7 @@ describe('UniversalSearchController', () => {
     const provider = createMockUniversalSearchProvider({
       documents: [{ id: 'one', text: 'hello hello' }],
     })
-    const controller = new UniversalSearchController(provider)
+    const controller = new UniversalSearchController(provider, immediateSearchOptions)
 
     controller.open()
     controller.setQuery('hello')
@@ -101,8 +138,31 @@ describe('UniversalSearchController', () => {
     expect(controller.results).toHaveLength(0)
   })
 
+  it('preserves the current result index after replacing a single match', async () => {
+    const provider = createMockUniversalSearchProvider({
+      documents: [{ id: 'one', text: 'hello hello hello' }],
+    })
+    const controller = new UniversalSearchController(provider, immediateSearchOptions)
+
+    controller.open()
+    controller.setQuery('hello')
+    controller.setReplaceQuery('bye')
+    await flushSearch()
+
+    controller.goToNextResult()
+    await flushSearch()
+    expect(controller.currentResultIndex).toBe(1)
+
+    await controller.replaceCurrentResult()
+
+    expect(provider.getDocuments()[0].text).toBe('hello bye hello')
+    expect(controller.results).toHaveLength(2)
+    expect(controller.currentResultIndex).toBe(1)
+    expect(controller.currentResult?.id).toBe('one-10')
+  })
+
   it('keeps unsupported providers stable and predictable', async () => {
-    const controller = new UniversalSearchController(NoOpUniversalSearchProvider)
+    const controller = new UniversalSearchController(NoOpUniversalSearchProvider, immediateSearchOptions)
 
     controller.open()
     controller.setQuery('hello')
@@ -120,5 +180,54 @@ describe('UniversalSearchController', () => {
     controller.open()
 
     expect(controller.isOpen).toBe(false)
+  })
+
+  it('resetContext clears search state without selecting a stale result', async () => {
+    const onSelectResult = jest.fn()
+    const provider = createMockUniversalSearchProvider({
+      documents: [{ id: 'one', text: 'hello hello' }],
+      onSelectResult,
+    })
+    const controller = new UniversalSearchController(provider, immediateSearchOptions)
+
+    controller.open()
+    controller.setQuery('hello')
+    controller.setReplaceQuery('bye')
+    controller.toggleReplaceMode()
+    await flushSearch()
+
+    expect(controller.isOpen).toBe(true)
+    expect(controller.results).toHaveLength(2)
+    expect(onSelectResult).toHaveBeenCalledTimes(1)
+
+    controller.resetContext()
+
+    expect(controller.isOpen).toBe(false)
+    expect(controller.query).toBe('')
+    expect(controller.replaceQuery).toBe('')
+    expect(controller.results).toEqual([])
+    expect(controller.isReplaceMode).toBe(false)
+    expect(onSelectResult).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not toggle case sensitivity when search is closed', async () => {
+    const search = jest.fn(() => [])
+    const provider: UniversalSearchProvider = {
+      id: 'case-sensitive',
+      capabilities: {
+        supportsSearch: true,
+        supportsReplace: false,
+        supportsHighlightAll: false,
+      },
+      search,
+      selectResult: jest.fn(),
+      clear: jest.fn(),
+    }
+    const controller = new UniversalSearchController(provider, immediateSearchOptions)
+
+    controller.toggleCaseSensitivity()
+
+    expect(controller.isCaseSensitive).toBe(false)
+    expect(search).not.toHaveBeenCalled()
   })
 })

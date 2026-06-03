@@ -36,9 +36,17 @@ function errorMessage(error: unknown): string {
   return 'Search failed'
 }
 
+type SetSearchResultsOptions = {
+  preferredIndex?: number
+  selectResult?: boolean
+  scrollIntoView?: boolean
+}
+
 interface UniversalSearchControllerOptions<TPayload = UniversalSearchResultPayload> {
   provider: UniversalSearchProvider<TPayload>
   isEnabled?: boolean
+  searchDebounceMs?: number
+  contentSearchDebounceMs?: number
 }
 
 export class UniversalSearchController<TPayload = UniversalSearchResultPayload> {
@@ -55,13 +63,18 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
 
   private searchId = 0
   private isEnabled: boolean
+  private searchDebounceMs: number
+  private contentSearchDebounceMs: number
+  private searchDebounceTimeout: ReturnType<typeof setTimeout> | undefined
 
   constructor(
     public readonly provider: UniversalSearchProvider<TPayload>,
     options: Omit<UniversalSearchControllerOptions<TPayload>, 'provider'> = {},
   ) {
     this.isEnabled = options.isEnabled ?? true
-    this.shouldHighlightAll = provider.capabilities.supportsHighlightAll
+    this.searchDebounceMs = options.searchDebounceMs ?? 30
+    this.contentSearchDebounceMs = options.contentSearchDebounceMs ?? 250
+    this.shouldHighlightAll = provider.capabilities.supportsHighlightAll ? true : false
 
     makeObservable<this, 'setSearchResults' | 'setSearchError' | 'clearResults'>(this, {
       isOpen: observable,
@@ -79,6 +92,7 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
 
       open: action,
       close: action,
+      resetContext: action,
       setQuery: action,
       setReplaceQuery: action,
       toggleCaseSensitivity: action,
@@ -97,6 +111,7 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   }
 
   deinit(): void {
+    this.cancelScheduledSearch()
     this.searchId++
     void this.provider.clear()
     this.results = []
@@ -108,28 +123,36 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
     }
 
     this.isOpen = true
-    void this.search()
+    void this.executeSearch()
   }
 
   close = (): void => {
     void this.selectCurrentResult()
-    this.searchId++
-    void this.provider.clear()
-    this.isOpen = false
-    this.query = ''
-    this.replaceQuery = ''
-    this.results = []
-    this.currentResultIndex = -1
-    this.status = 'idle'
-    this.error = undefined
-    this.isCaseSensitive = false
-    this.isReplaceMode = false
-    this.shouldHighlightAll = this.provider.capabilities.supportsHighlightAll
+    this.clearSessionState()
+  }
+
+  resetContext = (): void => {
+    this.clearSessionState()
   }
 
   setQuery = (query: string): void => {
     this.query = query
-    void this.search()
+
+    if (!query) {
+      this.cancelScheduledSearch()
+      void this.executeSearch()
+      return
+    }
+
+    this.scheduleSearch(this.searchDebounceMs)
+  }
+
+  refreshSearch = (): void => {
+    if (!this.isOpen || !this.query) {
+      return
+    }
+
+    this.scheduleSearch(this.contentSearchDebounceMs)
   }
 
   setReplaceQuery = (replaceQuery: string): void => {
@@ -137,8 +160,12 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   }
 
   toggleCaseSensitivity = (): void => {
+    if (!this.isOpen) {
+      return
+    }
+
     this.isCaseSensitive = !this.isCaseSensitive
-    void this.search()
+    this.scheduleSearch(this.searchDebounceMs)
   }
 
   toggleReplaceMode = (): void => {
@@ -151,21 +178,21 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
 
   goToNextResult = (): void => {
     this.currentResultIndex = getNextUniversalSearchResultIndex(this.currentResultIndex, this.results.length)
-    void this.selectCurrentResult()
+    void this.selectCurrentResult({ scrollIntoView: true })
   }
 
   goToPreviousResult = (): void => {
     this.currentResultIndex = getPreviousUniversalSearchResultIndex(this.currentResultIndex, this.results.length)
-    void this.selectCurrentResult()
+    void this.selectCurrentResult({ scrollIntoView: true })
   }
 
-  selectCurrentResult = async (): Promise<void> => {
+  selectCurrentResult = async (options?: { scrollIntoView?: boolean }): Promise<void> => {
     const result = this.currentResult
     if (!result) {
       return
     }
 
-    await this.provider.selectResult(result)
+    await this.provider.selectResult(result, { scrollIntoView: options?.scrollIntoView ?? false })
   }
 
   replaceCurrentResult = async (): Promise<void> => {
@@ -178,13 +205,14 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
       return
     }
 
+    const indexBeforeReplace = this.currentResultIndex
     const nextResults = await this.provider.replaceCurrentResult(result, {
       query: this.query,
       isCaseSensitive: this.isCaseSensitive,
       replaceQuery: this.replaceQuery,
     })
 
-    await this.handleReplaceResult(nextResults)
+    await this.handleReplaceResult(nextResults, { preferredIndex: indexBeforeReplace })
   }
 
   replaceAllResults = async (): Promise<void> => {
@@ -205,7 +233,44 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
     await this.handleReplaceResult(nextResults)
   }
 
-  private search = async (): Promise<void> => {
+  private clearSessionState = (): void => {
+    this.cancelScheduledSearch()
+    this.searchId++
+    void this.provider.clear()
+    this.isOpen = false
+    this.query = ''
+    this.replaceQuery = ''
+    this.results = []
+    this.currentResultIndex = -1
+    this.status = 'idle'
+    this.error = undefined
+    this.isCaseSensitive = false
+    this.isReplaceMode = false
+    this.shouldHighlightAll = this.provider.capabilities.supportsHighlightAll ? true : false
+  }
+
+  private cancelScheduledSearch = (): void => {
+    if (this.searchDebounceTimeout) {
+      clearTimeout(this.searchDebounceTimeout)
+      this.searchDebounceTimeout = undefined
+    }
+  }
+
+  private scheduleSearch = (debounceMs: number): void => {
+    this.cancelScheduledSearch()
+
+    if (debounceMs <= 0) {
+      void this.executeSearch()
+      return
+    }
+
+    this.searchDebounceTimeout = setTimeout(() => {
+      this.searchDebounceTimeout = undefined
+      void this.executeSearch()
+    }, debounceMs)
+  }
+
+  private executeSearch = async (): Promise<void> => {
     if (!this.isOpen || !this.isEnabled) {
       return
     }
@@ -233,10 +298,8 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
       }
 
       runInAction(() => {
-        this.setSearchResults(results)
+        this.setSearchResults(results, { selectResult: true, scrollIntoView: false })
       })
-
-      await this.selectCurrentResult()
     } catch (error) {
       if (searchId !== this.searchId) {
         return
@@ -248,10 +311,17 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
     }
   }
 
-  private handleReplaceResult = async (nextResults: UniversalSearchResult<TPayload>[] | void): Promise<void> => {
+  private handleReplaceResult = async (
+    nextResults: UniversalSearchResult<TPayload>[] | void,
+    options?: Pick<SetSearchResultsOptions, 'preferredIndex'>,
+  ): Promise<void> => {
     if (Array.isArray(nextResults)) {
       runInAction(() => {
-        this.setSearchResults(nextResults)
+        this.setSearchResults(nextResults, {
+          preferredIndex: options?.preferredIndex,
+          selectResult: true,
+          scrollIntoView: true,
+        })
       })
       return
     }
@@ -262,15 +332,31 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
     })
 
     runInAction(() => {
-      this.setSearchResults(results)
+      this.setSearchResults(results, {
+        preferredIndex: options?.preferredIndex,
+        selectResult: true,
+        scrollIntoView: true,
+      })
     })
   }
 
-  private setSearchResults(results: UniversalSearchResult<TPayload>[]): void {
+  private setSearchResults(results: UniversalSearchResult<TPayload>[], options?: SetSearchResultsOptions): void {
     this.results = results
-    this.currentResultIndex = results.length > 0 ? 0 : -1
+
+    if (results.length < 1) {
+      this.currentResultIndex = -1
+    } else if (options?.preferredIndex !== undefined) {
+      this.currentResultIndex = Math.min(Math.max(0, options.preferredIndex), results.length - 1)
+    } else {
+      this.currentResultIndex = 0
+    }
+
     this.status = 'ready'
     this.error = undefined
+
+    if (options?.selectResult && this.currentResultIndex >= 0) {
+      void this.selectCurrentResult({ scrollIntoView: options.scrollIntoView ?? false })
+    }
   }
 
   private setSearchError(error: string): void {
