@@ -5,7 +5,7 @@
 import { ContentType } from '@standardnotes/domain-core'
 import { SNNote, SNTag } from '@standardnotes/models'
 import { EvernoteConverter, EvernoteResource } from './EvernoteConverter'
-import { createTestResourceElement, emptyLineEnex, enex, highlightEnex } from './testData'
+import { checkboxEnex, createTestResourceElement, emptyLineEnex, enTodoEnex, enex, highlightEnex } from './testData'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { GenerateUuid } from '@standardnotes/services'
 import { Converter } from '../Converter'
@@ -109,7 +109,43 @@ describe('EvernoteConverter', () => {
     )
   })
 
+  it('should convert Evernote checkbox lists to super format', async () => {
+    const converter = new EvernoteConverter(generateUuid)
+
+    const { successful } = await converter.convert(checkboxEnex as unknown as File, {
+      ...dependencies,
+      canUseSuper: true,
+    })
+
+    expect((successful?.[0] as SNNote).content.text).toContain('__lexicallisttype="check"')
+    expect((successful?.[0] as SNNote).content.text).toContain('aria-checked="true"')
+    expect((successful?.[0] as SNNote).content.text).toContain('aria-checked="false"')
+  })
+
+  it('should convert Evernote checkbox lists to plaintext checkboxes without super', async () => {
+    const converter = new EvernoteConverter(generateUuid)
+
+    const { successful } = await converter.convert(checkboxEnex as unknown as File, dependencies)
+
+    expect((successful?.[0] as SNNote).content.text).toBe('- [x] Line 1\n- [ ] Line 2\n')
+  })
+
+  it('should convert en-todo tags to super checklist format', async () => {
+    const converter = new EvernoteConverter(generateUuid)
+
+    const { successful } = await converter.convert(enTodoEnex as unknown as File, {
+      ...dependencies,
+      canUseSuper: true,
+    })
+
+    expect((successful?.[0] as SNNote).content.text).toContain('__lexicallisttype="check"')
+    expect((successful?.[0] as SNNote).content.text).toContain('Checked item')
+    expect((successful?.[0] as SNNote).content.text).toContain('Unchecked item')
+  })
+
   it('should convert lists to super format if applicable', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const noteElement = document.createElement('en-note')
     const unorderedList1 = document.createElement('ul')
     unorderedList1.style.setProperty('--en-todo', 'true')
     const listItem1 = document.createElement('li')
@@ -120,11 +156,10 @@ describe('EvernoteConverter', () => {
     unorderedList1.appendChild(listItem2)
 
     const unorderedList2 = document.createElement('ul')
+    noteElement.appendChild(unorderedList1)
+    noteElement.appendChild(unorderedList2)
 
-    const array = [unorderedList1, unorderedList2]
-
-    const converter = new EvernoteConverter(generateUuid)
-    converter.convertListsToSuperFormatIfApplicable(array)
+    converter.convertEvernoteChecklists(noteElement, true)
 
     expect(unorderedList1.getAttribute('__lexicallisttype')).toBe('check')
     expect(listItem1.getAttribute('aria-checked')).toBe('true')
@@ -138,6 +173,18 @@ describe('EvernoteConverter', () => {
     const { successful } = await converter.convert(emptyLineEnex as unknown as File, dependencies)
 
     expect((successful?.[0] as SNNote).content.text).toBe('line1\n\nline2')
+  })
+
+  it('should convert highlight spans to mark elements', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const root = document.createElement('div')
+    root.innerHTML =
+      '<span style="--en-highlight:yellow;background-color: #ffef9e;">Line 2</span><span>plain</span>'
+
+    converter.convertHighlightSpansToMarks(root)
+
+    expect(root.querySelector('span')?.textContent).toBe('plain')
+    expect(root.querySelector('mark')?.textContent).toBe('Line 2')
   })
 
   it('should convert highlight spans to mark elements before Super import', async () => {

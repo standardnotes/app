@@ -1,4 +1,4 @@
-import { isEvernoteHighlightElement } from '@standardnotes/ui-services/src/Import/EvernoteHighlight'
+import { isHighlightSpanElement } from '@standardnotes/ui-services/src/Import/HighlightSpanImport'
 import { $isTextNode, DOMConversionMap, LexicalNode } from 'lexical'
 
 function applyHighlightToTextChild(domNode: HTMLElement) {
@@ -30,7 +30,7 @@ export const highlightHtmlImport: DOMConversionMap = {
     priority: 1,
   }),
   span: (domNode) => {
-    if (!isEvernoteHighlightElement(domNode as HTMLElement)) {
+    if (!isHighlightSpanElement(domNode as HTMLElement)) {
       return null
     }
 

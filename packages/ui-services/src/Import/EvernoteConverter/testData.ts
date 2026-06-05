@@ -50,6 +50,33 @@ export const highlightEnex = `<?xml version="1.0" encoding="UTF-8"?>
   </note>
 </en-export>`
 
+export const checkboxEnex = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+<en-export export-date="20221222T043818Z" application="Evernote" version="10.49.4">
+  <note>
+    <title>Checkbox test</title>
+    <created>20221122T043758Z</created>
+    <updated>20221122T043813Z</updated>
+    <content>
+      <![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note><ul style="--en-todo:true;"><li style="--en-checked:true;"><div>Line 1</div></li><li><div>Line 2</div></li></ul></en-note>]]>
+    </content>
+  </note>
+</en-export>`
+
+export const enTodoEnex = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export2.dtd">
+<en-export export-date="20200622T091735Z" application="Evernote/Windows" version="6.x">
+  <note>
+    <title>En-todo test</title>
+    <content><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
+<en-note><div><en-todo checked="true"/>Checked item<br/></div><div><en-todo checked="false"/>Unchecked item<br/></div></en-note>]]></content>
+    <created>20200622T091652Z</created>
+    <updated>20200622T091707Z</updated>
+  </note>
+</en-export>`
+
 export const emptyLineEnex = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export3.dtd">
 <en-export export-date="20210408T052957Z" application="Evernote" version="10.8.5">
