@@ -8,6 +8,7 @@ import Base64 from 'crypto-js/enc-base64'
 import { Converter, UploadFileFn } from '../Converter'
 import { ConversionResult } from '../ConversionResult'
 import { getBlobFromBase64 } from '../Utils'
+import { convertEvernoteHighlightSpansToMarks } from '../EvernoteHighlight'
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
@@ -92,6 +93,7 @@ export class EvernoteConverter implements Converter {
           this.convertTopLevelDivsToParagraphs(noteElement)
           this.convertListsToSuperFormatIfApplicable(unorderedLists)
           this.convertLeftPaddingToSuperIndent(noteElement)
+          convertEvernoteHighlightSpansToMarks(noteElement)
         }
 
         this.removeEmptyAndOrphanListElements(noteElement)
