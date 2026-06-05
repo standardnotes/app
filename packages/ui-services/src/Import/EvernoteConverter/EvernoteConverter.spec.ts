@@ -5,7 +5,7 @@
 import { ContentType } from '@standardnotes/domain-core'
 import { SNNote, SNTag } from '@standardnotes/models'
 import { EvernoteConverter, EvernoteResource } from './EvernoteConverter'
-import { createTestResourceElement, emptyLineEnex, enex } from './testData'
+import { createTestResourceElement, emptyLineEnex, enex, highlightEnex } from './testData'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { GenerateUuid } from '@standardnotes/services'
 import { Converter } from '../Converter'
@@ -138,6 +138,18 @@ describe('EvernoteConverter', () => {
     const { successful } = await converter.convert(emptyLineEnex as unknown as File, dependencies)
 
     expect((successful?.[0] as SNNote).content.text).toBe('line1\n\nline2')
+  })
+
+  it('should convert highlight spans to mark elements before Super import', async () => {
+    const converter = new EvernoteConverter(generateUuid)
+
+    const { successful } = await converter.convert(highlightEnex as unknown as File, {
+      ...dependencies,
+      canUseSuper: true,
+    })
+
+    expect((successful?.[0] as SNNote).content.text).toContain('<mark')
+    expect((successful?.[0] as SNNote).content.text).not.toMatch(/<span[^>]*--en-highlight/)
   })
 
   it('should convert Evernote br-only divs to empty paragraphs for Super', async () => {
