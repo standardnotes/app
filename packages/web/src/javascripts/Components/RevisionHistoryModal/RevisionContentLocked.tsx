@@ -37,15 +37,17 @@ const RevisionContentLocked: FunctionComponent = () => {
         <div className="leading-140% mb-4 text-passive-0">
           {getPremiumContentCopy(planName)}. Learn more about our other plans to upgrade your history capacity.
         </div>
-        <Button
-          primary
-          label="Discover plans"
-          onClick={() => {
-            if (window.plansUrl) {
-              window.location.assign(window.plansUrl)
-            }
-          }}
-        />
+        {application.canShowPurchaseFlow() && (
+          <Button
+            primary
+            label="Discover plans"
+            onClick={() => {
+              if (window.plansUrl) {
+                window.location.assign(window.plansUrl)
+              }
+            }}
+          />
+        )}
       </div>
     </div>
   )
