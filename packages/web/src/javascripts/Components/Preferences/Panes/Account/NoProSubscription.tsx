@@ -40,7 +40,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
         {!application.hideOutboundSubscriptionLinks && (
           <LinkButton className="mr-3 mt-3 min-w-20" label="Learn More" link={window.plansUrl as string} />
         )}
-        {application.hasAccount() && (
+        {application.hasAccount() && application.canShowPurchaseFlow() && (
           <Button className="mt-3 min-w-20" primary label="Upgrade" onClick={onPurchaseClick} />
         )}
       </div>
