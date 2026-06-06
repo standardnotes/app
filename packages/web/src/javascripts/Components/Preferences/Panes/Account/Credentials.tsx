@@ -10,6 +10,7 @@ import PasswordWizard from '@/Components/PasswordWizard/PasswordWizard'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import { c, jt } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -34,28 +35,27 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
 
   const closeChangeEmailDialog = () => setIsChangeEmailDialogOpen(false)
 
+  const emailSpan = <span className="wrap font-bold">{user?.email}</span>
+  const passwordDateSpan = <span className="font-bold">{passwordCreatedOn}</span>
+
   return (
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Credentials</Title>
-          <Subtitle>Email</Subtitle>
-          <Text>
-            You're signed in as <span className="wrap font-bold">{user?.email}</span>
-          </Text>
+          <Title>{c('Title').t`Credentials`}</Title>
+          <Subtitle>{c('Subtitle').t`Email`}</Subtitle>
+          <Text>{jt`You're signed in as ${emailSpan}`}</Text>
           <Button
             className="mt-3 min-w-20"
-            label="Change email"
+            label={c('Action').t`Change email`}
             onClick={() => {
               setIsChangeEmailDialogOpen(true)
             }}
           />
           <HorizontalSeparator classes="my-4" />
-          <Subtitle>Password</Subtitle>
-          <Text>
-            Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
-          </Text>
-          <Button className="mt-3 min-w-20" label="Change password" onClick={presentPasswordWizard} />
+          <Subtitle>{c('Subtitle').t`Password`}</Subtitle>
+          <Text>{jt`Current password was set on ${passwordDateSpan}`}</Text>
+          <Button className="mt-3 min-w-20" label={c('Action').t`Change password`} onClick={presentPasswordWizard} />
           <ModalOverlay isOpen={isChangeEmailDialogOpen} close={closeChangeEmailDialog}>
             <ChangeEmail onCloseDialog={closeChangeEmailDialog} application={application} />
           </ModalOverlay>

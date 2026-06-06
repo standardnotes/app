@@ -18,12 +18,18 @@ const UpgradeNow = ({ application, featuresController, subscriptionContoller }: 
   const onClick = useCallback(() => {
     if (hasAccount && application.isNativeIOS()) {
       application.showPremiumModal()
+    } else if (!application.canShowPurchaseFlow() && !hasAccount) {
+      application.showAccountMenu()
     } else {
       void application.openPurchaseFlow()
     }
   }, [application, hasAccount])
 
   if (!shouldShowCTA || hasAccessToFeatures) {
+    return null
+  }
+
+  if (!application.canShowPurchaseFlow() && hasAccount) {
     return null
   }
 

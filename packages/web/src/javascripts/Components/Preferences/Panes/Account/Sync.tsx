@@ -9,6 +9,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { c, jt } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -27,24 +28,24 @@ const Sync: FunctionComponent<Props> = ({ application }: Props) => {
     })
     setIsSyncingInProgress(false)
     if (response && (response as any).error) {
-      application.alerts.alert(STRING_GENERIC_SYNC_ERROR).catch(console.error)
+      application.alerts.alert(STRING_GENERIC_SYNC_ERROR()).catch(console.error)
     } else {
       setLastSyncDate(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
     }
   }
+
+  const lastSyncSpan = <span className="font-bold">{c('Info').t`on ${lastSyncDate}`}</span>
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title>Sync</Title>
-            <Text>
-              Last synced <span className="font-bold">on {lastSyncDate}</span>
-            </Text>
+            <Title>{c('Title').t`Sync`}</Title>
+            <Text>{jt`Last synced ${lastSyncSpan}`}</Text>
             <Button
               className="mt-3 min-w-20"
-              label="Sync now"
+              label={c('Action').t`Sync now`}
               disabled={isSyncingInProgress}
               onClick={doSynchronization}
             />

@@ -122,7 +122,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
       }
 
       if (password !== confirmPassword) {
-        setError(STRING_NON_MATCHING_PASSWORDS)
+        setError(STRING_NON_MATCHING_PASSWORDS())
         setConfirmPassword('')
         passwordInputRef.current?.focus()
         return

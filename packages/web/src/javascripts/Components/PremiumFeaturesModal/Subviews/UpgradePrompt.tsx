@@ -110,16 +110,18 @@ export const UpgradePrompt = ({
           )}
         </div>
       </div>
-      <button
-        onClick={handleClick}
-        className={classNames(
-          'no-border cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125',
-          preferHorizontalLayout ? 'w-full px-4 md:ml-auto md:w-auto' : 'my-2 w-full',
-        )}
-        ref={ctaRef}
-      >
-        Upgrade
-      </button>
+      {application.canShowPurchaseFlow() && (
+        <button
+          onClick={handleClick}
+          className={classNames(
+            'no-border cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125',
+            preferHorizontalLayout ? 'w-full px-4 md:ml-auto md:w-auto' : 'my-2 w-full',
+          )}
+          ref={ctaRef}
+        >
+          Upgrade
+        </button>
+      )}
     </div>
   )
 }

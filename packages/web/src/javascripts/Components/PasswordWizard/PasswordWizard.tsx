@@ -6,14 +6,21 @@ import Spinner from '../Spinner/Spinner'
 import { PasswordStep } from './PasswordStep'
 import { FinishStep } from './FinishStep'
 import { PreprocessingStep } from './PreprocessingStep'
+import { c } from 'ttag'
 
 interface Props {
   application: WebApplication
   dismissModal: () => void
 }
 
+enum ContinueTitle {
+  Default,
+  Generating,
+  Finish,
+}
+
 type State = {
-  continueTitle: string
+  continueTitle: ContinueTitle
   formData: FormData
   isContinuing?: boolean
   lockContinue?: boolean
@@ -21,10 +28,6 @@ type State = {
   showSpinner?: boolean
   step: Steps
 }
-
-const DEFAULT_CONTINUE_TITLE = 'Continue'
-const GENERATING_CONTINUE_TITLE = 'Generating Keys...'
-const FINISH_CONTINUE_TITLE = 'Finish'
 
 enum Steps {
   PreprocessingStep = 'preprocessing-step',
@@ -46,7 +49,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
     const baseState = {
       formData: {},
-      continueTitle: DEFAULT_CONTINUE_TITLE,
+      continueTitle: ContinueTitle.Default,
     }
 
     if (props.application.featuresController.isVaultsEnabled()) {
@@ -82,7 +85,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
   resetContinueState() {
     this.setState({
       showSpinner: false,
-      continueTitle: DEFAULT_CONTINUE_TITLE,
+      continueTitle: ContinueTitle.Default,
       isContinuing: false,
     })
   }
@@ -109,7 +112,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     this.setState({
       isContinuing: true,
       showSpinner: true,
-      continueTitle: GENERATING_CONTINUE_TITLE,
+      continueTitle: ContinueTitle.Generating,
     })
 
     const valid = await this.validateCurrentPassword()
@@ -127,7 +130,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     this.setState({
       isContinuing: false,
       showSpinner: false,
-      continueTitle: FINISH_CONTINUE_TITLE,
+      continueTitle: ContinueTitle.Finish,
       step: Steps.FinishStep,
     })
   }
@@ -136,16 +139,18 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     const currentPassword = this.state.formData.currentPassword
     const newPass = this.state.formData.newPassword
     if (!currentPassword || currentPassword.length === 0) {
-      this.application.alerts.alert('Please enter your current password.').catch(console.error)
+      this.application.alerts.alert(c('Error').t`Please enter your current password.`).catch(console.error)
       return false
     }
 
     if (!newPass || newPass.length === 0) {
-      this.application.alerts.alert('Please enter a new password.').catch(console.error)
+      this.application.alerts.alert(c('Error').t`Please enter a new password.`).catch(console.error)
       return false
     }
     if (newPass !== this.state.formData.newPasswordConfirmation) {
-      this.application.alerts.alert('Your new password does not match its confirmation.').catch(console.error)
+      this.application.alerts
+        .alert(c('Error').t`Your new password does not match its confirmation.`)
+        .catch(console.error)
       this.setFormDataState({
         status: undefined,
       }).catch(console.error)
@@ -154,7 +159,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
     if (!this.application.sessions.getUser()?.email) {
       this.application.alerts
-        .alert("We don't have your email stored. Please sign out then log back in to fix this issue.")
+        .alert(c('Error').t`We don't have your email stored. Please sign out then log back in to fix this issue.`)
         .catch(console.error)
       this.setFormDataState({
         status: undefined,
@@ -165,7 +170,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     const success = await this.application.validateAccountPassword(this.state.formData.currentPassword as string)
     if (!success) {
       this.application.alerts
-        .alert('The current password you entered is not correct. Please try again.')
+        .alert(c('Error').t`The current password you entered is not correct. Please try again.`)
         .catch(console.error)
     }
     return success
@@ -180,7 +185,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     })
 
     await this.setFormDataState({
-      status: 'Processing encryption keys…',
+      status: c('Status').t`Processing encryption keys…`,
     })
 
     const newPassword = this.state.formData.newPassword
@@ -197,13 +202,13 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
     if (!success) {
       this.setFormDataState({
-        status: 'Unable to process your password. Please try again.',
+        status: c('Status').t`Unable to process your password. Please try again.`,
       }).catch(console.error)
     } else {
       this.setState({
         formData: {
           ...this.state.formData,
-          status: 'Successfully changed password.',
+          status: c('Status').t`Successfully changed password.`,
         },
       })
     }
@@ -212,7 +217,9 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
   dismiss = () => {
     if (this.state.processing) {
-      this.application.alerts.alert('Cannot close window until pending tasks are complete.').catch(console.error)
+      this.application.alerts
+        .alert(c('Error').t`Cannot close window until pending tasks are complete.`)
+        .catch(console.error)
     } else {
       this.props.dismissModal()
     }
@@ -266,25 +273,37 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     }
   }
 
+  continueLabel(): string {
+    switch (this.state.continueTitle) {
+      case ContinueTitle.Generating:
+        return c('Action').t`Generating Keys...`
+      case ContinueTitle.Finish:
+        return c('Action').t`Finish`
+      case ContinueTitle.Default:
+      default:
+        return c('Action').t`Continue`
+    }
+  }
+
   override render() {
     return (
       <div className="sn-component h-full w-full md:h-auto md:w-auto" id="password-wizard">
         <Modal
-          title={'Change Password'}
+          title={c('Title').t`Change Password`}
           close={this.dismiss}
           actions={[
             {
-              label: 'Cancel',
+              label: c('Action').t`Cancel`,
               onClick: this.dismiss,
               type: 'cancel',
               mobileSlot: 'left',
             },
             {
               label:
-                this.state.continueTitle === GENERATING_CONTINUE_TITLE && isMobileScreen() ? (
+                this.state.continueTitle === ContinueTitle.Generating && isMobileScreen() ? (
                   <Spinner className="h-4 w-4" />
                 ) : (
-                  this.state.continueTitle
+                  this.continueLabel()
                 ),
               onClick: this.nextStep,
               type: 'primary',

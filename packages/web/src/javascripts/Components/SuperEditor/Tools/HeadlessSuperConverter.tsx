@@ -20,6 +20,7 @@ import { parseFileName } from '@standardnotes/utils'
 import { $dfs } from '@lexical/utils'
 import { $isFileNode } from '../Plugins/EncryptedFilePlugin/Nodes/FileUtils'
 import { $generateNodesFromSerializedNodes, $insertGeneratedNodes } from '@lexical/clipboard'
+import { highlightHtmlImport } from '../Lexical/Utils/highlightHtmlImport'
 
 export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private importEditor: LexicalEditor
@@ -32,6 +33,9 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
       editable: false,
       onError: (error: Error) => console.error(error),
       nodes: BlockEditorNodes,
+      html: {
+        import: highlightHtmlImport,
+      },
     })
     this.exportEditor = createHeadlessEditor({
       namespace: 'BlocksEditor',

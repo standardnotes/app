@@ -1,4 +1,5 @@
 import { FunctionComponent, useCallback, useMemo, useState } from 'react'
+import { c } from 'ttag'
 import { WebApplication } from '@/Application/WebApplication'
 import { useBeforeUnload } from '@/Hooks/useBeforeUnload'
 import ChangeEmailForm from './ChangeEmailForm'
@@ -6,9 +7,9 @@ import ChangeEmailSuccess from './ChangeEmailSuccess'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 
 enum SubmitButtonTitles {
-  Default = 'Continue',
-  GeneratingKeys = 'Generating Keys...',
-  Finish = 'Finish',
+  Default,
+  GeneratingKeys,
+  Finish,
 }
 
 enum Steps {
@@ -35,7 +36,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
 
   const validateCurrentPassword = useCallback(async () => {
     if (!currentPassword || currentPassword.length === 0) {
-      applicationAlertService.alert('Please enter your current password.').catch(console.error)
+      applicationAlertService.alert(c('Error').t`Please enter your current password.`).catch(console.error)
 
       return false
     }
@@ -43,7 +44,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
     const success = await application.validateAccountPassword(currentPassword)
     if (!success) {
       applicationAlertService
-        .alert('The current password you entered is not correct. Please try again.')
+        .alert(c('Error').t`The current password you entered is not correct. Please try again.`)
         .catch(console.error)
 
       return false
@@ -73,7 +74,9 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
 
   const dismiss = useCallback(() => {
     if (lockContinue) {
-      applicationAlertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
+      applicationAlertService
+        .alert(c('Error').t`Cannot close window until pending tasks are complete.`)
+        .catch(console.error)
     } else {
       onCloseDialog()
     }
@@ -115,32 +118,46 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
 
   const handleDialogClose = useCallback(() => {
     if (lockContinue) {
-      applicationAlertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
+      applicationAlertService
+        .alert(c('Error').t`Cannot close window until pending tasks are complete.`)
+        .catch(console.error)
     } else {
       onCloseDialog()
     }
   }, [applicationAlertService, lockContinue, onCloseDialog])
 
+  const submitButtonLabel = useMemo(() => {
+    switch (submitButtonTitle) {
+      case SubmitButtonTitles.GeneratingKeys:
+        return c('Action').t`Generating Keys...`
+      case SubmitButtonTitles.Finish:
+        return c('Action').t`Finish`
+      case SubmitButtonTitles.Default:
+      default:
+        return c('Action').t`Continue`
+    }
+  }, [submitButtonTitle])
+
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Cancel',
+        label: c('Action').t`Cancel`,
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
       },
       {
-        label: submitButtonTitle,
+        label: submitButtonLabel,
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',
       },
     ],
-    [handleDialogClose, handleSubmit, submitButtonTitle],
+    [handleDialogClose, handleSubmit, submitButtonLabel],
   )
 
   return (
-    <Modal title="Change Email" close={handleDialogClose} actions={modalActions}>
+    <Modal title={c('Title').t`Change Email`} close={handleDialogClose} actions={modalActions}>
       <div className="px-4.5 py-4">
         {currentStep === Steps.InitialStep && (
           <ChangeEmailForm setNewEmail={setNewEmail} setCurrentPassword={setCurrentPassword} />
