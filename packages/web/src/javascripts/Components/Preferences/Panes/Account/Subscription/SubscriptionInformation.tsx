@@ -14,7 +14,7 @@ const SubscriptionInformation = () => {
   return (
     <>
       <SubscriptionStatusText />
-      {!isSharedSubscription && (
+      {!isSharedSubscription && application.canShowPurchaseFlow() && (
         <Button className="mr-3 mt-3 min-w-20" label="Manage subscription" onClick={manageSubscription} />
       )}
     </>

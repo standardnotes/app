@@ -50,9 +50,11 @@ const NotEntitledBanner: FunctionComponent<Props> = ({ featureStatus, feature })
           </div>
         </div>
         <div className={'right'}>
-          <Button onClick={manageSubscription} primary colorStyle="success" small>
-            Manage subscription
-          </Button>
+          {application.canShowPurchaseFlow() && (
+            <Button onClick={manageSubscription} primary colorStyle="success" small>
+              Manage subscription
+            </Button>
+          )}
         </div>
       </div>
     </div>
