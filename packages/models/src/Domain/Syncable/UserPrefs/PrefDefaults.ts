@@ -27,6 +27,7 @@ export const PrefDefaults = {
   [PrefKey.NotesHideDate]: false,
   [PrefKey.NotesHideTags]: false,
   [PrefKey.NotesHideEditorIcon]: false,
+  [PrefKey.NotesListLayout]: 'rows',
   [PrefKey.DEPRECATED_UseSystemColorScheme]: false,
   [PrefKey.DEPRECATED_UseTranslucentUI]: true,
   [PrefKey.DEPRECATED_AutoLightThemeIdentifier]: 'Default',
