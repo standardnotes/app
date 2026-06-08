@@ -48,14 +48,14 @@ export function getLinkingSearchResults(
     return defaultReturnValue
   }
 
-  const searchableItems = naturalSort(
-    application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.File, ContentType.TYPES.Tag]),
-    'title',
-  )
+  const searchableItems = application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.File, ContentType.TYPES.Tag])
+  const lowercaseQuery = searchQuery.toLowerCase()
 
   const unlinkedTags: LinkableItem[] = []
   const unlinkedNotes: LinkableItem[] = []
   const unlinkedFiles: LinkableItem[] = []
+  const enforceResultLimit = options.contentType == null
+  const limitPerContentType = resultLimitForSearchQuery(searchQuery)
 
   for (let index = 0; index < searchableItems.length; index++) {
     const item = searchableItems[index]
@@ -68,7 +68,7 @@ export function getLinkingSearchResults(
       continue
     }
 
-    if (searchQuery.length && !doesItemMatchSearchQuery(item, searchQuery, application)) {
+    if (searchQuery.length && !doesItemMatchSearchQuery(item, searchQuery, application, lowercaseQuery)) {
       continue
     }
 
@@ -79,10 +79,6 @@ export function getLinkingSearchResults(
       linkedItems.push(item)
       continue
     }
-
-    const enforceResultLimit = options.contentType == null
-
-    const limitPerContentType = resultLimitForSearchQuery(searchQuery)
 
     if (
       item.content_type === ContentType.TYPES.Tag &&
@@ -108,9 +104,20 @@ export function getLinkingSearchResults(
       unlinkedFiles.push(item)
       continue
     }
+
+    // at capacity, don't be greedy
+    if (
+      enforceResultLimit &&
+      unlinkedTags.length >= limitPerContentType &&
+      unlinkedNotes.length >= limitPerContentType &&
+      unlinkedFiles.length >= limitPerContentType &&
+      linkedResults.length >= MaxLinkedResults
+    ) {
+      break
+    }
   }
 
-  unlinkedItems = [...unlinkedTags, ...unlinkedNotes, ...unlinkedFiles]
+  unlinkedItems = naturalSort([...unlinkedTags, ...unlinkedNotes, ...unlinkedFiles], 'title')
 
   shouldShowCreateTag =
     !linkedResults.find((link) => isSearchResultExistingTag(link.item, searchQuery)) &&
