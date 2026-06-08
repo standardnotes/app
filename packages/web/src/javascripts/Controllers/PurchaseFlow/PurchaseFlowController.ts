@@ -11,7 +11,7 @@ import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { PurchaseFlowPane } from './PurchaseFlowPane'
 import { LoadPurchaseFlowUrl } from '@/Application/UseCase/LoadPurchaseFlowUrl'
-import { IsNativeIOS, IsNativeAndroid } from '@standardnotes/ui-services'
+import { IsNativeIOS, IsAndroid } from '@standardnotes/ui-services'
 
 export class PurchaseFlowController extends AbstractViewController {
   isOpen = false
@@ -25,7 +25,7 @@ export class PurchaseFlowController extends AbstractViewController {
     private mobileDevice: MobileDeviceInterface | undefined,
     private _loadPurchaseFlowUrl: LoadPurchaseFlowUrl,
     private _isNativeIOS: IsNativeIOS,
-    private _isNativeAndroid: IsNativeAndroid,
+    private _isAndroid: IsAndroid,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -45,7 +45,7 @@ export class PurchaseFlowController extends AbstractViewController {
   }
 
   openPurchaseFlow = async (plan = AppleIAPProductId.ProPlanYearly) => {
-    if (this._isNativeAndroid.execute().getValue()) {
+    if (this._isAndroid.execute().getValue()) {
       return
     }
 
@@ -63,7 +63,7 @@ export class PurchaseFlowController extends AbstractViewController {
   }
 
   openPurchaseWebpage = async () => {
-    if (this._isNativeAndroid.execute().getValue()) {
+    if (this._isAndroid.execute().getValue()) {
       return
     }
 
