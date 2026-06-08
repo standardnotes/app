@@ -37,7 +37,7 @@ import {
   IsGlobalSpellcheckEnabled,
   IsMobileDevice,
   IsNativeIOS,
-  IsNativeAndroid,
+  IsAndroid,
   IsNativeMobileWeb,
   KeyboardService,
   PluginsServiceInterface,
@@ -258,12 +258,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.deps.get<IsNativeIOS>(Web_TYPES.IsNativeIOS).execute().getValue()
   }
 
-  isNativeAndroid(): boolean {
-    return this.deps.get<IsNativeAndroid>(Web_TYPES.IsNativeAndroid).execute().getValue()
+  isAndroid(): boolean {
+    return this.deps.get<IsAndroid>(Web_TYPES.IsAndroid).execute().getValue()
   }
 
   canShowPurchaseFlow(): boolean {
-    return !this.isNativeAndroid()
+    return !this.isAndroid()
   }
 
   get isMobileDevice(): boolean {
@@ -271,7 +271,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   get hideOutboundSubscriptionLinks() {
-    return this.isNativeIOS() || this.isNativeAndroid()
+    return this.isNativeIOS() || this.isAndroid()
   }
 
   get mobileDevice(): MobileDeviceInterface {
