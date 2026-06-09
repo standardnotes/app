@@ -22,6 +22,10 @@ export class ItemGroupController {
   changeObservers: ItemControllerGroupChangeCallback[] = []
   eventObservers: (() => void)[] = []
 
+  public activeControllerIndex = 0
+  public splitControllerIndex: number | undefined = undefined
+  public focusedPane: 'primary' | 'secondary' = 'primary'
+
   constructor(
     private items: ItemManagerInterface,
     private mutator: MutatorClientInterface,
@@ -42,20 +46,35 @@ export class ItemGroupController {
 
     this.changeObservers.length = 0
 
-    for (const controller of this.itemControllers) {
+    for (const controller of [...this.itemControllers]) {
       this.closeItemController(controller, { notify: false })
     }
 
     this.itemControllers.length = 0
   }
 
-  async createItemController(context: {
-    file?: FileItem
-    note?: SNNote
-    templateOptions?: TemplateNoteViewControllerOptions
-  }): Promise<NoteViewController | FileViewController> {
-    if (this.activeItemViewController) {
-      this.closeItemController(this.activeItemViewController, { notify: false })
+  async createItemController(
+    context: {
+      file?: FileItem
+      note?: SNNote
+      templateOptions?: TemplateNoteViewControllerOptions
+    },
+    options: { openInNewTab?: boolean; forceNewTab?: boolean } = {}
+  ): Promise<NoteViewController | FileViewController> {
+    // Check if the item is already open in any existing tab
+    if (!options.forceNewTab && (context.note || context.file)) {
+      const targetUuid = context.note?.uuid || context.file?.uuid
+      const existingIndex = this.itemControllers.findIndex((c) => c.item?.uuid === targetUuid)
+      if (existingIndex !== -1) {
+        if (this.splitControllerIndex !== undefined && existingIndex === this.splitControllerIndex) {
+          this.focusedPane = 'secondary'
+        } else {
+          this.activeControllerIndex = existingIndex
+          this.focusedPane = 'primary'
+        }
+        this.notifyObservers()
+        return this.itemControllers[existingIndex]
+      }
     }
 
     let controller!: NoteViewController | FileViewController
@@ -91,25 +110,160 @@ export class ItemGroupController {
       throw Error('Invalid input to createItemController')
     }
 
-    this.itemControllers.push(controller)
-
     await controller.initialize()
+
+    const shouldNewTab = options.openInNewTab || this.itemControllers.length === 0
+
+    if (shouldNewTab) {
+      this.itemControllers.push(controller)
+      if (this.focusedPane === 'secondary' && this.splitControllerIndex !== undefined) {
+        this.splitControllerIndex = this.itemControllers.length - 1
+      } else {
+        this.activeControllerIndex = this.itemControllers.length - 1
+        this.focusedPane = 'primary'
+      }
+    } else {
+      const targetIndex = (this.focusedPane === 'secondary' && this.splitControllerIndex !== undefined)
+        ? this.splitControllerIndex
+        : this.activeControllerIndex
+
+      const oldController = this.itemControllers[targetIndex]
+      if (oldController) {
+        if (oldController instanceof NoteViewController) {
+          oldController.syncOnlyIfLargeNote()
+        }
+        oldController.deinit()
+      }
+
+      this.itemControllers[targetIndex] = controller
+    }
 
     this.notifyObservers()
 
     return controller
   }
 
-  public closeItemController(
-    controller: NoteViewController | FileViewController,
-    { notify = true }: { notify: boolean } = { notify: true },
-  ): void {
+  public selectControllerIndex(index: number): void {
+    if (index >= 0 && index < this.itemControllers.length) {
+      this.activeControllerIndex = index
+      this.focusedPane = 'primary'
+      this.notifyObservers()
+    }
+  }
+
+  public async openNewTemplateTab(): Promise<void> {
+    await this.createItemController({
+      templateOptions: {
+        title: '',
+        autofocusBehavior: 'editor',
+      }
+    }, { openInNewTab: true })
+  }
+
+  public splitTab(index: number): void {
+    if (index >= 0 && index < this.itemControllers.length) {
+      this.splitControllerIndex = index
+      this.focusedPane = 'secondary'
+      this.notifyObservers()
+    }
+  }
+
+  public toggleSplitScreen(): void {
+    if (this.splitControllerIndex !== undefined) {
+      this.splitControllerIndex = undefined
+      this.focusedPane = 'primary'
+    } else {
+      if (this.itemControllers.length > 1) {
+        const otherIndex = this.itemControllers.findIndex((_, idx) => idx !== this.activeControllerIndex)
+        this.splitControllerIndex = otherIndex !== -1 ? otherIndex : undefined
+      } else {
+        const currentController = this.itemControllers[this.activeControllerIndex]
+        if (currentController) {
+          void this.createItemController({
+            note: currentController.item instanceof SNNote ? currentController.item : undefined,
+            file: currentController.item instanceof FileItem ? currentController.item : undefined,
+          }, { openInNewTab: true, forceNewTab: true }).then((newController) => {
+            const newIndex = this.itemControllers.indexOf(newController)
+            this.splitControllerIndex = newIndex
+            this.focusedPane = 'secondary'
+            this.notifyObservers()
+          })
+          return
+        }
+      }
+    }
+    this.notifyObservers()
+  }
+
+  public closeTab(index: number): void {
+    if (index < 0 || index >= this.itemControllers.length) {
+      return
+    }
+
+    const controller = this.itemControllers[index]
     if (controller instanceof NoteViewController) {
       controller.syncOnlyIfLargeNote()
     }
     controller.deinit()
 
-    removeFromArray(this.itemControllers, controller)
+    this.itemControllers.splice(index, 1)
+
+    if (this.activeControllerIndex >= this.itemControllers.length) {
+      this.activeControllerIndex = Math.max(0, this.itemControllers.length - 1)
+    }
+
+    if (this.splitControllerIndex !== undefined) {
+      if (this.splitControllerIndex === index) {
+        this.splitControllerIndex = undefined
+        this.focusedPane = 'primary'
+      } else if (this.splitControllerIndex > index) {
+        this.splitControllerIndex--
+      }
+    }
+
+    if (this.itemControllers.length === 0) {
+      this.activeControllerIndex = 0
+      this.splitControllerIndex = undefined
+      this.focusedPane = 'primary'
+    }
+
+    this.notifyObservers()
+  }
+
+  public closeItemController(
+    controller: NoteViewController | FileViewController,
+    { notify = true }: { notify: boolean } = { notify: true },
+  ): void {
+    const index = this.itemControllers.indexOf(controller)
+    if (index === -1) {
+      return
+    }
+
+    if (controller instanceof NoteViewController) {
+      controller.syncOnlyIfLargeNote()
+    }
+    controller.deinit()
+
+    this.itemControllers.splice(index, 1)
+
+    if (this.activeControllerIndex >= this.itemControllers.length) {
+      this.activeControllerIndex = Math.max(0, this.itemControllers.length - 1)
+    }
+
+    if (this.splitControllerIndex !== undefined) {
+      if (this.splitControllerIndex === index) {
+        this.splitControllerIndex = undefined
+        this.focusedPane = 'primary'
+      } else if (this.splitControllerIndex > index) {
+        this.splitControllerIndex--
+      }
+    }
+
+    if (this.itemControllers.length === 0) {
+      this.activeControllerIndex = 0
+      this.splitControllerIndex = undefined
+      this.focusedPane = 'primary'
+    }
 
     if (notify) {
       this.notifyObservers()
@@ -125,7 +279,7 @@ export class ItemGroupController {
   }
 
   closeAllItemControllers(): void {
-    for (const controller of this.itemControllers) {
+    for (const controller of [...this.itemControllers]) {
       this.closeItemController(controller, { notify: false })
     }
 
@@ -133,7 +287,10 @@ export class ItemGroupController {
   }
 
   get activeItemViewController(): NoteViewController | FileViewController | undefined {
-    return this.itemControllers[0]
+    if (this.focusedPane === 'secondary' && this.splitControllerIndex !== undefined) {
+      return this.itemControllers[this.splitControllerIndex]
+    }
+    return this.itemControllers[this.activeControllerIndex]
   }
 
   /**
@@ -152,7 +309,7 @@ export class ItemGroupController {
     }
   }
 
-  private notifyObservers(): void {
+  public notifyObservers(): void {
     for (const observer of this.changeObservers) {
       observer(this.activeItemViewController)
     }
