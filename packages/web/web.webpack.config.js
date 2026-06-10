@@ -20,6 +20,7 @@ module.exports = (env) => {
     { from: 'src/500.html' },
     { from: 'src/index.html' },
     { from: 'src/manifest.webmanifest' },
+    { from: 'src/sw.js' },
     { from: 'src/robots.txt' },
     { from: 'src/.well-known', to: '.well-known' },
   ]
