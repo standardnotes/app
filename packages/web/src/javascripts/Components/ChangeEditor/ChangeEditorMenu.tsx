@@ -13,6 +13,7 @@ import {
   SNNote,
   ContentType,
   LocalPrefKey,
+  PreferencePaneId,
 } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
@@ -247,7 +248,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   }
 
   const managePlugins = useCallback(() => {
-    application.openPreferences('plugins')
+    application.openPreferences(PreferencePaneId.Plugins)
   }, [application])
 
   return (
