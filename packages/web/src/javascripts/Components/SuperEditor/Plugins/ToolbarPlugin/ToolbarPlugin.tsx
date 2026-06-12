@@ -24,6 +24,8 @@ import {
   $isTextNode,
   $getNodeByKey,
   TextNode,
+  $getRoot,
+  LexicalNode,
 } from 'lexical'
 import {
   mergeRegister,
@@ -48,6 +50,7 @@ import { CenterAlignBlock, JustifyAlignBlock, LeftAlignBlock, RightAlignBlock } 
 import { BulletedListBlock, ChecklistBlock, NumberedListBlock } from '../Blocks/List'
 import { CodeBlock } from '../Blocks/Code'
 import { CollapsibleBlock } from '../Blocks/Collapsible'
+import { $isCollapsibleContainerNode } from '../CollapsiblePlugin/CollapsibleContainerNode'
 import { DividerBlock } from '../Blocks/Divider'
 import { H1Block, H2Block, H3Block } from '../Blocks/Headings'
 import { IndentBlock, OutdentBlock } from '../Blocks/IndentOutdent'
@@ -243,6 +246,9 @@ const ToolbarPlugin = () => {
   const [isInsertMenuOpen, setIsInsertMenuOpen] = useState(false)
   const insertAnchorRef = useRef<HTMLButtonElement>(null)
 
+  const [isCollapsibleMenuOpen, setIsCollapsibleMenuOpen] = useState(false)
+  const collapsibleAnchorRef = useRef<HTMLButtonElement>(null)
+
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
 
@@ -433,6 +439,32 @@ const ToolbarPlugin = () => {
       }
     })
   }, [activeEditor])
+
+  const setAllCollapsiblesOpen = useCallback(
+    (open: boolean) => {
+      activeEditor.update(() => {
+        const root = $getRoot()
+        const traverse = (node: LexicalNode) => {
+          if ($isCollapsibleContainerNode(node)) {
+            node.setOpen(open)
+          }
+          if ($isElementNode(node)) {
+            node.getChildren().forEach(traverse)
+          }
+        }
+        root.getChildren().forEach(traverse)
+      })
+    },
+    [activeEditor],
+  )
+
+  const foldAllCollapsibles = useCallback(() => {
+    setAllCollapsiblesOpen(false)
+  }, [setAllCollapsiblesOpen])
+
+  const unfoldAllCollapsibles = useCallback(() => {
+    setAllCollapsiblesOpen(true)
+  }, [setAllCollapsiblesOpen])
 
   useEffect(() => {
     if (isMobile) {
@@ -816,6 +848,17 @@ const ToolbarPlugin = () => {
               }}
               disabled={!hasNonCollapsedSelection}
             />
+            <ToolbarButton
+              name="Collapsibles options"
+              onSelect={() => {
+                setIsCollapsibleMenuOpen(!isCollapsibleMenuOpen)
+              }}
+              ref={collapsibleAnchorRef}
+              className={isCollapsibleMenuOpen ? 'md:bg-default' : ''}
+            >
+              <Icon type="details-block" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
+              <Icon type="chevron-down" size="custom" className="ml-1 h-4 w-4 md:h-3.5 md:w-3.5" />
+            </ToolbarButton>
           </Toolbar>
           {isMobile && (
             <button
@@ -1097,6 +1140,33 @@ const ToolbarPlugin = () => {
             name={PasswordBlock.name}
             iconName={PasswordBlock.iconName}
             onClick={() => PasswordBlock.onSelect(editor)}
+          />
+        </Menu>
+      </Popover>
+      <Popover
+        title="Collapsibles options"
+        anchorElement={collapsibleAnchorRef}
+        open={isCollapsibleMenuOpen}
+        togglePopover={() => setIsCollapsibleMenuOpen(!isCollapsibleMenuOpen)}
+        side={isMobile ? 'top' : 'bottom'}
+        align="start"
+        className="py-1"
+        disableMobileFullscreenTakeover
+        disableFlip
+        containerClassName="md:!min-w-60 md:!w-auto"
+        portal={false}
+        documentElement={popoverDocumentElement}
+      >
+        <Menu a11yLabel="Collapsibles options" className="!px-0" onClick={() => setIsCollapsibleMenuOpen(false)}>
+          <ToolbarMenuItem
+            name="Fold all"
+            iconName="chevron-up"
+            onClick={foldAllCollapsibles}
+          />
+          <ToolbarMenuItem
+            name="Unfold all"
+            iconName="chevron-down"
+            onClick={unfoldAllCollapsibles}
           />
         </Menu>
       </Popover>
