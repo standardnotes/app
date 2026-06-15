@@ -38,18 +38,33 @@ export function itemMatchesQuery(
   searchQuery: SearchQuery,
   collection: ReferenceLookupCollection,
 ): boolean {
-  const shouldCheckForSomeTagMatches = searchQuery.shouldCheckForSomeTagMatches ?? true
-  const itemTags = collection.elementsReferencingElement(itemToMatch, ContentType.TYPES.Tag) as SNTag[]
-  const someTagsMatches =
-    shouldCheckForSomeTagMatches &&
-    itemTags.some((tag) => matchResultForStringQuery(tag, searchQuery.query) !== MatchResult.None)
+  const { query, includeProtectedNoteText, shouldCheckForSomeTagMatches = true, noteTitleOnly = false } = searchQuery
 
-  if (itemToMatch.protected && !searchQuery.includeProtectedNoteText) {
-    const match = matchResultForStringQuery(itemToMatch, searchQuery.query)
-    return match === MatchResult.Title || match === MatchResult.TitleAndText || someTagsMatches
+  if (query.length === 0) {
+    return true
   }
 
-  return matchResultForStringQuery(itemToMatch, searchQuery.query) !== MatchResult.None || someTagsMatches
+  const itemMatch = matchResultForStringQuery(itemToMatch, query)
+
+  if (noteTitleOnly) {
+    return itemMatch === MatchResult.Title
+  }
+
+  if (shouldCheckForSomeTagMatches) {
+    const itemTags = collection.elementsReferencingElement(itemToMatch, ContentType.TYPES.Tag) as SNTag[]
+    const tagMatches = itemTags.map((tag) => matchResultForStringQuery(tag, query))
+    const someTagsMatches = tagMatches.some((match) => match !== MatchResult.None)
+
+    if (someTagsMatches) {
+      return true
+    }
+  }
+
+  if (itemToMatch.protected && !includeProtectedNoteText) {
+    return itemMatch === MatchResult.Title || itemMatch === MatchResult.TitleAndText
+  }
+
+  return itemMatch !== MatchResult.None
 }
 
 function matchResultForStringQuery(item: SearchableItem, searchString: string): MatchResult {

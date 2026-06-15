@@ -227,6 +227,7 @@ export class ItemListController
           this.searchOptionsController.includeProtectedContents,
           this.searchOptionsController.includeArchived,
           this.searchOptionsController.includeTrashed,
+          this.searchOptionsController.noteTitleOnly,
         ],
         () => {
           this.reloadNotesDisplayOptions()
@@ -642,6 +643,7 @@ export class ItemListController
       searchQuery: {
         query: searchText,
         includeProtectedNoteText: this.searchOptionsController.includeProtectedContents,
+        noteTitleOnly: this.searchOptionsController.noteTitleOnly,
       },
     }
 

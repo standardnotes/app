@@ -8,7 +8,7 @@ type Props = {
 }
 
 const SearchOptions = ({ searchOptions }: Props) => {
-  const { includeProtectedContents, includeArchived, includeTrashed } = searchOptions
+  const { includeProtectedContents, includeArchived, includeTrashed, noteTitleOnly } = searchOptions
 
   const toggleIncludeProtectedContents = useCallback(async () => {
     await searchOptions.toggleIncludeProtectedContents()
@@ -25,6 +25,8 @@ const SearchOptions = ({ searchOptions }: Props) => {
       <Bubble label="Archived" selected={includeArchived} onSelect={searchOptions.toggleIncludeArchived} />
 
       <Bubble label="Trashed" selected={includeTrashed} onSelect={searchOptions.toggleIncludeTrashed} />
+
+      <Bubble label="Note title only" selected={noteTitleOnly} onSelect={searchOptions.toggleNoteTitleOnly} />
     </div>
   )
 }

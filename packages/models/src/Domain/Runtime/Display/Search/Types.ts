@@ -6,6 +6,7 @@ export type SearchQuery = {
   query: string
   includeProtectedNoteText: boolean
   shouldCheckForSomeTagMatches?: boolean
+  noteTitleOnly?: boolean
 }
 
 export interface ReferenceLookupCollection {

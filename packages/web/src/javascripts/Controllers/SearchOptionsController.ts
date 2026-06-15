@@ -12,6 +12,7 @@ export class SearchOptionsController extends AbstractViewController implements I
   includeProtectedContents = false
   includeArchived = false
   includeTrashed = false
+  noteTitleOnly = false
 
   constructor(
     private protections: ProtectionsClientInterface,
@@ -23,11 +24,13 @@ export class SearchOptionsController extends AbstractViewController implements I
       includeProtectedContents: observable,
       includeTrashed: observable,
       includeArchived: observable,
+      noteTitleOnly: observable,
 
       toggleIncludeArchived: action,
       toggleIncludeTrashed: action,
       toggleIncludeProtectedContents: action,
       refreshIncludeProtectedContents: action,
+      toggleNoteTitleOnly: action,
     })
 
     eventBus.addEventHandler(this, ApplicationEvent.UnprotectedSessionBegan)
@@ -63,5 +66,9 @@ export class SearchOptionsController extends AbstractViewController implements I
         this.refreshIncludeProtectedContents()
       })
     }
+  }
+
+  toggleNoteTitleOnly = (): void => {
+    this.noteTitleOnly = !this.noteTitleOnly
   }
 }
