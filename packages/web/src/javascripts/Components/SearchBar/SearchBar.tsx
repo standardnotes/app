@@ -14,9 +14,15 @@ type Props = {
   itemListController: ItemListController
   searchOptionsController: SearchOptionsController
   hideOptions?: boolean
+  showNoteTitleOnlyOption?: boolean
 }
 
-const SearchBar = ({ itemListController, searchOptionsController, hideOptions = false }: Props) => {
+const SearchBar = ({
+  itemListController,
+  searchOptionsController,
+  hideOptions = false,
+  showNoteTitleOnlyOption = false,
+}: Props) => {
   const searchBarRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -68,7 +74,7 @@ const SearchBar = ({ itemListController, searchOptionsController, hideOptions = 
           hideOptions ? 'hidden' : !noteFilterText && 'hidden group-focus-within:flex',
         )}
       >
-        <SearchOptions searchOptions={searchOptionsController} />
+        <SearchOptions searchOptions={searchOptionsController} showNoteTitleOnlyOption={showNoteTitleOnlyOption} />
       </div>
     </div>
   )

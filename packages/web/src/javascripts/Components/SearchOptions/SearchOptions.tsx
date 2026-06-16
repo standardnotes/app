@@ -5,9 +5,10 @@ import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 
 type Props = {
   searchOptions: SearchOptionsController
+  showNoteTitleOnlyOption?: boolean
 }
 
-const SearchOptions = ({ searchOptions }: Props) => {
+const SearchOptions = ({ searchOptions, showNoteTitleOnlyOption = false }: Props) => {
   const { includeProtectedContents, includeArchived, includeTrashed, noteTitleOnly } = searchOptions
 
   const toggleIncludeProtectedContents = useCallback(async () => {
@@ -26,7 +27,9 @@ const SearchOptions = ({ searchOptions }: Props) => {
 
       <Bubble label="Trashed" selected={includeTrashed} onSelect={searchOptions.toggleIncludeTrashed} />
 
-      <Bubble label="Note title only" selected={noteTitleOnly} onSelect={searchOptions.toggleNoteTitleOnly} />
+      {showNoteTitleOnlyOption && (
+        <Bubble label="Note title only" selected={noteTitleOnly} onSelect={searchOptions.toggleNoteTitleOnly} />
+      )}
     </div>
   )
 }
