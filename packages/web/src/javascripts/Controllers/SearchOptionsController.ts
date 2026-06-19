@@ -30,7 +30,7 @@ export class SearchOptionsController extends AbstractViewController implements I
       toggleIncludeTrashed: action,
       toggleIncludeProtectedContents: action,
       refreshIncludeProtectedContents: action,
-      toggleNoteTitleOnly: action,
+      setNoteTitleOnly: action,
     })
 
     eventBus.addEventHandler(this, ApplicationEvent.UnprotectedSessionBegan)
@@ -68,7 +68,7 @@ export class SearchOptionsController extends AbstractViewController implements I
     }
   }
 
-  toggleNoteTitleOnly = (): void => {
-    this.noteTitleOnly = !this.noteTitleOnly
+  setNoteTitleOnly = (value: boolean): void => {
+    this.noteTitleOnly = value
   }
 }
