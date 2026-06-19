@@ -9,7 +9,7 @@ import {
 } from '@ariakit/react'
 import { classNames, DecryptedItem, naturalSort } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useDeferredValue, useEffect, useState } from 'react'
+import { useDeferredValue, useEffect, useRef, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import LinkedItemMeta from '../LinkedItems/LinkedItemMeta'
 
@@ -17,6 +17,7 @@ type Props = {
   contentTypes: string[]
   placeholder: string
   onSelection: (item: DecryptedItem) => void
+  excludeUuids?: string[]
   className?: {
     input?: string
     popover?: string
@@ -24,28 +25,47 @@ type Props = {
   comboboxProps?: ComboboxStoreProps
 }
 
-const ItemSelectionDropdown = ({ contentTypes, placeholder, onSelection, comboboxProps, className = {} }: Props) => {
+const ItemSelectionDropdown = ({
+  contentTypes,
+  placeholder,
+  onSelection,
+  excludeUuids = [],
+  comboboxProps,
+  className = {},
+}: Props) => {
   const application = useApplication()
 
   const combobox = useComboboxStore(comboboxProps)
   const value = combobox.useState('value')
   const open = combobox.useState('open')
+  const previousValueRef = useRef(value)
+
   useEffect(() => {
-    if (value.length < 1 && open) {
+    const valueWasCleared = previousValueRef.current.length > 0 && value.length < 1
+
+    if (valueWasCleared && open) {
       combobox.setOpen(false)
     }
-  }, [combobox, open, value.length])
+
+    previousValueRef.current = value
+  }, [combobox, open, value])
 
   const searchQuery = useDeferredValue(value)
   const [items, setItems] = useState<DecryptedItem[]>([])
+  const excludeUuidKey = excludeUuids.join(',')
 
   useEffect(() => {
+    const excludedUuids = new Set(excludeUuids)
     const searchableItems = naturalSort(application.items.getItems(contentTypes), 'title')
     const filteredItems = searchableItems.filter((item) => {
+      if (excludedUuids.has(item.uuid)) {
+        return false
+      }
+
       return doesItemMatchSearchQuery(item, searchQuery, application)
     })
     setItems(filteredItems)
-  }, [searchQuery, application, contentTypes])
+  }, [searchQuery, application, contentTypes, excludeUuidKey, excludeUuids])
 
   return (
     <div>

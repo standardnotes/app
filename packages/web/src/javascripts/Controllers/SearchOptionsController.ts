@@ -4,8 +4,9 @@ import {
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
+  SNTag,
 } from '@standardnotes/snjs'
-import { makeObservable, observable, action, runInAction } from 'mobx'
+import { makeObservable, observable, action, runInAction, computed } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 
 export class SearchOptionsController extends AbstractViewController implements InternalEventHandlerInterface {
@@ -13,6 +14,7 @@ export class SearchOptionsController extends AbstractViewController implements I
   includeArchived = false
   includeTrashed = false
   noteTitleOnly = false
+  tagFilterList: SNTag[] = []
 
   constructor(
     private protections: ProtectionsClientInterface,
@@ -25,12 +27,19 @@ export class SearchOptionsController extends AbstractViewController implements I
       includeTrashed: observable,
       includeArchived: observable,
       noteTitleOnly: observable,
+      tagFilterList: observable,
 
       toggleIncludeArchived: action,
       toggleIncludeTrashed: action,
       toggleIncludeProtectedContents: action,
       refreshIncludeProtectedContents: action,
       setNoteTitleOnly: action,
+      addTagFilter: action,
+      removeTagFilter: action,
+      clearTagFilters: action,
+      clearAllFilters: action,
+
+      activeSearchFilterCount: computed,
     })
 
     eventBus.addEventHandler(this, ApplicationEvent.UnprotectedSessionBegan)
@@ -70,5 +79,37 @@ export class SearchOptionsController extends AbstractViewController implements I
 
   setNoteTitleOnly = (value: boolean): void => {
     this.noteTitleOnly = value
+  }
+
+  addTagFilter = (tag: SNTag): void => {
+    if (!this.tagFilterList.some((existing) => existing.uuid === tag.uuid)) {
+      this.tagFilterList = [...this.tagFilterList, tag]
+    }
+  }
+
+  removeTagFilter = (tag: SNTag): void => {
+    this.tagFilterList = this.tagFilterList.filter((existing) => existing.uuid !== tag.uuid)
+  }
+
+  clearTagFilters = (): void => {
+    this.tagFilterList = []
+  }
+
+  clearAllFilters = (): void => {
+    this.noteTitleOnly = false
+    this.includeArchived = false
+    this.includeTrashed = false
+    this.includeProtectedContents = false
+    this.tagFilterList = []
+  }
+
+  get activeSearchFilterCount(): number {
+    return (
+      Number(this.noteTitleOnly) +
+      Number(this.includeProtectedContents) +
+      Number(this.includeArchived) +
+      Number(this.includeTrashed) +
+      this.tagFilterList.length
+    )
   }
 }

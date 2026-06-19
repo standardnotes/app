@@ -228,6 +228,7 @@ export class ItemListController
           this.searchOptionsController.includeArchived,
           this.searchOptionsController.includeTrashed,
           this.searchOptionsController.noteTitleOnly,
+          this.searchOptionsController.tagFilterList.map((tag) => tag.uuid).join(','),
         ],
         () => {
           this.reloadNotesDisplayOptions()
@@ -411,7 +412,7 @@ export class ItemListController
   }
 
   get isFiltering(): boolean {
-    return !!this.noteFilterText && this.noteFilterText.length > 0
+    return this.noteFilterText.length > 0 || this.searchOptionsController.tagFilterList.length > 0
   }
 
   reloadPanelTitle = () => {
@@ -619,7 +620,7 @@ export class ItemListController
     const tag = this.navigationController.selected
 
     const searchText = this.noteFilterText.toLowerCase()
-    const isSearching = searchText.length
+    const isSearching = searchText.length > 0 || this.searchOptionsController.tagFilterList.length > 0
     let includeArchived: boolean
     let includeTrashed: boolean
 
@@ -631,10 +632,20 @@ export class ItemListController
       includeTrashed = this.displayOptions.includeTrashed ?? false
     }
 
+    const tags: SNTag[] = []
+    if (tag instanceof SNTag) {
+      tags.push(tag)
+    }
+    for (const filterTag of this.searchOptionsController.tagFilterList) {
+      if (!tags.some((existingTag) => existingTag.uuid === filterTag.uuid)) {
+        tags.push(filterTag)
+      }
+    }
+
     const criteria: NotesAndFilesDisplayControllerOptions = {
       sortBy: this.displayOptions.sortBy,
       sortDirection: this.displayOptions.sortDirection,
-      tags: tag instanceof SNTag ? [tag] : [],
+      tags,
       views: tag instanceof SmartView ? [tag] : [],
       includeArchived,
       includeTrashed,
