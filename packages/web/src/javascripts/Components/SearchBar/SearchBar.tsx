@@ -2,7 +2,9 @@ import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useCallback, KeyboardEventHandler, useRef, useState } from 'react'
 import SearchOptions from '@/Components/SearchOptions/SearchOptions'
+import SearchFilterSheet from '@/Components/SearchOptions/SearchFilterSheet'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
 import { observer } from 'mobx-react-lite'
@@ -53,6 +55,7 @@ const SearchBar = ({
   const searchBarRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const { noteFilterText, setNoteFilterText, clearFilterText, onFilterEnter } = itemListController
   const { activeSearchFilterCount } = searchOptionsController
@@ -82,12 +85,20 @@ const SearchBar = ({
     setIsFilterPanelOpen((current) => !current)
   }, [])
 
+  const closeFilterPanel = useCallback(() => {
+    setIsFilterPanelOpen(false)
+  }, [])
+
   const searchOptionsVisibilityClass = (() => {
     if (hideOptions) {
       return 'hidden'
     }
 
     if (showSearchEnhancements) {
+      if (isMobileScreen) {
+        return 'hidden'
+      }
+
       return isFilterPanelOpen ? 'flex' : 'hidden'
     }
 
@@ -133,6 +144,14 @@ const SearchBar = ({
       <div className={classNames('animate-fade-from-top w-full', searchOptionsVisibilityClass)}>
         <SearchOptions searchOptions={searchOptionsController} showSearchEnhancements={showSearchEnhancements} />
       </div>
+
+      {showSearchEnhancements && isMobileScreen && (
+        <SearchFilterSheet
+          open={isFilterPanelOpen && !hideOptions}
+          onClose={closeFilterPanel}
+          searchOptions={searchOptionsController}
+        />
+      )}
     </div>
   )
 }
