@@ -2,7 +2,6 @@ import Checkbox from '@/Components/Checkbox/Checkbox'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useCallback } from 'react'
 import SearchBubbles from './SearchBubbles'
 import SearchOptionsSection, { ClearFilterButton } from './SearchOptionsSection'
 import SearchTagFilters from './SearchTagFilters'
@@ -15,14 +14,6 @@ type Props = {
 const EnhancedSearchOptionsContent = ({ searchOptions, className }: Props) => {
   const { noteTitleOnly, tagFilterList, activeSearchFilterCount } = searchOptions
 
-  const clearAllTagFilters = useCallback(() => {
-    searchOptions.clearTagFilters()
-  }, [searchOptions])
-
-  const clearAllFilters = useCallback(() => {
-    searchOptions.clearAllFilters()
-  }, [searchOptions])
-
   return (
     <div className={classNames('flex w-full flex-col gap-2', className)}>
       <div className="flex flex-col gap-2" onMouseDown={(event) => event.preventDefault()}>
@@ -34,7 +25,7 @@ const EnhancedSearchOptionsContent = ({ searchOptions, className }: Props) => {
             onChange={(event) => searchOptions.setNoteTitleOnly(event.target.checked)}
           />
           {activeSearchFilterCount > 0 && (
-            <ClearFilterButton onClick={clearAllFilters}>Clear all filters</ClearFilterButton>
+            <ClearFilterButton onClick={searchOptions.clearAllFilters}>Clear all filters</ClearFilterButton>
           )}
         </div>
 
@@ -49,7 +40,7 @@ const EnhancedSearchOptionsContent = ({ searchOptions, className }: Props) => {
         label="Filter by tag"
         action={
           tagFilterList.length > 0 ? (
-            <ClearFilterButton onClick={clearAllTagFilters}>Clear tag filters</ClearFilterButton>
+            <ClearFilterButton onClick={searchOptions.clearTagFilters}>Clear tag filters</ClearFilterButton>
           ) : undefined
         }
       >

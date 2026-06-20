@@ -52,7 +52,6 @@ const ItemSelectionDropdown = ({
 
   const searchQuery = useDeferredValue(value)
   const [items, setItems] = useState<DecryptedItem[]>([])
-  const excludeUuidKey = excludeUuids.join(',')
 
   useEffect(() => {
     const excludedUuids = new Set(excludeUuids)
@@ -65,7 +64,7 @@ const ItemSelectionDropdown = ({
       return doesItemMatchSearchQuery(item, searchQuery, application)
     })
     setItems(filteredItems)
-  }, [searchQuery, application, contentTypes, excludeUuidKey, excludeUuids])
+  }, [searchQuery, application, contentTypes, excludeUuids])
 
   return (
     <div>
