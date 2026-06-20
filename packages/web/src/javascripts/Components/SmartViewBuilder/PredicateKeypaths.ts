@@ -18,6 +18,7 @@ export type PredicateKeypath =
   | 'starred'
   | 'hidePreview'
   | 'spellcheck'
+  | 'tags'
 
 export const PredicateKeypathLabels: { [k in PredicateKeypath]: string } = {
   title: 'Title',
@@ -39,10 +40,11 @@ export const PredicateKeypathLabels: { [k in PredicateKeypath]: string } = {
   starred: 'Starred',
   hidePreview: 'Hide Preview',
   spellcheck: 'Spellcheck',
+  tags: 'Tags',
 } as const
 
 export const PredicateKeypathTypes: {
-  [k in PredicateKeypath]: 'string' | 'noteType' | 'editorIdentifier' | 'number' | 'boolean' | 'date'
+  [k in PredicateKeypath]: 'string' | 'noteType' | 'editorIdentifier' | 'number' | 'boolean' | 'date' | 'tag'
 } = {
   title: 'string',
   'title.length': 'number',
@@ -63,4 +65,5 @@ export const PredicateKeypathTypes: {
   starred: 'boolean',
   hidePreview: 'boolean',
   spellcheck: 'boolean',
+  tags: 'tag',
 } as const
