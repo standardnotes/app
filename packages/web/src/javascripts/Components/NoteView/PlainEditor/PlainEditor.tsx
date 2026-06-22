@@ -22,15 +22,26 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
   FocusEvent,
 } from 'react'
 import { NoteViewController } from '../Controller/NoteViewController'
 import { applyTextReplacements } from '../UniversalSearch/applyTextReplacements'
+import { findStringMatches } from '../UniversalSearch/findStringMatches'
 import { PlainEditorSearchBackdrop } from './search/PlainEditorSearchBackdrop'
+import { buildPlainSearchHighlightHtml } from './search/buildPlainSearchHighlightHtml'
 import { scrollPlainTextareaToOffset } from './search/scrollPlainTextareaToOffset'
 import { TextRange } from '../UniversalSearch/types'
+
+export type PlainEditorSearchHighlightState = {
+  isOpen: boolean
+  query: string
+  isCaseSensitive: boolean
+  shouldHighlightAll: boolean
+  activeMatch?: TextRange
+}
 
 type Props = {
   application: WebApplication
@@ -41,7 +52,7 @@ type Props = {
   onBlur: (event: FocusEvent) => void
   onTextChange?: () => void
   isSearchMode?: boolean
-  searchHighlightHtml?: string | null
+  search?: PlainEditorSearchHighlightState
 }
 
 export type PlainEditorInterface = {
@@ -55,10 +66,7 @@ export type PlainEditorInterface = {
 }
 
 export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
-  (
-    { application, spellcheck, controller, locked, onFocus, onBlur, onTextChange, isSearchMode, searchHighlightHtml },
-    ref,
-  ) => {
+  ({ application, spellcheck, controller, locked, onFocus, onBlur, onTextChange, isSearchMode, search }, ref) => {
     const [editorText, setEditorText] = useState<string | undefined>()
     const [textareaUnloading, setTextareaUnloading] = useState(false)
     const [lineHeight, setLineHeight] = useState<EditorLineHeight | undefined>()
@@ -165,7 +173,6 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
           const nextText = applyTextReplacements(textarea.value, ranges, replacement)
           textarea.value = nextText
           textarea.setSelectionRange(nextText.length, nextText.length)
-
           await persistText(nextText, { bypassDebouncer: true })
           notifyTextChange()
         },
@@ -380,6 +387,34 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
       },
       [application.keyboardService, notifyTextChange, persistText],
     )
+
+    const {
+      isOpen: searchIsOpen = false,
+      query: searchQuery = '',
+      isCaseSensitive: searchIsCaseSensitive = false,
+      shouldHighlightAll: searchShouldHighlightAll = false,
+      activeMatch: searchActiveMatch,
+    } = search ?? {}
+
+    const searchHighlightHtml = useMemo(() => {
+      if (!searchIsOpen || !searchQuery) {
+        return null
+      }
+
+      const text = editorText ?? ''
+      const matches = findStringMatches(text, searchQuery, searchIsCaseSensitive)
+
+      return buildPlainSearchHighlightHtml(
+        {
+          isOpen: true,
+          query: searchQuery,
+          results: matches.map((range) => ({ id: `plain-${range.start}`, payload: range })),
+          currentResult: searchActiveMatch ? { id: 'active', payload: searchActiveMatch } : undefined,
+          shouldHighlightAll: searchShouldHighlightAll,
+        },
+        () => text,
+      )
+    }, [editorText, searchIsOpen, searchQuery, searchIsCaseSensitive, searchShouldHighlightAll, searchActiveMatch])
 
     if (textareaUnloading) {
       return null

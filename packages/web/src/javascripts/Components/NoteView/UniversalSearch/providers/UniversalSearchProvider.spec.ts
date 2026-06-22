@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { NoOpUniversalSearchProvider } from './NoOpUniversalSearchProvider'
 import { createMockUniversalSearchProvider } from './createMockUniversalSearchProvider'
 
 describe('UniversalSearchProvider', () => {
-  it('returns no results for unsupported editors', async () => {
-    expect(await NoOpUniversalSearchProvider.search({ query: 'hello', isCaseSensitive: false })).toEqual([])
-    expect(NoOpUniversalSearchProvider.capabilities.supportsSearch).toBe(false)
-    expect(NoOpUniversalSearchProvider.capabilities.supportsReplace).toBe(false)
-  })
-
   it('searches documents with a mock provider', async () => {
     const provider = createMockUniversalSearchProvider({
       documents: [

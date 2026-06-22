@@ -1,7 +1,7 @@
 import { KeyboardService, UNIVERSAL_SEARCH_TOGGLE_REPLACE_MODE } from '@standardnotes/ui-services'
 import { UniversalSearchController } from './UniversalSearchController'
 import { registerUniversalSearchKeyboardHandlers } from './registerUniversalSearchKeyboardHandlers'
-import { NoOpUniversalSearchProvider } from './providers/NoOpUniversalSearchProvider'
+import { createMockUniversalSearchProvider } from './providers/createMockUniversalSearchProvider'
 
 type CapturedKeyboardHandler = {
   command: unknown
@@ -32,7 +32,7 @@ describe('registerUniversalSearchKeyboardHandlers', () => {
 
   it('opens search in replace mode when the replace shortcut is used while closed', () => {
     const { keyboardService, handlers } = createCapturingKeyboardService()
-    const controller = new UniversalSearchController(NoOpUniversalSearchProvider, {
+    const controller = new UniversalSearchController(createMockUniversalSearchProvider({ documents: [] }), {
       searchDebounceMs: 0,
       contentSearchDebounceMs: 0,
     })
@@ -48,7 +48,7 @@ describe('registerUniversalSearchKeyboardHandlers', () => {
 
   it('does not open replace mode when the editor is locked', () => {
     const { keyboardService, handlers } = createCapturingKeyboardService()
-    const controller = new UniversalSearchController(NoOpUniversalSearchProvider, {
+    const controller = new UniversalSearchController(createMockUniversalSearchProvider({ documents: [] }), {
       searchDebounceMs: 0,
       contentSearchDebounceMs: 0,
     })

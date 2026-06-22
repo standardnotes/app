@@ -62,7 +62,6 @@ export function createMockUniversalSearchProvider({
   return {
     id: 'mock',
     capabilities: {
-      supportsSearch: true,
       supportsReplace: true,
       supportsHighlightAll: false,
     },

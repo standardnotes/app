@@ -5,7 +5,6 @@ import {
   UniversalSearchController,
 } from './UniversalSearchController'
 import { UniversalSearchProvider } from './types'
-import { NoOpUniversalSearchProvider } from './providers/NoOpUniversalSearchProvider'
 
 const immediateSearchOptions = { searchDebounceMs: 0, contentSearchDebounceMs: 0 }
 
@@ -65,7 +64,6 @@ describe('UniversalSearchController', () => {
     const provider: UniversalSearchProvider = {
       id: 'debounced',
       capabilities: {
-        supportsSearch: true,
         supportsReplace: false,
         supportsHighlightAll: false,
       },
@@ -95,7 +93,6 @@ describe('UniversalSearchController', () => {
     const provider: UniversalSearchProvider = {
       id: 'failing',
       capabilities: {
-        supportsSearch: true,
         supportsReplace: false,
         supportsHighlightAll: false,
       },
@@ -161,27 +158,6 @@ describe('UniversalSearchController', () => {
     expect(controller.currentResult?.id).toBe('one-10')
   })
 
-  it('keeps unsupported providers stable and predictable', async () => {
-    const controller = new UniversalSearchController(NoOpUniversalSearchProvider, immediateSearchOptions)
-
-    controller.open()
-    controller.setQuery('hello')
-    controller.goToNextResult()
-    await flushSearch()
-
-    expect(controller.results).toEqual([])
-    expect(controller.currentResultIndex).toBe(-1)
-    await expect(controller.replaceCurrentResult()).resolves.toBeUndefined()
-  })
-
-  it('does not open when access is disabled', () => {
-    const controller = new UniversalSearchController(NoOpUniversalSearchProvider, { isEnabled: false })
-
-    controller.open()
-
-    expect(controller.isOpen).toBe(false)
-  })
-
   it('resetContext clears search state without selecting a stale result', async () => {
     const onSelectResult = jest.fn()
     const provider = createMockUniversalSearchProvider({
@@ -215,7 +191,6 @@ describe('UniversalSearchController', () => {
     const provider: UniversalSearchProvider = {
       id: 'case-sensitive',
       capabilities: {
-        supportsSearch: true,
         supportsReplace: false,
         supportsHighlightAll: false,
       },

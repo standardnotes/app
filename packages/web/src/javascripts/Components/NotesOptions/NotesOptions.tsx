@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { NoteType, Platform } from '@standardnotes/snjs'
+import { isUIFeatureAnIframeFeature, NoteType, Platform } from '@standardnotes/snjs'
 import {
   CHANGE_EDITOR_WIDTH_COMMAND,
   OPEN_NOTE_HISTORY_COMMAND,
@@ -370,9 +370,10 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         <>
           {notes[0].noteType === NoteType.Super && <SuperNoteOptions closeMenu={closeMenu} />}
 
-          {notes[0].noteType === NoteType.Plain && application.featuresController.isUniversalSearchEnabled() && (
-            <PlainNoteOptions closeMenu={closeMenu} />
-          )}
+          {notes[0].noteType !== NoteType.Super &&
+            editorForNote &&
+            !isUIFeatureAnIframeFeature(editorForNote) &&
+            application.featuresController.isUniversalSearchEnabled() && <PlainNoteOptions closeMenu={closeMenu} />}
 
           {!areSomeNotesInSharedVault && (
             <MenuSection>

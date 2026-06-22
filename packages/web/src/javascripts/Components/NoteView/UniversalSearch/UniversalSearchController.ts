@@ -6,6 +6,9 @@ import {
   UniversalSearchStatus,
 } from './types'
 
+const DEFAULT_QUERY_DEBOUNCE_MS = 30
+const DEFAULT_CONTENT_REFRESH_DEBOUNCE_MS = 250
+
 export function getNextUniversalSearchResultIndex(currentResultIndex: number, resultCount: number): number {
   if (resultCount < 1) {
     return -1
@@ -24,10 +27,6 @@ export function getPreviousUniversalSearchResultIndex(currentResultIndex: number
   return previous < 0 ? resultCount - 1 : previous
 }
 
-function statusForEmptyQuery(provider: UniversalSearchProvider): UniversalSearchStatus {
-  return provider.capabilities.supportsSearch ? 'idle' : 'ready'
-}
-
 function errorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message
@@ -44,7 +43,7 @@ type SetSearchResultsOptions = {
 
 interface UniversalSearchControllerOptions<TPayload = UniversalSearchResultPayload> {
   provider: UniversalSearchProvider<TPayload>
-  isEnabled?: boolean
+  /** Overridable mainly so tests can run searches synchronously; production uses the defaults below. */
   searchDebounceMs?: number
   contentSearchDebounceMs?: number
 }
@@ -62,7 +61,6 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   shouldHighlightAll: boolean
 
   private searchId = 0
-  private isEnabled: boolean
   private searchDebounceMs: number
   private contentSearchDebounceMs: number
   private searchDebounceTimeout: ReturnType<typeof setTimeout> | undefined
@@ -71,9 +69,8 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
     public readonly provider: UniversalSearchProvider<TPayload>,
     options: Omit<UniversalSearchControllerOptions<TPayload>, 'provider'> = {},
   ) {
-    this.isEnabled = options.isEnabled ?? true
-    this.searchDebounceMs = options.searchDebounceMs ?? 30
-    this.contentSearchDebounceMs = options.contentSearchDebounceMs ?? 250
+    this.searchDebounceMs = options.searchDebounceMs ?? DEFAULT_QUERY_DEBOUNCE_MS
+    this.contentSearchDebounceMs = options.contentSearchDebounceMs ?? DEFAULT_CONTENT_REFRESH_DEBOUNCE_MS
     this.shouldHighlightAll = provider.capabilities.supportsHighlightAll ? true : false
 
     makeObservable<this, 'setSearchResults' | 'setSearchError' | 'clearResults'>(this, {
@@ -118,10 +115,6 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   }
 
   open = (): void => {
-    if (!this.isEnabled) {
-      return
-    }
-
     this.isOpen = true
     void this.executeSearch()
   }
@@ -271,16 +264,16 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   }
 
   private executeSearch = async (): Promise<void> => {
-    if (!this.isOpen || !this.isEnabled) {
+    if (!this.isOpen) {
       return
     }
 
     const searchId = this.searchId + 1
     this.searchId = searchId
 
-    if (!this.query || !this.provider.capabilities.supportsSearch) {
+    if (!this.query) {
       void this.provider.clear()
-      this.clearResults(statusForEmptyQuery(this.provider))
+      this.clearResults('idle')
       return
     }
 

@@ -50,7 +50,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
         return
       }
 
-      const parsedOfflineFeaturesCodeResult = application.features.parseOfflineEntitlementsCode(activationCode)
+      const parsedOfflineFeaturesCodeResult = await application.features.parseOfflineEntitlementsCode(activationCode)
       if (parsedOfflineFeaturesCodeResult instanceof ClientDisplayableError) {
         await application.alerts.alert(parsedOfflineFeaturesCodeResult.text)
 

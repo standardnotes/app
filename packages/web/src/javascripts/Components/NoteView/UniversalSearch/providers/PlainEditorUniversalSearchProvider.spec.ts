@@ -48,7 +48,7 @@ describe('PlainEditorUniversalSearchProvider', () => {
   it('finds matches with optional case sensitivity', async () => {
     const provider = createPlainEditorUniversalSearchProvider({
       getEditor: () => createMockPlainEditor('Hello hello'),
-      locked: false,
+      getLocked: () => false,
     })
 
     expect(await provider.search({ query: 'hello', isCaseSensitive: true })).toHaveLength(1)
@@ -58,7 +58,7 @@ describe('PlainEditorUniversalSearchProvider', () => {
   it('supports highlight all capability', () => {
     const provider = createPlainEditorUniversalSearchProvider({
       getEditor: () => createMockPlainEditor('hello'),
-      locked: false,
+      getLocked: () => false,
     })
 
     expect(provider.capabilities.supportsHighlightAll).toBe(true)
@@ -68,7 +68,7 @@ describe('PlainEditorUniversalSearchProvider', () => {
     const editor = createMockPlainEditor('hello world')
     const provider = createPlainEditorUniversalSearchProvider({
       getEditor: () => editor,
-      locked: false,
+      getLocked: () => false,
     })
     const [result] = await provider.search({ query: 'world', isCaseSensitive: false })
 
@@ -82,7 +82,7 @@ describe('PlainEditorUniversalSearchProvider', () => {
     const editor = createMockPlainEditor('hello hello')
     const provider = createPlainEditorUniversalSearchProvider({
       getEditor: () => editor,
-      locked: false,
+      getLocked: () => false,
     })
     const results = await provider.search({ query: 'hello', isCaseSensitive: false })
 
@@ -110,8 +110,22 @@ describe('PlainEditorUniversalSearchProvider', () => {
   it('disables replace when the editor is locked', () => {
     const provider = createPlainEditorUniversalSearchProvider({
       getEditor: () => createMockPlainEditor('hello', true),
-      locked: true,
+      getLocked: () => true,
     })
+
+    expect(provider.capabilities.supportsReplace).toBe(false)
+  })
+
+  it('reflects locked changes lazily without rebuilding the provider', () => {
+    let locked = false
+    const provider = createPlainEditorUniversalSearchProvider({
+      getEditor: () => createMockPlainEditor('hello'),
+      getLocked: () => locked,
+    })
+
+    expect(provider.capabilities.supportsReplace).toBe(true)
+
+    locked = true
 
     expect(provider.capabilities.supportsReplace).toBe(false)
   })

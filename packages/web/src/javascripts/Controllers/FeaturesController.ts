@@ -162,9 +162,7 @@ export class FeaturesController extends AbstractViewController implements Intern
       return true
     }
 
-    const universalSearchIdentifier =
-      NativeFeatureIdentifier.TYPES.UniversalSearch ?? 'org.standardnotes.universal-search'
-    const identifierOrError = NativeFeatureIdentifier.create(universalSearchIdentifier)
+    const identifierOrError = NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.UniversalSearch)
 
     if (identifierOrError.isFailed()) {
       return false

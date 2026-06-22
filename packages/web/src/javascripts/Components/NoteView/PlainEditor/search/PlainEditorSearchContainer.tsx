@@ -13,7 +13,6 @@ import { registerUniversalSearchKeyboardHandlers } from '../../UniversalSearch/r
 import { createPlainEditorUniversalSearchProvider } from '../../UniversalSearch/providers/PlainEditorUniversalSearchProvider'
 import { UniversalSearchShell } from '../../UniversalSearch/UniversalSearchShell'
 import { PlainEditor, PlainEditorInterface } from '../PlainEditor'
-import { buildPlainSearchHighlightHtml } from './buildPlainSearchHighlightHtml'
 
 type PlainEditorProps = ComponentProps<typeof PlainEditor>
 
@@ -26,6 +25,9 @@ export const PlainEditorSearchContainer = observer(
 
     const noteUuid = props.controller.item.uuid
 
+    const lockedRef = useRef(props.locked)
+    lockedRef.current = props.locked
+
     const controller = useMemo(() => {
       if (!isUniversalSearchEnabled) {
         return undefined
@@ -33,11 +35,11 @@ export const PlainEditorSearchContainer = observer(
 
       const provider = createPlainEditorUniversalSearchProvider({
         getEditor: () => plainEditorRef.current ?? undefined,
-        locked: props.locked,
+        getLocked: () => lockedRef.current,
       })
 
       return new UniversalSearchController(provider)
-    }, [isUniversalSearchEnabled, props.locked])
+    }, [isUniversalSearchEnabled])
 
     useEffect(() => {
       controller?.resetContext()
@@ -97,18 +99,15 @@ export const PlainEditorSearchContainer = observer(
       plainEditorRef.current = editor
     }, [])
 
-    const searchHighlightHtml = controller
-      ? buildPlainSearchHighlightHtml(
-          {
-            isOpen: controller.isOpen,
-            query: controller.query,
-            results: controller.results,
-            currentResult: controller.currentResult,
-            shouldHighlightAll: controller.shouldHighlightAll,
-          },
-          () => plainEditorRef.current?.getText() ?? '',
-        )
-      : null
+    const search = controller
+      ? {
+          isOpen: controller.isOpen,
+          query: controller.query,
+          isCaseSensitive: controller.isCaseSensitive,
+          shouldHighlightAll: controller.shouldHighlightAll,
+          activeMatch: controller.currentResult?.payload,
+        }
+      : undefined
 
     const searchToggleShortcut = keyboardStringForShortcut(
       keyboardService.keyboardShortcutForCommand(UNIVERSAL_TOGGLE_SEARCH),
@@ -132,13 +131,7 @@ export const PlainEditorSearchContainer = observer(
           replaceShortcut={toggleReplaceShortcut}
           caseSensitivityShortcut={caseSensitivityShortcut}
         />
-        <PlainEditor
-          {...props}
-          ref={setPlainEditorRef}
-          isSearchMode
-          onTextChange={handleTextChange}
-          searchHighlightHtml={searchHighlightHtml}
-        />
+        <PlainEditor {...props} ref={setPlainEditorRef} isSearchMode onTextChange={handleTextChange} search={search} />
       </div>
     )
   }),
