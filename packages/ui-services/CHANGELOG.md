@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.39.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.4...@standardnotes/ui-services@1.39.5) (2026-06-05)
+
+### Bug Fixes
+
+* Fixes checkboxes parsed as bullet items when importing Evernote notes ([f488518](https://github.com/standardnotes/app/commit/f4885188ad7a289b16f95eeea56de2bed56dfb95))
+* Fixes empty lines doubled when importing Evernote notes ([b4faa20](https://github.com/standardnotes/app/commit/b4faa20ac1089187d2655dc132f8252893a51a9f))
+* Fixes highlight text style lost when importing Evernote notes ([a62f496](https://github.com/standardnotes/app/commit/a62f496ee6ca588876b616261c479f6499b4ec19))
+
+## [1.39.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.3...@standardnotes/ui-services@1.39.4) (2026-04-24)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.39.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.2...@standardnotes/ui-services@1.39.3) (2026-04-23)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.39.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.1...@standardnotes/ui-services@1.39.2) (2025-12-18)
 
 **Note:** Version bump only for package @standardnotes/ui-services

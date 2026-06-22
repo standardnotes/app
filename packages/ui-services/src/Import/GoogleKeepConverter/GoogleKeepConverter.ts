@@ -74,8 +74,8 @@ export class GoogleKeepConverter implements Converter {
     convertHTMLToSuper: HTMLToSuperConverterFunction,
     canUseSuper: boolean,
   ): Promise<SNNote> {
-    const rootElement = document.createElement('html')
-    rootElement.innerHTML = data
+    const doc = new DOMParser().parseFromString(data, 'text/html')
+    const rootElement = doc.documentElement
 
     const headingElement = rootElement.getElementsByClassName('heading')[0]
     const parsedDate = new Date(headingElement?.textContent || '')
@@ -110,8 +110,9 @@ export class GoogleKeepConverter implements Converter {
     })
 
     if (!canUseSuper) {
-      // Replace <br> with \n so line breaks get recognised
-      contentElement.innerHTML = contentElement.innerHTML.replace(/<br>/g, '\n')
+      Array.from(contentElement.querySelectorAll('br')).forEach((br) => {
+        br.replaceWith(doc.createTextNode('\n'))
+      })
       content = contentElement.textContent
     } else {
       content = convertHTMLToSuper(rootElement.innerHTML, {

@@ -15,3 +15,7 @@ export function featureTrunkVaultsEnabled(): boolean {
 export function featureTrunkUniversalSearchEnabled(): boolean {
   return InternalFeatureService.get().isFeatureEnabled(InternalFeature.UniversalSearch)
 }
+
+export function featureTrunkSearchEnhancementsEnabled(): boolean {
+  return InternalFeatureService.get().isFeatureEnabled(InternalFeature.SearchEnhancements)
+}

@@ -60,6 +60,7 @@ describe('ApplicationEventObserver', () => {
 
   beforeEach(() => {
     application = {} as jest.Mocked<WebApplication>
+    application.canShowPurchaseFlow = jest.fn().mockReturnValue(true)
 
     routeService = {} as jest.Mocked<RouteServiceInterface>
     routeService.getRoute = jest.fn().mockReturnValue({
@@ -107,6 +108,17 @@ describe('ApplicationEventObserver', () => {
       await createObserver().handle(ApplicationEvent.Launched)
 
       expect(purchaseFlowController.openPurchaseFlow).toHaveBeenCalled()
+    })
+
+    it('should not open the purchase flow on Android', async () => {
+      application.canShowPurchaseFlow = jest.fn().mockReturnValue(false)
+      routeService.getRoute = jest.fn().mockReturnValue({
+        type: RouteType.Purchase,
+      } as jest.Mocked<RouteParserInterface>)
+
+      await createObserver().handle(ApplicationEvent.Launched)
+
+      expect(purchaseFlowController.openPurchaseFlow).not.toHaveBeenCalled()
     })
 
     it('should open up settings if user is logged in', async () => {

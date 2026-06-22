@@ -59,19 +59,23 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
                 </option>
               ))}
             </select>
-            <select
-              className="rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
-              value={predicate.operator}
-              onChange={(event) => {
-                setPredicate(index, { operator: event.target.value as PredicateOperator })
-              }}
-            >
-              {AllNonCompoundPredicateOperators.map((operator) => (
-                <option key={operator} value={operator}>
-                  {operator}
-                </option>
-              ))}
-            </select>
+            {PredicateKeypathTypes[predicate.keypath as PredicateKeypath] === 'tag' ? (
+              <div className="shrink-0 px-2 py-1.5 text-sm">include</div>
+            ) : (
+              <select
+                className="rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
+                value={predicate.operator}
+                onChange={(event) => {
+                  setPredicate(index, { operator: event.target.value as PredicateOperator })
+                }}
+              >
+                {AllNonCompoundPredicateOperators.map((operator) => (
+                  <option key={operator} value={operator}>
+                    {operator}
+                  </option>
+                ))}
+              </select>
+            )}
             {predicate.keypath && (
               <PredicateValue
                 keypath={predicate.keypath as PredicateKeypath}

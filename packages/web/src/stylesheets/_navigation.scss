@@ -23,7 +23,7 @@ $content-horizontal-padding: 16px;
     padding-bottom: 8px;
     padding-left: $content-horizontal-padding;
     padding-right: $content-horizontal-padding;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 
   .root-drop {
@@ -54,7 +54,7 @@ $content-horizontal-padding: 16px;
 
   .tag,
   .root-drop {
-    font-size: 14px;
+    font-size: 0.875rem;
     cursor: pointer;
     transition: height 0.1s ease-in-out;
     width: 100%;
@@ -136,7 +136,7 @@ $content-horizontal-padding: 16px;
 
     .meta {
       > .menu {
-        font-size: 11px;
+        font-size: 0.6875rem;
 
         > .item {
           margin-right: 4px;

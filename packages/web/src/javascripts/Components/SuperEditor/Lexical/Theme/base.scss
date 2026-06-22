@@ -42,9 +42,7 @@
 }
 
 ::highlight(search-results) {
-  background-color: var(--sn-stylekit-info-color);
   background-color: color-mix(in srgb, var(--sn-stylekit-info-color), transparent 60%);
-  color: var(--text-norm);
 }
 
 // has to be defined separately, otherwise browsers which don't support ::highlight syntax
@@ -57,6 +55,6 @@
 }
 
 ::highlight(active-search-result) {
-  background-color: var(--sn-stylekit-info-color);
-  color: var(--text-norm);
+  background-color: color-mix(in srgb, var(--sn-stylekit-info-color), transparent 30%);
+  color: var(--sn-stylekit-info-contrast-color);
 }

@@ -6,6 +6,7 @@ import Icon from '@/Components/Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import ServerPicker from './ServerPicker/ServerPicker'
 import { DefaultHost } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 type Props = {
   disabled?: boolean
@@ -50,7 +51,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
 
       if (!identifier) {
         if (privateUsername?.length > 0) {
-          application.alerts.alert('Unable to compute private username.').catch(console.error)
+          application.alerts.alert(c('Error').t`Unable to compute private username.`).catch(console.error)
         }
         return
       }
@@ -112,7 +113,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
         onClick={toggleShowAdvanced}
       >
         <div className="flex items-center">
-          Advanced options
+          {c('Action').t`Advanced options`}
           <Icon type="chevron-down" className="ml-1 text-passive-1" />
         </div>
       </button>
@@ -124,12 +125,17 @@ const AdvancedOptions: FunctionComponent<Props> = ({
             <div className="mb-1 flex items-center justify-between">
               <Checkbox
                 name="private-workspace"
-                label="Private username mode"
+                label={c('Option').t`Private username mode`}
                 checked={isPrivateUsername}
                 disabled={disabled || isRecoveryCodes}
                 onChange={handleIsPrivateUsernameChange}
               />
-              <a href="https://standardnotes.com/help/80" target="_blank" rel="noopener noreferrer" title="Learn more">
+              <a
+                href="https://standardnotes.com/help/80"
+                target="_blank"
+                rel="noopener noreferrer"
+                title={c('Action').t`Learn more`}
+              >
                 <Icon type="info" className="text-neutral" />
               </a>
             </div>
@@ -140,7 +146,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
                   className={{ container: 'mb-2' }}
                   left={[<Icon type="account-circle" className="text-neutral" />]}
                   type="text"
-                  placeholder="Username"
+                  placeholder={c('Label').t`Username`}
                   value={privateUsername}
                   onChange={handlePrivateUsernameNameChange}
                   disabled={disabled || isRecoveryCodes}
@@ -154,7 +160,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
               <div className="mb-1 flex items-center justify-between">
                 <Checkbox
                   name="use-strict-signin"
-                  label="Use strict sign-in"
+                  label={c('Option').t`Use strict sign-in`}
                   checked={isStrictSignin}
                   disabled={disabled || isRecoveryCodes}
                   onChange={handleStrictSigninChange}
@@ -163,7 +169,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
                   href="https://standardnotes.com/help/security"
                   target="_blank"
                   rel="noopener noreferrer"
-                  title="Learn more"
+                  title={c('Action').t`Learn more`}
                 >
                   <Icon type="info" className="text-neutral" />
                 </a>
@@ -174,7 +180,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
               <div className="mb-1 flex items-center justify-between">
                 <Checkbox
                   name="recovery-codes"
-                  label="Use recovery code"
+                  label={c('Option').t`Use recovery code`}
                   checked={isRecoveryCodes}
                   disabled={disabled}
                   onChange={handleIsRecoveryCodesChange}
@@ -188,7 +194,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
                   className={{ container: 'mb-2' }}
                   left={[<Icon type="security" className="text-neutral" />]}
                   type="text"
-                  placeholder="Recovery code"
+                  placeholder={c('Label').t`Recovery code`}
                   value={recoveryCodes}
                   onChange={handleRecoveryCodesChange}
                   disabled={disabled}

@@ -5,6 +5,7 @@ export class DevMode {
   constructor(private application: WebApplicationInterface) {
     InternalFeatureService.get().enableFeature(InternalFeature.Vaults)
     InternalFeatureService.get().enableFeature(InternalFeature.UniversalSearch)
+    InternalFeatureService.get().enableFeature(InternalFeature.SearchEnhancements)
   }
 
   /** Valid only when running a mock event publisher on port 3124 */

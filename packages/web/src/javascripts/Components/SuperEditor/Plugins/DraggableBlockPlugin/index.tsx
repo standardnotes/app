@@ -310,7 +310,7 @@ function useDraggableBlockMenu(editor: LexicalEditor, anchorElem: HTMLElement, i
         return false
       }
 
-      const dragData = dataTransfer?.getData(DRAG_DATA_FORMAT) || ''
+      const dragData = dataTransfer?.getData(DRAG_DATA_FORMAT) || draggedNodeKey || ''
       const draggedNode = $getNodeByKey(dragData)
       if (!draggedNode) {
         return false

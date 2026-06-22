@@ -23,7 +23,7 @@ export const SuccessPrompt = ({
           className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[50%] bg-contrast"
           aria-hidden={true}
         >
-          <Icon className={'h-24 w-24 px-7 py-2 text-[50px]'} size={'custom'} type={'🎉'} />
+          <Icon className={'h-24 w-24 px-7 py-2 text-[3.125rem]'} size={'custom'} type={'🎉'} />
         </div>
         <div className="mb-1 text-center text-lg font-bold">Your purchase was successful!</div>
       </div>

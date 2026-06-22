@@ -1,10 +1,11 @@
 import { ImportModalController, ImportModalFile } from '@/Components/ImportModal/ImportModalController'
-import { classNames, ContentType, pluralize } from '@standardnotes/snjs'
+import { classNames, ContentType } from '@standardnotes/snjs'
 import { ConversionResult, Importer } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
 import { Disclosure, DisclosureContent, DisclosureProvider } from '@ariakit/react'
+import { c, msgid, ngettext } from 'ttag'
 
 const NoteImportTypeColors: Record<string, string> = {
   evernote: 'bg-[#14cc45] text-[#000]',
@@ -49,12 +50,17 @@ const countSuccessfulItemsByGroup = (successful: ConversionResult['successful'])
 }
 
 const ImportErroredAccordion = ({ errored }: { errored: ConversionResult['errored'] }) => {
+  const count = errored.length
   return (
     <DisclosureProvider>
       <Disclosure>
         <div className="flex items-center gap-1">
           <Icon type="warning" className="flex-shrink-0 text-danger" size="small" />
-          Could not import {errored.length} {pluralize(errored.length, 'item', 'items')} (click for details)
+          {ngettext(
+            msgid`Could not import ${count} item (click for details)`,
+            `Could not import ${count} items (click for details)`,
+            count,
+          )}
         </div>
       </Disclosure>
       <DisclosureContent className="w-full overflow-hidden pl-5">
@@ -77,9 +83,9 @@ const ImportFinishedStatus = ({ file }: { file: ImportModalFile }) => {
 
   const { notes, tags, files } = countSuccessfulItemsByGroup(file.successful)
 
-  const notesStatus = notes > 0 ? `${notes} ${pluralize(notes, 'note', 'notes')}` : ''
-  const tagsStatus = tags > 0 ? `${tags} ${pluralize(tags, 'tag', 'tags')}` : ''
-  const filesStatus = files > 0 ? `${files} ${pluralize(files, 'file', 'files')}` : ''
+  const notesStatus = notes > 0 ? ngettext(msgid`${notes} note`, `${notes} notes`, notes) : ''
+  const tagsStatus = tags > 0 ? ngettext(msgid`${tags} tag`, `${tags} tags`, tags) : ''
+  const filesStatus = files > 0 ? ngettext(msgid`${files} file`, `${files} files`, files) : ''
   const status = [notesStatus, tagsStatus, filesStatus].filter(Boolean).join(', ')
 
   return (
@@ -87,7 +93,7 @@ const ImportFinishedStatus = ({ file }: { file: ImportModalFile }) => {
       {file.successful.length > 0 && (
         <div className="flex items-center gap-1">
           <Icon type="check-circle-filled" className="flex-shrink-0 text-success" size="small" />
-          <span>{status} imported</span>
+          <span>{c('Info').t`${status} imported`}</span>
         </div>
       )}
       {file.errored.length > 0 && <ImportErroredAccordion errored={file.errored} />}
@@ -126,9 +132,14 @@ const ImportModalFileItem = ({
   useEffect(() => {
     const detect = async () => {
       setIsDetectingService(true)
-      const detectedService = await importer.detectService(file.file)
-      void setFileService(detectedService)
-      setIsDetectingService(false)
+      try {
+        const detectedService = await importer.detectService(file.file)
+        void setFileService(detectedService)
+      } catch {
+        void setFileService(null)
+      } finally {
+        setIsDetectingService(false)
+      }
     }
     if (file.service === undefined) {
       void detect()
@@ -151,14 +162,16 @@ const ImportModalFileItem = ({
         <div className="flex w-full flex-col overflow-hidden">
           <div>{file.file.name}</div>
           {isDetectingService ? (
-            <div className="text-xs opacity-75">Detecting service...</div>
+            <div className="text-xs opacity-75">{c('Status').t`Detecting service...`}</div>
           ) : (
             <div className={classNames(file.status !== 'finished' && 'line-clamp-3', 'w-full text-xs opacity-75')}>
-              {file.status === 'pending' && file.service && 'Ready to import'}
-              {file.status === 'pending' && !file.service && 'Could not auto-detect service. Please select manually.'}
-              {file.status === 'parsing' && 'Parsing...'}
-              {file.status === 'importing' && 'Importing...'}
-              {file.status === 'uploading-files' && 'Uploading and embedding files...'}
+              {file.status === 'pending' && file.service && c('Status').t`Ready to import`}
+              {file.status === 'pending' &&
+                !file.service &&
+                c('Status').t`Could not auto-detect service. Please select manually.`}
+              {file.status === 'parsing' && c('Status').t`Parsing...`}
+              {file.status === 'importing' && c('Status').t`Importing...`}
+              {file.status === 'uploading-files' && c('Status').t`Uploading and embedding files...`}
               {file.status === 'error' && file.error.message}
               <ImportFinishedStatus file={file} />
             </div>
@@ -192,7 +205,7 @@ const ImportModalFileItem = ({
                   <option value="super">Super</option>
                 </select>
                 <button
-                  aria-label="Choose service"
+                  aria-label={c('AriaLabel').t`Choose service`}
                   type="submit"
                   className="rounded border border-border bg-default p-1.5 hover:bg-contrast"
                 >
@@ -200,7 +213,7 @@ const ImportModalFileItem = ({
                 </button>
               </form>
               <button
-                aria-label="Cancel"
+                aria-label={c('AriaLabel').t`Cancel`}
                 className="ml-2 rounded border border-border bg-default p-1.5 hover:bg-contrast"
                 onClick={() => {
                   setChangingService(false)
@@ -211,7 +224,7 @@ const ImportModalFileItem = ({
             </>
           ) : (
             <button
-              aria-label="Change service"
+              aria-label={c('AriaLabel').t`Change service`}
               className="rounded border border-border bg-default p-1.5 hover:bg-contrast"
               onClick={() => {
                 setChangingService(true)
@@ -221,7 +234,7 @@ const ImportModalFileItem = ({
             </button>
           )}
           <button
-            aria-label="Remove"
+            aria-label={c('AriaLabel').t`Remove`}
             className="ml-2 rounded border border-border bg-default p-1.5 hover:bg-contrast"
             onClick={() => {
               removeFile(file.id)

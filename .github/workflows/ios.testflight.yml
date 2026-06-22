@@ -15,7 +15,7 @@ jobs:
       - name: Select Xcode 26
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "26.0"
+          xcode-version: "26"
       - name: Export version from package.json
         run:
           echo "PACKAGE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV

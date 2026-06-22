@@ -1,3 +1,4 @@
+import { c } from 'ttag'
 import { CheckmarkCircle } from '../UIElements/CheckmarkCircle'
 
 export const FinishStep = () => {
@@ -8,8 +9,11 @@ export const FinishStep = () => {
           <CheckmarkCircle />
         </div>
         <div className="flex flex-col">
-          <div className="text-base font-bold">Your password has been successfully changed.</div>
-          <p>Ensure you are running the latest version of Standard Notes on all platforms for maximum compatibility.</p>
+          <div className="text-base font-bold">{c('Info').t`Your password has been successfully changed.`}</div>
+          <p>
+            {c('Info')
+              .t`Ensure you are running the latest version of Standard Notes on all platforms for maximum compatibility.`}
+          </p>
         </div>
       </div>
     </div>

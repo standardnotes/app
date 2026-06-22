@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.57](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.56...@standardnotes/responses@1.13.57) (2026-04-24)
+
+### Bug Fixes
+
+* Shows info on UI and hides Manage button for shared subs ([#3002](https://github.com/standardnotes/app/issues/3002)) ([073db14](https://github.com/standardnotes/app/commit/073db143144bf88007010e4f44003198b327b4da))
+
 ## [1.13.56](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.55...@standardnotes/responses@1.13.56) (2024-04-10)
 
 **Note:** Version bump only for package @standardnotes/responses

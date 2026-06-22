@@ -332,6 +332,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 itemListController={itemListController}
                 searchOptionsController={searchOptionsController}
                 hideOptions={shouldUseTableView}
+                showSearchEnhancements={application.featuresController.isSearchEnhancementsEnabled()}
               />
             )}
             <NoAccountWarning

@@ -4,17 +4,19 @@ import {
   $isElementNode,
   $isParagraphNode,
   $isLineBreakNode,
+  $isTabNode,
   $isTextNode,
   LexicalEditor,
   LexicalNode,
   ElementNode,
+  TextNode,
 } from 'lexical'
 import { $isLinkNode } from '@lexical/link'
 import { $isHeadingNode, type HeadingNode, $isQuoteNode } from '@lexical/rich-text'
 import { $isListNode, $isListItemNode, ListType } from '@lexical/list'
 import { $isHorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode'
 import { $isTableNode, $isTableRowNode, $isTableCellNode } from '@lexical/table'
-import { $isCodeNode } from '@lexical/code'
+import { $isCodeHighlightNode, $isCodeNode } from '@lexical/code'
 import { $isInlineFileNode } from '../../../Plugins/InlineFilePlugin/InlineFileNode'
 import { $isRemoteImageNode } from '../../../Plugins/RemoteImagePlugin/RemoteImageNode'
 import { $isCollapsibleContainerNode } from '../../../Plugins/CollapsiblePlugin/CollapsibleContainerNode'
@@ -32,20 +34,24 @@ import {
   MONOSPACE_FONT_FAMILY,
   getFontFamiliesFromLexicalNode,
 } from './FontConfig'
+import { getPDFColorForCodeHighlight } from './CodeHighlightColors'
+import {
+  PDF_BASE_FONT_SIZE,
+  PDF_BLOCK_GAP,
+  PDF_CODE_BLOCK_FONT_SIZE,
+  PDF_CODE_TAB_SIZE,
+  PDF_LINE_HEIGHT_MULTIPLIER,
+  PDF_LIST_ITEM_GAP,
+  PDF_PAGE_PADDING,
+  PDF_QUOTE_INNER_GAP,
+} from './PDFLayoutConstants'
 
 const PDF_SUPERSUBSCRIPT_FONT_SIZE = 9
 const PDF_HEADING_SUPERSUBSCRIPT_SCALE = 0.75
 
 const styles = StyleSheet.create({
-  page: {
-    paddingVertical: 35,
-    paddingHorizontal: 35,
-    lineHeight: 1.5,
-    fontSize: 12,
-    gap: 14,
-  },
   block: {
-    gap: 14,
+    gap: PDF_BLOCK_GAP,
   },
   wrap: {
     flexWrap: 'wrap',
@@ -75,7 +81,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#72767e',
     paddingLeft: 12,
     paddingVertical: 4,
-    gap: 4,
+    gap: PDF_QUOTE_INNER_GAP,
   },
 })
 
@@ -138,6 +144,7 @@ const getListItemNode = ({
         type: 'Text',
         style: {
           flex: 1,
+          lineHeight: PDF_BASE_FONT_SIZE * PDF_LINE_HEIGHT_MULTIPLIER,
         },
         children,
       },
@@ -145,13 +152,121 @@ const getListItemNode = ({
   }
 }
 
-const MinimumHeadingFontSize = 13
-const MaxHeadingLevel = 6
+const HEADING_FONT_SIZES = [1.625, 1.375, 1.125, 0.875, 0.625, 0.375]
+
 const getFontSizeForHeading = (heading: HeadingNode) => {
   const level = parseInt(heading.getTag().slice(1))
-  const multiplier = (MaxHeadingLevel - level) * 2
+  return (HEADING_FONT_SIZES[level - 1] ?? 1) * PDF_BASE_FONT_SIZE
+}
 
-  return MinimumHeadingFontSize + multiplier
+const getPDFTextContent = (node: TextNode, isCodeNodeText: boolean): string => {
+  if ($isTabNode(node) && isCodeNodeText) {
+    return ' '.repeat(PDF_CODE_TAB_SIZE)
+  }
+
+  return node.getTextContent()
+}
+
+const getPDFTextFontFamily = (
+  node: TextNode,
+  fontFamilies: FontFamily[],
+  useCustomFonts: boolean,
+  isInlineCode: boolean,
+  isCodeNodeText: boolean,
+): FontFamily | FontFamily[] => {
+  if (isCodeNodeText || isInlineCode) {
+    return MONOSPACE_FONT_FAMILY
+  }
+
+  if (useCustomFonts) {
+    const nodeFontFamilies = getFontFamiliesFromLexicalNode(node)
+    fontFamilies.push(...nodeFontFamilies)
+    return [...nodeFontFamilies, FALLBACK_FONT_FAMILY]
+  }
+
+  return FALLBACK_FONT_FAMILY
+}
+
+const getPDFTextFontSize = (
+  isInlineCode: boolean,
+  isCodeNodeText: boolean,
+  isSuperscript: boolean,
+  isSubscript: boolean,
+  headingFontSize: number | undefined,
+): number | undefined => {
+  const baseFontSize = isInlineCode || isCodeNodeText ? PDF_CODE_BLOCK_FONT_SIZE : undefined
+
+  if (isSuperscript || isSubscript) {
+    if (headingFontSize) {
+      return Math.max(PDF_SUPERSUBSCRIPT_FONT_SIZE, Math.round(headingFontSize * PDF_HEADING_SUPERSUBSCRIPT_SCALE))
+    }
+    return PDF_SUPERSUBSCRIPT_FONT_SIZE
+  }
+
+  return baseFontSize
+}
+
+const getPDFTextLineHeight = (isHeading: boolean, headingFontSize: number | undefined): string => {
+  const size =
+    isHeading && headingFontSize
+      ? headingFontSize * PDF_LINE_HEIGHT_MULTIPLIER
+      : PDF_BASE_FONT_SIZE * PDF_LINE_HEIGHT_MULTIPLIER
+
+  return `${size}px`
+}
+
+const getPDFTextColor = (node: TextNode, parent: LexicalNode | null): string | undefined => {
+  if ($isCodeHighlightNode(node) && $isCodeNode(parent)) {
+    return getPDFColorForCodeHighlight(node.getHighlightType())
+  }
+
+  return undefined
+}
+
+const getPDFTextDecoration = (node: TextNode): 'underline' | 'line-through' | undefined => {
+  if (node.hasFormat('underline')) {
+    return 'underline'
+  }
+  if (node.hasFormat('strikethrough')) {
+    return 'line-through'
+  }
+  return undefined
+}
+
+const isInsideTableHeaderCell = (node: LexicalNode): boolean => {
+  return node.getParents().some((parent) => {
+    return $isTableCellNode(parent) && parent.hasHeader()
+  })
+}
+
+const getPDFTextDataNodeFromLexicalTextNode = (
+  node: TextNode,
+  parent: LexicalNode | null,
+  fontFamilies: FontFamily[],
+  useCustomFonts: boolean,
+): PDFDataNode => {
+  const isInlineCode = node.hasFormat('code')
+  const isCodeNodeText = $isCodeNode(parent)
+  const isHeading = $isHeadingNode(parent)
+  const isSuperscript = node.hasFormat('superscript')
+  const isSubscript = node.hasFormat('subscript')
+  const headingFontSize = isHeading ? getFontSizeForHeading(parent) : undefined
+
+  return {
+    type: 'Text',
+    children: getPDFTextContent(node, isCodeNodeText),
+    style: {
+      fontFamily: getPDFTextFontFamily(node, fontFamilies, useCustomFonts, isInlineCode, isCodeNodeText),
+      fontWeight: node.hasFormat('bold') || isHeading || isInsideTableHeaderCell(node) ? 'bold' : 'normal',
+      fontStyle: node.hasFormat('italic') ? 'italic' : 'normal',
+      textDecoration: getPDFTextDecoration(node),
+      backgroundColor: isInlineCode ? '#f1f1f1' : node.hasFormat('highlight') ? 'rgb(255,255,0)' : undefined,
+      color: getPDFTextColor(node, parent),
+      fontSize: getPDFTextFontSize(isInlineCode, isCodeNodeText, isSuperscript, isSubscript, headingFontSize),
+      verticalAlign: isSuperscript ? 'super' : isSubscript ? 'sub' : undefined,
+      lineHeight: getPDFTextLineHeight(isHeading, headingFontSize),
+    },
+  }
 }
 
 const getNodeTextAlignment = (node: ElementNode) => {
@@ -183,6 +298,11 @@ const getNodeDirection = (node: ElementNode) => {
   return direction ?? 'ltr'
 }
 
+const getPDFVerticalSpacer = (height: number = PDF_BASE_FONT_SIZE * PDF_LINE_HEIGHT_MULTIPLIER): PDFDataNode => ({
+  type: 'View',
+  style: { height },
+})
+
 const getPDFDataNodeFromLexicalNode = (
   node: LexicalNode,
   fontFamilies: FontFamily[],
@@ -198,53 +318,7 @@ const getPDFDataNodeFromLexicalNode = (
   }
 
   if ($isTextNode(node)) {
-    const isInlineCode = node.hasFormat('code')
-    const isCodeNodeText = $isCodeNode(parent)
-    const isBold = node.hasFormat('bold')
-    const isItalic = node.hasFormat('italic')
-    const isHighlight = node.hasFormat('highlight')
-    const isSuperscript = node.hasFormat('superscript')
-    const isSubscript = node.hasFormat('subscript')
-    let fontFamily: FontFamily[] | FontFamily = FALLBACK_FONT_FAMILY
-
-    if (isInlineCode && isCodeNodeText) {
-      fontFamily = MONOSPACE_FONT_FAMILY
-    } else {
-      if (useCustomFonts) {
-        const nodeFontFamilies = getFontFamiliesFromLexicalNode(node)
-        fontFamily = [...nodeFontFamilies, FALLBACK_FONT_FAMILY]
-        fontFamilies.push(...nodeFontFamilies)
-      }
-    }
-
-    const baseFontSize = isInlineCode || isCodeNodeText ? 11 : undefined
-    const headingFontSize = $isHeadingNode(parent) ? getFontSizeForHeading(parent) : undefined
-    const fontSize =
-      isSuperscript || isSubscript
-        ? headingFontSize
-          ? Math.max(PDF_SUPERSUBSCRIPT_FONT_SIZE, Math.round(headingFontSize * PDF_HEADING_SUPERSUBSCRIPT_SCALE))
-          : PDF_SUPERSUBSCRIPT_FONT_SIZE
-        : baseFontSize
-
-    return {
-      type: 'Text',
-      children: node.getTextContent(),
-      style: {
-        fontFamily,
-        fontWeight: isBold ? 'bold' : 'normal',
-        fontStyle: isItalic ? 'italic' : 'normal',
-        direction: $isElementNode(parent) ? getNodeDirection(parent) : 'ltr',
-        textDecoration: node.hasFormat('underline')
-          ? 'underline'
-          : node.hasFormat('strikethrough')
-          ? 'line-through'
-          : undefined,
-        backgroundColor: isInlineCode ? '#f1f1f1' : isHighlight ? 'rgb(255,255,0)' : undefined,
-        fontSize,
-        textAlign: $isElementNode(parent) ? getNodeTextAlignment(parent) : 'left',
-        verticalAlign: isSuperscript ? 'super' : isSubscript ? 'sub' : undefined,
-      },
-    }
+    return getPDFTextDataNodeFromLexicalTextNode(node, parent, fontFamilies, useCustomFonts)
   }
 
   if ($isCodeNode(node)) {
@@ -270,16 +344,20 @@ const getPDFDataNodeFromLexicalNode = (
           backgroundColor: 'rgba(0,0,0,0.05)',
           padding: 12,
           borderRadius: 6,
-          fontFamily: 'Courier',
+          fontFamily: MONOSPACE_FONT_FAMILY,
+          fontSize: PDF_CODE_BLOCK_FONT_SIZE,
         },
       ],
       children: lines.map((line) => {
         return {
           type: 'View',
           style: [styles.row, styles.wrap],
-          children: line.map((child) => {
-            return getPDFDataNodeFromLexicalNode(child, fontFamilies, useCustomFonts)
-          }),
+          children:
+            line.length === 0
+              ? [getPDFVerticalSpacer(PDF_CODE_BLOCK_FONT_SIZE * PDF_LINE_HEIGHT_MULTIPLIER)]
+              : line
+                  .map((child) => getPDFDataNodeFromLexicalNode(child, fontFamilies, useCustomFonts))
+                  .filter((child): child is PDFDataNode => child != null),
         }
       }),
     }
@@ -356,7 +434,7 @@ const getPDFDataNodeFromLexicalNode = (
       style: [
         styles.column,
         {
-          gap: 7,
+          gap: PDF_LIST_ITEM_GAP,
         },
       ],
       children,
@@ -392,7 +470,7 @@ const getPDFDataNodeFromLexicalNode = (
   }
 
   if ($isParagraphNode(node) && node.getTextContent().length === 0) {
-    return null
+    return getPDFVerticalSpacer()
   }
 
   if ($isTableCellNode(node)) {
@@ -403,7 +481,8 @@ const getPDFDataNodeFromLexicalNode = (
         borderColor: '#e3e3e3',
         borderWidth: 1,
         flex: 1,
-        padding: 2,
+        paddingHorizontal: 8,
+        paddingVertical: 6,
       },
       children,
     }
@@ -453,7 +532,8 @@ const getPDFDataNodeFromLexicalNode = (
         {
           type: 'Text',
           style: {
-            lineHeight: $isHeadingNode(node) ? 1 : 1.5,
+            textAlign: getNodeTextAlignment(node),
+            direction: getNodeDirection(node),
           },
           children,
         },
@@ -474,6 +554,95 @@ const getPDFDataNodesFromLexicalNodes = (
   useCustomFonts: boolean,
 ): PDFDataNode[] => {
   return nodes.map((node) => getPDFDataNodeFromLexicalNode(node, fontFamilies, useCustomFonts))
+}
+
+/**
+ * Page widths in points (72dpi) sourced from PAGE_SIZES in
+ * @react-pdf/layout/lib/index.js — verify against that file when upgrading the library.
+ */
+const PDF_PAGE_WIDTHS_PT: Record<PrefValue[PrefKey.SuperNoteExportPDFPageSize], number> = {
+  A3: 841.89,
+  A4: 595.28,
+  LETTER: 612,
+  LEGAL: 612,
+  TABLOID: 792,
+}
+
+const getPDFContentWidth = (pageSize: PrefValue[PrefKey.SuperNoteExportPDFPageSize]): number => {
+  return PDF_PAGE_WIDTHS_PT[pageSize] - 2 * PDF_PAGE_PADDING
+}
+
+type PDFImageNaturalDimensions = {
+  width: number
+  height: number
+}
+
+const walkPDFDataNodes = (nodes: PDFDataNode[], visitor: (node: NonNullable<PDFDataNode>) => void): void => {
+  const visit = (node: PDFDataNode) => {
+    if (!node) {
+      return
+    }
+    visitor(node)
+    if (Array.isArray(node.children)) {
+      node.children.forEach(visit)
+    }
+  }
+  nodes.forEach(visit)
+}
+
+const collectPDFImageSources = (nodes: PDFDataNode[]): string[] => {
+  const sources = new Set<string>()
+  walkPDFDataNodes(nodes, (node) => {
+    if (node.type === 'Image' && typeof node.src === 'string') {
+      sources.add(node.src)
+    }
+  })
+  return [...sources]
+}
+
+const loadPDFImageDimensions = (src: string): Promise<PDFImageNaturalDimensions | null> => {
+  return new Promise((resolve) => {
+    const image = new window.Image()
+    image.onload = () => {
+      if (image.naturalWidth <= 0 || image.naturalHeight <= 0) {
+        resolve(null)
+        return
+      }
+      resolve({ width: image.naturalWidth, height: image.naturalHeight })
+    }
+    image.onerror = () => resolve(null)
+    image.src = src
+  })
+}
+
+const loadPDFImageDimensionsMap = async (sources: string[]): Promise<Map<string, PDFImageNaturalDimensions>> => {
+  const entries = await Promise.all(sources.map(async (src) => [src, await loadPDFImageDimensions(src)] as const))
+
+  const map = new Map<string, PDFImageNaturalDimensions>()
+  for (const [src, dimensions] of entries) {
+    if (dimensions) {
+      map.set(src, dimensions)
+    }
+  }
+  return map
+}
+
+const patchPDFImageStyles = (
+  nodes: PDFDataNode[],
+  contentWidth: number,
+  imageDimensions: Map<string, PDFImageNaturalDimensions>,
+): void => {
+  walkPDFDataNodes(nodes, (node) => {
+    if (node.type === 'Image' && typeof node.src === 'string') {
+      const natural = imageDimensions.get(node.src)
+      if (natural && natural.width > 0 && natural.height > 0) {
+        const displayWidth = Math.min(natural.width, contentWidth)
+        node.style = { width: displayWidth, height: displayWidth * (natural.height / natural.width) }
+      } else {
+        node.style = { width: contentWidth }
+      }
+    }
+  })
 }
 
 const pdfWorker = new PDFWorker()
@@ -499,10 +668,15 @@ export function $generatePDFFromNodes(editor: LexicalEditor, pageSize: PrefValue
           const root = $getRoot()
           const nodes = root.getChildren()
           const fontFamilies: FontFamily[] = []
-
+          const contentWidth = getPDFContentWidth(pageSize)
           const pdfDataNodes = getPDFDataNodesFromLexicalNodes(nodes, fontFamilies, useCustomFonts)
+          const imageSources = collectPDFImageSources(pdfDataNodes)
 
-          void PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize, fontFamilies, useCustomFonts)
+          void loadPDFImageDimensionsMap(imageSources)
+            .then((imageDimensions) => {
+              patchPDFImageStyles(pdfDataNodes, contentWidth, imageDimensions)
+              return PDFWorkerComlink.renderPDF(pdfDataNodes, pageSize, fontFamilies, useCustomFonts)
+            })
             .then((blob) => {
               const url = URL.createObjectURL(blob)
               resolve(url)

@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.29](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.28...@standardnotes/web@3.201.29) (2026-06-05)
+
+### Bug Fixes
+
+* Fixes checkboxes parsed as bullet items when importing Evernote notes ([f488518](https://github.com/standardnotes/app/commit/f4885188ad7a289b16f95eeea56de2bed56dfb95))
+* Fixes highlight text style lost when importing Evernote notes ([a62f496](https://github.com/standardnotes/app/commit/a62f496ee6ca588876b616261c479f6499b4ec19))
+
+## [3.201.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.27...@standardnotes/web@3.201.28) (2026-05-27)
+
+### Bug Fixes
+
+* Fixes cell padding and bold font within table cells in Super pdf export ([c81589b](https://github.com/standardnotes/app/commit/c81589b945b04b6f2b6842f193495d562c132bc8))
+* Fixes images rendering too small on Super pdf export ([80fa337](https://github.com/standardnotes/app/commit/80fa337afba85bada70b4ddacb6e5ad391978f28))
+* Fixes Super pdf export code block formatting issues ([bd3cf60](https://github.com/standardnotes/app/commit/bd3cf600e7a766c2fd980fbc01924e59664184b8))
+* Fixes Super pdf export headings font sizes and weights ([6daf58c](https://github.com/standardnotes/app/commit/6daf58c92893a6cfa93596a2429ed3e0697222e0))
+* Fixes Super pdf export line height ([e22e6fc](https://github.com/standardnotes/app/commit/e22e6fce7936a9b425f90e7363f274bce3b3b841))
+* Fixes Upgrade button in Settings leading to purchase page ([#3011](https://github.com/standardnotes/app/issues/3011)) ([eda1bfe](https://github.com/standardnotes/app/commit/eda1bfe0bd5b2be762dadf840f49034a2c659816))
+
+## [3.201.27](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.26...@standardnotes/web@3.201.27) (2026-04-29)
+
+### Bug Fixes
+
+* Fixes Super search highlights styling ([#3009](https://github.com/standardnotes/app/issues/3009)) ([a39bb82](https://github.com/standardnotes/app/commit/a39bb824f7b6d4f761abb27df9b7c7ba4818ce14))
+* Switches back to note list on mobile when active note is deleted from a different device ([#3008](https://github.com/standardnotes/app/issues/3008)) ([f4a9481](https://github.com/standardnotes/app/commit/f4a94811848ea19550703d5dcd2b446091bf9536))
+
+## [3.201.26](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.25...@standardnotes/web@3.201.26) (2026-04-24)
+
+### Bug Fixes
+
+* Shows info on UI and hides Manage button for shared subs ([#3002](https://github.com/standardnotes/app/issues/3002)) ([073db14](https://github.com/standardnotes/app/commit/073db143144bf88007010e4f44003198b327b4da))
+
+## [3.201.25](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.24...@standardnotes/web@3.201.25) (2026-04-23)
+
+### Bug Fixes
+
+* Adds dynamic type support for iOS ([#3005](https://github.com/standardnotes/app/issues/3005)) ([6261fd8](https://github.com/standardnotes/app/commit/6261fd8241b36be0e73dd84b39d31059d6077c16))
+* Fixes Super sections drag and drop issues on mobile ([#3003](https://github.com/standardnotes/app/issues/3003)) ([b330890](https://github.com/standardnotes/app/commit/b33089029f5979adf0c8e80a65c29a38945cf899))
+* Prevents unhandled error when attempting to import a blank note ([#3004](https://github.com/standardnotes/app/issues/3004)) ([90ca0c2](https://github.com/standardnotes/app/commit/90ca0c2cfb648d34c97d58b332a10c61daa20fa4))
+
 ## [3.201.24](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.23...@standardnotes/web@3.201.24) (2026-04-07)
 
 **Note:** Version bump only for package @standardnotes/web

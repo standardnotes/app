@@ -1,3 +1,4 @@
+import { classNames } from '@standardnotes/snjs'
 import { ChangeEventHandler, FunctionComponent } from 'react'
 
 type CheckboxProps = {
@@ -10,9 +11,15 @@ type CheckboxProps = {
 
 const Checkbox: FunctionComponent<CheckboxProps> = ({ name, checked, onChange, disabled, label }) => {
   return (
-    <label htmlFor={name} className="fit-content mb-2 flex items-center text-sm">
+    <label
+      htmlFor={name}
+      className={classNames(
+        'fit-content mb-2 flex items-center text-sm',
+        disabled ? 'cursor-not-allowed' : 'cursor-pointer',
+      )}
+    >
       <input
-        className="mr-2"
+        className={classNames('mr-2', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
         type="checkbox"
         name={name}
         id={name}

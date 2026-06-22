@@ -21,6 +21,7 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Spinner from '@/Components/Spinner/Spinner'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -104,7 +105,7 @@ const DataBackups = ({ application }: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const readFile = async (file: File): Promise<any> => {
     if (file.type === 'application/zip') {
-      application.alerts.alert(STRING_IMPORTING_ZIP_FILE).catch(console.error)
+      application.alerts.alert(STRING_IMPORTING_ZIP_FILE()).catch(console.error)
       return
     }
 
@@ -115,7 +116,7 @@ const DataBackups = ({ application }: Props) => {
           const data = JSON.parse(e.target?.result as string)
           resolve(data)
         } catch (e) {
-          application.alerts.alert(STRING_INVALID_IMPORT_FILE).catch(console.error)
+          application.alerts.alert(STRING_INVALID_IMPORT_FILE()).catch(console.error)
         }
       }
       reader.readAsText(file)
@@ -129,7 +130,7 @@ const DataBackups = ({ application }: Props) => {
 
     setIsImportDataLoading(false)
 
-    let statusText = STRING_IMPORT_SUCCESS
+    let statusText = STRING_IMPORT_SUCCESS()
     if (result.isFailed()) {
       statusText = result.getError()
     } else if (result.getValue().errorCount) {
@@ -162,7 +163,7 @@ const DataBackups = ({ application }: Props) => {
       await performImport(data)
     } else {
       setIsImportDataLoading(false)
-      void alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION })
+      void alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION() })
     }
   }
 
@@ -187,32 +188,32 @@ const DataBackups = ({ application }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Data backups</Title>
-          <Subtitle>Download a backup of all your text-based data</Subtitle>
+          <Title>{c('Title').t`Data backups`}</Title>
+          <Subtitle>{c('Subtitle').t`Download a backup of all your text-based data`}</Subtitle>
 
           {isEncryptionEnabled && (
             <form className="sk-panel-form sk-panel-row">
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
-                  <span className="text-base font-medium md:text-sm">Encrypted</span>
+                  <span className="text-base font-medium md:text-sm">{c('Label').t`Encrypted`}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
-                  <span className="text-base font-medium md:text-sm">Decrypted</span>
+                  <span className="text-base font-medium md:text-sm">{c('Label').t`Decrypted`}</span>
                 </label>
               </div>
             </form>
           )}
 
-          <Button onClick={downloadDataArchive} label="Download backup" className="mt-2" />
+          <Button onClick={downloadDataArchive} label={c('Action').t`Download backup`} className="mt-2" />
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>
-          <Subtitle>Import a previously saved backup file</Subtitle>
+          <Subtitle>{c('Subtitle').t`Import a previously saved backup file`}</Subtitle>
 
           <div className="mt-3 flex flex-row items-center">
-            <Button label="Import backup" onClick={handleImportFile} />
+            <Button label={c('Action').t`Import backup`} onClick={handleImportFile} />
             <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
             {isImportDataLoading && <Spinner className="ml-4" />}
           </div>

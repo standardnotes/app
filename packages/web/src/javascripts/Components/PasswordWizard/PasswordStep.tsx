@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { c } from 'ttag'
 import DecoratedPasswordInput from '../Input/DecoratedPasswordInput'
 
 export const PasswordStep = ({
@@ -33,7 +34,7 @@ export const PasswordStep = ({
     <div className="flex flex-col pb-1.5">
       <form>
         <label htmlFor="password-wiz-current-password" className="mb-1 block">
-          Current Password
+          {c('Label').t`Current Password`}
         </label>
 
         <DecoratedPasswordInput
@@ -47,7 +48,7 @@ export const PasswordStep = ({
         <div className="min-h-2" />
 
         <label htmlFor="password-wiz-new-password" className="mb-1 block">
-          New Password
+          {c('Label').t`New Password`}
         </label>
 
         <DecoratedPasswordInput
@@ -60,7 +61,7 @@ export const PasswordStep = ({
         <div className="min-h-2" />
 
         <label htmlFor="password-wiz-confirm-new-password" className="mb-1 block">
-          Confirm New Password
+          {c('Label').t`Confirm New Password`}
         </label>
 
         <DecoratedPasswordInput
