@@ -3,7 +3,7 @@ exports.default = async function (configuration) {
     const keypairAlias = process.env.SM_KEYPAIR_ALIAS
 
     require('child_process').execSync(
-      `smctl sign --keypair-alias="${keypairAlias}" --input "${String(configuration.path)}" --verbose`,
+      `signtool.exe sign /a /d "${String(configuration.certificateSubjectName)}" /t "http://timestamp.sectigo.com" /fd SHA256 "${String(configuration.path)}"`,
       {
         stdio: 'inherit',
       },

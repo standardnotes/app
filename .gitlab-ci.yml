@@ -1,0 +1,37 @@
+---
+stages:
+  - build
+
+build:windows:
+  stage: build
+  tags:
+    - windows-drive-signer-v1
+  script:
+    - $env:ELECTRON_GET_USE_PROXY = '1'
+    - $env:GLOBAL_AGENT_HTTPS_PROXY = 'http://proxy.plabs.ch:3128'
+    - $env:GLOBAL_AGENT_HTTP_PROXY = 'http://proxy.plabs.ch:3128'
+    - $env:HTTP_PROXY = 'http://proxy.plabs.ch:3128'
+    - $env:HTTPS_PROXY = 'http://proxy.plabs.ch:3128'
+    - $env:TRANSFER_METER_FREQUENCY = '2s'
+    - $env:ARTIFACT_COMPRESSION_LEVEL = 'fastest'
+    - $env:CACHE_COMPRESSION_LEVEL = 'fastest'
+    - $env:SQUIRREL_SIGNTOOL_ARGS = '/a /tr "http://timestamp.sectigo.com" /fd sha256 /td sha256'
+    - $env:NODE_OPTIONS="--max-old-space-size=8192"
+    - corepack enable
+    - yarn config set httpProxy http://proxy.plabs.ch:3128
+    - yarn config set httpsProxy http://proxy.plabs.ch:3128
+    - yarn install
+    - yarn build:desktop
+    - yarn workspace @standardnotes/desktop run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$(node -p "require('./packages/web/package.json').version")
+  after_script:
+    - rimraf node_modules
+    - rimraf packages/mobile/node_modules
+    - rimraf packages/desktop/node_modules
+    - rimraf packages/desktop/app/node_modules
+    - mv packages/desktop/dist dist
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 week
+  # rules:
+  #   - when: manual
