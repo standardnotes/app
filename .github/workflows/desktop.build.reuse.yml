@@ -1,0 +1,256 @@
+name: Desktop Reusable Manual Build Workflow
+
+on:
+  workflow_call:
+    inputs:
+      platform:
+        required: true
+        type: string
+
+jobs:
+  Mac:
+    if: inputs.platform == 'mac'
+    runs-on: macos-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: false
+    defaults:
+      run:
+        working-directory: packages/desktop
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: yarn install --immutable
+      - name: Rebuild Electron Native Modules
+        run: yarn workspace @standardnotes/desktop rebuild:home-server
+      - run: yarn build:desktop
+      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
+      - name: Compile Mac
+        run: yarn run webpack --config desktop.webpack.prod.js
+      - name: MacX64
+        run: |
+          yarn run electron-builder --mac --x64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }} -c.afterSign=null
+          node scripts/fixMacZip.js ${{ env.APP_VERSION }}
+      - name: MacArm64
+        run: yarn run electron-builder --mac --arm64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }} -c.afterSign=null
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-macos
+          retention-days: 7
+          path: |
+            packages/desktop/dist/*.dmg
+            packages/desktop/dist/*.zip
+            packages/desktop/dist/*.blockmap
+            packages/desktop/dist/*.yml
+            packages/desktop/dist/*.yaml
+
+  Linux-AppImage-X64:
+    name: Linux AppImage X64
+    if: inputs.platform == 'linux'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/desktop
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install FPM
+        run: sudo gem install fpm -f
+      - run: yarn install --immutable
+      - name: Rebuild Electron Native Modules
+        run: yarn workspace @standardnotes/desktop rebuild:home-server
+      - run: yarn build:desktop
+      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
+      - name: Compile for AppImage
+        run: yarn run webpack --config desktop.webpack.prod.js
+      - name: AppImageX64
+        run: yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-linux-appimage-x64
+          retention-days: 7
+          path: |
+            packages/desktop/dist/*.AppImage
+            packages/desktop/dist/*.yml
+            packages/desktop/dist/*.yaml
+
+  Linux-AppImage-ARM64:
+    name: Linux AppImage ARM64
+    if: inputs.platform == 'linux'
+    runs-on: ubuntu-24.04-arm
+    defaults:
+      run:
+        working-directory: packages/desktop
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install FPM
+        run: sudo gem install fpm -f
+      - run: yarn install --immutable
+      - name: Rebuild Electron Native Modules
+        run: yarn workspace @standardnotes/desktop rebuild:home-server
+      - run: yarn build:desktop
+      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
+      - name: Compile for AppImage
+        run: yarn run webpack --config desktop.webpack.prod.js
+      - name: AppImageArm64
+        run: yarn run electron-builder --linux --arm64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-linux-appimage-arm64
+          retention-days: 7
+          path: |
+            packages/desktop/dist/*.AppImage
+            packages/desktop/dist/*.yml
+            packages/desktop/dist/*.yaml
+
+  Linux-Deb-X64:
+    name: Linux Deb X64
+    if: inputs.platform == 'linux'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/desktop
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install FPM
+        run: sudo gem install fpm -f
+      - run: yarn install --immutable
+      - name: Rebuild Electron Native Modules
+        run: yarn workspace @standardnotes/desktop rebuild:home-server
+      - run: yarn build:desktop
+      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
+      - name: Deb
+        run: |
+          yarn run webpack --config desktop.webpack.prod.js --env deb
+          yarn run electron-builder --linux --x64 -c.linux.target=deb --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-linux-deb-x64
+          retention-days: 7
+          path: |
+            packages/desktop/dist/*.deb
+            packages/desktop/dist/*.yml
+            packages/desktop/dist/*.yaml
+
+  Linux-Deb-ARM64:
+    name: Linux Deb ARM64
+    if: inputs.platform == 'linux'
+    runs-on: ubuntu-24.04-arm
+    defaults:
+      run:
+        working-directory: packages/desktop
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install FPM
+        run: sudo gem install fpm -f
+      - run: yarn install --immutable
+      - name: Rebuild Electron Native Modules
+        run: yarn workspace @standardnotes/desktop rebuild:home-server
+      - run: yarn build:desktop
+      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
+      - name: DebArm64
+        env:
+          USE_SYSTEM_FPM: 'true'
+        run: |
+          yarn run webpack --config desktop.webpack.prod.js --env deb
+          yarn run electron-builder --linux --arm64 -c.linux.target=deb --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-linux-deb-arm64
+          retention-days: 7
+          path: |
+            packages/desktop/dist/*.deb
+            packages/desktop/dist/*.yml
+            packages/desktop/dist/*.yaml
+
+  Windows:
+    name: Windows
+    if: inputs.platform == 'windows'
+    runs-on: windows-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=8192
+      CSC_IDENTITY_AUTO_DISCOVERY: false
+    defaults:
+      run:
+        working-directory: packages/desktop
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: corepack enable
+      - run: yarn install --immutable
+      - name: Rebuild Electron Native Modules
+        run: yarn workspace @standardnotes/desktop rebuild:home-server
+      - run: yarn build:desktop
+      - name: Set app version
+        shell: bash
+        run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
+      - name: Compile
+        run: yarn run webpack --config desktop.webpack.prod.js
+      - name: Build Windows installers
+        shell: bash
+        run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$APP_VERSION -c.win.sign=null
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-windows
+          retention-days: 7
+          path: |
+            packages/desktop/dist/*.exe
+            packages/desktop/dist/*.yml
+            packages/desktop/dist/*.yaml
+            packages/desktop/dist/*.blockmap

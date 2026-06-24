@@ -37,7 +37,7 @@ export * from './UseCase/IsGlobalSpellcheckEnabled'
 export * from './UseCase/IsNativeMobileWeb'
 export * from './UseCase/IsMobileDevice'
 export * from './UseCase/IsNativeIOS'
-export * from './UseCase/IsNativeAndroid'
+export * from './UseCase/IsAndroid'
 export * from './UseCase/GetItemTags'
 
 export * from './Theme/ThemeManager'
