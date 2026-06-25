@@ -154,22 +154,9 @@ export class FeaturesController extends AbstractViewController implements Intern
   }
 
   isUniversalSearchEnabled(): boolean {
-    if (featureTrunkUniversalSearchEnabled()) {
-      return true
-    }
-
-    if (this.features.hasRole(RoleName.create(RoleName.NAMES.InternalTeamUser).getValue())) {
-      return true
-    }
-
-    const identifierOrError = NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.UniversalSearch)
-
-    if (identifierOrError.isFailed()) {
-      return false
-    }
-
-    const status = this.features.getFeatureStatus(identifierOrError.getValue())
-
-    return status === FeatureStatus.Entitled
+    return (
+      featureTrunkUniversalSearchEnabled() ||
+      this.features.hasRole(RoleName.create(RoleName.NAMES.InternalTeamUser).getValue())
+    )
   }
 }
