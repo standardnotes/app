@@ -5,7 +5,7 @@ module.exports = {
     project: './tsconfig.json',
     tsconfigRootDir: __dirname,
   },
-  ignorePatterns: ['**/*.spec.ts', '@types', 'node_modules', 'dist'],
+  ignorePatterns: ['**/*.spec.ts', '@types', 'node_modules', 'dist', 'electron-builder.unsigned.cjs'],
   rules: {
     'no-console': ['warn', { allow: ['warn', 'error'] }],
     '@typescript-eslint/no-var-requires': 'off',
