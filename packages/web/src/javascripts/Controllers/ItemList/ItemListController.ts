@@ -636,11 +636,6 @@ export class ItemListController
     if (tag instanceof SNTag) {
       tags.push(tag)
     }
-    for (const filterTag of this.searchOptionsController.tagFilterList) {
-      if (!tags.some((existingTag) => existingTag.uuid === filterTag.uuid)) {
-        tags.push(filterTag)
-      }
-    }
 
     const criteria: NotesAndFilesDisplayControllerOptions = {
       sortBy: this.displayOptions.sortBy,
@@ -655,6 +650,10 @@ export class ItemListController
         query: searchText,
         includeProtectedNoteText: this.searchOptionsController.includeProtectedContents,
         noteTitleOnly: this.searchOptionsController.noteTitleOnly,
+        tagFilters:
+          this.searchOptionsController.tagFilterList.length > 0
+            ? this.searchOptionsController.tagFilterList
+            : undefined,
       },
     }
 
