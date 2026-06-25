@@ -36,10 +36,10 @@ jobs:
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: MacX64
         run: |
-          yarn run electron-builder --mac --x64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }} -c.afterSign=null
+          yarn run electron-builder --mac --x64 --publish=never --config electron-builder.unsigned.cjs --c.extraMetadata.version=${{ env.APP_VERSION }}
           node scripts/fixMacZip.js ${{ env.APP_VERSION }}
       - name: MacArm64
-        run: yarn run electron-builder --mac --arm64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }} -c.afterSign=null
+        run: yarn run electron-builder --mac --arm64 --publish=never --config electron-builder.unsigned.cjs --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
@@ -241,7 +241,7 @@ jobs:
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: Build Windows installers
         shell: bash
-        run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=$APP_VERSION -c.win.sign=null
+        run: yarn run electron-builder --windows --x64 --ia32 --publish=never --config electron-builder.unsigned.cjs --c.extraMetadata.version=$APP_VERSION
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
