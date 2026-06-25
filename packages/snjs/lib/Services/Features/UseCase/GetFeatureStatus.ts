@@ -118,7 +118,6 @@ export class GetFeatureStatusUseCase {
       NativeFeatureIdentifier.TYPES.DarkTheme,
       NativeFeatureIdentifier.TYPES.PlainEditor,
       NativeFeatureIdentifier.TYPES.ProtonTheme,
-      // NativeFeatureIdentifier.TYPES.UniversalSearch
     ].includes(featureId.value)
   }
 }

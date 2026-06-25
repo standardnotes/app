@@ -1,6 +1,6 @@
 import * as FeatureTrunk from '@/FeatureTrunk'
-import { FeaturesClientInterface } from '@standardnotes/services'
-import { NativeFeatureIdentifier, FeatureStatus, InternalEventBusInterface } from '@standardnotes/snjs'
+import { FeaturesClientInterface, FeatureStatus } from '@standardnotes/services'
+import { InternalEventBusInterface } from '@standardnotes/snjs'
 import { FeaturesController } from './FeaturesController'
 
 describe('FeaturesController', () => {
@@ -14,12 +14,7 @@ describe('FeaturesController', () => {
       featureTrunkSpy = jest.spyOn(FeatureTrunk, 'featureTrunkUniversalSearchEnabled').mockReturnValue(false)
 
       features = {
-        getFeatureStatus: jest.fn().mockImplementation((id: { value: string }) => {
-          if (id.value === NativeFeatureIdentifier.TYPES.UniversalSearch) {
-            return FeatureStatus.NoUserSubscription
-          }
-          return FeatureStatus.Entitled
-        }),
+        getFeatureStatus: jest.fn().mockReturnValue(FeatureStatus.Entitled),
         hasRole: jest.fn(),
       }
       eventBus = {
@@ -48,26 +43,8 @@ describe('FeaturesController', () => {
       expect(controller.isUniversalSearchEnabled()).toBe(true)
     })
 
-    it('returns true when getFeatureStatus is Entitled (e.g. after Universal Search is added to free features)', () => {
+    it('returns false when trunk and internal role are not enabled', () => {
       features.hasRole.mockReturnValue(false)
-      features.getFeatureStatus.mockImplementation((id: { value: string }) => {
-        if (id.value === NativeFeatureIdentifier.TYPES.UniversalSearch) {
-          return FeatureStatus.Entitled
-        }
-        return FeatureStatus.Entitled
-      })
-
-      expect(controller.isUniversalSearchEnabled()).toBe(true)
-    })
-
-    it('returns false when trunk, internal role, and entitlement do not apply', () => {
-      features.hasRole.mockReturnValue(false)
-      features.getFeatureStatus.mockImplementation((id: { value: string }) => {
-        if (id.value === NativeFeatureIdentifier.TYPES.UniversalSearch) {
-          return FeatureStatus.NoUserSubscription
-        }
-        return FeatureStatus.Entitled
-      })
 
       expect(controller.isUniversalSearchEnabled()).toBe(false)
     })
