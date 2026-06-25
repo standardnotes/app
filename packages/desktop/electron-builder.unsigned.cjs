@@ -5,6 +5,9 @@ module.exports = {
   afterSign: null,
   win: {
     ...packageJson.build.win,
+    certificateSubjectName: null,
+    publisherName: null,
     sign: null,
+    signDlls: false,
   },
 }
