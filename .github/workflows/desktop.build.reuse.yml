@@ -233,8 +233,6 @@ jobs:
           python-version: '3.10'
       - run: corepack enable
       - run: yarn install --immutable
-      - name: Rebuild Electron Native Modules
-        run: yarn workspace @standardnotes/desktop rebuild:home-server
       - run: yarn build:desktop
       - name: Set app version
         shell: bash
