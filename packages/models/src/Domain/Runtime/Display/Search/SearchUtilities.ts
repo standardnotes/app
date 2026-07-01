@@ -47,7 +47,7 @@ export function itemMatchesQuery(
   const itemMatch = matchResultForStringQuery(itemToMatch, query)
 
   if (noteTitleOnly) {
-    return itemMatch === MatchResult.Title
+    return itemMatch === MatchResult.Title || itemMatch === MatchResult.TitleAndText
   }
 
   if (shouldCheckForSomeTagMatches) {
