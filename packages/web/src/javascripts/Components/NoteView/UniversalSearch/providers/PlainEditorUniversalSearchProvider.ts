@@ -17,13 +17,10 @@ function toSearchResults(matches: TextRange[]): UniversalSearchResult<TextRange>
 
 type CreatePlainEditorUniversalSearchProviderOptions = {
   getEditor: () => PlainEditorInterface | undefined
-  /** Read lazily so the controller does not need to be rebuilt when the note's locked state changes. */
-  getLocked: () => boolean
 }
 
 export function createPlainEditorUniversalSearchProvider({
   getEditor,
-  getLocked,
 }: CreatePlainEditorUniversalSearchProviderOptions): UniversalSearchProvider<TextRange> {
   const searchText = (query: UniversalSearchQuery): UniversalSearchResult<TextRange>[] => {
     const text = getEditor()?.getText() ?? ''
@@ -32,11 +29,9 @@ export function createPlainEditorUniversalSearchProvider({
 
   return {
     id: 'plain-editor',
-    get capabilities() {
-      return {
-        supportsReplace: !getLocked(),
-        supportsHighlightAll: true,
-      }
+    capabilities: {
+      supportsReplace: true,
+      supportsHighlightAll: true,
     },
     search: searchText,
     selectResult: (result, options) => {

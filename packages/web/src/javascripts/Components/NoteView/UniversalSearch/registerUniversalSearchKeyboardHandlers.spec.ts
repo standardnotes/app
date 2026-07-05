@@ -37,7 +37,7 @@ describe('registerUniversalSearchKeyboardHandlers', () => {
       contentSearchDebounceMs: 0,
     })
 
-    registerUniversalSearchKeyboardHandlers(keyboardService, controller, { locked: false })
+    registerUniversalSearchKeyboardHandlers(keyboardService, controller)
 
     const handler = handlers.find((entry) => entry.command === UNIVERSAL_SEARCH_TOGGLE_REPLACE_MODE)
     handler?.onKeyDown?.(createKeyboardEvent())
@@ -46,14 +46,15 @@ describe('registerUniversalSearchKeyboardHandlers', () => {
     expect(controller.isReplaceMode).toBe(true)
   })
 
-  it('does not open replace mode when the editor is locked', () => {
+  it('does not open replace mode when replace is unsupported', () => {
     const { keyboardService, handlers } = createCapturingKeyboardService()
     const controller = new UniversalSearchController(createMockUniversalSearchProvider({ documents: [] }), {
       searchDebounceMs: 0,
       contentSearchDebounceMs: 0,
     })
+    controller.setLocked(true)
 
-    registerUniversalSearchKeyboardHandlers(keyboardService, controller, { locked: true })
+    registerUniversalSearchKeyboardHandlers(keyboardService, controller)
 
     const handler = handlers.find((entry) => entry.command === UNIVERSAL_SEARCH_TOGGLE_REPLACE_MODE)
     handler?.onKeyDown?.(createKeyboardEvent())

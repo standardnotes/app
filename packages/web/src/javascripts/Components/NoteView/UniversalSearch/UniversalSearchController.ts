@@ -59,6 +59,7 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   isCaseSensitive = false
   isReplaceMode = false
   shouldHighlightAll: boolean
+  locked = false
 
   private searchId = 0
   private searchDebounceMs: number
@@ -84,7 +85,9 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
       isCaseSensitive: observable,
       isReplaceMode: observable,
       shouldHighlightAll: observable,
+      locked: observable,
 
+      canReplace: computed,
       currentResult: computed,
 
       open: action,
@@ -94,6 +97,8 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
       setReplaceQuery: action,
       toggleCaseSensitivity: action,
       toggleReplaceMode: action,
+      closeReplaceMode: action,
+      setLocked: action,
       setShouldHighlightAll: action,
       goToNextResult: action,
       goToPreviousResult: action,
@@ -101,6 +106,10 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
       setSearchError: action,
       clearResults: action,
     })
+  }
+
+  get canReplace(): boolean {
+    return this.provider.capabilities.supportsReplace && !this.locked
   }
 
   get currentResult(): UniversalSearchResult<TPayload> | undefined {
@@ -162,7 +171,23 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   }
 
   toggleReplaceMode = (): void => {
+    if (!this.canReplace) {
+      this.closeReplaceMode()
+      return
+    }
+
     this.isReplaceMode = !this.isReplaceMode
+  }
+
+  closeReplaceMode = (): void => {
+    this.isReplaceMode = false
+  }
+
+  setLocked = (locked: boolean): void => {
+    this.locked = locked
+    if (locked) {
+      this.closeReplaceMode()
+    }
   }
 
   setShouldHighlightAll = (shouldHighlightAll: boolean): void => {
@@ -189,7 +214,7 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   }
 
   replaceCurrentResult = async (): Promise<void> => {
-    if (!this.provider.capabilities.supportsReplace || !this.provider.replaceCurrentResult) {
+    if (!this.canReplace || !this.provider.replaceCurrentResult) {
       return
     }
 
@@ -209,7 +234,7 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   }
 
   replaceAllResults = async (): Promise<void> => {
-    if (!this.provider.capabilities.supportsReplace || !this.provider.replaceAllResults) {
+    if (!this.canReplace || !this.provider.replaceAllResults) {
       return
     }
 

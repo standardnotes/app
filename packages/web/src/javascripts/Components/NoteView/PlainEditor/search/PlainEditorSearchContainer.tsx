@@ -25,9 +25,6 @@ export const PlainEditorSearchContainer = observer(
 
     const noteUuid = props.controller.item.uuid
 
-    const lockedRef = useRef(props.locked)
-    lockedRef.current = props.locked
-
     const controller = useMemo(() => {
       if (!isUniversalSearchEnabled) {
         return undefined
@@ -35,7 +32,6 @@ export const PlainEditorSearchContainer = observer(
 
       const provider = createPlainEditorUniversalSearchProvider({
         getEditor: () => plainEditorRef.current ?? undefined,
-        getLocked: () => lockedRef.current,
       })
 
       return new UniversalSearchController(provider)
@@ -92,8 +88,8 @@ export const PlainEditorSearchContainer = observer(
         return
       }
 
-      return registerUniversalSearchKeyboardHandlers(keyboardService, controller, { locked: props.locked })
-    }, [controller, isUniversalSearchEnabled, keyboardService, props.locked])
+      return registerUniversalSearchKeyboardHandlers(keyboardService, controller)
+    }, [controller, isUniversalSearchEnabled, keyboardService])
 
     const setPlainEditorRef = useCallback((editor: PlainEditorInterface | null) => {
       plainEditorRef.current = editor
@@ -127,6 +123,7 @@ export const PlainEditorSearchContainer = observer(
       <div className="relative flex flex-grow flex-col">
         <UniversalSearchShell
           controller={controller}
+          locked={props.locked}
           closeShortcut={searchToggleShortcut}
           replaceShortcut={toggleReplaceShortcut}
           caseSensitivityShortcut={caseSensitivityShortcut}

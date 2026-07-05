@@ -9,14 +9,9 @@ import {
 import { Disposer } from '@/Types/Disposer'
 import { UniversalSearchController } from './UniversalSearchController'
 
-type RegisterUniversalSearchKeyboardHandlersOptions = {
-  locked: boolean
-}
-
 export function registerUniversalSearchKeyboardHandlers<TPayload>(
   keyboardService: KeyboardService,
   controller: UniversalSearchController<TPayload>,
-  { locked }: RegisterUniversalSearchKeyboardHandlersOptions,
 ): Disposer {
   return keyboardService.addCommandHandlers([
     {
@@ -39,7 +34,7 @@ export function registerUniversalSearchKeyboardHandlers<TPayload>(
       category: 'Search',
       description: 'Search and replace in current note',
       onKeyDown: (event) => {
-        if (locked) {
+        if (!controller.canReplace) {
           return
         }
 
