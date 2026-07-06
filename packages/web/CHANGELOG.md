@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.32](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.31...@standardnotes/web@3.201.32) (2026-07-06)
+
+### Bug Fixes
+
+* Fixes default language for newly created code blocks in Super notes ([#2999](https://github.com/standardnotes/app/issues/2999)) ([9d026df](https://github.com/standardnotes/app/commit/9d026df49aedc49b143e7cf91576576c73e49986))
+* Fixes Super replace functionality not correctly hidden when toggling Prevent editing on a note ([#3022](https://github.com/standardnotes/app/issues/3022)) ([386d73f](https://github.com/standardnotes/app/commit/386d73ffb839e7a6b3c4bc7578c674fa6b29f658))
+
 ## [3.201.31](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.30...@standardnotes/web@3.201.31) (2026-06-08)
 
 **Note:** Version bump only for package @standardnotes/web

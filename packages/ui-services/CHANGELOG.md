@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.39.7](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.6...@standardnotes/ui-services@1.39.7) (2026-07-06)
+
+### Bug Fixes
+
+* Allows demo login on demo host only ([#3021](https://github.com/standardnotes/app/issues/3021)) ([8a20206](https://github.com/standardnotes/app/commit/8a20206cf3957d6f89a89e84b5d5eebe95dd2539))
+
 ## [1.39.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.5...@standardnotes/ui-services@1.39.6) (2026-06-08)
 
 **Note:** Version bump only for package @standardnotes/ui-services
