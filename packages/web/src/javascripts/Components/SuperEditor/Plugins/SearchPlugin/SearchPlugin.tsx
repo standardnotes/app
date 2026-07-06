@@ -1,4 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { useLexicalEditable } from '@lexical/react/useLexicalEditable'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useApplication } from '../../../ApplicationProvider'
 import {
@@ -28,6 +29,7 @@ import Icon from '../../../Icon/Icon'
 export function SearchPlugin() {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
+  const isEditable = useLexicalEditable()
 
   const [isSearchActive, setIsSearchActive] = useState(false)
 
@@ -42,6 +44,12 @@ export function SearchPlugin() {
   const [isReplaceMode, setIsReplaceMode] = useState(false)
   const toggleReplaceMode = useCallback(() => setIsReplaceMode((enabled) => !enabled), [])
   const [replaceQuery, setReplaceQuery] = useState('')
+
+  useEffect(() => {
+    if (!isEditable) {
+      setIsReplaceMode(false)
+    }
+  }, [isEditable])
 
   const highlightRendererRef = useRef<SearchHighlightRendererMethods>(null)
 
@@ -126,7 +134,7 @@ export function SearchPlugin() {
         category: 'Super notes',
         description: 'Search and replace in current note',
         onKeyDown: (event) => {
-          if (!editor.isEditable()) {
+          if (!isEditable) {
             return
           }
           event.preventDefault()
@@ -161,7 +169,15 @@ export function SearchPlugin() {
         },
       },
     ])
-  }, [application.keyboardService, editor, goToNextResult, goToPrevResult, toggleCaseSensitivity, toggleReplaceMode])
+  }, [
+    application.keyboardService,
+    editor,
+    goToNextResult,
+    goToPrevResult,
+    isEditable,
+    toggleCaseSensitivity,
+    toggleReplaceMode,
+  ])
 
   const searchQueryAndHighlight = useCallback(
     (query: string, isCaseSensitive: boolean) => {
@@ -222,6 +238,9 @@ export function SearchPlugin() {
   )
 
   const replaceCurrentResult = useCallback(() => {
+    if (!isEditable) {
+      return
+    }
     const currentResult = results[currentResultIndex]
     if (!currentResult) {
       return
@@ -236,9 +255,12 @@ export function SearchPlugin() {
       },
     )
     searchQueryAndHighlight(query, isCaseSensitive)
-  }, [$replaceResult, currentResultIndex, editor, isCaseSensitive, query, results, searchQueryAndHighlight])
+  }, [$replaceResult, currentResultIndex, editor, isCaseSensitive, isEditable, query, results, searchQueryAndHighlight])
 
   const replaceAllResults = useCallback(() => {
+    if (!isEditable) {
+      return
+    }
     if (results.length === 0) {
       return
     }
@@ -258,7 +280,7 @@ export function SearchPlugin() {
       },
     )
     searchQueryAndHighlight(query, isCaseSensitive)
-  }, [$replaceResult, editor, isCaseSensitive, query, results, searchQueryAndHighlight])
+  }, [$replaceResult, editor, isCaseSensitive, isEditable, query, results, searchQueryAndHighlight])
 
   const [isMounted, setElement] = useLifecycleAnimation({
     open: isSearchActive,
@@ -295,11 +317,11 @@ export function SearchPlugin() {
       <div
         className={classNames(
           'absolute left-2 right-6 top-2 z-10 flex select-none rounded border border-border bg-default font-sans md:left-auto',
-          editor.isEditable() ? 'md:top-13' : 'md:top-3',
+          isEditable ? 'md:top-13' : 'md:top-3',
         )}
         ref={setElement}
       >
-        {editor.isEditable() && (
+        {isEditable && (
           <button
             className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
             onClick={toggleReplaceMode}
@@ -392,7 +414,7 @@ export function SearchPlugin() {
               <CloseIcon className="h-4 w-4 fill-current text-text" />
             </button>
           </div>
-          {isReplaceMode && (
+          {isReplaceMode && isEditable && (
             <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
               <input
                 type="text"
