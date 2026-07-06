@@ -12,6 +12,8 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $findMatchingParent, mergeRegister, $insertNodeToNearestRoot } from '@lexical/utils'
 import {
   $createParagraphNode,
+  $getRoot,
+  $isElementNode,
   $getSelection,
   $isRangeSelection,
   COMMAND_PRIORITY_LOW,
@@ -21,6 +23,7 @@ import {
   KEY_ARROW_LEFT_COMMAND,
   KEY_ARROW_RIGHT_COMMAND,
   KEY_ARROW_UP_COMMAND,
+  LexicalNode,
 } from 'lexical'
 import { useEffect } from 'react'
 
@@ -37,6 +40,28 @@ import {
 import { $createCollapsibleTitleNode, $isCollapsibleTitleNode, CollapsibleTitleNode } from './CollapsibleTitleNode'
 
 export const INSERT_COLLAPSIBLE_COMMAND = createCommand<void>()
+export const SET_ALL_COLLAPSIBLES_OPEN_COMMAND = createCommand<boolean>('SET_ALL_COLLAPSIBLES_OPEN_COMMAND')
+
+export function $hasCollapsibleContainers(): boolean {
+  const containsCollapsibleContainer = (node: LexicalNode): boolean =>
+    $isCollapsibleContainerNode(node) || ($isElementNode(node) && node.getChildren().some(containsCollapsibleContainer))
+
+  return $getRoot().getChildren().some(containsCollapsibleContainer)
+}
+
+function $setAllCollapsiblesOpen(open: boolean): void {
+  const traverse = (node: LexicalNode) => {
+    if ($isCollapsibleContainerNode(node)) {
+      node.setOpen(open)
+    }
+
+    if ($isElementNode(node)) {
+      node.getChildren().forEach(traverse)
+    }
+  }
+
+  $getRoot().getChildren().forEach(traverse)
+}
 
 export default function CollapsiblePlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext()
@@ -157,6 +182,14 @@ export default function CollapsiblePlugin(): JSX.Element | null {
           }
 
           return false
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
+      editor.registerCommand(
+        SET_ALL_COLLAPSIBLES_OPEN_COMMAND,
+        (open) => {
+          $setAllCollapsiblesOpen(open)
+          return true
         },
         COMMAND_PRIORITY_LOW,
       ),
