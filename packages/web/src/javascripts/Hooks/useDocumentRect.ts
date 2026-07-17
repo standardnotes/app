@@ -11,19 +11,22 @@ export const useDocumentRect = (): DOMRect => {
   const [documentRect, setDocumentRect] = useState<DOMRect>(getBoundingClientRect())
 
   useEffect(() => {
-    let debounceTimeout: number
+    let debounceTimeout: number | undefined
 
     const handleWindowResize = () => {
       window.clearTimeout(debounceTimeout)
 
-      window.setTimeout(() => {
+      debounceTimeout = window.setTimeout(() => {
         setDocumentRect(getBoundingClientRect())
       }, DebounceTimeInMs)
     }
 
     window.addEventListener('resize', handleWindowResize)
 
-    return () => window.removeEventListener('resize', handleWindowResize)
+    return () => {
+      window.removeEventListener('resize', handleWindowResize)
+      window.clearTimeout(debounceTimeout)
+    }
   }, [])
 
   return documentRect

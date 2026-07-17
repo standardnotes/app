@@ -109,8 +109,8 @@ export class DecryptBackupFile implements UseCaseInterface<(EncryptedPayloadInte
     /** Extract items keys and synced vault root keys from root key decryption results */
     const recentlyDecryptedKeys: (ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface)[] =
       rootKeyBasedDecryptionResults
-        .filter((x) => isItemsKey(x) || isKeySystemRootKey(x))
         .filter(isDecryptedPayload)
+        .filter((x) => isItemsKey(x) || isKeySystemRootKey(x))
         .map((p) => CreateDecryptedItemFromPayload(p))
 
     /**

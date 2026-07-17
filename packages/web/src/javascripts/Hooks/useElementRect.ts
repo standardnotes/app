@@ -17,7 +17,7 @@ export const useAutoElementRect = (
   const [rect, setRect] = useState<DOMRect>()
 
   useEffect(() => {
-    let windowResizeDebounceTimeout: number
+    let windowResizeDebounceTimeout: number | undefined
     let windowResizeHandler: () => void
 
     if (element) {
@@ -30,7 +30,7 @@ export const useAutoElementRect = (
         windowResizeHandler = () => {
           window.clearTimeout(windowResizeDebounceTimeout)
 
-          window.setTimeout(() => {
+          windowResizeDebounceTimeout = window.setTimeout(() => {
             setRect(element.getBoundingClientRect())
           }, DebounceTimeInMs)
         }
@@ -42,6 +42,7 @@ export const useAutoElementRect = (
         if (windowResizeHandler) {
           window.removeEventListener('resize', windowResizeHandler)
         }
+        window.clearTimeout(windowResizeDebounceTimeout)
       }
     } else {
       setRect(undefined)
@@ -54,7 +55,7 @@ export const useAutoElementRect = (
 
 export const useElementResize = (element: HTMLElement | null | undefined, callback: () => void) => {
   useEffect(() => {
-    let windowResizeDebounceTimeout: number
+    let windowResizeDebounceTimeout: number | undefined
     let windowResizeHandler: () => void
 
     if (element) {
@@ -66,7 +67,7 @@ export const useElementResize = (element: HTMLElement | null | undefined, callba
       windowResizeHandler = () => {
         window.clearTimeout(windowResizeDebounceTimeout)
 
-        window.setTimeout(() => {
+        windowResizeDebounceTimeout = window.setTimeout(() => {
           callback()
         }, DebounceTimeInMs)
       }
@@ -75,6 +76,7 @@ export const useElementResize = (element: HTMLElement | null | undefined, callba
       return () => {
         resizeObserver.unobserve(element)
         window.removeEventListener('resize', windowResizeHandler)
+        window.clearTimeout(windowResizeDebounceTimeout)
       }
     } else {
       return
