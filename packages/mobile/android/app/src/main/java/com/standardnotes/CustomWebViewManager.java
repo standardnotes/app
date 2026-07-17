@@ -62,7 +62,7 @@ public class CustomWebViewManager extends RNCWebViewManager {
 
 	@Override
 	public RNCWebViewWrapper createViewInstance(ThemedReactContext reactContext) {
-		return super.createViewInstance(reactContext);
+		return super.createViewInstance(reactContext, new CustomWebView(reactContext));
 	}
 
 	@Override
@@ -70,7 +70,8 @@ public class CustomWebViewManager extends RNCWebViewManager {
 		return REACT_CLASS;
 	}
 
-	protected void addEventEmitters(ThemedReactContext reactContext, RNCWebView view) {
-		view.setWebViewClient(new CustomWebViewClient());
+	@Override
+	protected void addEventEmitters(ThemedReactContext reactContext, RNCWebViewWrapper view) {
+		view.getWebView().setWebViewClient(new CustomWebViewClient());
 	}
 }
