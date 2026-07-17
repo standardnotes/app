@@ -161,4 +161,10 @@ platform :android do
     version = 3_004_000 + ENV['BUILD_NUMBER'].to_i
     deploy_android 'prod', version
   end
+
+  desc 'Deploy production app to Play Store closed testing (alpha track)'
+  lane :closed_beta do
+    version = 3_004_000 + ENV['BUILD_NUMBER'].to_i
+    deploy_android 'prod', version, 'alpha'
+  end
 end
