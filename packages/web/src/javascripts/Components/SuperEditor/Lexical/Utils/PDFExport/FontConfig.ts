@@ -3,6 +3,13 @@ import { LexicalNode } from 'lexical'
 // @ts-expect-error No typing for this package
 import { unicodeScripts } from 'unicode-script'
 
+const SYMBOLS_FONT_CHARACTERS_PATTERN =
+  /[\u2160-\u218F\u2190-\u21FF\u2300-\u23FF\u2460-\u24FF\u2600-\u26FF\u2700-\u27BF]/
+
+const textNeedsSymbolsFont = (text: string): boolean => {
+  return SYMBOLS_FONT_CHARACTERS_PATTERN.test(text)
+}
+
 enum UnicodeScript {
   Latin = 'Latin',
   Common = 'Common',
@@ -59,6 +66,7 @@ export enum FontFamily {
   NotoSansSC = 'Noto Sans SC',
   NotoSansJP = 'Noto Sans JP',
   NotoSansKR = 'Noto Sans KR',
+  NotoSansSymbols = 'Noto Sans Symbols',
   Courier = 'Courier',
   Helvetica = 'Helvetica',
 }
@@ -174,6 +182,9 @@ const FONT_FAMILY_TO_FONT_SOURCES: Partial<Record<FontFamily, Partial<Record<Fon
   [FontFamily.NotoSansKR]: {
     [FontVariant.Normal]: '/noto-sans-kr/NotoSansKR-Regular.ttf',
   },
+  [FontFamily.NotoSansSymbols]: {
+    [FontVariant.Normal]: '/noto-sans-symbols/NotoSansSymbols-VariableFont_wght.ttf',
+  },
 }
 
 export const getFontFamilyForUnicodeScript = (script: UnicodeScript): FontFamily => {
@@ -270,7 +281,8 @@ const getFontRegisterOptions = (fontFamily: FontFamily) => {
 }
 
 export const getFontFamiliesFromLexicalNode = (node: LexicalNode) => {
-  const scripts: UnicodeScript[] = Array.from(unicodeScripts(node.getTextContent()))
+  const text = node.getTextContent()
+  const scripts: UnicodeScript[] = Array.from(unicodeScripts(text))
   const fontFamilies = [FontFamily.NotoSans]
   scripts.forEach((script) => {
     const fontFamilyForScript = getFontFamilyForUnicodeScript(script)
@@ -278,6 +290,11 @@ export const getFontFamiliesFromLexicalNode = (node: LexicalNode) => {
       fontFamilies.unshift(fontFamilyForScript)
     }
   })
+
+  if (textNeedsSymbolsFont(text)) {
+    fontFamilies.unshift(FontFamily.NotoSansSymbols)
+  }
+
   const fontFamiliesSet = new Set(fontFamilies)
   return Array.from(fontFamiliesSet)
 }
