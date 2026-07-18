@@ -188,7 +188,9 @@ export default function CollapsiblePlugin(): JSX.Element | null {
       editor.registerCommand(
         SET_ALL_COLLAPSIBLES_OPEN_COMMAND,
         (open) => {
-          $setAllCollapsiblesOpen(open)
+          editor.update(() => {
+            $setAllCollapsiblesOpen(open)
+          })
           return true
         },
         COMMAND_PRIORITY_LOW,
