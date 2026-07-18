@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.34](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.33...@standardnotes/web@3.201.34) (2026-07-18)
+
+### Bug Fixes
+
+* Fixes blurry context menus on desktop ([#2882](https://github.com/standardnotes/app/issues/2882)) ([0f65f70](https://github.com/standardnotes/app/commit/0f65f7061cd0d67150a76cbb9a2bd1bf3919952b))
+* Fixes hardware key authentication on Web Clipper ([#3028](https://github.com/standardnotes/app/issues/3028)) ([09bcc2f](https://github.com/standardnotes/app/commit/09bcc2f937f90f340e84a14474fa207d13da6a3f))
+
 ## [3.201.33](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.32...@standardnotes/web@3.201.33) (2026-07-18)
 
 ### Bug Fixes
