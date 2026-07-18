@@ -3,14 +3,17 @@ package com.standardnotes;
 import com.reactnativecommunity.webview.RNCWebView;
 import com.reactnativecommunity.webview.RNCWebViewClient;
 import com.reactnativecommunity.webview.RNCWebViewManager;
+import com.reactnativecommunity.webview.RNCWebViewManagerImpl;
+import com.reactnativecommunity.webview.RNCWebViewWrapper;
 import com.facebook.react.uimanager.ThemedReactContext;
 import android.view.inputmethod.InputConnectionWrapper;
 import com.facebook.react.module.annotations.ReactModule;
-import com.reactnativecommunity.webview.RNCWebViewWrapper;
 
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+
+import androidx.annotation.NonNull;
 
 @ReactModule(name = CustomWebViewManager.REACT_CLASS)
 public class CustomWebViewManager extends RNCWebViewManager {
@@ -62,7 +65,8 @@ public class CustomWebViewManager extends RNCWebViewManager {
 
 	@Override
 	public RNCWebViewWrapper createViewInstance(ThemedReactContext reactContext) {
-		return super.createViewInstance(reactContext, new CustomWebView(reactContext));
+		RNCWebViewManagerImpl impl = new RNCWebViewManagerImpl(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+		return impl.createViewInstance(reactContext, new CustomWebView(reactContext));
 	}
 
 	@Override
@@ -71,7 +75,7 @@ public class CustomWebViewManager extends RNCWebViewManager {
 	}
 
 	@Override
-	protected void addEventEmitters(ThemedReactContext reactContext, RNCWebViewWrapper view) {
+	protected void addEventEmitters(@NonNull ThemedReactContext reactContext, @NonNull RNCWebViewWrapper view) {
 		view.getWebView().setWebViewClient(new CustomWebViewClient());
 	}
 }
