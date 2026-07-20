@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.201.35](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.34...@standardnotes/web@3.201.35) (2026-07-20)
+
+### Bug Fixes
+
+* Fixes hardware key authentication ([#3029](https://github.com/standardnotes/app/issues/3029)) ([be928de](https://github.com/standardnotes/app/commit/be928defccdc4ff3e877ab83886cf0d7d0092246))
+
 ## [3.201.34](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.33...@standardnotes/web@3.201.34) (2026-07-18)
 
 ### Bug Fixes
