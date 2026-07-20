@@ -131,8 +131,10 @@ platform :android do
   def deploy_android(variant, versionCode, track = 'beta')
     sh('yarn run android:bundle')
     build_android(variant, versionCode)
+    package_name = variant == 'dev' ? 'com.standardnotes.dev' : 'com.standardnotes'
     upload_to_play_store(
       track: track,
+      package_name: package_name,
       json_key_data: (ENV['GOOGLE_PLAY_JSON_KEY_DATA']).to_s,
       skip_upload_metadata: true,
       skip_upload_images: true,
