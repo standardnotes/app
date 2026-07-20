@@ -24,14 +24,12 @@ const U2FAuthIframe = () => {
   const [parentOrigin, setParentOrigin] = useState<string | null>(null)
 
   useEffect(() => {
-    for (const origin of ALLOWED_PARENT_ORIGINS) {
-      window.parent.postMessage(
-        {
-          mountedAuthView: true,
-        },
-        origin,
-      )
-    }
+    window.parent.postMessage(
+      {
+        mountedAuthView: true,
+      },
+      '*',
+    )
   }, [])
 
   useEffect(() => {
