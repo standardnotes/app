@@ -19,6 +19,7 @@ export type AbstractListItemProps<I extends ListableContentItem> = {
   selected: boolean
   sortBy: keyof SortableItem | undefined
   tags: SNTag[]
+  isTiled?: boolean
   isPreviousItemTiled?: boolean
   isNextItemTiled?: boolean
 }
@@ -35,6 +36,7 @@ export function doListItemPropsMeritRerender(
     'hidePreview',
     'selected',
     'sortBy',
+    'isTiled',
     'isPreviousItemTiled',
     'isNextItemTiled',
   ]
