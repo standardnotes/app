@@ -1,3 +1,4 @@
+import IconButton from '@/Components/Button/IconButton'
 import TagsList from '@/Components/Tags/TagsList'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
@@ -27,7 +28,25 @@ const TagsSection: FunctionComponent = () => {
         <div className={'section-title-bar'}>
           <div className="section-title-bar-header">
             <TagsSectionTitle features={application.featuresController} />
-            {!application.navigationController.isSearching && <TagsSectionAddButton />}
+            {!application.navigationController.isSearching && (
+              <div className="flex flex-row items-center gap-1.5">
+                <IconButton
+                  focusable={true}
+                  icon={"collapse-all" as any}
+                  title="Collapse all folders"
+                  className="p-0 text-neutral hover:text-text transition-colors duration-150"
+                  onClick={() => application.navigationController.collapseAllTags()}
+                />
+                <IconButton
+                  focusable={true}
+                  icon={"expand-all" as any}
+                  title="Expand all folders"
+                  className="p-0 text-neutral hover:text-text transition-colors duration-150"
+                  onClick={() => application.navigationController.expandAllTags()}
+                />
+                <TagsSectionAddButton />
+              </div>
+            )}
           </div>
         </div>
         <TagsList type="all" />
