@@ -48,6 +48,7 @@ import { CenterAlignBlock, JustifyAlignBlock, LeftAlignBlock, RightAlignBlock } 
 import { BulletedListBlock, ChecklistBlock, NumberedListBlock } from '../Blocks/List'
 import { CodeBlock } from '../Blocks/Code'
 import { CollapsibleBlock } from '../Blocks/Collapsible'
+import { $hasCollapsibleContainers, SET_ALL_COLLAPSIBLES_OPEN_COMMAND } from '../CollapsiblePlugin'
 import { DividerBlock } from '../Blocks/Divider'
 import { H1Block, H2Block, H3Block } from '../Blocks/Headings'
 import { IndentBlock, OutdentBlock } from '../Blocks/IndentOutdent'
@@ -223,6 +224,7 @@ const ToolbarPlugin = () => {
   const [isHighlight, setIsHighlight] = useState(false)
 
   const [hasNonCollapsedSelection, setHasNonCollapsedSelection] = useState(false)
+  const [hasCollapsibleContainers, setHasCollapsibleContainers] = useState(false)
 
   const [linkNode, setLinkNode] = useState<LinkNode | null>(null)
   const [linkTextNode, setLinkTextNode] = useState<TextNode | null>(null)
@@ -242,6 +244,9 @@ const ToolbarPlugin = () => {
 
   const [isInsertMenuOpen, setIsInsertMenuOpen] = useState(false)
   const insertAnchorRef = useRef<HTMLButtonElement>(null)
+
+  const [isCollapsibleMenuOpen, setIsCollapsibleMenuOpen] = useState(false)
+  const collapsibleAnchorRef = useRef<HTMLButtonElement>(null)
 
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
@@ -309,6 +314,8 @@ const ToolbarPlugin = () => {
   }, [activeEditor, isMobile, isToolbarFixedRef])
 
   const $updateToolbar = useCallback(() => {
+    setHasCollapsibleContainers($hasCollapsibleContainers())
+
     const selection = $getSelection()
     if (!$isRangeSelection(selection)) {
       return
@@ -479,6 +486,10 @@ const ToolbarPlugin = () => {
   }, [editor, $updateToolbar])
 
   useEffect(() => {
+    activeEditor.getEditorState().read(() => {
+      setHasCollapsibleContainers($hasCollapsibleContainers())
+    })
+
     return mergeRegister(
       activeEditor.registerUpdateListener(({ editorState }) => {
         editorState.read(() => {
@@ -816,6 +827,18 @@ const ToolbarPlugin = () => {
               }}
               disabled={!hasNonCollapsedSelection}
             />
+            <ToolbarButton
+              name="Collapsibles options"
+              onSelect={() => {
+                setIsCollapsibleMenuOpen(!isCollapsibleMenuOpen)
+              }}
+              ref={collapsibleAnchorRef}
+              className={isCollapsibleMenuOpen ? 'md:bg-default' : ''}
+              disabled={!hasCollapsibleContainers}
+            >
+              <Icon type="details-block" size="custom" className="h-4 w-4 md:h-3.5 md:w-3.5" />
+              <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
+            </ToolbarButton>
           </Toolbar>
           {isMobile && (
             <button
@@ -1097,6 +1120,33 @@ const ToolbarPlugin = () => {
             name={PasswordBlock.name}
             iconName={PasswordBlock.iconName}
             onClick={() => PasswordBlock.onSelect(editor)}
+          />
+        </Menu>
+      </Popover>
+      <Popover
+        title="Collapsibles options"
+        anchorElement={collapsibleAnchorRef}
+        open={isCollapsibleMenuOpen}
+        togglePopover={() => setIsCollapsibleMenuOpen(!isCollapsibleMenuOpen)}
+        side={isMobile ? 'top' : 'bottom'}
+        align="start"
+        className="py-1"
+        disableMobileFullscreenTakeover
+        disableFlip
+        containerClassName="md:!min-w-60 md:!w-auto"
+        portal={false}
+        documentElement={popoverDocumentElement}
+      >
+        <Menu a11yLabel="Collapsibles options" className="!px-0" onClick={() => setIsCollapsibleMenuOpen(false)}>
+          <ToolbarMenuItem
+            name="Collapse all"
+            iconName="chevron-up"
+            onClick={() => activeEditor.dispatchCommand(SET_ALL_COLLAPSIBLES_OPEN_COMMAND, false)}
+          />
+          <ToolbarMenuItem
+            name="Expand all"
+            iconName="chevron-down"
+            onClick={() => activeEditor.dispatchCommand(SET_ALL_COLLAPSIBLES_OPEN_COMMAND, true)}
           />
         </Menu>
       </Popover>
