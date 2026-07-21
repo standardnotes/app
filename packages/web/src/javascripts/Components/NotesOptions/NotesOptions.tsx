@@ -97,6 +97,27 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     closeMenuAndToggleNotesList()
   }, [closeMenuAndToggleNotesList, notesController])
 
+  const openInNewTab = useCallback(async () => {
+    if (notes[0]) {
+      await application.itemListController.openNote(notes[0].uuid, true)
+      closeMenu()
+    }
+  }, [application, notes, closeMenu])
+
+  const openInSplitScreen = useCallback(async () => {
+    if (notes[0]) {
+      const newController = await application.itemControllerGroup.createItemController(
+        { note: notes[0] },
+        { openInNewTab: true }
+      )
+      const newIndex = application.itemControllerGroup.itemControllers.indexOf(newController)
+      if (newIndex !== -1) {
+        application.itemControllerGroup.splitTab(newIndex)
+      }
+      closeMenu()
+    }
+  }, [application, notes, closeMenu])
+
   const openRevisionHistoryModal = useCallback(() => {
     application.historyModalController.openModal(notesController.firstSelectedNote)
   }, [application.historyModalController, notesController.firstSelectedNote])
@@ -150,6 +171,16 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     <>
       {notes.length === 1 && (
         <>
+          <MenuSection>
+            <MenuItem onClick={openInNewTab}>
+              <Icon type="plus" className={iconClass} />
+              Open in new tab
+            </MenuItem>
+            <MenuItem onClick={openInSplitScreen}>
+              <Icon type="pencil" className={iconClass} />
+              Open in split screen
+            </MenuItem>
+          </MenuSection>
           <MenuSection>
             <MenuItem onClick={openRevisionHistoryModal}>
               <Icon type="history" className={iconClass} />
