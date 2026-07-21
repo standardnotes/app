@@ -1,9 +1,9 @@
 import { IconType } from '@standardnotes/snjs'
 
-export type DropdownItem = {
+export type DropdownItem<T extends string> = {
   icon?: IconType
   iconClassName?: string
   label: string
-  value: string
+  value: T
   disabled?: boolean
 }

@@ -4,11 +4,11 @@ import { RootQueryParam, RouteServiceInterface } from '@standardnotes/ui-service
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { PreferencePaneId } from '@standardnotes/services'
 
-const DEFAULT_PANE: PreferencePaneId = 'account'
+const DEFAULT_PANE = PreferencePaneId.Account
 
 export class PreferencesController extends AbstractViewController {
   private _open = false
-  currentPane: PreferencePaneId = DEFAULT_PANE
+  currentPane = DEFAULT_PANE
 
   constructor(
     private routeService: RouteServiceInterface,

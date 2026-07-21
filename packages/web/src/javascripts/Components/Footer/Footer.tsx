@@ -9,6 +9,7 @@ import {
   StatusServiceEvent,
   HttpErrorResponseBody,
   getErrorMessageFromErrorResponseBody,
+  PreferencePaneId,
 } from '@standardnotes/snjs'
 import {
   STRING_NEW_UPDATE_READY,
@@ -343,7 +344,7 @@ class Footer extends AbstractComponent<Props, State> {
 
   openPreferences = (openWhatsNew: boolean) => {
     if (openWhatsNew) {
-      this.application.preferencesController.setCurrentPane('whats-new')
+      this.application.preferencesController.setCurrentPane(PreferencePaneId.WhatsNew)
     }
     this.application.preferencesController.openPreferences()
   }
