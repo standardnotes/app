@@ -18,9 +18,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-      - name: Export version from package.json
-        run:
-          echo "PACKAGE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
+      - name: Export version for closed beta
+        run: |
+          BASE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)
+          echo "PACKAGE_VERSION=${BASE_VERSION}-beta.${{ github.run_number }}" >> $GITHUB_ENV
       - name: Setup react-native kernel and increase watchers
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
       - name: Decode Production Android keystore
