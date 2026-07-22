@@ -19,6 +19,7 @@ import { $isTableNode, $isTableRowNode, $isTableCellNode } from '@lexical/table'
 import { $isCodeHighlightNode, $isCodeNode } from '@lexical/code'
 import { $isInlineFileNode } from '../../../Plugins/InlineFilePlugin/InlineFileNode'
 import { $isRemoteImageNode } from '../../../Plugins/RemoteImagePlugin/RemoteImageNode'
+import { $isBubbleNode } from '../../../Plugins/ItemBubblePlugin/Nodes/BubbleUtils'
 import { $isCollapsibleContainerNode } from '../../../Plugins/CollapsiblePlugin/CollapsibleContainerNode'
 import { $isCollapsibleContentNode } from '../../../Plugins/CollapsiblePlugin/CollapsibleContentNode'
 import { $isCollapsibleTitleNode } from '../../../Plugins/CollapsiblePlugin/CollapsibleTitleNode'
@@ -141,10 +142,10 @@ const getListItemNode = ({
             ],
           },
       {
-        type: 'Text',
+        type: 'View',
         style: {
           flex: 1,
-          lineHeight: PDF_BASE_FONT_SIZE * PDF_LINE_HEIGHT_MULTIPLIER,
+          flexDirection: 'column',
         },
         children,
       },
@@ -363,6 +364,13 @@ const getPDFDataNodeFromLexicalNode = (
     }
   }
 
+  if ($isBubbleNode(node)) {
+    return {
+      type: 'Text',
+      children: node.getTextContent(),
+    }
+  }
+
   if ($isInlineFileNode(node) || $isRemoteImageNode(node)) {
     if (!node.__src.startsWith('data:')) {
       return {
@@ -470,6 +478,10 @@ const getPDFDataNodeFromLexicalNode = (
   }
 
   if ($isParagraphNode(node) && node.getTextContent().length === 0) {
+    if ($isListItemNode(parent)) {
+      return null
+    }
+
     return getPDFVerticalSpacer()
   }
 

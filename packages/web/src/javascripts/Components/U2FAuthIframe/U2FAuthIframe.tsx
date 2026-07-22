@@ -3,22 +3,32 @@ import Button from '../Button/Button'
 import { startAuthentication } from '@simplewebauthn/browser'
 import { log, LoggingDomain } from '@/Logging'
 
+const CHROME_CLIPPER_EXTENSION_ORIGIN = 'chrome-extension://heapafmadojoodklnkhjanbinemaagok'
+const FIREFOX_CLIPPER_EXTENSION_ORIGIN = 'moz-extension://2a461925-d1b1-4ed3-99a6-91fe7633cc2c'
+
+const ALLOWED_PARENT_ORIGINS = ['file://', CHROME_CLIPPER_EXTENSION_ORIGIN, FIREFOX_CLIPPER_EXTENSION_ORIGIN]
+
+const isAllowedParentOrigin = (origin: string): boolean => {
+  return ALLOWED_PARENT_ORIGINS.includes(origin)
+}
+
 /**
- * An iframe for use in the desktop and mobile application that allows them to load app.standardnotes.com to perform
- * U2F authentication. Web applications do not need this iframe, as they can perform U2F authentication directly.
+ * An iframe for use in the desktop app and web clipper extension that allows them to load app.standardnotes.com
+ * to perform U2F authentication. Web applications do not need this iframe, as they can perform U2F authentication
+ * directly.
  */
 const U2FAuthIframe = () => {
   const [username, setUsername] = useState('')
   const [apiHost, setApiHost] = useState<string | null>(null)
   const [source, setSource] = useState<MessageEvent['source'] | null>(null)
-  const NATIVE_CLIENT_ORIGIN = 'file://'
+  const [parentOrigin, setParentOrigin] = useState<string | null>(null)
 
   useEffect(() => {
     window.parent.postMessage(
       {
         mountedAuthView: true,
       },
-      NATIVE_CLIENT_ORIGIN,
+      '*',
     )
   }, [])
 
@@ -26,9 +36,8 @@ const U2FAuthIframe = () => {
     const messageHandler = (event: MessageEvent) => {
       log(LoggingDomain.U2F, 'U2F iframe received message', event)
 
-      const eventDoesNotComeFromNativeClient = event.origin !== NATIVE_CLIENT_ORIGIN
-      if (eventDoesNotComeFromNativeClient) {
-        log(LoggingDomain.U2F, 'Not setting username; origin does not match', event.origin, NATIVE_CLIENT_ORIGIN)
+      if (!isAllowedParentOrigin(event.origin)) {
+        log(LoggingDomain.U2F, 'Not setting username; origin is not allowed', event.origin)
         return
       }
 
@@ -36,6 +45,7 @@ const U2FAuthIframe = () => {
         setUsername(event.data.username)
         setApiHost(event.data.apiHost)
         setSource(event.source)
+        setParentOrigin(event.origin)
       }
     }
 
@@ -54,7 +64,7 @@ const U2FAuthIframe = () => {
     setError('')
 
     try {
-      if (!username || !source) {
+      if (!username || !source || !parentOrigin) {
         throw new Error('No username provided')
       }
 
@@ -81,7 +91,7 @@ const U2FAuthIframe = () => {
         {
           assertionResponse,
         },
-        NATIVE_CLIENT_ORIGIN,
+        parentOrigin,
       )
 
       setInfo('Authentication successful!')
@@ -92,7 +102,7 @@ const U2FAuthIframe = () => {
       setError(JSON.stringify(error))
       console.error(error)
     }
-  }, [source, username, apiHost])
+  }, [source, username, apiHost, parentOrigin])
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">

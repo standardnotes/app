@@ -1,6 +1,56 @@
 {
   "versions": [
     {
+      "version": "3.201.35",
+      "title": "[3.201.35](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.34...@standardnotes/web@3.201.35) (2026-07-20)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixes hardware key authentication ([#3029](https://github.com/standardnotes/app/issues/3029)) ([be928de](https://github.com/standardnotes/app/commit/be928defccdc4ff3e877ab83886cf0d7d0092246))",
+      "parsed": {
+        "_": [
+          "Fixes hardware key authentication (#3029) (be928de)"
+        ],
+        "Bug Fixes": [
+          "Fixes hardware key authentication (#3029) (be928de)"
+        ]
+      }
+    },
+    {
+      "version": "3.201.34",
+      "title": "[3.201.34](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.33...@standardnotes/web@3.201.34) (2026-07-18)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixes blurry context menus on desktop ([#2882](https://github.com/standardnotes/app/issues/2882)) ([0f65f70](https://github.com/standardnotes/app/commit/0f65f7061cd0d67150a76cbb9a2bd1bf3919952b))\n* Fixes hardware key authentication on Web Clipper ([#3028](https://github.com/standardnotes/app/issues/3028)) ([09bcc2f](https://github.com/standardnotes/app/commit/09bcc2f937f90f340e84a14474fa207d13da6a3f))",
+      "parsed": {
+        "_": [
+          "Fixes blurry context menus on desktop (#2882) (0f65f70)",
+          "Fixes hardware key authentication on Web Clipper (#3028) (09bcc2f)"
+        ],
+        "Bug Fixes": [
+          "Fixes blurry context menus on desktop (#2882) (0f65f70)",
+          "Fixes hardware key authentication on Web Clipper (#3028) (09bcc2f)"
+        ]
+      }
+    },
+    {
+      "version": "3.201.33",
+      "title": "[3.201.33](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.32...@standardnotes/web@3.201.33) (2026-07-18)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fix keyboard shortcut handling from within iframe editors ([#3025](https://github.com/standardnotes/app/issues/3025)) ([ee56c85](https://github.com/standardnotes/app/commit/ee56c858ab2c0d7d5a158e29c070b4bf55c1bd8b))\n* Fixes gaps after linked items within bullet lists on Super PDF export ([#3023](https://github.com/standardnotes/app/issues/3023)) ([883cd4f](https://github.com/standardnotes/app/commit/883cd4fda968c01648b8465f5cf02cd72d16f514))\n* Fixes incorrect rendering of some special characters on Super PDF export ([#3024](https://github.com/standardnotes/app/issues/3024)) ([44a1a6c](https://github.com/standardnotes/app/commit/44a1a6c374ea1d5ee05cc938dce77afe369a1ce5))\n* Fixes text alignment in Super linked items ([#3027](https://github.com/standardnotes/app/issues/3027)) ([eec6bc2](https://github.com/standardnotes/app/commit/eec6bc2782fd3b499961f73c33b2b284a69a49b5))",
+      "parsed": {
+        "_": [
+          "Fix keyboard shortcut handling from within iframe editors (#3025) (ee56c85)",
+          "Fixes gaps after linked items within bullet lists on Super PDF export (#3023) (883cd4f)",
+          "Fixes incorrect rendering of some special characters on Super PDF export (#3024) (44a1a6c)",
+          "Fixes text alignment in Super linked items (#3027) (eec6bc2)"
+        ],
+        "Bug Fixes": [
+          "Fix keyboard shortcut handling from within iframe editors (#3025) (ee56c85)",
+          "Fixes gaps after linked items within bullet lists on Super PDF export (#3023) (883cd4f)",
+          "Fixes incorrect rendering of some special characters on Super PDF export (#3024) (44a1a6c)",
+          "Fixes text alignment in Super linked items (#3027) (eec6bc2)"
+        ]
+      }
+    },
+    {
       "version": "3.201.32",
       "title": "[3.201.32](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.31...@standardnotes/web@3.201.32) (2026-07-06)",
       "date": null,

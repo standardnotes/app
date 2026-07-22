@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.58.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.58.3...@standardnotes/models@1.58.4) (2026-07-18)
+
+### Bug Fixes
+
+* Fix keyboard shortcut handling from within iframe editors ([#3025](https://github.com/standardnotes/app/issues/3025)) ([ee56c85](https://github.com/standardnotes/app/commit/ee56c858ab2c0d7d5a158e29c070b4bf55c1bd8b))
+
 ## [1.58.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.58.2...@standardnotes/models@1.58.3) (2026-04-24)
 
 **Note:** Version bump only for package @standardnotes/models

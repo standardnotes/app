@@ -7,6 +7,7 @@ import {
   ComponentInterface,
   SubscriptionManagerEvent,
 } from '@standardnotes/snjs'
+import { KeyboardKeyEvent, type KeyboardModifier } from '@standardnotes/ui-services'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import OfflineRestricted from '@/Components/ComponentView/OfflineRestricted'
@@ -153,12 +154,50 @@ const IframeFeatureView: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const removeActionObserver = componentViewer.addActionObserver((action, data) => {
+      const keyboardData = data as {
+        key?: string
+        code?: string
+        ctrlKey?: boolean
+        metaKey?: boolean
+        shiftKey?: boolean
+        altKey?: boolean
+        keyboardModifier?: KeyboardModifier
+      }
+
       switch (action) {
         case ComponentAction.KeyDown:
-          application.keyboardService.handleComponentKeyDown(data.keyboardModifier)
+          if (keyboardData.key !== undefined && keyboardData.code !== undefined) {
+            application.keyboardService.handleComponentKeyboardEvent(
+              {
+                key: keyboardData.key,
+                code: keyboardData.code,
+                ctrlKey: keyboardData.ctrlKey ?? false,
+                metaKey: keyboardData.metaKey ?? false,
+                shiftKey: keyboardData.shiftKey ?? false,
+                altKey: keyboardData.altKey ?? false,
+              },
+              KeyboardKeyEvent.Down,
+            )
+          } else {
+            application.keyboardService.handleComponentKeyDown(keyboardData.keyboardModifier)
+          }
           break
         case ComponentAction.KeyUp:
-          application.keyboardService.handleComponentKeyUp(data.keyboardModifier)
+          if (keyboardData.key !== undefined && keyboardData.code !== undefined) {
+            application.keyboardService.handleComponentKeyboardEvent(
+              {
+                key: keyboardData.key,
+                code: keyboardData.code,
+                ctrlKey: keyboardData.ctrlKey ?? false,
+                metaKey: keyboardData.metaKey ?? false,
+                shiftKey: keyboardData.shiftKey ?? false,
+                altKey: keyboardData.altKey ?? false,
+              },
+              KeyboardKeyEvent.Up,
+            )
+          } else {
+            application.keyboardService.handleComponentKeyUp(keyboardData.keyboardModifier)
+          }
           break
         case ComponentAction.Click:
           application.notesController.setContextMenuOpen(false)
