@@ -17,13 +17,13 @@ const DeleteAccount = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>{c('Title').t`Delete account`}</Title>
-        <Text>{c('Info')
+        <Title>{c('B1.Account.Session.Title').t`Delete account`}</Title>
+        <Text>{c('B1.Account.Session.Info')
           .t`This action is irreversible. After deletion completes, you will be signed out on all devices.`}</Text>
         <div className="mt-3 flex flex-row flex-wrap gap-3">
           <Button
             colorStyle="danger"
-            label={c('Action').t`Delete my account`}
+            label={c('B1.Account.Session.Action').t`Delete my account`}
             onClick={() => {
               application.accountMenuController.setDeletingAccount(true)
             }}

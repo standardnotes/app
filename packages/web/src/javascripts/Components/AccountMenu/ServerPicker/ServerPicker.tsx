@@ -50,7 +50,7 @@ const ServerPicker = ({ className }: Props) => {
     } else if (type === 'home server') {
       if (!application.homeServer) {
         application.alerts
-          .alert(c('Error').t`Home server is not running. Please open the prefences and home server tab to start it.`)
+          .alert(c('B1.Account.SignIn.Error').t`Home server is not running. Please open the prefences and home server tab to start it.`)
           .catch(console.error)
 
         return
@@ -59,7 +59,7 @@ const ServerPicker = ({ className }: Props) => {
       const homeServerUrl = await application.homeServer.getHomeServerUrl()
       if (!homeServerUrl) {
         application.alerts
-          .alert(c('Error').t`Home server is not running. Please open the prefences and home server tab to start it.`)
+          .alert(c('B1.Account.SignIn.Error').t`Home server is not running. Please open the prefences and home server tab to start it.`)
           .catch(console.error)
 
         return
@@ -72,9 +72,9 @@ const ServerPicker = ({ className }: Props) => {
   const options = useMemo(
     () =>
       [
-        { label: c('Option').t`Default`, value: 'standard' },
-        { label: c('Option').t`Custom`, value: 'custom' },
-      ].concat(isDesktopApplication() ? [{ label: c('Option').t`Home Server`, value: 'home server' }] : []) as {
+        { label: c('B1.Account.SignIn.Option').t`Default`, value: 'standard' },
+        { label: c('B1.Account.SignIn.Option').t`Custom`, value: 'custom' },
+      ].concat(isDesktopApplication() ? [{ label: c('B1.Account.SignIn.Option').t`Home Server`, value: 'home server' }] : []) as {
         label: string
         value: ServerType
       }[],
@@ -83,7 +83,7 @@ const ServerPicker = ({ className }: Props) => {
 
   return (
     <div className={`flex h-full flex-grow flex-col px-3 pb-1.5 ${className}`}>
-      <div className="mb-2 flex font-bold">{c('Label').t`Sync Server`}</div>
+      <div className="mb-2 flex font-bold">{c('B1.Account.SignIn.Label').t`Sync Server`}</div>
       <RadioButtonGroup value={currentType} items={options} onChange={selectTab} />
       {currentType === 'custom' && (
         <DecoratedInput

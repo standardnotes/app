@@ -68,10 +68,10 @@ const PasscodeLock = ({ application }: Props) => {
     const encryptionEnabled = hasUser || hasPasscode
 
     const encryptionStatusString = hasUser
-      ? STRING_E2E_ENABLED
+      ? STRING_E2E_ENABLED()
       : hasPasscode
-      ? STRING_LOCAL_ENC_ENABLED
-      : STRING_ENC_NOT_ENABLED
+      ? STRING_LOCAL_ENC_ENABLED()
+      : STRING_ENC_NOT_ENABLED()
 
     setEncryptionStatusString(encryptionStatusString)
     setIsEncryptionEnabled(encryptionEnabled)

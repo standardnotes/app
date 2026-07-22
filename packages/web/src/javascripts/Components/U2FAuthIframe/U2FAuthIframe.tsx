@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Button from '../Button/Button'
 import { startAuthentication } from '@simplewebauthn/browser'
 import { log, LoggingDomain } from '@/Logging'
+import { c } from 'ttag'
 
 const CHROME_CLIPPER_EXTENSION_ORIGIN = 'chrome-extension://heapafmadojoodklnkhjanbinemaagok'
 const FIREFOX_CLIPPER_EXTENSION_ORIGIN = 'moz-extension://2a461925-d1b1-4ed3-99a6-91fe7633cc2c'
@@ -65,7 +66,7 @@ const U2FAuthIframe = () => {
 
     try {
       if (!username || !source || !parentOrigin) {
-        throw new Error('No username provided')
+        throw new Error(c('B1.Account.SignIn.Error').t`No username provided`)
       }
 
       const response = await fetch(`${apiHost}/v1/authenticators/generate-authentication-options`, {
@@ -80,10 +81,10 @@ const U2FAuthIframe = () => {
 
       const jsonResponse = await response.json()
       if (!jsonResponse.data || !jsonResponse.data.options) {
-        throw new Error('No options returned from server')
+        throw new Error(c('B1.Account.SignIn.Error').t`No options returned from server`)
       }
 
-      setInfo('Waiting for security key...')
+      setInfo(c('B1.Account.SignIn.Status').t`Waiting for security key...`)
 
       const assertionResponse = await startAuthentication(jsonResponse.data.options)
 
@@ -94,7 +95,7 @@ const U2FAuthIframe = () => {
         parentOrigin,
       )
 
-      setInfo('Authentication successful!')
+      setInfo(c('B1.Account.SignIn.Info').t`Authentication successful!`)
     } catch (error) {
       if (!error) {
         return
@@ -107,9 +108,10 @@ const U2FAuthIframe = () => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
       <div className="mb-2 text-center">
-        Insert your hardware security key, then press the button below to authenticate.
+        {c('B1.Account.SignIn.Info')
+          .t`Insert your hardware security key, then press the button below to authenticate.`}
       </div>
-      <Button onClick={beginAuthentication}>Authenticate</Button>
+      <Button onClick={beginAuthentication}>{c('B1.Account.SignIn.Action').t`Authenticate`}</Button>
       <div className="mt-2">
         <div>{info}</div>
         <div className="text-danger">{error}</div>

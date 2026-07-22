@@ -36,7 +36,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
 
   const validateCurrentPassword = useCallback(async () => {
     if (!currentPassword || currentPassword.length === 0) {
-      applicationAlertService.alert(c('Error').t`Please enter your current password.`).catch(console.error)
+      applicationAlertService.alert(c('B1.Account.Session.Error').t`Please enter your current password.`).catch(console.error)
 
       return false
     }
@@ -44,7 +44,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
     const success = await application.validateAccountPassword(currentPassword)
     if (!success) {
       applicationAlertService
-        .alert(c('Error').t`The current password you entered is not correct. Please try again.`)
+        .alert(c('B1.Account.Session.Error').t`The current password you entered is not correct. Please try again.`)
         .catch(console.error)
 
       return false
@@ -75,7 +75,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
   const dismiss = useCallback(() => {
     if (lockContinue) {
       applicationAlertService
-        .alert(c('Error').t`Cannot close window until pending tasks are complete.`)
+        .alert(c('B1.Account.Session.Error').t`Cannot close window until pending tasks are complete.`)
         .catch(console.error)
     } else {
       onCloseDialog()
@@ -119,7 +119,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
   const handleDialogClose = useCallback(() => {
     if (lockContinue) {
       applicationAlertService
-        .alert(c('Error').t`Cannot close window until pending tasks are complete.`)
+        .alert(c('B1.Account.Session.Error').t`Cannot close window until pending tasks are complete.`)
         .catch(console.error)
     } else {
       onCloseDialog()
@@ -129,19 +129,19 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
   const submitButtonLabel = useMemo(() => {
     switch (submitButtonTitle) {
       case SubmitButtonTitles.GeneratingKeys:
-        return c('Action').t`Generating Keys...`
+        return c('B1.Account.Session.Action').t`Generating Keys...`
       case SubmitButtonTitles.Finish:
-        return c('Action').t`Finish`
+        return c('B1.Account.Session.Action').t`Finish`
       case SubmitButtonTitles.Default:
       default:
-        return c('Action').t`Continue`
+        return c('B1.Account.Session.Action').t`Continue`
     }
   }, [submitButtonTitle])
 
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: c('Action').t`Cancel`,
+        label: c('B1.Account.Session.Action').t`Cancel`,
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
@@ -157,7 +157,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
   )
 
   return (
-    <Modal title={c('Title').t`Change Email`} close={handleDialogClose} actions={modalActions}>
+    <Modal title={c('B1.Account.Session.Title').t`Change Email`} close={handleDialogClose} actions={modalActions}>
       <div className="px-4.5 py-4">
         {currentStep === Steps.InitialStep && (
           <ChangeEmailForm setNewEmail={setNewEmail} setCurrentPassword={setCurrentPassword} />

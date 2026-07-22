@@ -163,25 +163,15 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
     checkIfCaptchaRequiredAndRegister()
   }, [checkIfCaptchaRequiredAndRegister])
 
+  const noPasswordResetOption = (
+    <span className="text-danger">{c('B1.Account.SignIn.Info').t`Standard Notes does not have a password reset option`}</span>
+  )
+
   const confirmPasswordForm = (
     <>
       <div className="mb-3 px-3 text-sm">
-        {
-          // translator: Full sentence: "Because your notes are encrypted using your password, Standard Notes does not have a password reset option. If you forget your password, you will permanently lose access to your data."
-          c('Info').t`Because your notes are encrypted using your password,`
-        }{' '}
-        {
-          <span className="text-danger">
-            {
-              // translator: Full sentence: "Because your notes are encrypted using your password, Standard Notes does not have a password reset option. If you forget your password, you will permanently lose access to your data."
-              c('Info').t`Standard Notes does not have a password reset option`
-            }
-          </span>
-        }
-        {
-          // translator: Full sentence: "Because your notes are encrypted using your password, Standard Notes does not have a password reset option. If you forget your password, you will permanently lose access to your data."
-          c('Info').t`. If you forget your password, you will permanently lose access to your data.`
-        }
+        {c('B1.Account.SignIn.Info')
+          .jt`Because your notes are encrypted using your password, ${noPasswordResetOption}. If you forget your password, you will permanently lose access to your data.`}
       </div>
       <form onSubmit={handleConfirmFormSubmit} className="mb-1 px-3">
         {!isRegistering && (
@@ -191,7 +181,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
             left={[<Icon type="password" className="text-neutral" />]}
             onChange={handlePasswordChange}
             onKeyDown={handleKeyDown}
-            placeholder={c('Label').t`Confirm password`}
+            placeholder={c('B1.Account.SignIn.Label').t`Confirm password`}
             ref={passwordInputRef}
             value={confirmPassword}
           />
@@ -201,13 +191,13 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
           primary
           fullWidth
           className="mb-3 mt-1"
-          label={isRegistering ? c('Action').t`Creating account...` : c('Action').t`Create account & sign in`}
+          label={isRegistering ? c('B1.Account.SignIn.Action').t`Creating account...` : c('B1.Account.SignIn.Action').t`Create account & sign in`}
           onClick={handleConfirmFormSubmit}
           disabled={isRegistering}
         />
         <Checkbox
           name="is-ephemeral"
-          label={c('Option').t`Stay signed in`}
+          label={c('B1.Account.SignIn.Option').t`Stay signed in`}
           checked={!isEphemeral}
           onChange={handleEphemeralChange}
           disabled={isRegistering}
@@ -229,14 +219,14 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
       <div className="mb-3 mt-1 flex items-center px-3">
         <IconButton
           icon="arrow-left"
-          title={c('Action').t`Go back`}
+          title={c('B1.Account.SignIn.Action').t`Go back`}
           className="mr-2 flex p-0 text-neutral"
           onClick={handleGoBack}
           focusable={true}
           disabled={isRegistering}
         />
         <div className="text-base font-bold">
-          {captchaURL ? c('Title').t`Human verification` : c('Title').t`Confirm password`}
+          {captchaURL ? c('B1.Account.SignIn.Title').t`Human verification` : c('B1.Account.SignIn.Title').t`Confirm password`}
         </div>
       </div>
       {captchaURL ? <div className="p-[10px]">{captchaIframe}</div> : confirmPasswordForm}

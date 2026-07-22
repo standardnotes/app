@@ -15,10 +15,10 @@ const Encryption: FunctionComponent = () => {
   const isEncryptionEnabled = app.isEncryptionAvailable()
 
   const encryptionStatusString = hasUser
-    ? STRING_E2E_ENABLED
+    ? STRING_E2E_ENABLED()
     : hasPasscode
-    ? STRING_LOCAL_ENC_ENABLED
-    : STRING_ENC_NOT_ENABLED
+    ? STRING_LOCAL_ENC_ENABLED()
+    : STRING_ENC_NOT_ENABLED()
 
   return (
     <PreferencesGroup>

@@ -38,7 +38,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
   return (
     <AlertDialog closeDialog={closeDialog}>
       <div className="flex items-center justify-between text-lg font-bold">
-        {c('Title').t`Sign out workspace?`}
+        {c('B1.Account.Session.Title').t`Sign out workspace?`}
         <button className="rounded p-1 font-bold hover:bg-contrast" onClick={closeDialog}>
           <Icon type="close" />
         </button>
@@ -50,8 +50,8 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
             <>
               <br />
               <p className="text-base text-foreground lg:text-sm">
-                <strong>{c('Label').t`Note:`} </strong>
-                {c('Info')
+                <strong>{c('B1.Account.Session.Label').t`Note:`} </strong>
+                {c('B1.Account.Session.Info')
                   .t`Because you have other workspaces signed in, this sign out may leave logs and other metadata of your session on this device. For a more robust sign out that performs a hard clear of all app-related data, use the "Sign out all workspaces" option under "Switch workspace".`}
               </p>
             </>
@@ -66,7 +66,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
             <div className="sk-panel-row"></div>
             <div>
               <p className="text-base text-foreground lg:text-sm">
-                {c('Info')
+                {c('B1.Account.Session.Info')
                   .t`Local backups are enabled for this workspace. Review your backup files manually to decide what to keep.`}
               </p>
               <button
@@ -75,7 +75,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
                   void application.fileBackups?.openAllDirectoriesContainingBackupFiles()
                 }}
               >
-                {c('Action').t`View backup files`}
+                {c('B1.Account.Session.Action').t`View backup files`}
               </button>
             </div>
           </div>
@@ -84,10 +84,10 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
 
       <div className="mt-4 flex justify-end gap-2">
         <Button ref={cancelRef} onClick={closeDialog}>
-          {c('Action').t`Cancel`}
+          {c('B1.Account.Session.Action').t`Cancel`}
         </Button>
         <Button primary colorStyle="danger" onClick={confirm}>
-          {application.hasAccount() ? c('Action').t`Sign Out` : c('Action').t`Delete Workspace`}
+          {application.hasAccount() ? c('B1.Account.Session.Action').t`Sign Out` : c('B1.Account.Session.Action').t`Delete Workspace`}
         </Button>
       </div>
     </AlertDialog>

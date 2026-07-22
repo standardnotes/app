@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import { ChangeEventHandler, FunctionComponent } from 'react'
-import { c } from 'ttag'
+import { c, msgid } from 'ttag'
 
 type Props = {
   checked: boolean
@@ -22,9 +22,15 @@ const MergeLocalDataCheckbox: FunctionComponent<Props> = ({ checked, onChange, d
         onChange={onChange}
         disabled={disabled}
       />
-      <span className="text-danger">{c('Option').t`Merge local data (${notesAndTagsCount} notes and tags)`}</span>
+      <span className="text-danger">
+        {c('B1.Account.SignIn.Option').ngettext(
+          msgid`Merge local data (${notesAndTagsCount} item)`,
+          `Merge local data (${notesAndTagsCount} items)`,
+          notesAndTagsCount,
+        )}
+      </span>
       <StyledTooltip
-        label={c('Info')
+        label={c('B1.Account.SignIn.Info')
           .t`If unchecked, your local notes and tags will be permanently deleted and replaced with data from your account.`}
         showOnMobile
         className="!z-modal !max-w-[30ch] whitespace-normal"

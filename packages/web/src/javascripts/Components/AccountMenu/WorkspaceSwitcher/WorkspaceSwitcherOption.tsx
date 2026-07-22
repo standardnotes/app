@@ -26,12 +26,12 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
       <MenuItem tabIndex={FOCUSABLE_BUT_NOT_TABBABLE} ref={buttonRef} onClick={toggleMenu} className="justify-between">
         <div className="flex items-center">
           <Icon type="user-switch" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-          {c('Action').t`Switch workspace`}
+          {c('B1.Account.Session.Action').t`Switch workspace`}
         </div>
         <Icon type="chevron-right" className={`text-neutral ${MenuItemIconSize}`} />
       </MenuItem>
       <Popover
-        title={c('Action').t`Switch workspace`}
+        title={c('B1.Account.Session.Action').t`Switch workspace`}
         align="end"
         anchorElement={buttonRef}
         className="pb-2"
