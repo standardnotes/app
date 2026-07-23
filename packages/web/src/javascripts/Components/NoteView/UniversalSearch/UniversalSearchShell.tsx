@@ -11,6 +11,7 @@ import { UniversalSearchResultPayload } from './types'
 
 interface UniversalSearchShellProps<TPayload = UniversalSearchResultPayload> {
   controller: UniversalSearchController<TPayload>
+  locked: boolean
   className?: string
   position?: 'absolute' | 'inline'
   topMarginClassName?: string
@@ -41,6 +42,7 @@ function statusLabel<TPayload = UniversalSearchResultPayload>(controller: Univer
 
 export const UniversalSearchShell = observer(function UniversalSearchShell<TPayload = UniversalSearchResultPayload>({
   controller,
+  locked,
   className,
   position = 'absolute',
   topMarginClassName,
@@ -52,6 +54,10 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
   const replaceInputRef = useRef<HTMLInputElement | null>(null)
   const wasOpenRef = useRef(false)
   const wasReplaceModeRef = useRef(false)
+
+  useEffect(() => {
+    controller.setLocked(locked)
+  }, [controller, locked])
 
   useEffect(() => {
     if (controller.isOpen && !wasOpenRef.current) {
@@ -69,7 +75,7 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
     wasReplaceModeRef.current = controller.isReplaceMode
   }, [controller.isOpen, controller.isReplaceMode])
 
-  const canReplace = controller.provider.capabilities.supportsReplace
+  const canReplace = controller.canReplace
   const canHighlightAll = controller.provider.capabilities.supportsHighlightAll
   const hasResults = controller.results.length > 0
   const hasReplaceQuery = controller.replaceQuery.length > 0
@@ -119,19 +125,20 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
         className,
       )}
     >
-      <button
-        className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info disabled:cursor-not-allowed"
-        onClick={controller.toggleReplaceMode}
-        title={replaceShortcut ? `Toggle Replace Mode (${replaceShortcut})` : 'Toggle Replace Mode'}
-        disabled={!canReplace}
-        aria-label="Toggle replace mode"
-      >
-        {controller.isReplaceMode ? (
-          <ArrowDownIcon className="h-4 w-4 fill-text" />
-        ) : (
-          <ArrowRightIcon className="h-4 w-4 fill-text" />
-        )}
-      </button>
+      {canReplace && (
+        <button
+          className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
+          onClick={controller.toggleReplaceMode}
+          title={replaceShortcut ? `Toggle Replace Mode (${replaceShortcut})` : 'Toggle Replace Mode'}
+          aria-label="Toggle replace mode"
+        >
+          {controller.isReplaceMode ? (
+            <ArrowDownIcon className="h-4 w-4 fill-text" />
+          ) : (
+            <ArrowRightIcon className="h-4 w-4 fill-text" />
+          )}
+        </button>
+      )}
       <div
         className="flex flex-col gap-2 px-2 py-2"
         onKeyDown={(event) => {
@@ -204,7 +211,7 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
             <CloseIcon className="h-4 w-4 fill-current text-text" />
           </button>
         </div>
-        {controller.isReplaceMode && (
+        {controller.isReplaceMode && canReplace && (
           <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
             <input
               type="text"

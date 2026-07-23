@@ -205,4 +205,124 @@ describe('UniversalSearchController', () => {
     expect(controller.isCaseSensitive).toBe(false)
     expect(search).not.toHaveBeenCalled()
   })
+
+  it('does not enable replace mode when replace is unsupported', () => {
+    const provider: UniversalSearchProvider = {
+      id: 'no-replace',
+      capabilities: {
+        supportsReplace: false,
+        supportsHighlightAll: true,
+      },
+      search: jest.fn(() => []),
+      selectResult: jest.fn(),
+      clear: jest.fn(),
+    }
+    const controller = new UniversalSearchController(provider, immediateSearchOptions)
+
+    controller.open()
+    controller.toggleReplaceMode()
+
+    expect(controller.isReplaceMode).toBe(false)
+  })
+
+  it('closes replace mode when locked', () => {
+    const provider: UniversalSearchProvider = {
+      id: 'dynamic-replace',
+      capabilities: {
+        supportsReplace: true,
+        supportsHighlightAll: true,
+      },
+      search: jest.fn(() => []),
+      selectResult: jest.fn(),
+      clear: jest.fn(),
+    }
+    const controller = new UniversalSearchController(provider, immediateSearchOptions)
+
+    controller.open()
+    controller.toggleReplaceMode()
+
+    expect(controller.isReplaceMode).toBe(true)
+
+    controller.setLocked(true)
+
+    expect(controller.canReplace).toBe(false)
+    expect(controller.isReplaceMode).toBe(false)
+  })
+
+  it('closes replace mode', () => {
+    const provider: UniversalSearchProvider = {
+      id: 'dynamic-replace',
+      capabilities: {
+        supportsReplace: true,
+        supportsHighlightAll: true,
+      },
+      search: jest.fn(() => []),
+      selectResult: jest.fn(),
+      clear: jest.fn(),
+    }
+    const controller = new UniversalSearchController(provider, immediateSearchOptions)
+
+    controller.open()
+    controller.toggleReplaceMode()
+
+    expect(controller.isReplaceMode).toBe(true)
+
+    controller.closeReplaceMode()
+
+    expect(controller.isReplaceMode).toBe(false)
+  })
+
+  it('does not enable replace mode when the note is locked', () => {
+    const provider: UniversalSearchProvider = {
+      id: 'read-only',
+      capabilities: {
+        supportsReplace: true,
+        supportsHighlightAll: true,
+      },
+      search: jest.fn(() => []),
+      selectResult: jest.fn(),
+      clear: jest.fn(),
+    }
+    const controller = new UniversalSearchController(provider, {
+      ...immediateSearchOptions,
+    })
+    controller.setLocked(true)
+
+    controller.open()
+    controller.toggleReplaceMode()
+
+    expect(controller.canReplace).toBe(false)
+    expect(controller.isReplaceMode).toBe(false)
+  })
+
+  it('does not replace text when locked', async () => {
+    const replaceCurrentResult = jest.fn()
+    const provider: UniversalSearchProvider = {
+      id: 'read-only-replace',
+      capabilities: {
+        supportsReplace: true,
+        supportsHighlightAll: true,
+      },
+      search: jest.fn(() => [{ id: 'one-0' }]),
+      selectResult: jest.fn(),
+      clear: jest.fn(),
+      replaceCurrentResult,
+      replaceAllResults: jest.fn(),
+    }
+    const controller = new UniversalSearchController(provider, {
+      ...immediateSearchOptions,
+    })
+
+    controller.open()
+    controller.setQuery('hello')
+    await flushSearch()
+    controller.setReplaceQuery('bye')
+    controller.toggleReplaceMode()
+
+    controller.setLocked(true)
+    await controller.replaceCurrentResult()
+    await controller.replaceAllResults()
+
+    expect(replaceCurrentResult).not.toHaveBeenCalled()
+  })
 })

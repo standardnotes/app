@@ -28,11 +28,19 @@ export interface UniversalSearchProviderCapabilities {
   supportsHighlightAll: boolean
 }
 
+export interface UniversalSearchSelectResultOptions {
+  scrollIntoView?: boolean
+  selectInEditor?: boolean
+}
+
 export interface UniversalSearchProvider<TPayload = UniversalSearchResultPayload> {
   id: string
   capabilities: UniversalSearchProviderCapabilities
   search(query: UniversalSearchQuery): Promise<UniversalSearchResult<TPayload>[]> | UniversalSearchResult<TPayload>[]
-  selectResult(result: UniversalSearchResult<TPayload>, options?: { scrollIntoView?: boolean }): Promise<void> | void
+  selectResult(
+    result: UniversalSearchResult<TPayload>,
+    options?: UniversalSearchSelectResultOptions,
+  ): Promise<void> | void
   clear(): Promise<void> | void
   replaceCurrentResult?(
     result: UniversalSearchResult<TPayload>,
