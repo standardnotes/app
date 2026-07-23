@@ -9,14 +9,17 @@ function createMockPlainEditor(text: string): PlainEditorInterface {
   let currentText = text
   const textarea = document.createElement('textarea')
   textarea.value = text
+  textarea.setSelectionRange(0, 0)
 
   return {
     focus: jest.fn(),
     getText: () => currentText,
     getTextarea: () => textarea,
-    setSelection: (start, end) => {
-      textarea.setSelectionRange(start, end)
-    },
+    setSelection: jest.fn((start, end, options) => {
+      if (options?.selectInEditor) {
+        textarea.setSelectionRange(start, end)
+      }
+    }),
     replaceRange: jest.fn(async (start, end, replacement) => {
       currentText = currentText.slice(0, start) + replacement + currentText.slice(end)
       textarea.value = currentText
@@ -55,14 +58,32 @@ describe('PlainEditorUniversalSearchProvider', () => {
     expect(provider.capabilities.supportsHighlightAll).toBe(true)
   })
 
-  it('selects a result in the textarea', async () => {
+  it('scrolls to a result without selecting it during search navigation', async () => {
     const editor = createMockPlainEditor('hello world')
     const provider = createPlainEditorUniversalSearchProvider({
       getEditor: () => editor,
     })
     const [result] = await provider.search({ query: 'world', isCaseSensitive: false })
 
-    provider.selectResult(result)
+    provider.selectResult(result, { scrollIntoView: true })
+
+    expect(editor.setSelection).toHaveBeenCalledWith(6, 11, {
+      focus: false,
+      scrollIntoView: true,
+      selectInEditor: false,
+    })
+    expect(editor.getTextarea()?.selectionStart).toBe(0)
+    expect(editor.getTextarea()?.selectionEnd).toBe(0)
+  })
+
+  it('selects a result in the editor when requested', async () => {
+    const editor = createMockPlainEditor('hello world')
+    const provider = createPlainEditorUniversalSearchProvider({
+      getEditor: () => editor,
+    })
+    const [result] = await provider.search({ query: 'world', isCaseSensitive: false })
+
+    provider.selectResult(result, { selectInEditor: true })
 
     expect(editor.getTextarea()?.selectionStart).toBe(6)
     expect(editor.getTextarea()?.selectionEnd).toBe(11)

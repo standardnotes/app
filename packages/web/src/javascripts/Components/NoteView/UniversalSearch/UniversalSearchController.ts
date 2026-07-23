@@ -129,7 +129,7 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
   }
 
   close = (): void => {
-    void this.selectCurrentResult()
+    void this.selectCurrentResult({ selectInEditor: true })
     this.clearSessionState()
   }
 
@@ -204,13 +204,16 @@ export class UniversalSearchController<TPayload = UniversalSearchResultPayload> 
     void this.selectCurrentResult({ scrollIntoView: true })
   }
 
-  selectCurrentResult = async (options?: { scrollIntoView?: boolean }): Promise<void> => {
+  selectCurrentResult = async (options?: { scrollIntoView?: boolean; selectInEditor?: boolean }): Promise<void> => {
     const result = this.currentResult
     if (!result) {
       return
     }
 
-    await this.provider.selectResult(result, { scrollIntoView: options?.scrollIntoView ?? false })
+    await this.provider.selectResult(result, {
+      scrollIntoView: options?.scrollIntoView ?? false,
+      selectInEditor: options?.selectInEditor ?? false,
+    })
   }
 
   replaceCurrentResult = async (): Promise<void> => {

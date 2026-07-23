@@ -28,10 +28,10 @@ import {
   FocusEvent,
 } from 'react'
 import { NoteViewController } from '../Controller/NoteViewController'
-import { applyTextReplacements } from '../UniversalSearch/applyTextReplacements'
 import { findStringMatches } from '../UniversalSearch/findStringMatches'
 import { PlainEditorSearchBackdrop } from './search/PlainEditorSearchBackdrop'
 import { buildPlainSearchHighlightHtml } from './search/buildPlainSearchHighlightHtml'
+import { replaceAllTextRangesWithUndoSupport, replaceTextRangeWithUndoSupport } from './replacePlainTextWithUndoSupport'
 import { scrollPlainTextareaToOffset } from './search/scrollPlainTextareaToOffset'
 import { TextRange } from '../UniversalSearch/types'
 
@@ -59,7 +59,11 @@ export type PlainEditorInterface = {
   focus: () => void
   getText: () => string
   getTextarea: () => HTMLTextAreaElement | null
-  setSelection: (start: number, end: number, options?: { focus?: boolean; scrollIntoView?: boolean }) => void
+  setSelection: (
+    start: number,
+    end: number,
+    options?: { focus?: boolean; scrollIntoView?: boolean; selectInEditor?: boolean },
+  ) => void
   replaceRange: (start: number, end: number, replacement: string) => Promise<void>
   replaceAllRanges: (ranges: TextRange[], replacement: string) => Promise<void>
   onTextChange: (callback: () => void) => Disposer
@@ -136,6 +140,16 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
           }
 
           const scrollTopBefore = textarea.scrollTop
+          const shouldSelectInEditor = options?.selectInEditor ?? !search?.isOpen
+
+          if (!shouldSelectInEditor) {
+            if (options?.scrollIntoView !== false) {
+              scrollPlainTextareaToOffset(textarea, start, end)
+            } else {
+              textarea.scrollTop = scrollTopBefore
+            }
+            return
+          }
 
           textarea.setSelectionRange(start, end)
 
@@ -156,13 +170,13 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
             return
           }
 
-          const nextText = textarea.value.slice(0, start) + replacement + textarea.value.slice(end)
-          textarea.value = nextText
-          const nextSelection = start + replacement.length
-          textarea.setSelectionRange(nextSelection, nextSelection)
+          const nextText = replaceTextRangeWithUndoSupport(textarea, start, end, replacement)
 
-          await persistText(nextText)
-          notifyTextChange()
+          void persistText(nextText, { bypassDebouncer: true })
+
+          if (!search?.isOpen) {
+            notifyTextChange()
+          }
         },
         async replaceAllRanges(ranges, replacement) {
           const textarea = textareaRef.current
@@ -170,11 +184,13 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
             return
           }
 
-          const nextText = applyTextReplacements(textarea.value, ranges, replacement)
-          textarea.value = nextText
-          textarea.setSelectionRange(nextText.length, nextText.length)
-          await persistText(nextText, { bypassDebouncer: true })
-          notifyTextChange()
+          const nextText = replaceAllTextRangesWithUndoSupport(textarea, ranges, replacement)
+
+          void persistText(nextText, { bypassDebouncer: true })
+
+          if (!search?.isOpen) {
+            notifyTextChange()
+          }
         },
         onTextChange(callback) {
           textChangeObservers.current.add(callback)
@@ -183,7 +199,7 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
           }
         },
       }),
-      [editorText, focusEditor, locked, notifyTextChange, persistText],
+      [editorText, focusEditor, locked, notifyTextChange, persistText, search?.isOpen],
     )
 
     useEffect(() => {

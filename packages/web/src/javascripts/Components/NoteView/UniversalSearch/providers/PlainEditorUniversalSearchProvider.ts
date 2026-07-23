@@ -43,6 +43,7 @@ export function createPlainEditorUniversalSearchProvider({
       getEditor()?.setSelection(payload.start, payload.end, {
         focus: false,
         scrollIntoView: options?.scrollIntoView ?? false,
+        selectInEditor: options?.selectInEditor ?? false,
       })
     },
     clear: () => {
