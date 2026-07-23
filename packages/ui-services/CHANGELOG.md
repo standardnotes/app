@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.39.8](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.7...@standardnotes/ui-services@1.39.8) (2026-07-18)
+
+### Bug Fixes
+
+* Fix keyboard shortcut handling from within iframe editors ([#3025](https://github.com/standardnotes/app/issues/3025)) ([ee56c85](https://github.com/standardnotes/app/commit/ee56c858ab2c0d7d5a158e29c070b4bf55c1bd8b))
+
+## [1.39.7](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.6...@standardnotes/ui-services@1.39.7) (2026-07-06)
+
+### Bug Fixes
+
+* Allows demo login on demo host only ([#3021](https://github.com/standardnotes/app/issues/3021)) ([8a20206](https://github.com/standardnotes/app/commit/8a20206cf3957d6f89a89e84b5d5eebe95dd2539))
+
 ## [1.39.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.5...@standardnotes/ui-services@1.39.6) (2026-06-08)
 
 **Note:** Version bump only for package @standardnotes/ui-services
