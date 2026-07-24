@@ -45,10 +45,10 @@ const DataBackups = ({ application }: Props) => {
     const encryptionEnabled = hasUser || hasPasscode
 
     const encryptionStatusString = hasUser
-      ? STRING_E2E_ENABLED
+      ? STRING_E2E_ENABLED()
       : hasPasscode
-      ? STRING_LOCAL_ENC_ENABLED
-      : STRING_ENC_NOT_ENABLED
+      ? STRING_LOCAL_ENC_ENABLED()
+      : STRING_ENC_NOT_ENABLED()
 
     setEncryptionStatusString(encryptionStatusString)
     setIsEncryptionEnabled(encryptionEnabled)
@@ -188,32 +188,32 @@ const DataBackups = ({ application }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>{c('Title').t`Data backups`}</Title>
-          <Subtitle>{c('Subtitle').t`Download a backup of all your text-based data`}</Subtitle>
+          <Title>{c('B1.Account.ImportExport.Title').t`Data backups`}</Title>
+          <Subtitle>{c('B1.Account.ImportExport.Subtitle').t`Download a backup of all your text-based data`}</Subtitle>
 
           {isEncryptionEnabled && (
             <form className="sk-panel-form sk-panel-row">
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
-                  <span className="text-base font-medium md:text-sm">{c('Label').t`Encrypted`}</span>
+                  <span className="text-base font-medium md:text-sm">{c('B1.Account.ImportExport.Label').t`Encrypted`}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
-                  <span className="text-base font-medium md:text-sm">{c('Label').t`Decrypted`}</span>
+                  <span className="text-base font-medium md:text-sm">{c('B1.Account.ImportExport.Label').t`Decrypted`}</span>
                 </label>
               </div>
             </form>
           )}
 
-          <Button onClick={downloadDataArchive} label={c('Action').t`Download backup`} className="mt-2" />
+          <Button onClick={downloadDataArchive} label={c('B1.Account.ImportExport.Action').t`Download backup`} className="mt-2" />
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>
-          <Subtitle>{c('Subtitle').t`Import a previously saved backup file`}</Subtitle>
+          <Subtitle>{c('B1.Account.ImportExport.Subtitle').t`Import a previously saved backup file`}</Subtitle>
 
           <div className="mt-3 flex flex-row items-center">
-            <Button label={c('Action').t`Import backup`} onClick={handleImportFile} />
+            <Button label={c('B1.Account.ImportExport.Action').t`Import backup`} onClick={handleImportFile} />
             <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
             {isImportDataLoading && <Spinner className="ml-4" />}
           </div>

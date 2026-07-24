@@ -13,6 +13,7 @@ import { action, makeObservable, observable, runInAction } from 'mobx'
 import { NavigationController } from '../../Controllers/Navigation/NavigationController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
+import { c } from 'ttag'
 
 type ImportModalFileCommon = {
   id: string
@@ -175,7 +176,7 @@ export class ImportModalController extends AbstractViewController {
         this.updateFile({
           ...file,
           status: 'error',
-          error: error instanceof Error ? error : new Error('Could not import file'),
+          error: error instanceof Error ? error : new Error(c('B1.Account.ImportExport.Error').t`Could not import file`),
         })
         console.error(error)
       }
@@ -185,10 +186,11 @@ export class ImportModalController extends AbstractViewController {
     }
     if (this.addImportsToTag) {
       const currentDate = new Date()
+      const importedOnDate = currentDate.toLocaleString()
       let importTag: SNTag | undefined
       if (this.shouldCreateTag) {
         const importTagItem = this.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {
-          title: `Imported on ${currentDate.toLocaleString()}`,
+          title: c('B1.Account.ImportExport.Label').t`Imported on ${importedOnDate}`,
           expanded: false,
           iconString: '',
           references: importedItems

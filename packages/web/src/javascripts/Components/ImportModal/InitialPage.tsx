@@ -28,34 +28,34 @@ const ImportModalInitialPage = ({ setFiles, selectFiles }: Props) => {
           setFiles(files)
         }}
       >
-        <div className="text-lg font-semibold">{c('Info').t`Drag and drop files to auto-detect and import`}</div>
-        <div className="text-sm">{c('Info').t`Or click to open file picker`}</div>
+        <div className="text-lg font-semibold">{c('B1.Account.ImportExport.Info').t`Drag and drop files to auto-detect and import`}</div>
+        <div className="text-sm">{c('B1.Account.ImportExport.Info').t`Or click to open file picker`}</div>
       </button>
-      <div className="my-4 w-full text-center">{c('Info').t`or import from:`}</div>
+      <div className="my-4 w-full text-center">{c('B1.Account.ImportExport.Info').t`or import from:`}</div>
       <div className="flex flex-wrap items-center justify-center gap-4">
         <Button className="flex items-center !py-2" onClick={() => selectFiles('evernote')}>
           <Icon type="evernote" className="mr-2 text-[#14cc45]" />
-          Evernote
+          {c('B1.Account.ImportExport.ImportSource').t`Evernote`}
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('google-keep')}>
           <Icon type="gkeep" className="mr-2 text-[#fbbd00]" />
-          Google Keep
+          {c('B1.Account.ImportExport.ImportSource').t`Google Keep`}
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('simplenote')}>
           <Icon type="simplenote" className="mr-2 text-[#3360cc]" />
-          Simplenote
+          {c('B1.Account.ImportExport.ImportSource').t`Simplenote`}
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('aegis')}>
           <Icon type="aegis" className="mr-2 rounded bg-[#0d47a1] p-1 text-[#fff]" size="normal" />
-          Aegis
+          {c('B1.Account.ImportExport.ImportSource').t`Aegis`}
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('plaintext')}>
           <Icon type="plain-text" className="mr-2 text-info" />
-          {c('ImportSource').t`Plaintext / Markdown`}
+          {c('B1.Account.ImportExport.ImportSource').t`Plaintext / Markdown`}
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('html')}>
           <Icon type="rich-text" className="mr-2 text-accessory-tint-2" />
-          HTML
+          {c('B1.Account.ImportExport.ImportSource').t`HTML`}
         </Button>
         <Button
           className="flex items-center !py-2"
@@ -72,7 +72,7 @@ const ImportModalInitialPage = ({ setFiles, selectFiles }: Props) => {
           }}
         >
           <Icon type="file-doc" className="mr-2 text-accessory-tint-1" />
-          Super (JSON)
+          {c('B1.Account.ImportExport.ImportSource').t`Super (JSON)`}
         </Button>
       </div>
     </>

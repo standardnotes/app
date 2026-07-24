@@ -17,7 +17,7 @@ import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/Pre
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import Spinner from '@/Components/Spinner/Spinner'
 import NoProSubscription from '../NoProSubscription'
-import { c, jt } from 'ttag'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -118,19 +118,19 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
     }
   }
 
-  const subscriptionBold = <span className="font-bold">{c('Label').t`subscription`}</span>
+  const subscriptionBold = <span className="font-bold">{c('B1.Account.Session.Label').t`subscription`}</span>
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>{c('Title').t`Email`}</Title>
+        <Title>{c('B1.Account.Session.Title').t`Email`}</Title>
         <div>
           <div className="flex items-start justify-between gap-2 md:items-center">
             <div className="flex flex-col">
-              <Subtitle>{c('Subtitle').t`Mute sign-in notification emails`}</Subtitle>
+              <Subtitle>{c('B1.Account.Session.Subtitle').t`Mute sign-in notification emails`}</Subtitle>
               {isMuteSignInEmailsFeatureAvailable ? (
                 <Text>
-                  {c('Info')
+                  {c('B1.Account.Session.Info')
                     .t`Disables email notifications when a new sign-in occurs on your account. (Email notifications are available only to paid subscribers).`}
                 </Text>
               ) : (
@@ -138,7 +138,8 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
                   application={application}
                   text={
                     <span>
-                      {jt`Sign-in notification emails are available only on a ${subscriptionBold} plan. Please upgrade in order to enable sign-in notifications.`}
+                      {c('B1.Account.Session.Info')
+                        .jt`Sign-in notification emails are available only on a ${subscriptionBold} plan. Please upgrade in order to enable sign-in notifications.`}
                     </span>
                   }
                 />
@@ -158,8 +159,8 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
           <HorizontalSeparator classes="my-4" />
           <div className="flex items-start justify-between gap-2 md:items-center">
             <div className="flex flex-col">
-              <Subtitle>{c('Subtitle').t`Mute marketing notification emails`}</Subtitle>
-              <Text>{c('Info').t`Disables email notifications with special deals and promotions.`}</Text>
+              <Subtitle>{c('B1.Account.Session.Subtitle').t`Mute marketing notification emails`}</Subtitle>
+              <Text>{c('B1.Account.Session.Info').t`Disables email notifications with special deals and promotions.`}</Text>
             </div>
             {isLoading ? (
               <Spinner className="h-5 w-5 flex-shrink-0" />

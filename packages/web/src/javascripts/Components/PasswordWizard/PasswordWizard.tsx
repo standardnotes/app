@@ -139,17 +139,17 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     const currentPassword = this.state.formData.currentPassword
     const newPass = this.state.formData.newPassword
     if (!currentPassword || currentPassword.length === 0) {
-      this.application.alerts.alert(c('Error').t`Please enter your current password.`).catch(console.error)
+      this.application.alerts.alert(c('B1.Account.Password.Error').t`Please enter your current password.`).catch(console.error)
       return false
     }
 
     if (!newPass || newPass.length === 0) {
-      this.application.alerts.alert(c('Error').t`Please enter a new password.`).catch(console.error)
+      this.application.alerts.alert(c('B1.Account.Password.Error').t`Please enter a new password.`).catch(console.error)
       return false
     }
     if (newPass !== this.state.formData.newPasswordConfirmation) {
       this.application.alerts
-        .alert(c('Error').t`Your new password does not match its confirmation.`)
+        .alert(c('B1.Account.Password.Error').t`Your new password does not match its confirmation.`)
         .catch(console.error)
       this.setFormDataState({
         status: undefined,
@@ -159,7 +159,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
     if (!this.application.sessions.getUser()?.email) {
       this.application.alerts
-        .alert(c('Error').t`We don't have your email stored. Please sign out then log back in to fix this issue.`)
+        .alert(c('B1.Account.Password.Error').t`We don't have your email stored. Please sign out then log back in to fix this issue.`)
         .catch(console.error)
       this.setFormDataState({
         status: undefined,
@@ -170,7 +170,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     const success = await this.application.validateAccountPassword(this.state.formData.currentPassword as string)
     if (!success) {
       this.application.alerts
-        .alert(c('Error').t`The current password you entered is not correct. Please try again.`)
+        .alert(c('B1.Account.Password.Error').t`The current password you entered is not correct. Please try again.`)
         .catch(console.error)
     }
     return success
@@ -185,7 +185,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     })
 
     await this.setFormDataState({
-      status: c('Status').t`Processing encryption keys…`,
+      status: c('B1.Account.Password.Status').t`Processing encryption keys…`,
     })
 
     const newPassword = this.state.formData.newPassword
@@ -202,13 +202,13 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
     if (!success) {
       this.setFormDataState({
-        status: c('Status').t`Unable to process your password. Please try again.`,
+        status: c('B1.Account.Password.Status').t`Unable to process your password. Please try again.`,
       }).catch(console.error)
     } else {
       this.setState({
         formData: {
           ...this.state.formData,
-          status: c('Status').t`Successfully changed password.`,
+          status: c('B1.Account.Password.Status').t`Successfully changed password.`,
         },
       })
     }
@@ -218,7 +218,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
   dismiss = () => {
     if (this.state.processing) {
       this.application.alerts
-        .alert(c('Error').t`Cannot close window until pending tasks are complete.`)
+        .alert(c('B1.Account.Password.Error').t`Cannot close window until pending tasks are complete.`)
         .catch(console.error)
     } else {
       this.props.dismissModal()
@@ -276,12 +276,12 @@ class PasswordWizard extends AbstractComponent<Props, State> {
   continueLabel(): string {
     switch (this.state.continueTitle) {
       case ContinueTitle.Generating:
-        return c('Action').t`Generating Keys...`
+        return c('B1.Account.Password.Action').t`Generating Keys...`
       case ContinueTitle.Finish:
-        return c('Action').t`Finish`
+        return c('B1.Account.Password.Action').t`Finish`
       case ContinueTitle.Default:
       default:
-        return c('Action').t`Continue`
+        return c('B1.Account.Password.Action').t`Continue`
     }
   }
 
@@ -289,11 +289,11 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     return (
       <div className="sn-component h-full w-full md:h-auto md:w-auto" id="password-wizard">
         <Modal
-          title={c('Title').t`Change Password`}
+          title={c('B1.Account.Password.Title').t`Change Password`}
           close={this.dismiss}
           actions={[
             {
-              label: c('Action').t`Cancel`,
+              label: c('B1.Account.Password.Action').t`Cancel`,
               onClick: this.dismiss,
               type: 'cancel',
               mobileSlot: 'left',

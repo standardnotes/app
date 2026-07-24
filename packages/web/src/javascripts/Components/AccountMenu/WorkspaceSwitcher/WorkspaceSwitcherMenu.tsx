@@ -43,9 +43,9 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
 
   const signoutAll = useCallback(async () => {
     const confirmed = await application.alerts.confirm(
-      c('Info').t`Are you sure you want to sign out of all workspaces on this device?`,
+      c('B1.Account.Session.Info').t`Are you sure you want to sign out of all workspaces on this device?`,
       undefined,
-      c('Action').t`Sign out all`,
+      c('B1.Account.Session.Action').t`Sign out all`,
       ButtonType.Danger,
     )
     if (!confirmed) {
@@ -87,12 +87,12 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
       <MenuSection>
         <MenuItem onClick={addAnotherWorkspace}>
           <Icon type="user-add" className="mr-2 text-neutral" />
-          {c('Action').t`Add another workspace`}
+          {c('B1.Account.Session.Action').t`Add another workspace`}
         </MenuItem>
         {!hideWorkspaceOptions && (
           <MenuItem onClick={signoutAll}>
             <Icon type="signOut" className="mr-2 text-neutral" />
-            {c('Action').t`Sign out all workspaces`}
+            {c('B1.Account.Session.Action').t`Sign out all workspaces`}
           </MenuItem>
         )}
       </MenuSection>

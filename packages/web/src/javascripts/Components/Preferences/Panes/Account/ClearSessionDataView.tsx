@@ -13,12 +13,12 @@ const ClearSessionDataView: FunctionComponent = () => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>{c('Title').t`Clear workspace`}</Title>
-        <Text className="mb-3">{c('Info')
+        <Title>{c('B1.Account.Session.Title').t`Clear workspace`}</Title>
+        <Text className="mb-3">{c('B1.Account.Session.Info')
           .t`Remove all data related to the current workspace from the application.`}</Text>
         <Button
           colorStyle="danger"
-          label={c('Action').t`Clear workspace`}
+          label={c('B1.Account.Session.Action').t`Clear workspace`}
           onClick={() => {
             application.accountMenuController.setSigningOut(true)
           }}

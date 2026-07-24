@@ -15,7 +15,7 @@ const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPass
     <div className="flex w-full flex-col">
       <div className="mb-3">
         <label className={labelClassName} htmlFor="change-email-email-input">
-          {c('Label').t`New Email`}
+          {c('B1.Account.Session.Label').t`New Email`}
         </label>
         <DecoratedInput
           type="email"
@@ -27,7 +27,7 @@ const ChangeEmailForm: FunctionComponent<Props> = ({ setNewEmail, setCurrentPass
       </div>
       <div className="mb-2">
         <label className={labelClassName} htmlFor="change-email-password-input">
-          {c('Label').t`Current Password`}
+          {c('B1.Account.Session.Label').t`Current Password`}
         </label>
         <DecoratedPasswordInput
           id="change-email-password-input"

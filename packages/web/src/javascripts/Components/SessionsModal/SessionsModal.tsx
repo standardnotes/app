@@ -1,6 +1,5 @@
 import {
   SNApplication,
-  SessionStrings,
   UuidString,
   SessionListEntry,
   isErrorResponse,
@@ -15,6 +14,7 @@ import Icon from '../Icon/Icon'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
 import AlertDialog from '../AlertDialog/AlertDialog'
+import { c } from 'ttag'
 
 type Session = SessionListEntry & {
   revoking?: true
@@ -37,7 +37,7 @@ function useSessions(
         if (response.data?.error?.message) {
           setErrorMessage(response.data?.error.message)
         } else {
-          setErrorMessage('An unknown error occured while loading sessions.')
+          setErrorMessage(c('B1.Account.Session.Error').t`An unknown error occured while loading sessions.`)
         }
       } else {
         const sessions = response.data as SessionListEntry[]
@@ -71,7 +71,8 @@ function useSessions(
       setSessions(sessionsBeforeRevoke)
     } else if (isErrorResponse(response)) {
       setErrorMessage(
-        getErrorFromErrorResponse(response).message || 'An unknown error occured while revoking the session.',
+        getErrorFromErrorResponse(response).message ||
+          c('B1.Account.Session.Error').t`An unknown error occured while revoking the session.`,
       )
 
       setSessions(sessionsBeforeRevoke)
@@ -112,13 +113,13 @@ const SessionsModalContent: FunctionComponent<{
   const sessionModalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Close',
+        label: c('B1.Account.Session.Action').t`Close`,
         onClick: application.closeSessionsModal,
         type: 'cancel',
         mobileSlot: 'left',
       },
       {
-        label: 'Refresh',
+        label: c('B1.Account.Session.Action').t`Refresh`,
         onClick: refresh,
         type: 'primary',
         mobileSlot: 'right',
@@ -129,12 +130,16 @@ const SessionsModalContent: FunctionComponent<{
 
   return (
     <>
-      <Modal title="Active Sessions" close={application.closeSessionsModal} actions={sessionModalActions}>
+      <Modal
+        title={c('B1.Account.Session.Title').t`Active Sessions`}
+        close={application.closeSessionsModal}
+        actions={sessionModalActions}
+      >
         <div className="px-4 py-4">
           {refreshing ? (
             <div className="flex items-center gap-2">
               <Spinner className="h-3 w-3" />
-              <h2 className="sk-p sessions-modal-refreshing">Loading sessions</h2>
+              <h2 className="sk-p sessions-modal-refreshing">{c('B1.Account.Session.Status').t`Loading sessions`}</h2>
             </div>
           ) : (
             <>
@@ -145,14 +150,19 @@ const SessionsModalContent: FunctionComponent<{
               )}
               {sessions.length > 0 && (
                 <ul>
-                  {sessions.map((session) => (
+                  {sessions.map((session) => {
+                    const signedInDate = (
+                      <span className="font-bold">{formatter.format(new Date(session.created_at))}</span>
+                    )
+
+                    return (
                     <li key={session.uuid}>
                       <h2 className="text-base font-bold">{session.device_info}</h2>
                       {session.current ? (
-                        <span className="font-bold text-info">Current session</span>
+                        <span className="font-bold text-info">{c('B1.Account.Session.Label').t`Current session`}</span>
                       ) : (
                         <>
-                          <p>Signed in on {formatter.format(new Date(session.created_at))}</p>
+                          <p>{c('B1.Account.Session.Info').jt`Signed in on ${signedInDate}`}</p>
                           <Button
                             primary
                             small
@@ -160,12 +170,13 @@ const SessionsModalContent: FunctionComponent<{
                             disabled={session.revoking}
                             onClick={() => setRevokingSessionUuid(session.uuid)}
                           >
-                            <span>Revoke</span>
+                            <span>{c('B1.Account.Session.Action').t`Revoke`}</span>
                           </Button>
                         </>
                       )}
                     </li>
-                  ))}
+                    )
+                  })}
                 </ul>
               )}
             </>
@@ -175,17 +186,20 @@ const SessionsModalContent: FunctionComponent<{
       {confirmRevokingSessionUuid && (
         <AlertDialog closeDialog={closeRevokeConfirmationDialog}>
           <div className="flex items-center justify-between text-lg font-bold">
-            {SessionStrings.RevokeTitle}
+            {c('B1.Account.Session.Title').t`Revoke this session?`}
             <button className="rounded p-1 font-bold hover:bg-contrast" onClick={closeRevokeConfirmationDialog}>
               <Icon type="close" />
             </button>
           </div>
           <div className="sk-panel-row">
-            <p className="text-base text-foreground lg:text-sm">{SessionStrings.RevokeText}</p>
+            <p className="text-base text-foreground lg:text-sm">
+              {c('B1.Account.Session.Info')
+                .t`The associated app will be signed out and all data removed from the device when it is next launched. You can sign back in on that device at any time.`}
+            </p>
           </div>
           <div className="mt-4 flex justify-end gap-2">
             <Button ref={cancelRevokeRef} onClick={closeRevokeSessionAlert}>
-              <span>{SessionStrings.RevokeCancelButton}</span>
+              <span>{c('B1.Account.Session.Action').t`Cancel`}</span>
             </Button>
             <Button
               primary
@@ -195,7 +209,7 @@ const SessionsModalContent: FunctionComponent<{
                 revokeSession(confirmRevokingSessionUuid).catch(console.error)
               }}
             >
-              <span>{SessionStrings.RevokeConfirmButton}</span>
+              <span>{c('B1.Account.Session.Action').t`Revoke`}</span>
             </Button>
           </div>
         </AlertDialog>

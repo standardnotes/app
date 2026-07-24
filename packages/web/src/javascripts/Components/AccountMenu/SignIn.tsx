@@ -253,7 +253,7 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
           className={{ container: `mb-2 ${error ? 'border-danger' : null}` }}
           left={[<Icon type="email" className="text-neutral" />]}
           type="email"
-          placeholder={c('Label').t`Email`}
+          placeholder={c('B1.Account.SignIn.Label').t`Email`}
           value={email}
           onChange={handleEmailChange}
           onFocus={resetInvalid}
@@ -269,14 +269,14 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
           onChange={handlePasswordChange}
           onFocus={resetInvalid}
           onKeyDown={handleKeyDown}
-          placeholder={c('Label').t`Password`}
+          placeholder={c('B1.Account.SignIn.Label').t`Password`}
           ref={passwordInputRef}
           value={password}
         />
         {error ? <div className="my-2 text-danger">{error}</div> : null}
         <Button
           className="mb-3 mt-1"
-          label={isSigningIn ? c('Action').t`Signing in...` : c('Action').t`Sign in`}
+          label={isSigningIn ? c('B1.Account.SignIn.Action').t`Signing in...` : c('B1.Account.SignIn.Action').t`Sign in`}
           primary
           onClick={handleSignInFormSubmit}
           disabled={isSigningIn}
@@ -284,7 +284,7 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         />
         <Checkbox
           name="is-ephemeral"
-          label={c('Option').t`Stay signed in`}
+          label={c('B1.Account.SignIn.Option').t`Stay signed in`}
           checked={!isEphemeral}
           disabled={isSigningIn || isRecoverySignIn}
           onChange={handleEphemeralChange}
@@ -326,14 +326,14 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
       <div className="mb-3 mt-1 flex items-center px-3">
         <IconButton
           icon="arrow-left"
-          title={c('Action').t`Go back`}
+          title={c('B1.Account.SignIn.Action').t`Go back`}
           className="mr-2 flex p-0 text-neutral"
           onClick={() => setMenuPane(AccountMenuPane.GeneralMenu)}
           focusable={true}
           disabled={isSigningIn}
         />
         <div className="text-base font-bold">
-          {showCaptcha ? c('Title').t`Human verification` : c('Title').t`Sign in`}
+          {showCaptcha ? c('B1.Account.SignIn.Title').t`Human verification` : c('B1.Account.SignIn.Title').t`Sign in`}
         </div>
       </div>
       {showCaptcha ? <div className="p-[10px]">{captchaIframe}</div> : signInForm}

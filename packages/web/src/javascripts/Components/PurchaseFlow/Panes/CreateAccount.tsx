@@ -151,19 +151,19 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
           className={`min-w-auto md:min-w-90 ${isEmailInvalid ? 'mb-2' : 'mb-4'}`}
           id="purchase-sign-in-email"
           type="email"
-          label={c('Label').t`Email`}
+          label={c('B1.Account.SignIn.Label').t`Email`}
           value={email}
           onChange={handleEmailChange}
           ref={emailInputRef}
           disabled={isCreatingAccount}
           isInvalid={isEmailInvalid}
         />
-        {isEmailInvalid ? <div className="mb-4 text-danger">{c('Error').t`Please provide a valid email.`}</div> : null}
+        {isEmailInvalid ? <div className="mb-4 text-danger">{c('B1.Account.SignIn.Error').t`Please provide a valid email.`}</div> : null}
         <FloatingLabelInput
           className="min-w-auto mb-4 md:min-w-90"
           id="purchase-create-account-password"
           type="password"
-          label={c('Label').t`Password`}
+          label={c('B1.Account.SignIn.Label').t`Password`}
           value={password}
           onChange={handlePasswordChange}
           ref={passwordInputRef}
@@ -173,7 +173,7 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
           className={`min-w-auto md:min-w-90 ${isPasswordNotMatching ? 'mb-2' : 'mb-4'}`}
           id="create-account-confirm"
           type="password"
-          label={c('Label').t`Repeat password`}
+          label={c('B1.Account.SignIn.Label').t`Repeat password`}
           value={confirmPassword}
           onChange={handleConfirmPasswordChange}
           ref={confirmPasswordInputRef}
@@ -181,7 +181,7 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
           isInvalid={isPasswordNotMatching}
         />
         {isPasswordNotMatching ? (
-          <div className="mb-4 text-danger">{c('Error').t`Passwords don't match. Please try again.`}</div>
+          <div className="mb-4 text-danger">{c('B1.Account.SignIn.Error').t`Passwords don't match. Please try again.`}</div>
         ) : null}
       </div>
     </form>
@@ -200,11 +200,11 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
       <div className="mr-0 lg:mr-12">
         {
           // translator: Full sentence: "Create your free account"
-          <h1 className="mb-2 mt-0 text-2xl font-bold">{c('Title').t`Create your free account`}</h1>
+          <h1 className="mb-2 mt-0 text-2xl font-bold">{c('B1.Account.SignIn.Title').t`Create your free account`}</h1>
         }
         {
           // translator: Full sentence: "Create your free account to continue to Standard Notes."
-          <div className="mb-4 text-sm font-medium">{c('Info').t`to continue to Standard Notes.`}</div>
+          <div className="mb-4 text-sm font-medium">{c('B1.Account.SignIn.Info').t`to continue to Standard Notes.`}</div>
         }
         {captchaURL ? captchaIframe : CreateAccountForm}
         <div className="flex flex-col-reverse items-start justify-between md:flex-row md:items-center">
@@ -216,7 +216,7 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
             >
               {
                 // translator: "Instead" here refers to "instead of creating an account"
-                c('Action').t`Sign in instead`
+                c('B1.Account.SignIn.Action').t`Sign in instead`
               }
             </button>
             {!application.isNativeIOS() && (
@@ -225,14 +225,14 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
                 disabled={isCreatingAccount}
                 className="flex cursor-pointer items-start border-0 bg-default p-0 font-medium text-info hover:underline"
               >
-                {c('Action').t`Subscribe without account`}
+                {c('B1.Account.SignIn.Action').t`Subscribe without account`}
               </button>
             )}
           </div>
           <Button
             className="mb-4 py-2.5 md:mb-0"
             primary
-            label={isCreatingAccount ? c('Action').t`Creating account...` : c('Action').t`Create account`}
+            label={isCreatingAccount ? c('B1.Account.SignIn.Action').t`Creating account...` : c('B1.Account.SignIn.Action').t`Create account`}
             onClick={handleCreateAccount}
             disabled={isCreatingAccount}
           />
