@@ -28,6 +28,8 @@ import {
   SNNote,
   VaultUserServiceEvent,
   LocalPrefKey,
+  LocalPrefDefaults,
+  EditorFontFamily,
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, FocusEvent, KeyboardEventHandler, RefObject } from 'react'
@@ -75,7 +77,7 @@ type State = {
   spellcheck: boolean
   stackComponentViewers: ComponentViewerInterface[]
   syncTakingTooLong: boolean
-  monospaceFont?: boolean
+  fontFamily?: EditorFontFamily
   editorFocused?: boolean
   paneGestureEnabled?: boolean
   noteLastEditedByUuid?: string
@@ -547,7 +549,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         editorStateDidLoad: true,
       })
     } else {
-      reloadFont(this.state.monospaceFont)
+      reloadFont(this.state.fontFamily)
       this.setState({
         editorStateDidLoad: true,
       })
@@ -654,7 +656,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   async reloadSpellcheck() {
     const spellcheck = this.application.notesController.getSpellcheckStateForNote(this.note)
     if (spellcheck !== this.state.spellcheck) {
-      reloadFont(this.state.monospaceFont)
+      reloadFont(this.state.fontFamily)
       this.setState({ spellcheck })
     }
   }
@@ -669,10 +671,19 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   async reloadPreferences() {
     log(LoggingDomain.NoteView, 'Reload preferences')
-    const monospaceFont = this.application.preferences.getLocalValue(
-      LocalPrefKey.EditorMonospaceEnabled,
-      PrefDefaults[LocalPrefKey.EditorMonospaceEnabled],
+    let fontFamily = this.application.preferences.getLocalValue(
+      LocalPrefKey.EditorFontFamily,
+      LocalPrefDefaults[LocalPrefKey.EditorFontFamily],
     )
+
+    const legacyMonospace = this.application.preferences.getLocalValue(
+      LocalPrefKey.EditorMonospaceEnabled,
+      LocalPrefDefaults[LocalPrefKey.EditorMonospaceEnabled],
+    )
+
+    if (fontFamily === EditorFontFamily.SansSerif && legacyMonospace) {
+      fontFamily = EditorFontFamily.Monospace
+    }
 
     const updateSavingIndicator = this.application.getPreference(
       PrefKey.UpdateSavingStatusIndicator,
@@ -689,12 +700,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.reloadLineWidth()
 
     this.setState({
-      monospaceFont,
+      fontFamily,
       updateSavingIndicator,
       paneGestureEnabled,
     })
 
-    reloadFont(monospaceFont)
+    reloadFont(fontFamily)
   }
 
   async reloadStackComponents() {

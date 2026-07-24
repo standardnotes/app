@@ -2,8 +2,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import Icon from '@/Components/Icon/Icon'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
-import Switch from '@/Components/Switch/Switch'
-import { EditorFontSize, EditorLineHeight, EditorLineWidth, LocalPrefKey } from '@standardnotes/snjs'
+import { EditorFontSize, EditorLineHeight, EditorLineWidth, LocalPrefKey, EditorFontFamily } from '@standardnotes/snjs'
 import { useCallback, useMemo } from 'react'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -31,10 +30,26 @@ const EditorDefaults = ({ application }: Props) => {
     [],
   )
 
-  const [monospaceFont, setMonospaceFont] = useLocalPreference(LocalPrefKey.EditorMonospaceEnabled)
-  const toggleMonospaceFont = () => {
-    setMonospaceFont(!monospaceFont)
+  const [fontFamily, setFontFamily] = useLocalPreference(LocalPrefKey.EditorFontFamily)
+  const handleFontFamilyChange = (value: string) => {
+    setFontFamily(value as EditorFontFamily)
   }
+
+  const fontFamilyDropdownOptions = useMemo(
+    () => [
+      { label: 'Sans-serif (System default)', value: EditorFontFamily.SansSerif },
+      { label: 'Monospace (System default)', value: EditorFontFamily.Monospace },
+      { label: 'Serif (Georgia)', value: EditorFontFamily.Serif },
+      { label: 'Lora (Serif)', value: EditorFontFamily.Lora },
+      { label: 'Merriweather (Serif)', value: EditorFontFamily.Merriweather },
+      { label: 'Open Sans (Modern sans-serif)', value: EditorFontFamily.OpenSans },
+      { label: 'Roboto Mono (Modern monospace)', value: EditorFontFamily.RobotoMono },
+      { label: 'Dyslexic-friendly (Comic Neue)', value: EditorFontFamily.Dyslexic },
+      { label: 'Quicksand (Rounded sans-serif)', value: EditorFontFamily.Quicksand },
+      { label: 'Comic Sans', value: EditorFontFamily.ComicSans },
+    ],
+    [],
+  )
 
   const [fontSize, setFontSize] = useLocalPreference(LocalPrefKey.EditorFontSize)
   const handleFontSizeChange = (value: string) => {
@@ -61,12 +76,17 @@ const EditorDefaults = ({ application }: Props) => {
       <PreferencesSegment>
         <Title>Editor</Title>
         <div className="mt-2">
-          <div className="flex justify-between gap-2 md:items-center">
-            <div className="flex flex-col">
-              <Subtitle>Monospace Font</Subtitle>
-              <Text>Toggles the font style in plaintext and Super notes</Text>
+          <div>
+            <Subtitle>Font family</Subtitle>
+            <Text>Sets the font family in plaintext and Super notes</Text>
+            <div className="mt-2">
+              <Dropdown
+                label="Select the font family for notes"
+                items={fontFamilyDropdownOptions}
+                value={fontFamily}
+                onChange={handleFontFamilyChange}
+              />
             </div>
-            <Switch onChange={toggleMonospaceFont} checked={monospaceFont} />
           </div>
           <HorizontalSeparator classes="my-4" />
           <div>
