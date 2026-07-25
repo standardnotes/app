@@ -107,7 +107,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           onClick={() => {
             application.accountMenuController.toggleShow()
           }}
-          label="Go to account menu"
+          label={c('B3.Notes.TagsLinkedItems.Label').t`Go to account menu`}
           icon="account-circle"
         />
         {hasPasscode && (

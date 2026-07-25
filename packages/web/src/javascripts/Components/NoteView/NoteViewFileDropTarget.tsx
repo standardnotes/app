@@ -2,6 +2,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { NoteType, SNNote } from '@standardnotes/snjs'
 import { useEffect } from 'react'
+import { c } from 'ttag'
 import { useApplication } from '../ApplicationProvider'
 import { useFileDragNDrop } from '../FileDragNDropProvider'
 
@@ -20,7 +21,7 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement, file
     const target = noteViewElement
 
     if (target) {
-      const tooltipText = 'Drop your files to upload and link them to the current note'
+      const tooltipText = c('B3.Notes.NoteList.Info').t`Drop your files to upload and link them to the current note`
       if (note.noteType === NoteType.Super) {
         addDragTarget(target, {
           tooltipText,

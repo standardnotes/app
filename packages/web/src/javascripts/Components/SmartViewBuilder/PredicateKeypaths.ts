@@ -1,3 +1,5 @@
+import { c } from 'ttag'
+
 export type PredicateKeypath =
   | 'title'
   | 'title.length'
@@ -20,25 +22,25 @@ export type PredicateKeypath =
   | 'spellcheck'
 
 export const PredicateKeypathLabels: { [k in PredicateKeypath]: string } = {
-  title: 'Title',
-  'title.length': 'Title Length',
-  text: 'Text',
-  'text.length': 'Text Length',
-  noteType: 'Note Type',
-  authorizedForListed: 'Authorized For Listed',
-  editorIdentifier: 'Editor Identifier',
-  userModifiedDate: 'User Modified Date',
-  serverUpdatedAt: 'Server Updated At',
-  created_at: 'Created At',
-  conflict_of: 'Conflict Of',
-  protected: 'Protected',
-  trashed: 'Trashed',
-  pinned: 'Pinned',
-  archived: 'Archived',
-  locked: 'Locked',
-  starred: 'Starred',
-  hidePreview: 'Hide Preview',
-  spellcheck: 'Spellcheck',
+  title: c('B3.Notes.TagsLinkedItems.Label').t`Title`,
+  'title.length': c('B3.Notes.TagsLinkedItems.Label').t`Title Length`,
+  text: c('B3.Notes.TagsLinkedItems.Label').t`Text`,
+  'text.length': c('B3.Notes.TagsLinkedItems.Label').t`Text Length`,
+  noteType: c('B3.Notes.TagsLinkedItems.Action').t`Note Type`,
+  authorizedForListed: c('B3.Notes.TagsLinkedItems.Label').t`Authorized For Listed`,
+  editorIdentifier: c('B3.Notes.TagsLinkedItems.Label').t`Editor Identifier`,
+  userModifiedDate: c('B3.Notes.TagsLinkedItems.Action').t`User Modified Date`,
+  serverUpdatedAt: c('B3.Notes.TagsLinkedItems.Label').t`Server Updated At`,
+  created_at: c('B3.Notes.TagsLinkedItems.Label').t`Created At`,
+  conflict_of: c('B3.Notes.TagsLinkedItems.Action').t`Conflict Of`,
+  protected: c('B3.Notes.TagsLinkedItems.Action').t`Protected`,
+  trashed: c('B3.Notes.TagsLinkedItems.Action').t`Trashed`,
+  pinned: c('B3.Notes.TagsLinkedItems.Label').t`Pinned`,
+  archived: c('B3.Notes.TagsLinkedItems.Action').t`Archived`,
+  locked: c('B3.Notes.TagsLinkedItems.Label').t`Locked`,
+  starred: c('B3.Notes.TagsLinkedItems.Label').t`Starred`,
+  hidePreview: c('B3.Notes.TagsLinkedItems.Label').t`Hide Preview`,
+  spellcheck: c('B3.Notes.TagsLinkedItems.Label').t`Spellcheck`,
 } as const
 
 export const PredicateKeypathTypes: {

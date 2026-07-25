@@ -43,7 +43,7 @@ const SmartViews = ({ application, featuresController }: Props) => {
   const deleteItem = useCallback(
     async (view: SmartView) => {
       const shouldDelete = await confirmDialog({
-        text: STRING_DELETE_TAG,
+        text: STRING_DELETE_TAG(),
         confirmButtonStyle: 'danger',
       })
       if (shouldDelete) {

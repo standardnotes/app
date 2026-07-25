@@ -1,4 +1,4 @@
-import { c } from 'ttag'
+import { c, jt } from 'ttag'
 import {
   CANCEL_SEARCH_COMMAND,
   CREATE_NEW_NOTE_KEYBOARD_COMMAND,
@@ -77,6 +77,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       selectPreviousItem,
     } = itemListController
 
+    const selectedItemsCount = itemListController.selectedItemsCount
+    const selectedItemsLabel = c('B3.Notes.NoteList.Info').jt`${selectedItemsCount} selected`
+
     const innerRef = useRef<HTMLDivElement | null>(null)
 
     const { addDragTarget, removeDragTarget } = useFileDragNDrop()
@@ -127,8 +130,10 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       const shouldAddDropTarget = !navigationController.isInAnySystemView() && !navigationController.isInSmartView()
 
       if (target && shouldAddDropTarget && currentTag) {
+        const tagTitle = currentTag.title
         addDragTarget(target, {
-          tooltipText: `Drop your files to upload and link them to tag "${currentTag.title}"`,
+          tooltipText: c('B3.Notes.NoteList.Info')
+            .jt`Drop your files to upload and link them to tag "${tagTitle}"` as unknown as string,
           callback: fileDropCallback,
         })
       }
@@ -178,8 +183,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       return application.keyboardService.addCommandHandlers([
         {
           command: NEXT_LIST_ITEM_KEYBOARD_COMMAND,
-          category: c('B2.SharedUI.Label').t`Notes list` as 'Notes list',
-          description: 'Go to next item',
+          category: 'Notes list',
+          description: c('B3.Notes.NoteList.Action').t`Go to next item`,
           elements: [document.body, ...(searchBarElement ? [searchBarElement] : [])],
           onKeyDown: () => {
             if (searchBarElement === document.activeElement) {
@@ -193,8 +198,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
-          category: c('B2.SharedUI.Label').t`Notes list` as 'Notes list',
-          description: 'Go to previous item',
+          category: 'Notes list',
+          description: c('B3.Notes.NoteList.Action').t`Go to previous item`,
           element: document.body,
           onKeyDown: () => {
             if (shouldUseTableView) {
@@ -205,7 +210,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SEARCH_KEYBOARD_COMMAND,
-          category: c('B2.SharedUI.Label').t`General` as 'General',
+          category: 'General',
           description: c('B2.SharedUI.Action').t`Toggle global search`,
           onKeyDown: (event) => {
             if (searchBarElement) {
@@ -224,7 +229,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
-          category: c('B2.SharedUI.Label').t`General` as 'General',
+          category: 'General',
           description: c('B2.SharedUI.Action').t`Select all items`,
           onKeyDown: (event) => {
             const isTargetInsideContentList = (event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)
@@ -258,15 +263,19 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       if (shortcut) {
         shortcut = '(' + shortcut + ')'
       }
-      return isFilesSmartView ? `Upload file ${shortcut}` : `Create a new note in the selected tag ${shortcut}`
+      return isFilesSmartView
+        ? (c('B3.Notes.NoteList.Action').jt`Upload file ${shortcut}` as unknown as string)
+        : (c('B3.Notes.NoteList.Action').jt`Create a new note in the selected tag ${shortcut}` as unknown as string)
     }, [isFilesSmartView, shortcutForCreate])
 
     useEffect(
       () =>
         application.commands.addWithShortcut(
           CREATE_NEW_NOTE_KEYBOARD_COMMAND,
-          c('B2.SharedUI.Label').t`General` as 'General',
-          isFilesSmartView ? 'Upload file' : 'Create new note',
+          'General',
+          isFilesSmartView
+            ? c('B3.Notes.NoteList.Action').t`Upload file`
+            : c('B3.Notes.NoteList.Action').t`Create new note`,
           (event) => {
             event?.preventDefault()
             void addNewItem()
@@ -355,9 +364,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 </button>
               </StyledTooltip>
             </div>
-            <div className="text-base font-semibold md:text-sm">
-              {c('B2.SharedUI.Status').t`${itemListController.selectedItemsCount} selected`}
-            </div>
+            <div className="text-base font-semibold md:text-sm">{selectedItemsLabel}</div>
             <StyledTooltip label={c('B2.SharedUI.AriaLabel').t`Cancel multiple selection`} showOnHover showOnMobile>
               <button
                 className="ml-auto rounded border border-border p-1 hover:bg-contrast"

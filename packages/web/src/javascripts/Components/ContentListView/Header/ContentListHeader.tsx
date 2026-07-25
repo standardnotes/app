@@ -81,7 +81,7 @@ const ContentListHeader = ({
 
       if (event === ApplicationEvent.SyncStatusChanged) {
         setSyncSubtitle(
-          syncStatus.syncInProgress && !application.sync.completedOnlineDownloadFirstSync ? 'Syncing...' : '',
+          syncStatus.syncInProgress && !application.sync.completedOnlineDownloadFirstSync ? `Syncing...` : '',
         )
         return
       }
@@ -92,7 +92,9 @@ const ContentListHeader = ({
           return
         }
 
-        setSyncSubtitle(`Loading ${localDataCurrent}/${localDataTotal} items...`)
+        setSyncSubtitle(
+          c('B3.Notes.NoteList.Info').jt`Loading ${localDataCurrent}/${localDataTotal} items...` as unknown as string,
+        )
         return
       }
     })
@@ -186,7 +188,7 @@ const ContentListHeader = ({
             <div className="text-2xl font-semibold text-text md:text-lg">{panelTitle}</div>
             {showSyncSubtitle && (
               <div className={classNames('-mt-1 text-xs md:mt-0', outOfSync ? 'text-warning' : 'text-passive-0')}>
-                {outOfSync ? 'Potentially Out of Sync' : syncSubtitle}
+                {outOfSync ? `Potentially Out of Sync` : syncSubtitle}
               </div>
             )}
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}

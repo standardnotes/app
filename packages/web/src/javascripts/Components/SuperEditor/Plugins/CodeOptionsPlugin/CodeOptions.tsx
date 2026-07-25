@@ -4,12 +4,37 @@ import { $getNodeByKey, $getSelection, $isRangeSelection, $isRootOrShadowRoot, N
 import { useCallback, useEffect, useState } from 'react'
 import { $isCodeNode, CODE_LANGUAGE_MAP, CODE_LANGUAGE_FRIENDLY_NAME_MAP, normalizeCodeLang } from '@lexical/code'
 import Dropdown from '@/Components/Dropdown/Dropdown'
+import { c } from 'ttag'
+
+const CODE_LANGUAGE_LABEL_GETTERS: Partial<Record<string, () => string>> = {
+  c: () => c('B3.Notes.EditorToolbar.Label').t`C`,
+  clike: () => c('B3.Notes.EditorToolbar.Label').t`C-like`,
+  cpp: () => c('B3.Notes.EditorToolbar.Label').t`C++`,
+  css: () => c('B3.Notes.EditorToolbar.Label').t`CSS`,
+  html: () => c('B3.Notes.EditorOptions.Label').t`HTML`,
+  java: () => c('B3.Notes.EditorToolbar.Label').t`Java`,
+  js: () => c('B3.Notes.EditorToolbar.Label').t`JavaScript`,
+  markdown: () => c('B3.Notes.EditorToolbar.Label').t`Markdown`,
+  objc: () => c('B3.Notes.EditorToolbar.Label').t`Objective-C`,
+  plain: () => c('B3.Notes.EditorToolbar.Label').t`Plain Text`,
+  powershell: () => c('B3.Notes.EditorToolbar.Label').t`PowerShell`,
+  py: () => c('B3.Notes.EditorToolbar.Label').t`Python`,
+  rust: () => c('B3.Notes.EditorToolbar.Label').t`Rust`,
+  sql: () => c('B3.Notes.EditorToolbar.Label').t`SQL`,
+  swift: () => c('B3.Notes.EditorToolbar.Label').t`Swift`,
+  typescript: () => c('B3.Notes.EditorToolbar.Label').t`TypeScript`,
+  xml: () => c('B3.Notes.EditorToolbar.Label').t`XML`,
+}
+
+function getCodeLanguageLabel(lang: string, fallback: string): string {
+  return CODE_LANGUAGE_LABEL_GETTERS[lang]?.() ?? fallback
+}
 
 function getCodeLanguageOptions(): [string, string][] {
   const options: [string, string][] = []
 
   for (const [lang, friendlyName] of Object.entries(CODE_LANGUAGE_FRIENDLY_NAME_MAP)) {
-    options.push([lang, friendlyName])
+    options.push([lang, getCodeLanguageLabel(lang, friendlyName)])
   }
 
   return options
@@ -95,7 +120,7 @@ const CodeOptionsPlugin = () => {
     <>
       <div className="absolute right-6 top-13 rounded border border-border bg-default p-2">
         <Dropdown
-          label="Change code block language"
+          label={c('B3.Notes.EditorToolbar.Label').t`Change code block language`}
           items={CODE_LANGUAGE_OPTIONS.map(([value, label]) => ({
             label,
             value,

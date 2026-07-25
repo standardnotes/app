@@ -14,6 +14,7 @@ import { mergeRegister } from '@lexical/utils'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
 import { isMobileScreen } from '../../../Utils'
+import { c } from 'ttag'
 
 export function InsertTableDialog({
   activeEditor,
@@ -39,16 +40,16 @@ export function InsertTableDialog({
   return (
     <>
       <label className="mb-2.5 flex items-center justify-between gap-3">
-        Rows:
+        {c('B3.Notes.EditorToolbar.Label').t`Rows:`}
         <DecoratedInput type="number" value={rows} onChange={setRows} ref={focusOnMount} />
       </label>
       <label className="mb-2.5 flex items-center justify-between gap-3">
-        Columns:
+        {c('B3.Notes.EditorToolbar.Label').t`Columns:`}
         <DecoratedInput type="number" value={columns} onChange={setColumns} />
       </label>
       <div className="flex justify-end">
         <Button onClick={onClick} small={isMobileScreen()}>
-          Confirm
+          {c('B3.Notes.EditorToolbar.Action').t`Confirm`}
         </Button>
       </div>
     </>

@@ -2,6 +2,8 @@ import { escapeHtmlString, Platform, SNApplication } from '@standardnotes/snjs'
 import { getPlatform, isDesktopApplication } from '../Utils'
 import { c, msgid } from 'ttag'
 
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
+
 /** @generic */
 export const STRING_DEFAULT_FILE_ERROR = () =>
   c('Error')
@@ -20,33 +22,41 @@ export const STRING_NEW_UPDATE_READY =
   "A new update is ready to install. Please use the top-level 'Updates' menu to manage installation."
 
 /** @tags */
-export const STRING_DELETE_TAG =
-  'Are you sure you want to delete this tag? Deleting a tag will not delete its subtags or its notes.'
+export const STRING_DELETE_TAG = () =>
+  c('B3.Notes.TagsLinkedItems.Confirmation')
+    .t`Are you sure you want to delete this tag? Deleting a tag will not delete its subtags or its notes.`
 
-export const STRING_MISSING_SYSTEM_TAG = 'We are missing a System Tag.'
+export const STRING_MISSING_SYSTEM_TAG = () => c('B3.Notes.TagsLinkedItems.Error').t`We are missing a System Tag.`
 
 /** @editor */
-export const STRING_GENERIC_SAVE_ERROR = 'There was an error saving your note. Please try again.'
-export const STRING_DELETE_PLACEHOLDER_ATTEMPT =
-  'This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.'
-export const STRING_ARCHIVE_LOCKED_ATTEMPT =
-  "This note has editing disabled. If you'd like to archive it, enable editing, and try again."
-export const STRING_UNARCHIVE_LOCKED_ATTEMPT =
-  "This note has editing disabled. If you'd like to unarchive it, enable editing, and try again."
-export const STRING_DELETE_LOCKED_ATTEMPT =
-  "This note had editing disabled. If you'd like to delete it, enable editing, and try again."
-export const STRING_EDIT_LOCKED_ATTEMPT =
-  "This note has editing disabled. If you'd like to edit its options, enable editing, and try again."
-export const STRING_RESTORE_LOCKED_ATTEMPT =
-  "This note has editing disabled. If you'd like to restore it to a previous revision, enable editing and try again."
+export const STRING_GENERIC_SAVE_ERROR = () =>
+  c('B3.Notes.EditingUI.Error').t`There was an error saving your note. Please try again.`
+export const STRING_DELETE_PLACEHOLDER_ATTEMPT = () =>
+  c('B3.Notes.NoteActions.Info')
+    .t`This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.`
+export const STRING_ARCHIVE_LOCKED_ATTEMPT = () =>
+  c('B3.Notes.NoteActions.Info')
+    .t`This note has editing disabled. If you'd like to archive it, enable editing, and try again.`
+export const STRING_UNARCHIVE_LOCKED_ATTEMPT = () =>
+  c('B3.Notes.NoteActions.Info')
+    .t`This note has editing disabled. If you'd like to unarchive it, enable editing, and try again.`
+export const STRING_DELETE_LOCKED_ATTEMPT = () =>
+  c('B3.Notes.NoteActions.Info')
+    .t`This note had editing disabled. If you'd like to delete it, enable editing, and try again.`
+export const STRING_EDIT_LOCKED_ATTEMPT = () =>
+  c('B3.Notes.NoteActions.Info')
+    .t`This note has editing disabled. If you'd like to edit its options, enable editing, and try again.`
+export const STRING_RESTORE_LOCKED_ATTEMPT = () =>
+  c('B3.Notes.NoteActions.Info')
+    .t`This note has editing disabled. If you'd like to restore it to a previous revision, enable editing and try again.`
 export function StringDeleteNote(title: string, permanently: boolean) {
-  const escapedTitle = escapeHtmlString(title)
+  const noteTitle = title
   return permanently
-    ? `Are you sure you want to permanently delete ${escapedTitle}?`
-    : `Are you sure you want to move ${escapedTitle} to the trash?`
+    ? jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to permanently delete ${noteTitle}?`)
+    : jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to move ${noteTitle} to the trash?`)
 }
 export function StringEmptyTrash(count: number) {
-  return c('Confirmation').ngettext(
+  return c('B3.Notes.NoteActions.Confirmation').ngettext(
     msgid`Are you sure you want to permanently delete ${count} note?`,
     `Are you sure you want to permanently delete ${count} notes?`,
     count,
@@ -58,13 +68,13 @@ export const STRING_SIGN_OUT_CONFIRMATION = () =>
   c('B1.Account.Session.Info')
     .t`This action will remove this workspace and its related data from this device. Your synced data will not be affected.`
 export const STRING_E2E_ENABLED = () =>
-  c('B1.Account.ImportExport.Info')
+  c('B1.Account.Session.Info')
     .t`End-to-end encryption is enabled. Your data is encrypted on your device first, then synced to your private cloud.`
 export const STRING_LOCAL_ENC_ENABLED = () =>
-  c('B1.Account.ImportExport.Info')
+  c('B1.Account.Session.Info')
     .t`Encryption is enabled. Your data is encrypted using your passcode before it is saved to your device storage.`
 export const STRING_ENC_NOT_ENABLED = () =>
-  c('B1.Account.ImportExport.Info')
+  c('B1.Account.Session.Info')
     .t`Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.`
 export const STRING_IMPORT_SUCCESS = () =>
   c('B1.Account.ImportExport.Info').t`Your data has been successfully imported.`
@@ -116,14 +126,25 @@ export const STRING_FAILED_TO_UPDATE_USER_SETTING = () =>
   c('B1.Account.Session.Error').t`There was an error while trying to update your settings. Please try again.`
 
 export const Strings = {
-  protectingNoteWithoutProtectionSources:
-    'Access to this note will not be restricted until you set up a passcode or account.',
-  trashItemsTitle: 'Move to Trash',
-  deleteItemsPermanentlyTitle: 'Delete Permanently',
-  trashNotesText: 'Are you sure you want to move these notes to the trash?',
-  trashFilesText: 'Are you sure you want to move these files to the trash?',
+  get protectingNoteWithoutProtectionSources() {
+    return `Access to this note will not be restricted until you set up a passcode or account.`
+  },
+  get trashItemsTitle() {
+    return c('B3.Notes.NoteActions.Title').t`Move to Trash`
+  },
+  get deleteItemsPermanentlyTitle() {
+    return c('B3.Notes.NoteActions.Title').t`Delete Permanently`
+  },
+  get trashNotesText() {
+    return c('B3.Notes.NoteActions.Confirmation').t`Are you sure you want to move these notes to the trash?`
+  },
+  get trashFilesText() {
+    return c('B3.Notes.NoteActions.Confirmation').t`Are you sure you want to move these files to the trash?`
+  },
   enterPasscode: 'Please enter a passcode.',
-  deleteMultipleFiles: 'Are you sure you want to permanently delete these files?',
+  get deleteMultipleFiles() {
+    return c('B3.Notes.NoteActions.Confirmation').t`Are you sure you want to permanently delete these files?`
+  },
 }
 
 export const StringUtils = {
@@ -145,37 +166,49 @@ export const StringUtils = {
   },
   deleteNotes(permanently: boolean, notesCount = 1, title?: string): string {
     if (notesCount === 1) {
-      const escapedTitle = escapeHtmlString(title || '')
+      const noteTitle = title ? escapeHtmlString(title) : c('B3.Notes.NoteActions.Label').t`this note`
       return permanently
-        ? `Are you sure you want to permanently delete ${escapedTitle}?`
-        : `Are you sure you want to move ${escapedTitle} to the trash?`
-    } else {
-      return permanently
-        ? 'Are you sure you want to permanently delete these notes?'
-        : 'Are you sure you want to move these notes to the trash?'
+        ? jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to permanently delete ${noteTitle}?`)
+        : jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to move ${noteTitle} to the trash?`)
     }
+
+    return permanently
+      ? c('B3.Notes.NoteActions.Confirmation').t`Are you sure you want to permanently delete these notes?`
+      : c('B3.Notes.NoteActions.Confirmation').t`Are you sure you want to move these notes to the trash?`
   },
   deleteFile(title: string): string {
-    const escapedTitle = escapeHtmlString(title)
-    return `Are you sure you want to permanently delete ${escapedTitle}?`
+    const fileTitle = escapeHtmlString(title)
+    return jtString(
+      c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to permanently delete ${fileTitle}?`,
+    )
   },
   archiveLockedNotesAttempt(archive: boolean, notesCount = 1): string {
-    const archiveString = archive ? 'archive' : 'unarchive'
+    const archiveAction = archive
+      ? c('B3.Notes.NoteActions.Label').t`archive`
+      : c('B3.Notes.NoteActions.Label').t`unarchive`
     return notesCount === 1
-      ? `This note has editing disabled. If you'd like to ${archiveString} it, enable editing, and try again.`
-      : `One or more of these notes have editing disabled. If you'd like to ${archiveString} them, make sure editing is enabled on all of them, and try again.`
+      ? jtString(
+          c('B3.Notes.NoteActions.Info')
+            .jt`This note has editing disabled. If you'd like to ${archiveAction} it, enable editing, and try again.`,
+        )
+      : jtString(
+          c('B3.Notes.NoteActions.Info')
+            .jt`One or more of these notes have editing disabled. If you'd like to ${archiveAction} them, make sure editing is enabled on all of them, and try again.`,
+        )
   },
   deleteLockedNotesAttempt(notesCount = 1): string {
     return notesCount === 1
-      ? "This note has editing disabled. If you'd like to delete it, enable editing, and try again."
-      : "One or more of these notes have editing disabled. If you'd like to delete them, make sure editing is enabled on all of them, and try again."
+      ? c('B3.Notes.NoteActions.Info')
+          .t`This note has editing disabled. If you'd like to delete it, enable editing, and try again.`
+      : c('B3.Notes.NoteActions.Info')
+          .t`One or more of these notes have editing disabled. If you'd like to delete them, make sure editing is enabled on all of them, and try again.`
   },
   deleteTag(title: string): string {
-    const escapedTitle = escapeHtmlString(title)
-    return `Delete tag "${escapedTitle}"?`
+    const tagTitle = escapeHtmlString(title)
+    return jtString(c('B3.Notes.TagsLinkedItems.Confirmation').jt`Delete tag "${tagTitle}"?`)
   },
   cannotUploadFile(name: string): string {
-    const escapedName = escapeHtmlString(name)
-    return `Cannot upload file "${escapedName}"`
+    const fileName = escapeHtmlString(name)
+    return jtString(c('B3.Notes.EditorToolbar.Error').jt`Cannot upload file "${fileName}"`)
   },
 }

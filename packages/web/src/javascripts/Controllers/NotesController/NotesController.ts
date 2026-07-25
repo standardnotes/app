@@ -303,7 +303,7 @@ export class NotesController
     let noteTitle = undefined
     if (this.selectedNotesCount === 1) {
       const selectedNote = this.getSelectedNotesList()[0]
-      noteTitle = selectedNote.title.length ? `'${selectedNote.title}'` : 'this note'
+      noteTitle = selectedNote.title.length ? `'${selectedNote.title}'` : c('B3.Notes.NoteActions.Label').t`this note`
     }
     const text = StringUtils.deleteNotes(permanently, this.selectedNotesCount, noteTitle)
 

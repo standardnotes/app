@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react'
 import Popover from '../Popover/Popover'
 import Menu from '../Menu/Menu'
 import { useApplication } from '../ApplicationProvider'
+import { c } from 'ttag'
 
 const NotesContextMenu = () => {
   const application = useApplication()
@@ -19,7 +20,7 @@ const NotesContextMenu = () => {
 
   return (
     <Popover
-      title="Note options"
+      title={c('B3.Notes.NoteActions.Label').t`Note options`}
       align="start"
       anchorPoint={{
         x: contextMenuClickLocation.x,

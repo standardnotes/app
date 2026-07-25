@@ -620,7 +620,7 @@ export class NavigationController
     if (userTriggered) {
       shouldDelete = await confirmDialog({
         title: StringUtils.deleteTag(tag.title),
-        text: STRING_DELETE_TAG,
+        text: STRING_DELETE_TAG(),
         confirmButtonStyle: 'danger',
       })
     }
@@ -659,7 +659,7 @@ export class NavigationController
       if (isTemplateChange) {
         this.undoCreateNewTag()
       }
-      this.alerts.alert('A tag with this name already exists.').catch(console.error)
+      this.alerts.alert(c('B3.Notes.TagsLinkedItems.Info').t`A tag with this name already exists.`).catch(console.error)
       return
     }
 
