@@ -1,4 +1,5 @@
 import { destroyAllObjectProperties } from '@/Utils'
+import { c } from 'ttag'
 import {
   confirmDialog,
   GetItemTags,
@@ -169,13 +170,13 @@ export class NotesController
     this.disposers.push(
       application.keyboardService.addCommandHandler({
         command: PIN_NOTE_COMMAND,
-        category: 'Current note',
+        category: c('B2.SharedUI.Label').t`Current note` as 'Current note',
         description: 'Pin/unpin selected note(s)',
         onKeyDown: this.togglePinSelectedNotes,
       }),
       application.keyboardService.addCommandHandler({
         command: STAR_NOTE_COMMAND,
-        category: 'Current note',
+        category: c('B2.SharedUI.Label').t`Current note` as 'Current note',
         description: 'Star/unstar selected note(s)',
         onKeyDown: this.toggleStarSelectedNotes,
       }),

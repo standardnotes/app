@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { c } from 'ttag'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
@@ -440,11 +441,11 @@ class Footer extends AbstractComponent<Props, State> {
               </div>
             )}
             {this.state.hasPasscode && (
-              <StyledTooltip label="Lock application">
+              <StyledTooltip label={c('B2.SharedUI.AriaLabel').t`Lock application`}>
                 <div
                   id="lock-item"
                   onClick={this.lockClickHandler}
-                  title="Locks application and wipes unencrypted data from memory."
+                  title={c('B2.SharedUI.AriaLabel').t`Locks application and wipes unencrypted data from memory.`}
                   className="relative z-footer-bar-item ml-3 flex cursor-pointer select-none items-center border-l border-solid border-border pl-2 hover:text-info"
                 >
                   <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />

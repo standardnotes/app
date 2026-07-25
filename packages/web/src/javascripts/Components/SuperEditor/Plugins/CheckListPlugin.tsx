@@ -1,4 +1,5 @@
 import { $insertList, $isListItemNode, INSERT_CHECK_LIST_COMMAND, ListNode } from '@lexical/list'
+import { c } from 'ttag'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { calculateZoomLevel, isHTMLElement, mergeRegister } from '@lexical/utils'
 import {
@@ -159,7 +160,7 @@ export function CheckListPlugin(): null {
         platform: application.platform,
         modifiers: [primaryModifier],
         key: 'Enter',
-        category: 'Super notes',
+        category: c('B2.SharedUI.Label').t`Super notes` as 'Super notes',
         description: 'Toggle checklist item',
       }),
     )

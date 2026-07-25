@@ -1,3 +1,4 @@
+import { c } from 'ttag'
 import {
   confirmDialog,
   CREATE_NEW_TAG_COMMAND,
@@ -201,7 +202,7 @@ export class NavigationController
     this.disposers.push(
       this.commands.addWithShortcut(
         CREATE_NEW_TAG_COMMAND,
-        'General',
+        c('B2.SharedUI.Label').t`General` as 'General',
         'Create new tag',
         () => this.createNewTemplate(),
         'add',

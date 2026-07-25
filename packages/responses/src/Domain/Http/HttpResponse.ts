@@ -3,6 +3,7 @@ import { HttpResponseMeta } from './HttpResponseMeta'
 import { HttpHeaders } from './HttpHeaders'
 import { HttpStatusCode } from './HttpStatusCode'
 import { HttpError } from './HttpError'
+import { c } from 'ttag'
 
 type AnySuccessRecord = Record<string, unknown> & { error?: never }
 
@@ -57,6 +58,6 @@ export function getErrorFromErrorResponse(response: HttpErrorResponse): HttpErro
   }
 
   return {
-    message: 'Unknown error',
+    message: c('B2.SharedUI.Error').t`Unknown error`,
   }
 }

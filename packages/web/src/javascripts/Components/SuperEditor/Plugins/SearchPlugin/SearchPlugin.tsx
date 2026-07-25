@@ -1,4 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { c } from 'ttag'
 import { useLexicalEditable } from '@lexical/react/useLexicalEditable'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useApplication } from '../../../ApplicationProvider'
@@ -121,7 +122,7 @@ export function SearchPlugin() {
     return application.keyboardService.addCommandHandlers([
       {
         command: SUPER_TOGGLE_SEARCH,
-        category: 'Super notes',
+        category: c('B2.SharedUI.Label').t`Super notes` as 'Super notes',
         description: 'Search in current note',
         onKeyDown: (event) => {
           event.preventDefault()
@@ -131,7 +132,7 @@ export function SearchPlugin() {
       },
       {
         command: SUPER_SEARCH_TOGGLE_REPLACE_MODE,
-        category: 'Super notes',
+        category: c('B2.SharedUI.Label').t`Super notes` as 'Super notes',
         description: 'Search and replace in current note',
         onKeyDown: (event) => {
           if (!isEditable) {
@@ -150,7 +151,7 @@ export function SearchPlugin() {
       },
       {
         command: SUPER_SEARCH_NEXT_RESULT,
-        category: 'Super notes',
+        category: c('B2.SharedUI.Label').t`Super notes` as 'Super notes',
         description: 'Go to next search result',
         onKeyDown(event) {
           event.preventDefault()
@@ -160,7 +161,7 @@ export function SearchPlugin() {
       },
       {
         command: SUPER_SEARCH_PREVIOUS_RESULT,
-        category: 'Super notes',
+        category: c('B2.SharedUI.Label').t`Super notes` as 'Super notes',
         description: 'Go to previous search result',
         onKeyDown(event) {
           event.preventDefault()

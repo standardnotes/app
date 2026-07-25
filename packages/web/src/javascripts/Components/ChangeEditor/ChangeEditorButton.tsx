@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+import { c } from 'ttag'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ChangeEditorMenu from './ChangeEditorMenu'
 import Popover from '../Popover/Popover'
@@ -57,7 +58,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onCl
   useEffect(() => {
     return application.commands.addWithShortcut(
       CHANGE_EDITOR_COMMAND,
-      'Current note',
+      c('B2.SharedUI.Label').t`Current note` as 'Current note',
       'Change note type',
       () => {
         void toggleMenu()

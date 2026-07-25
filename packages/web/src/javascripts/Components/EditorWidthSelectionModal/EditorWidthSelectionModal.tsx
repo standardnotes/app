@@ -1,4 +1,5 @@
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { c } from 'ttag'
 import { classNames, EditorLineWidth, SNNote, PrefDefaults, LocalPrefKey } from '@standardnotes/snjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Button from '../Button/Button'
@@ -180,7 +181,7 @@ const EditorWidthSelectionModalWrapper = () => {
   useEffect(() => {
     return application.commands.addWithShortcut(
       CHANGE_EDITOR_WIDTH_COMMAND,
-      'Current note',
+      c('B2.SharedUI.Label').t`Current note` as 'Current note',
       'Change editor width',
       (_, data) => {
         if (typeof data === 'boolean' && data) {

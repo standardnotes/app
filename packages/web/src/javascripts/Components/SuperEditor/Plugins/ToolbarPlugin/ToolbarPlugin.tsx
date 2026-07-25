@@ -1,4 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
+import { c } from 'ttag'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import useModal from '../../Lexical/Hooks/useModal'
 import { InsertTableDialog } from '../TablePlugin'
@@ -606,7 +607,7 @@ const ToolbarPlugin = () => {
   useEffect(() => {
     return application.keyboardService.addCommandHandler({
       command: SUPER_TOGGLE_TOOLBAR,
-      category: 'Super notes',
+      category: c('B2.SharedUI.Label').t`Super notes` as 'Super notes',
       description: 'Toggle Super note toolbar',
       onKeyDown(event) {
         if (isMobile) {

@@ -1,26 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { c } from 'ttag'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
-import {
-  KeyboardService,
-  KeyboardShortcutCategory,
-  KeyboardShortcutHelpItem,
-  TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
-} from '@standardnotes/ui-services'
+import { KeyboardService, KeyboardShortcutHelpItem, TOGGLE_KEYBOARD_SHORTCUTS_MODAL } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 
-type GroupedItems = {
-  [category in KeyboardShortcutCategory]: KeyboardShortcutHelpItem[]
-}
+type GroupedItems = Record<string, KeyboardShortcutHelpItem[]>
 
 const createGroupedItems = (items: KeyboardShortcutHelpItem[]): GroupedItems => {
   const groupedItems: GroupedItems = {
-    'Current note': [],
-    Formatting: [],
-    'Super notes': [],
-    'Notes list': [],
-    General: [],
+    [c('B2.SharedUI.Label').t`Current note`]: [],
+    [c('B2.SharedUI.Label').t`Formatting`]: [],
+    [c('B2.SharedUI.Label').t`Super notes`]: [],
+    [c('B2.SharedUI.Label').t`Notes list`]: [],
+    [c('B2.SharedUI.Label').t`General` as 'General']: [],
   }
   return items.reduce((acc, item) => {
     acc[item.category].push(item)
@@ -48,8 +42,8 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
   useEffect(() => {
     return keyboardService.addCommandHandler({
       command: TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
-      category: 'General',
-      description: 'Toggle keyboard shortcuts help',
+      category: c('B2.SharedUI.Label').t`General` as 'General',
+      description: c('B2.SharedUI.Action').t`Toggle keyboard shortcuts help`,
       onKeyDown: () => {
         setItems(createGroupedItems(keyboardService.getRegisteredKeyboardShorcutHelpItems()))
         setIsOpen((open) => !open)
@@ -60,7 +54,7 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
   const actions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Cancel',
+        label: c('B2.SharedUI.Action').t`Cancel`,
         onClick: close,
         type: 'cancel',
         mobileSlot: 'left',
@@ -71,7 +65,7 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
 
   return (
     <ModalOverlay isOpen={isOpen} close={close}>
-      <Modal title="Keyboard shortcuts" close={close} actions={actions}>
+      <Modal title={c('B2.SharedUI.Title').t`Keyboard shortcuts`} close={close} actions={actions}>
         {Object.entries(items).map(
           ([category, items]) =>
             items.length > 0 && (

@@ -1,4 +1,5 @@
 import { ProtocolVersion } from '@standardnotes/models'
+import { c } from 'ttag'
 
 export const API_MESSAGE_GENERIC_INVALID_LOGIN = 'A server error occurred while trying to sign in. Please try again.'
 export const API_MESSAGE_GENERIC_REGISTRATION_FAIL =
@@ -28,7 +29,8 @@ export const API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL =
 export const API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS =
   'Your account session is being renewed with the server. Please try your request again.'
 
-export const API_MESSAGE_RATE_LIMITED = 'Too many successive server requests. Please wait a few minutes and try again.'
+export const API_MESSAGE_RATE_LIMITED = c('B2.SharedUI.Error')
+  .t`Too many successive server requests. Please wait a few minutes and try again.`
 
 export const API_MESSAGE_INVALID_SESSION = 'Please sign in to an account in order to continue with your request.'
 
@@ -74,7 +76,7 @@ export const REMOVING_PASSCODE = 'Removing passcode…'
 
 export const DO_NOT_CLOSE_APPLICATION = 'Do not close the application until this process completes.'
 
-export const UNKNOWN_ERROR = 'Unknown error.'
+export const UNKNOWN_ERROR = c('B2.SharedUI.Error').t`Unknown error.`
 
 export function InsufficientPasswordMessage(minimum: number): string {
   return `Your password must be at least ${minimum} characters in length. For your security, please choose a longer password or, ideally, a passphrase, and try again.`

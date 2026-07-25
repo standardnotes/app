@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+import { c } from 'ttag'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
@@ -70,7 +71,7 @@ const LinkedItemBubblesContainer = ({
     return mergeRegister(
       keyboardService.addCommandHandler({
         command: FOCUS_TAGS_INPUT_COMMAND,
-        category: 'Current note',
+        category: c('B2.SharedUI.Label').t`Current note` as 'Current note',
         description: 'Link tags, notes, files',
         onKeyDown: focusInput,
       }),

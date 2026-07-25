@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { c } from 'ttag'
 import {
   ApplicationEvent,
   isPayloadSourceRetrieved,
@@ -105,7 +106,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   useEffect(() => {
     return application.commands.addWithShortcut(
       SUPER_SHOW_MARKDOWN_PREVIEW,
-      'Super notes',
+      c('B2.SharedUI.Label').t`Super notes` as 'Super notes',
       'Show markdown preview for current note',
       () => setShowMarkdownPreview((s) => !s),
       'markdown',
@@ -121,28 +122,28 @@ export const SuperEditor: FunctionComponent<Props> = ({
         key: 'b',
         modifiers: [primaryModifier],
         description: 'Bold',
-        category: 'Formatting',
+        category: c('B2.SharedUI.Label').t`Formatting` as 'Formatting',
         platform: platform,
       },
       {
         key: 'i',
         modifiers: [primaryModifier],
         description: 'Italic',
-        category: 'Formatting',
+        category: c('B2.SharedUI.Label').t`Formatting` as 'Formatting',
         platform: platform,
       },
       {
         key: 'u',
         modifiers: [primaryModifier],
         description: 'Underline',
-        category: 'Formatting',
+        category: c('B2.SharedUI.Label').t`Formatting` as 'Formatting',
         platform: platform,
       },
       {
         key: 'k',
         modifiers: [primaryModifier],
         description: 'Link',
-        category: 'Formatting',
+        category: c('B2.SharedUI.Label').t`Formatting` as 'Formatting',
         platform: platform,
       },
     ])

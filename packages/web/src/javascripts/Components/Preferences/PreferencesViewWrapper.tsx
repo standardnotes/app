@@ -1,4 +1,5 @@
 import { FunctionComponent, useEffect } from 'react'
+import { c } from 'ttag'
 import { observer } from 'mobx-react-lite'
 import PreferencesView from './PreferencesView'
 import { PreferencesViewWrapperProps } from './PreferencesViewWrapperProps'
@@ -12,8 +13,8 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
   useEffect(() => {
     return application.commands.addWithShortcut(
       OPEN_PREFERENCES_COMMAND,
-      'General',
-      'Open preferences',
+      c('B2.SharedUI.Label').t`General` as 'General',
+      c('B2.SharedUI.Action').t`Open preferences`,
       () => application.preferencesController.openPreferences(),
       'tune',
     )

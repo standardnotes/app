@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { c } from 'ttag'
 import {
   ButtonType,
   Challenge,
@@ -263,7 +264,7 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
         {challenge.cancelable && (
           <button
             onClick={cancelChallenge}
-            aria-label="Close modal"
+            aria-label={c('B2.SharedUI.AriaLabel').t`Close modal`}
             className="absolute right-4 top-4 hidden cursor-pointer border-0 bg-transparent p-1 md:flex"
           >
             <Icon type="close" className="text-neutral" />

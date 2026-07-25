@@ -33,6 +33,7 @@ import {
   Challenge,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
+import { c } from 'ttag'
 
 type PayloadRequestHandler = (uuid: string) => TransferPayload | undefined
 
@@ -173,7 +174,7 @@ export class ActionsService extends AbstractService {
       })
       .catch((response) => {
         const error = (response && response.error) || {
-          message: 'An issue occurred while processing this action. Please try again.',
+          message: c('B2.SharedUI.Error').t`An issue occurred while processing this action. Please try again.`,
         }
         void this.alertService.alert(error.message)
         return { error } as DeprecatedHttpResponse

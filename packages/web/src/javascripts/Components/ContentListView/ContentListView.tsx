@@ -1,3 +1,4 @@
+import { c } from 'ttag'
 import {
   CANCEL_SEARCH_COMMAND,
   CREATE_NEW_NOTE_KEYBOARD_COMMAND,
@@ -177,7 +178,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       return application.keyboardService.addCommandHandlers([
         {
           command: NEXT_LIST_ITEM_KEYBOARD_COMMAND,
-          category: 'Notes list',
+          category: c('B2.SharedUI.Label').t`Notes list` as 'Notes list',
           description: 'Go to next item',
           elements: [document.body, ...(searchBarElement ? [searchBarElement] : [])],
           onKeyDown: () => {
@@ -192,7 +193,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
-          category: 'Notes list',
+          category: c('B2.SharedUI.Label').t`Notes list` as 'Notes list',
           description: 'Go to previous item',
           element: document.body,
           onKeyDown: () => {
@@ -204,8 +205,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SEARCH_KEYBOARD_COMMAND,
-          category: 'General',
-          description: 'Toggle global search',
+          category: c('B2.SharedUI.Label').t`General` as 'General',
+          description: c('B2.SharedUI.Action').t`Toggle global search`,
           onKeyDown: (event) => {
             if (searchBarElement) {
               event.preventDefault()
@@ -223,8 +224,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
-          category: 'General',
-          description: 'Select all items',
+          category: c('B2.SharedUI.Label').t`General` as 'General',
+          description: c('B2.SharedUI.Action').t`Select all items`,
           onKeyDown: (event) => {
             const isTargetInsideContentList = (event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)
 
@@ -264,7 +265,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       () =>
         application.commands.addWithShortcut(
           CREATE_NEW_NOTE_KEYBOARD_COMMAND,
-          'General',
+          c('B2.SharedUI.Label').t`General` as 'General',
           isFilesSmartView ? 'Upload file' : 'Create new note',
           (event) => {
             event?.preventDefault()
@@ -303,7 +304,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       <div
         id={id}
         className={classNames(className, 'sn-component section h-full overflow-hidden pt-safe-top')}
-        aria-label={'Notes & Files'}
+        aria-label={c('B2.SharedUI.AriaLabel').t`Notes & Files`}
         ref={mergeRefs([ref, innerRef, setElement])}
       >
         {isMobileScreen && !itemListController.isMultipleSelectionMode && (
@@ -343,7 +344,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         {itemListController.isMultipleSelectionMode && (
           <div className="flex items-center border-b border-l-2 border-border border-l-transparent py-2.5 pr-4">
             <div className="px-4">
-              <StyledTooltip label="Select all items" showOnHover showOnMobile>
+              <StyledTooltip label={c('B2.SharedUI.AriaLabel').t`Select all items`} showOnHover showOnMobile>
                 <button
                   className="ml-auto rounded border border-border p-1 hover:bg-contrast"
                   onClick={() => {
@@ -354,8 +355,10 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 </button>
               </StyledTooltip>
             </div>
-            <div className="text-base font-semibold md:text-sm">{itemListController.selectedItemsCount} selected</div>
-            <StyledTooltip label="Cancel multiple selection" showOnHover showOnMobile>
+            <div className="text-base font-semibold md:text-sm">
+              {c('B2.SharedUI.Status').t`${itemListController.selectedItemsCount} selected`}
+            </div>
+            <StyledTooltip label={c('B2.SharedUI.AriaLabel').t`Cancel multiple selection`} showOnHover showOnMobile>
               <button
                 className="ml-auto rounded border border-border p-1 hover:bg-contrast"
                 onClick={() => {
@@ -380,11 +383,11 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           isFilesSmartView ? (
             <EmptyFilesView addNewItem={addNewItem} />
           ) : (
-            <p className="empty-items-list opacity-50">No items.</p>
+            <p className="empty-items-list opacity-50">{c('B2.SharedUI.Info').t`No items.`}</p>
           )
         ) : null}
         {!dailyMode && !completedFullSync && !renderedItems.length ? (
-          <p className="empty-items-list opacity-50">Loading...</p>
+          <p className="empty-items-list opacity-50">{c('B2.SharedUI.Status').t`Loading...`}</p>
         ) : null}
         {!dailyMode && renderedItems.length ? (
           shouldUseTableView ? (
