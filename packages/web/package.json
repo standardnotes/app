@@ -20,7 +20,8 @@
     "tsc": "tsc --project tsconfig.json",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",
     "watch": "webpack -w --config web.webpack.dev.js",
-    "copy:components": "node scripts/CopyComponents.mjs"
+    "copy:components": "node scripts/CopyComponents.mjs",
+    "i18n:extract": "echo 'ttag: extract web'; mkdir -p po && ttag extract src/javascripts ../services/src ../ui-services/src ../responses/src ../snjs/lib -o po/template.pot"
   },
   "devDependencies": {
     "@babel/core": "*",

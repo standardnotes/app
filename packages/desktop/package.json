@@ -29,7 +29,8 @@
     "start": "electron ./app --enable-logging --icon _icon/icon.png",
     "ava": "rimraf test/data/tmp && ava --serial",
     "rebuild:keytar": "yarn app/node_modules/keytar build ",
-    "rebuild:home-server": "electron-rebuild -f -w @standardnotes/home-server -m ./app"
+    "rebuild:home-server": "electron-rebuild -f -w @standardnotes/home-server -m ./app",
+    "i18n:extract": "echo 'ttag: extract desktop'; mkdir -p po && ttag extract app/javascripts -o po/template.pot"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
