@@ -1,3 +1,4 @@
+import { c } from 'ttag'
 import {
   ChallengePrompt,
   ChallengeValidation,
@@ -164,7 +165,11 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
           onChange={(value) => onValueChange(value, prompt)}
         />
       )}
-      {isInvalid && <div className="mt-2 text-sm text-danger">Invalid authentication, please try again.</div>}
+      {isInvalid && (
+        <div className="mt-2 text-sm text-danger">
+          {c('B4.Security.Challenge.Error').t`Invalid authentication, please try again.`}
+        </div>
+      )}
     </div>
   )
 }

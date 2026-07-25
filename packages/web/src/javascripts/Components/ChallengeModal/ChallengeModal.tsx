@@ -246,7 +246,7 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
       )}
     >
       <Modal
-        title="Authenticate"
+        title={c('B4.Security.Challenge.Title').t`Authenticate`}
         close={cancelChallenge}
         customHeader={<></>}
         customFooter={<></>}
@@ -304,7 +304,9 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
           </form>
           {shouldShowSubmitButton && (
             <Button primary disabled={isProcessing} className="mb-3.5 mt-1 min-w-76" onClick={submit}>
-              {isProcessing ? 'Generating Keys...' : 'Submit'}
+              {isProcessing
+                ? c('B4.Security.Challenge.Status').t`Generating Keys...`
+                : c('B4.Security.Challenge.Action').t`Submit`}
             </Button>
           )}
           {shouldShowForgotPasscode && (
@@ -313,9 +315,10 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
               onClick={() => {
                 application.alerts
                   .confirm(
-                    'If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.',
-                    'Forgot passcode?',
-                    'Delete local data',
+                    c('B4.Security.Passcode.Info')
+                      .t`If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.`,
+                    c('B4.Security.Passcode.Title').t`Forgot passcode?`,
+                    c('B4.Security.Passcode.Action').t`Delete local data`,
                     ButtonType.Danger,
                   )
                   .then((shouldDeleteLocalData) => {
@@ -327,7 +330,7 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
               }}
             >
               <Icon type="help" className="mr-2 text-neutral" />
-              Forgot passcode?
+              {c('B4.Security.Passcode.Title').t`Forgot passcode?`}
             </Button>
           )}
           {shouldShowWorkspaceSwitcher && <LockscreenWorkspaceSwitcher mainApplicationGroup={mainApplicationGroup} />}

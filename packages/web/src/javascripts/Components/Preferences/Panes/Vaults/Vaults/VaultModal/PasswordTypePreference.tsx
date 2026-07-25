@@ -2,6 +2,7 @@ import { KeySystemPasswordType, classNames } from '@standardnotes/snjs'
 import StyledRadioInput from '@/Components/Radio/StyledRadioInput'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import { useState } from 'react'
+import { c } from 'ttag'
 
 type PasswordTypePreference = {
   value: KeySystemPasswordType
@@ -9,17 +10,17 @@ type PasswordTypePreference = {
   description: string
 }
 
-const options: PasswordTypePreference[] = [
+const getOptions = (): PasswordTypePreference[] => [
   {
     value: KeySystemPasswordType.Randomized,
-    label: 'Randomized (Recommended)',
-    description: 'Your vault key will be randomly generated and synced to your account.',
+    label: c('B4.Security.KeyStorage.Label').t`Randomized (Recommended)`,
+    description: c('B4.Security.KeyStorage.Info').t`Your vault key will be randomly generated and synced to your account.`,
   },
   {
     value: KeySystemPasswordType.UserInputted,
-    label: 'Custom (Advanced)',
-    description:
-      'Choose your own key for your vault. This is an advanced option and is not recommended for most users.',
+    label: c('B4.Security.KeyStorage.Label').t`Custom (Advanced)`,
+    description: c('B4.Security.KeyStorage.Info')
+      .t`Choose your own key for your vault. This is an advanced option and is not recommended for most users.`,
   },
 ]
 
@@ -33,6 +34,7 @@ export const PasswordTypePreference = ({
   onCustomKeyChange: (value: string) => void
 }) => {
   const [customKey, setCustomKey] = useState('')
+  const options = getOptions()
 
   const onKeyInputChange = (value: string) => {
     setCustomKey(value)
@@ -41,7 +43,7 @@ export const PasswordTypePreference = ({
 
   return (
     <div>
-      <div className="mb-3 text-lg">Vault Key Type</div>
+      <div className="mb-3 text-lg">{c('B4.Security.KeyStorage.Title').t`Vault Key Type`}</div>
       <div className="mb-1 space-y-3">
         {options.map((option) => {
           const isSelected = value === option.value
@@ -67,7 +69,7 @@ export const PasswordTypePreference = ({
       {value === KeySystemPasswordType.UserInputted && (
         <div className="mt-2">
           <DecoratedPasswordInput
-            placeholder="Choose a password"
+            placeholder={c('B4.Security.KeyStorage.Placeholder').t`Choose a password`}
             id="key-input"
             value={customKey}
             onChange={onKeyInputChange}

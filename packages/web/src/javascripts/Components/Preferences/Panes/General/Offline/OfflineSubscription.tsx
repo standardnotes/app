@@ -6,6 +6,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/Constants/Strings'
 import { ButtonType, ClientDisplayableError } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -96,9 +97,9 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
   const handleRemoveClick = async () => {
     application.alerts
       .confirm(
-        STRING_REMOVE_OFFLINE_KEY_CONFIRMATION,
-        'Remove offline key?',
-        'Remove Offline Key',
+        STRING_REMOVE_OFFLINE_KEY_CONFIRMATION(),
+        c('B4.Security.KeyStorage.Confirmation').t`Remove offline key?`,
+        c('B4.Security.KeyStorage.Action').t`Remove Offline Key`,
         ButtonType.Danger,
         'Cancel',
       )
@@ -152,7 +153,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
             {hasUserPreviouslyStoredCode && (
               <Button
                 colorStyle="danger"
-                label="Remove offline key"
+                label={c('B4.Security.KeyStorage.Action').t`Remove offline key`}
                 onClick={() => {
                   handleRemoveClick().catch(console.error)
                 }}

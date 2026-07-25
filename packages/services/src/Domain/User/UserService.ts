@@ -414,7 +414,7 @@ export class UserService
       return { canceled: true }
     }
     const dismissBlockingDialog = await this.alerts.blockingDialog(
-      Messages.DO_NOT_CLOSE_APPLICATION,
+      Messages.DO_NOT_CLOSE_APPLICATION(),
       Messages.UPGRADING_ENCRYPTION,
     )
     try {
@@ -461,8 +461,8 @@ export class UserService
     }
 
     const dismissBlockingDialog = await this.alerts.blockingDialog(
-      Messages.DO_NOT_CLOSE_APPLICATION,
-      Messages.SETTING_PASSCODE,
+      Messages.DO_NOT_CLOSE_APPLICATION(),
+      Messages.SETTING_PASSCODE(),
     )
     try {
       await this.setPasscodeWithoutWarning(passcode, KeyParamsOrigination.PasscodeCreate)
@@ -478,8 +478,8 @@ export class UserService
     }
 
     const dismissBlockingDialog = await this.alerts.blockingDialog(
-      Messages.DO_NOT_CLOSE_APPLICATION,
-      Messages.REMOVING_PASSCODE,
+      Messages.DO_NOT_CLOSE_APPLICATION(),
+      Messages.REMOVING_PASSCODE(),
     )
     try {
       await this.removePasscodeWithoutWarning()
@@ -504,10 +504,10 @@ export class UserService
     }
 
     const dismissBlockingDialog = await this.alerts.blockingDialog(
-      Messages.DO_NOT_CLOSE_APPLICATION,
+      Messages.DO_NOT_CLOSE_APPLICATION(),
       origination === KeyParamsOrigination.ProtocolUpgrade
         ? Messages.ProtocolUpgradeStrings.UpgradingPasscode
-        : Messages.CHANGING_PASSCODE,
+        : Messages.CHANGING_PASSCODE(),
     )
     try {
       await this.removePasscodeWithoutWarning()
