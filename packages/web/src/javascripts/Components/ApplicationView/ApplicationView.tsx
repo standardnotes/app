@@ -14,6 +14,7 @@ import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHist
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
 import { addToast, ToastContainer, ToastType } from '@standardnotes/toast'
+import { c } from 'ttag'
 import FilePreviewModalWrapper from '@/Components/FilePreview/FilePreviewModal'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
@@ -127,7 +128,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
         if (!currentLoadErrorDialog.current) {
           alertDialog({
-            text: 'Unable to load local database. Please restart the app and try again.',
+            text: c('B2.SharedUI.Error')
+              .t`Unable to load local database. Please restart the app and try again.`,
           })
             .then(() => {
               currentLoadErrorDialog.current = null
@@ -137,7 +139,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
         if (!currentWriteErrorDialog.current) {
           currentWriteErrorDialog.current = alertDialog({
-            text: 'Unable to write to local database. Please restart the app and try again.',
+            text: c('B2.SharedUI.Error')
+              .t`Unable to write to local database. Please restart the app and try again.`,
           })
             .then(() => {
               currentWriteErrorDialog.current = null
@@ -147,7 +150,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       } else if (eventName === ApplicationEvent.SyncTooManyRequests) {
         addToast({
           type: ToastType.Error,
-          message: 'Too many requests. Please try again later.',
+          message: c('B2.SharedUI.Error').t`Too many requests. Please try again later.`,
         })
       }
     })

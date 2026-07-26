@@ -24,6 +24,7 @@ import {
   classNames,
 } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
+import { c } from 'ttag'
 import { getSuperJSONFromClipPayload } from './getSuperJSONFromClipHTML'
 import ClippedNoteView from './ClippedNoteView'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
@@ -450,13 +451,13 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
             {isSyncing && (
               <>
                 <Spinner className="mx-2.5 h-4 w-4" />
-                <div className="flex-grow py-2 text-sm font-semibold text-info">Syncing...</div>
+                <div className="flex-grow py-2 text-sm font-semibold text-info">{c('B2.SharedUI.Status').t`Syncing...`}</div>
               </>
             )}
             {hasSyncError && (
               <>
                 <Icon type="warning" className="mx-2.5" />
-                <div className="flex-grow py-2 text-sm font-semibold">Unable to sync</div>
+                <div className="flex-grow py-2 text-sm font-semibold">{c('B2.SharedUI.Error').t`Unable to sync`}</div>
               </>
             )}
           </div>

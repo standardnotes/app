@@ -6,7 +6,7 @@ export const API_MESSAGE_GENERIC_REGISTRATION_FAIL =
   'A server error occurred while trying to register. Please try again.'
 export const API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL =
   'Something went wrong while changing your credentials. Your credentials were not changed. Please try again.'
-export const API_MESSAGE_GENERIC_SYNC_FAIL = 'Could not connect to server.'
+export const API_MESSAGE_GENERIC_SYNC_FAIL = () => c('B2.SharedUI.Error').t`Could not connect to server.`
 
 export const ServerErrorStrings = {
   DeleteAccountError: 'Your account was unable to be deleted due to an error. Please try your request again.',
@@ -14,7 +14,7 @@ export const ServerErrorStrings = {
 
 export const API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL = 'Could not check your data integrity with the server.'
 
-export const API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL = 'Could not retrieve item.'
+export const API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL = () => c('B2.SharedUI.Error').t`Could not retrieve item.`
 
 export const API_MESSAGE_REGISTRATION_IN_PROGRESS = 'An existing registration request is already in progress.'
 export const API_MESSAGE_LOGIN_IN_PROGRESS = 'An existing sign in request is already in progress.'
@@ -91,7 +91,9 @@ export const CredentialsChangeStrings = {
   get PasscodeRequired() {
     return c('B4.Security.Challenge.Info').t`Your passcode is required to process your credentials change.`
   },
-  Failed: 'Unable to change your credentials due to a sync error. Please try again.',
+  get Failed() {
+    return c('B2.SharedUI.Error').t`Unable to change your credentials due to a sync error. Please try again.`
+  },
 }
 
 export const RegisterStrings = {
@@ -254,9 +256,13 @@ export const ErrorAlertStrings = {
   MissingSessionBody:
     'We were unable to load your server session. This represents an inconsistency with your application state. Please take an opportunity to backup your data, then sign out and sign back in to resolve this issue.',
 
-  StorageDecryptErrorTitle: 'Storage Error',
-  StorageDecryptErrorBody:
-    "We were unable to decrypt your local storage. Please restart the app and try again. If you're unable to resolve this issue, and you have an account, you may try uninstalling the app then reinstalling, then signing back into your account. Otherwise, please contact help@standardnotes.com for support.",
+  get StorageDecryptErrorTitle() {
+    return c('B2.SharedUI.Error').t`Storage Error`
+  },
+  get StorageDecryptErrorBody() {
+    return c('B2.SharedUI.Error')
+      .t`We were unable to decrypt your local storage. Please restart the app and try again. If you're unable to resolve this issue, and you have an account, you may try uninstalling the app then reinstalling, then signing back into your account. Otherwise, please contact help@standardnotes.com for support.`
+  },
 }
 
 export const KeychainRecoveryStrings = {

@@ -395,8 +395,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       case ApplicationEvent.LocalDatabaseWriteError:
         this.controller.showErrorSyncStatus({
           type: 'error',
-          message: `Offline Saving Issue`,
-          description: `Changes not saved`,
+          message: c('B3.Notes.EditingUI.Error').t`Offline Saving Issue`,
+          description: c('B3.Notes.EditingUI.Error').t`Changes not saved`,
         })
         break
       case ApplicationEvent.UnprotectedSessionBegan: {

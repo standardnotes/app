@@ -209,7 +209,7 @@ class Footer extends AbstractComponent<Props, State> {
         this.setState({
           failedSyncError: getErrorMessageFromErrorResponseBody(
             data as HttpErrorResponseBody,
-            'Sync error. Please try again later.',
+            c('B2.SharedUI.Error').t`Sync error. Please try again later.`,
           ),
         })
         break
@@ -223,7 +223,7 @@ class Footer extends AbstractComponent<Props, State> {
         break
       case ApplicationEvent.WillSync:
         if (!this.completedInitialSync) {
-          this.application.status.setMessage('Syncing…')
+          this.application.status.setMessage(c('B2.SharedUI.Status').t`Syncing…`)
         }
         break
     }
@@ -234,14 +234,15 @@ class Footer extends AbstractComponent<Props, State> {
     const syncStatus = this.application.sync.getSyncStatus()
     const stats = syncStatus.getStats()
     if (syncStatus.hasError()) {
-      statusManager.setMessage('Unable to Sync')
+      statusManager.setMessage(c('B2.SharedUI.Error').t`Unable to Sync`)
     } else if (stats.downloadCount > 20) {
-      const text = `Downloading ${stats.downloadCount} items. Keep app open.`
+      const text = c('B2.SharedUI.Status')
+        .jt`Downloading ${stats.downloadCount} items. Keep app open.` as unknown as string
       statusManager.setMessage(text)
       this.showingDownloadStatus = true
     } else if (this.showingDownloadStatus) {
       this.showingDownloadStatus = false
-      statusManager.setMessage('Download Complete.')
+      statusManager.setMessage(c('B2.SharedUI.Status').t`Download Complete.`)
       setTimeout(() => {
         statusManager.setMessage('')
       }, 2000)
@@ -253,7 +254,10 @@ class Footer extends AbstractComponent<Props, State> {
         style: 'percent',
       })
 
-      statusManager.setMessage(`Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`)
+      statusManager.setMessage(
+        c('B2.SharedUI.Status')
+          .jt`Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)` as unknown as string,
+      )
     } else {
       statusManager.setMessage('')
     }
@@ -268,8 +272,11 @@ class Footer extends AbstractComponent<Props, State> {
       statusManager.setMessage('')
       return
     }
-    const notesString = `${stats.localDataCurrent}/${stats.localDataTotal} items...`
-    const loadingStatus = encryption ? `Decrypting ${notesString}` : `Loading ${notesString}`
+    const notesString = c('B2.SharedUI.Status')
+      .jt`${stats.localDataCurrent}/${stats.localDataTotal} items...` as unknown as string
+    const loadingStatus = encryption
+      ? (c('B2.SharedUI.Status').jt`Decrypting ${notesString}` as unknown as string)
+      : (c('B2.SharedUI.Status').jt`Loading ${notesString}` as unknown as string)
     statusManager.setMessage(loadingStatus)
   }
 
@@ -404,7 +411,7 @@ class Footer extends AbstractComponent<Props, State> {
           <div className="right flex h-full flex-shrink-0">
             {this.state.failedSyncError && (
               <div className="relative z-footer-bar-item flex select-none items-center text-xs font-bold text-neutral">
-                Sync error: {this.state.failedSyncError}
+                {c('B2.SharedUI.Error').jt`Sync error: ${this.state.failedSyncError}`}
               </div>
             )}
             {this.state.dataUpgradeAvailable && (
@@ -427,7 +434,7 @@ class Footer extends AbstractComponent<Props, State> {
               <div className="relative z-footer-bar-item ml-3 flex flex-shrink-0 select-none items-center">
                 {this.state.outOfSync && (
                   <div onClick={this.syncResolutionClickHandler} className="text-xs font-bold text-warning">
-                    Potentially Out of Sync
+                    {c('B2.SharedUI.Status').t`Potentially Out of Sync`}
                   </div>
                 )}
                 {this.state.showSyncResolution && (
@@ -437,7 +444,7 @@ class Footer extends AbstractComponent<Props, State> {
             )}
             {this.state.offline && (
               <div className="relative z-footer-bar-item ml-3 flex flex-shrink-0 select-none items-center text-xs font-bold">
-                Offline
+                {c('B2.SharedUI.Status').t`Offline`}
               </div>
             )}
             {this.state.hasPasscode && (
