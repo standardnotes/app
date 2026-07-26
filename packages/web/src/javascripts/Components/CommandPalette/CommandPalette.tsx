@@ -64,11 +64,11 @@ type TabId = (typeof Tabs)[number]
 
 const getTabLabel = (id: TabId) => {
   const labels: Record<TabId, string> = {
-    all: c('B2.SharedUI.Label').t`all`,
-    commands: c('B2.SharedUI.Label').t`commands`,
-    notes: c('B2.SharedUI.Label').t`notes`,
-    files: c('B2.SharedUI.Label').t`files`,
-    tags: c('B2.SharedUI.Label').t`tags`,
+    all: c('B2.NavSharedUI.Label').t`all`,
+    commands: c('B2.NavSharedUI.Label').t`commands`,
+    notes: c('B2.NavSharedUI.Label').t`notes`,
+    files: c('B2.NavSharedUI.Label').t`files`,
+    tags: c('B2.NavSharedUI.Label').t`tags`,
   }
   return labels[id]
 }
@@ -117,7 +117,7 @@ function ComboboxInput() {
     <Combobox
       autoSelect="always"
       className="h-10 w-full appearance-none bg-transparent px-1 text-base focus:shadow-none focus:outline-none"
-      placeholder={c('B2.SharedUI.Placeholder').t`Search notes, files, commands, etc...`}
+      placeholder={c('B2.NavSharedUI.Placeholder').t`Search notes, files, commands, etc...`}
       onKeyDown={(event) => {
         if (event.key !== 'Tab') {
           return
@@ -168,8 +168,8 @@ function CommandPalette() {
   useEffect(() => {
     return keyboardService.addCommandHandler({
       command: TOGGLE_COMMAND_PALETTE,
-      category: c('B2.SharedUI.Label').t`General` as 'General',
-      description: c('B2.SharedUI.Action').t`Toggle command palette`,
+      category: c('B2.NavSharedUI.Label').t`General` as 'General',
+      description: c('B2.NavSharedUI.Action').t`Toggle command palette`,
       onKeyDown: (e) => {
         e.preventDefault()
         setIsOpen((open) => !open)
@@ -230,7 +230,7 @@ function CommandPalette() {
         section,
         id: UuidGenerator.GenerateUuid(),
         itemUuid: item.uuid,
-        description: item.title || c('B2.SharedUI.Placeholder').t`<no title>`,
+        description: item.title || c('B2.NavSharedUI.Placeholder').t`<no title>`,
         icon: <Icon type={icon[0]} className={item instanceof SNNote ? icon[1] : ''} />,
       }
     },
@@ -390,14 +390,14 @@ function CommandPalette() {
           <TabPanel className="flex flex-col gap-1.5 overflow-y-auto" tabId={selectedTab}>
             {query.length > 0 && (hasNoItemsAtAll || hasNoItemsInSelectedTab) && (
               <div className="mx-auto px-2 text-sm font-semibold opacity-75">
-                {c('B2.SharedUI.Info').t`No items found`}
+                {c('B2.NavSharedUI.Info').t`No items found`}
               </div>
             )}
             <ComboboxList className="focus:shadow-none focus:outline-none">
               {recents.length > 0 && (
                 <ComboboxGroup>
                   <ComboboxGroupLabel className="px-2 font-semibold opacity-75">
-                    {c('B2.SharedUI.Label').t`Recent`}
+                    {c('B2.NavSharedUI.Label').t`Recent`}
                   </ComboboxGroupLabel>
                   {recents.map((item, index) => (
                     <CommandPaletteListItem
@@ -418,7 +418,7 @@ function CommandPalette() {
                 <ComboboxGroup>
                   {recents.length > 0 && (
                     <ComboboxGroupLabel className="mt-2 px-2 font-semibold opacity-75">
-                      {c('B2.SharedUI.Label').t`All commands`}
+                      {c('B2.NavSharedUI.Label').t`All commands`}
                     </ComboboxGroupLabel>
                   )}
                   {items.map((item, index) => (

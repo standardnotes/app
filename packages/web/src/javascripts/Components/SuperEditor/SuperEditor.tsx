@@ -106,7 +106,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   useEffect(() => {
     return application.commands.addWithShortcut(
       SUPER_SHOW_MARKDOWN_PREVIEW,
-      c('B2.SharedUI.Label').t`Super notes` as 'Super notes',
+      c('B2.NavSharedUI.Label').t`Super notes` as 'Super notes',
       c('B3.Notes.EditorToolbar.Action').t`Show markdown preview for current note`,
       () => setShowMarkdownPreview((s) => !s),
       'markdown',
@@ -122,28 +122,28 @@ export const SuperEditor: FunctionComponent<Props> = ({
         key: 'b',
         modifiers: [primaryModifier],
         description: c('B3.Notes.EditorToolbar.Action').t`Bold`,
-        category: c('B2.SharedUI.Label').t`Formatting` as 'Formatting',
+        category: c('B2.NavSharedUI.Label').t`Formatting` as 'Formatting',
         platform: platform,
       },
       {
         key: 'i',
         modifiers: [primaryModifier],
         description: c('B3.Notes.EditorToolbar.Action').t`Italic`,
-        category: c('B2.SharedUI.Label').t`Formatting` as 'Formatting',
+        category: c('B2.NavSharedUI.Label').t`Formatting` as 'Formatting',
         platform: platform,
       },
       {
         key: 'u',
         modifiers: [primaryModifier],
         description: c('B3.Notes.EditorToolbar.Action').t`Underline`,
-        category: c('B2.SharedUI.Label').t`Formatting` as 'Formatting',
+        category: c('B2.NavSharedUI.Label').t`Formatting` as 'Formatting',
         platform: platform,
       },
       {
         key: 'k',
         modifiers: [primaryModifier],
         description: c('B3.Notes.EditorToolbar.Action').t`Link`,
-        category: c('B2.SharedUI.Label').t`Formatting` as 'Formatting',
+        category: c('B2.NavSharedUI.Label').t`Formatting` as 'Formatting',
         platform: platform,
       },
     ])

@@ -203,7 +203,7 @@ const MobilePopoverContent = ({
             <div />
             <div className="flex items-center justify-center font-semibold">{title}</div>
             <MobileModalAction type="primary" slot="right" action={requestClose}>
-              {c('B2.SharedUI.Action').t`Done`}
+              {c('B2.NavSharedUI.Action').t`Done`}
             </MobileModalAction>
           </MobileModalHeader>
           <div className={classNames('h-full overflow-y-auto overscroll-none bg-passive-5', className)}>{children}</div>

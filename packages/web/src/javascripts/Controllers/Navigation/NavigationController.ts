@@ -202,7 +202,7 @@ export class NavigationController
     this.disposers.push(
       this.commands.addWithShortcut(
         CREATE_NEW_TAG_COMMAND,
-        c('B2.SharedUI.Label').t`General` as 'General',
+        c('B2.NavSharedUI.Label').t`General` as 'General',
         c('B3.Notes.TagsLinkedItems.Action').t`Create new tag`,
         () => this.createNewTemplate(),
         'add',

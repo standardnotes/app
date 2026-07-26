@@ -7,7 +7,7 @@ export const API_MESSAGE_GENERIC_REGISTRATION_FAIL = c('B1.Account.SignIn.Error'
   .t`A server error occurred while trying to register. Please try again.`
 export const API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL = c('B1.Account.SignIn.Error')
   .t`Something went wrong while changing your credentials. Your credentials were not changed. Please try again.`
-export const API_MESSAGE_GENERIC_SYNC_FAIL = () => c('B2.SharedUI.Error').t`Could not connect to server.`
+export const API_MESSAGE_GENERIC_SYNC_FAIL = () => c('B2.NavSharedUI.Error').t`Could not connect to server.`
 
 export const ServerErrorStrings = {
   get DeleteAccountError() {
@@ -16,10 +16,10 @@ export const ServerErrorStrings = {
   },
 }
 
-export const API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL = c('B2.SharedUI.Error')
+export const API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL = c('B2.NavSharedUI.Error')
   .t`Could not check your data integrity with the server.`
 
-export const API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL = () => c('B2.SharedUI.Error').t`Could not retrieve item.`
+export const API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL = () => c('B2.NavSharedUI.Error').t`Could not retrieve item.`
 
 export const API_MESSAGE_REGISTRATION_IN_PROGRESS = c('B1.Account.SignIn.Status')
   .t`An existing registration request is already in progress.`
@@ -36,7 +36,7 @@ export const API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL = c('B1.Account.Session.Erro
 export const API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS = c('B1.Account.Session.Info')
   .t`Your account session is being renewed with the server. Please try your request again.`
 
-export const API_MESSAGE_RATE_LIMITED = c('B2.SharedUI.Error')
+export const API_MESSAGE_RATE_LIMITED = c('B2.NavSharedUI.Error')
   .t`Too many successive server requests. Please wait a few minutes and try again.`
 
 export const API_MESSAGE_INVALID_SESSION = c('B1.Account.Session.Error')
@@ -55,14 +55,14 @@ export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = c('B7.FilesSubscriptionHelp.
 export const API_MESSAGE_FAILED_ACCESS_PURCHASE = c('B7.FilesSubscriptionHelp.Subscription.Error').t`Failed to access purchase flow.`
 
 export const API_MESSAGE_FAILED_OFFLINE_FEATURES = c('B7.FilesSubscriptionHelp.Subscription.Error').t`Failed to get offline features.`
-export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = c('B2.SharedUI.Warning')
+export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = c('B2.NavSharedUI.Warning')
   .t`The extension you are attempting to install comes from an untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?`
-export const API_MESSAGE_FAILED_DOWNLOADING_EXTENSION = c('B2.SharedUI.Error')
+export const API_MESSAGE_FAILED_DOWNLOADING_EXTENSION = c('B2.NavSharedUI.Error')
   .t`Error downloading package details. Please check the extension link and try again.`
 export const API_MESSAGE_FAILED_OFFLINE_ACTIVATION = c('B7.FilesSubscriptionHelp.Subscription.Error')
   .t`An unknown issue occurred during offline activation. Please download your activation code again and try once more.`
 
-export const INVALID_EXTENSION_URL = c('B2.SharedUI.Error').t`Invalid extension URL.`
+export const INVALID_EXTENSION_URL = c('B2.NavSharedUI.Error').t`Invalid extension URL.`
 
 export const UNSUPPORTED_PROTOCOL_VERSION = c('B1.Account.SignIn.Error')
   .t`This version of the application does not support your newer account type. Please upgrade to the latest version of Standard Notes to sign in.`
@@ -88,7 +88,7 @@ export const REMOVING_PASSCODE = () => c('B4.Security.Passcode.Status').t`Removi
 export const DO_NOT_CLOSE_APPLICATION = () =>
   c('B4.Security.Passcode.Warning').t`Do not close the application until this process completes.`
 
-export const UNKNOWN_ERROR = c('B2.SharedUI.Error').t`Unknown error.`
+export const UNKNOWN_ERROR = c('B2.NavSharedUI.Error').t`Unknown error.`
 
 export function InsufficientPasswordMessage(minimum: number): string {
   return c('B1.Account.SignIn.Error')
@@ -105,7 +105,7 @@ export const CredentialsChangeStrings = {
     return c('B4.Security.Challenge.Info').t`Your passcode is required to process your credentials change.`
   },
   get Failed() {
-    return c('B2.SharedUI.Error').t`Unable to change your credentials due to a sync error. Please try again.`
+    return c('B2.NavSharedUI.Error').t`Unable to change your credentials due to a sync error. Please try again.`
   },
 }
 
@@ -310,10 +310,10 @@ export const ErrorAlertStrings = {
   },
 
   get StorageDecryptErrorTitle() {
-    return c('B2.SharedUI.Error').t`Storage Error`
+    return c('B2.NavSharedUI.Error').t`Storage Error`
   },
   get StorageDecryptErrorBody() {
-    return c('B2.SharedUI.Error')
+    return c('B2.NavSharedUI.Error')
       .t`We were unable to decrypt your local storage. Please restart the app and try again. If you're unable to resolve this issue, and you have an account, you may try uninstalling the app then reinstalling, then signing back into your account. Otherwise, please contact help@standardnotes.com for support.`
   },
 }

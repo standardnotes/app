@@ -126,13 +126,25 @@ const VaultItem = ({ vault }: Props) => {
           <div className="mt-2 flex w-full flex-wrap gap-3">
             <Button label={c('B6.Preferences.Vaults.Action').t`Edit`} onClick={openEditModal} />
             {canShowLockOption && <Button label={isLocked ? 'Unlock' : 'Lock'} onClick={toggleLock} />}
-            {isCurrentUserOwner && <Button colorStyle="danger" label={c('B6.Preferences.Vaults.Action').t`Delete`} onClick={deleteVault} />}
-            {!isCurrentUserOwner && vault.isSharedVaultListing() && <Button label={c('B6.Preferences.Vaults.Label').t`Leave Vault`} onClick={leaveVault} />}
+            {isCurrentUserOwner && (
+              <Button colorStyle="danger" label={c('B6.Preferences.Vaults.Action').t`Delete`} onClick={deleteVault} />
+            )}
+            {!isCurrentUserOwner && vault.isSharedVaultListing() && (
+              <Button label={c('B6.Preferences.Vaults.Label').t`Leave Vault`} onClick={leaveVault} />
+            )}
             {isCurrentUserAdmin ? (
               vault.isSharedVaultListing() ? (
-                <Button colorStyle="info" label={c('B6.Preferences.Vaults.Label').t`Invite Contacts`} onClick={openInviteModal} />
+                <Button
+                  colorStyle="info"
+                  label={c('B6.Preferences.Vaults.Label').t`Invite Contacts`}
+                  onClick={openInviteModal}
+                />
               ) : canEnableCollaboration ? (
-                <Button colorStyle="info" label={c('B6.Preferences.Vaults.Action').t`Enable Collaboration`} onClick={convertToSharedVault} />
+                <Button
+                  colorStyle="info"
+                  label={c('B6.Preferences.Vaults.Action').t`Enable Collaboration`}
+                  onClick={convertToSharedVault}
+                />
               ) : null
             ) : null}
           </div>

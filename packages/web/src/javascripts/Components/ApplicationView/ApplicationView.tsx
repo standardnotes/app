@@ -98,7 +98,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       return
     }
 
-    const status = application.status.addMessage(c('B2.SharedUI.Info').t`Preparing demo...`)
+    const status = application.status.addMessage(c('B2.NavSharedUI.Info').t`Preparing demo...`)
     void application.user.populateSessionFromDemoShareToken(token).then(() => {
       application.status.removeMessage(status)
       application.hideAccountMenu()
@@ -128,7 +128,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
         if (!currentLoadErrorDialog.current) {
           alertDialog({
-            text: c('B2.SharedUI.Error')
+            text: c('B2.NavSharedUI.Error')
               .t`Unable to load local database. Please restart the app and try again.`,
           })
             .then(() => {
@@ -139,7 +139,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
         if (!currentWriteErrorDialog.current) {
           currentWriteErrorDialog.current = alertDialog({
-            text: c('B2.SharedUI.Error')
+            text: c('B2.NavSharedUI.Error')
               .t`Unable to write to local database. Please restart the app and try again.`,
           })
             .then(() => {
@@ -150,7 +150,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       } else if (eventName === ApplicationEvent.SyncTooManyRequests) {
         addToast({
           type: ToastType.Error,
-          message: c('B2.SharedUI.Error').t`Too many requests. Please try again later.`,
+          message: c('B2.NavSharedUI.Error').t`Too many requests. Please try again later.`,
         })
       }
     })

@@ -14,16 +14,16 @@ const UrlMissing: FunctionComponent<Props> = ({ componentName }) => {
         <div className={'sk-panel-content'}>
           <div className={'sk-panel-section stretch'}>
             <div className={'sk-panel-section-title'}>
-              {c('B2.SharedUI.Error').t`This extension is missing its URL property.`}
+              {c('B2.NavSharedUI.Error').t`This extension is missing its URL property.`}
             </div>
             <p>
               {jtString(
-                c('B2.SharedUI.Info')
+                c('B2.NavSharedUI.Info')
                   .jt`In order to access your note immediately, please switch from ${componentName} to the Plain Editor.`,
               )}
             </p>
             <br />
-            <p>{c('B2.SharedUI.Info').t`Please contact help@standardnotes.com to remedy this issue.`}</p>
+            <p>{c('B2.NavSharedUI.Info').t`Please contact help@standardnotes.com to remedy this issue.`}</p>
           </div>
         </div>
       </div>

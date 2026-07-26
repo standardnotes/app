@@ -50,7 +50,7 @@ const ItemSelectionDropdown = ({ contentTypes, placeholder, onSelection, combobo
 
   return (
     <div>
-      <VisuallyHidden>{c('B2.SharedUI.AriaLabel').t`Select an item`}</VisuallyHidden>
+      <VisuallyHidden>{c('B2.NavSharedUI.AriaLabel').t`Select an item`}</VisuallyHidden>
       <Combobox
         store={combobox}
         placeholder={placeholder}
@@ -81,7 +81,7 @@ const ItemSelectionDropdown = ({ contentTypes, placeholder, onSelection, combobo
             </ComboboxItem>
           ))
         ) : (
-          <div className="px-2">{c('B2.SharedUI.Info').t`No results found`}</div>
+          <div className="px-2">{c('B2.NavSharedUI.Info').t`No results found`}</div>
         )}
       </ComboboxPopover>
     </div>

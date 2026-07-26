@@ -37,8 +37,8 @@ const ManyVaultSelectionMenu: FunctionComponent = () => {
   )
 
   return (
-    <Menu a11yLabel={c('B2.SharedUI.Label').t`Vault selection menu`}>
-      {!vaults.length && <div className="py-1 text-center">{c('B2.SharedUI.Info').t`No vaults found`}</div>}
+    <Menu a11yLabel={c('B2.NavSharedUI.Label').t`Vault selection menu`}>
+      {!vaults.length && <div className="py-1 text-center">{c('B2.NavSharedUI.Info').t`No vaults found`}</div>}
       {vaults.map((vault) => (
         <VaultSelectMenuItemWithOptions vault={vault} key={vault.uuid}>
           <MenuSwitchButtonItem

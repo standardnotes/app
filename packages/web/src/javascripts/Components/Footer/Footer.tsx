@@ -209,7 +209,7 @@ class Footer extends AbstractComponent<Props, State> {
         this.setState({
           failedSyncError: getErrorMessageFromErrorResponseBody(
             data as HttpErrorResponseBody,
-            c('B2.SharedUI.Error').t`Sync error. Please try again later.`,
+            c('B2.NavSharedUI.Error').t`Sync error. Please try again later.`,
           ),
         })
         break
@@ -223,7 +223,7 @@ class Footer extends AbstractComponent<Props, State> {
         break
       case ApplicationEvent.WillSync:
         if (!this.completedInitialSync) {
-          this.application.status.setMessage(c('B2.SharedUI.Status').t`Syncing…`)
+          this.application.status.setMessage(c('B2.NavSharedUI.Status').t`Syncing…`)
         }
         break
     }
@@ -234,15 +234,15 @@ class Footer extends AbstractComponent<Props, State> {
     const syncStatus = this.application.sync.getSyncStatus()
     const stats = syncStatus.getStats()
     if (syncStatus.hasError()) {
-      statusManager.setMessage(c('B2.SharedUI.Error').t`Unable to Sync`)
+      statusManager.setMessage(c('B2.NavSharedUI.Error').t`Unable to Sync`)
     } else if (stats.downloadCount > 20) {
-      const text = c('B2.SharedUI.Status')
+      const text = c('B2.NavSharedUI.Status')
         .jt`Downloading ${stats.downloadCount} items. Keep app open.` as unknown as string
       statusManager.setMessage(text)
       this.showingDownloadStatus = true
     } else if (this.showingDownloadStatus) {
       this.showingDownloadStatus = false
-      statusManager.setMessage(c('B2.SharedUI.Status').t`Download Complete.`)
+      statusManager.setMessage(c('B2.NavSharedUI.Status').t`Download Complete.`)
       setTimeout(() => {
         statusManager.setMessage('')
       }, 2000)
@@ -255,7 +255,7 @@ class Footer extends AbstractComponent<Props, State> {
       })
 
       statusManager.setMessage(
-        c('B2.SharedUI.Status')
+        c('B2.NavSharedUI.Status')
           .jt`Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)` as unknown as string,
       )
     } else {
@@ -272,11 +272,11 @@ class Footer extends AbstractComponent<Props, State> {
       statusManager.setMessage('')
       return
     }
-    const notesString = c('B2.SharedUI.Status')
+    const notesString = c('B2.NavSharedUI.Status')
       .jt`${stats.localDataCurrent}/${stats.localDataTotal} items...` as unknown as string
     const loadingStatus = encryption
-      ? (c('B2.SharedUI.Status').jt`Decrypting ${notesString}` as unknown as string)
-      : (c('B2.SharedUI.Status').jt`Loading ${notesString}` as unknown as string)
+      ? (c('B2.NavSharedUI.Status').jt`Decrypting ${notesString}` as unknown as string)
+      : (c('B2.NavSharedUI.Status').jt`Loading ${notesString}` as unknown as string)
     statusManager.setMessage(loadingStatus)
   }
 
@@ -340,8 +340,8 @@ class Footer extends AbstractComponent<Props, State> {
 
   betaMessageClickHandler = () => {
     alertDialog({
-      title: c('B2.SharedUI.Info').t`You are using a beta version of the app`,
-      text: c('B2.SharedUI.Info')
+      title: c('B2.NavSharedUI.Info').t`You are using a beta version of the app`,
+      text: c('B2.NavSharedUI.Info')
         .t`If you wish to go back to a stable version, make sure to sign out of this beta app first.`,
     }).catch(console.error)
   }
@@ -396,7 +396,7 @@ class Footer extends AbstractComponent<Props, State> {
               <Fragment>
                 <div className="relative z-footer-bar-item ml-3 flex select-none items-center border-l border-solid border-border pl-3">
                   <a onClick={this.betaMessageClickHandler} className="no-decoration title text-xs font-bold">
-                    {c('B2.SharedUI.Info').t`You are using a beta version of the app`}
+                    {c('B2.NavSharedUI.Info').t`You are using a beta version of the app`}
                   </a>
                 </div>
               </Fragment>
@@ -412,7 +412,7 @@ class Footer extends AbstractComponent<Props, State> {
           <div className="right flex h-full flex-shrink-0">
             {this.state.failedSyncError && (
               <div className="relative z-footer-bar-item flex select-none items-center text-xs font-bold text-neutral">
-                {c('B2.SharedUI.Error').jt`Sync error: ${this.state.failedSyncError}`}
+                {c('B2.NavSharedUI.Error').jt`Sync error: ${this.state.failedSyncError}`}
               </div>
             )}
             {this.state.dataUpgradeAvailable && (
@@ -435,7 +435,7 @@ class Footer extends AbstractComponent<Props, State> {
               <div className="relative z-footer-bar-item ml-3 flex flex-shrink-0 select-none items-center">
                 {this.state.outOfSync && (
                   <div onClick={this.syncResolutionClickHandler} className="text-xs font-bold text-warning">
-                    {c('B2.SharedUI.Status').t`Potentially Out of Sync`}
+                    {c('B2.NavSharedUI.Status').t`Potentially Out of Sync`}
                   </div>
                 )}
                 {this.state.showSyncResolution && (
@@ -445,15 +445,15 @@ class Footer extends AbstractComponent<Props, State> {
             )}
             {this.state.offline && (
               <div className="relative z-footer-bar-item ml-3 flex flex-shrink-0 select-none items-center text-xs font-bold">
-                {c('B2.SharedUI.Status').t`Offline`}
+                {c('B2.NavSharedUI.Status').t`Offline`}
               </div>
             )}
             {this.state.hasPasscode && (
-              <StyledTooltip label={c('B2.SharedUI.AriaLabel').t`Lock application`}>
+              <StyledTooltip label={c('B2.NavSharedUI.AriaLabel').t`Lock application`}>
                 <div
                   id="lock-item"
                   onClick={this.lockClickHandler}
-                  title={c('B2.SharedUI.AriaLabel').t`Locks application and wipes unencrypted data from memory.`}
+                  title={c('B2.NavSharedUI.AriaLabel').t`Locks application and wipes unencrypted data from memory.`}
                   className="relative z-footer-bar-item ml-3 flex cursor-pointer select-none items-center border-l border-solid border-border pl-2 hover:text-info"
                 >
                   <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />

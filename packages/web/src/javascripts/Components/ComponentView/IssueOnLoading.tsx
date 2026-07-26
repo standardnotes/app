@@ -16,13 +16,13 @@ const IssueOnLoading: FunctionComponent<Props> = ({ componentName, reloadIframe 
         <div className={'left'}>
           <div className={'sk-app-bar-item'}>
             <div className={'sk-label.warning'}>
-              {jtString(c('B2.SharedUI.Error').jt`There was an issue loading ${componentName}.`)}
+              {jtString(c('B2.NavSharedUI.Error').jt`There was an issue loading ${componentName}.`)}
             </div>
           </div>
         </div>
         <div className={'right'}>
           <Button primary onClick={reloadIframe} small>
-            {c('B2.SharedUI.Action').t`Reload`}
+            {c('B2.NavSharedUI.Action').t`Reload`}
           </Button>
         </div>
       </div>

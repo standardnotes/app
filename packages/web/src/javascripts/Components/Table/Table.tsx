@@ -364,7 +364,7 @@ function Table<Data>({ table }: { table: TableType<Data> }) {
       {showSelectionActions && selectedRows.length >= 2 && (
         <div className="sticky top-0 z-[2] flex items-center justify-between border-b border-border bg-default px-3 py-2">
           <span className="text-info-0 text-sm font-medium">
-            {c('B2.SharedUI.Status').t`${selectedRows.length} selected`}
+            {c('B2.NavSharedUI.Status').t`${selectedRows.length} selected`}
           </span>
           {selectedRows.length > 0 && selectionActions}
         </div>

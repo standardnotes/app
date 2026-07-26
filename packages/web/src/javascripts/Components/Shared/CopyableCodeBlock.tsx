@@ -39,7 +39,7 @@ const CopyableCodeBlock = ({ code }: Props) => {
               () => {
                 addToast({
                   type: ToastType.Error,
-                  message: c('B2.SharedUI.Error').t`Failed to copy to clipboard`,
+                  message: c('B2.NavSharedUI.Error').t`Failed to copy to clipboard`,
                 })
                 setDidCopy(false)
               },
@@ -54,7 +54,7 @@ const CopyableCodeBlock = ({ code }: Props) => {
             'absolute right-0 top-full min-w-max translate-x-2 translate-y-1 select-none rounded border border-border bg-default px-3 py-1.5 text-left md:peer-hover:block',
           )}
         >
-          {didCopy ? c('B2.SharedUI.Status').t`Copied!` : c('B2.SharedUI.Action').t`Copy example to clipboard`}
+          {didCopy ? c('B2.NavSharedUI.Status').t`Copied!` : c('B2.NavSharedUI.Action').t`Copy example to clipboard`}
         </div>
       </div>
     </div>

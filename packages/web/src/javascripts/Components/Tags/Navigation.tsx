@@ -94,7 +94,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           onClick={() => {
             setPaneLayout(PaneLayout.ItemSelection)
           }}
-          label={c('B2.SharedUI.AriaLabel').t`Go to items list`}
+          label={c('B2.NavSharedUI.AriaLabel').t`Go to items list`}
           icon="chevron-left"
         />
         <UpgradeNow
@@ -114,7 +114,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           <RoundIconButton
             id="lock-item"
             onClick={() => application.lock()}
-            label={c('B2.SharedUI.AriaLabel').t`Locks application and wipes unencrypted data from memory.`}
+            label={c('B2.NavSharedUI.AriaLabel').t`Locks application and wipes unencrypted data from memory.`}
             className="ml-2.5 bg-default"
             icon="lock-filled"
           />

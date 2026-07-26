@@ -18,14 +18,14 @@ const SearchOptions = ({ searchOptions }: Props) => {
   return (
     <div className="mt-3 flex flex-wrap gap-2" onMouseDown={(e) => e.preventDefault()}>
       <Bubble
-        label={c('B2.SharedUI.Label').t`Protected Contents`}
+        label={c('B2.NavSharedUI.Label').t`Protected Contents`}
         selected={includeProtectedContents}
         onSelect={toggleIncludeProtectedContents}
       />
 
-      <Bubble label={c('B2.SharedUI.Label').t`Archived`} selected={includeArchived} onSelect={searchOptions.toggleIncludeArchived} />
+      <Bubble label={c('B2.NavSharedUI.Label').t`Archived`} selected={includeArchived} onSelect={searchOptions.toggleIncludeArchived} />
 
-      <Bubble label={c('B2.SharedUI.Label').t`Trashed`} selected={includeTrashed} onSelect={searchOptions.toggleIncludeTrashed} />
+      <Bubble label={c('B2.NavSharedUI.Label').t`Trashed`} selected={includeTrashed} onSelect={searchOptions.toggleIncludeTrashed} />
     </div>
   )
 }

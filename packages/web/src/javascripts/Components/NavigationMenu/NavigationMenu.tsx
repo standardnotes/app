@@ -34,7 +34,7 @@ export const NavigationMenuButton = () => {
         onClick={() => {
           setPaneLayout(PaneLayout.TagSelection)
         }}
-        label={c('B2.SharedUI.AriaLabel').t`Open navigation menu`}
+        label={c('B2.NavSharedUI.AriaLabel').t`Open navigation menu`}
         icon="menu-variant"
       />
       {isMobile && bubbleCount && <CountBubble position="right" count={bubbleCount} />}

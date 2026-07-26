@@ -150,7 +150,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         </>
       )}
       <Menu
-        a11yLabel={c('B2.SharedUI.Label').t`General account menu`}
+        a11yLabel={c('B2.NavSharedUI.Label').t`General account menu`}
         closeMenu={closeMenu}
         initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}
       >

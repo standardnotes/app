@@ -29,11 +29,11 @@ const VaultSelectionMenu = () => {
   }
 
   return (
-    <Menu a11yLabel={c('B2.SharedUI.Label').t`Vault selection menu`}>
+    <Menu a11yLabel={c('B2.NavSharedUI.Label').t`Vault selection menu`}>
       <RadioButtonGroup
         items={[
-          { label: c('B2.SharedUI.Label').t`Multiple`, value: 'many' },
-          { label: c('B2.SharedUI.Label').t`One`, value: 'single' },
+          { label: c('B2.NavSharedUI.Label').t`Multiple`, value: 'many' },
+          { label: c('B2.NavSharedUI.Label').t`One`, value: 'single' },
         ]}
         value={mode}
         onChange={(value) => changeSelectionMode(value)}
@@ -48,7 +48,7 @@ const VaultSelectionMenu = () => {
           application.preferencesController.openPreferences('vaults')
         }}
       >
-        {c('B2.SharedUI.Action').t`Open vault settings`}
+        {c('B2.NavSharedUI.Action').t`Open vault settings`}
       </MenuItem>
     </Menu>
   )

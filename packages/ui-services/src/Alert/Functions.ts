@@ -6,8 +6,8 @@ import { c } from 'ttag'
 export function confirmDialog({
   text,
   title,
-  confirmButtonText = c('B2.SharedUI.Action').t`Confirm`,
-  cancelButtonText = c('B2.SharedUI.Action').t`Cancel`,
+  confirmButtonText = c('B2.NavSharedUI.Action').t`Confirm`,
+  cancelButtonText = c('B2.NavSharedUI.Action').t`Cancel`,
   confirmButtonStyle = 'info',
 }: {
   text: string
@@ -45,7 +45,7 @@ export function confirmDialog({
 export function alertDialog({
   title,
   text,
-  closeButtonText = c('B2.SharedUI.Action').t`OK`,
+  closeButtonText = c('B2.NavSharedUI.Action').t`OK`,
 }: {
   title?: string
   text: string

@@ -10,11 +10,11 @@ type GroupedItems = Record<string, KeyboardShortcutHelpItem[]>
 
 const createGroupedItems = (items: KeyboardShortcutHelpItem[]): GroupedItems => {
   const groupedItems: GroupedItems = {
-    [c('B2.SharedUI.Label').t`Current note`]: [],
-    [c('B2.SharedUI.Label').t`Formatting`]: [],
-    [c('B2.SharedUI.Label').t`Super notes`]: [],
-    [c('B2.SharedUI.Label').t`Notes list`]: [],
-    [c('B2.SharedUI.Label').t`General` as 'General']: [],
+    [c('B2.NavSharedUI.Label').t`Current note`]: [],
+    [c('B2.NavSharedUI.Label').t`Formatting`]: [],
+    [c('B2.NavSharedUI.Label').t`Super notes`]: [],
+    [c('B2.NavSharedUI.Label').t`Notes list`]: [],
+    [c('B2.NavSharedUI.Label').t`General` as 'General']: [],
   }
   return items.reduce((acc, item) => {
     acc[item.category].push(item)
@@ -42,8 +42,8 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
   useEffect(() => {
     return keyboardService.addCommandHandler({
       command: TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
-      category: c('B2.SharedUI.Label').t`General` as 'General',
-      description: c('B2.SharedUI.Action').t`Toggle keyboard shortcuts help`,
+      category: c('B2.NavSharedUI.Label').t`General` as 'General',
+      description: c('B2.NavSharedUI.Action').t`Toggle keyboard shortcuts help`,
       onKeyDown: () => {
         setItems(createGroupedItems(keyboardService.getRegisteredKeyboardShorcutHelpItems()))
         setIsOpen((open) => !open)
@@ -54,7 +54,7 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
   const actions = useMemo(
     (): ModalAction[] => [
       {
-        label: c('B2.SharedUI.Action').t`Cancel`,
+        label: c('B2.NavSharedUI.Action').t`Cancel`,
         onClick: close,
         type: 'cancel',
         mobileSlot: 'left',
@@ -65,7 +65,7 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
 
   return (
     <ModalOverlay isOpen={isOpen} close={close}>
-      <Modal title={c('B2.SharedUI.Title').t`Keyboard shortcuts`} close={close} actions={actions}>
+      <Modal title={c('B2.NavSharedUI.Title').t`Keyboard shortcuts`} close={close} actions={actions}>
         {Object.entries(items).map(
           ([category, items]) =>
             items.length > 0 && (

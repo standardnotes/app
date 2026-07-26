@@ -44,7 +44,7 @@ const Tooltip = ({ text }: { text: string }) => {
       </div>
       <Popover
         open={visible}
-        title={c('B2.SharedUI.Title').t`Info`}
+        title={c('B2.NavSharedUI.Title').t`Info`}
         anchorElement={anchorElement}
         disableMobileFullscreenTakeover
         className="z-modal bg-default px-3 py-1.5 text-left"

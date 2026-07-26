@@ -14,13 +14,13 @@ const IsDeprecated: FunctionComponent<Props> = ({ deprecationMessage, dismissDep
         <div className={'left'}>
           <div className={'sk-app-bar-item'}>
             <div className="text-xs font-bold text-warning">
-              {deprecationMessage || c('B2.SharedUI.Warning').t`This extension is deprecated.`}
+              {deprecationMessage || c('B2.NavSharedUI.Warning').t`This extension is deprecated.`}
             </div>
           </div>
         </div>
         <div className={'right'}>
           <Button primary onClick={dismissDeprecationMessage} small>
-            {c('B2.SharedUI.Action').t`Dismiss`}
+            {c('B2.NavSharedUI.Action').t`Dismiss`}
           </Button>
         </div>
       </div>

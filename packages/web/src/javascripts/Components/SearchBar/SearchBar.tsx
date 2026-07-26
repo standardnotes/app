@@ -53,7 +53,7 @@ const SearchBar = ({ itemListController, searchOptionsController, hideOptions = 
           container: 'px-1',
           input: 'text-base placeholder:text-passive-0 lg:text-sm',
         }}
-        placeholder={c('B2.SharedUI.Placeholder').t`Search...`}
+        placeholder={c('B2.NavSharedUI.Placeholder').t`Search...`}
         value={noteFilterText}
         ref={searchInputRef}
         onChange={onNoteFilterTextChange}

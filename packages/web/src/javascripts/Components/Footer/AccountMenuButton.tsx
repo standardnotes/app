@@ -28,7 +28,7 @@ const AccountMenuButton = ({ hasError, controller, mainApplicationGroup, onClick
 
   return (
     <>
-      <StyledTooltip label={c('B2.SharedUI.Label').t`Open account menu`}>
+      <StyledTooltip label={c('B2.NavSharedUI.Label').t`Open account menu`}>
         <button
           ref={buttonRef}
           onClick={toggleMenu}
@@ -43,7 +43,7 @@ const AccountMenuButton = ({ hasError, controller, mainApplicationGroup, onClick
         </button>
       </StyledTooltip>
       <Popover
-        title={c('B2.SharedUI.Label').t`Account`}
+        title={c('B2.NavSharedUI.Label').t`Account`}
         anchorElement={buttonRef}
         open={isOpen}
         togglePopover={toggleMenu}

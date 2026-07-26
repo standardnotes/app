@@ -6,11 +6,11 @@ const STORE_NAME = 'items'
 const READ_WRITE = 'readwrite'
 
 const OUT_OF_SPACE = () =>
-  c('B2.SharedUI.Error')
+  c('B2.NavSharedUI.Error')
     .t`Unable to save changes locally because your device is out of space. Please free up some disk space and try again, otherwise, your data may end up in an inconsistent state.`
 
 const DB_DELETION_BLOCKED = () =>
-  c('B2.SharedUI.Error')
+  c('B2.NavSharedUI.Error')
     .t`Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out.`
 
 const QUOTE_EXCEEDED_ERROR = 'QuotaExceededError'
@@ -82,7 +82,7 @@ export class Database {
         const target = event.target as any
         if (target.errorCode) {
           this.showAlert(
-            c('B2.SharedUI.Error').jt`Offline database issue: ${target.errorCode}` as unknown as string,
+            c('B2.NavSharedUI.Error').jt`Offline database issue: ${target.errorCode}` as unknown as string,
           )
         } else {
           this.displayOfflineAlert()
@@ -280,14 +280,14 @@ export class Database {
   }
 
   private showGenericError(error: { code: number; name: string }) {
-    const message = c('B2.SharedUI.Error')
+    const message = c('B2.NavSharedUI.Error')
       .jt`Unable to save changes locally due to an unknown system issue. Issue Code: ${error.code} Issue Name: ${error.name}.` as unknown as string
 
     this.showAlert(message)
   }
 
   private displayOfflineAlert() {
-    const message = c('B2.SharedUI.Error')
+    const message = c('B2.NavSharedUI.Error')
       .t`There was an issue loading your offline database. This could happen for two reasons:
 
 1. You're in a private window in your browser. We can't save your data without access to the local database. Please use a non-private window.

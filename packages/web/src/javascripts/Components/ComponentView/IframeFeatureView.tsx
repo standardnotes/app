@@ -290,7 +290,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({
           sandbox={sandboxAttributes.join(' ')}
           {...(usedInModal && { 'data-used-in-modal': true })}
         >
-          {c('B2.SharedUI.Info').t`Loading`}
+          {c('B2.NavSharedUI.Info').t`Loading`}
         </iframe>
       )}
       {isLoading && <div className={'loading-overlay'} />}

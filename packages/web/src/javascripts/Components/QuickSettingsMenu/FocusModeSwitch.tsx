@@ -31,7 +31,7 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
 
   return (
     <MenuSwitchButtonItem onChange={toggle} shortcut={shortcut} checked={isEnabled}>
-      {c('B2.SharedUI.Label').t`Focus Mode`}
+      {c('B2.NavSharedUI.Label').t`Focus Mode`}
     </MenuSwitchButtonItem>
   )
 }

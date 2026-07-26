@@ -130,7 +130,7 @@ const Modal = ({
                     </div>
                   </MobileModalAction>
                   <Popover
-                    title={c('B2.SharedUI.Title').t`Advanced`}
+                    title={c('B2.NavSharedUI.Title').t`Advanced`}
                     open={showAdvanced}
                     anchorElement={advancedOptionRef}
                     disableMobileFullscreenTakeover={true}

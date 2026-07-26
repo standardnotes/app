@@ -34,8 +34,8 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
     return mergeRegister(
       application.commands.addWithShortcut(
         TOGGLE_DARK_MODE_COMMAND,
-        c('B2.SharedUI.Label').t`General` as 'General',
-        c('B2.SharedUI.Action').t`Toggle dark mode`,
+        c('B2.NavSharedUI.Label').t`General` as 'General',
+        c('B2.NavSharedUI.Action').t`Toggle dark mode`,
         () => {
           void application.componentManager.toggleTheme(darkThemeFeature)
           return true
@@ -43,7 +43,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
       ),
       application.commands.add(
         'open-quick-settings-menu',
-        c('B2.SharedUI.Action').t`Open quick settings menu`,
+        c('B2.NavSharedUI.Action').t`Open quick settings menu`,
         toggleMenu,
         'themes',
       ),
@@ -52,12 +52,12 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
 
   return (
     <>
-      <StyledTooltip label={c('B2.SharedUI.AriaLabel').t`Open quick settings menu`}>
+      <StyledTooltip label={c('B2.NavSharedUI.AriaLabel').t`Open quick settings menu`}>
         {isMobileNavigation ? (
           <RoundIconButton
             className="ml-2.5 bg-default"
             onClick={toggleMenu}
-            label={c('B2.SharedUI.AriaLabel').t`Go to quick settings menu`}
+            label={c('B2.NavSharedUI.AriaLabel').t`Go to quick settings menu`}
             icon="themes"
           />
         ) : (
@@ -73,7 +73,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
         )}
       </StyledTooltip>
       <Popover
-        title={c('B2.SharedUI.Title').t`Quick settings`}
+        title={c('B2.NavSharedUI.Title').t`Quick settings`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}

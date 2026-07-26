@@ -68,7 +68,7 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   const devicesAsDropdownItems = useMemo(() => {
     return recorder?.devices
       ? recorder.devices.map((device) => ({
-          label: device.label || jtString(c('B2.SharedUI.Label').jt`Camera (${device.deviceId.slice(0, 10)})`),
+          label: device.label || jtString(c('B2.NavSharedUI.Label').jt`Camera (${device.deviceId.slice(0, 10)})`),
           value: device.deviceId,
         }))
       : []
@@ -92,31 +92,31 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   }
   return (
     <Modal
-      title={c('B2.SharedUI.Title').t`Take a photo`}
+      title={c('B2.NavSharedUI.Title').t`Take a photo`}
       close={close}
       actions={[
         {
-          label: c('B2.SharedUI.Action').t`Capture`,
+          label: c('B2.NavSharedUI.Action').t`Capture`,
           onClick: takePhoto,
           type: 'primary',
           mobileSlot: 'right',
           hidden: !!capturedPhoto,
         },
         {
-          label: c('B2.SharedUI.Action').t`Upload`,
+          label: c('B2.NavSharedUI.Action').t`Upload`,
           onClick: savePhoto,
           type: 'primary',
           mobileSlot: 'right',
           hidden: !capturedPhoto,
         },
         {
-          label: c('B2.SharedUI.Action').t`Cancel`,
+          label: c('B2.NavSharedUI.Action').t`Cancel`,
           onClick: close,
           type: 'cancel',
           mobileSlot: 'left',
         },
         {
-          label: c('B2.SharedUI.Action').t`Retry`,
+          label: c('B2.NavSharedUI.Action').t`Retry`,
           onClick: retryPhoto,
           type: 'secondary',
         },
@@ -125,7 +125,7 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
       <div className="px-4 py-4">
         <div className="mb-4 flex flex-col">
           <label className="text-sm font-medium text-neutral">
-            {c('B2.SharedUI.Label').t`File name:`}
+            {c('B2.NavSharedUI.Label').t`File name:`}
             <DecoratedInput
               className={{
                 container: 'mt-1',
@@ -137,28 +137,28 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
           </label>
         </div>
         <div className="mt-2">
-          <div className="text-sm font-medium text-neutral">{c('B2.SharedUI.Label').t`Preview:`}</div>
+          <div className="text-sm font-medium text-neutral">{c('B2.NavSharedUI.Label').t`Preview:`}</div>
           {!isRecorderReady && (
             <div className="mt-1 w-full">
               <div className="flex h-64 w-full items-center justify-center gap-2 rounded-md bg-contrast text-base">
                 <Icon type="camera" className="text-neutral-300" />
-                {c('B2.SharedUI.Info').t`Initializing...`}
+                {c('B2.NavSharedUI.Info').t`Initializing...`}
               </div>
             </div>
           )}
           <div className={classNames('mt-1 w-full', capturedPhoto && 'hidden')} ref={previewRef}></div>
           {capturedPhoto && (
             <div className="mt-1 w-full">
-              <img src={URL.createObjectURL(capturedPhoto)} alt={c('B2.SharedUI.Label').t`Captured photo`} />
+              <img src={URL.createObjectURL(capturedPhoto)} alt={c('B2.NavSharedUI.Label').t`Captured photo`} />
             </div>
           )}
         </div>
         {recorder && devicesAsDropdownItems.length > 1 && !capturedPhoto && (
           <div className="mt-4">
             <label className="text-sm font-medium text-neutral">
-              {c('B2.SharedUI.Label').t`Device:`}
+              {c('B2.NavSharedUI.Label').t`Device:`}
               <Dropdown
-                label={c('B2.SharedUI.Label').t`Photo Capture Device`}
+                label={c('B2.NavSharedUI.Label').t`Photo Capture Device`}
                 items={devicesAsDropdownItems}
                 value={recorder.selectedDevice.deviceId}
                 onChange={(value: string) => {

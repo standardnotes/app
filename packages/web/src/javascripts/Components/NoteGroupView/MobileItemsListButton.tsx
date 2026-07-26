@@ -17,9 +17,9 @@ const MobileItemsListButton = () => {
 
   const label = isTablet
     ? itemsShown
-      ? c('B2.SharedUI.AriaLabel').t`Hide items list`
-      : c('B2.SharedUI.AriaLabel').t`Show items list`
-    : c('B2.SharedUI.AriaLabel').t`Go to items list`
+      ? c('B2.NavSharedUI.AriaLabel').t`Hide items list`
+      : c('B2.NavSharedUI.AriaLabel').t`Show items list`
+    : c('B2.NavSharedUI.AriaLabel').t`Go to items list`
 
   return (
     <RoundIconButton

@@ -30,7 +30,7 @@ const PanelSettingsSection = () => {
         onChange={toggleNavigationPane}
         shortcut={navigationShortcut}
       >
-        {c('B2.SharedUI.Label').t`Show Tags Panel`}
+        {c('B2.NavSharedUI.Label').t`Show Tags Panel`}
       </MenuSwitchButtonItem>
       <MenuSwitchButtonItem
         className="items-center"
@@ -38,7 +38,7 @@ const PanelSettingsSection = () => {
         onChange={toggleListPane}
         shortcut={listShortcut}
       >
-        {c('B2.SharedUI.Label').t`Show Notes Panel`}
+        {c('B2.NavSharedUI.Label').t`Show Notes Panel`}
       </MenuSwitchButtonItem>
     </div>
   )

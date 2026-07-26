@@ -15,7 +15,7 @@ export const SuccessPrompt = ({
           <button
             className="flex cursor-pointer border-0 bg-transparent p-0"
             onClick={onClose}
-            aria-label={c('B2.SharedUI.AriaLabel').t`Close modal`}
+            aria-label={c('B2.NavSharedUI.AriaLabel').t`Close modal`}
           >
             <Icon className="text-neutral" type="close" />
           </button>

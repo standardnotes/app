@@ -88,37 +88,37 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
 
   return (
     <Modal
-      title={c('B2.SharedUI.Title').t`Record a video`}
+      title={c('B2.NavSharedUI.Title').t`Record a video`}
       close={close}
       actions={[
         {
-          label: c('B2.SharedUI.Action').t`Cancel`,
+          label: c('B2.NavSharedUI.Action').t`Cancel`,
           onClick: close,
           type: 'cancel',
           mobileSlot: 'left',
         },
         {
-          label: c('B2.SharedUI.Action').t`Record`,
+          label: c('B2.NavSharedUI.Action').t`Record`,
           onClick: startRecording,
           type: 'primary',
           mobileSlot: 'right',
           hidden: !!capturedVideo || isRecording,
         },
         {
-          label: c('B2.SharedUI.Action').t`Stop`,
+          label: c('B2.NavSharedUI.Action').t`Stop`,
           onClick: stopRecording,
           type: 'primary',
           mobileSlot: 'right',
           hidden: !!capturedVideo || !isRecording,
         },
         {
-          label: c('B2.SharedUI.Action').t`Retry`,
+          label: c('B2.NavSharedUI.Action').t`Retry`,
           onClick: retryRecording,
           type: 'secondary',
           hidden: !capturedVideo,
         },
         {
-          label: c('B2.SharedUI.Action').t`Upload`,
+          label: c('B2.NavSharedUI.Action').t`Upload`,
           onClick: saveVideo,
           type: 'primary',
           mobileSlot: 'right',
@@ -129,7 +129,7 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
       <div className="px-4 py-4">
         <div className="mb-4 flex flex-col">
           <label className="text-sm font-medium text-neutral">
-            {c('B2.SharedUI.Label').t`File name:`}
+            {c('B2.NavSharedUI.Label').t`File name:`}
             <DecoratedInput
               className={{
                 container: 'mt-1',
@@ -141,12 +141,12 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
           </label>
         </div>
         <div className="mt-2">
-          <div className="text-sm font-medium text-neutral">{c('B2.SharedUI.Label').t`Preview:`}</div>
+          <div className="text-sm font-medium text-neutral">{c('B2.NavSharedUI.Label').t`Preview:`}</div>
           {!isRecorderReady && (
             <div className="mt-1 w-full">
               <div className="flex h-64 w-full items-center justify-center gap-2 rounded-md bg-contrast text-base">
                 <Icon type="camera" className="text-neutral-300" />
-                {c('B2.SharedUI.Info').t`Initializing...`}
+                {c('B2.NavSharedUI.Info').t`Initializing...`}
               </div>
             </div>
           )}

@@ -23,12 +23,12 @@ const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigati
 
   return (
     <>
-      <StyledTooltip label={c('B2.SharedUI.Label').t`Open vault selection menu`}>
+      <StyledTooltip label={c('B2.NavSharedUI.Label').t`Open vault selection menu`}>
         {isMobileNavigation ? (
           <RoundIconButton
             className="ml-2.5 bg-default"
             onClick={toggleMenu}
-            label={c('B2.SharedUI.Label').t`Go to vaults menu`}
+            label={c('B2.NavSharedUI.Label').t`Go to vaults menu`}
             icon="safe-square"
           />
         ) : (
@@ -55,7 +55,7 @@ const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigati
         )}
       </StyledTooltip>
       <Popover
-        title={c('B2.SharedUI.Label').t`Vault options`}
+        title={c('B2.NavSharedUI.Label').t`Vault options`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}

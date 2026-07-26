@@ -36,7 +36,7 @@ export function getCaptchaHeader<T>(response: HttpResponse<T>) {
 }
 
 export function getErrorMessageFromErrorResponseBody(data: HttpErrorResponseBody, defaultMessage?: string): string {
-  let errorMessage = defaultMessage || c('B2.SharedUI.Error').t`Unknown error`
+  let errorMessage = defaultMessage || c('B2.NavSharedUI.Error').t`Unknown error`
   if (
     data &&
     typeof data === 'object' &&
@@ -58,6 +58,6 @@ export function getErrorFromErrorResponse(response: HttpErrorResponse): HttpErro
   }
 
   return {
-    message: c('B2.SharedUI.Error').t`Unknown error`,
+    message: c('B2.NavSharedUI.Error').t`Unknown error`,
   }
 }

@@ -33,7 +33,7 @@ const VaultSelectMenuItemWithOptions = ({
         <Icon type="more" size="small" />
       </button>
       <Popover
-        title={c('B2.SharedUI.Title').t`Vault options`}
+        title={c('B2.NavSharedUI.Title').t`Vault options`}
         open={isOptionsMenuOpen}
         anchorElement={optionsButtonRef}
         side="top"

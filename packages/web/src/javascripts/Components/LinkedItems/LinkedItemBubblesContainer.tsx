@@ -71,7 +71,7 @@ const LinkedItemBubblesContainer = ({
     return mergeRegister(
       keyboardService.addCommandHandler({
         command: FOCUS_TAGS_INPUT_COMMAND,
-        category: c('B2.SharedUI.Label').t`Current note` as 'Current note',
+        category: c('B2.NavSharedUI.Label').t`Current note` as 'Current note',
         description: c('B3.Notes.TagsLinkedItems.Action').t`Link tags, notes, files`,
         onKeyDown: focusInput,
       }),

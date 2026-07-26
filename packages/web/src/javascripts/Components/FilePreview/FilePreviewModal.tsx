@@ -172,7 +172,7 @@ const FilePreviewModal = observer(({ application }: Props) => {
                 right={[
                   <button
                     className="flex h-full items-center justify-center border-l border-border px-2 py-1.5 text-neutral hover:bg-passive-4"
-                    title={c('B2.SharedUI.Label').t`Submit`}
+                    title={c('B2.NavSharedUI.Label').t`Submit`}
                     onClick={handleRename}
                   >
                     <Icon type="check" size="small" />
@@ -186,37 +186,37 @@ const FilePreviewModal = observer(({ application }: Props) => {
           </div>
           <div className="flex items-center">
             {!isReadonly && (
-              <StyledTooltip label={c('B2.SharedUI.Label').t`Rename file`} className="!z-modal">
+              <StyledTooltip label={c('B2.NavSharedUI.Label').t`Rename file`} className="!z-modal">
                 <button
                   className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
                   onClick={() => setIsRenaming((isRenaming) => !isRenaming)}
-                  aria-label={c('B2.SharedUI.Label').t`Rename file`}
+                  aria-label={c('B2.NavSharedUI.Label').t`Rename file`}
                 >
                   <Icon type="pencil-filled" className="text-neutral" />
                 </button>
               </StyledTooltip>
             )}
-            <StyledTooltip label={c('B2.SharedUI.Label').t`Show linked items`} className="!z-modal">
+            <StyledTooltip label={c('B2.NavSharedUI.Label').t`Show linked items`} className="!z-modal">
               <button
                 className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
                 onClick={toggleLinkedBubblesContainer}
-                aria-label={c('B2.SharedUI.Label').t`Show linked items`}
+                aria-label={c('B2.NavSharedUI.Label').t`Show linked items`}
               >
                 <Icon type="link" className="text-neutral" />
               </button>
             </StyledTooltip>
-            <StyledTooltip label={c('B2.SharedUI.Label').t`Show file options`} className="!z-modal">
+            <StyledTooltip label={c('B2.NavSharedUI.Label').t`Show file options`} className="!z-modal">
               <button
                 className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
                 onClick={toggleOptionsMenu}
                 ref={menuButtonRef}
-                aria-label={c('B2.SharedUI.Label').t`Show file options`}
+                aria-label={c('B2.NavSharedUI.Label').t`Show file options`}
               >
                 <Icon type="more" className="text-neutral" />
               </button>
             </StyledTooltip>
             <Popover
-              title={c('B2.SharedUI.Label').t`File options`}
+              title={c('B2.NavSharedUI.Label').t`File options`}
               open={showOptionsMenu}
               anchorElement={menuButtonRef}
               togglePopover={closeOptionsMenu}
@@ -225,7 +225,7 @@ const FilePreviewModal = observer(({ application }: Props) => {
               className="md:pb-2"
               overrideZIndex="z-modal"
             >
-              <Menu a11yLabel={c('B2.SharedUI.Label').t`File context menu`}>
+              <Menu a11yLabel={c('B2.NavSharedUI.Label').t`File context menu`}>
                 <FileMenuOptions
                   selectedFiles={[currentFile]}
                   closeMenu={closeOptionsMenu}
@@ -234,11 +234,11 @@ const FilePreviewModal = observer(({ application }: Props) => {
                 />
               </Menu>
             </Popover>
-            <StyledTooltip label={c('B2.SharedUI.Label').t`Show file info`} className="!z-modal">
+            <StyledTooltip label={c('B2.NavSharedUI.Label').t`Show file info`} className="!z-modal">
               <button
                 className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
                 onClick={toggleInfoPanel}
-                aria-label={c('B2.SharedUI.Label').t`Show file info`}
+                aria-label={c('B2.NavSharedUI.Label').t`Show file info`}
               >
                 <Icon type="info" className="text-neutral" />
               </button>
@@ -246,7 +246,7 @@ const FilePreviewModal = observer(({ application }: Props) => {
             <button
               ref={closeButtonRef}
               onClick={dismiss}
-              aria-label={c('B2.SharedUI.Label').t`Close modal`}
+              aria-label={c('B2.NavSharedUI.Label').t`Close modal`}
               className="flex cursor-pointer rounded border-0 bg-transparent p-1 hover:bg-contrast"
             >
               <Icon type="close" className="text-neutral" />
@@ -283,7 +283,7 @@ FilePreviewModal.displayName = 'FilePreviewModal'
 const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application }) => {
   return (
     <ModalOverlay
-      aria-label={c('B2.SharedUI.Label').t`File preview modal`}
+      aria-label={c('B2.NavSharedUI.Label').t`File preview modal`}
       isOpen={application.filePreviewModalController.isOpen}
       close={application.filePreviewModalController.dismiss}
       className="md:!h-full md:max-h-[90%] md:!w-full md:max-w-[90%]"

@@ -174,7 +174,7 @@ export class ActionsService extends AbstractService {
       })
       .catch((response) => {
         const error = (response && response.error) || {
-          message: c('B2.SharedUI.Error').t`An issue occurred while processing this action. Please try again.`,
+          message: c('B2.NavSharedUI.Error').t`An issue occurred while processing this action. Please try again.`,
         }
         void this.alertService.alert(error.message)
         return { error } as DeprecatedHttpResponse
@@ -310,7 +310,7 @@ export class ActionsService extends AbstractService {
       .catch((response) => {
         console.error('Action error response:', response)
         void this.alertService.alert(
-          c('B2.SharedUI.Error').t`An issue occurred while processing this action. Please try again.`,
+          c('B2.NavSharedUI.Error').t`An issue occurred while processing this action. Please try again.`,
         )
         return response as ActionResponse
       })

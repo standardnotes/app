@@ -607,7 +607,7 @@ const ToolbarPlugin = () => {
   useEffect(() => {
     return application.keyboardService.addCommandHandler({
       command: SUPER_TOGGLE_TOOLBAR,
-      category: c('B2.SharedUI.Label').t`Super notes` as 'Super notes',
+      category: c('B2.NavSharedUI.Label').t`Super notes` as 'Super notes',
       description: c('B3.Notes.EditorToolbar.Action').t`Toggle Super note toolbar`,
       onKeyDown(event) {
         if (isMobile) {

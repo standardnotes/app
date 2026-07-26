@@ -112,7 +112,7 @@ const ContentListHeader = ({
     () =>
       application.commands.add(
         'open-display-opts-menu',
-        c('B2.SharedUI.Action').t`Open display options menu`,
+        c('B2.NavSharedUI.Action').t`Open display options menu`,
         toggleDisplayOptionsMenu,
         'sort-descending',
       ),
@@ -128,7 +128,7 @@ const ContentListHeader = ({
             onClick={toggleDisplayOptionsMenu}
             ref={displayOptionsButtonRef}
             icon="sort-descending"
-            label={c('B2.SharedUI.AriaLabel').t`Display options menu`}
+            label={c('B2.NavSharedUI.AriaLabel').t`Display options menu`}
           />
           <Popover
             open={showDisplayOptionsMenu}
@@ -136,7 +136,7 @@ const ContentListHeader = ({
             togglePopover={toggleDisplayOptionsMenu}
             align="start"
             className="py-2"
-            title={c('B2.SharedUI.Title').t`Display options`}
+            title={c('B2.NavSharedUI.Title').t`Display options`}
           >
             <DisplayOptionsMenu
               application={application}
