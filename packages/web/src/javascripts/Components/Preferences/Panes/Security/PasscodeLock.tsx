@@ -238,7 +238,7 @@ const PasscodeLock = ({ application }: Props) => {
                 label={c('B4.Security.Passcode.Action').t`Set Passcode`}
                 className="mr-3 mt-3"
               />
-              <Button onClick={cancelPasscodeForm} label="Cancel" />
+              <Button onClick={cancelPasscodeForm} label={c('B6.Preferences.Security.Action').t`Cancel`} />
             </form>
           )}
 

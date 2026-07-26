@@ -6,6 +6,7 @@ import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import EncryptionEnabled from './EncryptionEnabled'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { c } from 'ttag'
 
 const Encryption: FunctionComponent = () => {
   const app = useApplication()
@@ -23,7 +24,7 @@ const Encryption: FunctionComponent = () => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Encryption</Title>
+        <Title>{c('B6.Preferences.Security.Title').t`Encryption`}</Title>
         <Text>{encryptionStatusString}</Text>
 
         {isEncryptionEnabled && <EncryptionEnabled />}

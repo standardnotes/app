@@ -5,6 +5,7 @@ import Icon from '@/Components/Icon/Icon'
 import Button from '@/Components/Button/Button'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import DesignateSurvivorModal from './DesignateSurvivorModal'
+import { c } from 'ttag'
 
 export const VaultModalMembers = ({
   members,
@@ -36,11 +37,11 @@ export const VaultModalMembers = ({
 
   return (
     <div>
-      <div className="mb-3 text-lg">Vault Members</div>
+      <div className="mb-3 text-lg">{c('B6.Preferences.Vaults.Label').t`Vault Members`}</div>
       {vaultHasNoDesignatedSurvivor && members.length > 1 && isCurrentUserAdmin && (
         <div className="bg-danger-faded mb-3 grid grid-cols-[auto,1fr] gap-x-[0.65rem] gap-y-0.5 overflow-hidden rounded p-2.5 text-danger">
           <Icon type="warning" className="place-self-center" />
-          <div className="text-base font-semibold">No designated survivor</div>
+          <div className="text-base font-semibold">{c('B6.Preferences.Vaults.Label').t`No designated survivor`}</div>
           <div className="col-start-2">
             Vaults that have no designated survivor will be deleted when the owner account is deleted. In order to
             ensure that no data is lost, please designate a survivor who will be transferred ownership of the vault.
@@ -89,7 +90,7 @@ export const VaultModalMembers = ({
               {isCurrentUserAdmin && !isMemberVaultOwner && (
                 <Button
                   className="col-start-2 row-start-3 mt-1"
-                  label="Remove From Vault"
+                  label={c('B6.Preferences.Vaults.Action').t`Remove From Vault`}
                   onClick={() => removeMemberFromVault(member)}
                   small
                 />

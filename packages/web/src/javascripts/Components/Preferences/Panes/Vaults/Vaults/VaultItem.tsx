@@ -9,6 +9,7 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import ContactInviteModal from '../Invites/ContactInviteModal'
 import EditVaultModal from './VaultModal/EditVaultModal'
 import { useVault } from '@/Hooks/useVault'
+import { c } from 'ttag'
 
 type Props = {
   vault: VaultListingInterface
@@ -54,7 +55,7 @@ const VaultItem = ({ vault }: Props) => {
     } else {
       const success = await application.vaults.deleteVault(vault)
       if (!success) {
-        void application.alerts.alert('Unable to delete vault. Please try again.')
+        void application.alerts.alert(c('B6.Preferences.Vaults.Error').t`Unable to delete vault. Please try again.`)
       }
     }
   }, [application.alerts, application.sharedVaults, application.vaults, vault])
@@ -76,7 +77,7 @@ const VaultItem = ({ vault }: Props) => {
 
     const response = await application.vaultUsers.leaveSharedVault(vault)
     if (isClientDisplayableError(response)) {
-      void application.alerts.alert('Unable to leave vault. Please try again.')
+      void application.alerts.alert(c('B6.Preferences.Vaults.Error').t`Unable to leave vault. Please try again.`)
       console.error(response)
     }
   }, [application, vault])
@@ -123,15 +124,15 @@ const VaultItem = ({ vault }: Props) => {
             </span>
           )}
           <div className="mt-2 flex w-full flex-wrap gap-3">
-            <Button label="Edit" onClick={openEditModal} />
+            <Button label={c('B6.Preferences.Vaults.Action').t`Edit`} onClick={openEditModal} />
             {canShowLockOption && <Button label={isLocked ? 'Unlock' : 'Lock'} onClick={toggleLock} />}
-            {isCurrentUserOwner && <Button colorStyle="danger" label="Delete" onClick={deleteVault} />}
-            {!isCurrentUserOwner && vault.isSharedVaultListing() && <Button label="Leave Vault" onClick={leaveVault} />}
+            {isCurrentUserOwner && <Button colorStyle="danger" label={c('B6.Preferences.Vaults.Action').t`Delete`} onClick={deleteVault} />}
+            {!isCurrentUserOwner && vault.isSharedVaultListing() && <Button label={c('B6.Preferences.Vaults.Label').t`Leave Vault`} onClick={leaveVault} />}
             {isCurrentUserAdmin ? (
               vault.isSharedVaultListing() ? (
-                <Button colorStyle="info" label="Invite Contacts" onClick={openInviteModal} />
+                <Button colorStyle="info" label={c('B6.Preferences.Vaults.Label').t`Invite Contacts`} onClick={openInviteModal} />
               ) : canEnableCollaboration ? (
-                <Button colorStyle="info" label="Enable Collaboration" onClick={convertToSharedVault} />
+                <Button colorStyle="info" label={c('B6.Preferences.Vaults.Action').t`Enable Collaboration`} onClick={convertToSharedVault} />
               ) : null
             ) : null}
           </div>

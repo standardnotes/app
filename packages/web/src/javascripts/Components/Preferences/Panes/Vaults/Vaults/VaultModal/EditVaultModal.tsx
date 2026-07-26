@@ -25,6 +25,7 @@ import IconPicker from '@/Components/Icon/IconPicker'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import { Disclosure, DisclosureContent, useDisclosureStore } from '@ariakit/react'
 import Spinner from '@/Components/Spinner/Spinner'
+import { c } from 'ttag'
 
 const EditVaultModalContent: FunctionComponent<{
   existingVaultUuid?: string
@@ -231,7 +232,7 @@ const EditVaultModalContent: FunctionComponent<{
         disabled: isSubmitting,
       },
       {
-        label: 'Cancel',
+        label: c('B6.Preferences.Vaults.Action').t`Cancel`,
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
@@ -250,24 +251,24 @@ const EditVaultModalContent: FunctionComponent<{
   const isShowingAdvancedOptions = advancedOptionsDisclosure.useState('open')
 
   if (existingVault && application.vaultLocks.isVaultLocked(existingVault)) {
-    return <div>Vault is locked.</div>
+    return <div>{c('B6.Preferences.Vaults.Info').t`Vault is locked.`}</div>
   }
 
   return (
     <Modal title={existingVault ? 'Edit Vault' : 'Create New Vault'} close={handleDialogClose} actions={modalActions}>
       <div className="flex w-full flex-col space-y-3.5 px-4.5 py-4">
         <div>
-          <div className="text-lg">Vault Info</div>
-          <div className="mt-1">The vault name and description are end-to-end encrypted.</div>
+          <div className="text-lg">{c('B6.Preferences.Vaults.Label').t`Vault Info`}</div>
+          <div className="mt-1">{c('B6.Preferences.Vaults.Info').t`The vault name and description are end-to-end encrypted.`}</div>
 
           <div className="mt-3.5 flex items-center gap-3">
-            <StyledTooltip className="!z-modal" label="Choose icon">
+            <StyledTooltip className="!z-modal" label={c('B6.Preferences.Vaults.Action').t`Choose icon`}>
               <Button className="!px-1.5" ref={iconPickerButtonRef} onClick={toggleIconPicker}>
                 <Icon type={iconString} />
               </Button>
             </StyledTooltip>
             <Popover
-              title="Choose icon"
+              title={c('B6.Preferences.Vaults.Title').t`Choose icon`}
               open={shouldShowIconPicker}
               anchorElement={iconPickerButtonRef}
               togglePopover={toggleIconPicker}
@@ -293,7 +294,7 @@ const EditVaultModalContent: FunctionComponent<{
               }}
               ref={nameInputRef}
               value={name}
-              placeholder="Vault Name"
+              placeholder={c('B6.Preferences.Vaults.Placeholder').t`Vault Name`}
               onChange={(value) => {
                 setName(value)
               }}
@@ -303,7 +304,7 @@ const EditVaultModalContent: FunctionComponent<{
           <DecoratedInput
             className={{ container: 'mt-3' }}
             value={description}
-            placeholder="Vault description"
+            placeholder={c('B6.Preferences.Vaults.Placeholder').t`Vault description`}
             onChange={(value) => {
               setDescription(value)
             }}
@@ -335,7 +336,7 @@ const EditVaultModalContent: FunctionComponent<{
           store={advancedOptionsDisclosure}
           className="flex items-center justify-between focus:shadow-none focus:outline-none"
         >
-          <div className="text-lg">Advanced options</div>
+          <div className="text-lg">{c('B6.Preferences.Vaults.Label').t`Advanced options`}</div>
           <Icon type={isShowingAdvancedOptions ? 'chevron-up' : 'chevron-down'} />
         </Disclosure>
         <DisclosureContent className="space-y-3.5 pb-3" store={advancedOptionsDisclosure}>

@@ -4,6 +4,7 @@ import { SmallText, Subtitle } from '@/Components/Preferences/PreferencesCompone
 import { ContentType } from '@standardnotes/snjs'
 import { PluginListing } from '@standardnotes/ui-services'
 import { FunctionComponent, useCallback } from 'react'
+import { c } from 'ttag'
 
 type Props = {
   plugin: PluginListing
@@ -15,7 +16,7 @@ const PluginRowView: FunctionComponent<Props> = ({ plugin }) => {
   const install = useCallback(async () => {
     const result = await application.pluginsService.installPlugin(plugin)
     if (!result) {
-      void application.alerts.alertV2({ text: 'Failed to install plugin' })
+      void application.alerts.alertV2({ text: c('B6.Preferences.Other.Error').t`Failed to install plugin` })
     } else {
       void application.alerts.alertV2({ text: `${result.name} has been successfully installed.` })
     }
@@ -36,7 +37,7 @@ const PluginRowView: FunctionComponent<Props> = ({ plugin }) => {
       </div>
 
       <Button disabled={!hasSubscription} small className="cursor-pointer" onClick={install}>
-        Install
+        {c('B6.Preferences.Other.Action').t`Install`}
       </Button>
     </div>
   )

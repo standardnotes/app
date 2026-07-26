@@ -6,6 +6,7 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Modal from '@/Components/Modal/Modal'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { c } from 'ttag'
 
 type Props = {
   addAuthenticator: AddAuthenticator
@@ -56,11 +57,11 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
   return (
     <Modal
-      title="Add Security Key"
+      title={c('B6.Preferences.Security.Title').t`Add Security Key`}
       close={closeModal}
       actions={[
         {
-          label: 'Cancel',
+          label: c('B6.Preferences.Security.Action').t`Cancel`,
           type: 'cancel',
           onClick: closeModal,
           mobileSlot: 'left',
@@ -69,7 +70,7 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
         {
           label: (
             <>
-              Add <span className="hidden md:inline">Device</span>
+              Add <span className="hidden md:inline">{c('B6.Preferences.Security.Label').t`Device`}</span>
             </>
           ),
           type: 'primary',

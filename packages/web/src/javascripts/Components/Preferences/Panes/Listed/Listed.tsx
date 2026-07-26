@@ -9,6 +9,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -79,9 +80,9 @@ const Listed = ({ application }: Props) => {
       )}
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>About Listed</Title>
+          <Title>{c('B6.Preferences.Other.Title').t`About Listed`}</Title>
           <div className="h-2 w-full" />
-          <Subtitle>What is Listed?</Subtitle>
+          <Subtitle>{c('B6.Preferences.Other.Subtitle').t`What is Listed?`}</Subtitle>
           <Text>
             Listed is a free blogging platform that allows you to create a public journal published directly from your
             notes.{' '}
@@ -95,8 +96,8 @@ const Listed = ({ application }: Props) => {
           <>
             <HorizontalSeparator classes="my-4" />
             <PreferencesSegment>
-              <Subtitle>Get Started</Subtitle>
-              <Text>Create a free Listed author account to get started.</Text>
+              <Subtitle>{c('B6.Preferences.Other.Subtitle').t`Get Started`}</Subtitle>
+              <Text>{c('B6.Preferences.Other.Action').t`Create a free Listed author account to get started.`}</Text>
               <Button
                 className="mt-3"
                 disabled={requestingAccount}

@@ -6,6 +6,7 @@ import { InviteRecord } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import EditContactModal from '../Contacts/EditContactModal'
 import { CheckmarkCircle } from '../../../../UIElements/CheckmarkCircle'
+import { c } from 'ttag'
 
 type Props = {
   inviteRecord: InviteRecord
@@ -65,14 +66,14 @@ const InviteItem = ({ inviteRecord }: Props) => {
           <div className="overflow-hidden text-ellipsis text-sm">Permission: {permission}</div>
           <div className="">
             {isTrusted ? (
-              <Button label="Accept Invite" className="text-xs" onClick={acceptInvite} />
+              <Button label={c('B6.Preferences.Vaults.Action').t`Accept Invite`} className="text-xs" onClick={acceptInvite} />
             ) : (
               <div>
                 <div>
                   The sender of this invite is not trusted. To accept this invite, first add the sender as a trusted
                   contact.
                 </div>
-                <Button label="Add Trusted Contact" className="mr-3 mt-2 text-xs" onClick={addAsTrustedContact} />
+                <Button label={c('B6.Preferences.Vaults.Action').t`Add Trusted Contact`} className="mr-3 mt-2 text-xs" onClick={addAsTrustedContact} />
               </div>
             )}
           </div>

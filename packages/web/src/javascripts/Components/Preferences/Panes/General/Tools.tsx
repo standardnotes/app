@@ -25,7 +25,7 @@ const Tools: FunctionComponent<Props> = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Tools</Title>
+        <Title>{c('B6.Preferences.General.Title').t`Tools`}</Title>
         <div>
           <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">

@@ -160,11 +160,14 @@ export const StringUtils = {
     const platform = getPlatform(application.device)
     const keychainName =
       platform === Platform.WindowsDesktop
-        ? 'credential manager'
+        ? c('B4.Security.Passcode.Label').t`credential manager`
         : platform === Platform.MacDesktop
-        ? 'keychain'
-        : 'password manager'
-    return `Your keys are currently stored in your operating system's ${keychainName}. Adding a passcode prevents even your operating system from reading them.`
+        ? c('B4.Security.Passcode.Label').t`keychain`
+        : c('B4.Security.Passcode.Label').t`password manager`
+    return jtString(
+      c('B4.Security.Passcode.Info')
+        .jt`Your keys are currently stored in your operating system's ${keychainName}. Adding a passcode prevents even your operating system from reading them.`,
+    )
   },
   deleteNotes(permanently: boolean, notesCount = 1, title?: string): string {
     if (notesCount === 1) {

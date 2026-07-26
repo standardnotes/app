@@ -7,6 +7,7 @@ import Bullet from './Bullet'
 import { downloadSecretKey } from './download-secret-key'
 import { TwoFactorActivation } from './TwoFactorActivation'
 import Icon from '@/Components/Icon/Icon'
+import { c } from 'ttag'
 
 type Props = {
   activation: TwoFactorActivation
@@ -19,7 +20,7 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
         <div className="flex flex-row flex-wrap items-center gap-1">
           <Bullet />
           <div className="text-sm">
-            <b>Save your secret key</b>{' '}
+            <b>{c('B6.Preferences.Security.Action').t`Save your secret key`}</b>{' '}
             <a
               target="_blank"
               href="https://standardnotes.com/help/21/where-should-i-store-my-two-factor-authentication-secret-key"
@@ -34,7 +35,7 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
               <CopyButton copyValue={act.secretKey} />,
               <IconButton
                 focusable={false}
-                title="Download"
+                title={c('B6.Preferences.Security.Title').t`Download`}
                 icon="download"
                 className="p-0"
                 onClick={() => {

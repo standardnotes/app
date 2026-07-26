@@ -7,6 +7,7 @@ import { Platform, SmartViewDefaultIconName, VectorIconNameOrEmoji } from '@stan
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { EditSmartViewModalController } from './EditSmartViewModalController'
+import { c } from 'ttag'
 
 type Props = {
   controller: EditSmartViewModalController
@@ -62,13 +63,13 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Delete',
+        label: c('B6.Preferences.General.Action').t`Delete`,
         onClick: deleteView,
         disabled: isSaving,
         type: 'destructive',
       },
       {
-        label: 'Cancel',
+        label: c('B6.Preferences.General.Action').t`Cancel`,
         onClick: closeDialog,
         disabled: isSaving,
         type: 'cancel',
@@ -108,14 +109,14 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
             <div className="text-sm font-semibold">Icon:</div>
             <button
               className="rounded border border-border p-2"
-              aria-label="Change icon"
+              aria-label={c('B6.Preferences.General.Action').t`Change icon`}
               onClick={toggleIconPicker}
               ref={iconPickerButtonRef}
             >
               <Icon type={icon || SmartViewDefaultIconName} />
             </button>
             <Popover
-              title="Choose icon"
+              title={c('B6.Preferences.General.Title').t`Choose icon`}
               open={shouldShowIconPicker}
               anchorElement={iconPickerButtonRef}
               togglePopover={toggleIconPicker}
