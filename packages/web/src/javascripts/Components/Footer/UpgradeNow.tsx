@@ -40,7 +40,7 @@ const UpgradeNow = ({ application, featuresController, subscriptionContoller }: 
         className="rounded bg-info px-1.5 py-0.5 text-sm font-bold uppercase text-info-contrast hover:brightness-125 lg:text-xs"
         onClick={onClick}
       >
-        {!hasAccount ? c('B7.Subscription.Info').t`Sign up to sync` : c('B7.Subscription.Info').t`Unlock features`}
+        {!hasAccount ? c('B7.FilesSubscriptionHelp.Subscription.Info').t`Sign up to sync` : c('B7.FilesSubscriptionHelp.Subscription.Info').t`Unlock features`}
       </button>
     </div>
   )

@@ -55,13 +55,13 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
   if (usedInvitationsCount === 0) {
     return (
-      <Text className="mb-3 mt-1">{c('B7.Subscription.Info').t`Make your first subscription invite below.`}</Text>
+      <Text className="mb-3 mt-1">{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Make your first subscription invite below.`}</Text>
     )
   }
 
   return (
     <div>
-      <SubtitleLight className="mb-2 text-info">{c('B7.Subscription.Info').t`Active Invites`}</SubtitleLight>
+      <SubtitleLight className="mb-2 text-info">{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Active Invites`}</SubtitleLight>
       {activeSubscriptions?.map((invitation) => (
         <div key={invitation.uuid} className="mb-4 mt-1">
           <Text>
@@ -70,7 +70,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
           {invitation.status !== InvitationStatus.Canceled && (
             <Button
               className="mt-2 min-w-20"
-              label={c('B7.Subscription.Label').t`Cancel`}
+              label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Cancel`}
               onClick={() => handleCancel(invitation.uuid)}
             />
           )}

@@ -33,7 +33,7 @@ const NoSubscriptionBanner = ({
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">{message}</p>
       {application.canShowPurchaseFlow() && (
         <Button primary small className="col-start-1 col-end-3 mt-3 justify-self-start uppercase" onClick={onClick}>
-          {c('B7.Subscription.Action').t`Upgrade Features`}
+          {c('B7.FilesSubscriptionHelp.Subscription.Action').t`Upgrade Features`}
         </Button>
       )}
     </div>

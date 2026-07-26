@@ -12,7 +12,7 @@ import { c } from 'ttag'
 
 export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   const code = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`Code`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Code`,
     spellcheckControl: true,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedCodeEditor,
     permission_name: PermissionName.DeprecatedCodeEditor,
@@ -29,35 +29,35 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const plus = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`Rich Text`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Rich Text`,
     note_type: NoteType.RichText,
     file_type: 'html',
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor,
     permission_name: PermissionName.DeprecatedPlusEditor,
     spellcheckControl: true,
     deprecated: true,
-    description: c('B7.Subscription.Info')
+    description: c('B7.FilesSubscriptionHelp.Subscription.Info')
       .t`From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.`,
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/plus-editor.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdown = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`Markdown`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Markdown`,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
     permission_name: PermissionName.DeprecatedMarkdownProEditor,
     spellcheckControl: true,
     deprecated: true,
-    description: c('B7.Subscription.Info')
+    description: c('B7.FilesSubscriptionHelp.Subscription.Info')
       .t`A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.`,
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/adv-markdown.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const task = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`Checklist`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Checklist`,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedTaskEditor,
     note_type: NoteType.Task,
     spellcheckControl: true,
@@ -65,14 +65,14 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     interchangeable: false,
     deprecated: true,
     permission_name: PermissionName.DeprecatedTaskEditor,
-    description: c('B7.Subscription.Status')
+    description: c('B7.FilesSubscriptionHelp.Subscription.Status')
       .t`A great way to manage short-term and long-term to-do"s. You can mark tasks as completed, change their order, and edit the text naturally in place.`,
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/task-editor.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const bold: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`Alternative Rich Text`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Alternative Rich Text`,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedBoldEditor,
     note_type: NoteType.RichText,
     file_type: 'html',
@@ -93,41 +93,41 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     spellcheckControl: true,
     deprecated: true,
     permission_name: PermissionName.BoldEditor,
-    description: c('B7.Subscription.Info')
+    description: c('B7.FilesSubscriptionHelp.Subscription.Info')
       .t`A simple and peaceful rich editor that helps you write and think clearly.`,
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/bold.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdownBasic: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`Basic Markdown`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Basic Markdown`,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownBasicEditor,
     note_type: NoteType.Markdown,
     spellcheckControl: true,
     file_type: 'md',
     deprecated: true,
     permission_name: PermissionName.MarkdownBasicEditor,
-    description: c('B7.Subscription.Info').t`A Markdown editor with dynamic split-pane preview.`,
+    description: c('B7.FilesSubscriptionHelp.Subscription.Info').t`A Markdown editor with dynamic split-pane preview.`,
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/simple-markdown.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdownAlt: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`Markdown Alternative`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Markdown Alternative`,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownVisualEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
     deprecated: true,
     permission_name: PermissionName.MarkdownVisualEditor,
     spellcheckControl: true,
-    description: c('B7.Subscription.Info')
+    description: c('B7.FilesSubscriptionHelp.Subscription.Info')
       .t`A WYSIWYG-style Markdown editor that renders Markdown in preview-mode while you type without displaying any syntax.`,
     index_path: 'build/index.html',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdownMinimist: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`Minimal Markdown`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Minimal Markdown`,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownMinimistEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
@@ -135,14 +135,14 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     permission_name: PermissionName.MarkdownMinimistEditor,
     spellcheckControl: true,
     deprecated: true,
-    description: c('B7.Subscription.Info')
+    description: c('B7.FilesSubscriptionHelp.Subscription.Info')
       .t`A minimal Markdown editor with live rendering and in-text search via Ctrl/Cmd + F`,
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/min-markdown.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdownMath: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`Markdown with Math`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Markdown with Math`,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownMathEditor,
     spellcheckControl: true,
     permission_name: PermissionName.MarkdownMathEditor,
@@ -150,14 +150,14 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     file_type: 'md',
     deprecated: true,
     index_path: 'index.html',
-    description: c('B7.Subscription.Info')
+    description: c('B7.FilesSubscriptionHelp.Subscription.Info')
       .t`A beautiful split-pane Markdown editor with synced-scroll, LaTeX support, and colorful syntax.`,
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/fancy-markdown.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const filesafe: IframeComponentFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.Subscription.Info').t`FileSafe`,
+    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`FileSafe`,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedFileSafe,
     component_permissions: [
       {
@@ -176,7 +176,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     permission_name: PermissionName.ComponentFilesafe,
     area: ComponentArea.EditorStack,
     deprecated: true,
-    description: c('B7.Subscription.Info')
+    description: c('B7.FilesSubscriptionHelp.Subscription.Info')
       .t`Encrypted attachments for your notes using your Dropbox, Google Drive, or WebDAV server. Limited to 50MB per file.`,
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/FileSafe-banner.png',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],

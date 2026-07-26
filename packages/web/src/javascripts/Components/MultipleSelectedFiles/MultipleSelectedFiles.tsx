@@ -14,7 +14,7 @@ type Props = {
 
 const MultipleSelectedFiles = ({ itemListController }: Props) => {
   const count = itemListController.selectedFilesCount
-  const selectedFilesLabel = jtString(c('B7.Files.Info').jt`${count} selected files`)
+  const selectedFilesLabel = jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`${count} selected files`)
 
   const cancelMultipleSelection = useCallback(() => {
     itemListController.cancelMultipleSelection()
@@ -32,10 +32,10 @@ const MultipleSelectedFiles = ({ itemListController }: Props) => {
         <IlNotesIcon className="block" />
         <h2 className="m-0 mt-4 text-center text-lg font-bold">{selectedFilesLabel}</h2>
         <p className="mt-2 max-w-60 text-center text-sm">
-          {c('B7.Files.Info').t`Actions will be performed on all selected files.`}
+          {c('B7.FilesSubscriptionHelp.Files.Info').t`Actions will be performed on all selected files.`}
         </p>
         <Button className="mt-2.5" onClick={cancelMultipleSelection}>
-          {c('B7.Files.Action').t`Cancel multiple selection`}
+          {c('B7.FilesSubscriptionHelp.Files.Action').t`Cancel multiple selection`}
         </Button>
       </div>
     </div>

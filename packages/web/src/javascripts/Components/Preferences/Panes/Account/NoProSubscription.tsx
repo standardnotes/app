@@ -35,7 +35,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
     <>
       <Text>{text}</Text>
       {isLoadingPurchaseFlow && (
-        <Text>{c('B7.Subscription.Info').t`Redirecting you to the subscription page...`}</Text>
+        <Text>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Redirecting you to the subscription page...`}</Text>
       )}
       {purchaseFlowError && <Text className="text-danger">{purchaseFlowError}</Text>}
 
@@ -43,7 +43,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
         {!application.hideOutboundSubscriptionLinks && (
           <LinkButton
             className="mr-3 mt-3 min-w-20"
-            label={c('B7.Subscription.Label').t`Learn More`}
+            label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Learn More`}
             link={window.plansUrl as string}
           />
         )}
@@ -51,7 +51,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
           <Button
             className="mt-3 min-w-20"
             primary
-            label={c('B7.Subscription.Label').t`Upgrade`}
+            label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Upgrade`}
             onClick={onPurchaseClick}
           />
         )}

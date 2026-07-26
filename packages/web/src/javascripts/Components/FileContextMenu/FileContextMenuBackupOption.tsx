@@ -52,7 +52,7 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
             <div className="font-semibold text-success">
               {(() => {
                 const backedUpOn = dateToStringStyle1(backupInfo.backedUpOn)
-                return c('B7.Files.Info').jt`Backed up on ${backedUpOn}` as unknown as string
+                return c('B7.FilesSubscriptionHelp.Files.Info').jt`Backed up on ${backedUpOn}` as unknown as string
               })()}
             </div>
             <div className="text-xs text-neutral">{backupAbsolutePath}</div>
@@ -69,7 +69,7 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
         >
           <div className="ml-2">
             <div>{c('B6.Settings.Backups.Action').t`Configure file backups`}</div>
-            <div className="text-xs text-neutral">{c('B7.Files.Info').t`File not backed up locally`}</div>
+            <div className="text-xs text-neutral">{c('B7.FilesSubscriptionHelp.Files.Info').t`File not backed up locally`}</div>
           </div>
         </MenuItem>
       )}

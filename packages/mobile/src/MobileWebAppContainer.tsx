@@ -438,7 +438,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
             marginBottom: 20,
           }}
         >
-          {c('B8.Mobile.WebView.Title').t`Could not load app`}
+          {c('B8.MobileDesktopShared.Mobile.WebView.Title').t`Could not load app`}
         </Text>
         <Text
           style={{
@@ -448,11 +448,11 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
             textAlign: 'center',
           }}
         >
-          {c('B8.Mobile.WebView.Info')
+          {c('B8.MobileDesktopShared.Mobile.WebView.Info')
             .t`Please make sure your Android System Webview is updated to the latest version`}
         </Text>
         <Button
-          title={c('B8.Mobile.WebView.Action').t`Update`}
+          title={c('B8.MobileDesktopShared.Mobile.WebView.Action').t`Update`}
           onPress={() => {
             setShowAndroidWebviewUpdatePrompt(false)
             device.openUrl('https://play.google.com/store/apps/details?id=com.google.android.webview')

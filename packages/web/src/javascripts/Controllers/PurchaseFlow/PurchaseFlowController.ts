@@ -81,13 +81,13 @@ export class PurchaseFlowController extends AbstractViewController {
     log(LoggingDomain.Purchasing, 'BeginIosIapPurchaseFlow result', result)
 
     if (!result) {
-      void this.alerts.alert(c('B7.Subscription.Error').t`Your purchase was canceled or failed. Please try again.`)
+      void this.alerts.alert(c('B7.FilesSubscriptionHelp.Subscription.Error').t`Your purchase was canceled or failed. Please try again.`)
       return
     }
 
     const showGenericError = () => {
       void this.alerts.alert(
-        c('B7.Subscription.Error')
+        c('B7.FilesSubscriptionHelp.Subscription.Error')
           .t`There was an error confirming your purchase. Please contact support at help@standardnotes.com.`,
       )
     }
@@ -108,9 +108,9 @@ export class PurchaseFlowController extends AbstractViewController {
 
     if (confirmResult) {
       void this.alerts.alert(
-        c('B7.Subscription.Info')
+        c('B7.FilesSubscriptionHelp.Subscription.Info')
           .t`Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.`,
-        c('B7.Subscription.Info').t`Your purchase was successful!`,
+        c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your purchase was successful!`,
       )
     } else {
       showGenericError()

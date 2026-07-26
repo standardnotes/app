@@ -44,7 +44,7 @@ const RevisionContentLocked: FunctionComponent = () => {
         {application.canShowPurchaseFlow() && (
           <Button
             primary
-            label={c('B7.Subscription.Action').t`Discover plans`}
+            label={c('B7.FilesSubscriptionHelp.Subscription.Action').t`Discover plans`}
             onClick={() => {
               if (window.plansUrl) {
                 window.location.assign(window.plansUrl)

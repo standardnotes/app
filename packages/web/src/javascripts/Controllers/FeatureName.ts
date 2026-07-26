@@ -8,8 +8,8 @@ export enum FeatureName {
 export function getFeatureNameLabel(feature: FeatureName): string {
   switch (feature) {
     case FeatureName.Files:
-      return c('B7.Subscription.Label').t`Encrypted File Storage`
+      return c('B7.FilesSubscriptionHelp.Subscription.Label').t`Encrypted File Storage`
     case FeatureName.Super:
-      return c('B7.Subscription.Label').t`Super notes`
+      return c('B7.FilesSubscriptionHelp.Subscription.Label').t`Super notes`
   }
 }

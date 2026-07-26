@@ -94,7 +94,7 @@ export class MobileDevice implements MobileDeviceInterface {
 
     await notifee.createChannel({
       id: 'files',
-      name: c('B8.Mobile.Notifications.Label').t`File Upload/Download`,
+      name: c('B8.MobileDesktopShared.Mobile.Notifications.Label').t`File Upload/Download`,
     })
 
     const didAskForPermission = await this.keyValueStore.getValue<boolean>('didAskForNotificationPermission')
@@ -266,7 +266,7 @@ export class MobileDevice implements MobileDeviceInterface {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore ts type does not exist for deviceCredentialAllowed
           deviceCredentialAllowed: true,
-          description: c('B8.Mobile.Device.Info').t`Biometrics are required to access your notes.`,
+          description: c('B8.MobileDesktopShared.Mobile.Device.Info').t`Biometrics are required to access your notes.`,
         })
           .then(() => {
             FingerprintScanner.release()
@@ -276,13 +276,13 @@ export class MobileDevice implements MobileDeviceInterface {
             FingerprintScanner.release()
             if (error.name === 'DeviceLocked') {
               Alert.alert(
-                c('B8.Mobile.Device.Title').t`Unsuccessful`,
-                c('B8.Mobile.Device.Error').t`Authentication failed. Wait 30 seconds to try again.`,
+                c('B8.MobileDesktopShared.Mobile.Device.Title').t`Unsuccessful`,
+                c('B8.MobileDesktopShared.Mobile.Device.Error').t`Authentication failed. Wait 30 seconds to try again.`,
               )
             } else {
               Alert.alert(
-                c('B8.Mobile.Device.Title').t`Unsuccessful`,
-                c('B8.Mobile.Device.Error').t`Authentication failed. Tap to try again.`,
+                c('B8.MobileDesktopShared.Mobile.Device.Title').t`Unsuccessful`,
+                c('B8.MobileDesktopShared.Mobile.Device.Error').t`Authentication failed. Tap to try again.`,
               )
             }
             resolve(false)
@@ -291,7 +291,7 @@ export class MobileDevice implements MobileDeviceInterface {
         // iOS
         FingerprintScanner.authenticate({
           fallbackEnabled: true,
-          description: c('B8.Mobile.Device.Info').t`This is required to access your notes.`,
+          description: c('B8.MobileDesktopShared.Mobile.Device.Info').t`This is required to access your notes.`,
         })
           .then(() => {
             FingerprintScanner.release()
@@ -301,11 +301,11 @@ export class MobileDevice implements MobileDeviceInterface {
             FingerprintScanner.release()
             if (error_1.name !== 'SystemCancel') {
               if (error_1.name !== 'UserCancel') {
-                Alert.alert(c('B8.Mobile.Device.Title').t`Unsuccessful`)
+                Alert.alert(c('B8.MobileDesktopShared.Mobile.Device.Title').t`Unsuccessful`)
               } else {
                 Alert.alert(
-                  c('B8.Mobile.Device.Title').t`Unsuccessful`,
-                  c('B8.Mobile.Device.Error').t`Authentication failed. Tap to try again.`,
+                  c('B8.MobileDesktopShared.Mobile.Device.Title').t`Unsuccessful`,
+                  c('B8.MobileDesktopShared.Mobile.Device.Error').t`Authentication failed. Tap to try again.`,
                 )
               }
             }
@@ -387,8 +387,8 @@ export class MobileDevice implements MobileDeviceInterface {
   openUrl(url: string) {
     const showAlert = () => {
       Alert.alert(
-        c('B8.Mobile.Device.Title').t`Unable to Open`,
-        c('B8.Mobile.Device.Error').jt`Unable to open URL ${url}.` as unknown as string,
+        c('B8.MobileDesktopShared.Mobile.Device.Title').t`Unable to Open`,
+        c('B8.MobileDesktopShared.Mobile.Device.Error').jt`Unable to open URL ${url}.` as unknown as string,
       )
     }
 
@@ -562,17 +562,17 @@ export class MobileDevice implements MobileDeviceInterface {
     }
 
     Alert.alert(
-      c('B8.Mobile.Device.Title').t`Close app`,
-      c('B8.Mobile.Device.Confirmation').t`Do you want to close the app?`,
+      c('B8.MobileDesktopShared.Mobile.Device.Title').t`Close app`,
+      c('B8.MobileDesktopShared.Mobile.Device.Confirmation').t`Do you want to close the app?`,
       [
         {
-          text: c('B8.Mobile.Device.Label').t`Cancel`,
+          text: c('B8.MobileDesktopShared.Mobile.Device.Label').t`Cancel`,
           style: 'cancel',
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onPress: async () => {},
         },
         {
-          text: c('B8.Mobile.Device.Action').t`Close`,
+          text: c('B8.MobileDesktopShared.Mobile.Device.Action').t`Close`,
           style: 'destructive',
           onPress: async () => {
             SNReactNative.exitApp()

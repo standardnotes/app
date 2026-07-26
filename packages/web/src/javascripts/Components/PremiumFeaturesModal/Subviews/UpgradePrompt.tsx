@@ -82,7 +82,7 @@ export const UpgradePrompt = ({
       </div>
       <div className={preferHorizontalLayout ? '' : 'mb-2'}>
         <div className={classNames('mb-1 text-lg font-bold', preferHorizontalLayout ? 'text-left' : 'text-center')}>
-          {c('B7.Subscription.Title').t`Enable Advanced Features`}
+          {c('B7.FilesSubscriptionHelp.Subscription.Title').t`Enable Advanced Features`}
         </div>
         <div
           className={classNames('text-sm text-passive-1', preferHorizontalLayout ? 'text-left' : 'px-4.5 text-center')}
@@ -90,33 +90,33 @@ export const UpgradePrompt = ({
           {featureNameBold && (
             <span>
               {jtString(
-                c('B7.Subscription.Info')
+                c('B7.FilesSubscriptionHelp.Subscription.Info')
                   .jt`To take advantage of ${featureNameBold} and other advanced features, upgrade your current plan.`,
               )}
             </span>
           )}
           {!featureNameBold && (
             <span>
-              {c('B7.Subscription.Info')
+              {c('B7.FilesSubscriptionHelp.Subscription.Info')
                 .t`To take advantage of all the advanced features Standard Notes has to offer, upgrade your current plan.`}
             </span>
           )}
           {application.isNativeIOS() && (
             <div className="mt-2">
               <div className="mb-2 font-bold">
-                {c('B7.Subscription.Info')
+                {c('B7.FilesSubscriptionHelp.Subscription.Info')
                   .t`The Professional Plan costs $119.99/year and includes benefits like`}
               </div>
               <ul className="list-inside list-[circle]">
-                <li>{c('B7.Subscription.Info').t`100GB encrypted file storage`}</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`100GB encrypted file storage`}</li>
                 <li>
-                  {c('B7.Subscription.Info')
+                  {c('B7.FilesSubscriptionHelp.Subscription.Info')
                     .t`Access to all note types, including Super, markdown, rich text, authenticator, tasks, and spreadsheets`}
                 </li>
-                <li>{c('B7.Subscription.Info').t`Access to Daily Notebooks and Moments journals`}</li>
-                <li>{c('B7.Subscription.Info').t`Note history going back indefinitely`}</li>
-                <li>{c('B7.Subscription.Info').t`Nested folders for your tags`}</li>
-                <li>{c('B7.Subscription.Info').t`Premium support`}</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Access to Daily Notebooks and Moments journals`}</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Note history going back indefinitely`}</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Nested folders for your tags`}</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Premium support`}</li>
               </ul>
             </div>
           )}
@@ -131,7 +131,7 @@ export const UpgradePrompt = ({
           )}
           ref={ctaRef}
         >
-          {c('B7.Subscription.Action').t`Upgrade`}
+          {c('B7.FilesSubscriptionHelp.Subscription.Action').t`Upgrade`}
         </button>
       )}
     </div>

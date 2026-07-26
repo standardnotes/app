@@ -24,10 +24,10 @@ export const DAYS_IN_A_YEAR = 365
 export const BYTES_IN_ONE_KILOBYTE = 1_000
 export const BYTES_IN_ONE_MEGABYTE = 1_000_000
 
-export const TAG_FOLDERS_FEATURE_NAME = c('B7.Subscription.Info').t`Tag folders`
-export const TAG_FOLDERS_FEATURE_TOOLTIP = c('B7.Subscription.Info')
+export const TAG_FOLDERS_FEATURE_NAME = c('B7.FilesSubscriptionHelp.Subscription.Info').t`Tag folders`
+export const TAG_FOLDERS_FEATURE_TOOLTIP = c('B7.FilesSubscriptionHelp.Subscription.Info')
   .t`A Plus or Pro plan is required to enable Tag folders.`
-export const SMART_TAGS_FEATURE_NAME = c('B7.Subscription.Info').t`Smart Tags`
+export const SMART_TAGS_FEATURE_NAME = c('B7.FilesSubscriptionHelp.Subscription.Info').t`Smart Tags`
 
 export const SYNC_TIMEOUT_DEBOUNCE = 350
 export const SYNC_TIMEOUT_NO_DEBOUNCE = 100

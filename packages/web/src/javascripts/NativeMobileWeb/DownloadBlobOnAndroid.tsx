@@ -16,7 +16,7 @@ export const downloadBlobOnAndroid = async (
   if (showToast) {
     loadingToastId = addToast({
       type: ToastType.Loading,
-      message: jtString(c('B8.Mobile.Info').jt`Downloading ${filename}..`),
+      message: jtString(c('B8.MobileDesktopShared.Mobile.Info').jt`Downloading ${filename}..`),
     })
   }
   const base64 = await getBase64FromBlob(blob)
@@ -33,12 +33,12 @@ export const downloadBlobOnAndroid = async (
   if (downloaded) {
     addToast({
       type: ToastType.Success,
-      message: jtString(c('B8.Mobile.Info').jt`Downloaded ${filename}`),
+      message: jtString(c('B8.MobileDesktopShared.Mobile.Info').jt`Downloaded ${filename}`),
     })
   } else {
     addToast({
       type: ToastType.Error,
-      message: jtString(c('B8.Mobile.Error').jt`Could not download ${filename}`),
+      message: jtString(c('B8.MobileDesktopShared.Mobile.Error').jt`Could not download ${filename}`),
     })
   }
 }

@@ -19,7 +19,7 @@ const SubscriptionStatusText = () => {
     <>
       <br />
       <br />
-      {c('B7.Subscription.Info')
+      {c('B7.FilesSubscriptionHelp.Subscription.Info')
         .t`This subscription has been shared with you and can only be managed by the owner.`}
     </>
   ) : null
@@ -27,23 +27,23 @@ const SubscriptionStatusText = () => {
   if (isUserSubscriptionCanceled) {
     return (
       <Text className="mt-1">
-        {c('B7.Subscription.Info').t`Your`}{' '}
+        {c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your`}{' '}
         <span className="font-bold">
-          {c('B7.Subscription.Info').t`Standard Notes`}
+          {c('B7.FilesSubscriptionHelp.Subscription.Info').t`Standard Notes`}
           {userSubscriptionName ? ' ' : ''}
           {userSubscriptionName}
         </span>{' '}
-        {c('B7.Subscription.Info').t`subscription has been canceled`}{' '}
+        {c('B7.FilesSubscriptionHelp.Subscription.Info').t`subscription has been canceled`}{' '}
         {isUserSubscriptionExpired ? (
           <span className="font-bold">
-            {c('B7.Subscription.Info').t`and expired on`} {expirationDateString}
+            {c('B7.FilesSubscriptionHelp.Subscription.Info').t`and expired on`} {expirationDateString}
           </span>
         ) : (
           <span className="font-bold">
-            {c('B7.Subscription.Info').t`but will remain valid until`} {expirationDateString}
+            {c('B7.FilesSubscriptionHelp.Subscription.Info').t`but will remain valid until`} {expirationDateString}
           </span>
         )}
-        {c('B7.Subscription.Info').t`. You may resubscribe below if you wish.`}
+        {c('B7.FilesSubscriptionHelp.Subscription.Info').t`. You may resubscribe below if you wish.`}
         {sharedMessage}
       </Text>
     )
@@ -52,17 +52,17 @@ const SubscriptionStatusText = () => {
   if (isUserSubscriptionExpired) {
     return (
       <Text className="mt-1">
-        {c('B7.Subscription.Info').t`Your`}{' '}
+        {c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your`}{' '}
         <span className="font-bold">
-          {c('B7.Subscription.Info').t`Standard Notes`}
+          {c('B7.FilesSubscriptionHelp.Subscription.Info').t`Standard Notes`}
           {userSubscriptionName ? ' ' : ''}
           {userSubscriptionName}
         </span>{' '}
-        {c('B7.Subscription.Info').t`subscription`}{' '}
+        {c('B7.FilesSubscriptionHelp.Subscription.Info').t`subscription`}{' '}
         <span className="font-bold">
-          {c('B7.Subscription.Info').t`expired on`} {expirationDateString}
+          {c('B7.FilesSubscriptionHelp.Subscription.Info').t`expired on`} {expirationDateString}
         </span>
-        {c('B7.Subscription.Info').t`. You may resubscribe below if you wish.`}
+        {c('B7.FilesSubscriptionHelp.Subscription.Info').t`. You may resubscribe below if you wish.`}
         {sharedMessage}
       </Text>
     )
@@ -70,15 +70,15 @@ const SubscriptionStatusText = () => {
 
   return (
     <Text className="mt-1">
-      {c('B7.Subscription.Info').t`Your`}{' '}
+      {c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your`}{' '}
       <span className="font-bold">
-        {c('B7.Subscription.Info').t`Standard Notes`}
+        {c('B7.FilesSubscriptionHelp.Subscription.Info').t`Standard Notes`}
         {userSubscriptionName ? ' ' : ''}
         {userSubscriptionName}
       </span>{' '}
-      {c('B7.Subscription.Info').t`subscription will be`}{' '}
+      {c('B7.FilesSubscriptionHelp.Subscription.Info').t`subscription will be`}{' '}
       <span className="font-bold">
-        {c('B7.Subscription.Info').t`renewed on`} {expirationDateString}
+        {c('B7.FilesSubscriptionHelp.Subscription.Info').t`renewed on`} {expirationDateString}
       </span>
       .{sharedMessage}
     </Text>

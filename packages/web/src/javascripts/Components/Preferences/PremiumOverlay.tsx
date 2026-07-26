@@ -20,7 +20,7 @@ export const PreferencesPremiumOverlay: FunctionComponent = () => {
       <div className="absolute h-full w-full bg-default opacity-[86%]"></div>
       <div className="border-1 z-10 rounded border border-border bg-default p-5">
         <UpgradePrompt
-          featureName={c('B7.Subscription.Info').t`Plugin Gallery`}
+          featureName={c('B7.FilesSubscriptionHelp.Subscription.Info').t`Plugin Gallery`}
           ctaRef={ctaButtonRef}
           application={application}
           hasSubscription={hasSubscription}

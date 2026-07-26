@@ -38,7 +38,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application }: Props) =
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title className="mb-2">{c('B7.Subscription.Info').t`Subscription sharing`}</Title>
+            <Title className="mb-2">{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Subscription sharing`}</Title>
             {isSubscriptionSharingFeatureAvailable ? (
               <div>
                 <SharingStatusText subscriptionState={subscriptionState} />
@@ -47,7 +47,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application }: Props) =
                 {!subscriptionState.allInvitationsUsed && (
                   <Button
                     className="min-w-20"
-                    label={c('B7.Subscription.Label').t`Invite`}
+                    label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Invite`}
                     onClick={() => setIsInviteDialogOpen(true)}
                   />
                 )}
@@ -64,9 +64,9 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application }: Props) =
                 application={application}
                 text={
                   <span>
-                    {c('B7.Subscription.Info').t`Subscription sharing is available only on the`}{' '}
-                    <span className="font-bold">{c('B7.Subscription.Info').t`Professional`}</span>{' '}
-                    {c('B7.Subscription.Info').t`plan. Please upgrade in order to share your subscription.`}
+                    {c('B7.FilesSubscriptionHelp.Subscription.Info').t`Subscription sharing is available only on the`}{' '}
+                    <span className="font-bold">{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Professional`}</span>{' '}
+                    {c('B7.FilesSubscriptionHelp.Subscription.Info').t`plan. Please upgrade in order to share your subscription.`}
                   </span>
                 }
               />

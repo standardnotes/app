@@ -53,7 +53,7 @@ function UploadFileDialog({ onClose }: { onClose: () => void }) {
       />
       <div className="mt-1.5 flex justify-end">
         <Button onClick={onClick} disabled={!file} small={isMobileScreen()}>
-          {c('B7.Files.Action').t`Upload`}
+          {c('B7.FilesSubscriptionHelp.Files.Action').t`Upload`}
         </Button>
       </div>
     </>
@@ -180,7 +180,7 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
 
   if (showFileUploadModal) {
     return (
-      <Modal onClose={() => setShowFileUploadModal(false)} title={c('B7.Files.Title').t`Upload File`}>
+      <Modal onClose={() => setShowFileUploadModal(false)} title={c('B7.FilesSubscriptionHelp.Files.Title').t`Upload File`}>
         <UploadFileDialog onClose={() => setShowFileUploadModal(false)} />
       </Modal>
     )

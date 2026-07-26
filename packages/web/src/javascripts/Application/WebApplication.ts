@@ -411,7 +411,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     addToast({
       type: ToastType.Success,
-      message: c('B8.Mobile.Info').t`Successfully created note from shared text`,
+      message: c('B8.MobileDesktopShared.Mobile.Info').t`Successfully created note from shared text`,
     })
   }
 
@@ -424,7 +424,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (isImagePath) {
       const fetchToastUuid = addToast({
         type: ToastType.Loading,
-        message: c('B8.Mobile.Info').t`Fetching image from link...`,
+        message: c('B8.MobileDesktopShared.Mobile.Info').t`Fetching image from link...`,
       })
       try {
         const imgResponse = await fetch(link)

@@ -180,12 +180,12 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       const fileName = file.name
       const deletingToastId = addToast({
         type: ToastType.Loading,
-        message: jtString(c('B7.Files.Info').jt`Deleting file "${fileName}"...`),
+        message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Deleting file "${fileName}"...`),
       })
       await this.files.deleteFile(file)
       addToast({
         type: ToastType.Success,
-        message: jtString(c('B7.Files.Info').jt`Deleted file "${fileName}"`),
+        message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Deleted file "${fileName}"`),
       })
       dismissToast(deletingToastId)
     }
@@ -196,7 +196,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     if (!note) {
       addToast({
         type: ToastType.Error,
-        message: c('B7.Files.Error').t`Could not attach file because selected note was deleted`,
+        message: c('B7.FilesSubscriptionHelp.Files.Error').t`Could not attach file because selected note was deleted`,
       })
       return
     }
@@ -210,7 +210,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     if (!note) {
       addToast({
         type: ToastType.Error,
-        message: c('B7.Files.Error').t`Could not attach file because selected note was deleted`,
+        message: c('B7.FilesSubscriptionHelp.Files.Error').t`Could not attach file because selected note was deleted`,
       })
       return
     }
@@ -337,7 +337,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       if (this.mobileDevice && canShowProgressNotification) {
         const fileName = file.name
         downloadingToastId = await this.mobileDevice.displayNotification({
-          title: jtString(c('B7.Files.Info').jt`Downloading file "${fileName}"`),
+          title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading file "${fileName}"`),
           android: {
             progress: { max: 100, current: 0, indeterminate: true },
             onlyAlertOnce: true,
@@ -347,7 +347,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         const fileName = file.name
         downloadingToastId = addToast({
           type: ToastType.Progress,
-          message: jtString(c('B7.Files.Info').jt`Downloading file "${fileName}" (0%)`),
+          message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading file "${fileName}" (0%)`),
           progress: 0,
         })
       }
@@ -370,7 +370,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           this.mobileDevice
             .displayNotification({
               id: downloadingToastId,
-              title: jtString(c('B7.Files.Info').jt`Downloading file "${fileName}"`),
+              title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading file "${fileName}"`),
               android: {
                 progress: { max: 100, current: progressPercent, indeterminate: false },
                 onlyAlertOnce: true,
@@ -412,15 +412,15 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       if (this.mobileDevice && canShowProgressNotification) {
         const fileName = file.name
         await this.mobileDevice.displayNotification({
-          title: jtString(c('B7.Files.Info').jt`Successfully downloaded file "${fileName}"`),
+          title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Successfully downloaded file "${fileName}"`),
         })
       } else {
         addToast({
           type: ToastType.Success,
           message:
             lastProgress && lastProgress.source === 'local'
-              ? c('B7.Files.Info').t`Successfully downloaded file from local backup`
-              : c('B7.Files.Info').t`Successfully downloaded file`,
+              ? c('B7.FilesSubscriptionHelp.Files.Info').t`Successfully downloaded file from local backup`
+              : c('B7.FilesSubscriptionHelp.Files.Info').t`Successfully downloaded file`,
         })
       }
     } catch (error) {
@@ -432,7 +432,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       addToast({
         type: ToastType.Error,
-        message: c('B7.Files.Error').t`There was an error while downloading the file`,
+        message: c('B7.FilesSubscriptionHelp.Files.Error').t`There was an error while downloading the file`,
       })
     }
 
@@ -549,7 +549,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         const fileName = fileToUpload.name
         if (this.mobileDevice && canShowProgressNotification) {
           toastId = await this.mobileDevice.displayNotification({
-            title: jtString(c('B7.Files.Info').jt`Uploading file "${fileName}"`),
+            title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}"`),
             android: {
               progress: { max: 100, current: initialProgress, indeterminate: true },
               onlyAlertOnce: true,
@@ -558,7 +558,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         } else {
           toastId = addToast({
             type: ToastType.Progress,
-            message: jtString(c('B7.Files.Info').jt`Uploading file "${fileName}" (${initialProgress}%)`),
+            message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${initialProgress}%)`),
             progress: initialProgress,
           })
         }
@@ -577,7 +577,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           if (this.mobileDevice && canShowProgressNotification) {
             await this.mobileDevice.displayNotification({
               id: toastId,
-              title: jtString(c('B7.Files.Info').jt`Uploading file "${fileName}"`),
+              title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}"`),
               android: {
                 progress: { max: 100, current: percentComplete, indeterminate: false },
                 onlyAlertOnce: true,
@@ -585,7 +585,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
             })
           } else {
             updateToast(toastId, {
-              message: jtString(c('B7.Files.Info').jt`Uploading file "${fileName}" (${percentComplete}%)`),
+              message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${percentComplete}%)`),
               progress: percentComplete,
             })
           }
@@ -629,11 +629,11 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           this.mobileDevice
             .displayNotification({
               id: uploadedFile.uuid,
-              title: jtString(c('B7.Files.Info').jt`Uploaded file "${uploadedFileName}"`),
+              title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploaded file "${uploadedFileName}"`),
               android: {
                 actions: [
                   {
-                    title: c('B7.Files.Title').t`Open`,
+                    title: c('B7.FilesSubscriptionHelp.Files.Title').t`Open`,
                     pressAction: {
                       id: 'open-file',
                     },
@@ -645,10 +645,10 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         } else {
           addToast({
             type: ToastType.Success,
-            message: jtString(c('B7.Files.Info').jt`Uploaded file "${uploadedFileName}"`),
+            message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploaded file "${uploadedFileName}"`),
             actions: [
               {
-                label: c('B7.Files.Label').t`Open`,
+                label: c('B7.FilesSubscriptionHelp.Files.Label').t`Open`,
                 handler: (toastId) => {
                   void this.handleFileAction({
                     type: FileItemActionType.PreviewFile,
@@ -676,13 +676,13 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       if (this.mobileDevice && canShowProgressNotification) {
         this.mobileDevice
           .displayNotification({
-            title: c('B7.Files.Error').t`There was an error while uploading the file`,
+            title: c('B7.FilesSubscriptionHelp.Files.Error').t`There was an error while uploading the file`,
           })
           .catch(console.error)
       } else {
         addToast({
           type: ToastType.Error,
-          message: c('B7.Files.Error').t`There was an error while uploading the file`,
+          message: c('B7.FilesSubscriptionHelp.Files.Error').t`There was an error while uploading the file`,
         })
       }
     }
@@ -806,7 +806,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     const zipFileHandle = await window.showSaveFilePicker({
       types: [
         {
-          description: c('B7.Files.Info').t`ZIP file`,
+          description: c('B7.FilesSubscriptionHelp.Files.Info').t`ZIP file`,
           accept: { 'application/zip': ['.zip'] },
         },
       ],
@@ -815,8 +815,8 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     const fileCount = files.length
     const toast = addToast({
       type: ToastType.Progress,
-      title: jtString(c('B7.Files.Info').jt`Downloading ${fileCount} files as archive`),
-      message: c('B7.Files.Info').t`Preparing archive...`,
+      title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading ${fileCount} files as archive`),
+      message: c('B7.FilesSubscriptionHelp.Files.Info').t`Preparing archive...`,
     })
 
     try {
@@ -850,7 +850,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
             await writer.write(bytesChunk)
             const truncatedFileName = truncateString(file.name, 25)
             updateToast(toast, {
-              message: jtString(c('B7.Files.Info').jt`Downloading "${truncatedFileName}"`),
+              message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading "${truncatedFileName}"`),
               progress: Math.floor(progress.percentComplete),
             })
           })
@@ -866,7 +866,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
     addToast({
       type: ToastType.Success,
-      message: jtString(c('B7.Files.Info').jt`Successfully downloaded ${fileCount} files as archive`),
+      message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Successfully downloaded ${fileCount} files as archive`),
     })
   }
 }

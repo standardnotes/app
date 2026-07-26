@@ -20,15 +20,15 @@ export function getCSSValueFromAlignment(format: ElementFormatType) {
 const Options = [
   {
     alignment: 'left',
-    label: c('B7.Files.Label').t`Left align`,
+    label: c('B7.FilesSubscriptionHelp.Files.Label').t`Left align`,
   },
   {
     alignment: 'center',
-    label: c('B7.Files.Label').t`Center align`,
+    label: c('B7.FilesSubscriptionHelp.Files.Label').t`Center align`,
   },
   {
     alignment: 'right',
-    label: c('B7.Files.Label').t`Right align`,
+    label: c('B7.FilesSubscriptionHelp.Files.Label').t`Right align`,
   },
 ]
 

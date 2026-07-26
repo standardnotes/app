@@ -34,7 +34,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         }}
       >
         <Icon type="file" className="mr-2 text-neutral" />
-        {c('B7.Files.Action').t`Preview file`}
+        {c('B7.FilesSubscriptionHelp.Files.Action').t`Preview file`}
       </MenuItem>
       <HorizontalSeparator classes="my-1" />
       <MenuSwitchButtonItem
@@ -64,7 +64,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         }}
       >
         <Icon type="download" className="mr-2 text-neutral" />
-        {c('B7.Files.Action').t`Download`}
+        {c('B7.FilesSubscriptionHelp.Files.Action').t`Download`}
       </MenuItem>
       <MenuItem
         onClick={() => {
@@ -73,7 +73,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         }}
       >
         <Icon type="pencil" className="mr-2 text-neutral" />
-        {c('B7.Files.Action').t`Rename`}
+        {c('B7.FilesSubscriptionHelp.Files.Action').t`Rename`}
       </MenuItem>
       <MenuItem
         onClick={() => {
@@ -85,7 +85,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         }}
       >
         <Icon type="trash" className="mr-2 text-danger" />
-        <span className="text-danger">{c('B7.Files.Action').t`Delete permanently`}</span>
+        <span className="text-danger">{c('B7.FilesSubscriptionHelp.Files.Action').t`Delete permanently`}</span>
       </MenuItem>
 
       <FileContextMenuBackupOption file={file} />

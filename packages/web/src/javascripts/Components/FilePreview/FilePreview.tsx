@@ -102,21 +102,21 @@ const FilePreview = ({
     return (
       <div className="flex flex-grow flex-col items-center justify-center">
         <ProtectedIllustration className="mb-4 h-30 w-30" />
-        <div className="mb-2 text-base font-bold">{c('B7.Files.Info').t`This file is protected.`}</div>
+        <div className="mb-2 text-base font-bold">{c('B7.FilesSubscriptionHelp.Files.Info').t`This file is protected.`}</div>
         <p className="max-w-[35ch] text-center text-sm text-passive-0">
           {hasProtectionSources
-            ? c('B7.Files.Info').t`Authenticate to view this file.`
-            : c('B7.Files.Info')
+            ? c('B7.FilesSubscriptionHelp.Files.Info').t`Authenticate to view this file.`
+            : c('B7.FilesSubscriptionHelp.Files.Info')
                 .t`Add a passcode or create an account to require authentication to view this file.`}
         </p>
         <div className="mt-3 flex gap-3">
           {!hasProtectionSources && (
             <Button primary small onClick={() => application.showAccountMenu()}>
-              {c('B7.Files.Action').t`Open account menu`}
+              {c('B7.FilesSubscriptionHelp.Files.Action').t`Open account menu`}
             </Button>
           )}
           <Button primary onClick={() => application.protections.authorizeItemAccess(file)}>
-            {hasProtectionSources ? c('B7.Files.Info').t`Authenticate` : c('B7.Files.Info').t`View file`}
+            {hasProtectionSources ? c('B7.FilesSubscriptionHelp.Files.Info').t`Authenticate` : c('B7.FilesSubscriptionHelp.Files.Info').t`View file`}
           </Button>
         </div>
       </div>
@@ -136,7 +136,7 @@ const FilePreview = ({
           {fileProgressToHumanReadableString(downloadProgress, file.name, { showPercent: false })}
         </span>
       ) : (
-        <span className="mt-3">{c('B7.Files.Info').t`Loading...`}</span>
+        <span className="mt-3">{c('B7.FilesSubscriptionHelp.Files.Info').t`Loading...`}</span>
       )}
     </div>
   ) : downloadedBytes ? (

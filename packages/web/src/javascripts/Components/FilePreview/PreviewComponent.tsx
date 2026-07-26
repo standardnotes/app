@@ -71,10 +71,10 @@ const PreviewComponent: FunctionComponent<Props> = ({
     return (
       <div className="flex flex-grow flex-col items-center justify-center">
         <div className="max-w-[30ch] text-center text-base font-bold">
-          {c('B7.Files.Info').t`This file can only be previewed in an external app`}
+          {c('B7.FilesSubscriptionHelp.Files.Info').t`This file can only be previewed in an external app`}
         </div>
         <Button className="mt-3" primary onClick={openNativeFilePreview}>
-          {c('B7.Files.Action').t`Open file preview`}
+          {c('B7.FilesSubscriptionHelp.Files.Action').t`Open file preview`}
         </Button>
       </div>
     )

@@ -30,16 +30,16 @@ const NoSubscription: FunctionComponent<Props> = ({ application }) => {
 
   return (
     <>
-      <Text>{c('B7.Subscription.Info').t`You don't have a Standard Notes subscription yet.`}</Text>
+      <Text>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`You don't have a Standard Notes subscription yet.`}</Text>
       {isLoadingPurchaseFlow && (
-        <Text>{c('B7.Subscription.Info').t`Redirecting you to the subscription page...`}</Text>
+        <Text>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Redirecting you to the subscription page...`}</Text>
       )}
       {purchaseFlowError && <Text className="text-danger">{purchaseFlowError}</Text>}
       <div className="flex">
         {!application.hideOutboundSubscriptionLinks && (
           <LinkButton
             className="mr-3 mt-3 min-w-20"
-            label={c('B7.Subscription.Label').t`Learn More`}
+            label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Learn More`}
             link={window.plansUrl as string}
           />
         )}
@@ -47,7 +47,7 @@ const NoSubscription: FunctionComponent<Props> = ({ application }) => {
           <Button
             className="mt-3 min-w-20"
             primary
-            label={c('B7.Subscription.Label').t`Subscribe`}
+            label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Subscribe`}
             onClick={onPurchaseClick}
           />
         )}

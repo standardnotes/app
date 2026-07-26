@@ -208,7 +208,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
       if (!clipPayload.content) {
         addToast({
           type: ToastType.Error,
-          message: c('B7.Help.Error').t`No content to clip`,
+          message: c('B7.FilesSubscriptionHelp.Help.Error').t`No content to clip`,
         })
         return
       }
@@ -248,7 +248,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
 
       addToast({
         type: ToastType.Success,
-        message: c('B7.Help.Info').t`Note clipped successfully`,
+        message: c('B7.FilesSubscriptionHelp.Help.Info').t`Note clipped successfully`,
       })
 
       const syncRequest = await application.sync.getRawSyncRequestForExternalUse([insertedNote])
@@ -285,7 +285,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
   }, [application, hasSubscription])
 
   if (user && !isEntitledToExtension) {
-    const webClipperLabel = <span className="font-semibold">{c('B7.Subscription.Label').t`Web Clipper`}</span>
+    const webClipperLabel = <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Subscription.Label').t`Web Clipper`}</span>
 
     return (
       <div className="px-3 py-3">
@@ -295,15 +295,15 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
         >
           <Icon className={`h-12 w-12 ${PremiumFeatureIconClass}`} size={'custom'} type={PremiumFeatureIconName} />
         </div>
-        <div className="mb-1 text-center text-lg font-bold">{c('B7.Subscription.Title').t`Enable Advanced Features`}</div>
+        <div className="mb-1 text-center text-lg font-bold">{c('B7.FilesSubscriptionHelp.Subscription.Title').t`Enable Advanced Features`}</div>
         <div className="mb-3 text-center">
           {jtString(
-            c('B7.Subscription.Info')
+            c('B7.FilesSubscriptionHelp.Subscription.Info')
               .jt`To take advantage of ${webClipperLabel} and other advanced features, upgrade your current plan.`,
           )}
         </div>
         <Button className="mb-2" fullWidth primary onClick={upgradePlan}>
-          {c('B7.Subscription.Action').t`Upgrade`}
+          {c('B7.FilesSubscriptionHelp.Subscription.Action').t`Upgrade`}
         </Button>
         <Button fullWidth onClick={showSignOutConfirmation}>
           {c('B1.Account.Session.Action').t`Sign out`}
@@ -350,7 +350,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
 
   return (
     <div className="bg-contrast p-3">
-      <Menu a11yLabel={c('B7.Help.Label').t`Extension menu`} className="rounded border border-border bg-default">
+      <Menu a11yLabel={c('B7.FilesSubscriptionHelp.Help.Label').t`Extension menu`} className="rounded border border-border bg-default">
         {hasSelection && (
           <MenuItem
             className="border-b border-border"
@@ -364,7 +364,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
             }}
           >
             <Icon type="paragraph" className="mr-2 text-info" />
-            {c('B7.Help.Action').t`Clip text selection`}
+            {c('B7.FilesSubscriptionHelp.Help.Action').t`Clip text selection`}
           </MenuItem>
         )}
         <MenuItem
@@ -377,7 +377,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           }}
         >
           <Icon type="notes-filled" className="mr-2 text-info" />
-          {isScreenshotMode ? c('B7.Help.Action').t`Capture visible` : c('B7.Help.Action').t`Clip full page`}
+          {isScreenshotMode ? c('B7.FilesSubscriptionHelp.Help.Action').t`Capture visible` : c('B7.FilesSubscriptionHelp.Help.Action').t`Clip full page`}
         </MenuItem>
         <MenuItem
           disabled={isScreenshotMode}
@@ -390,7 +390,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           }}
         >
           <Icon type="rich-text" className="mr-2 text-info" />
-          {c('B7.Help.Action').t`Clip article`}
+          {c('B7.FilesSubscriptionHelp.Help.Action').t`Clip article`}
         </MenuItem>
         <MenuItem
           onClick={async () => {
@@ -400,8 +400,8 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
         >
           <Icon type="dashboard" className="mr-2 text-info" />
           {isScreenshotMode
-            ? c('B7.Help.Action').t`Select elements to capture`
-            : c('B7.Help.Action').t`Select elements to clip`}
+            ? c('B7.FilesSubscriptionHelp.Help.Action').t`Select elements to capture`
+            : c('B7.FilesSubscriptionHelp.Help.Action').t`Select elements to clip`}
         </MenuItem>
         <MenuSwitchButtonItem
           checked={isScreenshotMode}
@@ -411,7 +411,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           className="flex-row-reverse gap-2"
           forceDesktopStyle={true}
         >
-          {c('B7.Help.Action').t`Clip as screenshot`}
+          {c('B7.FilesSubscriptionHelp.Help.Action').t`Clip as screenshot`}
         </MenuSwitchButtonItem>
         <div className="border-t border-border px-3 py-3  text-foreground">
           {defaultTag && (
@@ -422,7 +422,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
                 unlinkItem={unselectTag}
                 isBidirectional={false}
               />
-              <StyledTooltip label={c('B7.Help.Label').t`Remove default tag`} gutter={2}>
+              <StyledTooltip label={c('B7.FilesSubscriptionHelp.Help.Label').t`Remove default tag`} gutter={2}>
                 <button
                   className="rounded-full p-1 text-neutral hover:bg-contrast hover:text-info"
                   onClick={unselectTag}
@@ -434,7 +434,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           )}
           <ItemSelectionDropdown
             onSelection={selectTag}
-            placeholder={c('B7.Help.Placeholder').t`Select tag to save clipped notes to...`}
+            placeholder={c('B7.FilesSubscriptionHelp.Help.Placeholder').t`Select tag to save clipped notes to...`}
             contentTypes={[ContentType.TYPES.Tag]}
             className={{
               input: 'text-[0.85rem]',

@@ -47,19 +47,19 @@ export const API_MESSAGE_FAILED_UPDATE_SETTINGS = c('B6.Settings.Error').t`Faile
 export const API_MESSAGE_FAILED_LISTED_REGISTRATION = c('B6.Settings.Error')
   .t`Unable to register for Listed. Please try again later.`
 
-export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = c('B7.Files.Error').t`Failed to create file token.`
+export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to create file token.`
 
-export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = c('B7.Subscription.Error')
+export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = c('B7.FilesSubscriptionHelp.Subscription.Error')
   .t`Failed to get subscription's information.`
 
-export const API_MESSAGE_FAILED_ACCESS_PURCHASE = c('B7.Subscription.Error').t`Failed to access purchase flow.`
+export const API_MESSAGE_FAILED_ACCESS_PURCHASE = c('B7.FilesSubscriptionHelp.Subscription.Error').t`Failed to access purchase flow.`
 
-export const API_MESSAGE_FAILED_OFFLINE_FEATURES = c('B7.Subscription.Error').t`Failed to get offline features.`
+export const API_MESSAGE_FAILED_OFFLINE_FEATURES = c('B7.FilesSubscriptionHelp.Subscription.Error').t`Failed to get offline features.`
 export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = c('B2.SharedUI.Warning')
   .t`The extension you are attempting to install comes from an untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?`
 export const API_MESSAGE_FAILED_DOWNLOADING_EXTENSION = c('B2.SharedUI.Error')
   .t`Error downloading package details. Please check the extension link and try again.`
-export const API_MESSAGE_FAILED_OFFLINE_ACTIVATION = c('B7.Subscription.Error')
+export const API_MESSAGE_FAILED_OFFLINE_ACTIVATION = c('B7.FilesSubscriptionHelp.Subscription.Error')
   .t`An unknown issue occurred during offline activation. Please download your activation code again and try once more.`
 
 export const INVALID_EXTENSION_URL = c('B2.SharedUI.Error').t`Invalid extension URL.`

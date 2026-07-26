@@ -33,14 +33,14 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   return (
     <Modal
       close={onClose}
-      title={isShowingSuperDemo ? c('B7.Subscription.Title').t`Try out Super` : c('B7.Subscription.Title').t`Upgrade`}
+      title={isShowingSuperDemo ? c('B7.FilesSubscriptionHelp.Subscription.Title').t`Try out Super` : c('B7.FilesSubscriptionHelp.Subscription.Title').t`Upgrade`}
       className={isShowingSuperDemo ? '' : 'px-6 py-5'}
       customHeader={isShowingSuperDemo ? undefined : <></>}
       actions={
         isShowingSuperDemo
           ? [
               {
-                label: c('B7.Subscription.Action').t`Done`,
+                label: c('B7.FilesSubscriptionHelp.Subscription.Action').t`Done`,
                 type: 'primary',
                 onClick: onClose,
                 hidden: !isMobileScreen,

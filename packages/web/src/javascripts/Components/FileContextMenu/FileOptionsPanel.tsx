@@ -19,15 +19,15 @@ const FilesOptionsPanel = ({ itemListController }: Props) => {
 
   return (
     <>
-      <RoundIconButton label={c('B7.Files.Label').t`File options menu`} onClick={toggleMenu} ref={buttonRef} icon="more" />
+      <RoundIconButton label={c('B7.FilesSubscriptionHelp.Files.Label').t`File options menu`} onClick={toggleMenu} ref={buttonRef} icon="more" />
       <Popover
-        title={c('B7.Files.Title').t`File options`}
+        title={c('B7.FilesSubscriptionHelp.Files.Title').t`File options`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}
         className="md:pb-2"
       >
-        <Menu a11yLabel={c('B7.Files.Info').t`File options panel`}>
+        <Menu a11yLabel={c('B7.FilesSubscriptionHelp.Files.Info').t`File options panel`}>
           <FileMenuOptions
             selectedFiles={itemListController.selectedFiles}
             closeMenu={() => {

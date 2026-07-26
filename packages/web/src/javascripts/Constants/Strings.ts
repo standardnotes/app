@@ -6,7 +6,7 @@ const jtString = (value: unknown): string => (Array.isArray(value) ? value.join(
 
 /** @generic */
 export const STRING_DEFAULT_FILE_ERROR = () =>
-  c('B7.Files.Error')
+  c('B7.FilesSubscriptionHelp.Files.Error')
     .t`Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.com/filesafe.`
 export const STRING_GENERIC_SYNC_ERROR = () =>
   c('B1.Account.Session.Error')
@@ -21,7 +21,7 @@ export function StringSyncException(data: unknown) {
 
 /** @footer */
 export const STRING_NEW_UPDATE_READY = () =>
-  c('B8.Desktop.Info')
+  c('B8.MobileDesktopShared.Desktop.Info')
     .t`A new update is ready to install. Please use the top-level 'Updates' menu to manage installation.`
 
 /** @tags */

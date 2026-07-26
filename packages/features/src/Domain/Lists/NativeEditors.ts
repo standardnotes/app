@@ -8,7 +8,7 @@ import { c } from 'ttag'
 export function nativeEditors(): EditorFeatureDescription[] {
   return [
     {
-      name: c('B7.Subscription.Info').t`Super`,
+      name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Super`,
       note_type: NoteType.Super,
       identifier: NativeFeatureIdentifier.TYPES.SuperEditor,
       spellcheckControl: true,
@@ -16,7 +16,7 @@ export function nativeEditors(): EditorFeatureDescription[] {
       interchangeable: false,
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       permission_name: PermissionName.SuperEditor,
-      description: c('B7.Subscription.Info')
+      description: c('B7.FilesSubscriptionHelp.Subscription.Info')
         .t`The best way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note. Cmd/Ctrl + F to bring up search and replace.`,
     },
     {

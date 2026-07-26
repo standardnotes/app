@@ -7,8 +7,8 @@ import { c } from 'ttag'
 export function experimentalFeatures(): AnyFeatureDescription[] {
   return [
     {
-      name: c('B7.Subscription.Info').t`Private vaults`,
-      description: c('B7.Subscription.Info')
+      name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Private vaults`,
+      description: c('B7.FilesSubscriptionHelp.Subscription.Info')
         .t`Private vaults allow you to store notes, files and tags into separate, encrypted vaults.`,
       availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       identifier: NativeFeatureIdentifier.TYPES.Vaults,

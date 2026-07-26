@@ -124,7 +124,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
         disabled: lockContinue,
       },
       {
-        label: c('B7.Subscription.Label').t`Cancel`,
+        label: c('B7.FilesSubscriptionHelp.Subscription.Label').t`Cancel`,
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
@@ -135,7 +135,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   )
 
   return (
-    <Modal title={c('B7.Subscription.Title').t`Share Your Subscription`} close={handleDialogClose} actions={modalActions}>
+    <Modal title={c('B7.FilesSubscriptionHelp.Subscription.Title').t`Share Your Subscription`} close={handleDialogClose} actions={modalActions}>
       <div className="px-4.5 py-4">
         {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
         {currentStep === Steps.FinishStep && <InviteSuccess />}
