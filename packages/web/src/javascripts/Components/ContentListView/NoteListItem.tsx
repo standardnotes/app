@@ -31,6 +31,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   selected,
   sortBy,
   tags,
+  isTiled,
   isPreviousItemTiled,
   isNextItemTiled,
 }) => {
@@ -95,7 +96,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
 
   log(LoggingDomain.ItemsList, 'Rendering note list item', item.title)
 
-  const hasOffsetBorder = !isNextItemTiled
+  const hasOffsetBorder = !isTiled && !isNextItemTiled
 
   const dragPreview = useRef<HTMLDivElement>()
 
@@ -129,14 +130,17 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       ref={listItemRef}
       role="button"
       className={classNames(
-        'content-list-item flex w-full cursor-pointer items-stretch border-l-2 text-text',
+        'content-list-item flex w-full cursor-pointer items-stretch text-text',
         selected
           ? `selected ${
               application.itemListController.isMultipleSelectionMode ? 'border-info' : `border-accessory-tint-${tint}`
             }`
+          : isTiled
+          ? ''
           : 'border-transparent',
-        isPreviousItemTiled && 'mt-3 border-t border-t-border',
-        isNextItemTiled && 'mb-3 border-b border-b-border',
+        isTiled ? 'rounded-lg border border-border' : 'border-l-2',
+        !isTiled && isPreviousItemTiled && 'mt-3 border-t border-t-border',
+        !isTiled && isNextItemTiled && 'mb-3 border-b border-b-border',
       )}
       id={item.uuid}
       onClick={onClick}
@@ -169,7 +173,12 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       ) : (
         <div className="pr-4" />
       )}
-      <div className={`min-w-0 flex-grow ${hasOffsetBorder && 'border-b border-solid border-border'} px-0 py-4`}>
+      <div
+        className={classNames(
+          'min-w-0 flex-grow px-0 py-4',
+          !isTiled && hasOffsetBorder && 'border-b border-solid border-border',
+        )}
+      >
         <ListItemTitle item={item} />
         <ListItemNotePreviewText item={item} hidePreview={hidePreview} />
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
@@ -177,7 +186,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
         <ListItemConflictIndicator item={item} />
         <ListItemVaultInfo item={item} className="mt-1.5" />
       </div>
-      <ListItemFlagIcons className="p-4" item={item} hasFiles={hasFiles} hasBorder={hasOffsetBorder} />
+      <ListItemFlagIcons className="p-4" item={item} hasFiles={hasFiles} hasBorder={!isTiled && hasOffsetBorder} />
     </div>
   )
 }

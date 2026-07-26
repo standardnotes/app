@@ -24,6 +24,7 @@ export enum PrefKey {
   NotesHideDate = 'hideDate',
   NotesHideTags = 'hideTags',
   NotesHideEditorIcon = 'hideEditorIcon',
+  NotesListLayout = 'notesListLayout',
   NoteAddToParentFolders = 'noteAddToParentFolders',
   NewNoteTitleFormat = 'newNoteTitleFormat',
   CustomNoteTitleFormat = 'customNoteTitleFormat',
@@ -73,6 +74,7 @@ export type PrefValue = {
   [PrefKey.NotesHideDate]: boolean
   [PrefKey.NotesHideTags]: boolean
   [PrefKey.NotesHideEditorIcon]: boolean
+  [PrefKey.NotesListLayout]: 'rows' | 'tiles'
   [PrefKey.DEPRECATED_ActiveThemes]: string[]
   [PrefKey.DEPRECATED_UseSystemColorScheme]: boolean
   [PrefKey.DEPRECATED_UseTranslucentUI]: boolean

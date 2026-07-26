@@ -25,6 +25,7 @@ const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = 
   selected,
   sortBy,
   tags,
+  isTiled,
 }) => {
   const { setPaneLayout } = useResponsiveAppPane()
   const application = useApplication()
@@ -85,7 +86,8 @@ const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = 
       role="button"
       className={classNames(
         'content-list-item flex w-full cursor-pointer items-stretch text-text',
-        selected && 'selected border-l-2px border-solid border-info',
+        isTiled ? 'rounded-lg border border-border' : 'border-l-2px border-solid',
+        selected ? 'selected border-info' : isTiled ? 'border-border' : 'border-transparent',
       )}
       id={file.uuid}
       onClick={onClick}
@@ -97,7 +99,7 @@ const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = 
       ) : (
         <div className="pr-4" />
       )}
-      <div className="min-w-0 flex-grow border-b border-solid border-border px-0 py-4">
+      <div className={classNames('min-w-0 flex-grow px-0 py-4', !isTiled && 'border-b border-solid border-border')}>
         <div className="flex items-start justify-between overflow-hidden text-base font-semibold leading-[1.3]">
           <div className="break-word mr-2">{file.title}</div>
         </div>
@@ -106,7 +108,7 @@ const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = 
         <ListItemConflictIndicator item={file} />
         <ListItemVaultInfo item={file} className="mt-1.5" />
       </div>
-      <ListItemFlagIcons className="p-4" item={file} isFileBackedUp={!!backupInfo} />
+      <ListItemFlagIcons className="p-4" item={file} isFileBackedUp={!!backupInfo} hasBorder={!isTiled} />
     </div>
   )
 }

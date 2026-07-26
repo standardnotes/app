@@ -3,4 +3,5 @@ export type WebDisplayOptions = {
   hideDate: boolean
   hideNotePreview: boolean
   hideEditorIcon: boolean
+  notesListLayout: 'rows' | 'tiles'
 }
