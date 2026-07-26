@@ -797,7 +797,8 @@ export class ItemListController
       this.preferences.getValue(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
 
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
-      return jtString(c('B3.Notes.NoteList.Label').jt`Note ${this.notes.length + 1}`)
+      const noteNumber = this.notes.length + 1
+      return jtString(c('B3.Notes.NoteList.Label').jt`Note ${noteNumber}`)
     }
 
     if (titleFormat === NewNoteTitleFormat.CustomFormat) {
