@@ -195,7 +195,9 @@ export class ActionsService extends AbstractService {
     const payload = new EncryptedPayload(response.item as EncryptedTransferPayload)
 
     if (!payload.enc_item_key) {
-      void this.alertService.alert('This revision is missing its key and cannot be recovered.')
+      void this.alertService.alert(
+        c('B3.Notes.History.Error').t`This revision is missing its key and cannot be recovered.`,
+      )
       return
     }
 
@@ -241,10 +243,8 @@ export class ActionsService extends AbstractService {
        * Instruct the user to email us to get this remedied.
        */
       void this.alertService.alert(
-        'We were unable to decrypt this revision using your current keys, ' +
-          'and this revision is missing metadata that would allow us to try different ' +
-          'keys to decrypt it. This can likely be fixed with some manual intervention. ' +
-          'Please email help@standardnotes.com for assistance.',
+        c('B3.Notes.History.Error')
+          .t`We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email help@standardnotes.com for assistance.`,
       )
       return undefined
     }
@@ -309,7 +309,9 @@ export class ActionsService extends AbstractService {
       })
       .catch((response) => {
         console.error('Action error response:', response)
-        void this.alertService.alert('An issue occurred while processing this action. Please try again.')
+        void this.alertService.alert(
+          c('B2.SharedUI.Error').t`An issue occurred while processing this action. Please try again.`,
+        )
         return response as ActionResponse
       })
   }

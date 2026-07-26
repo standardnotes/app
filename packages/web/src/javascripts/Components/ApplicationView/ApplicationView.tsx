@@ -98,7 +98,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       return
     }
 
-    const status = application.status.addMessage('Preparing demo...')
+    const status = application.status.addMessage(c('B2.SharedUI.Info').t`Preparing demo...`)
     void application.user.populateSessionFromDemoShareToken(token).then(() => {
       application.status.removeMessage(status)
       application.hideAccountMenu()

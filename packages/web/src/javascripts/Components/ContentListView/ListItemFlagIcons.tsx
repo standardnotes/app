@@ -78,8 +78,13 @@ const ListItemFlagIcons: FunctionComponent<Props> = ({
         </span>
       )}
       {isFileBackedUp && (
-        <span className="ml-1.5 flex items-center" title={`File is backed up locally`}>
-          <Icon ariaLabel={`File is backed up locally`} type="check-circle" className="text-info" size="medium" />
+        <span className="ml-1.5 flex items-center" title={c('B3.Notes.NoteList.Label').t`File is backed up locally`}>
+          <Icon
+            ariaLabel={c('B3.Notes.NoteList.Label').t`File is backed up locally`}
+            type="check-circle"
+            className="text-info"
+            size="medium"
+          />
         </span>
       )}
     </div>

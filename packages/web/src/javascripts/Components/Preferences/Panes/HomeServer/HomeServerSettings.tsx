@@ -207,7 +207,7 @@ const HomeServerSettings = () => {
           location = newLocationOrError.getValue()
         }
 
-        setStatus({ state: 'restarting', message: 'Applying changes and restarting...' })
+        setStatus({ state: 'restarting', message: c('B6.Preferences.HomeServer.Status').t`Applying changes and restarting...` })
 
         await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
 

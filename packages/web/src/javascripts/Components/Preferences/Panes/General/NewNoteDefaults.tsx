@@ -128,7 +128,7 @@ const NewNoteDefaults = () => {
             <Subtitle>{c('B6.Preferences.General.Subtitle').t`Note Type`}</Subtitle>
             <div className="mt-2">
               <Dropdown
-                label="Select the default note type"
+                label={c('B6.Preferences.General.Label').t`Select the default note type`}
                 items={editorItems}
                 value={defaultEditorIdentifier}
                 onChange={(value) => selectEditorForNewNoteDefault(value as EditorOption['value'])}

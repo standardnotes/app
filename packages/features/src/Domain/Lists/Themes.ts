@@ -3,10 +3,11 @@ import { PermissionName } from '../Permission/PermissionName'
 import { NativeFeatureIdentifier } from '../Feature/NativeFeatureIdentifier'
 import { FillThemeComponentDefaults } from './Utilities/FillThemeComponentDefaults'
 import { RoleName } from '@standardnotes/domain-core'
+import { c } from 'ttag'
 
 export function themes(): ThemeFeatureDescription[] {
   const midnight: ThemeFeatureDescription = FillThemeComponentDefaults({
-    name: 'Midnight',
+    name: c('B6.Settings.Appearance.Label').t`Midnight`,
     identifier: NativeFeatureIdentifier.TYPES.MidnightTheme,
     permission_name: PermissionName.MidnightTheme,
     isDark: true,
@@ -21,7 +22,7 @@ export function themes(): ThemeFeatureDescription[] {
 
   const futura: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-    name: 'Futura',
+    name: c('B6.Settings.Appearance.Label').t`Futura`,
     identifier: NativeFeatureIdentifier.TYPES.FuturaTheme,
     permission_name: PermissionName.FuturaTheme,
     isDark: true,
@@ -35,7 +36,7 @@ export function themes(): ThemeFeatureDescription[] {
 
   const solarizedDark: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-    name: 'Solarized Dark',
+    name: c('B6.Settings.Appearance.Label').t`Solarized Dark`,
     identifier: NativeFeatureIdentifier.TYPES.SolarizedDarkTheme,
     permission_name: PermissionName.SolarizedDarkTheme,
     isDark: true,
@@ -49,7 +50,7 @@ export function themes(): ThemeFeatureDescription[] {
 
   const autobiography: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-    name: 'Autobiography',
+    name: c('B6.Settings.Appearance.Label').t`Autobiography`,
     identifier: NativeFeatureIdentifier.TYPES.AutobiographyTheme,
     permission_name: PermissionName.AutobiographyTheme,
     dock_icon: {
@@ -62,7 +63,7 @@ export function themes(): ThemeFeatureDescription[] {
 
   const dark: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-    name: 'Dark',
+    name: c('B6.Settings.Appearance.Label').t`Dark`,
     identifier: NativeFeatureIdentifier.TYPES.DarkTheme,
     permission_name: PermissionName.FocusedTheme,
     clientControlled: true,
@@ -77,7 +78,7 @@ export function themes(): ThemeFeatureDescription[] {
 
   const titanium: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-    name: 'Titanium',
+    name: c('B6.Settings.Appearance.Label').t`Titanium`,
     identifier: NativeFeatureIdentifier.TYPES.TitaniumTheme,
     permission_name: PermissionName.TitaniumTheme,
     dock_icon: {
@@ -90,7 +91,7 @@ export function themes(): ThemeFeatureDescription[] {
 
   const dynamic: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-    name: 'Dynamic Panels',
+    name: c('B6.Settings.Appearance.Label').t`Dynamic Panels`,
     identifier: NativeFeatureIdentifier.TYPES.DynamicTheme,
     permission_name: PermissionName.ThemeDynamic,
     layerable: true,
@@ -99,7 +100,7 @@ export function themes(): ThemeFeatureDescription[] {
 
   const proton: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-    name: 'Carbon',
+    name: c('B6.Settings.Appearance.Label').t`Carbon`,
     identifier: NativeFeatureIdentifier.TYPES.ProtonTheme,
     permission_name: PermissionName.ProtonTheme,
     dock_icon: {

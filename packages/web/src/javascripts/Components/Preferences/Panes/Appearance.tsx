@@ -127,7 +127,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
               <Text>{c('B6.Preferences.Appearance.Info').t`Theme to be used for system light mode:`}</Text>
               <div className="mt-2">
                 <Dropdown
-                  label="Select the automatic light theme"
+                  label={c('B6.Preferences.Appearance.Label').t`Select the automatic light theme`}
                   items={themeItems}
                   value={autoLightTheme}
                   onChange={changeAutoLightTheme}
@@ -141,7 +141,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
               <Text>{c('B6.Preferences.Appearance.Info').t`Theme to be used for system dark mode:`}</Text>
               <div className="mt-2">
                 <Dropdown
-                  label="Select the automatic dark theme"
+                  label={c('B6.Preferences.Appearance.Label').t`Select the automatic dark theme`}
                   items={themeItems}
                   value={autoDarkTheme}
                   onChange={changeAutoDarkTheme}

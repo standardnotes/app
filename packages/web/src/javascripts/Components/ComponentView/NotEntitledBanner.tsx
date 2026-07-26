@@ -16,16 +16,23 @@ const statusString = (featureStatus: FeatureStatus, expiredDate: Date | undefine
   switch (featureStatus) {
     case FeatureStatus.InCurrentPlanButExpired:
       if (expiredDate) {
-        return `Your subscription expired on ${dateToLocalizedString(expiredDate)}`
+        const expiredDateString = dateToLocalizedString(expiredDate)
+        return jtString(c('B7.Subscription.Info').jt`Your subscription expired on ${expiredDateString}`)
       } else {
-        return 'Your subscription expired.'
+        return c('B7.Subscription.Info').t`Your subscription expired.`
       }
     case FeatureStatus.NoUserSubscription:
-      return 'You do not have an active subscription'
-    case FeatureStatus.NotInCurrentPlan:
-      return `Please upgrade your plan to access ${featureName}`
-    default:
-      return `${featureName} is valid and you should not be seeing this message`
+      return c('B7.Subscription.Info').t`You do not have an active subscription`
+    case FeatureStatus.NotInCurrentPlan: {
+      const featureNameLabel = featureName
+      return jtString(c('B7.Subscription.Info').jt`Please upgrade your plan to access ${featureNameLabel}`)
+    }
+    default: {
+      const featureNameLabel = featureName
+      return jtString(
+        c('B7.Subscription.Info').jt`${featureNameLabel} is valid and you should not be seeing this message`,
+      )
+    }
   }
 }
 

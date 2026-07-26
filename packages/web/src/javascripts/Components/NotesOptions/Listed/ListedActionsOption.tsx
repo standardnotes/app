@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
+import { c } from 'ttag'
 import Icon from '@/Components/Icon/Icon'
 import ListedActionsMenu from './ListedActionsMenu'
 import { KeyboardKey } from '@standardnotes/ui-services'
@@ -43,12 +44,12 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note, icon
       >
         <div className="flex items-center">
           <Icon type="listed" className={`mr-2 text-neutral ${iconClassName}`} />
-          Listed actions
+          {c('B6.Settings.Listed.Label').t`Listed actions`}
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </MenuItem>
       <Popover
-        title="Listed"
+        title={c('B6.Settings.Listed.Label').t`Listed`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}

@@ -1,7 +1,9 @@
 import { c } from 'ttag'
 
 export const InfoStrings = {
-  AccountDeleted: 'Your account has been successfully deleted.',
+  get AccountDeleted() {
+    return c('B1.Account.Session.Info').t`Your account has been successfully deleted.`
+  },
 
   get InvalidNote() {
     return c('B2.SharedUI.Error')

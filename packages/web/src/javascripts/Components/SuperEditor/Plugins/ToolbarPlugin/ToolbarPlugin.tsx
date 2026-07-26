@@ -83,18 +83,18 @@ import { CREATE_NOTE_FROM_SELECTION_COMMAND } from '../NoteFromSelectionPlugin'
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
 const blockTypeToBlockName = {
-  bullet: 'Bulleted List',
-  check: 'Check List',
-  code: 'Code Block',
-  h1: 'Heading 1',
-  h2: 'Heading 2',
-  h3: 'Heading 3',
-  h4: 'Heading 4',
-  h5: 'Heading 5',
-  h6: 'Heading 6',
-  number: 'Numbered List',
-  paragraph: 'Normal',
-  quote: 'Quote',
+  bullet: c('B3.Notes.EditorToolbar.Label').t`Bulleted List`,
+  check: c('B3.Notes.EditorToolbar.Label').t`Check List`,
+  code: c('B3.Notes.EditorToolbar.Label').t`Code Block`,
+  h1: c('B3.Notes.EditorToolbar.Label').t`Heading 1`,
+  h2: c('B3.Notes.EditorToolbar.Label').t`Heading 2`,
+  h3: c('B3.Notes.EditorToolbar.Label').t`Heading 3`,
+  h4: c('B3.Notes.EditorToolbar.Label').t`Heading 4`,
+  h5: c('B3.Notes.EditorToolbar.Label').t`Heading 5`,
+  h6: c('B3.Notes.EditorToolbar.Label').t`Heading 6`,
+  number: c('B3.Notes.EditorToolbar.Label').t`Numbered List`,
+  paragraph: c('B3.Notes.EditorToolbar.Label').t`Normal`,
+  quote: c('B3.Notes.EditorToolbar.Label').t`Quote`,
 }
 
 const blockTypeToIconName = {

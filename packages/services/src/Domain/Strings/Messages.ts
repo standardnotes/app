@@ -1,74 +1,85 @@
 import { ProtocolVersion } from '@standardnotes/models'
 import { c } from 'ttag'
 
-export const API_MESSAGE_GENERIC_INVALID_LOGIN = 'A server error occurred while trying to sign in. Please try again.'
-export const API_MESSAGE_GENERIC_REGISTRATION_FAIL =
-  'A server error occurred while trying to register. Please try again.'
-export const API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL =
-  'Something went wrong while changing your credentials. Your credentials were not changed. Please try again.'
+export const API_MESSAGE_GENERIC_INVALID_LOGIN = c('B1.Account.SignIn.Error')
+  .t`A server error occurred while trying to sign in. Please try again.`
+export const API_MESSAGE_GENERIC_REGISTRATION_FAIL = c('B1.Account.SignIn.Error')
+  .t`A server error occurred while trying to register. Please try again.`
+export const API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL = c('B1.Account.SignIn.Error')
+  .t`Something went wrong while changing your credentials. Your credentials were not changed. Please try again.`
 export const API_MESSAGE_GENERIC_SYNC_FAIL = () => c('B2.SharedUI.Error').t`Could not connect to server.`
 
 export const ServerErrorStrings = {
-  DeleteAccountError: 'Your account was unable to be deleted due to an error. Please try your request again.',
+  get DeleteAccountError() {
+    return c('B1.Account.Session.Error')
+      .t`Your account was unable to be deleted due to an error. Please try your request again.`
+  },
 }
 
-export const API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL = 'Could not check your data integrity with the server.'
+export const API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL = c('B2.SharedUI.Error')
+  .t`Could not check your data integrity with the server.`
 
 export const API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL = () => c('B2.SharedUI.Error').t`Could not retrieve item.`
 
-export const API_MESSAGE_REGISTRATION_IN_PROGRESS = 'An existing registration request is already in progress.'
-export const API_MESSAGE_LOGIN_IN_PROGRESS = 'An existing sign in request is already in progress.'
-export const API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS =
-  'An existing change credentials request is already in progress.'
+export const API_MESSAGE_REGISTRATION_IN_PROGRESS = c('B1.Account.SignIn.Status')
+  .t`An existing registration request is already in progress.`
+export const API_MESSAGE_LOGIN_IN_PROGRESS = c('B1.Account.SignIn.Status')
+  .t`An existing sign in request is already in progress.`
+export const API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS = c('B1.Account.SignIn.Status')
+  .t`An existing change credentials request is already in progress.`
 
-export const API_MESSAGE_FALLBACK_LOGIN_FAIL = 'Invalid email or password.'
+export const API_MESSAGE_FALLBACK_LOGIN_FAIL = c('B1.Account.SignIn.Error').t`Invalid email or password.`
 
-export const API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL =
-  'A server error occurred while trying to refresh your session. Please try again.'
+export const API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL = c('B1.Account.Session.Error')
+  .t`A server error occurred while trying to refresh your session. Please try again.`
 
-export const API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS =
-  'Your account session is being renewed with the server. Please try your request again.'
+export const API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS = c('B1.Account.Session.Info')
+  .t`Your account session is being renewed with the server. Please try your request again.`
 
 export const API_MESSAGE_RATE_LIMITED = c('B2.SharedUI.Error')
   .t`Too many successive server requests. Please wait a few minutes and try again.`
 
-export const API_MESSAGE_INVALID_SESSION = 'Please sign in to an account in order to continue with your request.'
+export const API_MESSAGE_INVALID_SESSION = c('B1.Account.Session.Error')
+  .t`Please sign in to an account in order to continue with your request.`
 
-export const API_MESSAGE_FAILED_GET_SETTINGS = 'Failed to get settings.'
-export const API_MESSAGE_FAILED_UPDATE_SETTINGS = 'Failed to update settings.'
-export const API_MESSAGE_FAILED_LISTED_REGISTRATION = 'Unable to register for Listed. Please try again later.'
+export const API_MESSAGE_FAILED_GET_SETTINGS = c('B6.Settings.Error').t`Failed to get settings.`
+export const API_MESSAGE_FAILED_UPDATE_SETTINGS = c('B6.Settings.Error').t`Failed to update settings.`
+export const API_MESSAGE_FAILED_LISTED_REGISTRATION = c('B6.Settings.Error')
+  .t`Unable to register for Listed. Please try again later.`
 
-export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = 'Failed to create file token.'
+export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = c('B7.Files.Error').t`Failed to create file token.`
 
-export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = "Failed to get subscription's information."
+export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = c('B7.Subscription.Error')
+  .t`Failed to get subscription's information.`
 
-export const API_MESSAGE_FAILED_ACCESS_PURCHASE = 'Failed to access purchase flow.'
+export const API_MESSAGE_FAILED_ACCESS_PURCHASE = c('B7.Subscription.Error').t`Failed to access purchase flow.`
 
-export const API_MESSAGE_FAILED_OFFLINE_FEATURES = 'Failed to get offline features.'
-export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = `The extension you are attempting to install comes from an
-  untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?`
-export const API_MESSAGE_FAILED_DOWNLOADING_EXTENSION = `Error downloading package details. Please check the
-  extension link and try again.`
-export const API_MESSAGE_FAILED_OFFLINE_ACTIVATION =
-  'An unknown issue occurred during offline activation. Please download your activation code again and try once more.'
+export const API_MESSAGE_FAILED_OFFLINE_FEATURES = c('B7.Subscription.Error').t`Failed to get offline features.`
+export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = c('B2.SharedUI.Warning')
+  .t`The extension you are attempting to install comes from an untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?`
+export const API_MESSAGE_FAILED_DOWNLOADING_EXTENSION = c('B2.SharedUI.Error')
+  .t`Error downloading package details. Please check the extension link and try again.`
+export const API_MESSAGE_FAILED_OFFLINE_ACTIVATION = c('B7.Subscription.Error')
+  .t`An unknown issue occurred during offline activation. Please download your activation code again and try once more.`
 
-export const INVALID_EXTENSION_URL = 'Invalid extension URL.'
+export const INVALID_EXTENSION_URL = c('B2.SharedUI.Error').t`Invalid extension URL.`
 
-export const UNSUPPORTED_PROTOCOL_VERSION =
-  'This version of the application does not support your newer account type. Please upgrade to the latest version of Standard Notes to sign in.'
+export const UNSUPPORTED_PROTOCOL_VERSION = c('B1.Account.SignIn.Error')
+  .t`This version of the application does not support your newer account type. Please upgrade to the latest version of Standard Notes to sign in.`
 
-export const EXPIRED_PROTOCOL_VERSION =
-  'The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.com/help/security for more information.'
+export const EXPIRED_PROTOCOL_VERSION = c('B1.Account.SignIn.Error')
+  .t`The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.com/help/security for more information.`
 
-export const UNSUPPORTED_KEY_DERIVATION =
-  'Your account was created on a platform with higher security capabilities than this browser supports. If we attempted to generate your login keys here, it would take hours. Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in.'
+export const UNSUPPORTED_KEY_DERIVATION = c('B1.Account.SignIn.Error')
+  .t`Your account was created on a platform with higher security capabilities than this browser supports. If we attempted to generate your login keys here, it would take hours. Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in.`
 
-export const INVALID_PASSWORD_COST =
-  'Unable to sign in due to insecure password parameters. Please visit standardnotes.com/help/security for more information.'
-export const INVALID_PASSWORD = 'Invalid password.'
+export const INVALID_PASSWORD_COST = c('B1.Account.SignIn.Error')
+  .t`Unable to sign in due to insecure password parameters. Please visit standardnotes.com/help/security for more information.`
+export const INVALID_PASSWORD = c('B1.Account.SignIn.Error').t`Invalid password.`
 
-export const OUTDATED_PROTOCOL_ALERT_IGNORE = 'Sign In'
-export const UPGRADING_ENCRYPTION = "Upgrading your account's encryption version…"
+export const OUTDATED_PROTOCOL_ALERT_IGNORE = c('B1.Account.SignIn.Action').t`Sign In`
+export const UPGRADING_ENCRYPTION = c('B1.Account.Password.Status')
+  .t`Upgrading your account's encryption version…`
 
 export const SETTING_PASSCODE = () => c('B4.Security.Passcode.Status').t`Setting passcode…`
 export const CHANGING_PASSCODE = () => c('B4.Security.Passcode.Status').t`Changing passcode…`
@@ -80,11 +91,13 @@ export const DO_NOT_CLOSE_APPLICATION = () =>
 export const UNKNOWN_ERROR = c('B2.SharedUI.Error').t`Unknown error.`
 
 export function InsufficientPasswordMessage(minimum: number): string {
-  return `Your password must be at least ${minimum} characters in length. For your security, please choose a longer password or, ideally, a passphrase, and try again.`
+  return c('B1.Account.SignIn.Error')
+    .jt`Your password must be at least ${minimum} characters in length. For your security, please choose a longer password or, ideally, a passphrase, and try again.` as unknown as string
 }
 
 export function StrictSignInFailed(current: ProtocolVersion, latest: ProtocolVersion): string {
-  return `Strict Sign In has refused the server's sign-in parameters. The latest account version is ${latest}, but the server is reporting a version of ${current} for your account. If you'd like to proceed with sign in anyway, please disable Strict Sign In and try again.`
+  return c('B1.Account.SignIn.Error')
+    .jt`Strict Sign In has refused the server's sign-in parameters. The latest account version is ${latest}, but the server is reporting a version of ${current} for your account. If you'd like to proceed with sign in anyway, please disable Strict Sign In and try again.` as unknown as string
 }
 
 export const CredentialsChangeStrings = {
@@ -106,16 +119,28 @@ export const SignInStrings = {
   get PasscodeRequired() {
     return c('B4.Security.Challenge.Info').t`Your passcode is required in order to sign in to your account.`
   },
-  IncorrectMfa: 'Incorrect two-factor authentication code. Please try again.',
-  SignInCanceledMissingMfa: 'Your sign in request has been canceled.',
+  get IncorrectMfa() {
+    return c('B4.Security.Mfa.Error').t`Incorrect two-factor authentication code. Please try again.`
+  },
+  get SignInCanceledMissingMfa() {
+    return c('B4.Security.Mfa.Info').t`Your sign in request has been canceled.`
+  },
 }
 
 export const ProtocolUpgradeStrings = {
-  SuccessAccount:
-    "Your encryption version has been successfully upgraded. You may be asked to enter your credentials again on other devices you're signed into.",
-  SuccessPasscodeOnly: 'Your encryption version has been successfully upgraded.',
-  Fail: 'Unable to upgrade encryption version. Please try again.',
-  UpgradingPasscode: 'Upgrading local encryption...',
+  get SuccessAccount() {
+    return c('B1.Account.Password.Info')
+      .t`Your encryption version has been successfully upgraded. You may be asked to enter your credentials again on other devices you're signed into.`
+  },
+  get SuccessPasscodeOnly() {
+    return c('B1.Account.Password.Info').t`Your encryption version has been successfully upgraded.`
+  },
+  get Fail() {
+    return c('B1.Account.Password.Error').t`Unable to upgrade encryption version. Please try again.`
+  },
+  get UpgradingPasscode() {
+    return c('B1.Account.Password.Status').t`Upgrading local encryption...`
+  },
 }
 
 export const ChallengeModalTitle = {
@@ -128,18 +153,33 @@ export const ChallengeModalTitle = {
 }
 
 export const SessionStrings = {
-  EnterEmailAndPassword: 'Please enter your account email and password.',
+  get EnterEmailAndPassword() {
+    return c('B1.Account.Session.Info').t`Please enter your account email and password.`
+  },
   RecoverSession(email?: string): string {
     return email
-      ? `Your credentials are needed for ${email} to refresh your session with the server.`
-      : 'Your credentials are needed to refresh your session with the server.'
+      ? (c('B1.Account.Session.Info')
+          .jt`Your credentials are needed for ${email} to refresh your session with the server.` as unknown as string)
+      : c('B1.Account.Session.Info').t`Your credentials are needed to refresh your session with the server.`
   },
-  SessionRestored: 'Your session has been successfully restored.',
-  EnterMfa: 'Please enter your two-factor authentication code.',
-  InputU2FDevice: 'Please authenticate with your hardware security key.',
-  MfaInputPlaceholder: 'Two-factor authentication code',
-  EmailInputPlaceholder: 'Email',
-  PasswordInputPlaceholder: 'Password',
+  get SessionRestored() {
+    return c('B1.Account.Session.Info').t`Your session has been successfully restored.`
+  },
+  get EnterMfa() {
+    return c('B1.Account.Session.Info').t`Please enter your two-factor authentication code.`
+  },
+  get InputU2FDevice() {
+    return c('B1.Account.Session.Info').t`Please authenticate with your hardware security key.`
+  },
+  get MfaInputPlaceholder() {
+    return c('B4.Security.Challenge.Placeholder').t`Two-factor authentication code`
+  },
+  get EmailInputPlaceholder() {
+    return c('B1.Account.Session.Label').t`Email`
+  },
+  get PasswordInputPlaceholder() {
+    return c('B1.Account.Session.Label').t`Password`
+  },
   get KeychainRecoveryErrorTitle() {
     return c('B4.Security.KeyStorage.Error').t`Invalid Credentials`
   },
@@ -147,14 +187,23 @@ export const SessionStrings = {
     return c('B4.Security.KeyStorage.Info')
       .t`The email or password you entered is incorrect.\n\nPlease note that this sign-in request is made against the default server. If you are using a custom server, you must uninstall the app then reinstall, and sign back into your account.`
   },
-  RevokeTitle: 'Revoke this session?',
-  RevokeConfirmButton: 'Revoke',
-  RevokeCancelButton: 'Cancel',
-  RevokeText:
-    'The associated app will be signed out and all data removed ' +
-    'from the device when it is next launched. You can sign back in on that ' +
-    'device at any time.',
-  CurrentSessionRevoked: 'Your session has been revoked and all local data has been removed ' + 'from this device.',
+  get RevokeTitle() {
+    return c('B1.Account.Session.Title').t`Revoke this session?`
+  },
+  get RevokeConfirmButton() {
+    return c('B1.Account.Session.Action').t`Revoke`
+  },
+  get RevokeCancelButton() {
+    return c('B1.Account.Session.Action').t`Cancel`
+  },
+  get RevokeText() {
+    return c('B1.Account.Session.Info')
+      .t`The associated app will be signed out and all data removed from the device when it is next launched. You can sign back in on that device at any time.`
+  },
+  get CurrentSessionRevoked() {
+    return c('B1.Account.Session.Info')
+      .t`Your session has been revoked and all local data has been removed from this device.`
+  },
 }
 
 export const ChallengeStrings = {
@@ -252,9 +301,13 @@ export const ChallengeStrings = {
 }
 
 export const ErrorAlertStrings = {
-  MissingSessionTitle: 'Missing Session',
-  MissingSessionBody:
-    'We were unable to load your server session. This represents an inconsistency with your application state. Please take an opportunity to backup your data, then sign out and sign back in to resolve this issue.',
+  get MissingSessionTitle() {
+    return c('B1.Account.Session.Error').t`Missing Session`
+  },
+  get MissingSessionBody() {
+    return c('B1.Account.Session.Error')
+      .t`We were unable to load your server session. This represents an inconsistency with your application state. Please take an opportunity to backup your data, then sign out and sign back in to resolve this issue.`
+  },
 
   get StorageDecryptErrorTitle() {
     return c('B2.SharedUI.Error').t`Storage Error`

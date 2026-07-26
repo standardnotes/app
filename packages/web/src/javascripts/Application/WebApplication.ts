@@ -54,6 +54,7 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { VisibilityObserver } from './VisibilityObserver'
 import { DevMode } from './DevMode'
 import { ToastType, addToast, dismissToast } from '@standardnotes/toast'
+import { c } from 'ttag'
 import { WebDependencies } from './Dependencies/WebDependencies'
 import { Web_TYPES } from './Dependencies/Types'
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
@@ -410,7 +411,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     addToast({
       type: ToastType.Success,
-      message: 'Successfully created note from shared text',
+      message: c('B8.Mobile.Info').t`Successfully created note from shared text`,
     })
   }
 
@@ -423,7 +424,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (isImagePath) {
       const fetchToastUuid = addToast({
         type: ToastType.Loading,
-        message: 'Fetching image from link...',
+        message: c('B8.Mobile.Info').t`Fetching image from link...`,
       })
       try {
         const imgResponse = await fetch(link)

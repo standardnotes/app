@@ -154,7 +154,7 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
                   onClick={selectAndUploadFiles}
                 >
                   <Icon type="add" />
-                  {`Upload and link file(s)`}
+                  {c('B3.Notes.LinkedItems.Action').t`Upload and link file(s)`}
                 </button>
                 {filesLinkedToItem.map((link) => (
                   <LinkedItemsSectionItem

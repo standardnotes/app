@@ -82,8 +82,8 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
           <div className="flex flex-col">
             <Subtitle>{c('B6.Preferences.General.Subtitle').t`Spellcheck`}</Subtitle>
             <Text>
-              The default spellcheck value for new notes. Spellcheck can be configured per note from the note context
-              menu. Spellcheck may degrade overall typing performance with long notes.
+              {c('B6.Preferences.General.Info')
+                .t`The default spellcheck value for new notes. Spellcheck can be configured per note from the note context menu. Spellcheck may degrade overall typing performance with long notes.`}
             </Text>
           </div>
           <Switch onChange={toggleSpellcheck} checked={spellcheck} />
@@ -92,7 +92,10 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
         <div className="flex justify-between gap-2 md:items-center">
           <div className="flex flex-col">
             <Subtitle>{c('B6.Preferences.General.Subtitle').t`Add all parent tags when adding a nested tag to a note`}</Subtitle>
-            <Text>When enabled, adding a nested tag to a note will automatically add all associated parent tags.</Text>
+            <Text>
+              {c('B6.Preferences.General.Info')
+                .t`When enabled, adding a nested tag to a note will automatically add all associated parent tags.`}
+            </Text>
           </div>
           <Switch
             onChange={() => {

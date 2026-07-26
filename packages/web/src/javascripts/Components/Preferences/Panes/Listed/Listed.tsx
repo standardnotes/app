@@ -36,13 +36,12 @@ const Listed = ({ application }: Props) => {
       const account = await application.listed.requestNewListedAccount()
       if (account) {
         const openSettings = await application.alerts.confirm(
-          'Your new Listed blog has been successfully created!' +
-            ' You can publish a new post to your blog from Standard Notes via the' +
-            ' <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.',
+          c('B6.Settings.Listed.Info')
+            .t`Your new Listed blog has been successfully created! You can publish a new post to your blog from Standard Notes via the <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.`,
           undefined,
-          'Open Settings',
+          c('B6.Settings.Listed.Action').t`Open Settings`,
           ButtonType.Info,
-          'Later',
+          c('B6.Settings.Listed.Action').t`Later`,
         )
         reloadAccounts().catch(console.error)
         if (openSettings) {
@@ -63,7 +62,11 @@ const Listed = ({ application }: Props) => {
       {accounts.length > 0 && (
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>Your {accounts.length === 1 ? 'blog' : 'blogs'} on Listed</Title>
+            <Title>
+              {accounts.length === 1
+                ? c('B6.Settings.Listed.Title').t`Your blog on Listed`
+                : c('B6.Settings.Listed.Title').t`Your blogs on Listed`}
+            </Title>
             <div className="h-2 w-full" />
             {accounts.map((item, index, array) => {
               return (
@@ -84,12 +87,13 @@ const Listed = ({ application }: Props) => {
           <div className="h-2 w-full" />
           <Subtitle>{c('B6.Preferences.Other.Subtitle').t`What is Listed?`}</Subtitle>
           <Text>
-            Listed is a free blogging platform that allows you to create a public journal published directly from your
-            notes.{' '}
-            {!application.sessions.getUser() && 'To get started, sign in or register for a Standard Notes account.'}
+            {c('B6.Settings.Listed.Info')
+              .t`Listed is a free blogging platform that allows you to create a public journal published directly from your notes.`}{' '}
+            {!application.sessions.getUser() &&
+              c('B6.Settings.Listed.Info').t`To get started, sign in or register for a Standard Notes account.`}
           </Text>
           <a className="mt-2 text-info" target="_blank" href="https://listed.to" rel="noreferrer noopener">
-            Learn more
+            {c('B6.Settings.Listed.Action').t`Learn more`}
           </a>
         </PreferencesSegment>
         {application.sessions.getUser() && (
@@ -101,7 +105,11 @@ const Listed = ({ application }: Props) => {
               <Button
                 className="mt-3"
                 disabled={requestingAccount}
-                label={requestingAccount ? 'Creating account...' : 'Create new author'}
+                label={
+                  requestingAccount
+                    ? c('B6.Settings.Listed.Status').t`Creating account...`
+                    : c('B6.Settings.Listed.Action').t`Create new author`
+                }
                 onClick={registerNewAccount}
               />
             </PreferencesSegment>

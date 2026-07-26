@@ -86,11 +86,11 @@ class Footer extends AbstractComponent<Props, State> {
           }
           break
         case WebAppEvent.BeganBackupDownload:
-          statusService.setMessage('Saving local backup…')
+          statusService.setMessage(c('B5.Backup.Status').t`Saving local backup…`)
           break
         case WebAppEvent.EndedBackupDownload: {
-          const successMessage = 'Successfully saved backup.'
-          const errorMessage = 'Unable to save local backup.'
+          const successMessage = c('B5.Backup.Status').t`Successfully saved backup.`
+          const errorMessage = c('B5.Backup.Error').t`Unable to save local backup.`
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           statusService.setMessage((data as any).success ? successMessage : errorMessage)
 
@@ -335,13 +335,14 @@ class Footer extends AbstractComponent<Props, State> {
     this.setState({
       newUpdateAvailable: false,
     })
-    this.application.alerts.alert(STRING_NEW_UPDATE_READY).catch(console.error)
+    this.application.alerts.alert(STRING_NEW_UPDATE_READY()).catch(console.error)
   }
 
   betaMessageClickHandler = () => {
     alertDialog({
-      title: 'You are using a beta version of the app',
-      text: 'If you wish to go back to a stable version, make sure to sign out ' + 'of this beta app first.',
+      title: c('B2.SharedUI.Info').t`You are using a beta version of the app`,
+      text: c('B2.SharedUI.Info')
+        .t`If you wish to go back to a stable version, make sure to sign out of this beta app first.`,
     }).catch(console.error)
   }
 
@@ -395,7 +396,7 @@ class Footer extends AbstractComponent<Props, State> {
               <Fragment>
                 <div className="relative z-footer-bar-item ml-3 flex select-none items-center border-l border-solid border-border pl-3">
                   <a onClick={this.betaMessageClickHandler} className="no-decoration title text-xs font-bold">
-                    You are using a beta version of the app
+                    {c('B2.SharedUI.Info').t`You are using a beta version of the app`}
                   </a>
                 </div>
               </Fragment>
