@@ -7,6 +7,7 @@ import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionC
 import InviteForm from './InviteForm'
 import InviteSuccess from './InviteSuccess'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
+import { c } from 'ttag'
 
 enum SubmitButtonTitles {
   Default = 'Invite',
@@ -123,7 +124,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
         disabled: lockContinue,
       },
       {
-        label: 'Cancel',
+        label: c('B7.Subscription.Label').t`Cancel`,
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
@@ -134,7 +135,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   )
 
   return (
-    <Modal title="Share Your Subscription" close={handleDialogClose} actions={modalActions}>
+    <Modal title={c('B7.Subscription.Title').t`Share Your Subscription`} close={handleDialogClose} actions={modalActions}>
       <div className="px-4.5 py-4">
         {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
         {currentStep === Steps.FinishStep && <InviteSuccess />}

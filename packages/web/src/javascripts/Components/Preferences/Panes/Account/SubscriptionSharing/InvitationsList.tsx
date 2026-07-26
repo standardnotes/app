@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { ButtonType, InvitationStatus } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 import { SubtitleLight, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
@@ -53,19 +54,25 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
   }
 
   if (usedInvitationsCount === 0) {
-    return <Text className="mb-3 mt-1">Make your first subscription invite below.</Text>
+    return (
+      <Text className="mb-3 mt-1">{c('B7.Subscription.Info').t`Make your first subscription invite below.`}</Text>
+    )
   }
 
   return (
     <div>
-      <SubtitleLight className="mb-2 text-info">Active Invites</SubtitleLight>
+      <SubtitleLight className="mb-2 text-info">{c('B7.Subscription.Info').t`Active Invites`}</SubtitleLight>
       {activeSubscriptions?.map((invitation) => (
         <div key={invitation.uuid} className="mb-4 mt-1">
           <Text>
             {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
           </Text>
           {invitation.status !== InvitationStatus.Canceled && (
-            <Button className="mt-2 min-w-20" label="Cancel" onClick={() => handleCancel(invitation.uuid)} />
+            <Button
+              className="mt-2 min-w-20"
+              label={c('B7.Subscription.Label').t`Cancel`}
+              onClick={() => handleCancel(invitation.uuid)}
+            />
           )}
         </div>
       ))}

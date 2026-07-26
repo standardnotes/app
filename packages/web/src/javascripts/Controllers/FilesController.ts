@@ -37,6 +37,7 @@ import {
 } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
+import { c } from 'ttag'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController/NotesController'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
@@ -192,7 +193,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     if (!note) {
       addToast({
         type: ToastType.Error,
-        message: 'Could not attach file because selected note was deleted',
+        message: c('B7.Files.Error').t`Could not attach file because selected note was deleted`,
       })
       return
     }
@@ -206,7 +207,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     if (!note) {
       addToast({
         type: ToastType.Error,
-        message: 'Could not attach file because selected note was deleted',
+        message: c('B7.Files.Error').t`Could not attach file because selected note was deleted`,
       })
       return
     }
@@ -423,7 +424,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       addToast({
         type: ToastType.Error,
-        message: 'There was an error while downloading the file',
+        message: c('B7.Files.Error').t`There was an error while downloading the file`,
       })
     }
 
@@ -621,7 +622,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
               android: {
                 actions: [
                   {
-                    title: 'Open',
+                    title: c('B7.Files.Title').t`Open`,
                     pressAction: {
                       id: 'open-file',
                     },
@@ -636,7 +637,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
             message: `Uploaded file "${uploadedFile.name}"`,
             actions: [
               {
-                label: 'Open',
+                label: c('B7.Files.Label').t`Open`,
                 handler: (toastId) => {
                   void this.handleFileAction({
                     type: FileItemActionType.PreviewFile,
@@ -664,13 +665,13 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       if (this.mobileDevice && canShowProgressNotification) {
         this.mobileDevice
           .displayNotification({
-            title: 'There was an error while uploading the file',
+            title: c('B7.Files.Error').t`There was an error while uploading the file`,
           })
           .catch(console.error)
       } else {
         addToast({
           type: ToastType.Error,
-          message: 'There was an error while uploading the file',
+          message: c('B7.Files.Error').t`There was an error while uploading the file`,
         })
       }
     }
@@ -794,7 +795,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     const zipFileHandle = await window.showSaveFilePicker({
       types: [
         {
-          description: 'ZIP file',
+          description: c('B7.Files.Info').t`ZIP file`,
           accept: { 'application/zip': ['.zip'] },
         },
       ],
@@ -803,7 +804,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     const toast = addToast({
       type: ToastType.Progress,
       title: `Downloading ${files.length} files as archive`,
-      message: 'Preparing archive...',
+      message: c('B7.Files.Info').t`Preparing archive...`,
     })
 
     try {

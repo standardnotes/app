@@ -13,6 +13,7 @@ import Invite from './Invite/Invite'
 import Button from '@/Components/Button/Button'
 import SharingStatusText from './SharingStatusText'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -37,14 +38,18 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application }: Props) =
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title className="mb-2">Subscription sharing</Title>
+            <Title className="mb-2">{c('B7.Subscription.Info').t`Subscription sharing`}</Title>
             {isSubscriptionSharingFeatureAvailable ? (
               <div>
                 <SharingStatusText subscriptionState={subscriptionState} />
                 <HorizontalSeparator classes="my-4" />
                 <InvitationsList subscriptionState={subscriptionState} application={application} />
                 {!subscriptionState.allInvitationsUsed && (
-                  <Button className="min-w-20" label="Invite" onClick={() => setIsInviteDialogOpen(true)} />
+                  <Button
+                    className="min-w-20"
+                    label={c('B7.Subscription.Label').t`Invite`}
+                    onClick={() => setIsInviteDialogOpen(true)}
+                  />
                 )}
                 <ModalOverlay isOpen={isInviteDialogOpen} close={closeInviteDialog}>
                   <Invite
@@ -59,8 +64,9 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application }: Props) =
                 application={application}
                 text={
                   <span>
-                    Subscription sharing is available only on the <span className="font-bold">Professional</span> plan.
-                    Please upgrade in order to share your subscription.
+                    {c('B7.Subscription.Info').t`Subscription sharing is available only on the`}{' '}
+                    <span className="font-bold">{c('B7.Subscription.Info').t`Professional`}</span>{' '}
+                    {c('B7.Subscription.Info').t`plan. Please upgrade in order to share your subscription.`}
                   </span>
                 }
               />

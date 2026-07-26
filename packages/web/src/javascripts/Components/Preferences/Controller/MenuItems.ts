@@ -12,7 +12,7 @@ export const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'shortcuts', label: c('B6.Preferences.Other.Label').t`Shortcuts`, icon: 'keyboard', order: 8 },
   { id: 'plugins', label: c('B6.Preferences.Other.Label').t`Plugins`, icon: 'dashboard', order: 8 },
   { id: 'accessibility', label: c('B6.Preferences.Other.Label').t`Accessibility`, icon: 'accessibility', order: 9 },
-  { id: 'get-free-month', label: 'Get a free month', icon: 'star', order: 10 },
+  { id: 'get-free-month', label: c('B7.Subscription.Label').t`Get a free month`, icon: 'star', order: 10 },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help', order: 11 },
 ]
 

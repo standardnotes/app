@@ -1,5 +1,8 @@
 import { AnyFeatureDescription, FeatureStatus, dateToLocalizedString } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback } from 'react'
+import { c } from 'ttag'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 import Button from '@/Components/Button/Button'
 import { WarningCircle } from '../UIElements/WarningCircle'
 import { useApplication } from '../ApplicationProvider'
@@ -45,14 +48,16 @@ const NotEntitledBanner: FunctionComponent<Props> = ({ featureStatus, feature })
             </div>
             <div className="ml-2">
               <strong>{statusString(featureStatus, expiredDate, feature.name)}</strong>
-              <div className={'sk-p'}>{feature.name} is in a read-only state.</div>
+              <div className={'sk-p'}>
+                {jtString(c('B7.Subscription.Info').jt`${feature.name} is in a read-only state.`)}
+              </div>
             </div>
           </div>
         </div>
         <div className={'right'}>
           {application.canShowPurchaseFlow() && (
             <Button onClick={manageSubscription} primary colorStyle="success" small>
-              Manage subscription
+              {c('B7.Subscription.Label').t`Manage subscription`}
             </Button>
           )}
         </div>
