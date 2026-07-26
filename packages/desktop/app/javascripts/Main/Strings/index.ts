@@ -1,6 +1,5 @@
 import { isDev } from '../Utils/Utils'
-import { createEnglishStrings } from './english'
-import { createFrenchStrings } from './french'
+import { createStrings } from './strings'
 import { Strings } from './types'
 
 let strings: Strings
@@ -10,7 +9,7 @@ let strings: Strings
  * @param locale The user's locale
  * @see https://www.electronjs.org/docs/api/locales
  */
-export function initializeStrings(locale: string): void {
+export function initializeStrings(_locale: string): void {
   if (isDev()) {
     if (strings) {
       throw new Error('`strings` has already been initialized')
@@ -21,7 +20,7 @@ export function initializeStrings(locale: string): void {
     return
   }
 
-  strings = stringsForLocale(locale)
+  strings = createStrings()
 }
 
 export function str(): Strings {
@@ -51,16 +50,6 @@ export function extensions() {
 
 export function updates() {
   return str().updates
-}
-
-function stringsForLocale(locale: string): Strings {
-  if (locale === 'en' || locale.startsWith('en-')) {
-    return createEnglishStrings()
-  } else if (locale === 'fr' || locale.startsWith('fr-')) {
-    return createFrenchStrings()
-  }
-
-  return createEnglishStrings()
 }
 
 export const AppName = 'Standard Notes'
