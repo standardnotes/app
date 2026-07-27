@@ -67,10 +67,14 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
 
   const devicesAsDropdownItems = useMemo(() => {
     return recorder?.devices
-      ? recorder.devices.map((device) => ({
-          label: device.label || jtString(c('B2.NavSharedUI.Label').jt`Camera (${device.deviceId.slice(0, 10)})`),
-          value: device.deviceId,
-        }))
+      ? recorder.devices.map((device) => {
+          const abbreviatedDeviceId = device.deviceId.slice(0, 10)
+
+          return {
+            label: device.label || jtString(c('B2.NavSharedUI.Label').jt`Camera (${abbreviatedDeviceId})`),
+            value: device.deviceId,
+          }
+        })
       : []
   }, [recorder?.devices])
 

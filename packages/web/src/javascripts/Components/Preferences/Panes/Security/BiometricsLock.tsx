@@ -56,8 +56,8 @@ const BiometricsLock = ({ application }: Props) => {
   }
 
   const biometricTitle = hasBiometrics
-    ? c('B4.Security.Biometrics.Action').t`Disable Biometrics Lock`
-    : c('B4.Security.Biometrics.Action').t`Enable Biometrics Lock`
+    ? c('B6.Preferences.Security.Action').t`Disable Biometrics Lock`
+    : c('B6.Preferences.Security.Action').t`Enable Biometrics Lock`
 
   if (!supportsBiometrics) {
     return null
@@ -67,11 +67,11 @@ const BiometricsLock = ({ application }: Props) => {
     <div>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>{c('B4.Security.Biometrics.Title').t`Biometrics Lock`}</Title>
+          <Title>{c('B6.Preferences.Security.Title').t`Biometrics Lock`}</Title>
           <Button className={'mt-1'} label={biometricTitle} onClick={onBiometricsPress} primary />
           {hasBiometrics && (
             <div className="mt-2 flex flex-row items-center">
-              <div className={'mr-3'}>{c('B4.Security.Biometrics.Label').t`Require Biometrics`}</div>
+              <div className={'mr-3'}>{c('B6.Preferences.Security.Label').t`Require Biometrics`}</div>
               {biometricsTimingOptions.map((option) => {
                 return (
                   <a

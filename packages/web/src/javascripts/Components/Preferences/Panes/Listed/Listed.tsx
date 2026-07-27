@@ -36,12 +36,12 @@ const Listed = ({ application }: Props) => {
       const account = await application.listed.requestNewListedAccount()
       if (account) {
         const openSettings = await application.alerts.confirm(
-          c('B6.Settings.Listed.Info')
+          c('B6.Preferences.Listed.Info')
             .t`Your new Listed blog has been successfully created! You can publish a new post to your blog from Standard Notes via the <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.`,
           undefined,
-          c('B6.Settings.Listed.Action').t`Open Settings`,
+          c('B6.Preferences.Listed.Action').t`Open Settings`,
           ButtonType.Info,
-          c('B6.Settings.Listed.Action').t`Later`,
+          c('B6.Preferences.Listed.Action').t`Later`,
         )
         reloadAccounts().catch(console.error)
         if (openSettings) {
@@ -64,8 +64,8 @@ const Listed = ({ application }: Props) => {
           <PreferencesSegment>
             <Title>
               {accounts.length === 1
-                ? c('B6.Settings.Listed.Title').t`Your blog on Listed`
-                : c('B6.Settings.Listed.Title').t`Your blogs on Listed`}
+                ? c('B6.Preferences.Listed.Title').t`Your blog on Listed`
+                : c('B6.Preferences.Listed.Title').t`Your blogs on Listed`}
             </Title>
             <div className="h-2 w-full" />
             {accounts.map((item, index, array) => {
@@ -87,13 +87,13 @@ const Listed = ({ application }: Props) => {
           <div className="h-2 w-full" />
           <Subtitle>{c('B6.Preferences.Other.Subtitle').t`What is Listed?`}</Subtitle>
           <Text>
-            {c('B6.Settings.Listed.Info')
+            {c('B6.Preferences.Listed.Info')
               .t`Listed is a free blogging platform that allows you to create a public journal published directly from your notes.`}{' '}
             {!application.sessions.getUser() &&
-              c('B6.Settings.Listed.Info').t`To get started, sign in or register for a Standard Notes account.`}
+              c('B6.Preferences.Listed.Info').t`To get started, sign in or register for a Standard Notes account.`}
           </Text>
           <a className="mt-2 text-info" target="_blank" href="https://listed.to" rel="noreferrer noopener">
-            {c('B6.Settings.Listed.Action').t`Learn more`}
+            {c('B6.Preferences.Listed.Action').t`Learn more`}
           </a>
         </PreferencesSegment>
         {application.sessions.getUser() && (
@@ -107,8 +107,8 @@ const Listed = ({ application }: Props) => {
                 disabled={requestingAccount}
                 label={
                   requestingAccount
-                    ? c('B6.Settings.Listed.Status').t`Creating account...`
-                    : c('B6.Settings.Listed.Action').t`Create new author`
+                    ? c('B6.Preferences.Listed.Status').t`Creating account...`
+                    : c('B6.Preferences.Listed.Action').t`Create new author`
                 }
                 onClick={registerNewAccount}
               />

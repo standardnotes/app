@@ -126,8 +126,8 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
 
         {!editContactUuid && (
           <p>
-            Ask your contact for their Standard Notes CollaborationID via secure email or chat. Then, enter it here to
-            add them as a contact.
+            {c('B6.Preferences.Vaults.Info')
+              .t`Ask your contact for their Standard Notes CollaborationID via secure email or chat. Then, enter it here to add them as a contact.`}
           </p>
         )}
       </div>

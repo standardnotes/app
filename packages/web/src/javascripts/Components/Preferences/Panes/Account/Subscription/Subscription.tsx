@@ -33,7 +33,7 @@ const Subscription: FunctionComponent = () => {
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Subscription`}</Title>
+            <Title>{c('B6.Preferences.Subscription.Info').t`Subscription`}</Title>
             {onlineSubscription ? <SubscriptionInformation /> : <NoSubscription application={application} />}
           </div>
         </div>

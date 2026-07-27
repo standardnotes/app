@@ -34,18 +34,18 @@ const Sync: FunctionComponent<Props> = ({ application }: Props) => {
     }
   }
 
-  const lastSyncSpan = <span className="font-bold">{c('B1.Account.Session.Info').t`on ${lastSyncDate}`}</span>
+  const lastSyncSpan = <span className="font-bold">{c('B6.Preferences.Account.Info').t`on ${lastSyncDate}`}</span>
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title>{c('B1.Account.Session.Title').t`Sync`}</Title>
-            <Text>{c('B1.Account.Session.Info').jt`Last synced ${lastSyncSpan}`}</Text>
+            <Title>{c('B6.Preferences.Account.Title').t`Sync`}</Title>
+            <Text>{c('B6.Preferences.Account.Info').jt`Last synced ${lastSyncSpan}`}</Text>
             <Button
               className="mt-3 min-w-20"
-              label={c('B1.Account.Session.Action').t`Sync now`}
+              label={c('B6.Preferences.Account.Action').t`Sync now`}
               disabled={isSyncingInProgress}
               onClick={doSynchronization}
             />

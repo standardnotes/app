@@ -10,9 +10,9 @@ const SharingStatusText = ({ subscriptionState }: Props) => {
 
   return (
     <Text className="mt-1">
-      {c('B7.FilesSubscriptionHelp.Subscription.Info').t`You've used`}{' '}
-      <span className="font-bold">{usedInvitationsCount}</span> {c('B7.FilesSubscriptionHelp.Subscription.Info').t`out of`}{' '}
-      {allowedInvitationsCount} {c('B7.FilesSubscriptionHelp.Subscription.Info').t`subscription invites.`}
+      {c('B6.Preferences.Subscription.Info').t`You've used`} <span className="font-bold">{usedInvitationsCount}</span>{' '}
+      {c('B6.Preferences.Subscription.Info').t`out of`} {allowedInvitationsCount}{' '}
+      {c('B6.Preferences.Subscription.Info').t`subscription invites.`}
     </Text>
   )
 }

@@ -32,7 +32,7 @@ const SearchButton = ({ itemListController }: Props) => {
           ),
           input: 'text-base placeholder:text-passive-0 lg:text-sm',
         }}
-        placeholder={c('B2.NavSharedUI.Placeholder').t`Search...`}
+        placeholder={c('B3.Notes.NoteList.Placeholder').t`Search...`}
         value={noteFilterText}
         ref={(node) => {
           if (node && document.activeElement !== node) {
@@ -51,7 +51,7 @@ const SearchButton = ({ itemListController }: Props) => {
           setIsSearchBarVisible(!isSearchBarVisible)
         }}
         icon={isSearchBarVisible ? 'close' : 'search'}
-        label={c('B2.NavSharedUI.AriaLabel').t`Search`}
+        label={c('B3.Notes.NoteList.AriaLabel').t`Search`}
       />
     </>
   )

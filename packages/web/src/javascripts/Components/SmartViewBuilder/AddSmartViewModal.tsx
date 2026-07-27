@@ -124,7 +124,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: c('B2.Shared.Modal.Action').t`Cancel`,
+        label: c('B2.NavSharedUI.Modal.Action').t`Cancel`,
         onClick: closeModal,
         disabled: isSaving,
         type: 'cancel',

@@ -40,7 +40,7 @@ const Persistence = ({ application }: Props) => {
               toggleStatePersistence(!event.target.checked)
             }}
           />
-          The first note in the list
+          {c('B6.Preferences.General.Info').t`The first note in the list`}
         </label>
         <label className="flex items-center gap-2 text-base font-medium md:text-sm">
           <StyledRadioInput
@@ -50,7 +50,7 @@ const Persistence = ({ application }: Props) => {
               toggleStatePersistence(event.target.checked)
             }}
           />
-          The last viewed note
+          {c('B6.Preferences.General.Label').t`The last viewed note`}
         </label>
       </PreferencesSegment>
     </PreferencesGroup>

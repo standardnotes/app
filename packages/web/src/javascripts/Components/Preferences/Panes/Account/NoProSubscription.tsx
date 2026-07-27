@@ -14,7 +14,8 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
   const [purchaseFlowError, setPurchaseFlowError] = useState<string | undefined>(undefined)
 
   const onPurchaseClick = async () => {
-    const errorMessage = 'There was an error when attempting to redirect you to the subscription page.'
+    const errorMessage = c('B6.Preferences.Account.Error')
+      .t`There was an error when attempting to redirect you to the subscription page.`
     setIsLoadingPurchaseFlow(true)
     try {
       if (application.isNativeIOS()) {
@@ -35,7 +36,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
     <>
       <Text>{text}</Text>
       {isLoadingPurchaseFlow && (
-        <Text>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Redirecting you to the subscription page...`}</Text>
+        <Text>{c('B6.Preferences.Account.Info').t`Redirecting you to the subscription page...`}</Text>
       )}
       {purchaseFlowError && <Text className="text-danger">{purchaseFlowError}</Text>}
 
@@ -43,7 +44,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
         {!application.hideOutboundSubscriptionLinks && (
           <LinkButton
             className="mr-3 mt-3 min-w-20"
-            label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Learn More`}
+            label={c('B6.Preferences.Account.Label').t`Learn More`}
             link={window.plansUrl as string}
           />
         )}
@@ -51,7 +52,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
           <Button
             className="mt-3 min-w-20"
             primary
-            label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Upgrade`}
+            label={c('B6.Preferences.Account.Label').t`Upgrade`}
             onClick={onPurchaseClick}
           />
         )}

@@ -25,15 +25,18 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
   const handleCancel = async (invitationUuid: string) => {
     if (lockContinue) {
-      application.alerts.alert('Cancelation already in progress.').catch(console.error)
+      application.alerts
+        .alert(c('B6.Preferences.Subscription.Error').t`Cancelation already in progress.`)
+        .catch(console.error)
 
       return
     }
 
     const confirmed = await application.alerts.confirm(
-      'All uploaded files of this user will be removed. This action cannot be undone.',
-      'Are you sure you want to cancel this invitation?',
-      'Cancel Invitation',
+      c('B6.Preferences.Subscription.Confirmation')
+        .t`All uploaded files of this user will be removed. This action cannot be undone.`,
+      c('B6.Preferences.Subscription.Confirmation').t`Are you sure you want to cancel this invitation?`,
+      c('B6.Preferences.Subscription.Confirmation').t`Cancel Invitation`,
       ButtonType.Danger,
     )
     if (!confirmed) {
@@ -48,20 +51,25 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
     if (!success) {
       application.alerts
-        .alert('Could not cancel invitation. Please try again or contact support if the issue persists.')
+        .alert(
+          c('B6.Preferences.Subscription.Error')
+            .t`Could not cancel invitation. Please try again or contact support if the issue persists.`,
+        )
         .catch(console.error)
     }
   }
 
   if (usedInvitationsCount === 0) {
     return (
-      <Text className="mb-3 mt-1">{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Make your first subscription invite below.`}</Text>
+      <Text className="mb-3 mt-1">{c('B6.Preferences.Subscription.Info')
+        .t`Make your first subscription invite below.`}</Text>
     )
   }
 
   return (
     <div>
-      <SubtitleLight className="mb-2 text-info">{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Active Invites`}</SubtitleLight>
+      <SubtitleLight className="mb-2 text-info">{c('B6.Preferences.Subscription.Info')
+        .t`Active Invites`}</SubtitleLight>
       {activeSubscriptions?.map((invitation) => (
         <div key={invitation.uuid} className="mb-4 mt-1">
           <Text>
@@ -70,7 +78,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
           {invitation.status !== InvitationStatus.Canceled && (
             <Button
               className="mt-2 min-w-20"
-              label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Cancel`}
+              label={c('B6.Preferences.Subscription.Label').t`Cancel`}
               onClick={() => handleCancel(invitation.uuid)}
             />
           )}

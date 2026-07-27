@@ -36,6 +36,7 @@ import { GetVaults } from './UseCase/GetVaults'
 import { VaultLockServiceInterface } from '../VaultLock/VaultLockServiceInterface'
 import { Result } from '@standardnotes/domain-core'
 import { AuthorizeVaultDeletion } from './UseCase/AuthorizeVaultDeletion'
+import { c } from 'ttag'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
@@ -153,7 +154,7 @@ export class VaultService
           'This item is linked to other items that are not in the same vault. Please move those items to this vault first.'
         this.alerts
           .alertV2({
-            title: 'Cannot move item to vault',
+            title: c('B6.Preferences.Vaults.Title').t`Cannot move item to vault`,
             text: reason,
           })
           .catch(console.error)
@@ -172,7 +173,7 @@ export class VaultService
           'One or more subtags are in other vaults. Please remove those subtags from the vaults or move them to this vault first.'
         this.alerts
           .alertV2({
-            title: 'Cannot move item to vault',
+            title: c('B6.Preferences.Vaults.Title').t`Cannot move item to vault`,
             text: reason,
           })
           .catch(console.error)

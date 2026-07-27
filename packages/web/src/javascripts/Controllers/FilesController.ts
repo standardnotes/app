@@ -447,11 +447,11 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   alertIfFileExceedsSizeLimit = (file: File): boolean => {
     if (!this.shouldUseStreamingAPI && this.maxFileSize && file.size >= this.maxFileSize) {
+      const maxFileSizeInMegabytes = this.maxFileSize / BYTES_IN_ONE_MEGABYTE
       this.alerts
         .alert(
-          `This file exceeds the limits supported in this browser. To upload files greater than ${
-            this.maxFileSize / BYTES_IN_ONE_MEGABYTE
-          }MB, please use the desktop application or the Chrome browser.`,
+          c('B7.FilesSubscriptionHelp.Files.Error')
+            .t`This file exceeds the limits supported in this browser. To upload files greater than ${maxFileSizeInMegabytes}MB, please use the desktop application or the Chrome browser.`,
           StringUtils.cannotUploadFile(file.name),
         )
         .catch(console.error)
@@ -558,7 +558,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         } else {
           toastId = addToast({
             type: ToastType.Progress,
-            message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${initialProgress}%)`),
+            message: jtString(
+              c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${initialProgress}%)`,
+            ),
             progress: initialProgress,
           })
         }
@@ -585,7 +587,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
             })
           } else {
             updateToast(toastId, {
-              message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${percentComplete}%)`),
+              message: jtString(
+                c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${percentComplete}%)`,
+              ),
               progress: percentComplete,
             })
           }
@@ -866,7 +870,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
     addToast({
       type: ToastType.Success,
-      message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Successfully downloaded ${fileCount} files as archive`),
+      message: jtString(
+        c('B7.FilesSubscriptionHelp.Files.Info').jt`Successfully downloaded ${fileCount} files as archive`,
+      ),
     })
   }
 }

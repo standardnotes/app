@@ -248,7 +248,9 @@ export class FileService extends AbstractService implements FilesClientInterface
     const success = await operation.pushBytes(bytes, chunkId, isFinalChunk)
 
     if (!success) {
-      return new ClientDisplayableError(c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to push file bytes to server`)
+      return new ClientDisplayableError(
+        c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to push file bytes to server`,
+      )
     }
 
     return undefined
@@ -417,8 +419,8 @@ export class FileService extends AbstractService implements FilesClientInterface
           "If you're sure the file is yours and still exists on the server, do not choose this option,",
           'and instead try to delete it again.',
         ),
-        'Unable to Delete',
-        'Delete Anyway',
+        c('B7.FilesSubscriptionHelp.Files.Confirmation').t`Unable to Delete`,
+        c('B7.FilesSubscriptionHelp.Files.Confirmation').t`Delete Anyway`,
         ButtonType.Danger,
       )
 

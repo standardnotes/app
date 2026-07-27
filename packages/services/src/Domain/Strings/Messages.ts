@@ -42,19 +42,22 @@ export const API_MESSAGE_RATE_LIMITED = c('B2.NavSharedUI.Error')
 export const API_MESSAGE_INVALID_SESSION = c('B1.Account.Session.Error')
   .t`Please sign in to an account in order to continue with your request.`
 
-export const API_MESSAGE_FAILED_GET_SETTINGS = c('B6.Settings.Error').t`Failed to get settings.`
-export const API_MESSAGE_FAILED_UPDATE_SETTINGS = c('B6.Settings.Error').t`Failed to update settings.`
-export const API_MESSAGE_FAILED_LISTED_REGISTRATION = c('B6.Settings.Error')
+export const API_MESSAGE_FAILED_GET_SETTINGS = c('B6.Preferences.Error').t`Failed to get settings.`
+export const API_MESSAGE_FAILED_UPDATE_SETTINGS = c('B6.Preferences.Error').t`Failed to update settings.`
+export const API_MESSAGE_FAILED_LISTED_REGISTRATION = c('B6.Preferences.Error')
   .t`Unable to register for Listed. Please try again later.`
 
-export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to create file token.`
+export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = c('B7.FilesSubscriptionHelp.Files.Error')
+  .t`Failed to create file token.`
 
 export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = c('B7.FilesSubscriptionHelp.Subscription.Error')
   .t`Failed to get subscription's information.`
 
-export const API_MESSAGE_FAILED_ACCESS_PURCHASE = c('B7.FilesSubscriptionHelp.Subscription.Error').t`Failed to access purchase flow.`
+export const API_MESSAGE_FAILED_ACCESS_PURCHASE = c('B7.FilesSubscriptionHelp.Subscription.Error')
+  .t`Failed to access purchase flow.`
 
-export const API_MESSAGE_FAILED_OFFLINE_FEATURES = c('B7.FilesSubscriptionHelp.Subscription.Error').t`Failed to get offline features.`
+export const API_MESSAGE_FAILED_OFFLINE_FEATURES = c('B7.FilesSubscriptionHelp.Subscription.Error')
+  .t`Failed to get offline features.`
 export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = c('B2.NavSharedUI.Warning')
   .t`The extension you are attempting to install comes from an untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?`
 export const API_MESSAGE_FAILED_DOWNLOADING_EXTENSION = c('B2.NavSharedUI.Error')
@@ -78,8 +81,7 @@ export const INVALID_PASSWORD_COST = c('B1.Account.SignIn.Error')
 export const INVALID_PASSWORD = c('B1.Account.SignIn.Error').t`Invalid password.`
 
 export const OUTDATED_PROTOCOL_ALERT_IGNORE = c('B1.Account.SignIn.Action').t`Sign In`
-export const UPGRADING_ENCRYPTION = c('B1.Account.Password.Status')
-  .t`Upgrading your account's encryption version…`
+export const UPGRADING_ENCRYPTION = c('B1.Account.Password.Status').t`Upgrading your account's encryption version…`
 
 export const SETTING_PASSCODE = () => c('B4.Security.Passcode.Status').t`Setting passcode…`
 export const CHANGING_PASSCODE = () => c('B4.Security.Passcode.Status').t`Changing passcode…`

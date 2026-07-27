@@ -16,7 +16,7 @@ import {
   isNote,
 } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { c, jt } from 'ttag'
+import { c } from 'ttag'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import Popover from '../Popover/Popover'
@@ -164,7 +164,7 @@ const ItemNameCell = ({ item, hideIcon }: { item: DecryptedItemInterface; hideIc
         {backupInfo && (
           <div
             className="absolute bottom-1 right-1 translate-x-1/2 translate-y-1/2 rounded-full bg-default text-success"
-            title={`File is backed up locally`}
+            title={c('B3.Notes.NoteList.Info').t`File is backed up locally`}
           >
             <Icon size="small" type="check-circle-filled" />
           </div>

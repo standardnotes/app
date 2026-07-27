@@ -366,7 +366,7 @@ export class NoteHistoryController {
       c('B3.Notes.History.Label').t`Delete revision?`,
       c('B3.Notes.History.Action').t`Delete revision`,
       ButtonType.Danger,
-      c('B2.Shared.Modal.Action').t`Cancel`,
+      c('B3.Notes.History.Action').t`Cancel`,
     )
 
     if (!shouldDelete || !this.note) {

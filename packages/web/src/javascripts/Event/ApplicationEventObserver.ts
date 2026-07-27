@@ -146,7 +146,10 @@ export class ApplicationEventObserver implements EventObserverInterface {
   }
 
   private async sendUserRequest(route: RouteParserInterface): Promise<void> {
-    const processingToastId = this.toastService.showToast(ToastType.Loading, 'Processing your request...')
+    const processingToastId = this.toastService.showToast(
+      ToastType.Loading,
+      c('B2.NavSharedUI.Status').t`Processing your request...`,
+    )
 
     const requestSubmittedSuccessfully = await this.userService.submitUserRequest(route.userRequestParams.requestType)
 

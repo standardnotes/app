@@ -122,7 +122,7 @@ export function SearchPlugin() {
     return application.keyboardService.addCommandHandlers([
       {
         command: SUPER_TOGGLE_SEARCH,
-        category: c('B2.NavSharedUI.Label').t`Super notes` as 'Super notes',
+        category: c('B3.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
         description: c('B3.Notes.EditorToolbar.Action').t`Search in current note`,
         onKeyDown: (event) => {
           event.preventDefault()
@@ -132,7 +132,7 @@ export function SearchPlugin() {
       },
       {
         command: SUPER_SEARCH_TOGGLE_REPLACE_MODE,
-        category: c('B2.NavSharedUI.Label').t`Super notes` as 'Super notes',
+        category: c('B3.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
         description: c('B3.Notes.EditorToolbar.Action').t`Search and replace in current note`,
         onKeyDown: (event) => {
           if (!isEditable) {
@@ -151,7 +151,7 @@ export function SearchPlugin() {
       },
       {
         command: SUPER_SEARCH_NEXT_RESULT,
-        category: c('B2.NavSharedUI.Label').t`Super notes` as 'Super notes',
+        category: c('B3.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
         description: c('B3.Notes.EditorToolbar.Action').t`Go to next search result`,
         onKeyDown(event) {
           event.preventDefault()
@@ -161,7 +161,7 @@ export function SearchPlugin() {
       },
       {
         command: SUPER_SEARCH_PREVIOUS_RESULT,
-        category: c('B2.NavSharedUI.Label').t`Super notes` as 'Super notes',
+        category: c('B3.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
         description: c('B3.Notes.EditorToolbar.Action').t`Go to previous search result`,
         onKeyDown(event) {
           event.preventDefault()
@@ -326,7 +326,9 @@ export function SearchPlugin() {
           <button
             className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
             onClick={toggleReplaceMode}
-            title={c('B3.Notes.EditorToolbar.Label').jt`Toggle Replace Mode (${toggleReplaceShortcut})` as unknown as string}
+            title={
+              c('B3.Notes.EditorToolbar.Label').jt`Toggle Replace Mode (${toggleReplaceShortcut})` as unknown as string
+            }
           >
             {isReplaceMode ? (
               <ArrowDownIcon className="h-4 w-4 fill-text" />
@@ -378,7 +380,9 @@ export function SearchPlugin() {
                 'relative flex items-center rounded border px-1.5 py-1 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
                 isCaseSensitive ? 'border-info bg-info text-info-contrast' : 'border-border hover:bg-contrast',
               )}
-              title={c('B3.Notes.EditorToolbar.Label').jt`Case sensitive (${caseSensitivityShortcut})` as unknown as string}
+              title={
+                c('B3.Notes.EditorToolbar.Label').jt`Case sensitive (${caseSensitivityShortcut})` as unknown as string
+              }
             >
               <input
                 type="checkbox"

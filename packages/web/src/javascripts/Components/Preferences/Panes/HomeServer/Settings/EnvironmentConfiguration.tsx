@@ -78,7 +78,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Auth JWT Secret`}</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
-                    placeholder={'Auth JWT Secret'}
+                    placeholder={c('B6.Preferences.HomeServer.Placeholder').t`Auth JWT Secret`}
                     defaultValue={homeServerConfiguration?.authJwtSecret}
                     onChange={setAuthJWT}
                   />
@@ -88,17 +88,18 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`JWT Secret`}</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
-                    placeholder={'JWT Secret'}
+                    placeholder={c('B6.Preferences.HomeServer.Placeholder').t`JWT Secret`}
                     defaultValue={homeServerConfiguration?.jwtSecret}
                     onChange={setJWT}
                   />
                 </div>
               </PreferencesSegment>
               <PreferencesSegment>
-                <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Encryption Server Key`}</Subtitle>
+                <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle')
+                  .t`Encryption Server Key`}</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
-                    placeholder={'Encryption Server Key'}
+                    placeholder={c('B6.Preferences.HomeServer.Placeholder').t`Encryption Server Key`}
                     defaultValue={homeServerConfiguration?.encryptionServerKey}
                     disabled={true}
                   />
@@ -108,7 +109,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Pseudo Params Key`}</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
-                    placeholder={'Pseudo Params Key'}
+                    placeholder={c('B6.Preferences.HomeServer.Placeholder').t`Pseudo Params Key`}
                     defaultValue={homeServerConfiguration?.pseudoKeyParamsKey}
                     onChange={setPseudoParamsKey}
                   />
@@ -118,7 +119,7 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
                 <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Valet Token Secret`}</Subtitle>
                 <div className={'mt-2'}>
                   <DecoratedInput
-                    placeholder={'Valet Token Secret'}
+                    placeholder={c('B6.Preferences.HomeServer.Placeholder').t`Valet Token Secret`}
                     defaultValue={homeServerConfiguration?.valetTokenSecret}
                     onChange={setValetTokenSecret}
                   />
@@ -126,10 +127,11 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
               </PreferencesSegment>
               <PreferencesSegment>
                 <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Port`}</Subtitle>
-                <div className="text-xs">{c('B6.Preferences.HomeServer.Info').t`Changing the port will require you to sign out of all existing sessions.`}</div>
+                <div className="text-xs">{c('B6.Preferences.HomeServer.Info')
+                  .t`Changing the port will require you to sign out of all existing sessions.`}</div>
                 <div className={'mt-2'}>
                   <DecoratedInput
-                    placeholder={'Port'}
+                    placeholder={c('B6.Preferences.HomeServer.Placeholder').t`Port`}
                     defaultValue={homeServerConfiguration?.port.toString()}
                     onChange={(port: string) => setPort(Number(port))}
                   />
@@ -154,7 +156,12 @@ const EnvironmentConfiguration = ({ setHomeServerConfigurationChangedCallback, h
             </div>
           </div>
           {valuesChanged && (
-            <Button className="mt-3 min-w-20" primary label={c('B6.Preferences.HomeServer.Action').t`Apply & Restart`} onClick={handleConfigurationChange} />
+            <Button
+              className="mt-3 min-w-20"
+              primary
+              label={c('B6.Preferences.HomeServer.Action').t`Apply & Restart`}
+              onClick={handleConfigurationChange}
+            />
           )}
         </AccordionItem>
       </PreferencesSegment>

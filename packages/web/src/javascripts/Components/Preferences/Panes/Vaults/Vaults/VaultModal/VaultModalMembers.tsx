@@ -43,11 +43,11 @@ export const VaultModalMembers = ({
           <Icon type="warning" className="place-self-center" />
           <div className="text-base font-semibold">{c('B6.Preferences.Vaults.Label').t`No designated survivor`}</div>
           <div className="col-start-2">
-            Vaults that have no designated survivor will be deleted when the owner account is deleted. In order to
-            ensure that no data is lost, please designate a survivor who will be transferred ownership of the vault.
+            {c('B6.Preferences.Vaults.Info')
+              .t`Vaults that have no designated survivor will be deleted when the owner account is deleted. In order to ensure that no data is lost, please designate a survivor who will be transferred ownership of the vault.`}
           </div>
           <Button small className="col-start-2 mt-1.5" onClick={openDesignateSurvivorModal}>
-            Designate survivor
+            {c('B6.Preferences.Vaults.Action').t`Designate survivor`}
           </Button>
           <ModalOverlay isOpen={isDesignateSurvivorModalOpen} close={closeDesignateSurvivorModal}>
             <DesignateSurvivorModal vault={vault} members={members} closeModal={closeDesignateSurvivorModal} />
@@ -71,18 +71,18 @@ export const VaultModalMembers = ({
                 {contact ? (
                   <div className="flex items-center gap-1 rounded bg-success px-1 py-0.5 text-xs text-success-contrast">
                     <Icon type="check-circle" size="small" />
-                    Trusted
+                    {c('B6.Preferences.Vaults.Label').t`Trusted`}
                   </div>
                 ) : (
                   <div className="flex items-center gap-1 rounded bg-danger px-1 py-0.5 pr-1.5 text-xs text-danger-contrast">
                     <Icon type="clear-circle-filled" size="small" />
-                    Untrusted
+                    {c('B6.Preferences.Vaults.Label').t`Untrusted`}
                   </div>
                 )}
                 {member.is_designated_survivor && (
                   <div className="flex items-center gap-1 rounded bg-info px-1 py-0.5 text-xs text-success-contrast">
                     <Icon type="security" size="small" />
-                    Designated survivor
+                    {c('B6.Preferences.Vaults.Label').t`Designated survivor`}
                   </div>
                 )}
               </div>

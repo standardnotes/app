@@ -10,6 +10,7 @@ import {
 import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
+import { c, msgid } from 'ttag'
 import * as Messages from '../Strings/Messages'
 import { InfoStrings } from '../Strings/InfoStrings'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
@@ -354,11 +355,13 @@ export class UserService
 
     const dirtyItems = this.items.getDirtyItems()
     if (dirtyItems.length > 0) {
-      const singular = dirtyItems.length === 1
+      const dirtyItemCount = dirtyItems.length
       const didConfirm = await this.alerts.confirm(
-        `There ${singular ? 'is' : 'are'} ${dirtyItems.length} ${
-          singular ? 'item' : 'items'
-        } with unsynced changes. If you sign out, these changes will be lost forever. Are you sure you want to sign out?`,
+        c('B1.Account.Session.Confirmation').ngettext(
+          msgid`There is ${dirtyItemCount} item with unsynced changes. If you sign out, these changes will be lost forever. Are you sure you want to sign out?`,
+          `There are ${dirtyItemCount} items with unsynced changes. If you sign out, these changes will be lost forever. Are you sure you want to sign out?`,
+          dirtyItemCount,
+        ),
       )
       if (didConfirm) {
         await performSignOut()

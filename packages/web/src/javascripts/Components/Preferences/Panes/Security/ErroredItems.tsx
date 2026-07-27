@@ -43,11 +43,10 @@ const ErroredItems: FunctionComponent = () => {
     const count = items.length
     const confirmed = await application.alerts.confirm(
       jtString(
-        c('B6.Preferences.Security.Confirmation')
-          .jt`Are you sure you want to permanently delete ${count} item(s)?`,
+        c('B6.Preferences.Security.Confirmation').jt`Are you sure you want to permanently delete ${count} item(s)?`,
       ),
       undefined,
-      'Delete',
+      c('B6.Preferences.Security.Confirmation').t`Delete`,
       ButtonType.Danger,
     )
     if (!confirmed) {
@@ -86,8 +85,7 @@ const ErroredItems: FunctionComponent = () => {
         </Title>
         <Text>
           {jtString(
-            c('B6.Preferences.Security.Error')
-              .jt`${erroredItems.length} items are errored and could not be decrypted.`,
+            c('B6.Preferences.Security.Error').jt`${erroredItems.length} items are errored and could not be decrypted.`,
           )}
         </Text>
         <div className="flex">
@@ -121,16 +119,11 @@ const ErroredItems: FunctionComponent = () => {
                 <div className="flex flex-col">
                   <Subtitle>
                     {jtString(
-                      c('B6.Preferences.Security.Info')
-                        .jt`${contentTypeDisplay} created on ${createdAtString}`,
+                      c('B6.Preferences.Security.Info').jt`${contentTypeDisplay} created on ${createdAtString}`,
                     )}
                   </Subtitle>
-                  <Text>
-                    {jtString(c('B6.Preferences.Security.Info').jt`Item ID: ${itemUuid}`)}
-                  </Text>
-                  <Text>
-                    {jtString(c('B6.Preferences.Security.Info').jt`Last Modified: ${updatedAtString}`)}
-                  </Text>
+                  <Text>{jtString(c('B6.Preferences.Security.Info').jt`Item ID: ${itemUuid}`)}</Text>
+                  <Text>{jtString(c('B6.Preferences.Security.Info').jt`Last Modified: ${updatedAtString}`)}</Text>
                   <div className="flex">
                     <Button
                       className="mr-2 mt-3 min-w-20"

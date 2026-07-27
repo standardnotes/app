@@ -64,7 +64,8 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
           {!backupsEnabled && (
             <>
               <HorizontalSeparator classes="mt-2.5 mb-4" />
-              <Text>{c('B6.Preferences.Backups.Status').t`Text backups are not enabled. Enable to choose where your data is backed up.`}</Text>
+              <Text>{c('B6.Preferences.Backups.Status')
+                .t`Text backups are not enabled. Enable to choose where your data is backed up.`}</Text>
             </>
           )}
         </PreferencesSegment>
@@ -75,7 +76,8 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
 
             <PreferencesSegment>
               <>
-                <Text className="mb-3">{c('B6.Preferences.Backups.Status').t`Text backups are enabled and saved to:`}</Text>
+                <Text className="mb-3">{c('B6.Preferences.Backups.Status')
+                  .t`Text backups are enabled and saved to:`}</Text>
 
                 <EncryptionStatusItem
                   status={backupsLocation || 'Not Set'}
@@ -84,18 +86,31 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
                 />
 
                 <div className="mt-2.5 flex flex-row">
-                  <Button label={c('B6.Preferences.Backups.Action').t`Open Location`} className={'mr-3 text-xs'} onClick={openBackupsLocation} />
-                  <Button label={c('B6.Preferences.Backups.Action').t`Change Location`} className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
+                  <Button
+                    label={c('B6.Preferences.Backups.Action').t`Open Location`}
+                    className={'mr-3 text-xs'}
+                    onClick={openBackupsLocation}
+                  />
+                  <Button
+                    label={c('B6.Preferences.Backups.Action').t`Change Location`}
+                    className={'mr-3 text-xs'}
+                    onClick={changeBackupsLocation}
+                  />
                 </div>
               </>
 
               <HorizontalSeparator classes="my-4" />
 
               <Text className="mb-3">
-                Backups are saved automatically throughout the day. You can perform a one-time backup now below.
+                {c('B6.Preferences.Backups.Info')
+                  .t`Backups are saved automatically throughout the day. You can perform a one-time backup now below.`}
               </Text>
               <div className="flex flex-row">
-                <Button label={c('B6.Preferences.Backups.Label').t`Perform Backup`} className={'mr-3 text-xs'} onClick={performBackup} />
+                <Button
+                  label={c('B6.Preferences.Backups.Label').t`Perform Backup`}
+                  className={'mr-3 text-xs'}
+                  onClick={performBackup}
+                />
               </div>
             </PreferencesSegment>
           </>

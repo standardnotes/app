@@ -43,12 +43,12 @@ export const VaultModalInvites = ({
                 {contact ? (
                   <div className="flex items-center gap-1 rounded bg-success px-1 py-0.5 text-xs text-success-contrast">
                     <Icon type="check-circle" size="small" />
-                    Trusted
+                    {c('B6.Preferences.Vaults.Label').t`Trusted`}
                   </div>
                 ) : (
                   <div className="flex items-center gap-1 rounded bg-danger px-1 py-0.5 pr-1.5 text-xs text-danger-contrast">
                     <Icon type="clear-circle-filled" size="small" />
-                    Untrusted
+                    {c('B6.Preferences.Vaults.Label').t`Untrusted`}
                   </div>
                 )}
               </div>

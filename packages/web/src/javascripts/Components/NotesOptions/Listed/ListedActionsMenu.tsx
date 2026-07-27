@@ -149,7 +149,7 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
                 ))
               ) : (
                 <div className="select-none px-3 py-2 text-sm text-passive-0">
-                  {c('B6.Settings.Listed.Info').t`No actions available`}
+                  {c('B3.Notes.NoteList.Info').t`No actions available`}
                 </div>
               )}
             </MenuSection>
@@ -159,7 +159,7 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
       {!isFetchingAccounts && !menuGroups.length ? (
         <div className="flex w-full items-center justify-center px-4 py-6">
           <div className="select-none text-sm text-passive-0">
-            {c('B6.Settings.Listed.Info').t`No Listed accounts found`}
+            {c('B3.Notes.NoteList.Info').t`No Listed accounts found`}
           </div>
         </div>
       ) : null}

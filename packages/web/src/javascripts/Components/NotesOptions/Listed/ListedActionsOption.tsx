@@ -44,12 +44,12 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note, icon
       >
         <div className="flex items-center">
           <Icon type="listed" className={`mr-2 text-neutral ${iconClassName}`} />
-          {c('B6.Settings.Listed.Label').t`Listed actions`}
+          {c('B3.Notes.NoteList.Label').t`Listed actions`}
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </MenuItem>
       <Popover
-        title={c('B6.Settings.Listed.Label').t`Listed`}
+        title={c('B3.Notes.NoteList.Label').t`Listed`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}

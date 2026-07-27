@@ -68,8 +68,9 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
           onClick={configureFileBackups}
         >
           <div className="ml-2">
-            <div>{c('B6.Settings.Backups.Action').t`Configure file backups`}</div>
-            <div className="text-xs text-neutral">{c('B7.FilesSubscriptionHelp.Files.Info').t`File not backed up locally`}</div>
+            <div>{c('B7.FilesSubscriptionHelp.Files.Action').t`Configure file backups`}</div>
+            <div className="text-xs text-neutral">{c('B7.FilesSubscriptionHelp.Files.Info')
+              .t`File not backed up locally`}</div>
           </div>
         </MenuItem>
       )}

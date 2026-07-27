@@ -46,7 +46,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
         label: (
           <span className="flex items-center">
             <Icon type="chevron-left" size="large" />
-            Back
+            {c('B6.Preferences.Other.Action').t`Back`}
           </span>
         ),
         type: 'primary',
@@ -71,7 +71,8 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
           data-preferences-header
         >
           <div className="hidden h-8 w-8 md:block" />
-          <h1 className="text-base font-bold md:text-lg">{c('B6.Preferences.Other.Info').t`Your preferences for Standard Notes`}</h1>
+          <h1 className="text-base font-bold md:text-lg">{c('B6.Preferences.Other.Info')
+            .t`Your preferences for Standard Notes`}</h1>
           <RoundIconButton
             onClick={() => {
               closePreferences()

@@ -41,7 +41,9 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
 
     if (homeServerEnabled) {
       if (!homeServerIsRunning) {
-        await application.alerts.alert(c('B6.Preferences.HomeServer.Error').t`Please start your home server before activating offline features.`)
+        await application.alerts.alert(
+          c('B6.Preferences.HomeServer.Error').t`Please start your home server before activating offline features.`,
+        )
 
         return
       }
@@ -98,10 +100,10 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
     application.alerts
       .confirm(
         STRING_REMOVE_OFFLINE_KEY_CONFIRMATION(),
-        c('B4.Security.KeyStorage.Confirmation').t`Remove offline key?`,
-        c('B4.Security.KeyStorage.Action').t`Remove Offline Key`,
+        c('B6.Preferences.General.Confirmation').t`Remove offline key?`,
+        c('B6.Preferences.General.Action').t`Remove Offline Key`,
         ButtonType.Danger,
-        'Cancel',
+        c('B6.Preferences.General.Confirmation').t`Cancel`,
       )
       .then(async (shouldRemove: boolean) => {
         if (shouldRemove) {
@@ -123,7 +125,8 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
         <div className="mt-3 flex w-full flex-col">
           <div className="flex flex-row items-center justify-between">
             <Subtitle>
-              {!hasUserPreviouslyStoredCode && c('B6.Preferences.General.Subtitle').t`Activate`} Offline Subscription
+              {!hasUserPreviouslyStoredCode && c('B6.Preferences.General.Subtitle').t`Activate`}{' '}
+              {c('B6.Preferences.General.Label').t`Offline Subscription`}
             </Subtitle>
             <a
               href="https://standardnotes.com/help/59/can-i-use-standard-notes-totally-offline"
@@ -131,7 +134,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
               rel="noreferrer"
               className="text-info"
             >
-              Learn more
+              {c('B6.Preferences.General.Action').t`Learn more`}
             </a>
           </div>
           <form onSubmit={handleSubscriptionCodeSubmit}>
@@ -148,14 +151,14 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
             </div>
             {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
               <div className={'info mb-3 mt-3'}>
-                Your offline subscription code has been successfully {isSuccessfullyActivated ? 'activated' : 'removed'}
-                .
+                {c('B6.Preferences.General.Info').t`Your offline subscription code has been successfully`}{' '}
+                {isSuccessfullyActivated ? 'activated' : 'removed'}.
               </div>
             )}
             {hasUserPreviouslyStoredCode && (
               <Button
                 colorStyle="danger"
-                label={c('B4.Security.KeyStorage.Action').t`Remove offline key`}
+                label={c('B6.Preferences.General.Action').t`Remove offline key`}
                 onClick={() => {
                   handleRemoveClick().catch(console.error)
                 }}

@@ -86,11 +86,11 @@ class Footer extends AbstractComponent<Props, State> {
           }
           break
         case WebAppEvent.BeganBackupDownload:
-          statusService.setMessage(c('B5.Backup.Status').t`Saving local backup…`)
+          statusService.setMessage(c('B6.Preferences.Backups.Status').t`Saving local backup…`)
           break
         case WebAppEvent.EndedBackupDownload: {
-          const successMessage = c('B5.Backup.Status').t`Successfully saved backup.`
-          const errorMessage = c('B5.Backup.Error').t`Unable to save local backup.`
+          const successMessage = c('B6.Preferences.Backups.Status').t`Successfully saved backup.`
+          const errorMessage = c('B6.Preferences.Backups.Error').t`Unable to save local backup.`
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           statusService.setMessage((data as any).success ? successMessage : errorMessage)
 
@@ -420,7 +420,7 @@ class Footer extends AbstractComponent<Props, State> {
                 onClick={this.securityUpdateClickHandler}
                 className="relative z-footer-bar-item flex select-none items-center text-xs font-bold text-success"
               >
-                Encryption upgrade available.
+                {c('B2.NavSharedUI.Label').t`Encryption upgrade available.`}
               </div>
             )}
             {this.state.newUpdateAvailable && (
@@ -428,7 +428,7 @@ class Footer extends AbstractComponent<Props, State> {
                 onClick={this.newUpdateClickHandler}
                 className="relative z-footer-bar-item ml-3 flex select-none items-center text-xs font-bold text-info"
               >
-                New update available.
+                {c('B2.NavSharedUI.Label').t`New update available.`}
               </div>
             )}
             {(this.state.outOfSync || this.state.showSyncResolution) && (

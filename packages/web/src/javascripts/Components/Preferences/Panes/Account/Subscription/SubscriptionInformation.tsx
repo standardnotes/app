@@ -18,7 +18,7 @@ const SubscriptionInformation = () => {
       {!isSharedSubscription && application.canShowPurchaseFlow() && (
         <Button
           className="mr-3 mt-3 min-w-20"
-          label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Manage subscription`}
+          label={c('B6.Preferences.Subscription.Label').t`Manage subscription`}
           onClick={manageSubscription}
         />
       )}

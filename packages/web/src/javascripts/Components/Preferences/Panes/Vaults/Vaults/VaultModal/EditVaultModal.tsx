@@ -259,7 +259,8 @@ const EditVaultModalContent: FunctionComponent<{
       <div className="flex w-full flex-col space-y-3.5 px-4.5 py-4">
         <div>
           <div className="text-lg">{c('B6.Preferences.Vaults.Label').t`Vault Info`}</div>
-          <div className="mt-1">{c('B6.Preferences.Vaults.Info').t`The vault name and description are end-to-end encrypted.`}</div>
+          <div className="mt-1">{c('B6.Preferences.Vaults.Info')
+            .t`The vault name and description are end-to-end encrypted.`}</div>
 
           <div className="mt-3.5 flex items-center gap-3">
             <StyledTooltip className="!z-modal" label={c('B6.Preferences.Vaults.Action').t`Choose icon`}>
@@ -314,7 +315,7 @@ const EditVaultModalContent: FunctionComponent<{
           isLoadingCollaborationInfo ? (
             <div className="flex items-center gap-3 py-2 text-base">
               <Spinner className="h-5 w-5" />
-              Loading collaboration info...
+              {c('B6.Preferences.Vaults.Status').t`Loading collaboration info...`}
             </div>
           ) : (
             <>

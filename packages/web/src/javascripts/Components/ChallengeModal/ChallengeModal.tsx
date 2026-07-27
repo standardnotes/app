@@ -253,7 +253,7 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
         disableCustomHeader={isMobileScreen}
         actions={[
           {
-            label: 'Cancel',
+            label: c('B4.Security.Challenge.Label').t`Cancel`,
             onClick: cancelChallenge,
             type: 'primary',
             hidden: !challenge.cancelable,

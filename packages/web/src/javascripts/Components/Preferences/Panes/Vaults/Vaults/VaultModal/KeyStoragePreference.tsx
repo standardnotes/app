@@ -11,20 +11,20 @@ type KeyStorageOption = {
 const getOptions = (): KeyStorageOption[] => [
   {
     value: KeySystemRootKeyStorageMode.Synced,
-    label: c('B4.Security.KeyStorage.Label').t`Synced (Recommended)`,
-    description: c('B4.Security.KeyStorage.Info')
+    label: c('B6.Preferences.Vaults.Label').t`Synced (Recommended)`,
+    description: c('B6.Preferences.Vaults.Info')
       .t`Your vault key will be encrypted and synced to your account and automatically available on your other devices.`,
   },
   {
     value: KeySystemRootKeyStorageMode.Local,
-    label: c('B4.Security.KeyStorage.Label').t`Local`,
-    description: c('B4.Security.KeyStorage.Info')
+    label: c('B6.Preferences.Vaults.Label').t`Local`,
+    description: c('B6.Preferences.Vaults.Info')
       .t`Your vault key will be encrypted and saved locally on this device. You will need to manually enter your vault key on your other devices.`,
   },
   {
     value: KeySystemRootKeyStorageMode.Ephemeral,
-    label: c('B4.Security.KeyStorage.Label').t`Ephemeral`,
-    description: c('B4.Security.KeyStorage.Info')
+    label: c('B6.Preferences.Vaults.Label').t`Ephemeral`,
+    description: c('B6.Preferences.Vaults.Info')
       .t`Your vault key will only be stored in memory and will be forgotten when you close the app. You will need to manually enter your vault key on your other devices.`,
   },
 ]
@@ -40,7 +40,7 @@ export const KeyStoragePreference = ({
 
   return (
     <div>
-      <div className="mb-3 text-lg">{c('B4.Security.KeyStorage.Title').t`Vault Key Storage Mode`}</div>
+      <div className="mb-3 text-lg">{c('B6.Preferences.Vaults.Title').t`Vault Key Storage Mode`}</div>
       <div className="space-y-3">
         {options.map((option) => {
           const isSelected = value === option.value

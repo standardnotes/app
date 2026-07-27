@@ -171,13 +171,13 @@ export class NotesController
     this.disposers.push(
       application.keyboardService.addCommandHandler({
         command: PIN_NOTE_COMMAND,
-        category: c('B2.NavSharedUI.Label').t`Current note` as 'Current note',
+        category: c('B3.Notes.NoteActions.Label').t`Current note` as 'Current note',
         description: c('B3.Notes.NoteActions.Action').t`Pin/unpin selected note(s)`,
         onKeyDown: this.togglePinSelectedNotes,
       }),
       application.keyboardService.addCommandHandler({
         command: STAR_NOTE_COMMAND,
-        category: c('B2.NavSharedUI.Label').t`Current note` as 'Current note',
+        category: c('B3.Notes.NoteActions.Label').t`Current note` as 'Current note',
         description: c('B3.Notes.NoteActions.Action').t`Star/unstar selected note(s)`,
         onKeyDown: this.toggleStarSelectedNotes,
       }),
@@ -660,9 +660,7 @@ export class NotesController
           .then((duplicated) =>
             addToast({
               type: ToastType.Regular,
-              message: jtString(
-                c('B3.Notes.NoteActions.Info').jt`Duplicated note "${duplicated.title}"`,
-              ),
+              message: jtString(c('B3.Notes.NoteActions.Info').jt`Duplicated note "${duplicated.title}"`),
               actions: [
                 {
                   label: c('B3.Notes.NoteActions.Action').t`Open`,

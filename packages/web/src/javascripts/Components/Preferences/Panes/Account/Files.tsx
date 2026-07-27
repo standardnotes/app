@@ -45,8 +45,8 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Files`}</Title>
-        <Subtitle>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Storage Quota`}</Subtitle>
+        <Title>{c('B6.Preferences.Account.Info').t`Files`}</Title>
+        <Subtitle>{c('B6.Preferences.Account.Info').t`Storage Quota`}</Subtitle>
         {isLoading ? (
           <div className="mt-2">
             <Spinner className="h-3 w-3" />
@@ -55,17 +55,17 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
           <>
             <div className="mb-1 mt-1">
               <span className="font-semibold">{formatSizeToReadableString(filesQuotaUsed)}</span>{' '}
-              {c('B7.FilesSubscriptionHelp.Subscription.Info').t`of`}{' '}
+              {c('B6.Preferences.Account.Info').t`of`}{' '}
               <span>
                 {application.sessions.isSignedIntoFirstPartyServer()
                   ? formatSizeToReadableString(filesQuotaTotal)
                   : '∞'}
               </span>{' '}
-              {c('B7.FilesSubscriptionHelp.Subscription.Info').t`used`}
+              {c('B6.Preferences.Account.Info').t`used`}
             </div>
             <progress
               className="progress-bar w-full"
-              aria-label={c('B7.FilesSubscriptionHelp.Subscription.Label').t`Files storage used`}
+              aria-label={c('B6.Preferences.Account.Label').t`Files storage used`}
               value={filesQuotaUsed}
               max={filesQuotaTotal}
             />

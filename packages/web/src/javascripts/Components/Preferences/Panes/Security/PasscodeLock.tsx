@@ -188,12 +188,12 @@ const PasscodeLock = ({ application }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>{c('B4.Security.Passcode.Title').t`Passcode lock`}</Title>
+          <Title>{c('B6.Preferences.Security.Title').t`Passcode lock`}</Title>
 
           {!hasPasscode && canAddPasscode && (
             <>
               <Text className="mb-3">
-                {c('B4.Security.Passcode.Info')
+                {c('B6.Preferences.Security.Info')
                   .t`Add a passcode to lock the application and encrypt on-device key storage.`}
               </Text>
 
@@ -201,7 +201,7 @@ const PasscodeLock = ({ application }: Props) => {
 
               {!showPasscodeForm && (
                 <Button
-                  label={c('B4.Security.Passcode.Action').t`Add passcode`}
+                  label={c('B6.Preferences.Security.Action').t`Add passcode`}
                   onClick={handleAddPassCode}
                   primary
                 />
@@ -211,7 +211,7 @@ const PasscodeLock = ({ application }: Props) => {
 
           {!hasPasscode && !canAddPasscode && (
             <Text>
-              {c('B4.Security.Passcode.Warning')
+              {c('B6.Preferences.Security.Warning')
                 .t`Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the "Stay signed in" option checked.`}
             </Text>
           )}
@@ -223,19 +223,19 @@ const PasscodeLock = ({ application }: Props) => {
                 ref={passcodeInputRef}
                 value={passcode ? passcode : ''}
                 onChange={handlePasscodeChange}
-                placeholder={c('B4.Security.Passcode.Placeholder').t`Passcode`}
+                placeholder={c('B6.Preferences.Security.Placeholder').t`Passcode`}
               />
               <DecoratedPasswordInput
                 className={{ container: 'mt-2' }}
                 type="password"
                 value={passcodeConfirmation ? passcodeConfirmation : ''}
                 onChange={handleConfirmPasscodeChange}
-                placeholder={c('B4.Security.Passcode.Placeholder').t`Confirm Passcode`}
+                placeholder={c('B6.Preferences.Security.Placeholder').t`Confirm Passcode`}
               />
               <Button
                 primary
                 onClick={submitPasscodeForm}
-                label={c('B4.Security.Passcode.Action').t`Set Passcode`}
+                label={c('B6.Preferences.Security.Action').t`Set Passcode`}
                 className="mr-3 mt-3"
               />
               <Button onClick={cancelPasscodeForm} label={c('B6.Preferences.Security.Action').t`Cancel`} />
@@ -244,16 +244,16 @@ const PasscodeLock = ({ application }: Props) => {
 
           {hasPasscode && !showPasscodeForm && (
             <>
-              <Text>{c('B4.Security.Passcode.Info').t`Passcode lock is enabled.`}</Text>
+              <Text>{c('B6.Preferences.Security.Info').t`Passcode lock is enabled.`}</Text>
               <div className="mt-3 flex flex-row">
                 <Button
-                  label={c('B4.Security.Passcode.Action').t`Change Passcode`}
+                  label={c('B6.Preferences.Security.Action').t`Change Passcode`}
                   onClick={changePasscodePressed}
                   className="mr-3"
                 />
                 <Button
                   colorStyle="danger"
-                  label={c('B4.Security.Passcode.Action').t`Remove Passcode`}
+                  label={c('B6.Preferences.Security.Action').t`Remove Passcode`}
                   onClick={removePasscodePressed}
                 />
               </div>
@@ -267,9 +267,9 @@ const PasscodeLock = ({ application }: Props) => {
           <div className="min-h-3" />
           <PreferencesGroup>
             <PreferencesSegment>
-              <Title>{c('B4.Security.Autolock.Title').t`Autolock`}</Title>
+              <Title>{c('B6.Preferences.Security.Title').t`Autolock`}</Title>
               <Text className="mb-3">
-                {c('B4.Security.Autolock.Info').t`The autolock timer begins when the window or tab loses focus.`}
+                {c('B6.Preferences.Security.Info').t`The autolock timer begins when the window or tab loses focus.`}
               </Text>
               <div className="flex flex-row items-center">
                 {autolockService.getAutoLockIntervalOptions().map((option) => {
@@ -299,10 +299,10 @@ const PasscodeLock = ({ application }: Props) => {
           <div className="min-h-3" />
           <PreferencesGroup>
             <PreferencesSegment>
-              <Title>{c('B4.Security.Autolock.Title').t`Passcode Autolock`}</Title>
+              <Title>{c('B6.Preferences.Security.Title').t`Passcode Autolock`}</Title>
               <div className="flex flex-row items-center">
                 <div className="mt-2 flex flex-row items-center">
-                  <div className={'mr-3'}>{c('B4.Security.Autolock.Label').t`Require Passcode`}</div>
+                  <div className={'mr-3'}>{c('B6.Preferences.Security.Label').t`Require Passcode`}</div>
                   {mobilePasscodeTimingOptions.map((option) => {
                     return (
                       <a

@@ -18,7 +18,10 @@ const PluginRowView: FunctionComponent<Props> = ({ plugin }) => {
     if (!result) {
       void application.alerts.alertV2({ text: c('B6.Preferences.Other.Error').t`Failed to install plugin` })
     } else {
-      void application.alerts.alertV2({ text: `${result.name} has been successfully installed.` })
+      const pluginName = result.name
+      void application.alerts.alertV2({
+        text: c('B6.Preferences.Plugins.Info').t`${pluginName} has been successfully installed.`,
+      })
     }
   }, [application, plugin])
 
@@ -31,7 +34,7 @@ const PluginRowView: FunctionComponent<Props> = ({ plugin }) => {
       <div className="mr-5">
         <Subtitle className="mb-0 text-info">{plugin.name}</Subtitle>
         <SmallText className="mb-1">
-          A <strong>{pluginType}</strong> by {plugin.publisher}
+          A <strong>{pluginType}</strong> {c('B6.Preferences.Plugins.Label').t`by`} {plugin.publisher}
         </SmallText>
         {plugin.description && <SmallText className="text-neutral">{plugin.description}</SmallText>}
       </div>

@@ -318,7 +318,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         <NoSubscriptionBanner
           className="m-2 mb-3 mt-2"
           application={application}
-          title={c('B7.FilesSubscriptionHelp.Subscription.Info').t`Upgrade for per-tag preferences`}
+          title={c('B3.Notes.NoteList.Info').t`Upgrade for per-tag preferences`}
           message={
             DailyEntryModeEnabled
               ? c('B3.Notes.NoteList.Label')

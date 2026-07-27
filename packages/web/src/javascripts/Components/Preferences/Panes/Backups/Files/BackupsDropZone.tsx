@@ -51,15 +51,18 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     const result = await application.files.readBackupFileAndSaveDecrypted(binaryFile, decryptedFileItem, fileSystem)
 
     if (result === 'success') {
+      const decryptedFileName = decryptedFileItem.name
       void application.alerts.alert(
-        `<strong>${decryptedFileItem.name}</strong> has been successfully decrypted and saved to your chosen directory.`,
+        c('B6.Preferences.Backups.Info')
+          .t`<strong>${decryptedFileName}</strong> has been successfully decrypted and saved to your chosen directory.`,
       )
       setBinaryFile(undefined)
       setDecryptedFileItem(undefined)
       setDroppedFile(undefined)
     } else if (result === 'failed') {
       void application.alerts.alert(
-        'Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.',
+        c('B6.Preferences.Backups.Error')
+          .t`Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.`,
       )
     }
 
@@ -75,7 +78,9 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
       }
 
       if (type === 'binary') {
-        void application.alerts.alert(c('B6.Preferences.Backups.Info').t`Please drag the metadata file instead of the encrypted data file.`)
+        void application.alerts.alert(
+          c('B6.Preferences.Backups.Info').t`Please drag the metadata file instead of the encrypted data file.`,
+        )
         return
       }
 
@@ -167,7 +172,9 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
   return (
     <>
       <PreferencesSegment>
-        {!decryptedFileItem && <Text>{c('B6.Preferences.Backups.Action').t`Attempting to decrypt metadata file...`}</Text>}
+        {!decryptedFileItem && (
+          <Text>{c('B6.Preferences.Backups.Action').t`Attempting to decrypt metadata file...`}</Text>
+        )}
 
         {decryptedFileItem && (
           <>

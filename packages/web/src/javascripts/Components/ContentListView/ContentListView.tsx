@@ -1,4 +1,4 @@
-import { c, jt } from 'ttag'
+import { c } from 'ttag'
 import {
   CANCEL_SEARCH_COMMAND,
   CREATE_NEW_NOTE_KEYBOARD_COMMAND,
@@ -210,8 +210,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SEARCH_KEYBOARD_COMMAND,
-          category: c('B2.NavSharedUI.Label').t`General` as 'General',
-          description: c('B2.NavSharedUI.Action').t`Toggle global search`,
+          category: c('B3.Notes.NoteList.Label').t`General` as 'General',
+          description: c('B3.Notes.NoteList.Action').t`Toggle global search`,
           onKeyDown: (event) => {
             if (searchBarElement) {
               event.preventDefault()
@@ -229,8 +229,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
-          category: c('B2.NavSharedUI.Label').t`General` as 'General',
-          description: c('B2.NavSharedUI.Action').t`Select all items`,
+          category: c('B3.Notes.NoteList.Label').t`General` as 'General',
+          description: c('B3.Notes.NoteList.Action').t`Select all items`,
           onKeyDown: (event) => {
             const isTargetInsideContentList = (event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)
 
@@ -272,7 +272,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       () =>
         application.commands.addWithShortcut(
           CREATE_NEW_NOTE_KEYBOARD_COMMAND,
-          c('B2.NavSharedUI.Label').t`General` as 'General',
+          c('B3.Notes.NoteList.Label').t`General` as 'General',
           isFilesSmartView
             ? c('B3.Notes.NoteList.Action').t`Upload file`
             : c('B3.Notes.NoteList.Action').t`Create new note`,
@@ -313,7 +313,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       <div
         id={id}
         className={classNames(className, 'sn-component section h-full overflow-hidden pt-safe-top')}
-        aria-label={c('B2.NavSharedUI.AriaLabel').t`Notes & Files`}
+        aria-label={c('B3.Notes.NoteList.AriaLabel').t`Notes & Files`}
         ref={mergeRefs([ref, innerRef, setElement])}
       >
         {isMobileScreen && !itemListController.isMultipleSelectionMode && (
@@ -353,7 +353,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         {itemListController.isMultipleSelectionMode && (
           <div className="flex items-center border-b border-l-2 border-border border-l-transparent py-2.5 pr-4">
             <div className="px-4">
-              <StyledTooltip label={c('B2.NavSharedUI.AriaLabel').t`Select all items`} showOnHover showOnMobile>
+              <StyledTooltip label={c('B3.Notes.NoteList.AriaLabel').t`Select all items`} showOnHover showOnMobile>
                 <button
                   className="ml-auto rounded border border-border p-1 hover:bg-contrast"
                   onClick={() => {
@@ -365,7 +365,11 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
               </StyledTooltip>
             </div>
             <div className="text-base font-semibold md:text-sm">{selectedItemsLabel}</div>
-            <StyledTooltip label={c('B2.NavSharedUI.AriaLabel').t`Cancel multiple selection`} showOnHover showOnMobile>
+            <StyledTooltip
+              label={c('B3.Notes.NoteList.AriaLabel').t`Cancel multiple selection`}
+              showOnHover
+              showOnMobile
+            >
               <button
                 className="ml-auto rounded border border-border p-1 hover:bg-contrast"
                 onClick={() => {
@@ -390,11 +394,11 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           isFilesSmartView ? (
             <EmptyFilesView addNewItem={addNewItem} />
           ) : (
-            <p className="empty-items-list opacity-50">{c('B2.NavSharedUI.Info').t`No items.`}</p>
+            <p className="empty-items-list opacity-50">{c('B3.Notes.NoteList.Info').t`No items.`}</p>
           )
         ) : null}
         {!dailyMode && !completedFullSync && !renderedItems.length ? (
-          <p className="empty-items-list opacity-50">{c('B2.NavSharedUI.Status').t`Loading...`}</p>
+          <p className="empty-items-list opacity-50">{c('B3.Notes.NoteList.Status').t`Loading...`}</p>
         ) : null}
         {!dailyMode && renderedItems.length ? (
           shouldUseTableView ? (

@@ -179,7 +179,7 @@ const NewNoteDefaults = () => {
                       }
                     }}
                   >
-                    Options
+                    {c('B6.Preferences.General.Action').t`Options`}
                   </a>
                   {c('B6.Preferences.General.Info').t`. Use [] to escape formatting.`}
                 </div>

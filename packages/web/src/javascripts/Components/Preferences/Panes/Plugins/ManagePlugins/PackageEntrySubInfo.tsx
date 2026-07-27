@@ -63,8 +63,8 @@ const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin }) => {
   const uninstall = async () => {
     application.alerts
       .confirm(
-        'Are you sure you want to uninstall this plugin?',
-        'Uninstall Plugin?',
+        c('B6.Preferences.Plugins.Confirmation').t`Are you sure you want to uninstall this plugin?`,
+        c('B6.Preferences.Plugins.Confirmation').t`Uninstall Plugin?`,
         c('B6.Preferences.Other.Action').t`Uninstall`,
         ButtonType.Danger,
         c('B6.Preferences.Other.Action').t`Cancel`,
@@ -110,7 +110,12 @@ const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin }) => {
               {c('B6.Preferences.Other.Label').t`Rename`}
             </Button>
           )}
-          <Button small className="min-w-20" label={'Uninstall'} onClick={uninstall} />
+          <Button
+            small
+            className="min-w-20"
+            label={c('B6.Preferences.Plugins.Label').t`Uninstall`}
+            onClick={uninstall}
+          />
         </div>
       )}
     </div>

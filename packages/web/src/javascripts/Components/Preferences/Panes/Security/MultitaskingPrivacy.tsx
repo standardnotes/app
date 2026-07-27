@@ -30,16 +30,16 @@ const MultitaskingPrivacy = ({ application }: Props) => {
   }
 
   const screenshotPrivacyFeatureText = isIOS()
-    ? c('B4.Security.Privacy.Title').t`Multitasking Privacy`
-    : c('B4.Security.Privacy.Title').t`Multitasking/Screenshot Privacy`
+    ? c('B6.Preferences.Security.Title').t`Multitasking Privacy`
+    : c('B6.Preferences.Security.Title').t`Multitasking/Screenshot Privacy`
 
   const screenshotPrivacyTitle = hasScreenshotPrivacy
     ? isIOS()
-      ? c('B4.Security.Privacy.Action').t`Disable Multitasking Privacy`
-      : c('B4.Security.Privacy.Action').t`Disable Multitasking/Screenshot Privacy`
+      ? c('B6.Preferences.Security.Action').t`Disable Multitasking Privacy`
+      : c('B6.Preferences.Security.Action').t`Disable Multitasking/Screenshot Privacy`
     : isIOS()
-    ? c('B4.Security.Privacy.Action').t`Enable Multitasking Privacy`
-    : c('B4.Security.Privacy.Action').t`Enable Multitasking/Screenshot Privacy`
+    ? c('B6.Preferences.Security.Action').t`Enable Multitasking Privacy`
+    : c('B6.Preferences.Security.Action').t`Enable Multitasking/Screenshot Privacy`
 
   return (
     <div>

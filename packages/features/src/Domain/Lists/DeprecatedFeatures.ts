@@ -21,9 +21,8 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
     interchangeable: true,
     deprecated: true,
     index_path: 'index.html',
-    description:
-      'Syntax highlighting and convenient keyboard shortcuts for over 120 programming' +
-      ' languages. Ideal for code snippets and procedures.',
+    description: c('B7.FilesSubscriptionHelp.Subscription.Info')
+      .t`Syntax highlighting and convenient keyboard shortcuts for over 120 programming languages. Ideal for code snippets and procedures.`,
     thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/code.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })

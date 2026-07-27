@@ -73,23 +73,23 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>{c('B4.Security.Protections.Title').t`Protections`}</Title>
+        <Title>{c('B6.Preferences.Security.Title').t`Protections`}</Title>
         {protectionsDisabledUntil ? (
           <Text className="text-info">
-            {c('B4.Security.Protections.Status').jt`Unprotected access expires at ${protectionsDisabledUntil}.`}
+            {c('B6.Preferences.Security.Status').jt`Unprotected access expires at ${protectionsDisabledUntil}.`}
           </Text>
         ) : (
-          <Text className="text-info">{c('B4.Security.Protections.Status').t`Protections are enabled.`}</Text>
+          <Text className="text-info">{c('B6.Preferences.Security.Status').t`Protections are enabled.`}</Text>
         )}
         <Text className="mt-2">
-          {c('B4.Security.Protections.Info')
+          {c('B6.Preferences.Security.Info')
             .t`Actions like viewing or searching protected notes, exporting decrypted backups, or revoking an active session require additional authentication such as entering your account password or application passcode.`}
         </Text>
         {protectionsDisabledUntil && (
           <Button
             className="mt-3"
             primary
-            label={c('B4.Security.Protections.Action').t`End Unprotected Access`}
+            label={c('B6.Preferences.Security.Action').t`End Unprotected Access`}
             onClick={enableProtections}
           />
         )}
