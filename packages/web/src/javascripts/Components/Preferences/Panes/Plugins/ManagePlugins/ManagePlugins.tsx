@@ -53,7 +53,9 @@ const ManagePlugins: FunctionComponent<Props> = ({ pluginsLatestVersions, classN
 
   return (
     <div className={className}>
-      {visiblePlugins.length === 0 && <div className="text-neutral">{c('B6.Preferences.Other.Info').t`No plugins installed.`}</div>}
+      {visiblePlugins.length === 0 && (
+        <div className="text-neutral">{c('B6.Preferences.Other.Info').t`No plugins installed.`}</div>
+      )}
       {visiblePlugins.length > 0 && (
         <div className="divide-y divide-border">
           {visiblePlugins

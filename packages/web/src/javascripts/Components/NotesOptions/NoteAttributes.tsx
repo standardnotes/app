@@ -5,7 +5,7 @@ import { calculateReadTime } from './Utils/calculateReadTime'
 import { countNoteAttributes } from './Utils/countNoteAttributes'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { c, jt } from 'ttag'
+import { c } from 'ttag'
 
 export const useNoteAttributes = (application: WebApplicationInterface, note: SNNote) => {
   const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])

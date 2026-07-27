@@ -164,7 +164,8 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
   }, [checkIfCaptchaRequiredAndRegister])
 
   const noPasswordResetOption = (
-    <span className="text-danger">{c('B1.Account.SignIn.Info').t`Standard Notes does not have a password reset option`}</span>
+    <span className="text-danger">{c('B1.Account.SignIn.Info')
+      .t`Standard Notes does not have a password reset option`}</span>
   )
 
   const confirmPasswordForm = (
@@ -191,7 +192,11 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
           primary
           fullWidth
           className="mb-3 mt-1"
-          label={isRegistering ? c('B1.Account.SignIn.Action').t`Creating account...` : c('B1.Account.SignIn.Action').t`Create account & sign in`}
+          label={
+            isRegistering
+              ? c('B1.Account.SignIn.Action').t`Creating account...`
+              : c('B1.Account.SignIn.Action').t`Create account & sign in`
+          }
           onClick={handleConfirmFormSubmit}
           disabled={isRegistering}
         />
@@ -226,7 +231,9 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
           disabled={isRegistering}
         />
         <div className="text-base font-bold">
-          {captchaURL ? c('B1.Account.SignIn.Title').t`Human verification` : c('B1.Account.SignIn.Title').t`Confirm password`}
+          {captchaURL
+            ? c('B1.Account.SignIn.Title').t`Human verification`
+            : c('B1.Account.SignIn.Title').t`Confirm password`}
         </div>
       </div>
       {captchaURL ? <div className="p-[10px]">{captchaIframe}</div> : confirmPasswordForm}

@@ -67,7 +67,8 @@ const SmartViews = ({ application, featuresController }: Props) => {
               className="mt-2"
               application={application}
               title={c('B6.Preferences.General.Title').t`Upgrade for smart views`}
-              message={c('B6.Preferences.General.Action').t`Create smart views to organize your notes according to conditions you define.`}
+              message={c('B6.Preferences.General.Action')
+                .t`Create smart views to organize your notes according to conditions you define.`}
             />
           )}
           {featuresController.hasSmartViews && (

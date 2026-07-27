@@ -110,7 +110,8 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                   </div>
                   <HorizontalSeparator classes="my-4" />
                   <PreferencesSegment>
-                    <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Database Username`}</Subtitle>
+                    <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle')
+                      .t`Database Username`}</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
                         placeholder={c('B6.Preferences.HomeServer.Placeholder').t`username`}
@@ -120,7 +121,8 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                     </div>
                   </PreferencesSegment>
                   <PreferencesSegment>
-                    <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Database Password`}</Subtitle>
+                    <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle')
+                      .t`Database Password`}</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
                         placeholder={c('B6.Preferences.HomeServer.Placeholder').t`password`}
@@ -169,7 +171,12 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
             </div>
           </div>
           {valuesChanged && (
-            <Button className="mt-3 min-w-20" primary label={c('B6.Preferences.HomeServer.Action').t`Apply & Restart`} onClick={handleConfigurationChange} />
+            <Button
+              className="mt-3 min-w-20"
+              primary
+              label={c('B6.Preferences.HomeServer.Action').t`Apply & Restart`}
+              onClick={handleConfigurationChange}
+            />
           )}
         </AccordionItem>
       </PreferencesSegment>

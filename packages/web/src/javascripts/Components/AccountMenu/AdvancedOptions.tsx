@@ -51,7 +51,9 @@ const AdvancedOptions: FunctionComponent<Props> = ({
 
       if (!identifier) {
         if (privateUsername?.length > 0) {
-          application.alerts.alert(c('B1.Account.SignIn.Error').t`Unable to compute private username.`).catch(console.error)
+          application.alerts
+            .alert(c('B1.Account.SignIn.Error').t`Unable to compute private username.`)
+            .catch(console.error)
         }
         return
       }

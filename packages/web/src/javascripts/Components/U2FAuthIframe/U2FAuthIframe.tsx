@@ -108,8 +108,7 @@ const U2FAuthIframe = () => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
       <div className="mb-2 text-center">
-        {c('B1.Account.SignIn.Info')
-          .t`Insert your hardware security key, then press the button below to authenticate.`}
+        {c('B1.Account.SignIn.Info').t`Insert your hardware security key, then press the button below to authenticate.`}
       </div>
       <Button onClick={beginAuthentication}>{c('B1.Account.SignIn.Action').t`Authenticate`}</Button>
       <div className="mt-2">

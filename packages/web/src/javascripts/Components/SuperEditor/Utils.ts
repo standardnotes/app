@@ -1,5 +1,5 @@
 import { $getRoot, EditorState } from 'lexical'
-import { c, jt } from 'ttag'
+import { c } from 'ttag'
 
 export function truncateString(string: string, limit: number) {
   if (string.length <= limit) {

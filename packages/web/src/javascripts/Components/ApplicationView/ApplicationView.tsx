@@ -128,8 +128,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
         if (!currentLoadErrorDialog.current) {
           alertDialog({
-            text: c('B2.NavSharedUI.Error')
-              .t`Unable to load local database. Please restart the app and try again.`,
+            text: c('B2.NavSharedUI.Error').t`Unable to load local database. Please restart the app and try again.`,
           })
             .then(() => {
               currentLoadErrorDialog.current = null
@@ -139,8 +138,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
         if (!currentWriteErrorDialog.current) {
           currentWriteErrorDialog.current = alertDialog({
-            text: c('B2.NavSharedUI.Error')
-              .t`Unable to write to local database. Please restart the app and try again.`,
+            text: c('B2.NavSharedUI.Error').t`Unable to write to local database. Please restart the app and try again.`,
           })
             .then(() => {
               currentWriteErrorDialog.current = null

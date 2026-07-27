@@ -285,7 +285,9 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
   }, [application, hasSubscription])
 
   if (user && !isEntitledToExtension) {
-    const webClipperLabel = <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Subscription.Label').t`Web Clipper`}</span>
+    const webClipperLabel = (
+      <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Subscription.Label').t`Web Clipper`}</span>
+    )
 
     return (
       <div className="px-3 py-3">
@@ -295,7 +297,8 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
         >
           <Icon className={`h-12 w-12 ${PremiumFeatureIconClass}`} size={'custom'} type={PremiumFeatureIconName} />
         </div>
-        <div className="mb-1 text-center text-lg font-bold">{c('B7.FilesSubscriptionHelp.Subscription.Title').t`Enable Advanced Features`}</div>
+        <div className="mb-1 text-center text-lg font-bold">{c('B7.FilesSubscriptionHelp.Subscription.Title')
+          .t`Enable Advanced Features`}</div>
         <div className="mb-3 text-center">
           {jtString(
             c('B7.FilesSubscriptionHelp.Subscription.Info')
@@ -350,7 +353,10 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
 
   return (
     <div className="bg-contrast p-3">
-      <Menu a11yLabel={c('B7.FilesSubscriptionHelp.Help.Label').t`Extension menu`} className="rounded border border-border bg-default">
+      <Menu
+        a11yLabel={c('B7.FilesSubscriptionHelp.Help.Label').t`Extension menu`}
+        className="rounded border border-border bg-default"
+      >
         {hasSelection && (
           <MenuItem
             className="border-b border-border"
@@ -377,7 +383,9 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           }}
         >
           <Icon type="notes-filled" className="mr-2 text-info" />
-          {isScreenshotMode ? c('B7.FilesSubscriptionHelp.Help.Action').t`Capture visible` : c('B7.FilesSubscriptionHelp.Help.Action').t`Clip full page`}
+          {isScreenshotMode
+            ? c('B7.FilesSubscriptionHelp.Help.Action').t`Capture visible`
+            : c('B7.FilesSubscriptionHelp.Help.Action').t`Clip full page`}
         </MenuItem>
         <MenuItem
           disabled={isScreenshotMode}
@@ -459,13 +467,15 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
             {isSyncing && (
               <>
                 <Spinner className="mx-2.5 h-4 w-4" />
-                <div className="flex-grow py-2 text-sm font-semibold text-info">{c('B2.NavSharedUI.Status').t`Syncing...`}</div>
+                <div className="flex-grow py-2 text-sm font-semibold text-info">{c('B2.NavSharedUI.Status')
+                  .t`Syncing...`}</div>
               </>
             )}
             {hasSyncError && (
               <>
                 <Icon type="warning" className="mx-2.5" />
-                <div className="flex-grow py-2 text-sm font-semibold">{c('B2.NavSharedUI.Error').t`Unable to sync`}</div>
+                <div className="flex-grow py-2 text-sm font-semibold">{c('B2.NavSharedUI.Error')
+                  .t`Unable to sync`}</div>
               </>
             )}
           </div>

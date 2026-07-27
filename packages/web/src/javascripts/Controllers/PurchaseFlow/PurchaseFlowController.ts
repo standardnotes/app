@@ -81,7 +81,9 @@ export class PurchaseFlowController extends AbstractViewController {
     log(LoggingDomain.Purchasing, 'BeginIosIapPurchaseFlow result', result)
 
     if (!result) {
-      void this.alerts.alert(c('B7.FilesSubscriptionHelp.Subscription.Error').t`Your purchase was canceled or failed. Please try again.`)
+      void this.alerts.alert(
+        c('B7.FilesSubscriptionHelp.Subscription.Error').t`Your purchase was canceled or failed. Please try again.`,
+      )
       return
     }
 

@@ -143,7 +143,10 @@ export class SubscriptionManager
 
       return result.data
     } catch (error) {
-      return { success: false, message: c('B7.FilesSubscriptionHelp.Subscription.Error').t`Could not accept invitation.` }
+      return {
+        success: false,
+        message: c('B7.FilesSubscriptionHelp.Subscription.Error').t`Could not accept invitation.`,
+      }
     }
   }
 

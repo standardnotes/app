@@ -139,7 +139,9 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     const currentPassword = this.state.formData.currentPassword
     const newPass = this.state.formData.newPassword
     if (!currentPassword || currentPassword.length === 0) {
-      this.application.alerts.alert(c('B1.Account.Password.Error').t`Please enter your current password.`).catch(console.error)
+      this.application.alerts
+        .alert(c('B1.Account.Password.Error').t`Please enter your current password.`)
+        .catch(console.error)
       return false
     }
 
@@ -159,7 +161,10 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
     if (!this.application.sessions.getUser()?.email) {
       this.application.alerts
-        .alert(c('B1.Account.Password.Error').t`We don't have your email stored. Please sign out then log back in to fix this issue.`)
+        .alert(
+          c('B1.Account.Password.Error')
+            .t`We don't have your email stored. Please sign out then log back in to fix this issue.`,
+        )
         .catch(console.error)
       this.setFormDataState({
         status: undefined,

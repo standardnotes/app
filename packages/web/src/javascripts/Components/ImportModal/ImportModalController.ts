@@ -176,7 +176,8 @@ export class ImportModalController extends AbstractViewController {
         this.updateFile({
           ...file,
           status: 'error',
-          error: error instanceof Error ? error : new Error(c('B1.Account.ImportExport.Error').t`Could not import file`),
+          error:
+            error instanceof Error ? error : new Error(c('B1.Account.ImportExport.Error').t`Could not import file`),
         })
         console.error(error)
       }

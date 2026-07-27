@@ -50,7 +50,8 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">
-              <Subtitle>{c('B6.Preferences.Backups.Subtitle').t`Automatically save encrypted backups of your uploaded files to this computer.`}</Subtitle>
+              <Subtitle>{c('B6.Preferences.Backups.Subtitle')
+                .t`Automatically save encrypted backups of your uploaded files to this computer.`}</Subtitle>
             </div>
             <Switch onChange={toggleBackups} checked={backupsEnabled} />
           </div>
@@ -58,7 +59,8 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
           {!backupsEnabled && (
             <>
               <HorizontalSeparator classes="mt-2.5 mb-4" />
-              <Text>{c('B6.Preferences.Backups.Status').t`File backups are not enabled. Enable to choose where your files are backed up.`}</Text>
+              <Text>{c('B6.Preferences.Backups.Status')
+                .t`File backups are not enabled. Enable to choose where your files are backed up.`}</Text>
             </>
           )}
         </PreferencesSegment>
@@ -81,8 +83,16 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
                 />
 
                 <div className="mt-2.5 flex flex-row">
-                  <Button label={c('B6.Preferences.Backups.Action').t`Open Location`} className={'mr-3 text-xs'} onClick={openBackupsLocation} />
-                  <Button label={c('B6.Preferences.Backups.Action').t`Change Location`} className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
+                  <Button
+                    label={c('B6.Preferences.Backups.Action').t`Open Location`}
+                    className={'mr-3 text-xs'}
+                    onClick={openBackupsLocation}
+                  />
+                  <Button
+                    label={c('B6.Preferences.Backups.Action').t`Change Location`}
+                    className={'mr-3 text-xs'}
+                    onClick={changeBackupsLocation}
+                  />
                 </div>
               </>
             </PreferencesSegment>

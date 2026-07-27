@@ -85,7 +85,8 @@ const EditorDefaults = ({ application }: Props) => {
           <HorizontalSeparator classes="my-4" />
           <div>
             <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Line height`}</Subtitle>
-            <Text>{c('B6.Preferences.Appearance.Action').t`Sets the line height (leading) in plaintext and Super notes`}</Text>
+            <Text>{c('B6.Preferences.Appearance.Action')
+              .t`Sets the line height (leading) in plaintext and Super notes`}</Text>
             <div className="mt-2">
               <Dropdown
                 label={c('B6.Preferences.Appearance.Action').t`Select the line height for plaintext notes`}

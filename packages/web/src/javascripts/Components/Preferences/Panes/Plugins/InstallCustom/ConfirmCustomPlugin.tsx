@@ -59,11 +59,19 @@ const ConfirmCustomPlugin: FunctionComponent<{
       })}
 
       <div className="mt-3 flex flex-row">
-        <Button className="min-w-20" label={c('B6.Preferences.Other.Action').t`Cancel`} onClick={() => callback(false)} />
+        <Button
+          className="min-w-20"
+          label={c('B6.Preferences.Other.Action').t`Cancel`}
+          onClick={() => callback(false)}
+        />
 
         <div className="min-w-3" />
 
-        <Button className="min-w-20" label={c('B6.Preferences.Other.Action').t`Install`} onClick={() => callback(true)} />
+        <Button
+          className="min-w-20"
+          label={c('B6.Preferences.Other.Action').t`Install`}
+          onClick={() => callback(true)}
+        />
       </div>
     </PreferencesSegment>
   )

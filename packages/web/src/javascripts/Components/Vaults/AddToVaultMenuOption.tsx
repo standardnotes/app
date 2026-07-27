@@ -73,7 +73,10 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
             : c('B2.NavSharedUI.Action').t`Move out of vaults`}
         </MenuItem>
       )}
-      {!vaults.length && <div className="flex flex-col items-center justify-center py-1">{c('B2.NavSharedUI.Info').t`No vaults found`}</div>}
+      {!vaults.length && (
+        <div className="flex flex-col items-center justify-center py-1">{c('B2.NavSharedUI.Info')
+          .t`No vaults found`}</div>
+      )}
       {vaults.map((vault) => {
         if (singleItemVault) {
           return null

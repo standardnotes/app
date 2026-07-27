@@ -17,7 +17,9 @@ const statusString = (featureStatus: FeatureStatus, expiredDate: Date | undefine
     case FeatureStatus.InCurrentPlanButExpired:
       if (expiredDate) {
         const expiredDateString = dateToLocalizedString(expiredDate)
-        return jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Your subscription expired on ${expiredDateString}`)
+        return jtString(
+          c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Your subscription expired on ${expiredDateString}`,
+        )
       } else {
         return c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your subscription expired.`
       }
@@ -25,12 +27,15 @@ const statusString = (featureStatus: FeatureStatus, expiredDate: Date | undefine
       return c('B7.FilesSubscriptionHelp.Subscription.Info').t`You do not have an active subscription`
     case FeatureStatus.NotInCurrentPlan: {
       const featureNameLabel = featureName
-      return jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Please upgrade your plan to access ${featureNameLabel}`)
+      return jtString(
+        c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Please upgrade your plan to access ${featureNameLabel}`,
+      )
     }
     default: {
       const featureNameLabel = featureName
       return jtString(
-        c('B7.FilesSubscriptionHelp.Subscription.Info').jt`${featureNameLabel} is valid and you should not be seeing this message`,
+        c('B7.FilesSubscriptionHelp.Subscription.Info')
+          .jt`${featureNameLabel} is valid and you should not be seeing this message`,
       )
     }
   }

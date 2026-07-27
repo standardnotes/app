@@ -103,7 +103,8 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
     <div key={prompt.id} className="mb-3 w-full">
       {prompt.validation === ChallengeValidation.ProtectionSessionDuration ? (
         <div className="min-w-76">
-          <div className="mb-2 text-sm font-medium">{c('B4.Security.Challenge.Label').t`Allow protected access for`}</div>
+          <div className="mb-2 text-sm font-medium">{c('B4.Security.Challenge.Label')
+            .t`Allow protected access for`}</div>
           <div className="flex items-center justify-between rounded bg-passive-4 p-1">
             {ProtectionSessionDurations.map((option) => {
               const selected = option.valueInSeconds === values[prompt.id].value

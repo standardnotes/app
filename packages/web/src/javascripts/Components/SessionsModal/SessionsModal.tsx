@@ -156,25 +156,26 @@ const SessionsModalContent: FunctionComponent<{
                     )
 
                     return (
-                    <li key={session.uuid}>
-                      <h2 className="text-base font-bold">{session.device_info}</h2>
-                      {session.current ? (
-                        <span className="font-bold text-info">{c('B1.Account.Session.Label').t`Current session`}</span>
-                      ) : (
-                        <>
-                          <p>{c('B1.Account.Session.Info').jt`Signed in on ${signedInDate}`}</p>
-                          <Button
-                            primary
-                            small
-                            colorStyle="danger"
-                            disabled={session.revoking}
-                            onClick={() => setRevokingSessionUuid(session.uuid)}
-                          >
-                            <span>{c('B1.Account.Session.Action').t`Revoke`}</span>
-                          </Button>
-                        </>
-                      )}
-                    </li>
+                      <li key={session.uuid}>
+                        <h2 className="text-base font-bold">{session.device_info}</h2>
+                        {session.current ? (
+                          <span className="font-bold text-info">{c('B1.Account.Session.Label')
+                            .t`Current session`}</span>
+                        ) : (
+                          <>
+                            <p>{c('B1.Account.Session.Info').jt`Signed in on ${signedInDate}`}</p>
+                            <Button
+                              primary
+                              small
+                              colorStyle="danger"
+                              disabled={session.revoking}
+                              onClick={() => setRevokingSessionUuid(session.uuid)}
+                            >
+                              <span>{c('B1.Account.Session.Action').t`Revoke`}</span>
+                            </Button>
+                          </>
+                        )}
+                      </li>
                     )
                   })}
                 </ul>

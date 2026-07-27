@@ -294,27 +294,27 @@ const NoteConflictResolutionModal = ({
         {allVersions.map((note, index) => {
           const versionNumber = index + 1
           return (
-          <ConflictListItem
-            disabled={isPerformingAction}
-            isSelected={selectedVersions.includes(note.uuid)}
-            onClick={() => {
-              setSelectedVersions((versions) => {
-                if (!versions.includes(note.uuid)) {
-                  return versions.length > 1 ? versions.slice(1).concat(note.uuid) : versions.concat(note.uuid)
-                }
+            <ConflictListItem
+              disabled={isPerformingAction}
+              isSelected={selectedVersions.includes(note.uuid)}
+              onClick={() => {
+                setSelectedVersions((versions) => {
+                  if (!versions.includes(note.uuid)) {
+                    return versions.length > 1 ? versions.slice(1).concat(note.uuid) : versions.concat(note.uuid)
+                  }
 
-                return versions.length > 1 ? versions.filter((version) => version !== note.uuid) : versions
-              })
-              setSelectedMobileTab('preview')
-            }}
-            key={note.uuid}
-            title={
-              index === 0
-                ? c('B3.Notes.NoteActions.Label').t`Current version`
-                : (c('B3.Notes.NoteActions.Label').jt`Version ${versionNumber}` as unknown as string)
-            }
-            note={note}
-          />
+                  return versions.length > 1 ? versions.filter((version) => version !== note.uuid) : versions
+                })
+                setSelectedMobileTab('preview')
+              }}
+              key={note.uuid}
+              title={
+                index === 0
+                  ? c('B3.Notes.NoteActions.Label').t`Current version`
+                  : (c('B3.Notes.NoteActions.Label').jt`Version ${versionNumber}` as unknown as string)
+              }
+              note={note}
+            />
           )
         })}
       </div>

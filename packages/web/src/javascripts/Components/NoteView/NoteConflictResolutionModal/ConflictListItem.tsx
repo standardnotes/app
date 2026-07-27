@@ -1,5 +1,5 @@
 import { SNNote, classNames } from '@standardnotes/snjs'
-import { c, jt } from 'ttag'
+import { c } from 'ttag'
 import { MouseEventHandler } from 'react'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useApplication } from '../../ApplicationProvider'

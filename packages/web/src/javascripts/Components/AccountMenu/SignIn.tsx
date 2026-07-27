@@ -276,7 +276,9 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         {error ? <div className="my-2 text-danger">{error}</div> : null}
         <Button
           className="mb-3 mt-1"
-          label={isSigningIn ? c('B1.Account.SignIn.Action').t`Signing in...` : c('B1.Account.SignIn.Action').t`Sign in`}
+          label={
+            isSigningIn ? c('B1.Account.SignIn.Action').t`Signing in...` : c('B1.Account.SignIn.Action').t`Sign in`
+          }
           primary
           onClick={handleSignInFormSubmit}
           disabled={isSigningIn}

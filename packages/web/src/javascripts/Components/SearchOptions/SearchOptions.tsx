@@ -23,9 +23,17 @@ const SearchOptions = ({ searchOptions }: Props) => {
         onSelect={toggleIncludeProtectedContents}
       />
 
-      <Bubble label={c('B2.NavSharedUI.Label').t`Archived`} selected={includeArchived} onSelect={searchOptions.toggleIncludeArchived} />
+      <Bubble
+        label={c('B2.NavSharedUI.Label').t`Archived`}
+        selected={includeArchived}
+        onSelect={searchOptions.toggleIncludeArchived}
+      />
 
-      <Bubble label={c('B2.NavSharedUI.Label').t`Trashed`} selected={includeTrashed} onSelect={searchOptions.toggleIncludeTrashed} />
+      <Bubble
+        label={c('B2.NavSharedUI.Label').t`Trashed`}
+        selected={includeTrashed}
+        onSelect={searchOptions.toggleIncludeTrashed}
+      />
     </div>
   )
 }

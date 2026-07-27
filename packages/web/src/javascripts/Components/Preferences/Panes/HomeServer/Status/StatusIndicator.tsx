@@ -48,7 +48,9 @@ const StatusIndicator = ({ status, className, homeServerService }: Props) => {
         const email = signedInUser.email
         if (isUsingHomeServer) {
           setSignInStatusMessage(
-            jtString(c('B6.Preferences.HomeServer.Status').jt`You are currently signed into your home server under ${email}`),
+            jtString(
+              c('B6.Preferences.HomeServer.Status').jt`You are currently signed into your home server under ${email}`,
+            ),
           )
           setSignInStatusClassName('bg-success text-success-contrast')
           setSignInStatusIcon('check')

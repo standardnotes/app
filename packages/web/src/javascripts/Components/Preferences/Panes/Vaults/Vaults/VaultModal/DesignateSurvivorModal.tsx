@@ -63,7 +63,12 @@ const DesignateSurvivorModal = ({
   )
 
   return (
-    <Modal title={c('B6.Preferences.Vaults.Title').t`Designate survivor`} close={closeModal} actions={modalActions} className="px-4.5 py-4">
+    <Modal
+      title={c('B6.Preferences.Vaults.Title').t`Designate survivor`}
+      close={closeModal}
+      actions={modalActions}
+      className="px-4.5 py-4"
+    >
       <div className="flex flex-col gap-3">
         {members.map((member) => {
           const isSelected = selectedSurvivor?.uuid === member.uuid

@@ -22,8 +22,10 @@ const FileBackupsCrossPlatform = ({ application }: Props) => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>{c('B6.Preferences.Backups.Title').t`Automatic file backups`}</Title>
-          <Subtitle>{c('B6.Preferences.Backups.Subtitle').t`Automatically save encrypted backups of your files.`}</Subtitle>
-          <Text className="mt-3">{c('B6.Preferences.Backups.Info').t`To enable file backups, use the Standard Notes desktop application.`}</Text>
+          <Subtitle>{c('B6.Preferences.Backups.Subtitle')
+            .t`Automatically save encrypted backups of your files.`}</Subtitle>
+          <Text className="mt-3">{c('B6.Preferences.Backups.Info')
+            .t`To enable file backups, use the Standard Notes desktop application.`}</Text>
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>

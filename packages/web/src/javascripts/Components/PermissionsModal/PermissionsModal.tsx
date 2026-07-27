@@ -50,7 +50,8 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
         <div className="text-base">
           <strong>
             {jtString(
-              c('B2.NavSharedUI.Info').jt`${component.displayName} would like to interact with your ${permissionsString}`,
+              c('B2.NavSharedUI.Info')
+                .jt`${component.displayName} would like to interact with your ${permissionsString}`,
             )}
           </strong>
         </div>

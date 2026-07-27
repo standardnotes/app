@@ -50,7 +50,10 @@ const ServerPicker = ({ className }: Props) => {
     } else if (type === 'home server') {
       if (!application.homeServer) {
         application.alerts
-          .alert(c('B1.Account.SignIn.Error').t`Home server is not running. Please open the prefences and home server tab to start it.`)
+          .alert(
+            c('B1.Account.SignIn.Error')
+              .t`Home server is not running. Please open the prefences and home server tab to start it.`,
+          )
           .catch(console.error)
 
         return
@@ -59,7 +62,10 @@ const ServerPicker = ({ className }: Props) => {
       const homeServerUrl = await application.homeServer.getHomeServerUrl()
       if (!homeServerUrl) {
         application.alerts
-          .alert(c('B1.Account.SignIn.Error').t`Home server is not running. Please open the prefences and home server tab to start it.`)
+          .alert(
+            c('B1.Account.SignIn.Error')
+              .t`Home server is not running. Please open the prefences and home server tab to start it.`,
+          )
           .catch(console.error)
 
         return
@@ -74,7 +80,9 @@ const ServerPicker = ({ className }: Props) => {
       [
         { label: c('B1.Account.SignIn.Option').t`Default`, value: 'standard' },
         { label: c('B1.Account.SignIn.Option').t`Custom`, value: 'custom' },
-      ].concat(isDesktopApplication() ? [{ label: c('B1.Account.SignIn.Option').t`Home Server`, value: 'home server' }] : []) as {
+      ].concat(
+        isDesktopApplication() ? [{ label: c('B1.Account.SignIn.Option').t`Home Server`, value: 'home server' }] : [],
+      ) as {
         label: string
         value: ServerType
       }[],

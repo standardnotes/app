@@ -151,7 +151,8 @@ const FileMenuOptions: FunctionComponent<Props> = ({
                 console.error(error)
                 addToast({
                   type: ToastType.Error,
-                  message: error.message || c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to download files as archive`,
+                  message:
+                    error.message || c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to download files as archive`,
                 })
               })
               closeMenu()
@@ -189,7 +190,8 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <div className="px-3 pb-0.5 pt-1 text-xs font-medium text-neutral">
         {!hasSelectedMultipleFiles && (
           <div className="mb-1">
-            <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Files.Info').t`File ID:`}</span> {selectedFiles[0].uuid}
+            <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Files.Info').t`File ID:`}</span>{' '}
+            {selectedFiles[0].uuid}
           </div>
         )}
         <div>

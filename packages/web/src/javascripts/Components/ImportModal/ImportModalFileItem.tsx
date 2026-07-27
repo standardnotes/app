@@ -189,7 +189,8 @@ const ImportModalFileItem = ({
                 c('B1.Account.ImportExport.Status').t`Could not auto-detect service. Please select manually.`}
               {file.status === 'parsing' && c('B1.Account.ImportExport.Status').t`Parsing...`}
               {file.status === 'importing' && c('B1.Account.ImportExport.Status').t`Importing...`}
-              {file.status === 'uploading-files' && c('B1.Account.ImportExport.Status').t`Uploading and embedding files...`}
+              {file.status === 'uploading-files' &&
+                c('B1.Account.ImportExport.Status').t`Uploading and embedding files...`}
               {file.status === 'error' && file.error.message}
               <ImportFinishedStatus file={file} />
             </div>

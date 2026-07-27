@@ -177,7 +177,11 @@ const Vaults = observer(() => {
               </div>
             )}
             <div className="mt-2.5 flex flex-row">
-              <Button label={c('B6.Preferences.Vaults.Action').t`Add New Contact`} className="mr-3" onClick={createNewContact} />
+              <Button
+                label={c('B6.Preferences.Vaults.Action').t`Add New Contact`}
+                className="mr-3"
+                onClick={createNewContact}
+              />
             </div>
           </PreferencesSegment>
         </PreferencesGroup>
@@ -186,7 +190,8 @@ const Vaults = observer(() => {
         <PreferencesGroup>
           <PreferencesSegment>
             <Title>{c('B6.Preferences.Vaults.Title').t`CollaborationID`}</Title>
-            <Subtitle>{c('B6.Preferences.Vaults.Subtitle').t`Share your CollaborationID with collaborators to join their vaults.`}</Subtitle>
+            <Subtitle>{c('B6.Preferences.Vaults.Subtitle')
+              .t`Share your CollaborationID with collaborators to join their vaults.`}</Subtitle>
             {contactService.isCollaborationEnabled() ? (
               <>
                 <code className="mt-2.5 overflow-hidden whitespace-pre-wrap break-words rounded border border-border bg-contrast p-3">
@@ -238,14 +243,20 @@ const Vaults = observer(() => {
             <div className="mt-2.5 flex gap-3">
               <Button label={c('B6.Preferences.Vaults.Action').t`Create Vault`} onClick={createNewVault} />
               {hasAccount && isSharedVaultsEnabled && (
-                <Button label={c('B6.Preferences.Vaults.Action').t`Create Shared Vault`} onClick={createNewSharedVault} />
+                <Button
+                  label={c('B6.Preferences.Vaults.Action').t`Create Shared Vault`}
+                  onClick={createNewSharedVault}
+                />
               )}
             </div>
           ) : (
             <div className="mt-3.5">
               <NoProSubscription
                 application={application}
-                text={<span>{c('B6.Preferences.Vaults.Info').t`Please upgrade in order to increase your vault limit.`}</span>}
+                text={
+                  <span>{c('B6.Preferences.Vaults.Info')
+                    .t`Please upgrade in order to increase your vault limit.`}</span>
+                }
               />
             </div>
           )}

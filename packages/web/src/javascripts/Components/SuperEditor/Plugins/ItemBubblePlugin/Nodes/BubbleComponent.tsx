@@ -7,7 +7,7 @@ import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { useResponsiveAppPane } from '@/Components/Panes/ResponsivePaneProvider'
 import { LexicalNode } from 'lexical'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { c, jt } from 'ttag'
+import { c } from 'ttag'
 
 export type BubbleComponentProps = Readonly<{
   itemUuid: string

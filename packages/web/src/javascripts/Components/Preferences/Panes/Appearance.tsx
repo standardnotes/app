@@ -109,7 +109,8 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
             <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
                 <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Disable translucent UI`}</Subtitle>
-                <Text>{c('B6.Preferences.Appearance.Info').t`Use opaque style for UI elements instead of translucency`}</Text>
+                <Text>{c('B6.Preferences.Appearance.Info')
+                  .t`Use opaque style for UI elements instead of translucency`}</Text>
               </div>
               <Switch onChange={toggleTranslucentUI} checked={!useTranslucentUI} />
             </div>
@@ -117,7 +118,8 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
             <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
                 <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Use system color scheme`}</Subtitle>
-                <Text>{c('B6.Preferences.Appearance.Info').t`Automatically change active theme based on your system settings.`}</Text>
+                <Text>{c('B6.Preferences.Appearance.Info')
+                  .t`Automatically change active theme based on your system settings.`}</Text>
               </div>
               <Switch onChange={toggleUseDeviceSettings} checked={useDeviceSettings} />
             </div>

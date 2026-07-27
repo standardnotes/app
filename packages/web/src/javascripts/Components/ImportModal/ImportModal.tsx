@@ -50,7 +50,9 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
         disabled: !isReadyToImport || (addImportsToTag && !shouldCreateTag && !existingTagForImports),
       },
       {
-        label: importSuccessOrError ? c('B1.Account.ImportExport.Action').t`Close` : c('B1.Account.ImportExport.Action').t`Cancel`,
+        label: importSuccessOrError
+          ? c('B1.Account.ImportExport.Action').t`Close`
+          : c('B1.Account.ImportExport.Action').t`Cancel`,
         type: 'cancel',
         onClick: close,
         mobileSlot: 'left',
@@ -78,7 +80,12 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
 
   return (
     <ModalOverlay isOpen={isVisible} close={close}>
-      <Modal title={c('B1.Account.ImportExport.Title').t`Import`} close={close} actions={modalActions} className="flex flex-col">
+      <Modal
+        title={c('B1.Account.ImportExport.Title').t`Import`}
+        close={close}
+        actions={modalActions}
+        className="flex flex-col"
+      >
         <div className="min-h-0 flex-grow overflow-y-auto px-4 py-4">
           {!files.length && <ImportModalInitialPage setFiles={setFiles} selectFiles={selectFiles} />}
           {files.length > 0 && (

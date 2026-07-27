@@ -81,9 +81,7 @@ export class Database {
       request.onerror = (event) => {
         const target = event.target as any
         if (target.errorCode) {
-          this.showAlert(
-            c('B2.NavSharedUI.Error').jt`Offline database issue: ${target.errorCode}` as unknown as string,
-          )
+          this.showAlert(c('B2.NavSharedUI.Error').jt`Offline database issue: ${target.errorCode}` as unknown as string)
         } else {
           this.displayOfflineAlert()
         }

@@ -27,9 +27,11 @@ const VideoPreview = ({ file, filesController, objectUrl, isEmbeddedInSuper }: P
     return (
       <div className="flex flex-grow flex-col items-center justify-center">
         <NoPreviewIllustration className="mb-4 h-30 w-30" />
-        <div className="mb-2 text-base font-bold">{c('B7.FilesSubscriptionHelp.Files.Info').t`This video can't be previewed.`}</div>
+        <div className="mb-2 text-base font-bold">{c('B7.FilesSubscriptionHelp.Files.Info')
+          .t`This video can't be previewed.`}</div>
         <div className="mb-4 max-w-[35ch] text-center text-sm text-passive-0">
-          {c('B7.FilesSubscriptionHelp.Files.Info').t`To view this file, download it and open it using another application.`}
+          {c('B7.FilesSubscriptionHelp.Files.Info')
+            .t`To view this file, download it and open it using another application.`}
         </div>
         <Button
           primary

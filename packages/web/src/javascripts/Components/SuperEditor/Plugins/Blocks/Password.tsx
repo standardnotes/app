@@ -41,7 +41,8 @@ export function GetDynamicPasswordBlocks(editor: LexicalEditor, queryString: str
 
   return [
     new BlockPickerOption(
-      c('B3.Notes.EditorToolbar.Action').jt`Generate ${length}-character cryptographically secure password` as unknown as string,
+      c('B3.Notes.EditorToolbar.Action')
+        .jt`Generate ${length}-character cryptographically secure password` as unknown as string,
       {
         iconName: 'password',
         keywords: ['password', 'secure'],

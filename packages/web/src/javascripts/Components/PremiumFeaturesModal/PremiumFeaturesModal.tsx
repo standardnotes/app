@@ -33,7 +33,11 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   return (
     <Modal
       close={onClose}
-      title={isShowingSuperDemo ? c('B7.FilesSubscriptionHelp.Subscription.Title').t`Try out Super` : c('B7.FilesSubscriptionHelp.Subscription.Title').t`Upgrade`}
+      title={
+        isShowingSuperDemo
+          ? c('B7.FilesSubscriptionHelp.Subscription.Title').t`Try out Super`
+          : c('B7.FilesSubscriptionHelp.Subscription.Title').t`Upgrade`
+      }
       className={isShowingSuperDemo ? '' : 'px-6 py-5'}
       customHeader={isShowingSuperDemo ? undefined : <></>}
       actions={

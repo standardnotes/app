@@ -102,7 +102,8 @@ const FilePreview = ({
     return (
       <div className="flex flex-grow flex-col items-center justify-center">
         <ProtectedIllustration className="mb-4 h-30 w-30" />
-        <div className="mb-2 text-base font-bold">{c('B7.FilesSubscriptionHelp.Files.Info').t`This file is protected.`}</div>
+        <div className="mb-2 text-base font-bold">{c('B7.FilesSubscriptionHelp.Files.Info')
+          .t`This file is protected.`}</div>
         <p className="max-w-[35ch] text-center text-sm text-passive-0">
           {hasProtectionSources
             ? c('B7.FilesSubscriptionHelp.Files.Info').t`Authenticate to view this file.`
@@ -116,7 +117,9 @@ const FilePreview = ({
             </Button>
           )}
           <Button primary onClick={() => application.protections.authorizeItemAccess(file)}>
-            {hasProtectionSources ? c('B7.FilesSubscriptionHelp.Files.Info').t`Authenticate` : c('B7.FilesSubscriptionHelp.Files.Info').t`View file`}
+            {hasProtectionSources
+              ? c('B7.FilesSubscriptionHelp.Files.Info').t`Authenticate`
+              : c('B7.FilesSubscriptionHelp.Files.Info').t`View file`}
           </Button>
         </div>
       </div>

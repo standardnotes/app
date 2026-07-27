@@ -9,8 +9,7 @@ const OfflineRestricted: FunctionComponent = () => {
           <div className={'sk-panel-section stretch'}>
             <div className={'sk-panel-column'} />
             <div className="text-base font-bold">
-              {c('B2.NavSharedUI.Info')
-                .t`You have restricted this component to not use a hosted version.`}
+              {c('B2.NavSharedUI.Info').t`You have restricted this component to not use a hosted version.`}
             </div>
             <div className={'sk-subtitle'}>
               {c('B2.NavSharedUI.Info').t`Locally-installed components are not available in the web application.`}
@@ -18,7 +17,8 @@ const OfflineRestricted: FunctionComponent = () => {
             <div className={'sk-panel-row'} />
             <div className={'sk-panel-row'}>
               <div className={'sk-panel-column'}>
-                <div className={'sk-p'}>{c('B2.NavSharedUI.Info').t`To continue, choose from the following options:`}</div>
+                <div className={'sk-p'}>{c('B2.NavSharedUI.Info')
+                  .t`To continue, choose from the following options:`}</div>
                 <ul className="mt-3 list-disc pl-8">
                   <li className="sk-p mb-1">
                     {c('B2.NavSharedUI.Info')

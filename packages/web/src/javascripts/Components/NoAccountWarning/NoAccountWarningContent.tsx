@@ -26,7 +26,8 @@ const NoAccountWarningContent = ({ accountMenuController, noAccountWarningContro
 
   return (
     <div className="mt-4 grid grid-cols-1 rounded-md border border-border p-4">
-      <h1 className="sk-h3 m-0 text-base font-semibold lg:text-sm">{c('B1.Account.Session.Title').t`Data not backed up`}</h1>
+      <h1 className="sk-h3 m-0 text-base font-semibold lg:text-sm">{c('B1.Account.Session.Title')
+        .t`Data not backed up`}</h1>
       <p className="col-start-1 col-end-3 m-0 mt-1 text-base lg:text-sm">
         {c('B1.Account.Session.Info')
           .t`Sign in or register to sync your notes to your other devices with end-to-end encryption.`}

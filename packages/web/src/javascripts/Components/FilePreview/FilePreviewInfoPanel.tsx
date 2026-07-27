@@ -27,7 +27,8 @@ const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
         {formatSizeToReadableString(file.encryptedSize)}
       </div>
       <div className="mb-3">
-        <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Files.Info').t`Created:`}</span> {file.created_at.toLocaleString()}
+        <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Files.Info').t`Created:`}</span>{' '}
+        {file.created_at.toLocaleString()}
       </div>
       <div className="mb-3">
         <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Files.Info').t`Last Modified:`}</span>{' '}

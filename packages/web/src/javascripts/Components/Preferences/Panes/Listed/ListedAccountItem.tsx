@@ -34,8 +34,16 @@ const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, a
         {isLoading ? <Spinner className="h-4 w-4" /> : null}
         {accountInfo && (
           <>
-            <LinkButton className="mr-2" label={c('B6.Preferences.Other.Action').t`Open Blog`} link={accountInfo.author_url} />
-            <LinkButton className="mr-2" label={c('B6.Preferences.Other.Action').t`Settings`} link={accountInfo.settings_url} />
+            <LinkButton
+              className="mr-2"
+              label={c('B6.Preferences.Other.Action').t`Open Blog`}
+              link={accountInfo.author_url}
+            />
+            <LinkButton
+              className="mr-2"
+              label={c('B6.Preferences.Other.Action').t`Settings`}
+              link={accountInfo.settings_url}
+            />
           </>
         )}
       </div>

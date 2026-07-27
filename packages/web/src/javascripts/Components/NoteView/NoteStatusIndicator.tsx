@@ -122,7 +122,8 @@ const NoteStatusIndicator = ({
             {status.description && <div className="mt-0.5">{status.description}</div>}
           </>
         ) : (
-          <div className="text-sm font-bold text-warning">{c('B3.Notes.EditingUI.Warning').t`Sync taking too long`}</div>
+          <div className="text-sm font-bold text-warning">{c('B3.Notes.EditingUI.Warning')
+            .t`Sync taking too long`}</div>
         )}
       </IndicatorWithTooltip>
     )
@@ -148,9 +149,7 @@ const NoteStatusIndicator = ({
         <div className="text-sm font-bold">{status.message}</div>
         {status.description && <div className="mt-0.5">{status.description}</div>}
         {lastSyncedRelativeTime && (
-          <div className="mt-0.5">
-            {c('B3.Notes.EditingUI.Status').jt`Last synced ${lastSyncedRelativeTime}`}
-          </div>
+          <div className="mt-0.5">{c('B3.Notes.EditingUI.Status').jt`Last synced ${lastSyncedRelativeTime}`}</div>
         )}
         {status.type === 'waiting' ? (
           <Button

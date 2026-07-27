@@ -113,7 +113,8 @@ export const UpgradePrompt = ({
                   {c('B7.FilesSubscriptionHelp.Subscription.Info')
                     .t`Access to all note types, including Super, markdown, rich text, authenticator, tasks, and spreadsheets`}
                 </li>
-                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Access to Daily Notebooks and Moments journals`}</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info')
+                  .t`Access to Daily Notebooks and Moments journals`}</li>
                 <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Note history going back indefinitely`}</li>
                 <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Nested folders for your tags`}</li>
                 <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Premium support`}</li>

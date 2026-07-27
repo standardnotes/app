@@ -57,7 +57,12 @@ const ImagePreview: FunctionComponent<Props> = ({
 
   const imageResizer = (
     <>
-      <span className="mr-1.5">{isEmbeddedInSuper ? c('B7.FilesSubscriptionHelp.Files.Info').t`Size` : c('B7.FilesSubscriptionHelp.Files.Info').t`Zoom`}:</span>
+      <span className="mr-1.5">
+        {isEmbeddedInSuper
+          ? c('B7.FilesSubscriptionHelp.Files.Info').t`Size`
+          : c('B7.FilesSubscriptionHelp.Files.Info').t`Zoom`}
+        :
+      </span>
       <IconButton
         className="rounded p-1 hover:bg-contrast"
         icon={'subtract' as IconType}

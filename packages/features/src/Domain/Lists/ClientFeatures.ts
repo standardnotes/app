@@ -19,7 +19,8 @@ export function clientFeatures(): ClientFeatureDescription[] {
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       identifier: NativeFeatureIdentifier.TYPES.SmartFilters,
       permission_name: PermissionName.SmartFilters,
-      description: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Create smart filters for viewing notes matching specific criteria.`,
+      description: c('B7.FilesSubscriptionHelp.Subscription.Info')
+        .t`Create smart filters for viewing notes matching specific criteria.`,
     },
     {
       name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Encrypted files`,

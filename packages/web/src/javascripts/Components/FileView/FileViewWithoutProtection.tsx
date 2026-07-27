@@ -90,7 +90,11 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
   }, [addDragTarget, file, removeDragTarget, application.linkingController])
 
   return (
-    <div className="sn-component section editor" aria-label={c('B7.FilesSubscriptionHelp.Files.Label').t`File`} ref={fileDragTargetRef}>
+    <div
+      className="sn-component section editor"
+      aria-label={c('B7.FilesSubscriptionHelp.Files.Label').t`File`}
+      ref={fileDragTargetRef}
+    >
       <div className="flex flex-col">
         {isReadonly && (
           <div className="bg-warning-faded relative flex items-center px-3.5 py-2 text-sm text-accessory-tint-3">

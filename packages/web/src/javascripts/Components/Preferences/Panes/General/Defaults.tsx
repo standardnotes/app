@@ -71,7 +71,8 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
             <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
                 <Subtitle>{c('B6.Preferences.General.Subtitle').t`Always ask before closing app (Android)`}</Subtitle>
-                <Text>{c('B6.Preferences.General.Info').t`Whether a confirmation dialog should be shown before closing the app.`}</Text>
+                <Text>{c('B6.Preferences.General.Info')
+                  .t`Whether a confirmation dialog should be shown before closing the app.`}</Text>
               </div>
               <Switch onChange={toggleAndroidConfirmBeforeExit} checked={androidConfirmBeforeExit} />
             </div>
@@ -91,7 +92,8 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
         <HorizontalSeparator classes="my-4" />
         <div className="flex justify-between gap-2 md:items-center">
           <div className="flex flex-col">
-            <Subtitle>{c('B6.Preferences.General.Subtitle').t`Add all parent tags when adding a nested tag to a note`}</Subtitle>
+            <Subtitle>{c('B6.Preferences.General.Subtitle')
+              .t`Add all parent tags when adding a nested tag to a note`}</Subtitle>
             <Text>
               {c('B6.Preferences.General.Info')
                 .t`When enabled, adding a nested tag to a note will automatically add all associated parent tags.`}
