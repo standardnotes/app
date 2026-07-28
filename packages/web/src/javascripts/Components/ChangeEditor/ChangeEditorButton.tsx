@@ -59,7 +59,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onCl
     return application.commands.addWithShortcut(
       CHANGE_EDITOR_COMMAND,
       'Current note',
-      c('B3.Notes.EditingUI.Action').t`Change note type`,
+      c('B4.Notes.EditingUI.Action').t`Change note type`,
       () => {
         void toggleMenu()
       },
@@ -77,14 +77,14 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onCl
   return (
     <div ref={containerRef}>
       <RoundIconButton
-        label={c('B3.Notes.EditingUI.Label').jt`Change note type (${shortcutLabel})` as unknown as string}
+        label={c('B4.Notes.EditingUI.Label').jt`Change note type (${shortcutLabel})` as unknown as string}
         onClick={toggleMenu}
         ref={buttonRef}
         icon={selectedEditorIcon}
         iconClassName={`text-accessory-tint-${selectedEditorIconTint}`}
       />
       <Popover
-        title={c('B3.Notes.EditingUI.Title').t`Change note type`}
+        title={c('B4.Notes.EditingUI.Title').t`Change note type`}
         togglePopover={toggleMenu}
         disableClickOutside={isClickOutsideDisabled}
         anchorElement={buttonRef}

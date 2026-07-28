@@ -54,7 +54,7 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
           </div>
         </MobileModalAction>
         <Popover
-          title={c('B3.Notes.History.Label').t`Advanced`}
+          title={c('B4.Notes.History.Label').t`Advanced`}
           open={showTabMenu}
           anchorElement={tabOptionRef}
           disableMobileFullscreenTakeover={true}
@@ -70,7 +70,7 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
             }}
             className="p-1.5 text-base font-semibold hover:bg-contrast focus:bg-info-backdrop focus:shadow-none focus:outline-none"
           >
-            {c('B3.Notes.History.Label').t`List`}
+            {c('B4.Notes.History.Label').t`List`}
           </button>
           <button
             onClick={() => {
@@ -79,12 +79,12 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
             }}
             className="p-1.5 text-base font-semibold hover:bg-contrast focus:bg-info-backdrop focus:shadow-none focus:outline-none"
           >
-            {c('B3.Notes.History.Label').t`Content`}
+            {c('B4.Notes.History.Label').t`Content`}
           </button>
         </Popover>
-        <div className="text-center text-base font-semibold">{c('B3.Notes.History.Action').t`History`}</div>
+        <div className="text-center text-base font-semibold">{c('B4.Notes.History.Action').t`History`}</div>
         <MobileModalAction type="primary" slot="right" action={dismissModal}>
-          {c('B3.Notes.History.Action').t`Done`}
+          {c('B4.Notes.History.Action').t`Done`}
         </MobileModalAction>
       </MobileModalHeader>
       <div className="flex min-h-0 flex-grow">

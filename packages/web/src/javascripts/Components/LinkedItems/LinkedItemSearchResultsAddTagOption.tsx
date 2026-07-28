@@ -26,7 +26,7 @@ export const LinkedItemSearchResultsAddTagOption = forwardRef(
         {...props}
       >
         <span className="flex-shrink-0 align-middle text-sm lg:text-xs">
-          {c('B3.Notes.TagsLinkedItems.Action').t`Create & add tag`}
+          {c('B4.Notes.TagsLinkedItems.Action').t`Create & add tag`}
         </span>{' '}
         <span
           className={classNames(

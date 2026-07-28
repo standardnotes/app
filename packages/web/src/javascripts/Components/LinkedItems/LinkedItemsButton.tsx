@@ -32,7 +32,7 @@ const LinkedItemsButton = ({ linkingController, onClick, onClickPreprocessing }:
   useEffect(() =>
     application.commands.add(
       'open-linked-items-panel',
-      c('B3.Notes.TagsLinkedItems.Action').t`Open linked items panel`,
+      c('B4.Notes.TagsLinkedItems.Action').t`Open linked items panel`,
       toggleMenu,
       'link',
     ),
@@ -45,13 +45,13 @@ const LinkedItemsButton = ({ linkingController, onClick, onClickPreprocessing }:
   return (
     <>
       <RoundIconButton
-        label={c('B3.Notes.TagsLinkedItems.Label').t`Linked items panel`}
+        label={c('B4.Notes.TagsLinkedItems.Label').t`Linked items panel`}
         onClick={toggleMenu}
         ref={buttonRef}
         icon="link"
       />
       <Popover
-        title={c('B3.Notes.TagsLinkedItems.Title').t`Linked items`}
+        title={c('B4.Notes.TagsLinkedItems.Title').t`Linked items`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isLinkingPanelOpen}

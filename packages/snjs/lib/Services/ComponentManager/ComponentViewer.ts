@@ -461,7 +461,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       if (essential) {
         const componentDisplayName = this.componentOrFeature.displayName
         void this.services.alerts.alert(
-          c('B3.Notes.EditingUI.Error')
+          c('B4.Notes.EditingUI.Error')
             .t`Standard Notes is trying to communicate with ${componentDisplayName}, but an error is occurring. Please restart this extension and try again.`,
         )
       }
@@ -561,7 +561,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     if (!this.componentOrFeature) {
       this.services.logger.info('Component not defined for message, returning', message)
       void this.services.alerts.alert(
-        c('B3.Notes.EditingUI.Error')
+        c('B4.Notes.EditingUI.Error')
           .t`A component is trying to communicate with Standard Notes, but there is an error establishing a bridge. Please restart the app and try again.`,
       )
       return
@@ -569,7 +569,7 @@ export class ComponentViewer implements ComponentViewerInterface {
     if (this.readonly && ReadwriteActions.includes(message.action)) {
       const componentDisplayName = this.componentOrFeature.displayName
       void this.services.alerts.alert(
-        c('B3.Notes.EditingUI.Error')
+        c('B4.Notes.EditingUI.Error')
           .t`${componentDisplayName} is trying to save, but it is in a locked state and cannot accept changes.`,
       )
       return
@@ -716,20 +716,20 @@ export class ComponentViewer implements ComponentViewerInterface {
 
         if (lockedNoteCount === 1) {
           void this.services.alerts.alert(
-            c('B3.Notes.EditingUI.Error').t`The note you are attempting to save has editing disabled`,
-            c('B3.Notes.EditingUI.Title').t`Note has Editing Disabled`,
+            c('B4.Notes.EditingUI.Error').t`The note you are attempting to save has editing disabled`,
+            c('B4.Notes.EditingUI.Title').t`Note has Editing Disabled`,
           )
           return
         } else if (lockedCount > 0) {
           const editingDisabledMessage =
             lockedCount === 1
-              ? c('B3.Notes.EditingUI.Error').t`The item you are attempting to save has editing disabled.`
+              ? c('B4.Notes.EditingUI.Error').t`The item you are attempting to save has editing disabled.`
               : lockedNoteCount === lockedCount
-              ? c('B3.Notes.EditingUI.Error').t`The notes you are attempting to save have editing disabled.`
-              : c('B3.Notes.EditingUI.Error').t`The items you are attempting to save have editing disabled.`
+              ? c('B4.Notes.EditingUI.Error').t`The notes you are attempting to save have editing disabled.`
+              : c('B4.Notes.EditingUI.Error').t`The items you are attempting to save have editing disabled.`
           void this.services.alerts.alert(
             editingDisabledMessage,
-            c('B3.Notes.EditingUI.Title').t`Items have Editing Disabled`,
+            c('B4.Notes.EditingUI.Title').t`Items have Editing Disabled`,
           )
 
           return

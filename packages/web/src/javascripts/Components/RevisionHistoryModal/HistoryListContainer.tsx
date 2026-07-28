@@ -21,11 +21,11 @@ const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryC
   const revisionTypeLabel = (type: RevisionType) => {
     switch (type) {
       case RevisionType.Remote:
-        return c('B3.Notes.History.Label').t`Remote`
+        return c('B4.Notes.History.Label').t`Remote`
       case RevisionType.Session:
-        return c('B3.Notes.History.Label').t`Session`
+        return c('B4.Notes.History.Label').t`Session`
       case RevisionType.Legacy:
-        return c('B3.Notes.History.Label').t`Legacy`
+        return c('B4.Notes.History.Label').t`Legacy`
     }
   }
 

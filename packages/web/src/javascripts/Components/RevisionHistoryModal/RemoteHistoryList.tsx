@@ -68,7 +68,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
         }
       })}
       {!remoteHistoryLength && !isFetchingRemoteHistory && (
-        <div className="select-none text-sm text-passive-0">{c('B3.Notes.History.Label')
+        <div className="select-none text-sm text-passive-0">{c('B4.Notes.History.Label')
           .t`No remote history found`}</div>
       )}
     </div>

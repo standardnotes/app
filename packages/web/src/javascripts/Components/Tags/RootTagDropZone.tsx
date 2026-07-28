@@ -48,9 +48,9 @@ const RootTagDropZone: FunctionComponent<Props> = ({ tagsState }) => {
     >
       <Icon className="text-neutral" type="link-off" />
       <p className="content">
-        {c('B3.Notes.TagsLinkedItems.Action').t`Move the tag here to`}
+        {c('B4.Notes.TagsLinkedItems.Action').t`Move the tag here to`}
         <br />
-        {c('B3.Notes.TagsLinkedItems.Action').t`remove it from its folder.`}
+        {c('B4.Notes.TagsLinkedItems.Action').t`remove it from its folder.`}
       </p>
     </div>
   )

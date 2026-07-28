@@ -26,14 +26,14 @@ export const STRING_NEW_UPDATE_READY = () =>
 
 /** @tags */
 export const STRING_DELETE_TAG = () =>
-  c('B3.Notes.TagsLinkedItems.Confirmation')
+  c('B4.Notes.TagsLinkedItems.Confirmation')
     .t`Are you sure you want to delete this tag? Deleting a tag will not delete its subtags or its notes.`
 
-export const STRING_MISSING_SYSTEM_TAG = () => c('B3.Notes.TagsLinkedItems.Error').t`We are missing a System Tag.`
+export const STRING_MISSING_SYSTEM_TAG = () => c('B4.Notes.TagsLinkedItems.Error').t`We are missing a System Tag.`
 
 /** @editor */
 export const STRING_GENERIC_SAVE_ERROR = () =>
-  c('B3.Notes.EditingUI.Error').t`There was an error saving your note. Please try again.`
+  c('B4.Notes.EditingUI.Error').t`There was an error saving your note. Please try again.`
 export const STRING_DELETE_PLACEHOLDER_ATTEMPT = () =>
   c('B3.Notes.NoteActions.Info')
     .t`This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.`
@@ -213,7 +213,7 @@ export const StringUtils = {
   },
   deleteTag(title: string): string {
     const tagTitle = escapeHtmlString(title)
-    return jtString(c('B3.Notes.TagsLinkedItems.Confirmation').jt`Delete tag "${tagTitle}"?`)
+    return jtString(c('B4.Notes.TagsLinkedItems.Confirmation').jt`Delete tag "${tagTitle}"?`)
   },
   cannotUploadFile(name: string): string {
     const fileName = escapeHtmlString(name)

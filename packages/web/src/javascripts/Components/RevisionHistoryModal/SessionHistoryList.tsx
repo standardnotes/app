@@ -56,7 +56,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController, o
         }
       })}
       {!sessionHistoryLength && (
-        <div className="select-none text-sm text-passive-0">{c('B3.Notes.History.Label')
+        <div className="select-none text-sm text-passive-0">{c('B4.Notes.History.Label')
           .t`No session history found`}</div>
       )}
     </div>

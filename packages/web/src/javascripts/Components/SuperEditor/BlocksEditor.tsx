@@ -87,7 +87,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
 
     return (
       <div className="pointer-events-none absolute left-4 top-4 text-[length:--font-size] text-passive-1">
-        {c('B3.Notes.EditingUI.Label').jt`Type ${slashKey} for commands...`}
+        {c('B4.Notes.EditingUI.Label').jt`Type ${slashKey} for commands...`}
       </div>
     )
   }, [])

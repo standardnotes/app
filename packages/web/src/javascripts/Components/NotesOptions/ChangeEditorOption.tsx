@@ -50,7 +50,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
       >
         <div className="flex items-center">
           <Icon type="dashboard" className={`${iconClassName} mr-2 text-neutral`} />
-          {c('B3.Notes.EditingUI.Action').t`Change note type`}
+          {c('B4.Notes.EditingUI.Action').t`Change note type`}
         </div>
         <div className="flex">
           {shortcut && <KeyboardShortcutIndicator className={'mr-2'} shortcut={shortcut} />}
@@ -58,7 +58,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         </div>
       </MenuItem>
       <Popover
-        title={c('B3.Notes.EditingUI.Action').t`Change note type`}
+        title={c('B4.Notes.EditingUI.Action').t`Change note type`}
         align="start"
         anchorElement={buttonRef}
         className="md:pb-1"

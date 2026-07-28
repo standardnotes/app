@@ -326,7 +326,7 @@ export class NoteHistoryController {
     }
 
     const didConfirm = await confirmDialog({
-      text: c('B3.Notes.History.Label')
+      text: c('B4.Notes.History.Label')
         .t`Are you sure you want to replace the current note's contents with what you see in this preview?`,
       confirmButtonStyle: 'danger',
     })
@@ -362,11 +362,11 @@ export class NoteHistoryController {
 
   deleteRemoteRevision = async (revisionEntry: RevisionMetadata) => {
     const shouldDelete = await this.alerts.confirm(
-      c('B3.Notes.History.Label').t`Are you sure you want to delete this revision?`,
-      c('B3.Notes.History.Label').t`Delete revision?`,
-      c('B3.Notes.History.Action').t`Delete revision`,
+      c('B4.Notes.History.Label').t`Are you sure you want to delete this revision?`,
+      c('B4.Notes.History.Label').t`Delete revision?`,
+      c('B4.Notes.History.Action').t`Delete revision`,
       ButtonType.Danger,
-      c('B3.Notes.History.Action').t`Cancel`,
+      c('B4.Notes.History.Action').t`Cancel`,
     )
 
     if (!shouldDelete || !this.note) {

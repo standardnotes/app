@@ -119,7 +119,7 @@ const ItemLinksCell = ({ item }: { item: DecryptedItemInterface }) => {
         <Icon type="link" />
       </button>
       <Popover
-        title={c('B3.Notes.TagsLinkedItems.Label').t`Linked items`}
+        title={c('B4.Notes.TagsLinkedItems.Label').t`Linked items`}
         open={contextMenuVisible}
         anchorElement={anchorElementRef}
         togglePopover={() => {

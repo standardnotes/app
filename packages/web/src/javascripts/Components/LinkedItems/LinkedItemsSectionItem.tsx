@@ -99,7 +99,7 @@ export const LinkedItemsSectionItem = ({
         <Icon type="more" className="text-neutral" />
       </button>
       <Popover
-        title={c('B3.Notes.TagsLinkedItems.Label').t`Options`}
+        title={c('B4.Notes.TagsLinkedItems.Label').t`Options`}
         open={isMenuOpen}
         togglePopover={toggleMenu}
         anchorElement={menuButtonRef}
@@ -114,7 +114,7 @@ export const LinkedItemsSectionItem = ({
           }}
         >
           <Icon type="link-off" className="mr-2 text-danger" />
-          {c('B3.Notes.TagsLinkedItems.Action').t`Unlink`}
+          {c('B4.Notes.TagsLinkedItems.Action').t`Unlink`}
         </MenuItem>
         {item instanceof FileItem && (
           <LinkedFileMenuOptions
@@ -127,19 +127,19 @@ export const LinkedItemsSectionItem = ({
         <HorizontalSeparator classes="my-2" />
         <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
           <div className="mb-1">
-            <span className="font-semibold">{c('B3.Notes.TagsLinkedItems.Label').t`Created at:`}</span>{' '}
+            <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Created at:`}</span>{' '}
             {formatDateForContextMenu(item.created_at)}
           </div>
           <div className="mb-1">
-            <span className="font-semibold">{c('B3.Notes.TagsLinkedItems.Label').t`Modified at:`}</span>{' '}
+            <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Modified at:`}</span>{' '}
             {formatDateForContextMenu(item.userModifiedDate)}
           </div>
           <div className="mb-1">
-            <span className="font-semibold">{c('B3.Notes.TagsLinkedItems.Label').t`ID:`}</span> {item.uuid}
+            <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`ID:`}</span> {item.uuid}
           </div>
           {item instanceof FileItem && (
             <div>
-              <span className="font-semibold">{c('B3.Notes.TagsLinkedItems.Label').t`Size:`}</span>{' '}
+              <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Size:`}</span>{' '}
               {formatSizeToReadableString(item.decryptedSize)}
             </div>
           )}

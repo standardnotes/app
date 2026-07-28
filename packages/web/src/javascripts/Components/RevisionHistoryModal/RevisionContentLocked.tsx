@@ -8,18 +8,18 @@ import { c } from 'ttag'
 const getPlanHistoryDuration = (planName: string | undefined) => {
   switch (planName) {
     case 'Core':
-      return c('B3.Notes.History.Label').t`30 days`
+      return c('B4.Notes.History.Label').t`30 days`
     case 'Plus':
-      return c('B3.Notes.History.Label').t`365 days`
+      return c('B4.Notes.History.Label').t`365 days`
     default:
-      return c('B3.Notes.History.Label').t`the current session's changes`
+      return c('B4.Notes.History.Label').t`the current session's changes`
   }
 }
 
 const getPremiumContentCopy = (planName: string | undefined) => {
   const duration = getPlanHistoryDuration(planName)
-  const plan = planName ?? c('B3.Notes.History.Label').t`free`
-  return c('B3.Notes.History.Label').jt`Version history is limited to ${duration} in the ${plan} plan`
+  const plan = planName ?? c('B4.Notes.History.Label').t`free`
+  return c('B4.Notes.History.Label').jt`Version history is limited to ${duration} in the ${plan} plan`
 }
 
 const RevisionContentLocked: FunctionComponent = () => {
@@ -36,15 +36,15 @@ const RevisionContentLocked: FunctionComponent = () => {
     <div className="flex h-full w-full items-center justify-center">
       <div className="max-w-40% flex flex-col items-center px-8 text-center">
         <HistoryLockedIllustration />
-        <div className="mb-1 mt-2 text-lg font-bold">{c('B3.Notes.History.Label').t`Can't access this version`}</div>
+        <div className="mb-1 mt-2 text-lg font-bold">{c('B4.Notes.History.Label').t`Can't access this version`}</div>
         <div className="leading-140% mb-4 text-passive-0">
           {getPremiumContentCopy(planName)}.{' '}
-          {c('B3.Notes.History.Label').t`Learn more about our other plans to upgrade your history capacity.`}
+          {c('B4.Notes.History.Label').t`Learn more about our other plans to upgrade your history capacity.`}
         </div>
         {application.canShowPurchaseFlow() && (
           <Button
             primary
-            label={c('B3.Notes.History.Action').t`Discover plans`}
+            label={c('B4.Notes.History.Action').t`Discover plans`}
             onClick={() => {
               if (window.plansUrl) {
                 window.location.assign(window.plansUrl)

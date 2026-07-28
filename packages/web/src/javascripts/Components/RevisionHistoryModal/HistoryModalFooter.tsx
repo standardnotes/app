@@ -44,7 +44,7 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController, readonly = fa
 
   return (
     <div className="flex min-h-6 flex-shrink-0 flex-wrap items-center gap-2.5 border-t border-solid border-border px-2.5 py-2 md:justify-between">
-      <Button className="py-1.35" label={c('B3.Notes.History.Action').t`Close`} onClick={dismissModal} />
+      <Button className="py-1.35" label={c('B4.Notes.History.Action').t`Close`} onClick={dismissModal} />
       {selectedRevision && selectedEntry && !readonly && (
         <>
           {(selectedEntry as RevisionMetadata).uuid && (
@@ -52,18 +52,18 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController, readonly = fa
               {isDeletingRevision ? (
                 <Spinner className="my-1 h-3 w-3" />
               ) : (
-                c('B3.Notes.History.Action').t`Delete this revision`
+                c('B4.Notes.History.Action').t`Delete this revision`
               )}
             </Button>
           )}
           <Button
             className={!(selectedEntry as RevisionMetadata).uuid ? 'md:ml-auto' : ''}
-            label={c('B3.Notes.History.Action').t`Restore as a copy`}
+            label={c('B4.Notes.History.Action').t`Restore as a copy`}
             onClick={restoreAsCopy}
           />
           <Button
             className=""
-            label={c('B3.Notes.History.Action').t`Restore version`}
+            label={c('B4.Notes.History.Action').t`Restore version`}
             onClick={restoreSelectedRevision}
             primary
           />

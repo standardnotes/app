@@ -222,7 +222,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
       if (target) {
         addDragTarget(target, {
-          tooltipText: c('B3.Notes.TagsLinkedItems.Info')
+          tooltipText: c('B4.Notes.TagsLinkedItems.Info')
             .jt`Drop your files to upload and link them to tag "${tag.title}"` as unknown as string,
           async callback(file) {
             await linkingController.linkItems(file, tag)
@@ -427,7 +427,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
           {tag.conflictOf && (
             <div className="-mt-1 text-[0.625rem] font-bold text-danger">
-              {c('B3.Notes.TagsLinkedItems.Label').t`Conflicted Copy`}
+              {c('B4.Notes.TagsLinkedItems.Label').t`Conflicted Copy`}
             </div>
           )}
         </div>

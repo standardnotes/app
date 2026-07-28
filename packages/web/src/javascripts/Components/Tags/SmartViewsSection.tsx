@@ -38,7 +38,7 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
     () =>
       application.commands.add(
         'create-smart-view',
-        c('B3.Notes.TagsLinkedItems.Action').t`Create a new smart view`,
+        c('B4.Notes.TagsLinkedItems.Action').t`Create a new smart view`,
         createNewSmartView,
         'add',
       ),
@@ -50,13 +50,13 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
       <div className={'section-title-bar'}>
         <div className="section-title-bar-header">
           <div className="title text-base md:text-sm">
-            <span className="font-bold">{c('B3.Notes.TagsLinkedItems.Action').t`Views`}</span>
+            <span className="font-bold">{c('B4.Notes.TagsLinkedItems.Action').t`Views`}</span>
           </div>
           {!navigationController.isSearching && (
             <IconButton
               focusable={true}
               icon="add"
-              title={c('B3.Notes.TagsLinkedItems.Action').t`Create a new smart view`}
+              title={c('B4.Notes.TagsLinkedItems.Action').t`Create a new smart view`}
               className="p-0 text-neutral"
               onClick={createNewSmartView}
             />

@@ -86,10 +86,10 @@ const ItemLinkAutocompleteInput = forwardRef(
       <div>
         <form onSubmit={onFormSubmit}>
           <label>
-            <VisuallyHidden>{c('B3.Notes.TagsLinkedItems.Label').t`Link tags, notes or files`}</VisuallyHidden>
+            <VisuallyHidden>{c('B4.Notes.TagsLinkedItems.Label').t`Link tags, notes or files`}</VisuallyHidden>
             <Combobox
               store={combobox}
-              placeholder={c('B3.Notes.TagsLinkedItems.Label').t`Link tags, notes, files...`}
+              placeholder={c('B4.Notes.TagsLinkedItems.Label').t`Link tags, notes, files...`}
               className={classNames(
                 `${tagsLinkedToItem.length > 0 ? 'w-80' : 'mr-10 w-70'}`,
                 'h-7 w-70 bg-transparent text-sm text-text focus:border-b-2 focus:border-info focus:shadow-none focus:outline-none lg:text-xs',

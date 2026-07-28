@@ -14,7 +14,7 @@ export const NoteSizeWarning: FunctionComponent<{
       <div className="bg-warning-faded relative flex items-center px-3 py-3.5">
         <Icon type="warning" className="mr-3 flex-shrink-0 text-accessory-tint-3" />
         <div className="leading-140% max-w-80% select-none text-warning">
-          {c('B3.Notes.EditorOptions.Status')
+          {c('B4.Notes.EditorOptions.Status')
             .t`This note may have trouble syncing to the mobile application due to its size.`}
         </div>
       </div>

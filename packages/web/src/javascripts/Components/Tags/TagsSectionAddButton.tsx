@@ -21,7 +21,7 @@ function TagsSectionAddButton() {
   )
 
   const title = useMemo(
-    () => c('B3.Notes.TagsLinkedItems.Action').jt`Create a new tag (${shortcut})` as unknown as string,
+    () => c('B4.Notes.TagsLinkedItems.Action').jt`Create a new tag (${shortcut})` as unknown as string,
     [shortcut],
   )
 

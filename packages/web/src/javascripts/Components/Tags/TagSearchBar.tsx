@@ -64,7 +64,7 @@ const TagSearchBar = ({ navigationController }: Props) => {
           container: '!bg-default px-1',
           input: 'text-base placeholder:text-passive-0 lg:text-sm',
         }}
-        placeholder={c('B3.Notes.TagsLinkedItems.Label').t`Search tags...`}
+        placeholder={c('B4.Notes.TagsLinkedItems.Label').t`Search tags...`}
         value={searchQuery}
         onChange={setSearchQuery}
         left={[<Icon type="search" className="mr-1 h-4.5 w-4.5 flex-shrink-0 text-passive-1" />]}

@@ -42,7 +42,7 @@ function YouTubeComponent({ className, format, nodeKey, videoID }: YouTubeCompon
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen={true}
-        title={c('B3.Notes.EditingUI.Label').t`YouTube video`}
+        title={c('B4.Notes.EditingUI.Label').t`YouTube video`}
       />
     </BlockWithAlignableContents>
   )
@@ -103,7 +103,7 @@ export class YouTubeNode extends DecoratorBlockNode {
       'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
     )
     element.setAttribute('allowfullscreen', 'true')
-    element.setAttribute('title', c('B3.Notes.EditingUI.Label').t`YouTube video`)
+    element.setAttribute('title', c('B4.Notes.EditingUI.Label').t`YouTube video`)
     return { element }
   }
 

@@ -139,12 +139,12 @@ const InlineFileComponent = ({ className, src, mimeType, fileName, format, setFo
         {isSaving ? (
           <>
             <Spinner className="h-4 w-4" />
-            {c('B3.Notes.EditingUI.Status').t`Saving...`}
+            {c('B4.Notes.EditingUI.Status').t`Saving...`}
           </>
         ) : (
           <>
             <Icon type="download" />
-            {c('B3.Notes.EditingUI.Action').t`Save to Files`}
+            {c('B4.Notes.EditingUI.Action').t`Save to Files`}
           </>
         )}
       </button>

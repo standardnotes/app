@@ -72,11 +72,11 @@ const GROUP_TITLE_YEAR = 'More Than A Year Ago'
 export const formatRevisionGroupTitle = (title: string): string => {
   switch (title) {
     case GROUP_TITLE_TODAY:
-      return c('B3.Notes.History.Label').t`Today`
+      return c('B4.Notes.History.Label').t`Today`
     case GROUP_TITLE_WEEK:
-      return c('B3.Notes.History.Label').t`This Week`
+      return c('B4.Notes.History.Label').t`This Week`
     case GROUP_TITLE_YEAR:
-      return c('B3.Notes.History.Label').t`More Than A Year Ago`
+      return c('B4.Notes.History.Label').t`More Than A Year Ago`
     default:
       return title
   }

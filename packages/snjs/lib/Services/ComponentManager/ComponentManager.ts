@@ -543,9 +543,9 @@ export class ComponentManager
 
   async showEditorChangeAlert(): Promise<boolean> {
     const shouldChangeEditor = await this.alerts.confirm(
-      c('B3.Notes.EditingUI.Confirmation').t`Doing so might result in minor formatting changes.`,
-      c('B3.Notes.EditingUI.Confirmation').t`Are you sure you want to change this note's type?`,
-      c('B3.Notes.EditingUI.Confirmation').t`Yes, change it`,
+      c('B4.Notes.EditingUI.Confirmation').t`Doing so might result in minor formatting changes.`,
+      c('B4.Notes.EditingUI.Confirmation').t`Are you sure you want to change this note's type?`,
+      c('B4.Notes.EditingUI.Confirmation').t`Yes, change it`,
     )
 
     return shouldChangeEditor

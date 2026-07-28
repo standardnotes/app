@@ -96,7 +96,7 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
 
         return (
           <Popover
-            title={c('B3.Notes.EditingUI.Label').t`Select item`}
+            title={c('B4.Notes.EditingUI.Label').t`Select item`}
             align="start"
             anchorElement={anchorElementRef}
             open={true}

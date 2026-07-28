@@ -139,7 +139,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
 
   return (
     <>
-      <Menu a11yLabel={c('B3.Notes.EditingUI.Label').t`Change note type`}>
+      <Menu a11yLabel={c('B4.Notes.EditingUI.Label').t`Change note type`}>
         {groupsWithItems.map((group) => (
           <MenuSection key={getGroupId(group)}>
             {group.items.map((item) => {
@@ -158,7 +158,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
                       {item.uiFeature.displayName}
                       {item.isLabs && (
                         <Pill className="px-1.5 py-0.5" style="success">
-                          {c('B3.Notes.EditingUI.Label').t`Labs`}
+                          {c('B4.Notes.EditingUI.Label').t`Labs`}
                         </Pill>
                       )}
                     </div>

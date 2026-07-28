@@ -35,12 +35,12 @@ const SuperNoteOptions = ({ closeMenu }: Props) => {
     <MenuSection>
       <MenuItem onClick={findInNote}>
         <Icon type="search" className={iconClass} />
-        {c('B3.Notes.EditorOptions.Action').t`Find in note`}
+        {c('B4.Notes.EditorOptions.Action').t`Find in note`}
         {findShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={findShortcut} />}
       </MenuItem>
       <MenuItem onClick={enableSuperMarkdownPreview}>
         <Icon type="markdown" className={iconClass} />
-        {c('B3.Notes.EditorOptions.Action').t`Show Markdown`}
+        {c('B4.Notes.EditorOptions.Action').t`Show Markdown`}
         {markdownShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={markdownShortcut} />}
       </MenuItem>
     </MenuSection>

@@ -38,18 +38,18 @@ const ModalContent = observer(() => {
 
   return (
     <Modal
-      title={c('B3.Notes.EditorOptions.Label').t`Export notes`}
+      title={c('B4.Notes.EditorOptions.Label').t`Export notes`}
       className="p-4"
       close={notesController.closeSuperExportModal}
       actions={[
         {
-          label: c('B3.Notes.EditorOptions.Action').t`Cancel`,
+          label: c('B4.Notes.EditorOptions.Action').t`Cancel`,
           type: 'cancel',
           onClick: notesController.closeSuperExportModal,
           mobileSlot: 'left',
         },
         {
-          label: c('B3.Notes.EditorOptions.Action').t`Export`,
+          label: c('B4.Notes.EditorOptions.Action').t`Export`,
           type: 'primary',
           onClick: () => {
             void notesController.downloadSelectedNotes()
@@ -63,16 +63,16 @@ const ModalContent = observer(() => {
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <div className="text-base">
             {notes.length > 1
-              ? c('B3.Notes.EditorOptions.Label').t`Choose export format for Super notes`
-              : c('B3.Notes.EditorOptions.Label').t`Choose export format`}
+              ? c('B4.Notes.EditorOptions.Label').t`Choose export format for Super notes`
+              : c('B4.Notes.EditorOptions.Label').t`Choose export format`}
           </div>
           <Dropdown
-            label={c('B3.Notes.EditorOptions.Label').t`Export format`}
+            label={c('B4.Notes.EditorOptions.Label').t`Export format`}
             items={[
-              { label: c('B3.Notes.EditorOptions.Label').t`Super (.json)`, value: 'json' },
-              { label: c('B3.Notes.EditorOptions.Label').t`Markdown (.md)`, value: 'md' },
-              { label: c('B3.Notes.EditorOptions.Label').t`HTML`, value: 'html' },
-              { label: c('B3.Notes.EditorOptions.Label').t`PDF`, value: 'pdf' },
+              { label: c('B4.Notes.EditorOptions.Label').t`Super (.json)`, value: 'json' },
+              { label: c('B4.Notes.EditorOptions.Label').t`Markdown (.md)`, value: 'md' },
+              { label: c('B4.Notes.EditorOptions.Label').t`HTML`, value: 'html' },
+              { label: c('B4.Notes.EditorOptions.Label').t`PDF`, value: 'pdf' },
             ]}
             value={superNoteExportFormat}
             onChange={(value) => {
@@ -88,23 +88,23 @@ const ModalContent = observer(() => {
         </div>
         {superNoteExportFormat === 'md' && (
           <div className="mt-2 text-xs text-passive-0">
-            {c('B3.Notes.EditorOptions.Info')
+            {c('B4.Notes.EditorOptions.Info')
               .t`Note that conversion to Markdown is not lossless. Some features like collapsible blocks and formatting like superscript/subscript may not be correctly converted.`}
           </div>
         )}
       </div>
       {superNoteExportFormat === 'pdf' && (
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-          <div className="text-base">{c('B3.Notes.EditorOptions.Label').t`Page size`}</div>
+          <div className="text-base">{c('B4.Notes.EditorOptions.Label').t`Page size`}</div>
           <Dropdown
-            label={c('B3.Notes.EditorOptions.Label').t`Page size`}
+            label={c('B4.Notes.EditorOptions.Label').t`Page size`}
             items={
               [
-                { label: c('B3.Notes.EditorOptions.Label').t`A3`, value: 'A3' },
-                { label: c('B3.Notes.EditorOptions.Label').t`A4`, value: 'A4' },
-                { label: c('B3.Notes.EditorOptions.Label').t`Letter`, value: 'LETTER' },
-                { label: c('B3.Notes.EditorOptions.Label').t`Legal`, value: 'LEGAL' },
-                { label: c('B3.Notes.EditorOptions.Label').t`Tabloid`, value: 'TABLOID' },
+                { label: c('B4.Notes.EditorOptions.Label').t`A3`, value: 'A3' },
+                { label: c('B4.Notes.EditorOptions.Label').t`A4`, value: 'A4' },
+                { label: c('B4.Notes.EditorOptions.Label').t`Letter`, value: 'LETTER' },
+                { label: c('B4.Notes.EditorOptions.Label').t`Legal`, value: 'LEGAL' },
+                { label: c('B4.Notes.EditorOptions.Label').t`Tabloid`, value: 'TABLOID' },
               ] satisfies {
                 label: string
                 value: PrefValue[PrefKey.SuperNoteExportPDFPageSize]
@@ -135,21 +135,21 @@ const ModalContent = observer(() => {
             }}
             className="!flex items-center"
           >
-            <span className="ml-2">{c('B3.Notes.EditorOptions.Label').t`Export with frontmatter`}</span>
+            <span className="ml-2">{c('B4.Notes.EditorOptions.Label').t`Export with frontmatter`}</span>
           </Switch>
         </div>
       )}
       {canShowEmbeddedFileOptions && someNotesHaveEmbeddedFiles && (
         <div className="mb-2 mt-4 flex flex-wrap items-center justify-between gap-2">
-          <div className="text-base">{c('B3.Notes.EditorOptions.Action').t`Embedded files`}</div>
+          <div className="text-base">{c('B4.Notes.EditorOptions.Action').t`Embedded files`}</div>
           <Dropdown
-            label={c('B3.Notes.EditorOptions.Label').t`Embedded files`}
+            label={c('B4.Notes.EditorOptions.Label').t`Embedded files`}
             items={[
-              { label: c('B3.Notes.EditorOptions.Label').t`Inline`, value: 'inline' },
-              { label: c('B3.Notes.EditorOptions.Action').t`Export separately`, value: 'separate' },
+              { label: c('B4.Notes.EditorOptions.Label').t`Inline`, value: 'inline' },
+              { label: c('B4.Notes.EditorOptions.Action').t`Export separately`, value: 'separate' },
             ].concat(
               superNoteExportFormat !== 'md'
-                ? [{ label: c('B3.Notes.EditorOptions.Label').t`Keep as reference`, value: 'reference' }]
+                ? [{ label: c('B4.Notes.EditorOptions.Label').t`Keep as reference`, value: 'reference' }]
                 : [],
             )}
             value={superNoteExportEmbedBehavior}

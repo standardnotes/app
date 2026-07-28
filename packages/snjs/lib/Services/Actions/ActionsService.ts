@@ -196,7 +196,7 @@ export class ActionsService extends AbstractService {
 
     if (!payload.enc_item_key) {
       void this.alertService.alert(
-        c('B3.Notes.History.Error').t`This revision is missing its key and cannot be recovered.`,
+        c('B4.Notes.History.Error').t`This revision is missing its key and cannot be recovered.`,
       )
       return
     }
@@ -243,7 +243,7 @@ export class ActionsService extends AbstractService {
        * Instruct the user to email us to get this remedied.
        */
       void this.alertService.alert(
-        c('B3.Notes.History.Error')
+        c('B4.Notes.History.Error')
           .t`We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email help@standardnotes.com for assistance.`,
       )
       return undefined

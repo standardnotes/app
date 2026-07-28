@@ -166,17 +166,17 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
         <div className="meta">
           {view.conflictOf && (
             <div className="-mt-1 text-[0.625rem] font-bold text-danger">
-              {c('B3.Notes.TagsLinkedItems.Label').t`Conflicted Copy`}
+              {c('B4.Notes.TagsLinkedItems.Label').t`Conflicted Copy`}
             </div>
           )}
 
           {isSelected && (
             <div className="menu">
               <a className="item" onClick={onClickEdit}>
-                {c('B3.Notes.TagsLinkedItems.Action').t`Edit`}
+                {c('B4.Notes.TagsLinkedItems.Action').t`Edit`}
               </a>
               <a className="item" onClick={onClickDelete}>
-                {c('B3.Notes.TagsLinkedItems.Action').t`Delete`}
+                {c('B4.Notes.TagsLinkedItems.Action').t`Delete`}
               </a>
             </div>
           )}

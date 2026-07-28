@@ -164,12 +164,12 @@ const RemoteImageComponent = ({ className, src, alt, node, format, nodeKey, setF
             {isSaving ? (
               <>
                 <Spinner className="h-4 w-4" />
-                {c('B3.Notes.EditingUI.Status').t`Saving...`}
+                {c('B4.Notes.EditingUI.Status').t`Saving...`}
               </>
             ) : (
               <>
                 <Icon type="download" />
-                {c('B3.Notes.EditingUI.Action').t`Save image to Files`}
+                {c('B4.Notes.EditingUI.Action').t`Save image to Files`}
               </>
             )}
           </button>

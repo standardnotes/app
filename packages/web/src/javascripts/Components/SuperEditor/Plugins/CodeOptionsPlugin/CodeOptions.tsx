@@ -11,7 +11,7 @@ const CODE_LANGUAGE_LABEL_GETTERS: Partial<Record<string, () => string>> = {
   clike: () => c('B3.Notes.EditorToolbar.Label').t`C-like`,
   cpp: () => c('B3.Notes.EditorToolbar.Label').t`C++`,
   css: () => c('B3.Notes.EditorToolbar.Label').t`CSS`,
-  html: () => c('B3.Notes.EditorOptions.Label').t`HTML`,
+  html: () => c('B4.Notes.EditorOptions.Label').t`HTML`,
   java: () => c('B3.Notes.EditorToolbar.Label').t`Java`,
   js: () => c('B3.Notes.EditorToolbar.Label').t`JavaScript`,
   markdown: () => c('B3.Notes.EditorToolbar.Label').t`Markdown`,

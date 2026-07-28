@@ -28,7 +28,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
               setOperator(event.target.value as PredicateCompoundOperator)
             }}
           />
-          {c('B3.Notes.TagsLinkedItems.Label').t`Should match ALL conditions`}
+          {c('B4.Notes.TagsLinkedItems.Label').t`Should match ALL conditions`}
         </label>
         <label className="flex items-center gap-2">
           <input
@@ -40,7 +40,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
               setOperator(event.target.value as PredicateCompoundOperator)
             }}
           />
-          {c('B3.Notes.TagsLinkedItems.Label').t`Should match ANY conditions`}
+          {c('B4.Notes.TagsLinkedItems.Label').t`Should match ANY conditions`}
         </label>
       </div>
       {predicates.map((predicate, index) => (
@@ -49,8 +49,8 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
             {index !== 0 && (
               <div className="mr-2 text-sm font-semibold">
                 {operator === 'and'
-                  ? c('B3.Notes.TagsLinkedItems.Label').t`AND`
-                  : c('B3.Notes.TagsLinkedItems.Label').t`OR`}
+                  ? c('B4.Notes.TagsLinkedItems.Label').t`AND`
+                  : c('B4.Notes.TagsLinkedItems.Label').t`OR`}
               </div>
             )}
             <select
@@ -91,7 +91,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
             {index !== 0 && (
               <button
                 className="rounded border border-border p-1 text-danger"
-                aria-label={c('B3.Notes.TagsLinkedItems.Action').t`Remove condition`}
+                aria-label={c('B4.Notes.TagsLinkedItems.Action').t`Remove condition`}
                 onClick={() => {
                   removePredicate(index)
                 }}
@@ -107,23 +107,23 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
                 addPredicate()
               }}
             >
-              {c('B3.Notes.TagsLinkedItems.Action').t`Add another condition`}
+              {c('B4.Notes.TagsLinkedItems.Action').t`Add another condition`}
             </Button>
           )}
         </div>
       ))}
       {predicates.some((predicate) => PredicateKeypathTypes[predicate.keypath as PredicateKeypath] === 'date') && (
         <div className="flex flex-col gap-2 rounded-md border-2 border-info-backdrop bg-info-backdrop px-4 py-3 [&_code]:rounded [&_code]:bg-default [&_code]:px-1.5 [&_code]:py-1">
-          <div className="text-sm font-semibold">{c('B3.Notes.TagsLinkedItems.Label').t`Date Examples:`}</div>
+          <div className="text-sm font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Date Examples:`}</div>
           <ul className="space-y-2 pl-4">
             <li>
-              {c('B3.Notes.TagsLinkedItems.Info').t`To get all the items modified within the last 7 days, you can use`}{' '}
-              <code>{c('B3.Notes.TagsLinkedItems.Label').t`User Modified Date`}</code> <code>&gt;</code>{' '}
+              {c('B4.Notes.TagsLinkedItems.Info').t`To get all the items modified within the last 7 days, you can use`}{' '}
+              <code>{c('B4.Notes.TagsLinkedItems.Label').t`User Modified Date`}</code> <code>&gt;</code>{' '}
               <code>7.days.ago</code>
             </li>
             <li>
-              {c('B3.Notes.TagsLinkedItems.Info').t`To get all the items created before June 2022, you can use`}{' '}
-              <code>{c('B3.Notes.TagsLinkedItems.Action').t`Created At`}</code> <code>&lt;</code>{' '}
+              {c('B4.Notes.TagsLinkedItems.Info').t`To get all the items created before June 2022, you can use`}{' '}
+              <code>{c('B4.Notes.TagsLinkedItems.Action').t`Created At`}</code> <code>&lt;</code>{' '}
               <code>06/01/2022</code>
             </li>
           </ul>

@@ -28,7 +28,7 @@ const HistoryModalDialog = forwardRef(({ children, onDismiss }: Props, ref: Forw
   return (
     <Dialog
       store={dialog}
-      aria-label={c('B3.Notes.History.Label').t`Note revision history`}
+      aria-label={c('B4.Notes.History.Label').t`Note revision history`}
       ref={mergeRefs([addCloseMethod, ref])}
       className="fixed left-0 top-0 z-modal h-full w-full"
     >

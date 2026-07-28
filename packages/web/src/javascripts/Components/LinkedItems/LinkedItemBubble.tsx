@@ -128,7 +128,7 @@ const LinkedItemBubble = ({
         <span className="whitespace-pre-wrap">
           {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
           {link.type === 'linked-by' && link.item.content_type !== ContentType.TYPES.Tag && (
-            <span className={!isBidirectional ? 'hidden group-focus:inline' : ''}>{c('B3.Notes.TagsLinkedItems.Label')
+            <span className={!isBidirectional ? 'hidden group-focus:inline' : ''}>{c('B4.Notes.TagsLinkedItems.Label')
               .t`Linked By:`}</span>
           )}
           {getItemTitleInContextOfLinkBubble(link.item)}
@@ -167,7 +167,7 @@ const LinkedItemBubble = ({
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
         <span className="flex items-center gap-1">
           {link.type === 'linked-by' && link.item.content_type !== ContentType.TYPES.Tag && (
-            <span className={!isBidirectional ? 'hidden group-focus:block' : ''}>{c('B3.Notes.TagsLinkedItems.Label')
+            <span className={!isBidirectional ? 'hidden group-focus:block' : ''}>{c('B4.Notes.TagsLinkedItems.Label')
               .t`Linked By:`}</span>
           )}
           {getItemTitleInContextOfLinkBubble(link.item)}

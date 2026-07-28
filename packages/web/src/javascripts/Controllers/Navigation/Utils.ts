@@ -33,7 +33,7 @@ export const isValidFutureSiblings = (alerts: AlertService, futureSiblings: SNTa
     alerts
       ?.alert(
         jtString(
-          c('B3.Notes.TagsLinkedItems.Error')
+          c('B4.Notes.TagsLinkedItems.Error')
             .jt`A tag with the name ${tag.title} already exists at this destination. Please rename this tag before moving and try again.`,
         ),
       )

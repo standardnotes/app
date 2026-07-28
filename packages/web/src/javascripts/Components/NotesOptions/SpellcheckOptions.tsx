@@ -29,11 +29,11 @@ export const SpellcheckOptions: FunctionComponent<{
         disabled={disabled || !spellcheckControllable}
       >
         <Icon type="notes" className={iconClass} />
-        {c('B3.Notes.EditorOptions.Action').t`Spellcheck`}
+        {c('B4.Notes.EditorOptions.Action').t`Spellcheck`}
       </MenuSwitchButtonItem>
       {!spellcheckControllable && (
         <p className="px-3 py-1.5 text-xs">
-          {c('B3.Notes.EditorOptions.Info').t`Spellcheck cannot be controlled for this editor.`}
+          {c('B4.Notes.EditorOptions.Info').t`Spellcheck cannot be controlled for this editor.`}
         </p>
       )}
     </div>

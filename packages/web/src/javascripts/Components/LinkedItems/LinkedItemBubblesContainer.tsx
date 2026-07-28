@@ -71,13 +71,13 @@ const LinkedItemBubblesContainer = ({
     return mergeRegister(
       keyboardService.addCommandHandler({
         command: FOCUS_TAGS_INPUT_COMMAND,
-        category: c('B3.Notes.LinkedItems.Label').t`Current note` as 'Current note',
-        description: c('B3.Notes.TagsLinkedItems.Action').t`Link tags, notes, files`,
+        category: c('B4.Notes.LinkedItems.Label').t`Current note` as 'Current note',
+        description: c('B4.Notes.TagsLinkedItems.Action').t`Link tags, notes, files`,
         onKeyDown: focusInput,
       }),
       application.commands.add(
         'link-items-current',
-        c('B3.Notes.TagsLinkedItems.Action').t`Link items to current note`,
+        c('B4.Notes.TagsLinkedItems.Action').t`Link items to current note`,
         focusInput,
         'link',
       ),
@@ -220,7 +220,7 @@ const LinkedItemBubblesContainer = ({
           />
         ))}
         {isCollapsed && nonVisibleItems > 0 && (
-          <span className="flex-shrink-0">{c('B3.Notes.TagsLinkedItems.Info').jt`and ${nonVisibleItems} more...`}</span>
+          <span className="flex-shrink-0">{c('B4.Notes.TagsLinkedItems.Info').jt`and ${nonVisibleItems} more...`}</span>
         )}
         {!readonly && (
           <ItemLinkAutocompleteInput
@@ -230,7 +230,7 @@ const LinkedItemBubblesContainer = ({
             focusPreviousItem={focusPreviousItem}
             setFocusedId={setFocusedId}
             hoverLabel={
-              c('B3.Notes.TagsLinkedItems.Label').jt`Focus input to add a link (${shortcut})` as unknown as string
+              c('B4.Notes.TagsLinkedItems.Label').jt`Focus input to add a link (${shortcut})` as unknown as string
             }
             item={item}
           />
@@ -239,7 +239,7 @@ const LinkedItemBubblesContainer = ({
       {itemsToDisplay.length > 0 && !shouldHideToggle && (
         <RoundIconButton
           id="toggle-linking-container"
-          label={c('B3.Notes.TagsLinkedItems.Label').t`Toggle linked items container`}
+          label={c('B4.Notes.TagsLinkedItems.Label').t`Toggle linked items container`}
           onClick={() => {
             setIsCollapsed((isCollapsed) => !isCollapsed)
           }}

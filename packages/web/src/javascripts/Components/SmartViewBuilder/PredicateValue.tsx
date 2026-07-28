@@ -59,8 +59,8 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
         setValue(event.target.value)
       }}
     >
-      <option value="true">{c('B3.Notes.TagsLinkedItems.Label').t`True`}</option>
-      <option value="false">{c('B3.Notes.TagsLinkedItems.Label').t`False`}</option>
+      <option value="true">{c('B4.Notes.TagsLinkedItems.Label').t`True`}</option>
+      <option value="false">{c('B4.Notes.TagsLinkedItems.Label').t`False`}</option>
     </select>
   ) : type === 'number' ? (
     <input

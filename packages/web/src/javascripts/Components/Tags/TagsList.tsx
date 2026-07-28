@@ -57,8 +57,8 @@ const TagsList: FunctionComponent<Props> = ({ type }: Props) => {
     return (
       <div className="px-4 text-base opacity-50 lg:text-sm">
         {application.navigationController.isSearching
-          ? c('B3.Notes.TagsLinkedItems.Label').t`No tags found. Try a different search.`
-          : c('B3.Notes.TagsLinkedItems.Label').t`No tags or folders. Create one using the add button above.`}
+          ? c('B4.Notes.TagsLinkedItems.Label').t`No tags found. Try a different search.`
+          : c('B4.Notes.TagsLinkedItems.Label').t`No tags or folders. Create one using the add button above.`}
       </div>
     )
   }

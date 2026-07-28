@@ -128,19 +128,19 @@ const IconPicker = ({
     <div className={`flex h-full flex-grow flex-col ${className}`}>
       <div className="flex">
         <TabButton
-          label={c('B3.Notes.EditingUI.Label').t`Icon`}
+          label={c('B4.Notes.EditingUI.Label').t`Icon`}
           type={'icon'}
           currentType={currentType}
           selectTab={selectTab}
         />
         <TabButton
-          label={c('B3.Notes.EditingUI.Label').t`Emoji`}
+          label={c('B4.Notes.EditingUI.Label').t`Emoji`}
           type={'emoji'}
           currentType={currentType}
           selectTab={selectTab}
         />
         <TabButton
-          label={c('B3.Notes.EditingUI.Action').t`Reset`}
+          label={c('B4.Notes.EditingUI.Action').t`Reset`}
           type={'reset'}
           currentType={currentType}
           selectTab={selectTab}
@@ -170,7 +170,7 @@ const IconPicker = ({
           ) : (
             <Dropdown
               fullWidth={true}
-              label={c('B3.Notes.TagsLinkedItems.Action').t`Change the icon for a tag`}
+              label={c('B4.Notes.TagsLinkedItems.Action').t`Change the icon for a tag`}
               items={iconOptions}
               value={selectedValue as string}
               onChange={handleIconChange}
@@ -187,16 +187,16 @@ const IconPicker = ({
               onChange={(value) => handleEmojiChange(value)}
             />
             <div className="mt-2 text-sm text-passive-0 lg:text-xs">
-              {c('B3.Notes.EditingUI.Info').t`Use your keyboard to enter or paste in an emoji character.`}
+              {c('B4.Notes.EditingUI.Info').t`Use your keyboard to enter or paste in an emoji character.`}
             </div>
             {isMacOS && (
               <div className="mt-2 text-sm text-passive-0 lg:text-xs">
-                {c('B3.Notes.EditingUI.Info').t`On macOS: ⌘ + ⌃ + Space bar to bring up emoji picker.`}
+                {c('B4.Notes.EditingUI.Info').t`On macOS: ⌘ + ⌃ + Space bar to bring up emoji picker.`}
               </div>
             )}
             {isWindows && (
               <div className="mt-2 text-sm text-passive-0 lg:text-xs">
-                {c('B3.Notes.EditingUI.Info').t`On Windows: Windows key + . to bring up emoji picker.`}
+                {c('B4.Notes.EditingUI.Info').t`On Windows: Windows key + . to bring up emoji picker.`}
               </div>
             )}
           </>

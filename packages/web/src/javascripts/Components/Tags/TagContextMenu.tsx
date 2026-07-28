@@ -33,7 +33,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
 
   const onClickAddSubtag = useCallback(() => {
     if (!isEntitledToFolders) {
-      premiumModal.activate(c('B3.Notes.TagsLinkedItems.Label').t`Folders`)
+      premiumModal.activate(c('B4.Notes.TagsLinkedItems.Label').t`Folders`)
       return
     }
 
@@ -90,14 +90,14 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
 
   return (
     <Popover
-      title={c('B3.Notes.TagsLinkedItems.Label').t`Tag options`}
+      title={c('B4.Notes.TagsLinkedItems.Label').t`Tag options`}
       open={contextMenuOpen}
       anchorPoint={contextMenuClickLocation}
       togglePopover={() => navigationController.setContextMenuOpen(!contextMenuOpen)}
       className="py-2"
     >
       <div className="flex flex-col gap-1 px-4 py-0.5 text-mobile-menu-item md:px-3 md:text-tablet-menu-item lg:text-menu-item">
-        <div className="font-semibold">{c('B3.Notes.TagsLinkedItems.Label').t`Name`}</div>
+        <div className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Name`}</div>
         <div className="flex gap-2.5">
           <DecoratedInput
             ref={titleInputRef}
@@ -115,7 +115,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
             }}
           />
           <button
-            aria-label={c('B3.Notes.TagsLinkedItems.Action').t`Save tag name`}
+            aria-label={c('B4.Notes.TagsLinkedItems.Action').t`Save tag name`}
             className="rounded border border-border bg-transparent px-1.5 active:bg-default translucent-ui:border-[--popover-border-color] md:hidden"
             onClick={() => saveTitle(true)}
           >
@@ -124,7 +124,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
         </div>
       </div>
       <HorizontalSeparator classes="my-2" />
-      <Menu a11yLabel={c('B3.Notes.TagsLinkedItems.Label').t`Tag context menu`}>
+      <Menu a11yLabel={c('B4.Notes.TagsLinkedItems.Label').t`Tag context menu`}>
         <IconPicker
           key={selectedTag.uuid}
           onIconChange={handleIconChange}
@@ -143,34 +143,34 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
             <div className="flex items-center">
               <Icon type="star" className="mr-2 text-neutral" />
               {selectedTag.starred
-                ? c('B3.Notes.TagsLinkedItems.Action').t`Unfavorite`
-                : c('B3.Notes.TagsLinkedItems.Action').t`Favorite`}
+                ? c('B4.Notes.TagsLinkedItems.Action').t`Unfavorite`
+                : c('B4.Notes.TagsLinkedItems.Action').t`Favorite`}
             </div>
           </MenuItem>
           <MenuItem className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
             <div className="flex items-center">
               <Icon type="add" className="mr-2 text-neutral" />
-              {c('B3.Notes.TagsLinkedItems.Action').t`Add subtag`}
+              {c('B4.Notes.TagsLinkedItems.Action').t`Add subtag`}
             </div>
             {!isEntitledToFolders && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
           </MenuItem>
           <MenuItem className={'py-1.5'} onClick={onClickDelete}>
             <Icon type="trash" className="mr-2 text-danger" />
-            <span className="text-danger">{c('B3.Notes.TagsLinkedItems.Action').t`Delete`}</span>
+            <span className="text-danger">{c('B4.Notes.TagsLinkedItems.Action').t`Delete`}</span>
           </MenuItem>
         </MenuSection>
       </Menu>
       <HorizontalSeparator classes="my-2" />
       <div className="px-4 pb-1.5 pt-1 text-sm font-medium text-neutral md:px-3 lg:text-xs">
         <div className="mb-1">
-          <span className="font-semibold">{c('B3.Notes.TagsLinkedItems.Label').t`Last modified:`}</span>{' '}
+          <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Last modified:`}</span>{' '}
           {tagLastModified}
         </div>
         <div className="mb-1">
-          <span className="font-semibold">{c('B3.Notes.TagsLinkedItems.Label').t`Created:`}</span> {tagCreatedAt}
+          <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Created:`}</span> {tagCreatedAt}
         </div>
         <div>
-          <span className="font-semibold">{c('B3.Notes.TagsLinkedItems.Label').t`Tag ID:`}</span> {selectedTag.uuid}
+          <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Tag ID:`}</span> {selectedTag.uuid}
         </div>
       </div>
     </Popover>

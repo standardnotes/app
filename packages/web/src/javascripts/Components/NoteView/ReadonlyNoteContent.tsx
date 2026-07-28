@@ -186,7 +186,7 @@ export const ReadonlyNoteContent = ({
             />
           ) : (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-passive-0">
-              {c('B3.Notes.EditingUI.Label').t`Empty note.`}
+              {c('B4.Notes.EditingUI.Label').t`Empty note.`}
             </div>
           )}
         </div>

@@ -160,7 +160,7 @@ export function CheckListPlugin(): null {
         platform: application.platform,
         modifiers: [primaryModifier],
         key: 'Enter',
-        category: c('B3.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
+        category: c('B4.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
         description: c('B3.Notes.EditorToolbar.Action').t`Toggle checklist item`,
       }),
     )

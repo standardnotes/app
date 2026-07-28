@@ -122,7 +122,7 @@ export function SearchPlugin() {
     return application.keyboardService.addCommandHandlers([
       {
         command: SUPER_TOGGLE_SEARCH,
-        category: c('B3.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
+        category: c('B4.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
         description: c('B3.Notes.EditorToolbar.Action').t`Search in current note`,
         onKeyDown: (event) => {
           event.preventDefault()
@@ -132,7 +132,7 @@ export function SearchPlugin() {
       },
       {
         command: SUPER_SEARCH_TOGGLE_REPLACE_MODE,
-        category: c('B3.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
+        category: c('B4.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
         description: c('B3.Notes.EditorToolbar.Action').t`Search and replace in current note`,
         onKeyDown: (event) => {
           if (!isEditable) {
@@ -151,7 +151,7 @@ export function SearchPlugin() {
       },
       {
         command: SUPER_SEARCH_NEXT_RESULT,
-        category: c('B3.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
+        category: c('B4.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
         description: c('B3.Notes.EditorToolbar.Action').t`Go to next search result`,
         onKeyDown(event) {
           event.preventDefault()
@@ -161,7 +161,7 @@ export function SearchPlugin() {
       },
       {
         command: SUPER_SEARCH_PREVIOUS_RESULT,
-        category: c('B3.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
+        category: c('B4.Notes.EditingUI.Label').t`Super notes` as 'Super notes',
         description: c('B3.Notes.EditorToolbar.Action').t`Go to previous search result`,
         onKeyDown(event) {
           event.preventDefault()

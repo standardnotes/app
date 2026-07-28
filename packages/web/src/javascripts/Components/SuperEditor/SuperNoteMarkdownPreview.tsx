@@ -35,13 +35,13 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
   const modalActions: ModalAction[] = useMemo(
     () => [
       {
-        label: didCopy ? c('B3.Notes.EditingUI.Action').t`Copied` : c('B3.Notes.EditingUI.Action').t`Copy`,
+        label: didCopy ? c('B4.Notes.EditingUI.Action').t`Copied` : c('B4.Notes.EditingUI.Action').t`Copy`,
         type: 'primary',
         onClick: copy,
         mobileSlot: 'left',
       },
       {
-        label: c('B3.Notes.EditingUI.Action').t`Done`,
+        label: c('B4.Notes.EditingUI.Action').t`Done`,
         type: 'cancel',
         onClick: closeDialog,
         mobileSlot: 'right',
@@ -52,7 +52,7 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
   )
 
   return (
-    <Modal title={c('B3.Notes.EditingUI.Label').t`Markdown Preview`} close={closeDialog} actions={modalActions}>
+    <Modal title={c('B4.Notes.EditingUI.Label').t`Markdown Preview`} close={closeDialog} actions={modalActions}>
       <div className="relative w-full px-4 py-4">
         <ErrorBoundary>
           <BlocksEditorComposer readonly initialValue={note.text}>

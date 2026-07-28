@@ -203,7 +203,7 @@ export class NavigationController
       this.commands.addWithShortcut(
         CREATE_NEW_TAG_COMMAND,
         c('B2.NavSharedUI.Label').t`General` as 'General',
-        c('B3.Notes.TagsLinkedItems.Action').t`Create new tag`,
+        c('B4.Notes.TagsLinkedItems.Action').t`Create new tag`,
         () => this.createNewTemplate(),
         'add',
       ),
@@ -659,7 +659,7 @@ export class NavigationController
       if (isTemplateChange) {
         this.undoCreateNewTag()
       }
-      this.alerts.alert(c('B3.Notes.TagsLinkedItems.Info').t`A tag with this name already exists.`).catch(console.error)
+      this.alerts.alert(c('B4.Notes.TagsLinkedItems.Info').t`A tag with this name already exists.`).catch(console.error)
       return
     }
 

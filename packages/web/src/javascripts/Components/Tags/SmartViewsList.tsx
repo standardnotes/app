@@ -32,7 +32,7 @@ const SmartViewsList: FunctionComponent<Props> = ({
   if (allViews.length === 0 && navigationController.isSearching) {
     return (
       <div className="px-4 py-1 text-base opacity-60 lg:text-sm">
-        {c('B3.Notes.TagsLinkedItems.Label').t`No smart views found. Try a different search.`}
+        {c('B4.Notes.TagsLinkedItems.Label').t`No smart views found. Try a different search.`}
       </div>
     )
   }

@@ -31,12 +31,12 @@ export function InsertRemoteImageDialog({ onClose }: { onClose: () => void }) {
   return (
     <>
       <label className="flex flex-col gap-1.5">
-        {c('B3.Notes.EditingUI.Label').t`URL:`}
+        {c('B4.Notes.EditingUI.Label').t`URL:`}
         <DecoratedInput value={url} onChange={setURL} ref={focusOnMount} />
       </label>
       <div className="mt-2.5 flex justify-end">
         <Button onClick={onClick} disabled={!url} small={isMobileScreen()}>
-          {c('B3.Notes.EditingUI.Action').t`Confirm`}
+          {c('B4.Notes.EditingUI.Action').t`Confirm`}
         </Button>
       </div>
     </>

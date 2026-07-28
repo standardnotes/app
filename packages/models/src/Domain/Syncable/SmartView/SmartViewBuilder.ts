@@ -20,7 +20,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: c('B3.Notes.TagsLinkedItems.Label').t`Notes`,
+        title: c('B4.Notes.TagsLinkedItems.Label').t`Notes`,
         predicate: allNotesPredicate(options).toJson(),
       }),
     }),
@@ -32,7 +32,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: c('B3.Notes.TagsLinkedItems.Label').t`Files`,
+        title: c('B4.Notes.TagsLinkedItems.Label').t`Files`,
         predicate: filesPredicate(options).toJson(),
       }),
     }),
@@ -44,7 +44,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: c('B3.Notes.TagsLinkedItems.Action').t`Archived`,
+        title: c('B4.Notes.TagsLinkedItems.Action').t`Archived`,
         predicate: archivedNotesPredicate(options).toJson(),
       }),
     }),
@@ -56,7 +56,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: c('B3.Notes.TagsLinkedItems.Action').t`Trash`,
+        title: c('B4.Notes.TagsLinkedItems.Action').t`Trash`,
         predicate: trashedNotesPredicate(options).toJson(),
       }),
     }),
@@ -68,7 +68,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: c('B3.Notes.TagsLinkedItems.Label').t`Untagged`,
+        title: c('B4.Notes.TagsLinkedItems.Label').t`Untagged`,
         predicate: untaggedNotesPredicate(options).toJson(),
       }),
     }),
@@ -80,7 +80,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: c('B3.Notes.TagsLinkedItems.Action').t`Starred`,
+        title: c('B4.Notes.TagsLinkedItems.Action').t`Starred`,
         predicate: starredNotesPredicate(options).toJson(),
       }),
     }),
@@ -92,7 +92,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: c('B3.Notes.TagsLinkedItems.Label').t`Conflicts`,
+        title: c('B4.Notes.TagsLinkedItems.Label').t`Conflicts`,
         predicate: conflictsPredicate(options).toJson(),
       }),
     }),

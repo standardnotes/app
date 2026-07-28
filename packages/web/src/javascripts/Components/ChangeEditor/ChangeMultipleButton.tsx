@@ -20,13 +20,13 @@ const ChangeMultipleButton = ({ application, notesController }: Props) => {
   return (
     <>
       <RoundIconButton
-        label={c('B3.Notes.EditingUI.Action').t`Change note type`}
+        label={c('B4.Notes.EditingUI.Action').t`Change note type`}
         onClick={toggleMenu}
         ref={changeButtonRef}
         icon="plain-text"
       />
       <Popover
-        title={c('B3.Notes.EditingUI.Action').t`Change note type`}
+        title={c('B4.Notes.EditingUI.Action').t`Change note type`}
         togglePopover={toggleMenu}
         disableClickOutside={disableClickOutside}
         anchorElement={changeButtonRef}

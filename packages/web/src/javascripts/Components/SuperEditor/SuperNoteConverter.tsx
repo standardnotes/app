@@ -137,12 +137,12 @@ const SuperNoteConverter = ({
   const convertAsIs = useCallback(async () => {
     const confirmed = await application.alerts.confirm(
       spaceSeparatedStrings(
-        c('B3.Notes.EditingUI.Info')
+        c('B4.Notes.EditingUI.Info')
           .t`This option is useful if you want to edit the note's content which is in Super's JSON format directly.`,
-        c('B3.Notes.EditingUI.Info')
+        c('B4.Notes.EditingUI.Info')
           .t`This format is not human-readable. If you want to convert the note to a human-readable format, please use the "Convert" option instead.`,
       ),
-      c('B3.Notes.EditingUI.Confirmation').t`Are you sure?`,
+      c('B4.Notes.EditingUI.Confirmation').t`Are you sure?`,
     )
     if (!confirmed) {
       return
@@ -158,19 +158,19 @@ const SuperNoteConverter = ({
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: c('B3.Notes.EditingUI.Action').t`Cancel`,
+        label: c('B4.Notes.EditingUI.Action').t`Cancel`,
         onClick: closeDialog,
         type: 'cancel',
         mobileSlot: 'left',
       },
       {
-        label: c('B3.Notes.EditingUI.Action').t`Convert`,
+        label: c('B4.Notes.EditingUI.Action').t`Convert`,
         onClick: confirmConvert,
         mobileSlot: 'right',
         type: 'primary',
       },
       {
-        label: c('B3.Notes.EditingUI.Action').t`Convert As-Is`,
+        label: c('B4.Notes.EditingUI.Action').t`Convert As-Is`,
         onClick: convertAsIs,
         type: 'secondary',
       },
@@ -180,7 +180,7 @@ const SuperNoteConverter = ({
 
   return (
     <Modal
-      title={c('B3.Notes.EditingUI.Label').jt`Convert to ${uiFeature.displayName}` as unknown as string}
+      title={c('B4.Notes.EditingUI.Label').jt`Convert to ${uiFeature.displayName}` as unknown as string}
       close={closeDialog}
       actions={modalActions}
       className="flex flex-col !overflow-hidden"
@@ -188,7 +188,7 @@ const SuperNoteConverter = ({
       {format === 'txt' || format === 'md' ? (
         <div className="flex items-start border-b border-border p-4 text-sm">
           <Icon type="warning" className="mr-2 flex-shrink-0" />
-          {c('B3.Notes.EditingUI.Status')
+          {c('B4.Notes.EditingUI.Status')
             .t`Conversion from Super's format to Markdown/Plaintext can be lossy. Please review the converted note before saving.`}
         </div>
       ) : null}

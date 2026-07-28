@@ -34,7 +34,7 @@ export function handleEditorChange(
     console.error(error)
     const errorDetails = JSON.stringify(error)
     window.alert(
-      c('B3.Notes.EditingUI.Info')
+      c('B4.Notes.EditingUI.Info')
         .jt`An invalid change was made inside the Super editor. Your change was not saved. Please report this error to the team: ${errorDetails}`,
     )
   }

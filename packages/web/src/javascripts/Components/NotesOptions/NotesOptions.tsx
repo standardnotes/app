@@ -156,14 +156,14 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           <MenuSection>
             <MenuItem onClick={openRevisionHistoryModal}>
               <Icon type="history" className={iconClass} />
-              {c('B3.Notes.History.Action').t`Note history`}
+              {c('B4.Notes.History.Action').t`Note history`}
               {historyShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={historyShortcut} />}
             </MenuItem>
           </MenuSection>
           <MenuSection>
             <MenuItem onClick={toggleLineWidthModal} disabled={areSomeNotesInReadonlySharedVault}>
               <Icon type="line-width" className={iconClass} />
-              {c('B3.Notes.EditorOptions.Action').t`Editor width`}
+              {c('B4.Notes.EditorOptions.Action').t`Editor width`}
               {editorWidthShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={editorWidthShortcut} />}
             </MenuItem>
           </MenuSection>
@@ -178,7 +178,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="pencil-off" className={iconClass} />
-          {c('B3.Notes.EditorOptions.Action').t`Prevent editing`}
+          {c('B4.Notes.EditorOptions.Action').t`Prevent editing`}
         </MenuSwitchButtonItem>
         <MenuSwitchButtonItem
           checked={!hidePreviews}
@@ -188,7 +188,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="rich-text" className={iconClass} />
-          {c('B3.Notes.EditorOptions.Action').t`Show preview`}
+          {c('B4.Notes.EditorOptions.Action').t`Show preview`}
         </MenuSwitchButtonItem>
         <MenuSwitchButtonItem
           checked={protect}
@@ -198,7 +198,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="lock" className={iconClass} />
-          {c('B3.Notes.EditorOptions.Label').t`Password protect`}
+          {c('B4.Notes.EditorOptions.Label').t`Password protect`}
         </MenuSwitchButtonItem>
       </MenuSection>
       {notes.length === 1 && (
@@ -267,12 +267,12 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
         )}
         <MenuItem onClick={notesController.exportSelectedNotes}>
           <Icon type="download" className={iconClass} />
-          {c('B3.Notes.EditorOptions.Action').t`Export`}
+          {c('B4.Notes.EditorOptions.Action').t`Export`}
         </MenuItem>
         {application.platform === Platform.Android && (
           <MenuItem onClick={shareSelectedItems}>
             <Icon type="share" className={iconClass} />
-            {c('B3.Notes.EditorOptions.Action').t`Share`}
+            {c('B4.Notes.EditorOptions.Action').t`Share`}
           </MenuItem>
         )}
         <MenuItem onClick={duplicateSelectedNotes} disabled={areSomeNotesInReadonlySharedVault}>

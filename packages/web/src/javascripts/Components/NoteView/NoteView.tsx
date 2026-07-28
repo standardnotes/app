@@ -395,8 +395,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       case ApplicationEvent.LocalDatabaseWriteError:
         this.controller.showErrorSyncStatus({
           type: 'error',
-          message: c('B3.Notes.EditingUI.Error').t`Offline Saving Issue`,
-          description: c('B3.Notes.EditingUI.Error').t`Changes not saved`,
+          message: c('B4.Notes.EditingUI.Error').t`Offline Saving Issue`,
+          description: c('B4.Notes.EditingUI.Error').t`Changes not saved`,
         })
         break
       case ApplicationEvent.UnprotectedSessionBegan: {
@@ -837,7 +837,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     return (
       <div
-        aria-label={c('B3.Notes.EditingUI.Label').t`Note`}
+        aria-label={c('B4.Notes.EditingUI.Label').t`Note`}
         className="section editor sn-component h-full md:max-h-full"
         ref={this.noteViewElementRef}
       >
@@ -853,7 +853,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         {this.state.readonly && (
           <div className="bg-warning-faded flex items-center px-3.5 py-2 text-sm text-accessory-tint-3">
             <Icon type="pencil-off" className="mr-3" />
-            {c('B3.Notes.EditingUI.Label').t`You don't have permission to edit this note`}
+            {c('B4.Notes.EditingUI.Label').t`You don't have permission to edit this note`}
           </div>
         )}
 

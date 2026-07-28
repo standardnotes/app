@@ -38,7 +38,7 @@ export function BubbleComponent({ itemUuid, node }: BubbleComponentProps) {
   }, [linkingController, node, editor])
 
   if (!item) {
-    return <div>{c('B3.Notes.EditingUI.Info').jt`Unable to find item ${itemUuid}`}</div>
+    return <div>{c('B4.Notes.EditingUI.Info').jt`Unable to find item ${itemUuid}`}</div>
   }
 
   const link = createLinkFromItem(item, 'linked')

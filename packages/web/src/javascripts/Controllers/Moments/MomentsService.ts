@@ -150,7 +150,7 @@ export class MomentsService extends AbstractViewController implements InternalEv
     if (isAppInForeground) {
       toastId = addToast({
         type: ToastType.Regular,
-        message: c('B3.Notes.EditingUI.Status').t`Capturing Moment...`,
+        message: c('B4.Notes.EditingUI.Status').t`Capturing Moment...`,
         pauseOnWindowBlur: false,
       })
     }
@@ -163,7 +163,7 @@ export class MomentsService extends AbstractViewController implements InternalEv
         }
         addToast({
           type: ToastType.Error,
-          message: c('B3.Notes.EditingUI.Info')
+          message: c('B4.Notes.EditingUI.Info')
             .t`Please enable Camera permissions for Standard Notes to enable Moments.`,
           duration: 3000,
         })

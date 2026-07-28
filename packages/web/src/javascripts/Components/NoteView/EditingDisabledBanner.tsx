@@ -15,8 +15,8 @@ const EditingDisabledBanner: FunctionComponent<Props> = ({ onClick, noteLocked }
   const textColor = showDisabledCopy ? 'text-warning' : 'text-accessory-tint-1'
 
   const text = showDisabledCopy
-    ? c('B3.Notes.EditingUI.Status').t`Note editing disabled.`
-    : c('B3.Notes.EditingUI.Action').t`Enable editing`
+    ? c('B4.Notes.EditingUI.Status').t`Note editing disabled.`
+    : c('B4.Notes.EditingUI.Action').t`Enable editing`
 
   return (
     <div

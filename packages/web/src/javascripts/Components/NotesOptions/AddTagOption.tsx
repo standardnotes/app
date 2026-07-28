@@ -64,12 +64,12 @@ const AddTagOption: FunctionComponent<Props> = ({
       >
         <div className="flex items-center">
           <Icon type="hashtag" className={iconClassName} />
-          {c('B3.Notes.TagsLinkedItems.Action').t`Add tag`}
+          {c('B4.Notes.TagsLinkedItems.Action').t`Add tag`}
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </MenuItem>
       <Popover
-        title={c('B3.Notes.TagsLinkedItems.Action').t`Add tag`}
+        title={c('B4.Notes.TagsLinkedItems.Action').t`Add tag`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}
@@ -78,7 +78,7 @@ const AddTagOption: FunctionComponent<Props> = ({
         className="py-2"
         overrideZIndex="z-modal"
       >
-        <Menu a11yLabel={c('B3.Notes.TagsLinkedItems.Label').t`Tag selection menu`} className="!px-0">
+        <Menu a11yLabel={c('B4.Notes.TagsLinkedItems.Label').t`Tag selection menu`} className="!px-0">
           {navigationController.tags.map((tag) => {
             const tagTitlePrefix = getTitleForLinkedTag(tag, application)?.titlePrefix
             return (

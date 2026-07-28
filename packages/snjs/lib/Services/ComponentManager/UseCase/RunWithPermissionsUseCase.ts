@@ -49,9 +49,9 @@ export class RunWithPermissionsUseCase {
         this.pendingErrorAlerts.add(componentIdentifier)
         void this.alerts
           .alert(
-            c('B3.Notes.EditingUI.Error')
+            c('B4.Notes.EditingUI.Error')
               .t`Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
-            c('B3.Notes.EditingUI.Error').t`An unexpected error occurred`,
+            c('B4.Notes.EditingUI.Error').t`An unexpected error occurred`,
           )
           .then(() => {
             this.pendingErrorAlerts.delete(componentIdentifier)

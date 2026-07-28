@@ -43,10 +43,10 @@ const IndicatorWithTooltip = ({
         ref={buttonRef}
       >
         <Icon className={animateIcon ? 'animate-spin' : ''} type={icon} size="small" />
-        <VisuallyHidden>{c('B3.Notes.EditingUI.AriaLabel').t`Note sync status`}</VisuallyHidden>
+        <VisuallyHidden>{c('B4.Notes.EditingUI.AriaLabel').t`Note sync status`}</VisuallyHidden>
       </button>
       <Popover
-        title={c('B3.Notes.EditingUI.AriaLabel').t`Note sync status`}
+        title={c('B4.Notes.EditingUI.AriaLabel').t`Note sync status`}
         open={isTooltipVisible}
         togglePopover={() => setIsTooltipVisible((visible) => !visible)}
         className="px-3 py-2"
@@ -122,7 +122,7 @@ const NoteStatusIndicator = ({
             {status.description && <div className="mt-0.5">{status.description}</div>}
           </>
         ) : (
-          <div className="text-sm font-bold text-warning">{c('B3.Notes.EditingUI.Warning')
+          <div className="text-sm font-bold text-warning">{c('B4.Notes.EditingUI.Warning')
             .t`Sync taking too long`}</div>
         )}
       </IndicatorWithTooltip>
@@ -149,7 +149,7 @@ const NoteStatusIndicator = ({
         <div className="text-sm font-bold">{status.message}</div>
         {status.description && <div className="mt-0.5">{status.description}</div>}
         {lastSyncedRelativeTime && (
-          <div className="mt-0.5">{c('B3.Notes.EditingUI.Status').jt`Last synced ${lastSyncedRelativeTime}`}</div>
+          <div className="mt-0.5">{c('B4.Notes.EditingUI.Status').jt`Last synced ${lastSyncedRelativeTime}`}</div>
         )}
         {status.type === 'waiting' ? (
           <Button
@@ -160,11 +160,11 @@ const NoteStatusIndicator = ({
               toggleTooltip()
             }}
           >
-            {c('B3.Notes.EditingUI.Action').t`Sync now`}
+            {c('B4.Notes.EditingUI.Action').t`Sync now`}
           </Button>
         ) : (
           <Button small className="mt-1" onClick={toggleShowPreference}>
-            {c('B3.Notes.EditingUI.Action').t`Disable status updates`}
+            {c('B4.Notes.EditingUI.Action').t`Disable status updates`}
           </Button>
         )}
       </IndicatorWithTooltip>
@@ -179,9 +179,9 @@ const NoteStatusIndicator = ({
       isTooltipVisible={isTooltipVisible}
       setIsTooltipVisible={setIsTooltipVisible}
     >
-      <div className="text-sm font-bold">{c('B3.Notes.EditingUI.Info').t`Note status updates are disabled`}</div>
+      <div className="text-sm font-bold">{c('B4.Notes.EditingUI.Info').t`Note status updates are disabled`}</div>
       <Button small className="mt-1" onClick={toggleShowPreference}>
-        {c('B3.Notes.EditingUI.Action').t`Enable status updates`}
+        {c('B4.Notes.EditingUI.Action').t`Enable status updates`}
       </Button>
     </IndicatorWithTooltip>
   )
