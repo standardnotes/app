@@ -8,8 +8,7 @@ export const ErrorMessage = {
     return c('B1.Account.SignIn.Error').t`A server error occurred while trying to register. Please try again.`
   },
   get RateLimited() {
-    return c('B2.NavSharedUI.Error')
-      .t`Too many successive server requests. Please wait a few minutes and try again.`
+    return c('B2.NavSharedUI.Error').t`Too many successive server requests. Please wait a few minutes and try again.`
   },
   get InsufficientPasswordMessage() {
     return c('B1.Account.SignIn.Error')
