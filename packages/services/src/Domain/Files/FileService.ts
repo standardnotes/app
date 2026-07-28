@@ -25,7 +25,7 @@ import {
   DecryptedItemInterface,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { LoggerInterface, spaceSeparatedStrings, UuidGenerator } from '@standardnotes/utils'
+import { LoggerInterface, UuidGenerator } from '@standardnotes/utils'
 import { c } from 'ttag'
 import { SNItemsKey } from '@standardnotes/encryption'
 import {
@@ -413,12 +413,8 @@ export class FileService extends AbstractService implements FilesClientInterface
 
     if (isErrorResponse(result)) {
       const deleteAnyway = await this.alertService.confirm(
-        spaceSeparatedStrings(
-          'This file could not be deleted from the server, possibly because you are attempting to delete a file item',
-          'that was imported from another account. Would you like to remove this file item from your account anyway?',
-          "If you're sure the file is yours and still exists on the server, do not choose this option,",
-          'and instead try to delete it again.',
-        ),
+        c('B7.FilesSubscriptionHelp.Files.Confirmation')
+          .t`This file could not be deleted from the server, possibly because you are attempting to delete a file item that was imported from another account. Would you like to remove this file item from your account anyway? If you're sure the file is yours and still exists on the server, do not choose this option, and instead try to delete it again.`,
         c('B7.FilesSubscriptionHelp.Files.Confirmation').t`Unable to Delete`,
         c('B7.FilesSubscriptionHelp.Files.Confirmation').t`Delete Anyway`,
         ButtonType.Danger,

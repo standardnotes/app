@@ -150,8 +150,8 @@ export class VaultService
       })
 
       if (areAnyLinkedItemsInOtherVaults) {
-        const reason =
-          'This item is linked to other items that are not in the same vault. Please move those items to this vault first.'
+        const reason = c('B6.Preferences.Vaults.Error')
+          .t`This item is linked to other items that are not in the same vault. Please move those items to this vault first.`
         this.alerts
           .alertV2({
             title: c('B6.Preferences.Vaults.Title').t`Cannot move item to vault`,
@@ -169,8 +169,8 @@ export class VaultService
         return subtag.key_system_identifier && subtag.key_system_identifier !== vault.systemIdentifier
       })
       if (anySubtagIsInOtherVault) {
-        const reason =
-          'One or more subtags are in other vaults. Please remove those subtags from the vaults or move them to this vault first.'
+        const reason = c('B6.Preferences.Vaults.Error')
+          .t`One or more subtags are in other vaults. Please remove those subtags from the vaults or move them to this vault first.`
         this.alerts
           .alertV2({
             title: c('B6.Preferences.Vaults.Title').t`Cannot move item to vault`,

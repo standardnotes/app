@@ -67,7 +67,9 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: editContactUuid ? 'Save Contact' : 'Add Contact',
+        label: editContactUuid
+          ? c('B6.Preferences.Vaults.Action').t`Save Contact`
+          : c('B6.Preferences.Vaults.Action').t`Add Contact`,
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',
@@ -92,7 +94,11 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
 
   return (
     <Modal
-      title={editContactUuid ? 'Edit Contact' : 'Add New Contact'}
+      title={
+        editContactUuid
+          ? c('B6.Preferences.Vaults.Title').t`Edit Contact`
+          : c('B6.Preferences.Vaults.Title').t`Add New Contact`
+      }
       close={handleDialogClose}
       actions={modalActions}
     >

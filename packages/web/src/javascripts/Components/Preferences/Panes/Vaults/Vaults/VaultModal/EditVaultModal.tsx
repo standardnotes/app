@@ -225,7 +225,11 @@ const EditVaultModalContent: FunctionComponent<{
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: existingVault ? 'Save Vault' : creatingSharedVault ? 'Create Shared Vault' : 'Create Vault',
+        label: existingVault
+          ? c('B6.Preferences.Vaults.Action').t`Save Vault`
+          : creatingSharedVault
+            ? c('B6.Preferences.Vaults.Action').t`Create Shared Vault`
+            : c('B6.Preferences.Vaults.Action').t`Create Vault`,
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',
@@ -255,7 +259,15 @@ const EditVaultModalContent: FunctionComponent<{
   }
 
   return (
-    <Modal title={existingVault ? 'Edit Vault' : 'Create New Vault'} close={handleDialogClose} actions={modalActions}>
+    <Modal
+      title={
+        existingVault
+          ? c('B6.Preferences.Vaults.Title').t`Edit Vault`
+          : c('B6.Preferences.Vaults.Title').t`Create New Vault`
+      }
+      close={handleDialogClose}
+      actions={modalActions}
+    >
       <div className="flex w-full flex-col space-y-3.5 px-4.5 py-4">
         <div>
           <div className="text-lg">{c('B6.Preferences.Vaults.Label').t`Vault Info`}</div>

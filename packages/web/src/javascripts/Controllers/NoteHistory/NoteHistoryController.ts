@@ -164,7 +164,7 @@ export class NoteHistoryController {
 
     try {
       if (!entry.subactions?.[0]) {
-        throw new Error('Could not find revision action url')
+        throw new Error(c('B4.Notes.History.Error').t`Could not find revision action url`)
       }
 
       this.setSelectedEntry(entry)
@@ -172,7 +172,7 @@ export class NoteHistoryController {
       const response = await this.actions.runAction(entry.subactions[0], this.note)
 
       if (!response) {
-        throw new Error('Could not fetch revision')
+        throw new Error(c('B4.Notes.History.Error').t`Could not fetch revision`)
       }
 
       this.setSelectedRevision(response.item as unknown as HistoryEntry)

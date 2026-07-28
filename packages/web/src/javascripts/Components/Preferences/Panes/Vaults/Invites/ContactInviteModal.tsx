@@ -80,7 +80,11 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: isInvitingContacts ? <Spinner className="h-5 w-5 border-info-contrast" /> : 'Invite Selected Contacts',
+        label: isInvitingContacts ? (
+          <Spinner className="h-5 w-5 border-info-contrast" />
+        ) : (
+          c('B6.Preferences.Vaults.Action').t`Invite Selected Contacts`
+        ),
         onClick: inviteSelectedContacts,
         type: 'primary',
         mobileSlot: 'right',

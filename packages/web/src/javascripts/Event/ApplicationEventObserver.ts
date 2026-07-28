@@ -157,8 +157,10 @@ export class ApplicationEventObserver implements EventObserverInterface {
 
     const toastType = requestSubmittedSuccessfully ? ToastType.Success : ToastType.Error
     const toastMessage = requestSubmittedSuccessfully
-      ? 'We have received your request. Please check your email for further instructions.'
-      : 'We could not process your request. Please try again or contact support if the issue persists.'
+      ? c('B2.NavSharedUI.Info')
+          .t`We have received your request. Please check your email for further instructions.`
+      : c('B2.NavSharedUI.Error')
+          .t`We could not process your request. Please try again or contact support if the issue persists.`
 
     this.toastService.showToast(toastType, toastMessage)
 

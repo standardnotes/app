@@ -285,10 +285,18 @@ export class ActionsService extends AbstractService {
 
   private async promptForLegacyPassword(): Promise<string | undefined> {
     const challenge = new Challenge(
-      [new ChallengePrompt(ChallengeValidation.None, 'Previous Password', undefined, true)],
+      [
+        new ChallengePrompt(
+          ChallengeValidation.None,
+          c('B5.SecuritySync.Challenge.Label').t`Previous Password`,
+          undefined,
+          true,
+        ),
+      ],
       ChallengeReason.Custom,
       true,
-      'Unable to find key for revision. Please enter the account password you may have used at the time of the revision.',
+      c('B4.Notes.History.Info')
+        .t`Unable to find key for revision. Please enter the account password you may have used at the time of the revision.`,
     )
 
     const response = await this.challengeService.promptForChallengeResponse(challenge)

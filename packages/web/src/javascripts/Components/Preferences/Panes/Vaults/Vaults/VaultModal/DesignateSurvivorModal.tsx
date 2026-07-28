@@ -45,7 +45,11 @@ const DesignateSurvivorModal = ({
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: isDesignating ? <Spinner className="h-5 w-5 border-info-contrast" /> : 'Designate survivor',
+        label: isDesignating ? (
+          <Spinner className="h-5 w-5 border-info-contrast" />
+        ) : (
+          c('B6.Preferences.Vaults.Action').t`Designate survivor`
+        ),
         onClick: designateSelectedSurvivor,
         type: 'primary',
         mobileSlot: 'right',

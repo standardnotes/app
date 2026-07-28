@@ -90,7 +90,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
         <div>
           {canShowPaneGesturesOption && (
             <LabsFeature
-              name="Pane switch gestures"
+              name={c('B6.Preferences.General.Label').t`Pane switch gestures`}
               description={c('B6.Preferences.General.Info').t`Allows using gestures to navigate`}
               isEnabled={isPaneGesturesEnabled}
               toggleFeature={() => {
