@@ -121,27 +121,27 @@ export class AutolockService extends AbstractService {
     return [
       {
         value: LockInterval.None,
-        label: c('B4.Security.Autolock.Label').t`Off`,
+        label: c('B5.SecuritySync.Autolock.Label').t`Off`,
       },
       {
         value: LockInterval.Immediate,
-        label: c('B4.Security.Autolock.Label').t`Immediately`,
+        label: c('B5.SecuritySync.Autolock.Label').t`Immediately`,
       },
       {
         value: LockInterval.OneMinute,
-        label: c('B4.Security.Autolock.Label').t`1m`,
+        label: c('B5.SecuritySync.Autolock.Label').t`1m`,
       },
       {
         value: LockInterval.FiveMinutes,
-        label: c('B4.Security.Autolock.Label').t`5m`,
+        label: c('B5.SecuritySync.Autolock.Label').t`5m`,
       },
       {
         value: LockInterval.TenMinutes,
-        label: c('B4.Security.Autolock.Label').t`10m`,
+        label: c('B5.SecuritySync.Autolock.Label').t`10m`,
       },
       {
         value: LockInterval.OneHour,
-        label: c('B4.Security.Autolock.Label').t`1h`,
+        label: c('B5.SecuritySync.Autolock.Label').t`1h`,
       },
     ]
   }

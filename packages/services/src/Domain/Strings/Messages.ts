@@ -83,12 +83,12 @@ export const INVALID_PASSWORD = c('B1.Account.SignIn.Error').t`Invalid password.
 export const OUTDATED_PROTOCOL_ALERT_IGNORE = c('B1.Account.SignIn.Action').t`Sign In`
 export const UPGRADING_ENCRYPTION = c('B1.Account.Password.Status').t`Upgrading your account's encryption version…`
 
-export const SETTING_PASSCODE = () => c('B4.Security.Passcode.Status').t`Setting passcode…`
-export const CHANGING_PASSCODE = () => c('B4.Security.Passcode.Status').t`Changing passcode…`
-export const REMOVING_PASSCODE = () => c('B4.Security.Passcode.Status').t`Removing passcode…`
+export const SETTING_PASSCODE = () => c('B5.SecuritySync.Passcode.Status').t`Setting passcode…`
+export const CHANGING_PASSCODE = () => c('B5.SecuritySync.Passcode.Status').t`Changing passcode…`
+export const REMOVING_PASSCODE = () => c('B5.SecuritySync.Passcode.Status').t`Removing passcode…`
 
 export const DO_NOT_CLOSE_APPLICATION = () =>
-  c('B4.Security.Passcode.Warning').t`Do not close the application until this process completes.`
+  c('B5.SecuritySync.Passcode.Warning').t`Do not close the application until this process completes.`
 
 export const UNKNOWN_ERROR = c('B2.NavSharedUI.Error').t`Unknown error.`
 
@@ -104,7 +104,7 @@ export function StrictSignInFailed(current: ProtocolVersion, latest: ProtocolVer
 
 export const CredentialsChangeStrings = {
   get PasscodeRequired() {
-    return c('B4.Security.Challenge.Info').t`Your passcode is required to process your credentials change.`
+    return c('B5.SecuritySync.Challenge.Info').t`Your passcode is required to process your credentials change.`
   },
   get Failed() {
     return c('B2.NavSharedUI.Error').t`Unable to change your credentials due to a sync error. Please try again.`
@@ -113,19 +113,19 @@ export const CredentialsChangeStrings = {
 
 export const RegisterStrings = {
   get PasscodeRequired() {
-    return c('B4.Security.Challenge.Info').t`Your passcode is required in order to register for an account.`
+    return c('B5.SecuritySync.Challenge.Info').t`Your passcode is required in order to register for an account.`
   },
 }
 
 export const SignInStrings = {
   get PasscodeRequired() {
-    return c('B4.Security.Challenge.Info').t`Your passcode is required in order to sign in to your account.`
+    return c('B5.SecuritySync.Challenge.Info').t`Your passcode is required in order to sign in to your account.`
   },
   get IncorrectMfa() {
-    return c('B4.Security.Mfa.Error').t`Incorrect two-factor authentication code. Please try again.`
+    return c('B5.SecuritySync.Mfa.Error').t`Incorrect two-factor authentication code. Please try again.`
   },
   get SignInCanceledMissingMfa() {
-    return c('B4.Security.Mfa.Info').t`Your sign in request has been canceled.`
+    return c('B5.SecuritySync.Mfa.Info').t`Your sign in request has been canceled.`
   },
 }
 
@@ -147,10 +147,10 @@ export const ProtocolUpgradeStrings = {
 
 export const ChallengeModalTitle = {
   get Generic() {
-    return c('B4.Security.Challenge.Title').t`Authentication Required`
+    return c('B5.SecuritySync.Challenge.Title').t`Authentication Required`
   },
   get Migration() {
-    return c('B4.Security.Challenge.Title').t`Storage Update`
+    return c('B5.SecuritySync.Challenge.Title').t`Storage Update`
   },
 }
 
@@ -174,7 +174,7 @@ export const SessionStrings = {
     return c('B1.Account.Session.Info').t`Please authenticate with your hardware security key.`
   },
   get MfaInputPlaceholder() {
-    return c('B4.Security.Challenge.Placeholder').t`Two-factor authentication code`
+    return c('B5.SecuritySync.Challenge.Placeholder').t`Two-factor authentication code`
   },
   get EmailInputPlaceholder() {
     return c('B1.Account.Session.Label').t`Email`
@@ -183,10 +183,10 @@ export const SessionStrings = {
     return c('B1.Account.Session.Label').t`Password`
   },
   get KeychainRecoveryErrorTitle() {
-    return c('B4.Security.KeyStorage.Error').t`Invalid Credentials`
+    return c('B5.SecuritySync.KeyStorage.Error').t`Invalid Credentials`
   },
   get KeychainRecoveryError() {
-    return c('B4.Security.KeyStorage.Info')
+    return c('B5.SecuritySync.KeyStorage.Info')
       .t`The email or password you entered is incorrect.\n\nPlease note that this sign-in request is made against the default server. If you are using a custom server, you must uninstall the app then reinstall, and sign back into your account.`
   },
   get RevokeTitle() {
@@ -210,95 +210,95 @@ export const SessionStrings = {
 
 export const ChallengeStrings = {
   get UnlockApplication() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to unlock the application`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to unlock the application`
   },
   get NoteAccess() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to view this note`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to view this note`
   },
   get FileAccess() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to access this file`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to access this file`
   },
   get ImportFile() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to import a backup file`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to import a backup file`
   },
   get AddPasscode() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to add a passcode`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to add a passcode`
   },
   get RemovePasscode() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to remove your passcode`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to remove your passcode`
   },
   get ChangePasscode() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to change your passcode`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to change your passcode`
   },
   get ChangeAutolockInterval() {
-    return c('B4.Security.Autolock.Info').t`Authentication is required to change autolock timer duration`
+    return c('B5.SecuritySync.Autolock.Info').t`Authentication is required to change autolock timer duration`
   },
   get RevokeSession() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to revoke a session`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to revoke a session`
   },
   get EnterAccountPassword() {
-    return c('B4.Security.Challenge.Label').t`Enter your account password`
+    return c('B5.SecuritySync.Challenge.Label').t`Enter your account password`
   },
   get EnterLocalPasscode() {
-    return c('B4.Security.Challenge.Label').t`Enter your application passcode`
+    return c('B5.SecuritySync.Challenge.Label').t`Enter your application passcode`
   },
   get EnterPasscodeForMigration() {
-    return c('B4.Security.Challenge.Info')
+    return c('B5.SecuritySync.Challenge.Info')
       .t`Your application passcode is required to perform an upgrade of your local data storage structure.`
   },
   get EnterPasscodeForRootResave() {
-    return c('B4.Security.Challenge.Label').t`Enter your application passcode to continue`
+    return c('B5.SecuritySync.Challenge.Label').t`Enter your application passcode to continue`
   },
   get EnterCredentialsForProtocolUpgrade() {
-    return c('B4.Security.Challenge.Label').t`Enter your credentials to perform encryption upgrade`
+    return c('B5.SecuritySync.Challenge.Label').t`Enter your credentials to perform encryption upgrade`
   },
   get EnterCredentialsForDecryptedBackupDownload() {
-    return c('B4.Security.Challenge.Label').t`Enter your credentials to download a decrypted backup`
+    return c('B5.SecuritySync.Challenge.Label').t`Enter your credentials to download a decrypted backup`
   },
   get AccountPasswordPlaceholder() {
-    return c('B4.Security.Challenge.Placeholder').t`Account Password`
+    return c('B5.SecuritySync.Challenge.Placeholder').t`Account Password`
   },
   get LocalPasscodePlaceholder() {
-    return c('B4.Security.Challenge.Placeholder').t`Application Passcode`
+    return c('B5.SecuritySync.Challenge.Placeholder').t`Application Passcode`
   },
   get DecryptEncryptedFile() {
-    return c('B4.Security.Challenge.Label').t`Enter the account password associated with the import file`
+    return c('B5.SecuritySync.Challenge.Label').t`Enter the account password associated with the import file`
   },
   get ExportBackup() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to export a backup`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to export a backup`
   },
   get DisableBiometrics() {
-    return c('B4.Security.Biometrics.Info').t`Authentication is required to disable biometrics`
+    return c('B5.SecuritySync.Biometrics.Info').t`Authentication is required to disable biometrics`
   },
   get UnprotectNote() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to unprotect a note`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to unprotect a note`
   },
   get UnprotectFile() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to unprotect a file`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to unprotect a file`
   },
   get SearchProtectedNotesText() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to search protected contents`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to search protected contents`
   },
   get SelectProtectedNote() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to select a protected note`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to select a protected note`
   },
   get DisableMfa() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to disable two-factor authentication`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to disable two-factor authentication`
   },
   get DeleteAccount() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to delete your account`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to delete your account`
   },
   get ListedAuthorization() {
-    return c('B4.Security.Challenge.Info').t`Authentication is required to approve this note for Listed`
+    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to approve this note for Listed`
   },
   UnlockVault(vaultName: string): string {
-    return c('B4.Security.Challenge.Info').jt`Unlock ${vaultName}` as unknown as string
+    return c('B5.SecuritySync.Challenge.Info').jt`Unlock ${vaultName}` as unknown as string
   },
   DeleteVault(vaultName: string): string {
-    return c('B4.Security.Challenge.Info').jt`Delete ${vaultName}` as unknown as string
+    return c('B5.SecuritySync.Challenge.Info').jt`Delete ${vaultName}` as unknown as string
   },
   get EnterVaultPassword() {
-    return c('B4.Security.Challenge.Label').t`Enter the password for this vault`
+    return c('B5.SecuritySync.Challenge.Label').t`Enter the password for this vault`
   },
 }
 
@@ -322,10 +322,10 @@ export const ErrorAlertStrings = {
 
 export const KeychainRecoveryStrings = {
   get Title() {
-    return c('B4.Security.KeyStorage.Title').t`Restore Keychain`
+    return c('B5.SecuritySync.KeyStorage.Title').t`Restore Keychain`
   },
   Text(email: string): string {
-    return c('B4.Security.KeyStorage.Info')
+    return c('B5.SecuritySync.KeyStorage.Info')
       .jt`We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password for "${email}" to restore your account keys.` as unknown as string
   },
 }

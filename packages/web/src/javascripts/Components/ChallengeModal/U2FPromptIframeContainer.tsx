@@ -57,7 +57,7 @@ const U2FPromptIframeContainer = ({ contextData, onResponse, apiHost }: Props) =
       ref={iframeRef}
       src={U2F_IFRAME_ORIGIN}
       className="h-40 w-full"
-      title={c('B4.Security.U2F.Label').t`U2F`}
+      title={c('B5.SecuritySync.U2F.Label').t`U2F`}
       allow="publickey-credentials-get"
       id="u2f"
     />

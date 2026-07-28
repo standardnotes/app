@@ -14,7 +14,7 @@ export const STRING_GENERIC_SYNC_ERROR = () =>
 export function StringSyncException(data: unknown) {
   const message = JSON.stringify(data)
   return jtString(
-    c('B5.Sync.Error')
+    c('B5.SecuritySync.Sync.Error')
       .jt`There was an error while trying to save your items. Please contact support and share this message: ${message}.`,
   )
 }
@@ -82,7 +82,7 @@ export const STRING_ENC_NOT_ENABLED = () =>
 export const STRING_IMPORT_SUCCESS = () =>
   c('B1.Account.ImportExport.Info').t`Your data has been successfully imported.`
 export const STRING_NON_MATCHING_PASSCODES = () =>
-  c('B4.Security.Passcode.Error').t`The two passcodes you entered do not match. Please try again.`
+  c('B5.SecuritySync.Passcode.Error').t`The two passcodes you entered do not match. Please try again.`
 export const STRING_NON_MATCHING_PASSWORDS = () =>
   c('B1.Account.SignIn.Error').t`The two passwords you entered do not match. Please try again.`
 export const STRING_INVALID_IMPORT_FILE = () =>
@@ -107,11 +107,11 @@ export const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE = () =>
     .t`The encryption upgrade is in progress. You may lose data if you quit the app. Are you sure you want to quit?`
 
 export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE = () =>
-  c('B4.Security.Passcode.Confirmation')
+  c('B5.SecuritySync.Passcode.Confirmation')
     .t`A passcode change is in progress. You may lose data if you quit the app. Are you sure you want to quit?`
 
 export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL = () =>
-  c('B4.Security.Passcode.Confirmation')
+  c('B5.SecuritySync.Passcode.Confirmation')
     .t`A passcode removal is in progress. You may lose data if you quit the app. Are you sure you want to quit?`
 
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE = () => c('B1.Account.Password.Title').t`Encryption upgrade available`
@@ -121,7 +121,7 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT = () =>
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = () => c('B1.Account.Password.Action').t`Upgrade`
 
 export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION = () =>
-  c('B4.Security.KeyStorage.Confirmation').t`This will delete the previously saved offline key.`
+  c('B5.SecuritySync.KeyStorage.Confirmation').t`This will delete the previously saved offline key.`
 
 export const STRING_DELETE_ACCOUNT_CONFIRMATION = () =>
   c('B1.Account.Session.Info')
@@ -132,7 +132,7 @@ export const STRING_FAILED_TO_UPDATE_USER_SETTING = () =>
 
 export const Strings = {
   get protectingNoteWithoutProtectionSources() {
-    return c('B4.Security.Info').t`Access to this note will not be restricted until you set up a passcode or account.`
+    return c('B5.SecuritySync.Info').t`Access to this note will not be restricted until you set up a passcode or account.`
   },
   get trashItemsTitle() {
     return c('B3.Notes.NoteActions.Title').t`Move to Trash`
@@ -146,7 +146,7 @@ export const Strings = {
   get trashFilesText() {
     return c('B3.Notes.NoteActions.Confirmation').t`Are you sure you want to move these files to the trash?`
   },
-  enterPasscode: () => c('B4.Security.Passcode.Error').t`Please enter a passcode.`,
+  enterPasscode: () => c('B5.SecuritySync.Passcode.Error').t`Please enter a passcode.`,
   get deleteMultipleFiles() {
     return c('B3.Notes.NoteActions.Confirmation').t`Are you sure you want to permanently delete these files?`
   },
@@ -163,12 +163,12 @@ export const StringUtils = {
     const platform = getPlatform(application.device)
     const keychainName =
       platform === Platform.WindowsDesktop
-        ? c('B4.Security.Passcode.Label').t`credential manager`
+        ? c('B5.SecuritySync.Passcode.Label').t`credential manager`
         : platform === Platform.MacDesktop
-        ? c('B4.Security.Passcode.Label').t`keychain`
-        : c('B4.Security.Passcode.Label').t`password manager`
+        ? c('B5.SecuritySync.Passcode.Label').t`keychain`
+        : c('B5.SecuritySync.Passcode.Label').t`password manager`
     return jtString(
-      c('B4.Security.Passcode.Info')
+      c('B5.SecuritySync.Passcode.Info')
         .jt`Your keys are currently stored in your operating system's ${keychainName}. Adding a passcode prevents even your operating system from reading them.`,
     )
   },

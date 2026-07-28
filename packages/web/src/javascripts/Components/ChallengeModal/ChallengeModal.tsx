@@ -246,14 +246,14 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
       )}
     >
       <Modal
-        title={c('B4.Security.Challenge.Title').t`Authenticate`}
+        title={c('B5.SecuritySync.Challenge.Title').t`Authenticate`}
         close={cancelChallenge}
         customHeader={<></>}
         customFooter={<></>}
         disableCustomHeader={isMobileScreen}
         actions={[
           {
-            label: c('B4.Security.Challenge.Label').t`Cancel`,
+            label: c('B5.SecuritySync.Challenge.Label').t`Cancel`,
             onClick: cancelChallenge,
             type: 'primary',
             hidden: !challenge.cancelable,
@@ -305,8 +305,8 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
           {shouldShowSubmitButton && (
             <Button primary disabled={isProcessing} className="mb-3.5 mt-1 min-w-76" onClick={submit}>
               {isProcessing
-                ? c('B4.Security.Challenge.Status').t`Generating Keys...`
-                : c('B4.Security.Challenge.Action').t`Submit`}
+                ? c('B5.SecuritySync.Challenge.Status').t`Generating Keys...`
+                : c('B5.SecuritySync.Challenge.Action').t`Submit`}
             </Button>
           )}
           {shouldShowForgotPasscode && (
@@ -315,10 +315,10 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
               onClick={() => {
                 application.alerts
                   .confirm(
-                    c('B4.Security.Passcode.Info')
+                    c('B5.SecuritySync.Passcode.Info')
                       .t`If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.`,
-                    c('B4.Security.Passcode.Title').t`Forgot passcode?`,
-                    c('B4.Security.Passcode.Action').t`Delete local data`,
+                    c('B5.SecuritySync.Passcode.Title').t`Forgot passcode?`,
+                    c('B5.SecuritySync.Passcode.Action').t`Delete local data`,
                     ButtonType.Danger,
                   )
                   .then((shouldDeleteLocalData) => {
@@ -330,7 +330,7 @@ const ChallengeModal: FunctionComponent<Props> = ({ application, mainApplication
               }}
             >
               <Icon type="help" className="mr-2 text-neutral" />
-              {c('B4.Security.Passcode.Title').t`Forgot passcode?`}
+              {c('B5.SecuritySync.Passcode.Title').t`Forgot passcode?`}
             </Button>
           )}
           {shouldShowWorkspaceSwitcher && <LockscreenWorkspaceSwitcher mainApplicationGroup={mainApplicationGroup} />}

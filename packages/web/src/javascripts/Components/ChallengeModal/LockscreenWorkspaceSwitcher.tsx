@@ -23,10 +23,10 @@ const LockscreenWorkspaceSwitcher: FunctionComponent<Props> = ({ mainApplication
     <div ref={containerRef}>
       <Button ref={buttonRef} onClick={toggleMenu} className="mt-2 flex min-w-76 items-center justify-center">
         <Icon type="user-switch" className="mr-2 text-neutral" />
-        {c('B4.Security.Challenge.Action').t`Switch workspace`}
+        {c('B5.SecuritySync.Challenge.Action').t`Switch workspace`}
       </Button>
       <Popover
-        title={c('B4.Security.Challenge.Title').t`Switch workspace`}
+        title={c('B5.SecuritySync.Challenge.Title').t`Switch workspace`}
         align="center"
         anchorElement={buttonRef}
         open={isOpen}

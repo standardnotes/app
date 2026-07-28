@@ -73,7 +73,7 @@ export class NoteSyncController {
     this.setStatus(
       {
         type: 'saving',
-        message: c('B5.Sync.Status').t`Saving…`,
+        message: c('B5.SecuritySync.Sync.Status').t`Saving…`,
       },
       false,
     )

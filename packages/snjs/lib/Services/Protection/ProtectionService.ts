@@ -305,12 +305,12 @@ export class ProtectionService
   getMobilePasscodeTimingOptions(): TimingDisplayOption[] {
     return [
       {
-        title: c('B4.Security.Autolock.Label').t`Immediately`,
+        title: c('B5.SecuritySync.Autolock.Label').t`Immediately`,
         key: MobileUnlockTiming.Immediately,
         selected: this.mobilePasscodeTiming === MobileUnlockTiming.Immediately,
       },
       {
-        title: c('B4.Security.Autolock.Label').t`On Quit`,
+        title: c('B5.SecuritySync.Autolock.Label').t`On Quit`,
         key: MobileUnlockTiming.OnQuit,
         selected: this.mobilePasscodeTiming === MobileUnlockTiming.OnQuit,
       },
@@ -320,12 +320,12 @@ export class ProtectionService
   getMobileBiometricsTimingOptions(): TimingDisplayOption[] {
     return [
       {
-        title: c('B4.Security.Autolock.Label').t`Immediately`,
+        title: c('B5.SecuritySync.Autolock.Label').t`Immediately`,
         key: MobileUnlockTiming.Immediately,
         selected: this.mobileBiometricsTiming === MobileUnlockTiming.Immediately,
       },
       {
-        title: c('B4.Security.Autolock.Label').t`On Quit`,
+        title: c('B5.SecuritySync.Autolock.Label').t`On Quit`,
         key: MobileUnlockTiming.OnQuit,
         selected: this.mobileBiometricsTiming === MobileUnlockTiming.OnQuit,
       },

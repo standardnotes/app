@@ -78,7 +78,7 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
             }
 
             if (authenticatorResponse === null) {
-              setError(c('B4.Security.Challenge.Error').t`Failed to obtain device response`)
+              setError(c('B5.SecuritySync.Challenge.Error').t`Failed to obtain device response`)
               return
             }
 
@@ -90,10 +90,10 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
           {authenticatorResponse ? (
             <span className="flex items-center justify-center gap-3">
               <Icon type="check-circle" />
-              {c('B4.Security.Challenge.Info').t`Obtained Device Response`}
+              {c('B5.SecuritySync.Challenge.Info').t`Obtained Device Response`}
             </span>
           ) : (
-            c('B4.Security.Challenge.Action').t`Authenticate Device`
+            c('B5.SecuritySync.Challenge.Action').t`Authenticate Device`
           )}
         </Button>
       </div>

@@ -103,9 +103,9 @@ class ApplicationGroupView extends Component<Props, State> {
   override render() {
     if (this.state.deviceDestroyed) {
       const message = isDesktopApplication()
-        ? c('B4.Security.Protections.Error')
+        ? c('B5.SecuritySync.Protections.Error')
             .t`Secure memory has destroyed this application instance. Restart the app to continue.`
-        : c('B4.Security.Protections.Error')
+        : c('B5.SecuritySync.Protections.Error')
             .t`Secure memory has destroyed this application instance. Close this browser tab and open a new one to continue.`
 
       return renderDialog(message)

@@ -32,10 +32,10 @@ const BiometricsPrompt = ({ application, onValueChange, prompt, buttonRef }: Pro
         {authenticated ? (
           <span className="flex items-center justify-center gap-3">
             <Icon type="check-circle" />
-            {c('B4.Security.Challenge.Info').t`Biometrics successful`}
+            {c('B5.SecuritySync.Challenge.Info').t`Biometrics successful`}
           </span>
         ) : (
-          c('B4.Security.Challenge.Action').t`Tap to use biometrics`
+          c('B5.SecuritySync.Challenge.Action').t`Tap to use biometrics`
         )}
       </Button>
     </div>
