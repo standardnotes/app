@@ -183,7 +183,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       return application.keyboardService.addCommandHandlers([
         {
           command: NEXT_LIST_ITEM_KEYBOARD_COMMAND,
-          category: c('B3.Notes.NoteList.Label').t`Notes list` as 'Notes list',
+          category: 'Notes list',
           description: c('B3.Notes.NoteList.Action').t`Go to next item`,
           elements: [document.body, ...(searchBarElement ? [searchBarElement] : [])],
           onKeyDown: () => {
@@ -198,7 +198,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
-          category: c('B3.Notes.NoteList.Label').t`Notes list` as 'Notes list',
+          category: 'Notes list',
           description: c('B3.Notes.NoteList.Action').t`Go to previous item`,
           element: document.body,
           onKeyDown: () => {
@@ -210,7 +210,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SEARCH_KEYBOARD_COMMAND,
-          category: c('B3.Notes.NoteList.Label').t`General` as 'General',
+          category: 'General',
           description: c('B3.Notes.NoteList.Action').t`Toggle global search`,
           onKeyDown: (event) => {
             if (searchBarElement) {
@@ -229,7 +229,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         },
         {
           command: SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
-          category: c('B3.Notes.NoteList.Label').t`General` as 'General',
+          category: 'General',
           description: c('B3.Notes.NoteList.Action').t`Select all items`,
           onKeyDown: (event) => {
             const isTargetInsideContentList = (event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)
@@ -272,7 +272,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       () =>
         application.commands.addWithShortcut(
           CREATE_NEW_NOTE_KEYBOARD_COMMAND,
-          c('B3.Notes.NoteList.Label').t`General` as 'General',
+          'General',
           isFilesSmartView
             ? c('B3.Notes.NoteList.Action').t`Upload file`
             : c('B3.Notes.NoteList.Action').t`Create new note`,

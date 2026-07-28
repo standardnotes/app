@@ -29,7 +29,7 @@ export class HistoryModalController extends AbstractViewController {
     this.disposers.push(
       commandService.addWithShortcut(
         OPEN_NOTE_HISTORY_COMMAND,
-        c('B4.Notes.History.Label').t`Current note` as 'Current note',
+        'Current note',
         c('B4.Notes.History.Action').t`Open note history`,
         () => {
           this.openModal(notesController.firstSelectedNote)

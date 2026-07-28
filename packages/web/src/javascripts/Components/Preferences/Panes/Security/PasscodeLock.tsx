@@ -120,6 +120,8 @@ const PasscodeLock = ({ application }: Props) => {
       await alertDialog({
         text: Strings.enterPasscode(),
       })
+      setIsPasscodeFocused(true)
+      return
     }
 
     if (passcode !== passcodeConfirmation) {

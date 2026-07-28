@@ -168,7 +168,7 @@ function CommandPalette() {
   useEffect(() => {
     return keyboardService.addCommandHandler({
       command: TOGGLE_COMMAND_PALETTE,
-      category: c('B2.NavSharedUI.Label').t`General` as 'General',
+      category: 'General',
       description: c('B2.NavSharedUI.Action').t`Toggle command palette`,
       onKeyDown: (e) => {
         e.preventDefault()

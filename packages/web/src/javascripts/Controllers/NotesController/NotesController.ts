@@ -171,13 +171,13 @@ export class NotesController
     this.disposers.push(
       application.keyboardService.addCommandHandler({
         command: PIN_NOTE_COMMAND,
-        category: c('B3.Notes.NoteActions.Label').t`Current note` as 'Current note',
+        category: 'Current note',
         description: c('B3.Notes.NoteActions.Action').t`Pin/unpin selected note(s)`,
         onKeyDown: this.togglePinSelectedNotes,
       }),
       application.keyboardService.addCommandHandler({
         command: STAR_NOTE_COMMAND,
-        category: c('B3.Notes.NoteActions.Label').t`Current note` as 'Current note',
+        category: 'Current note',
         description: c('B3.Notes.NoteActions.Action').t`Star/unstar selected note(s)`,
         onKeyDown: this.toggleStarSelectedNotes,
       }),

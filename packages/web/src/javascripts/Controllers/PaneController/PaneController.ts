@@ -109,7 +109,7 @@ export class PaneController extends AbstractViewController implements InternalEv
     this.disposers.push(
       commands.addWithShortcut(
         TOGGLE_FOCUS_MODE_COMMAND,
-        c('B2.NavSharedUI.Label').t`General` as 'General',
+        'General',
         c('B2.NavSharedUI.Action').t`Toggle focus mode`,
         (event) => {
           event?.preventDefault()
@@ -118,7 +118,7 @@ export class PaneController extends AbstractViewController implements InternalEv
       ),
       commands.addWithShortcut(
         TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
-        c('B2.NavSharedUI.Label').t`General` as 'General',
+        'General',
         c('B2.NavSharedUI.Action').t`Toggle notes panel`,
         (event) => {
           event?.preventDefault()
@@ -127,7 +127,7 @@ export class PaneController extends AbstractViewController implements InternalEv
       ),
       commands.addWithShortcut(
         TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
-        c('B2.NavSharedUI.Label').t`General` as 'General',
+        'General',
         c('B2.NavSharedUI.Action').t`Toggle tags panel`,
         (event) => {
           event?.preventDefault()

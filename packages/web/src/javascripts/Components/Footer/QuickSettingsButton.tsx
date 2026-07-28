@@ -34,7 +34,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
     return mergeRegister(
       application.commands.addWithShortcut(
         TOGGLE_DARK_MODE_COMMAND,
-        c('B2.NavSharedUI.Label').t`General` as 'General',
+        'General',
         c('B2.NavSharedUI.Action').t`Toggle dark mode`,
         () => {
           void application.componentManager.toggleTheme(darkThemeFeature)

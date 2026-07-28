@@ -2,24 +2,34 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { c } from 'ttag'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
-import { KeyboardService, KeyboardShortcutHelpItem, TOGGLE_KEYBOARD_SHORTCUTS_MODAL } from '@standardnotes/ui-services'
+import {
+  KeyboardService,
+  KeyboardShortcutCategory,
+  KeyboardShortcutHelpItem,
+  TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
+} from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
+import {
+  KEYBOARD_SHORTCUT_CATEGORY_ORDER,
+  translateKeyboardShortcutCategory,
+} from '@/Utils/KeyboardShortcutCategoryLabels'
 
-type GroupedItems = Record<string, KeyboardShortcutHelpItem[]>
+type GroupedItems = Record<KeyboardShortcutCategory, KeyboardShortcutHelpItem[]>
+
+const createEmptyGroupedItems = (): GroupedItems =>
+  Object.fromEntries(
+    KEYBOARD_SHORTCUT_CATEGORY_ORDER.map((category) => [category, [] as KeyboardShortcutHelpItem[]]),
+  ) as GroupedItems
 
 const createGroupedItems = (items: KeyboardShortcutHelpItem[]): GroupedItems => {
-  const groupedItems: GroupedItems = {
-    [c('B2.NavSharedUI.Label').t`Current note`]: [],
-    [c('B2.NavSharedUI.Label').t`Formatting`]: [],
-    [c('B2.NavSharedUI.Label').t`Super notes`]: [],
-    [c('B2.NavSharedUI.Label').t`Notes list`]: [],
-    [c('B2.NavSharedUI.Label').t`General` as 'General']: [],
+  const groupedItems = createEmptyGroupedItems()
+
+  for (const item of items) {
+    groupedItems[item.category].push(item)
   }
-  return items.reduce((acc, item) => {
-    acc[item.category].push(item)
-    return acc
-  }, groupedItems)
+
+  return groupedItems
 }
 
 const Item = ({ item }: { item: KeyboardShortcutHelpItem }) => {
@@ -42,7 +52,7 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
   useEffect(() => {
     return keyboardService.addCommandHandler({
       command: TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
-      category: c('B2.NavSharedUI.Label').t`General` as 'General',
+      category: 'General',
       description: c('B2.NavSharedUI.Action').t`Toggle keyboard shortcuts help`,
       onKeyDown: () => {
         setItems(createGroupedItems(keyboardService.getRegisteredKeyboardShorcutHelpItems()))
@@ -66,17 +76,23 @@ const KeyboardShortcutsModal = ({ keyboardService }: { keyboardService: Keyboard
   return (
     <ModalOverlay isOpen={isOpen} close={close}>
       <Modal title={c('B2.NavSharedUI.Title').t`Keyboard shortcuts`} close={close} actions={actions}>
-        {Object.entries(items).map(
-          ([category, items]) =>
-            items.length > 0 && (
-              <div key={category}>
-                <div className="p-4 pb-0.5 pt-4 text-base font-semibold capitalize">{category}</div>
-                {items.map((item, index) => (
-                  <Item item={item} key={index} />
-                ))}
+        {KEYBOARD_SHORTCUT_CATEGORY_ORDER.map((category) => {
+          const categoryItems = items[category]
+          if (categoryItems.length === 0) {
+            return null
+          }
+
+          return (
+            <div key={category}>
+              <div className="p-4 pb-0.5 pt-4 text-base font-semibold capitalize">
+                {translateKeyboardShortcutCategory(category)}
               </div>
-            ),
-        )}
+              {categoryItems.map((item, index) => (
+                <Item item={item} key={index} />
+              ))}
+            </div>
+          )
+        })}
       </Modal>
     </ModalOverlay>
   )

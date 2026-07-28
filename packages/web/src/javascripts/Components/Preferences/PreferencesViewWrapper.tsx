@@ -13,7 +13,7 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
   useEffect(() => {
     return application.commands.addWithShortcut(
       OPEN_PREFERENCES_COMMAND,
-      c('B6.Preferences.Other.Label').t`General` as 'General',
+      'General',
       c('B6.Preferences.Other.Action').t`Open preferences`,
       () => application.preferencesController.openPreferences(),
       'tune',
