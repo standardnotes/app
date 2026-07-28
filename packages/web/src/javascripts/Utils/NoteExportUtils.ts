@@ -264,6 +264,6 @@ export const createNoteExport = async (
   return {
     blob: zippedBlob,
     fileName: c('B4.Notes.EditorOptions.Label')
-      .jt`Standard Notes Export - ${application.archiveService.formattedDateForExports()}.zip`,
+      .t`Standard Notes Export - ${application.archiveService.formattedDateForExports()}.zip`,
   }
 }

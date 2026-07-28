@@ -94,13 +94,11 @@ export const UNKNOWN_ERROR = c('B2.NavSharedUI.Error').t`Unknown error.`
 
 export function InsufficientPasswordMessage(minimum: number): string {
   return c('B1.Account.SignIn.Error')
-    .jt`Your password must be at least ${minimum} characters in length. For your security, please choose a longer password or, ideally, a passphrase, and try again.` as unknown as string
-}
+    .t`Your password must be at least ${minimum} characters in length. For your security, please choose a longer password or, ideally, a passphrase, and try again.`}
 
 export function StrictSignInFailed(current: ProtocolVersion, latest: ProtocolVersion): string {
   return c('B1.Account.SignIn.Error')
-    .jt`Strict Sign In has refused the server's sign-in parameters. The latest account version is ${latest}, but the server is reporting a version of ${current} for your account. If you'd like to proceed with sign in anyway, please disable Strict Sign In and try again.` as unknown as string
-}
+    .t`Strict Sign In has refused the server's sign-in parameters. The latest account version is ${latest}, but the server is reporting a version of ${current} for your account. If you'd like to proceed with sign in anyway, please disable Strict Sign In and try again.`}
 
 export const CredentialsChangeStrings = {
   get PasscodeRequired() {
@@ -161,7 +159,7 @@ export const SessionStrings = {
   RecoverSession(email?: string): string {
     return email
       ? (c('B1.Account.Session.Info')
-          .jt`Your credentials are needed for ${email} to refresh your session with the server.` as unknown as string)
+          .t`Your credentials are needed for ${email} to refresh your session with the server.`)
       : c('B1.Account.Session.Info').t`Your credentials are needed to refresh your session with the server.`
   },
   get SessionRestored() {
@@ -292,11 +290,9 @@ export const ChallengeStrings = {
     return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to approve this note for Listed`
   },
   UnlockVault(vaultName: string): string {
-    return c('B5.SecuritySync.Challenge.Info').jt`Unlock ${vaultName}` as unknown as string
-  },
+    return c('B5.SecuritySync.Challenge.Info').t`Unlock ${vaultName}`  },
   DeleteVault(vaultName: string): string {
-    return c('B5.SecuritySync.Challenge.Info').jt`Delete ${vaultName}` as unknown as string
-  },
+    return c('B5.SecuritySync.Challenge.Info').t`Delete ${vaultName}`  },
   get EnterVaultPassword() {
     return c('B5.SecuritySync.Challenge.Label').t`Enter the password for this vault`
   },
@@ -326,6 +322,5 @@ export const KeychainRecoveryStrings = {
   },
   Text(email: string): string {
     return c('B5.SecuritySync.KeyStorage.Info')
-      .jt`We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password for "${email}" to restore your account keys.` as unknown as string
-  },
+      .t`We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password for "${email}" to restore your account keys.`  },
 }

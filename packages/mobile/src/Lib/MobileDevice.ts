@@ -388,7 +388,7 @@ export class MobileDevice implements MobileDeviceInterface {
     const showAlert = () => {
       Alert.alert(
         c('B8.MobileDesktopShared.Mobile.Device.Title').t`Unable to Open`,
-        c('B8.MobileDesktopShared.Mobile.Device.Error').jt`Unable to open URL ${url}.` as unknown as string,
+        c('B8.MobileDesktopShared.Mobile.Device.Error').t`Unable to open URL ${url}.`,
       )
     }
 

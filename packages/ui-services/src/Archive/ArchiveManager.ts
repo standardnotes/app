@@ -47,7 +47,7 @@ export class ArchiveManager {
       this.downloadData(
         blobData,
         c('B6.Preferences.Backups.Label')
-          .jt`Standard Notes Encrypted Backup and Import File - ${this.formattedDateForExports()}.txt`,
+          .t`Standard Notes Encrypted Backup and Import File - ${this.formattedDateForExports()}.txt`,
       )
     } else {
       this.downloadZippedDecryptedItems(data).catch(console.error)
@@ -105,7 +105,7 @@ export class ArchiveManager {
   private async downloadZippedDecryptedItems(data: BackupFile) {
     const zippedDecryptedItemsBlob = await this.getZippedDecryptedItemsBlob(data)
     this.downloadData(zippedDecryptedItemsBlob, c('B6.Preferences.Backups.Label')
-      .jt`Standard Notes Backup - ${this.formattedDateForExports()}.zip`)
+      .t`Standard Notes Backup - ${this.formattedDateForExports()}.zip`)
   }
 
   async zipData(data: ZippableData): Promise<Blob> {
@@ -138,7 +138,7 @@ export class ArchiveManager {
     const zipFileAsBlob = await this.zipData(data)
     this.downloadData(
       zipFileAsBlob,
-      c('B4.Notes.EditorOptions.Label').jt`Standard Notes Export - ${this.formattedDateForExports()}.zip`,
+      c('B4.Notes.EditorOptions.Label').t`Standard Notes Export - ${this.formattedDateForExports()}.zip`,
     )
   }
 

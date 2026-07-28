@@ -429,9 +429,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       try {
         const imgResponse = await fetch(link)
         if (!imgResponse.ok) {
-          throw new Error(
-            c('B4.Notes.EditingUI.Error').jt`${imgResponse.status}: Could not fetch image`,
-          )
+          throw new Error(c('B4.Notes.EditingUI.Error').t`${imgResponse.status}: Could not fetch image`)
         }
         const imgBlob = await imgResponse.blob()
         const file = new File([imgBlob], finalPath, {

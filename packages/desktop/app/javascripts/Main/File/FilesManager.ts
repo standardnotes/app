@@ -204,7 +204,7 @@ export class FilesManager implements FilesManagerInterface {
 
       return Result.fail(
         c('B8.MobileDesktopShared.Desktop.Error')
-          .jt`Could not move directory contents: ${(error as Error).message}`,
+          .t`Could not move directory contents: ${(error as Error).message}`,
       )
     }
   }
