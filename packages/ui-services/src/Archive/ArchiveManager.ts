@@ -104,8 +104,10 @@ export class ArchiveManager {
 
   private async downloadZippedDecryptedItems(data: BackupFile) {
     const zippedDecryptedItemsBlob = await this.getZippedDecryptedItemsBlob(data)
-    this.downloadData(zippedDecryptedItemsBlob, c('B6.Preferences.Backups.Label')
-      .t`Standard Notes Backup - ${this.formattedDateForExports()}.zip`)
+    this.downloadData(
+      zippedDecryptedItemsBlob,
+      c('B6.Preferences.Backups.Label').t`Standard Notes Backup - ${this.formattedDateForExports()}.zip`,
+    )
   }
 
   async zipData(data: ZippableData): Promise<Blob> {

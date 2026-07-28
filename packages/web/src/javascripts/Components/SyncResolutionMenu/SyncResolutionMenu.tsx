@@ -37,15 +37,18 @@ class SyncResolutionMenu extends AbstractComponent<Props> {
               </div>
               <div className="sk-p sk-panel-row mb-3.5">
                 <div className="sk-panel-column">
-                  <div className="mb-2 font-bold">{c('B5.SecuritySync.Sync.Subtitle').t`Option 1 — Restart Application:`}</div>
+                  <div className="mb-2 font-bold">{c('B5.SecuritySync.Sync.Subtitle')
+                    .t`Option 1 — Restart Application:`}</div>
                   <div>
-                    {c('B5.SecuritySync.Sync.Info').t`Quit the application and re-open it. Sometimes, this may resolve the issue.`}
+                    {c('B5.SecuritySync.Sync.Info')
+                      .t`Quit the application and re-open it. Sometimes, this may resolve the issue.`}
                   </div>
                 </div>
               </div>
               <div className="sk-p sk-panel-row">
                 <div className="sk-panel-column">
-                  <div className="mb-2 font-bold">{c('B5.SecuritySync.Sync.Subtitle').t`Option 2 — Sign Out and Back In:`}</div>
+                  <div className="mb-2 font-bold">{c('B5.SecuritySync.Sync.Subtitle')
+                    .t`Option 2 — Sign Out and Back In:`}</div>
                   <div>
                     {c('B5.SecuritySync.Sync.Info')
                       .t`Sign out of your account, then sign back in. This will ensure your data is consistent with the server. Be sure to download a backup of your data before doing so.`}

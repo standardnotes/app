@@ -37,18 +37,24 @@ export function createStrings(): Strings {
       manuallyDownloadUpdate: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Manually Download Update`,
       spellcheckerLanguages: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Spellchecker Languages`,
       installPendingUpdate(versionNumber: string) {
-        return c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Install Pending Update (${versionNumber})`      },
+        return c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Install Pending Update (${versionNumber})`
+      },
       lastUpdateCheck(date: Date) {
         const dateString = date.toLocaleString()
-        return c('B8.MobileDesktopShared.Desktop.Menu.Info').t`Last checked ${dateString}`      },
+        return c('B8.MobileDesktopShared.Desktop.Menu.Info').t`Last checked ${dateString}`
+      },
       version(number: string) {
-        return c('B8.MobileDesktopShared.Desktop.Menu.Info').t`Version: ${number}`      },
+        return c('B8.MobileDesktopShared.Desktop.Menu.Info').t`Version: ${number}`
+      },
       yourVersion(number: string) {
-        return c('B8.MobileDesktopShared.Desktop.Menu.Info').t`Your Version: ${number}`      },
+        return c('B8.MobileDesktopShared.Desktop.Menu.Info').t`Your Version: ${number}`
+      },
       latestVersion(number: string) {
-        return c('B8.MobileDesktopShared.Desktop.Menu.Info').t`Latest Version: ${number}`      },
+        return c('B8.MobileDesktopShared.Desktop.Menu.Info').t`Latest Version: ${number}`
+      },
       viewReleaseNotes(versionNumber: string) {
-        return c('B8.MobileDesktopShared.Desktop.Menu.Label').t`View ${versionNumber} Release Notes`      },
+        return c('B8.MobileDesktopShared.Desktop.Menu.Label').t`View ${versionNumber} Release Notes`
+      },
       preferencesChanged: {
         title: c('B8.MobileDesktopShared.Desktop.Menu.Title').t`Preference Changed`,
         message: c('B8.MobileDesktopShared.Desktop.Menu.Info')
@@ -56,7 +62,8 @@ export function createStrings(): Strings {
       },
       security: {
         security: c('B8.MobileDesktopShared.Desktop.Security.Label').t`Security`,
-        useKeyringtoStorePassword: c('B8.MobileDesktopShared.Desktop.Security.Label').t`Use password storage to store password`,
+        useKeyringtoStorePassword: c('B8.MobileDesktopShared.Desktop.Security.Label')
+          .t`Use password storage to store password`,
         enabledKeyringAccessMessage: c('B8.MobileDesktopShared.Desktop.Security.Info')
           .t`Standard Notes will try to use your system's password storage facility to store your password the next time you start it.`,
         enabledKeyringQuitNow: c('B8.MobileDesktopShared.Desktop.Security.Action').t`Quit Now`,
@@ -88,18 +95,23 @@ export function createStrings(): Strings {
         title: c('B8.MobileDesktopShared.Desktop.Updates.Title').t`Finished checking for updates.`,
         error(description: string) {
           return c('B8.MobileDesktopShared.Desktop.Updates.Error')
-            .t`An issue occurred while checking for updates. Please try again.\nIf this issue persists please contact support with the following information: ${description}`        },
+            .t`An issue occurred while checking for updates. Please try again.\nIf this issue persists please contact support with the following information: ${description}`
+        },
         updateAvailable(newVersion: string) {
           return c('B8.MobileDesktopShared.Desktop.Updates.Info')
-            .t`A new update is available (version ${newVersion}). You can wait for the app to update itself, or manually download and install this update.`        },
+            .t`A new update is available (version ${newVersion}). You can wait for the app to update itself, or manually download and install this update.`
+        },
         noUpdateAvailable(currentVersion: string) {
           return c('B8.MobileDesktopShared.Desktop.Updates.Info')
-            .t`Your version (${currentVersion}) is the latest available version.`        },
+            .t`Your version (${currentVersion}) is the latest available version.`
+        },
       },
       updateReady: {
         title: c('B8.MobileDesktopShared.Desktop.Updates.Title').t`Update Ready`,
         message(version: string) {
-          return c('B8.MobileDesktopShared.Desktop.Updates.Info').t`A new update (version ${version}) is ready to install.`        },
+          return c('B8.MobileDesktopShared.Desktop.Updates.Info')
+            .t`A new update (version ${version}) is ready to install.`
+        },
         quitAndInstall: c('B8.MobileDesktopShared.Desktop.Updates.Action').t`Quit and Install`,
         installLater: c('B8.MobileDesktopShared.Desktop.Updates.Action').t`Install Later`,
         noRecentBackupMessage: c('B8.MobileDesktopShared.Desktop.Updates.Info')

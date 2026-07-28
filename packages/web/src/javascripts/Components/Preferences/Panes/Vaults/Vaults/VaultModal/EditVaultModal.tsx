@@ -228,8 +228,8 @@ const EditVaultModalContent: FunctionComponent<{
         label: existingVault
           ? c('B6.Preferences.Vaults.Action').t`Save Vault`
           : creatingSharedVault
-            ? c('B6.Preferences.Vaults.Action').t`Create Shared Vault`
-            : c('B6.Preferences.Vaults.Action').t`Create Vault`,
+          ? c('B6.Preferences.Vaults.Action').t`Create Shared Vault`
+          : c('B6.Preferences.Vaults.Action').t`Create Vault`,
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',

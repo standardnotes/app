@@ -203,8 +203,7 @@ export class FilesManager implements FilesManagerInterface {
       console.error(error)
 
       return Result.fail(
-        c('B8.MobileDesktopShared.Desktop.Error')
-          .t`Could not move directory contents: ${(error as Error).message}`,
+        c('B8.MobileDesktopShared.Desktop.Error').t`Could not move directory contents: ${(error as Error).message}`,
       )
     }
   }

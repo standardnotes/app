@@ -10,8 +10,7 @@ export const KeyRecoveryStrings = {
         return c('B5.SecuritySync.Challenge.Info')
           .t`Enter your account password as it was when you changed your email on ${dateString}.`
       case KeyParamsOrigination.PasswordChange:
-        return c('B5.SecuritySync.Challenge.Info')
-          .t`Enter your account password after it was changed on ${dateString}.`
+        return c('B5.SecuritySync.Challenge.Info').t`Enter your account password after it was changed on ${dateString}.`
       case KeyParamsOrigination.Registration:
         return c('B5.SecuritySync.Challenge.Info')
           .t`Enter your account password as it was when you registered ${dateString}.`
@@ -41,8 +40,7 @@ export const KeyRecoveryStrings = {
     return c('B5.SecuritySync.Challenge.Label').t`Passcode Required`
   },
   get KeyRecoveryPasscodeRequiredText() {
-    return c('B5.SecuritySync.Challenge.Info')
-      .t`You must enter your passcode in order to save your new credentials.`
+    return c('B5.SecuritySync.Challenge.Info').t`You must enter your passcode in order to save your new credentials.`
   },
   get KeyRecoveryPasswordRequired() {
     return c('B5.SecuritySync.Challenge.Info').t`Your account password is required to recover an encryption key.`

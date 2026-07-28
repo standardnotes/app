@@ -281,9 +281,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
 
     if (didThrow) {
-      throw new Error(
-        c('B4.Notes.EditorOptions.Error').t`Could not import note. Check error console for details.`,
-      )
+      throw new Error(c('B4.Notes.EditorOptions.Error').t`Could not import note. Check error console for details.`)
     }
 
     return JSON.stringify(this.importEditor.getEditorState())

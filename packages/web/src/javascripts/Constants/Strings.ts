@@ -132,7 +132,8 @@ export const STRING_FAILED_TO_UPDATE_USER_SETTING = () =>
 
 export const Strings = {
   get protectingNoteWithoutProtectionSources() {
-    return c('B5.SecuritySync.Info').t`Access to this note will not be restricted until you set up a passcode or account.`
+    return c('B5.SecuritySync.Info')
+      .t`Access to this note will not be restricted until you set up a passcode or account.`
   },
   get trashItemsTitle() {
     return c('B3.Notes.NoteActions.Title').t`Move to Trash`
