@@ -9382,6 +9382,7 @@ __metadata:
     jest: ^29.3.1
     reflect-metadata: ^0.1.13
     ts-jest: ^29.0.3
+    ttag: ^1.8.12
     typescript: "*"
   languageName: unknown
   linkType: soft
@@ -9743,6 +9744,7 @@ __metadata:
     prettier: "*"
     reflect-metadata: ^0.1.13
     ts-jest: ^29.0.3
+    ttag: ^1.8.12
     typescript: "*"
   languageName: unknown
   linkType: soft
