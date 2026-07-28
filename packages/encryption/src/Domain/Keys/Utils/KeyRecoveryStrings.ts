@@ -8,22 +8,22 @@ export const KeyRecoveryStrings = {
     switch (keyParams.origination) {
       case KeyParamsOrigination.EmailChange:
         return c('B5.SecuritySync.Challenge.Info')
-          .jt`Enter your account password as it was when you changed your email on ${dateString}.`
+          .t`Enter your account password as it was when you changed your email on ${dateString}.`
       case KeyParamsOrigination.PasswordChange:
         return c('B5.SecuritySync.Challenge.Info')
-          .jt`Enter your account password after it was changed on ${dateString}.`
+          .t`Enter your account password after it was changed on ${dateString}.`
       case KeyParamsOrigination.Registration:
         return c('B5.SecuritySync.Challenge.Info')
-          .jt`Enter your account password as it was when you registered ${dateString}.`
+          .t`Enter your account password as it was when you registered ${dateString}.`
       case KeyParamsOrigination.ProtocolUpgrade:
         return c('B5.SecuritySync.Challenge.Info')
-          .jt`Enter your account password as it was when you upgraded your encryption version on ${dateString}.`
+          .t`Enter your account password as it was when you upgraded your encryption version on ${dateString}.`
       case KeyParamsOrigination.PasscodeChange:
         return c('B5.SecuritySync.Challenge.Info')
-          .jt`Enter your application passcode after it was changed on ${dateString}.`
+          .t`Enter your application passcode after it was changed on ${dateString}.`
       case KeyParamsOrigination.PasscodeCreate:
         return c('B5.SecuritySync.Challenge.Info')
-          .jt`Enter your application passcode as it was when you created it on ${dateString}.`
+          .t`Enter your application passcode as it was when you created it on ${dateString}.`
       default:
         throw Error('Unhandled KeyParamsOrigination case for KeyRecoveryLoginFlowPrompt')
     }

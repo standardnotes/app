@@ -212,7 +212,7 @@ export class KeyRecoveryService
     if (!key) {
       return new ClientDisplayableError(
         c('B5.SecuritySync.Challenge.Error')
-          .jt`Unable to find key ${keyId} for this item. You may try signing out and back in; if that doesn't help, check your backup files for a key with this ID and import it.`,
+          .t`Unable to find key ${keyId} for this item. You may try signing out and back in; if that doesn't help, check your backup files for a key with this ID and import it.`,
       )
     }
 
