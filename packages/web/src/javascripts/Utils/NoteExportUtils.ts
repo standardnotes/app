@@ -260,10 +260,10 @@ export const createNoteExport = async (
   }
 
   const zippedBlob = await zipFS.exportBlob()
+  const formattedDate = application.archiveService.formattedDateForExports()
 
   return {
     blob: zippedBlob,
-    fileName: c('B4.Notes.EditorOptions.Label')
-      .t`Standard Notes Export - ${application.archiveService.formattedDateForExports()}.zip`,
+    fileName: c('B4.Notes.EditorOptions.Label').t`Standard Notes Export - ${formattedDate}.zip`,
   }
 }
