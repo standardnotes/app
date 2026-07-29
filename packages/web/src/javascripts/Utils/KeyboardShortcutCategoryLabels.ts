@@ -1,4 +1,5 @@
 import { KeyboardShortcutCategory } from '@standardnotes/ui-services'
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 /** Display order in the keyboard shortcuts help modal. */
@@ -20,7 +21,7 @@ export function translateKeyboardShortcutCategory(category: KeyboardShortcutCate
     case 'Current note':
       return c('B2.NavSharedUI.Label').t`Current note`
     case 'Super notes':
-      return c('B2.NavSharedUI.Label').t`Super notes`
+      return jtString(c('B2.NavSharedUI.Label').jt`${SuperName} notes`)
     case 'Formatting':
       return c('B2.NavSharedUI.Label').t`Formatting`
   }

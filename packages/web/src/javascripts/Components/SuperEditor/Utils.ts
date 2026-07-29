@@ -1,4 +1,5 @@
 import { $getRoot, EditorState } from 'lexical'
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 export function truncateString(string: string, limit: number) {
@@ -34,8 +35,10 @@ export function handleEditorChange(
     console.error(error)
     const errorDetails = JSON.stringify(error)
     window.alert(
-      c('B4.Notes.EditingUI.Info')
-        .jt`An invalid change was made inside the Super editor. Your change was not saved. Please report this error to the team: ${errorDetails}`,
+      jtString(
+        c('B4.Notes.EditingUI.Info')
+          .jt`An invalid change was made inside the ${SuperName} editor. Your change was not saved. Please report this error to the team: ${errorDetails}`,
+      ),
     )
   }
 }

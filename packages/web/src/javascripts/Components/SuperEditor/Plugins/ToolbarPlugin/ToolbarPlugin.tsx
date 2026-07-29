@@ -1,5 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { c } from 'ttag'
+import { SuperName, jtString } from '@standardnotes/features'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import useModal from '../../Lexical/Hooks/useModal'
 import { InsertTableDialog } from '../TablePlugin'
@@ -608,7 +609,7 @@ const ToolbarPlugin = () => {
     return application.keyboardService.addCommandHandler({
       command: SUPER_TOGGLE_TOOLBAR,
       category: 'Super notes',
-      description: c('B3.Notes.EditorToolbar.Action').t`Toggle Super note toolbar`,
+      description: jtString(c('B3.Notes.EditorToolbar.Action').jt`Toggle ${SuperName} note toolbar`),
       onKeyDown(event) {
         if (isMobile) {
           return

@@ -7,6 +7,7 @@ import {
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/domain-core'
 import { ApplicationInterface } from '@standardnotes/services'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type ZippableData = {
@@ -47,8 +48,9 @@ export class ArchiveManager {
       const formattedDate = this.formattedDateForExports()
       this.downloadData(
         blobData,
-        c('B6.Preferences.Backups.Label')
-          .t`Standard Notes Encrypted Backup and Import File - ${formattedDate}.txt`,
+        jtString(
+          c('B6.Preferences.Backups.Label').jt`${AppName} Encrypted Backup and Import File - ${formattedDate}.txt`,
+        ),
       )
     } else {
       this.downloadZippedDecryptedItems(data).catch(console.error)
@@ -74,7 +76,9 @@ export class ArchiveManager {
       type: 'text/plain',
     })
 
-    const fileName = createZippableFileName(c('B6.Preferences.Backups.Label').t`Standard Notes Backup and Import File`)
+    const fileName = createZippableFileName(
+      jtString(c('B6.Preferences.Backups.Label').jt`${AppName} Backup and Import File`),
+    )
     await zipWriter.add(fileName, new zip.BlobReader(blob))
 
     for (let index = 0; index < items.length; index++) {
@@ -108,7 +112,7 @@ export class ArchiveManager {
     const formattedDate = this.formattedDateForExports()
     this.downloadData(
       zippedDecryptedItemsBlob,
-      c('B6.Preferences.Backups.Label').t`Standard Notes Backup - ${formattedDate}.zip`,
+      jtString(c('B6.Preferences.Backups.Label').jt`${AppName} Backup - ${formattedDate}.zip`),
     )
   }
 
@@ -141,9 +145,10 @@ export class ArchiveManager {
   async downloadDataAsZip(data: ZippableData) {
     const zipFileAsBlob = await this.zipData(data)
     const formattedDate = this.formattedDateForExports()
+    const exportLabel = c('B4.Notes.EditorOptions.Label').t`Export`
     this.downloadData(
       zipFileAsBlob,
-      c('B4.Notes.EditorOptions.Label').t`Standard Notes Export - ${formattedDate}.zip`,
+      jtString(c('B4.Notes.EditorOptions.Label').jt`${AppName} ${exportLabel} - ${formattedDate}.zip`),
     )
   }
 

@@ -24,6 +24,7 @@ import {
   classNames,
 } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
+import { ClipperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 import { getSuperJSONFromClipPayload } from './getSuperJSONFromClipHTML'
 import ClippedNoteView from './ClippedNoteView'
@@ -38,8 +39,6 @@ import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import Spinner from '../Spinner/Spinner'
-
-const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGroup }) => {
   const application = useApplication()
@@ -285,10 +284,6 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
   }, [application, hasSubscription])
 
   if (user && !isEntitledToExtension) {
-    const webClipperLabel = (
-      <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Subscription.Label').t`Web Clipper`}</span>
-    )
-
     return (
       <div className="px-3 py-3">
         <div
@@ -302,7 +297,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
         <div className="mb-3 text-center">
           {jtString(
             c('B7.FilesSubscriptionHelp.Subscription.Info')
-              .jt`To take advantage of ${webClipperLabel} and other advanced features, upgrade your current plan.`,
+              .jt`To take advantage of ${ClipperName} and other advanced features, upgrade your current plan.`,
           )}
         </div>
         <Button className="mb-2" fullWidth primary onClick={upgradePlan}>

@@ -1,4 +1,5 @@
 import { IconType } from '@standardnotes/snjs'
+import { PlusPlanName, ProPlanName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 export const PANEL_NAME_NOTES = 'notes'
@@ -25,8 +26,10 @@ export const BYTES_IN_ONE_KILOBYTE = 1_000
 export const BYTES_IN_ONE_MEGABYTE = 1_000_000
 
 export const TAG_FOLDERS_FEATURE_NAME = c('B7.FilesSubscriptionHelp.Subscription.Info').t`Tag folders`
-export const TAG_FOLDERS_FEATURE_TOOLTIP = c('B7.FilesSubscriptionHelp.Subscription.Info')
-  .t`A Plus or Pro plan is required to enable Tag folders.`
+export const TAG_FOLDERS_FEATURE_TOOLTIP = jtString(
+  c('B7.FilesSubscriptionHelp.Subscription.Info')
+    .jt`A ${PlusPlanName} or ${ProPlanName} plan is required to enable Tag folders.`,
+)
 export const SMART_TAGS_FEATURE_NAME = c('B7.FilesSubscriptionHelp.Subscription.Info').t`Smart Tags`
 
 export const SYNC_TIMEOUT_DEBOUNCE = 350

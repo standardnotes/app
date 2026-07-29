@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { AppName } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const SubscriptionStatusText = () => {
@@ -29,7 +30,7 @@ const SubscriptionStatusText = () => {
       <Text className="mt-1">
         {c('B6.Preferences.Subscription.Info').t`Your`}{' '}
         <span className="font-bold">
-          {c('B6.Preferences.Subscription.Info').t`Standard Notes`}
+          {AppName}
           {userSubscriptionName ? ' ' : ''}
           {userSubscriptionName}
         </span>{' '}
@@ -54,7 +55,7 @@ const SubscriptionStatusText = () => {
       <Text className="mt-1">
         {c('B6.Preferences.Subscription.Info').t`Your`}{' '}
         <span className="font-bold">
-          {c('B6.Preferences.Subscription.Info').t`Standard Notes`}
+          {AppName}
           {userSubscriptionName ? ' ' : ''}
           {userSubscriptionName}
         </span>{' '}
@@ -72,7 +73,7 @@ const SubscriptionStatusText = () => {
     <Text className="mt-1">
       {c('B6.Preferences.Subscription.Info').t`Your`}{' '}
       <span className="font-bold">
-        {c('B6.Preferences.Subscription.Info').t`Standard Notes`}
+        {AppName}
         {userSubscriptionName ? ' ' : ''}
         {userSubscriptionName}
       </span>{' '}

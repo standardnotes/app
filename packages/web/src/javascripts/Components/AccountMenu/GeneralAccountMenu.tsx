@@ -15,6 +15,7 @@ import { useApplication } from '../ApplicationProvider'
 import MenuSection from '../Menu/MenuSection'
 import { TOGGLE_COMMAND_PALETTE, TOGGLE_KEYBOARD_SHORTCUTS_MODAL, isMobilePlatform } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -69,7 +70,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
   }, [application])
 
   const openEmail = useCallback(() => {
-    const subject = c('B1.Account.Session.MailtoSubject').t`Standard Notes Feedback`
+    const subject = jtString(c('B1.Account.Session.MailtoSubject').jt`${AppName} Feedback`)
 
     const body = c('B1.Account.Session.MailtoBody').t`App Version: ${application.version}`
 

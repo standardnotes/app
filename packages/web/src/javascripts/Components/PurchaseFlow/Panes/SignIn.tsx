@@ -8,6 +8,7 @@ import { isEmailValid } from '@/Utils'
 import { BlueDotIcon, CircleIcon, DiamondIcon } from '@standardnotes/icons'
 import { isErrorResponse, getCaptchaHeader } from '@standardnotes/snjs'
 import { useCaptcha } from '@/Hooks/useCaptcha'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -165,7 +166,9 @@ const SignIn: FunctionComponent<Props> = ({ application }) => {
 
       <div>
         <h1 className="mb-2 mt-0 text-2xl font-bold">{c('B1.Account.SignIn.Title').t`Sign in`}</h1>
-        <div className="mb-4 text-sm font-medium">{c('B1.Account.SignIn.Info').t`to continue to Standard Notes.`}</div>
+        <div className="mb-4 text-sm font-medium">
+          {jtString(c('B1.Account.SignIn.Info').jt`to continue to ${AppName}.`)}
+        </div>
         {showCaptcha ? captchaIframe : signInForm}
         <div className="text-sm font-medium text-passive-1">
           {c('B1.Account.SignIn.Info').t`Don’t have an account yet?`}{' '}

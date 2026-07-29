@@ -1,5 +1,6 @@
 import { ProtocolVersion } from '@standardnotes/models'
 import { c } from 'ttag'
+import { jtString, ListedName } from '@standardnotes/features'
 
 export const API_MESSAGE_GENERIC_INVALID_LOGIN = c('B1.Account.SignIn.Error')
   .t`A server error occurred while trying to sign in. Please try again.`
@@ -44,8 +45,9 @@ export const API_MESSAGE_INVALID_SESSION = c('B1.Account.Session.Error')
 
 export const API_MESSAGE_FAILED_GET_SETTINGS = c('B6.Preferences.Error').t`Failed to get settings.`
 export const API_MESSAGE_FAILED_UPDATE_SETTINGS = c('B6.Preferences.Error').t`Failed to update settings.`
-export const API_MESSAGE_FAILED_LISTED_REGISTRATION = c('B6.Preferences.Error')
-  .t`Unable to register for Listed. Please try again later.`
+export const API_MESSAGE_FAILED_LISTED_REGISTRATION = jtString(
+  c('B6.Preferences.Error').jt`Unable to register for ${ListedName}. Please try again later.`,
+)
 
 export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = c('B7.FilesSubscriptionHelp.Files.Error')
   .t`Failed to create file token.`
@@ -289,7 +291,9 @@ export const ChallengeStrings = {
     return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to delete your account`
   },
   get ListedAuthorization() {
-    return c('B5.SecuritySync.Challenge.Info').t`Authentication is required to approve this note for Listed`
+    return jtString(
+      c('B5.SecuritySync.Challenge.Info').jt`Authentication is required to approve this note for ${ListedName}`,
+    )
   },
   UnlockVault(vaultName: string): string {
     return c('B5.SecuritySync.Challenge.Info').t`Unlock ${vaultName}`

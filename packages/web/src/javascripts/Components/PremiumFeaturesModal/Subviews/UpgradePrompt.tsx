@@ -4,9 +4,17 @@ import Icon from '@/Components/Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import { classNames } from '@standardnotes/snjs'
 import { requestCloseAllOpenModalsAndPopovers } from '@/Utils/CloseOpenModalsAndPopovers'
+import {
+  AuthenticatorName,
+  ChecklistEditorName,
+  jtString,
+  MarkdownEditorName,
+  RichTextEditorName,
+  SpreadsheetName,
+  SuperName,
+  ProfessionalPlanName,
+} from '@standardnotes/features'
 import { c } from 'ttag'
-
-const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 type Props = {
   featureName?: string
@@ -104,14 +112,18 @@ export const UpgradePrompt = ({
           {application.isNativeIOS() && (
             <div className="mt-2">
               <div className="mb-2 font-bold">
-                {c('B7.FilesSubscriptionHelp.Subscription.Info')
-                  .t`The Professional Plan costs $119.99/year and includes benefits like`}
+                {jtString(
+                  c('B7.FilesSubscriptionHelp.Subscription.Info')
+                    .jt`The ${ProfessionalPlanName} Plan costs $119.99/year and includes benefits like`,
+                )}
               </div>
               <ul className="list-inside list-[circle]">
                 <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`100GB encrypted file storage`}</li>
                 <li>
-                  {c('B7.FilesSubscriptionHelp.Subscription.Info')
-                    .t`Access to all note types, including Super, markdown, rich text, authenticator, tasks, and spreadsheets`}
+                  {jtString(
+                    c('B7.FilesSubscriptionHelp.Subscription.Info')
+                      .jt`Access to all note types, including ${SuperName}, ${MarkdownEditorName}, ${RichTextEditorName}, ${AuthenticatorName}, ${ChecklistEditorName}, and ${SpreadsheetName}`,
+                  )}
                 </li>
                 <li>{c('B7.FilesSubscriptionHelp.Subscription.Info')
                   .t`Access to Daily Notebooks and Moments journals`}</li>

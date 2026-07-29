@@ -3,6 +3,7 @@ import { NativeFeatureIdentifier } from '../Feature/NativeFeatureIdentifier'
 import { RoleName } from '@standardnotes/domain-core'
 import { ClientFeatureDescription } from '../Feature/ClientFeatureDescription'
 import { c } from 'ttag'
+import { ClipperName } from '../Strings/ProductNames'
 
 export function clientFeatures(): ClientFeatureDescription[] {
   return [
@@ -30,7 +31,7 @@ export function clientFeatures(): ClientFeatureDescription[] {
       description: '',
     },
     {
-      name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Clipper`,
+      name: ClipperName,
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       identifier: NativeFeatureIdentifier.TYPES.Clipper,
       permission_name: PermissionName.Clipper,

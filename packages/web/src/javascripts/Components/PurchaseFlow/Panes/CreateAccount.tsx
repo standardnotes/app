@@ -9,6 +9,7 @@ import { BlueDotIcon, CircleIcon, DiamondIcon, CreateAccountIllustration } from 
 import { useCaptcha } from '@/Hooks/useCaptcha'
 import { AccountMenuPane } from '../../AccountMenu/AccountMenuPane'
 import { isErrorResponse } from '@standardnotes/snjs'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -207,8 +208,9 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
         }
         {
           // translator: Full sentence: "Create your free account to continue to Standard Notes."
-          <div className="mb-4 text-sm font-medium">{c('B1.Account.SignIn.Info')
-            .t`to continue to Standard Notes.`}</div>
+          <div className="mb-4 text-sm font-medium">
+            {jtString(c('B1.Account.SignIn.Info').jt`to continue to ${AppName}.`)}
+          </div>
         }
         {captchaURL ? captchaIframe : CreateAccountForm}
         <div className="flex flex-col-reverse items-start justify-between md:flex-row md:items-center">

@@ -4,11 +4,12 @@ import { NoteType } from '../Component/NoteType'
 import { FillIframeEditorDefaults } from './Utilities/FillEditorComponentDefaults'
 import { RoleName } from '@standardnotes/domain-core'
 import { IframeComponentFeatureDescription } from '../Feature/IframeComponentFeatureDescription'
+import { AuthenticatorName, SpreadsheetName } from '../Strings/ProductNames'
 import { c } from 'ttag'
 
 export function IframeEditors(): IframeComponentFeatureDescription[] {
   const tokenvault = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Authenticator`,
+    name: AuthenticatorName,
     note_type: NoteType.Authentication,
     file_type: 'json',
     interchangeable: false,
@@ -21,7 +22,7 @@ export function IframeEditors(): IframeComponentFeatureDescription[] {
   })
 
   const spreadsheets = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Spreadsheet`,
+    name: SpreadsheetName,
     identifier: NativeFeatureIdentifier.TYPES.SheetsEditor,
     note_type: NoteType.Spreadsheet,
     file_type: 'json',

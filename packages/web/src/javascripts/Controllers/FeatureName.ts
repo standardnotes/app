@@ -1,3 +1,4 @@
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 export enum FeatureName {
@@ -10,6 +11,6 @@ export function getFeatureNameLabel(feature: FeatureName): string {
     case FeatureName.Files:
       return c('B7.FilesSubscriptionHelp.Subscription.Label').t`Encrypted File Storage`
     case FeatureName.Super:
-      return c('B7.FilesSubscriptionHelp.Subscription.Label').t`Super notes`
+      return jtString(c('B7.FilesSubscriptionHelp.Subscription.Label').jt`${SuperName} notes`)
   }
 }

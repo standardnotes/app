@@ -5,6 +5,7 @@ import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { NativeFeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -73,7 +74,7 @@ const ImportModalInitialPage = ({ setFiles, selectFiles }: Props) => {
           }}
         >
           <Icon type="file-doc" className="mr-2 text-accessory-tint-1" />
-          {c('B1.Account.ImportExport.ImportSource').t`Super (JSON)`}
+          {jtString(c('B1.Account.ImportExport.ImportSource').jt`${SuperName} (JSON)`)}
         </Button>
       </div>
     </>

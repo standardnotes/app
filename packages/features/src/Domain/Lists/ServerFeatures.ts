@@ -3,6 +3,7 @@ import { PermissionName } from '../Permission/PermissionName'
 import { NativeFeatureIdentifier } from '../Feature/NativeFeatureIdentifier'
 import { RoleName } from '@standardnotes/domain-core'
 import { c } from 'ttag'
+import { ListedName, jtString } from '../Strings/ProductNames'
 
 export function serverFeatures(): ServerFeatureDescription[] {
   return [
@@ -61,7 +62,7 @@ export function serverFeatures(): ServerFeatureDescription[] {
       availableInRoles: [RoleName.NAMES.ProUser],
     },
     {
-      name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Listed Custom Domain`,
+      name: jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`${ListedName} Custom Domain`),
       identifier: NativeFeatureIdentifier.TYPES.ListedCustomDomain,
       permission_name: PermissionName.ListedCustomDomain,
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],

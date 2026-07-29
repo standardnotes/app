@@ -119,6 +119,7 @@
     "@lexical/utils": "0.43.0",
     "@radix-ui/react-slot": "^1.0.1",
     "@react-pdf/renderer": "^4.4.1",
+    "@standardnotes/features": "workspace:*",
     "comlink": "^4.4.1",
     "fast-diff": "^1.3.0",
     "lexical": "0.43.0",

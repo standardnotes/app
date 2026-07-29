@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { Action, SNNote } from '@standardnotes/snjs'
 import { useCallback, useEffect, useState } from 'react'
+import { ListedName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 import Icon from '@/Components/Icon/Icon'
 import { ListedMenuGroup } from './ListedMenuGroup'
@@ -159,7 +160,7 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
       {!isFetchingAccounts && !menuGroups.length ? (
         <div className="flex w-full items-center justify-center px-4 py-6">
           <div className="select-none text-sm text-passive-0">
-            {c('B3.Notes.NoteList.Info').t`No Listed accounts found`}
+            {jtString(c('B3.Notes.NoteList.Info').jt`No ${ListedName} accounts found`)}
           </div>
         </div>
       ) : null}

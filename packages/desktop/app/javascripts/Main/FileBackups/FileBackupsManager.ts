@@ -13,12 +13,12 @@ import { WebContents } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
 import { FileDownloader } from './FileDownloader'
-import { c } from 'ttag'
 import { FileReadOperation } from './FileReadOperation'
 import { Paths } from '../Types/Paths'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
 import { FilesManagerInterface } from '../File/FilesManagerInterface'
 import { sanitizeFileName } from '@standardnotes/utils'
+import { AppName } from '../Strings'
 
 const TextBackupFileExtension = '.txt'
 
@@ -104,7 +104,7 @@ export class FilesBackupManager implements FileBackupsDevice {
       return savedLocation
     }
 
-    const LegacyTextBackupsDirectory = c('B6.Preferences.Backups.Label').t`Standard Notes Backups`
+    const LegacyTextBackupsDirectory = `${AppName} Backups`
     const homeDir = Paths.homeDir
     if (homeDir) {
       return path.join(homeDir, LegacyTextBackupsDirectory)

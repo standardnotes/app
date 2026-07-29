@@ -13,6 +13,7 @@ import Invite from './Invite/Invite'
 import Button from '@/Components/Button/Button'
 import SharingStatusText from './SharingStatusText'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import { ProfessionalPlanName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -62,13 +63,10 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application }: Props) =
             ) : (
               <NoProSubscription
                 application={application}
-                text={
-                  <span>
-                    {c('B6.Preferences.Subscription.Info').t`Subscription sharing is available only on the`}{' '}
-                    <span className="font-bold">{c('B6.Preferences.Subscription.Info').t`Professional`}</span>{' '}
-                    {c('B6.Preferences.Subscription.Info').t`plan. Please upgrade in order to share your subscription.`}
-                  </span>
-                }
+                text={jtString(
+                  c('B6.Preferences.Subscription.Info')
+                    .jt`Subscription sharing is available only on the ${ProfessionalPlanName} plan. Please upgrade in order to share your subscription.`,
+                )}
               />
             )}
           </div>

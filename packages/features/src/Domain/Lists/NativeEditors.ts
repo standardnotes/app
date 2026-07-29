@@ -3,12 +3,13 @@ import { NoteType } from '../Component/NoteType'
 import { EditorFeatureDescription } from '../Feature/EditorFeatureDescription'
 import { NativeFeatureIdentifier } from '../Feature/NativeFeatureIdentifier'
 import { PermissionName } from '../Permission/PermissionName'
+import { SuperName } from '../Strings/ProductNames'
 import { c } from 'ttag'
 
 export function nativeEditors(): EditorFeatureDescription[] {
   return [
     {
-      name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Super`,
+      name: SuperName,
       note_type: NoteType.Super,
       identifier: NativeFeatureIdentifier.TYPES.SuperEditor,
       spellcheckControl: true,
