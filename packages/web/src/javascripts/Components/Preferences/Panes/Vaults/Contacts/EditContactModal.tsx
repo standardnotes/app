@@ -3,6 +3,7 @@ import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { ClientDisplayableError, InviteRecord, TrustedContactInterface } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 type Props = {
   fromInvite?: InviteRecord
@@ -52,7 +53,7 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
           onAddContact?.(contact)
           handleDialogClose()
         } else {
-          void application.alerts.alert('Unable to create contact. Please try again.')
+          void application.alerts.alert(c('B6.Preferences.Vaults.Error').t`Unable to create contact. Please try again.`)
         }
       } catch (error) {
         if (error instanceof ClientDisplayableError) {
@@ -66,13 +67,15 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: editContactUuid ? 'Save Contact' : 'Add Contact',
+        label: editContactUuid
+          ? c('B6.Preferences.Vaults.Action').t`Save Contact`
+          : c('B6.Preferences.Vaults.Action').t`Add Contact`,
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',
       },
       {
-        label: 'Cancel',
+        label: c('B6.Preferences.Vaults.Action').t`Cancel`,
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
@@ -91,13 +94,17 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
 
   return (
     <Modal
-      title={editContactUuid ? 'Edit Contact' : 'Add New Contact'}
+      title={
+        editContactUuid
+          ? c('B6.Preferences.Vaults.Title').t`Edit Contact`
+          : c('B6.Preferences.Vaults.Title').t`Add New Contact`
+      }
       close={handleDialogClose}
       actions={modalActions}
     >
       <div className="mb-3 flex w-full flex-col gap-4 px-4.5 pb-1.5 pt-4">
         <label>
-          <div className="mb-1">Contact Name</div>
+          <div className="mb-1">{c('B6.Preferences.Vaults.Label').t`Contact Name`}</div>
           <DecoratedInput
             id="invite-name-input"
             value={name}
@@ -111,7 +118,7 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
 
         {!editingContact?.isMe && (
           <label>
-            <div className="mb-1">CollaborationID</div>
+            <div className="mb-1">{c('B6.Preferences.Vaults.Label').t`CollaborationID`}</div>
             <DecoratedInput
               id="invite-email-input"
               value={collaborationID}
@@ -125,8 +132,8 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
 
         {!editContactUuid && (
           <p>
-            Ask your contact for their Standard Notes CollaborationID via secure email or chat. Then, enter it here to
-            add them as a contact.
+            {c('B6.Preferences.Vaults.Info')
+              .t`Ask your contact for their Standard Notes CollaborationID via secure email or chat. Then, enter it here to add them as a contact.`}
           </p>
         )}
       </div>

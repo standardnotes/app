@@ -5,6 +5,7 @@ import ApplicationView from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
 import { ApplicationGroupEvent, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
 import { getPlatformString, isDesktopApplication } from '@/Utils'
+import { c } from 'ttag'
 import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 import { IS_CHROME } from '../../Constants/Constants'
 
@@ -101,17 +102,20 @@ class ApplicationGroupView extends Component<Props, State> {
 
   override render() {
     if (this.state.deviceDestroyed) {
-      const message = `Secure memory has destroyed this application instance. ${
-        isDesktopApplication()
-          ? 'Restart the app to continue.'
-          : 'Close this browser tab and open a new one to continue.'
-      }`
+      const message = isDesktopApplication()
+        ? c('B5.SecuritySync.Protections.Error')
+            .t`Secure memory has destroyed this application instance. Restart the app to continue.`
+        : c('B5.SecuritySync.Protections.Error')
+            .t`Secure memory has destroyed this application instance. Close this browser tab and open a new one to continue.`
 
       return renderDialog(message)
     }
 
     if (this.state.dealloced) {
-      const message = this.state.deallocSource === DeinitSource.Lock ? 'Locking workspace...' : 'Switching workspace...'
+      const message =
+        this.state.deallocSource === DeinitSource.Lock
+          ? c('B1.Account.Session.Status').t`Locking workspace...`
+          : c('B1.Account.Session.Status').t`Switching workspace...`
       return renderDialog(message)
     }
 

@@ -4,6 +4,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { PrefKey, PrefDefaults } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
+import { c } from 'ttag'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
@@ -24,14 +25,14 @@ const Tools: FunctionComponent<Props> = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Tools</Title>
+        <Title>{c('B6.Preferences.General.Title').t`Tools`}</Title>
         <div>
           <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">
-              <Subtitle>Show note saving status while editing</Subtitle>
+              <Subtitle>{c('B6.Preferences.General.Subtitle').t`Show note saving status while editing`}</Subtitle>
               <Text>
-                Control whether the animated saving status is shown while editing. Error statuses are always shown
-                regardless of preference.
+                {c('B6.Preferences.General.Info')
+                  .t`Control whether the animated saving status is shown while editing. Error statuses are always shown regardless of preference.`}
               </Text>
             </div>
             <Switch onChange={toggleSavingIndicatorUpdates} checked={updateSavingIndicator} />

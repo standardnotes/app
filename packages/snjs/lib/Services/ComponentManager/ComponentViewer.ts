@@ -12,6 +12,7 @@ import {
   SyncServiceInterface,
 } from '@standardnotes/services'
 import { FeaturesService } from '@Lib/Services'
+import { c, msgid } from 'ttag'
 import {
   ActionObserver,
   ComponentEventObserver,
@@ -458,9 +459,10 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     if (!this.window) {
       if (essential) {
+        const componentDisplayName = this.componentOrFeature.displayName
         void this.services.alerts.alert(
-          `Standard Notes is trying to communicate with ${this.componentOrFeature.displayName}, ` +
-            'but an error is occurring. Please restart this extension and try again.',
+          c('B4.Notes.EditingUI.Error')
+            .t`Standard Notes is trying to communicate with ${componentDisplayName}, but an error is occurring. Please restart this extension and try again.`,
         )
       }
       return
@@ -559,14 +561,16 @@ export class ComponentViewer implements ComponentViewerInterface {
     if (!this.componentOrFeature) {
       this.services.logger.info('Component not defined for message, returning', message)
       void this.services.alerts.alert(
-        'A component is trying to communicate with Standard Notes, ' +
-          'but there is an error establishing a bridge. Please restart the app and try again.',
+        c('B4.Notes.EditingUI.Error')
+          .t`A component is trying to communicate with Standard Notes, but there is an error establishing a bridge. Please restart the app and try again.`,
       )
       return
     }
     if (this.readonly && ReadwriteActions.includes(message.action)) {
+      const componentDisplayName = this.componentOrFeature.displayName
       void this.services.alerts.alert(
-        `${this.componentOrFeature.displayName} is trying to save, but it is in a locked state and cannot accept changes.`,
+        c('B4.Notes.EditingUI.Error')
+          .t`${componentDisplayName} is trying to save, but it is in a locked state and cannot accept changes.`,
       )
       return
     }
@@ -712,16 +716,20 @@ export class ComponentViewer implements ComponentViewerInterface {
 
         if (lockedNoteCount === 1) {
           void this.services.alerts.alert(
-            'The note you are attempting to save has editing disabled',
-            'Note has Editing Disabled',
+            c('B4.Notes.EditingUI.Error').t`The note you are attempting to save has editing disabled`,
+            c('B4.Notes.EditingUI.Title').t`Note has Editing Disabled`,
           )
           return
         } else if (lockedCount > 0) {
-          const itemNoun = lockedCount === 1 ? 'item' : lockedNoteCount === lockedCount ? 'notes' : 'items'
-          const auxVerb = lockedCount === 1 ? 'has' : 'have'
+          const editingDisabledMessage =
+            lockedCount === 1
+              ? c('B4.Notes.EditingUI.Error').t`The item you are attempting to save has editing disabled.`
+              : lockedNoteCount === lockedCount
+              ? c('B4.Notes.EditingUI.Error').t`The notes you are attempting to save have editing disabled.`
+              : c('B4.Notes.EditingUI.Error').t`The items you are attempting to save have editing disabled.`
           void this.services.alerts.alert(
-            `${lockedCount} ${itemNoun} you are attempting to save ${auxVerb} editing disabled.`,
-            'Items have Editing Disabled',
+            editingDisabledMessage,
+            c('B4.Notes.EditingUI.Title').t`Items have Editing Disabled`,
           )
 
           return
@@ -876,10 +884,14 @@ export class ComponentViewer implements ComponentViewerInterface {
       requiredPermissions,
       async () => {
         const itemsData = items
-        const noun = itemsData.length === 1 ? 'item' : 'items'
+        const itemCount = itemsData.length
         let reply = null
         const didConfirm = await this.services.alerts.confirm(
-          `Are you sure you want to delete ${itemsData.length} ${noun}?`,
+          c('B3.Notes.NoteActions.Confirmation').ngettext(
+            msgid`Are you sure you want to delete ${itemCount} item?`,
+            `Are you sure you want to delete ${itemCount} items?`,
+            itemCount,
+          ),
         )
 
         if (didConfirm) {
@@ -887,7 +899,9 @@ export class ComponentViewer implements ComponentViewerInterface {
           for (const itemData of itemsData) {
             const item = this.services.items.findItem(itemData.uuid)
             if (!item) {
-              void this.services.alerts.alert('The item you are trying to delete cannot be found.')
+              void this.services.alerts.alert(
+                c('B3.Notes.NoteActions.Error').t`The item you are trying to delete cannot be found.`,
+              )
               continue
             }
             await this.services.mutator.setItemToBeDeleted(item, PayloadEmitSource.ComponentRetrieved)

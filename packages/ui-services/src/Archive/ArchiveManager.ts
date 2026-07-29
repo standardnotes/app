@@ -7,6 +7,7 @@ import {
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/domain-core'
 import { ApplicationInterface } from '@standardnotes/services'
+import { c } from 'ttag'
 
 type ZippableData = {
   name: string
@@ -45,7 +46,8 @@ export class ArchiveManager {
     if (encrypted) {
       this.downloadData(
         blobData,
-        `Standard Notes Encrypted Backup and Import File - ${this.formattedDateForExports()}.txt`,
+        c('B6.Preferences.Backups.Label')
+          .t`Standard Notes Encrypted Backup and Import File - ${this.formattedDateForExports()}.txt`,
       )
     } else {
       this.downloadZippedDecryptedItems(data).catch(console.error)
@@ -71,7 +73,7 @@ export class ArchiveManager {
       type: 'text/plain',
     })
 
-    const fileName = createZippableFileName('Standard Notes Backup and Import File')
+    const fileName = createZippableFileName(c('B6.Preferences.Backups.Label').t`Standard Notes Backup and Import File`)
     await zipWriter.add(fileName, new zip.BlobReader(blob))
 
     for (let index = 0; index < items.length; index++) {
@@ -102,7 +104,10 @@ export class ArchiveManager {
 
   private async downloadZippedDecryptedItems(data: BackupFile) {
     const zippedDecryptedItemsBlob = await this.getZippedDecryptedItemsBlob(data)
-    this.downloadData(zippedDecryptedItemsBlob, `Standard Notes Backup - ${this.formattedDateForExports()}.zip`)
+    this.downloadData(
+      zippedDecryptedItemsBlob,
+      c('B6.Preferences.Backups.Label').t`Standard Notes Backup - ${this.formattedDateForExports()}.zip`,
+    )
   }
 
   async zipData(data: ZippableData): Promise<Blob> {
@@ -133,7 +138,10 @@ export class ArchiveManager {
 
   async downloadDataAsZip(data: ZippableData) {
     const zipFileAsBlob = await this.zipData(data)
-    this.downloadData(zipFileAsBlob, `Standard Notes Export - ${this.formattedDateForExports()}.zip`)
+    this.downloadData(
+      zipFileAsBlob,
+      c('B4.Notes.EditorOptions.Label').t`Standard Notes Export - ${this.formattedDateForExports()}.zip`,
+    )
   }
 
   private hrefForData(data: Blob) {

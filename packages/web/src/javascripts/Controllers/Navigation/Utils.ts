@@ -1,4 +1,7 @@
 import { AlertService, ItemManagerInterface, SNTag } from '@standardnotes/snjs'
+import { c } from 'ttag'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 export const rootTags = (items: ItemManagerInterface): SNTag[] => {
   const hasNoParent = (tag: SNTag) => !items.getTagParent(tag)
@@ -29,7 +32,10 @@ export const isValidFutureSiblings = (alerts: AlertService, futureSiblings: SNTa
   if (siblingWithSameName) {
     alerts
       ?.alert(
-        `A tag with the name ${tag.title} already exists at this destination. Please rename this tag before moving and try again.`,
+        jtString(
+          c('B4.Notes.TagsLinkedItems.Error')
+            .jt`A tag with the name ${tag.title} already exists at this destination. Please rename this tag before moving and try again.`,
+        ),
       )
       .catch(console.error)
     return false

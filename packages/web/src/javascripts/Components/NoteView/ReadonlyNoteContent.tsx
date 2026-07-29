@@ -9,6 +9,7 @@ import {
   isUIFeatureAnIframeFeature,
 } from '@standardnotes/snjs'
 import { CSSProperties, useCallback, useEffect, useMemo, useRef } from 'react'
+import { c } from 'ttag'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
 import IframeFeatureView from '../ComponentView/IframeFeatureView'
@@ -185,7 +186,7 @@ export const ReadonlyNoteContent = ({
             />
           ) : (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-passive-0">
-              Empty note.
+              {c('B4.Notes.EditingUI.Label').t`Empty note.`}
             </div>
           )}
         </div>

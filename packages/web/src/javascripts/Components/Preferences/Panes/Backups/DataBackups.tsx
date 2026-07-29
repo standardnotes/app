@@ -75,7 +75,8 @@ const DataBackups = ({ application }: Props) => {
     })
 
     if (isBackupEncrypted) {
-      const filename = `Standard Notes Encrypted Backup and Import File - ${application.archiveService.formattedDateForExports()}`
+      const filename = c('B6.Preferences.Backups.Label')
+        .t`Standard Notes Encrypted Backup and Import File - ${application.archiveService.formattedDateForExports()}`
       const sanitizedFilename = sanitizeFileName(filename) + '.txt'
       void downloadOrShareBlobBasedOnPlatform({
         archiveService: application.archiveService,
@@ -88,7 +89,8 @@ const DataBackups = ({ application }: Props) => {
       })
     } else {
       const zippedDecryptedItemsBlob = await application.archiveService.getZippedDecryptedItemsBlob(data)
-      const filename = `Standard Notes Backup - ${application.archiveService.formattedDateForExports()}`
+      const filename = c('B6.Preferences.Backups.Label')
+        .t`Standard Notes Backup - ${application.archiveService.formattedDateForExports()}`
       const sanitizedFilename = sanitizeFileName(filename) + '.zip'
       void downloadOrShareBlobBasedOnPlatform({
         archiveService: application.archiveService,
@@ -188,32 +190,38 @@ const DataBackups = ({ application }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>{c('B1.Account.ImportExport.Title').t`Data backups`}</Title>
-          <Subtitle>{c('B1.Account.ImportExport.Subtitle').t`Download a backup of all your text-based data`}</Subtitle>
+          <Title>{c('B6.Preferences.Backups.Title').t`Data backups`}</Title>
+          <Subtitle>{c('B6.Preferences.Backups.Subtitle').t`Download a backup of all your text-based data`}</Subtitle>
 
           {isEncryptionEnabled && (
             <form className="sk-panel-form sk-panel-row">
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
-                  <span className="text-base font-medium md:text-sm">{c('B1.Account.ImportExport.Label').t`Encrypted`}</span>
+                  <span className="text-base font-medium md:text-sm">{c('B6.Preferences.Backups.Label')
+                    .t`Encrypted`}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
-                  <span className="text-base font-medium md:text-sm">{c('B1.Account.ImportExport.Label').t`Decrypted`}</span>
+                  <span className="text-base font-medium md:text-sm">{c('B6.Preferences.Backups.Label')
+                    .t`Decrypted`}</span>
                 </label>
               </div>
             </form>
           )}
 
-          <Button onClick={downloadDataArchive} label={c('B1.Account.ImportExport.Action').t`Download backup`} className="mt-2" />
+          <Button
+            onClick={downloadDataArchive}
+            label={c('B6.Preferences.Backups.Action').t`Download backup`}
+            className="mt-2"
+          />
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>
-          <Subtitle>{c('B1.Account.ImportExport.Subtitle').t`Import a previously saved backup file`}</Subtitle>
+          <Subtitle>{c('B6.Preferences.Backups.Subtitle').t`Import a previously saved backup file`}</Subtitle>
 
           <div className="mt-3 flex flex-row items-center">
-            <Button label={c('B1.Account.ImportExport.Action').t`Import backup`} onClick={handleImportFile} />
+            <Button label={c('B6.Preferences.Backups.Action').t`Import backup`} onClick={handleImportFile} />
             <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
             {isImportDataLoading && <Spinner className="ml-4" />}
           </div>

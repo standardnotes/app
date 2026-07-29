@@ -1,4 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction } from 'react'
+import { c } from 'ttag'
 
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 
@@ -11,7 +12,7 @@ const InviteForm: FunctionComponent<Props> = ({ setInviteeEmail }) => {
     <div className="flex w-full flex-col">
       <div className="mb-3">
         <label className="mb-1 block font-bold" htmlFor="invite-email-input">
-          Invitee Email
+          {c('B6.Preferences.Subscription.Info').t`Invitee Email`}
         </label>
 
         <DecoratedInput
@@ -24,9 +25,9 @@ const InviteForm: FunctionComponent<Props> = ({ setInviteeEmail }) => {
         />
 
         <p className="mt-4">
-          <span className="font-bold">Note: </span>
-          The invitee must have an existing account with Standard Notes. If they do not have an account yet, instruct
-          them to make an account first.
+          <span className="font-bold">{c('B6.Preferences.Subscription.Info').t`Note:`} </span>
+          {c('B6.Preferences.Subscription.Info')
+            .t`The invitee must have an existing account with Standard Notes. If they do not have an account yet, instruct them to make an account first.`}
         </p>
       </div>
     </div>

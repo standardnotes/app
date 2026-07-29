@@ -1,7 +1,7 @@
 import { useState, useEffect, FunctionComponent, useMemo } from 'react'
 import { CalendarActivity } from './CalendarActivity'
 import CalendarDay from './CalendarDay'
-import { CalendarDays, CalendarDaysLeap, CalendarDaysOfTheWeek } from './Constants'
+import { CalendarDays, CalendarDaysLeap, getCalendarDaysOfTheWeek } from './Constants'
 import { createActivityRecord, dateToDateOnlyString, isLeapYear, getStartDayOfMonth } from './CalendarUtilts'
 import { areDatesInSameDay } from '@/Utils/DateUtils'
 
@@ -36,7 +36,7 @@ const Calendar: FunctionComponent<Props> = ({ activities, startDate, onDateSelec
     <div className={`w-300 ${className} min-h-[210px]`}>
       <div className="ml-auto mr-auto w-70">
         <div className="flex w-full flex-wrap">
-          {CalendarDaysOfTheWeek.map((d) => (
+          {getCalendarDaysOfTheWeek().map((d: string) => (
             <div className={'flex h-8 w-[14.2%] items-center justify-center'} key={d}>
               {d}
             </div>

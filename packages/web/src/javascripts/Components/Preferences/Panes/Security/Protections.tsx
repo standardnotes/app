@@ -6,6 +6,7 @@ import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { Title, Text } from '../../PreferencesComponents/Content'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -72,18 +73,25 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Protections</Title>
+        <Title>{c('B6.Preferences.Security.Title').t`Protections`}</Title>
         {protectionsDisabledUntil ? (
-          <Text className="text-info">Unprotected access expires at {protectionsDisabledUntil}.</Text>
+          <Text className="text-info">
+            {c('B6.Preferences.Security.Status').jt`Unprotected access expires at ${protectionsDisabledUntil}.`}
+          </Text>
         ) : (
-          <Text className="text-info">Protections are enabled.</Text>
+          <Text className="text-info">{c('B6.Preferences.Security.Status').t`Protections are enabled.`}</Text>
         )}
         <Text className="mt-2">
-          Actions like viewing or searching protected notes, exporting decrypted backups, or revoking an active session
-          require additional authentication such as entering your account password or application passcode.
+          {c('B6.Preferences.Security.Info')
+            .t`Actions like viewing or searching protected notes, exporting decrypted backups, or revoking an active session require additional authentication such as entering your account password or application passcode.`}
         </Text>
         {protectionsDisabledUntil && (
-          <Button className="mt-3" primary label="End Unprotected Access" onClick={enableProtections} />
+          <Button
+            className="mt-3"
+            primary
+            label={c('B6.Preferences.Security.Action').t`End Unprotected Access`}
+            onClick={enableProtections}
+          />
         )}
       </PreferencesSegment>
     </PreferencesGroup>

@@ -10,7 +10,7 @@ import Icon from '@/Components/Icon/Icon'
 import IconButton from '@/Components/Button/IconButton'
 import AdvancedOptions from './AdvancedOptions'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
-import { getErrorFromErrorResponse, isErrorResponse, getCaptchaHeader } from '@standardnotes/snjs'
+import { getErrorFromErrorResponse, isErrorResponse, getCaptchaHeader, Result } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import { useCaptcha } from '@/Hooks/useCaptcha'
 import MergeLocalDataCheckbox from './MergeLocalDataCheckbox'
@@ -120,9 +120,9 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         }
         application.accountMenuController.closeAccountMenu()
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(err)
-        setError(err.message ?? err.toString())
+        setError(err instanceof Error ? err.message : String(err))
         setPassword('')
         setHVMToken('')
         passwordInputRef?.current?.blur()
@@ -145,7 +145,7 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         hvmToken,
         mergeLocal: shouldMergeLocal,
       })
-      .then((result) => {
+      .then((result: Result<void>) => {
         if (result.isFailed()) {
           const error = result.getError()
           try {
@@ -161,9 +161,9 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         }
         application.accountMenuController.closeAccountMenu()
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(err)
-        setError(err.message ?? err.toString())
+        setError(err instanceof Error ? err.message : String(err))
         setPassword('')
         setHVMToken('')
         passwordInputRef?.current?.blur()
@@ -276,7 +276,9 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
         {error ? <div className="my-2 text-danger">{error}</div> : null}
         <Button
           className="mb-3 mt-1"
-          label={isSigningIn ? c('B1.Account.SignIn.Action').t`Signing in...` : c('B1.Account.SignIn.Action').t`Sign in`}
+          label={
+            isSigningIn ? c('B1.Account.SignIn.Action').t`Signing in...` : c('B1.Account.SignIn.Action').t`Sign in`
+          }
           primary
           onClick={handleSignInFormSubmit}
           disabled={isSigningIn}

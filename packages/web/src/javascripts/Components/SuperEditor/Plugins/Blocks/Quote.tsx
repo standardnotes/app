@@ -3,9 +3,10 @@ import { $getSelection, $isRangeSelection, LexicalEditor } from 'lexical'
 import { $createQuoteNode } from '@lexical/rich-text'
 import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
 import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
+import { c } from 'ttag'
 
 export const QuoteBlock = {
-  name: 'Quote',
+  name: c('B3.Notes.EditorToolbar.Label').t`Quote`,
   iconName: 'quote' as LexicalIconName,
   keywords: ['block quote'],
   onSelect: (editor: LexicalEditor) =>

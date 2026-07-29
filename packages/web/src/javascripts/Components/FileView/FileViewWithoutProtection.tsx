@@ -14,6 +14,7 @@ import RoundIconButton from '../Button/RoundIconButton'
 import { useItemVaultInfo } from '@/Hooks/useItemVaultInfo'
 import Icon from '../Icon/Icon'
 import { VaultUserServiceEvent } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
@@ -89,12 +90,16 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
   }, [addDragTarget, file, removeDragTarget, application.linkingController])
 
   return (
-    <div className="sn-component section editor" aria-label="File" ref={fileDragTargetRef}>
+    <div
+      className="sn-component section editor"
+      aria-label={c('B7.FilesSubscriptionHelp.Files.Label').t`File`}
+      ref={fileDragTargetRef}
+    >
       <div className="flex flex-col">
         {isReadonly && (
           <div className="bg-warning-faded relative flex items-center px-3.5 py-2 text-sm text-accessory-tint-3">
             <Icon type="pencil-off" className="mr-3" />
-            This file is readonly
+            {c('B7.FilesSubscriptionHelp.Files.Info').t`This file is readonly`}
           </div>
         )}
         <div
@@ -122,13 +127,13 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
             <div className="flex items-center gap-3">
               {!isReadonly && <LinkedItemsButton linkingController={application.linkingController} />}
               <RoundIconButton
-                label="File information panel"
+                label={c('B7.FilesSubscriptionHelp.Files.Label').t`File information panel`}
                 onClick={toggleFileInfoPanel}
                 ref={fileInfoButtonRef}
                 icon="info"
               />
               <Popover
-                title="Details"
+                title={c('B7.FilesSubscriptionHelp.Files.Title').t`Details`}
                 open={isFileInfoPanelOpen}
                 togglePopover={toggleFileInfoPanel}
                 anchorElement={fileInfoButtonRef}

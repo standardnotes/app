@@ -3,6 +3,7 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import { SharedVaultInviteServerHash } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import Button from '@/Components/Button/Button'
+import { c } from 'ttag'
 
 export const VaultModalInvites = ({
   invites,
@@ -25,7 +26,7 @@ export const VaultModalInvites = ({
 
   return (
     <div>
-      <div className="mb-3 text-lg">Pending Invites</div>
+      <div className="mb-3 text-lg">{c('B6.Preferences.Vaults.Label').t`Pending Invites`}</div>
       <div className="space-y-3.5">
         {invites.map((invite) => {
           const contact = application.contacts.findContactForInvite(invite)
@@ -42,19 +43,19 @@ export const VaultModalInvites = ({
                 {contact ? (
                   <div className="flex items-center gap-1 rounded bg-success px-1 py-0.5 text-xs text-success-contrast">
                     <Icon type="check-circle" size="small" />
-                    Trusted
+                    {c('B6.Preferences.Vaults.Label').t`Trusted`}
                   </div>
                 ) : (
                   <div className="flex items-center gap-1 rounded bg-danger px-1 py-0.5 pr-1.5 text-xs text-danger-contrast">
                     <Icon type="clear-circle-filled" size="small" />
-                    Untrusted
+                    {c('B6.Preferences.Vaults.Label').t`Untrusted`}
                   </div>
                 )}
               </div>
               <div className="col-start-2 row-start-2">{permission}</div>
               {isAdmin && (
                 <Button
-                  label="Cancel Invite"
+                  label={c('B6.Preferences.Vaults.Action').t`Cancel Invite`}
                   className="col-start-2 row-start-3 mt-1"
                   onClick={() => deleteInvite(invite)}
                   small

@@ -21,6 +21,7 @@ import { dateToStringStyle1 } from '@/Utils/DateUtils'
 import { PhotoRecorder } from './PhotoRecorder'
 import { LinkingController } from '../LinkingController'
 import { IsMobileDevice } from '@standardnotes/ui-services'
+import { c } from 'ttag'
 
 const EVERY_HOUR = 1000 * 60 * 60
 const EVERY_TEN_SECONDS = 1000 * 10
@@ -149,7 +150,7 @@ export class MomentsService extends AbstractViewController implements InternalEv
     if (isAppInForeground) {
       toastId = addToast({
         type: ToastType.Regular,
-        message: 'Capturing Moment...',
+        message: c('B4.Notes.EditingUI.Status').t`Capturing Moment...`,
         pauseOnWindowBlur: false,
       })
     }
@@ -162,7 +163,8 @@ export class MomentsService extends AbstractViewController implements InternalEv
         }
         addToast({
           type: ToastType.Error,
-          message: 'Please enable Camera permissions for Standard Notes to enable Moments.',
+          message: c('B4.Notes.EditingUI.Info')
+            .t`Please enable Camera permissions for Standard Notes to enable Moments.`,
           duration: 3000,
         })
 

@@ -10,6 +10,7 @@ import { BlocksEditor } from './BlocksEditor'
 import { BlocksEditorComposer } from './BlocksEditorComposer'
 import { useLocalPreference } from '@/Hooks/usePreference'
 import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
+import { c } from 'ttag'
 
 const NotePreviewCharLimit = 160
 
@@ -84,11 +85,13 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
   const convertAsIs = useCallback(async () => {
     const confirmed = await application.alerts.confirm(
       spaceSeparatedStrings(
-        "This option is useful if you switched this note's type from Super to another plaintext-based format, and want to return to Super.",
-        'To use this option, the preview in the convert window should display a language format known as JSON.',
-        'If this is not the case, cancel this prompt.',
+        c('B4.Notes.EditingUI.Info')
+          .t`This option is useful if you switched this note's type from Super to another plaintext-based format, and want to return to Super.`,
+        c('B4.Notes.EditingUI.Info')
+          .t`To use this option, the preview in the convert window should display a language format known as JSON.`,
+        c('B4.Notes.EditingUI.Info').t`If this is not the case, cancel this prompt.`,
       ),
-      'Are you sure?',
+      c('B4.Notes.EditingUI.Confirmation').t`Are you sure?`,
     )
     if (!confirmed) {
       return
@@ -104,19 +107,19 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Cancel',
+        label: c('B4.Notes.EditingUI.Action').t`Cancel`,
         onClick: closeDialog,
         type: 'cancel',
         mobileSlot: 'left',
       },
       {
-        label: 'Convert',
+        label: c('B4.Notes.EditingUI.Action').t`Convert`,
         onClick: confirmConvert,
         mobileSlot: 'right',
         type: 'primary',
       },
       {
-        label: 'Convert As-Is',
+        label: c('B4.Notes.EditingUI.Action').t`Convert As-Is`,
         onClick: convertAsIs,
         type: 'secondary',
         hidden: !canBeConvertedAsIs,
@@ -134,10 +137,10 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
   }
 
   return (
-    <Modal title="Convert to Super note" close={closeDialog} actions={modalActions}>
+    <Modal title={c('B4.Notes.EditingUI.Label').t`Convert to Super note`} close={closeDialog} actions={modalActions}>
       <div className="border-b border-border px-4 py-4 text-sm font-normal text-neutral md:py-3">
-        The following is a preview of how your note will look when converted to Super. Super notes use a custom format
-        under the hood. Converting your note will transition it from plaintext to the custom Super format.
+        {c('B4.Notes.EditingUI.Info')
+          .t`The following is a preview of how your note will look when converted to Super. Super notes use a custom format under the hood. Converting your note will transition it from plaintext to the custom Super format.`}
       </div>
       <div
         className="relative w-full px-4 py-4"

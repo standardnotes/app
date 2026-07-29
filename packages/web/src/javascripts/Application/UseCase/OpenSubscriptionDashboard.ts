@@ -1,4 +1,5 @@
 import { Environment, LegacyApiServiceInterface, Result, UseCaseInterface } from '@standardnotes/snjs'
+import { c } from 'ttag'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
 
 export class OpenSubscriptionDashboard implements UseCaseInterface<void> {
@@ -10,7 +11,7 @@ export class OpenSubscriptionDashboard implements UseCaseInterface<void> {
   async execute(): Promise<Result<void>> {
     const token = await this.legacyApi.getNewSubscriptionToken()
     if (!token) {
-      return Result.fail('Could not get subscription token.')
+      return Result.fail(c('B7.FilesSubscriptionHelp.Subscription.Error').t`Could not get subscription token.`)
     }
 
     const url = `${window.dashboardUrl}?subscription_token=${token}`

@@ -150,7 +150,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         </>
       )}
       <Menu
-        a11yLabel="General account menu"
+        a11yLabel={c('B1.Account.Session.Label').t`General account menu`}
         closeMenu={closeMenu}
         initialFocus={!application.hasAccount() ? CREATE_ACCOUNT_INDEX : SWITCHER_INDEX}
       >

@@ -8,6 +8,7 @@ import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Spinner from '@/Components/Spinner/Spinner'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -75,15 +76,14 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Privacy</Title>
+        <Title>{c('B6.Preferences.Security.Title').t`Privacy`}</Title>
         <div>
           <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">
-              <Subtitle>Session user agent logging</Subtitle>
+              <Subtitle>{c('B6.Preferences.Security.Subtitle').t`Session user agent logging`}</Subtitle>
               <Text>
-                User agent logging allows you to identify the devices or browsers signed into your account. For
-                increased privacy, you can disable this feature, which will remove all saved user agent values from our
-                server, and disable future logging of this value.
+                {c('B6.Preferences.Security.Info')
+                  .t`User agent logging allows you to identify the devices or browsers signed into your account. For increased privacy, you can disable this feature, which will remove all saved user agent values from our server, and disable future logging of this value.`}
               </Text>
             </div>
             {isLoading ? (

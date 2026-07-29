@@ -4,6 +4,7 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { WebApplication } from '@/Application/WebApplication'
 import { useMemo } from 'react'
 import TextBackupsDesktop from './TextBackupsDesktop'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -18,9 +19,11 @@ const TextBackupsCrossPlatform = ({ application }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Automatic text backups</Title>
-          <Subtitle>Automatically save encrypted and decrypted backups of your note and tag data.</Subtitle>
-          <Text className="mt-3">To enable text backups, use the Standard Notes desktop application.</Text>
+          <Title>{c('B6.Preferences.Backups.Label').t`Automatic text backups`}</Title>
+          <Subtitle>{c('B6.Preferences.Backups.Info')
+            .t`Automatically save encrypted and decrypted backups of your note and tag data.`}</Subtitle>
+          <Text className="mt-3">{c('B6.Preferences.Backups.Info')
+            .t`To enable text backups, use the Standard Notes desktop application.`}</Text>
         </PreferencesSegment>
       </PreferencesGroup>
     </>

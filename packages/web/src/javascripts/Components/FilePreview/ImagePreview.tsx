@@ -1,5 +1,6 @@
 import { IconType, PrefKey } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { c } from 'ttag'
 import IconButton from '@/Components/Button/IconButton'
 import { OptionalSuperEmbeddedImageProps } from './OptionalSuperEmbeddedImageProps'
 import usePreference from '@/Hooks/usePreference'
@@ -56,11 +57,20 @@ const ImagePreview: FunctionComponent<Props> = ({
 
   const imageResizer = (
     <>
-      <span className="mr-1.5">{isEmbeddedInSuper ? 'Size' : 'Zoom'}:</span>
+      <span className="mr-1.5">
+        {isEmbeddedInSuper
+          ? c('B7.FilesSubscriptionHelp.Files.Info').t`Size`
+          : c('B7.FilesSubscriptionHelp.Files.Info').t`Zoom`}
+        :
+      </span>
       <IconButton
         className="rounded p-1 hover:bg-contrast"
         icon={'subtract' as IconType}
-        title={isEmbeddedInSuper ? 'Decrease size' : 'Zoom Out'}
+        title={
+          isEmbeddedInSuper
+            ? (c('B7.FilesSubscriptionHelp.Files.Info').t`Decrease size` as unknown as string)
+            : (c('B7.FilesSubscriptionHelp.Files.Info').t`Zoom Out` as unknown as string)
+        }
         focusable={true}
         onClick={(e) => {
           e.preventDefault()
@@ -117,7 +127,11 @@ const ImagePreview: FunctionComponent<Props> = ({
       <IconButton
         className="rounded p-1 hover:bg-contrast"
         icon="add"
-        title={isEmbeddedInSuper ? 'Increase size' : 'Zoom In'}
+        title={
+          isEmbeddedInSuper
+            ? (c('B7.FilesSubscriptionHelp.Files.Info').t`Increase size` as unknown as string)
+            : (c('B7.FilesSubscriptionHelp.Files.Info').t`Zoom In` as unknown as string)
+        }
         focusable={true}
         onClick={(e) => {
           e.preventDefault()

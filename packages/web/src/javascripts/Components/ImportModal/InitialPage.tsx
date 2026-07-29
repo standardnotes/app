@@ -28,7 +28,8 @@ const ImportModalInitialPage = ({ setFiles, selectFiles }: Props) => {
           setFiles(files)
         }}
       >
-        <div className="text-lg font-semibold">{c('B1.Account.ImportExport.Info').t`Drag and drop files to auto-detect and import`}</div>
+        <div className="text-lg font-semibold">{c('B1.Account.ImportExport.Info')
+          .t`Drag and drop files to auto-detect and import`}</div>
         <div className="text-sm">{c('B1.Account.ImportExport.Info').t`Or click to open file picker`}</div>
       </button>
       <div className="my-4 w-full text-center">{c('B1.Account.ImportExport.Info').t`or import from:`}</div>

@@ -6,6 +6,7 @@ import { PackageProvider } from '../PackageProvider'
 import PackageEntry from './PackageEntry'
 import { AnyPackageType } from '../AnyPackageType'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { c } from 'ttag'
 
 const loadPlugins = (application: WebApplication) =>
   application.items.getItems([
@@ -52,7 +53,9 @@ const ManagePlugins: FunctionComponent<Props> = ({ pluginsLatestVersions, classN
 
   return (
     <div className={className}>
-      {visiblePlugins.length === 0 && <div className="text-neutral">No plugins installed.</div>}
+      {visiblePlugins.length === 0 && (
+        <div className="text-neutral">{c('B6.Preferences.Other.Info').t`No plugins installed.`}</div>
+      )}
       {visiblePlugins.length > 0 && (
         <div className="divide-y divide-border">
           {visiblePlugins

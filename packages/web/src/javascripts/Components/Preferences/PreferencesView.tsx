@@ -10,6 +10,7 @@ import { classNames } from '@standardnotes/snjs'
 import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import Icon from '../Icon/Icon'
+import { c } from 'ttag'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, closePreferences }) => {
   const menu = useMemo(
@@ -45,7 +46,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
         label: (
           <span className="flex items-center">
             <Icon type="chevron-left" size="large" />
-            Back
+            {c('B6.Preferences.Other.Action').t`Back`}
           </span>
         ),
         type: 'primary',
@@ -59,7 +60,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
   return (
     <Modal
       close={closePreferences}
-      title="Preferences"
+      title={c('B6.Preferences.Other.Title').t`Preferences`}
       className="flex flex-col"
       customHeader={
         <div
@@ -70,13 +71,14 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
           data-preferences-header
         >
           <div className="hidden h-8 w-8 md:block" />
-          <h1 className="text-base font-bold md:text-lg">Your preferences for Standard Notes</h1>
+          <h1 className="text-base font-bold md:text-lg">{c('B6.Preferences.Other.Info')
+            .t`Your preferences for Standard Notes`}</h1>
           <RoundIconButton
             onClick={() => {
               closePreferences()
             }}
             icon="close"
-            label="Close preferences"
+            label={c('B6.Preferences.Other.Action').t`Close preferences`}
           />
         </div>
       }

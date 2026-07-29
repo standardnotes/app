@@ -14,6 +14,7 @@ import Modal, { ModalAction } from '../Modal/Modal'
 import { EditorMenuItem } from '../NotesOptions/EditorMenuItem'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
 import { HeadlessSuperConverter } from './Tools/HeadlessSuperConverter'
+import { c } from 'ttag'
 
 const SuperNoteConverter = ({
   note,
@@ -136,10 +137,12 @@ const SuperNoteConverter = ({
   const convertAsIs = useCallback(async () => {
     const confirmed = await application.alerts.confirm(
       spaceSeparatedStrings(
-        "This option is useful if you want to edit the note's content which is in Super's JSON format directly.",
-        'This format is not human-readable. If you want to convert the note to a human-readable format, please use the "Convert" option instead.',
+        c('B4.Notes.EditingUI.Info')
+          .t`This option is useful if you want to edit the note's content which is in Super's JSON format directly.`,
+        c('B4.Notes.EditingUI.Info')
+          .t`This format is not human-readable. If you want to convert the note to a human-readable format, please use the "Convert" option instead.`,
       ),
-      'Are you sure?',
+      c('B4.Notes.EditingUI.Confirmation').t`Are you sure?`,
     )
     if (!confirmed) {
       return
@@ -155,19 +158,19 @@ const SuperNoteConverter = ({
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Cancel',
+        label: c('B4.Notes.EditingUI.Action').t`Cancel`,
         onClick: closeDialog,
         type: 'cancel',
         mobileSlot: 'left',
       },
       {
-        label: 'Convert',
+        label: c('B4.Notes.EditingUI.Action').t`Convert`,
         onClick: confirmConvert,
         mobileSlot: 'right',
         type: 'primary',
       },
       {
-        label: 'Convert As-Is',
+        label: c('B4.Notes.EditingUI.Action').t`Convert As-Is`,
         onClick: convertAsIs,
         type: 'secondary',
       },
@@ -177,7 +180,7 @@ const SuperNoteConverter = ({
 
   return (
     <Modal
-      title={`Convert to ${uiFeature.displayName}`}
+      title={c('B4.Notes.EditingUI.Label').jt`Convert to ${uiFeature.displayName}` as unknown as string}
       close={closeDialog}
       actions={modalActions}
       className="flex flex-col !overflow-hidden"
@@ -185,8 +188,8 @@ const SuperNoteConverter = ({
       {format === 'txt' || format === 'md' ? (
         <div className="flex items-start border-b border-border p-4 text-sm">
           <Icon type="warning" className="mr-2 flex-shrink-0" />
-          Conversion from Super's format to Markdown/Plaintext can be lossy. Please review the converted note before
-          saving.
+          {c('B4.Notes.EditingUI.Status')
+            .t`Conversion from Super's format to Markdown/Plaintext can be lossy. Please review the converted note before saving.`}
         </div>
       ) : null}
       {componentViewer ? (

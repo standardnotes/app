@@ -1,6 +1,7 @@
 import { Username } from '@standardnotes/snjs'
 import { ChallengePrompt } from '@standardnotes/services'
 import { RefObject, useState } from 'react'
+import { c } from 'ttag'
 
 import { WebApplication } from '@/Application/WebApplication'
 
@@ -77,7 +78,7 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
             }
 
             if (authenticatorResponse === null) {
-              setError('Failed to obtain device response')
+              setError(c('B5.SecuritySync.Challenge.Error').t`Failed to obtain device response`)
               return
             }
 
@@ -89,10 +90,10 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
           {authenticatorResponse ? (
             <span className="flex items-center justify-center gap-3">
               <Icon type="check-circle" />
-              Obtained Device Response
+              {c('B5.SecuritySync.Challenge.Info').t`Obtained Device Response`}
             </span>
           ) : (
-            'Authenticate Device'
+            c('B5.SecuritySync.Challenge.Action').t`Authenticate Device`
           )}
         </Button>
       </div>

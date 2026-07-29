@@ -70,7 +70,7 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
   }, [mainApplicationGroup])
 
   return (
-    <Menu a11yLabel="Workspace switcher menu" className="focus:shadow-none">
+    <Menu a11yLabel={c('B1.Account.Session.Label').t`Workspace switcher menu`} className="focus:shadow-none">
       <MenuSection>
         {applicationDescriptors.map((descriptor) => (
           <WorkspaceMenuItem

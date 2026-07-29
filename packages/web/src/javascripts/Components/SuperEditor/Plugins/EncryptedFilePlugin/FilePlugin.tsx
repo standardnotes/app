@@ -2,6 +2,7 @@ import { INSERT_FILE_COMMAND, UPLOAD_AND_INSERT_FILE_COMMAND } from '../Commands
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 
 import { useEffect, useState } from 'react'
+import { c } from 'ttag'
 import { FileNode } from './Nodes/FileNode'
 import {
   $createParagraphNode,
@@ -52,7 +53,7 @@ function UploadFileDialog({ onClose }: { onClose: () => void }) {
       />
       <div className="mt-1.5 flex justify-end">
         <Button onClick={onClick} disabled={!file} small={isMobileScreen()}>
-          Upload
+          {c('B4.Notes.EditingUI.Action').t`Upload`}
         </Button>
       </div>
     </>
@@ -179,7 +180,7 @@ export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JS
 
   if (showFileUploadModal) {
     return (
-      <Modal onClose={() => setShowFileUploadModal(false)} title="Upload File">
+      <Modal onClose={() => setShowFileUploadModal(false)} title={c('B4.Notes.EditingUI.Title').t`Upload File`}>
         <UploadFileDialog onClose={() => setShowFileUploadModal(false)} />
       </Modal>
     )

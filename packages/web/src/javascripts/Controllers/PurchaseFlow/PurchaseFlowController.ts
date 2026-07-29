@@ -8,6 +8,7 @@ import {
 import { LoggingDomain, log } from '@/Logging'
 import { AppleIAPProductId, InternalEventBusInterface } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
+import { c } from 'ttag'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { PurchaseFlowPane } from './PurchaseFlowPane'
 import { LoadPurchaseFlowUrl } from '@/Application/UseCase/LoadPurchaseFlowUrl'
@@ -80,13 +81,16 @@ export class PurchaseFlowController extends AbstractViewController {
     log(LoggingDomain.Purchasing, 'BeginIosIapPurchaseFlow result', result)
 
     if (!result) {
-      void this.alerts.alert('Your purchase was canceled or failed. Please try again.')
+      void this.alerts.alert(
+        c('B7.FilesSubscriptionHelp.Subscription.Error').t`Your purchase was canceled or failed. Please try again.`,
+      )
       return
     }
 
     const showGenericError = () => {
       void this.alerts.alert(
-        'There was an error confirming your purchase. Please contact support at help@standardnotes.com.',
+        c('B7.FilesSubscriptionHelp.Subscription.Error')
+          .t`There was an error confirming your purchase. Please contact support at help@standardnotes.com.`,
       )
     }
 
@@ -106,8 +110,9 @@ export class PurchaseFlowController extends AbstractViewController {
 
     if (confirmResult) {
       void this.alerts.alert(
-        'Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.',
-        'Your purchase was successful!',
+        c('B7.FilesSubscriptionHelp.Subscription.Info')
+          .t`Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.`,
+        c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your purchase was successful!`,
       )
     } else {
       showGenericError()

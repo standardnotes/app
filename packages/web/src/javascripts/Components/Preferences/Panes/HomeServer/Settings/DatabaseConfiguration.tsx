@@ -9,6 +9,7 @@ import { Subtitle } from '../../../PreferencesComponents/Content'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import RadioButtonGroup from '@/Components/RadioButtonGroup/RadioButtonGroup'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import { c } from 'ttag'
 
 type Props = {
   homeServerConfiguration: HomeServerEnvironmentConfiguration
@@ -87,13 +88,13 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <AccordionItem title={'Database'}>
+        <AccordionItem title={c('B6.Preferences.HomeServer.Title').t`Database`}>
           <div className="flex flex-row items-center">
             <div className="flex max-w-full flex-grow flex-col">
               <RadioButtonGroup
                 items={[
-                  { label: 'SQLite', value: 'sqlite' },
-                  { label: 'MySQL', value: 'mysql' },
+                  { label: c('B6.Preferences.HomeServer.Label').t`SQLite`, value: 'sqlite' },
+                  { label: c('B6.Preferences.HomeServer.Label').t`MySQL`, value: 'mysql' },
                 ]}
                 value={selectedDatabaseEngine}
                 onChange={setSelectedDatabaseEngine}
@@ -101,28 +102,30 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
               {isMySQLSelected && (
                 <>
                   <div className={'mt-2'}>
-                    In order to connect to a MySQL database, ensure that your system has MySQL installed. For detailed
-                    instructions, visit the{' '}
+                    {c('B6.Preferences.HomeServer.Info')
+                      .t`In order to connect to a MySQL database, ensure that your system has MySQL installed. For detailed instructions, visit the`}{' '}
                     <a className="text-info" href="https://dev.mysql.com/doc/mysql-installation-excerpt/8.0/en/">
-                      MySQL website.
+                      {c('B6.Preferences.HomeServer.Action').t`MySQL website.`}
                     </a>
                   </div>
                   <HorizontalSeparator classes="my-4" />
                   <PreferencesSegment>
-                    <Subtitle className={'mt-2'}>Database Username</Subtitle>
+                    <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle')
+                      .t`Database Username`}</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
-                        placeholder={'username'}
+                        placeholder={c('B6.Preferences.HomeServer.Placeholder').t`username`}
                         defaultValue={homeServerConfiguration?.mysqlConfiguration?.username}
                         onChange={setMysqlUsername}
                       />
                     </div>
                   </PreferencesSegment>
                   <PreferencesSegment>
-                    <Subtitle className={'mt-2'}>Database Password</Subtitle>
+                    <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle')
+                      .t`Database Password`}</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
-                        placeholder={'password'}
+                        placeholder={c('B6.Preferences.HomeServer.Placeholder').t`password`}
                         defaultValue={homeServerConfiguration?.mysqlConfiguration?.password}
                         onChange={setMysqlPassword}
                         type="password"
@@ -130,20 +133,20 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                     </div>
                   </PreferencesSegment>
                   <PreferencesSegment>
-                    <Subtitle className={'mt-2'}>Database Host</Subtitle>
+                    <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Database Host`}</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
-                        placeholder={'host'}
+                        placeholder={c('B6.Preferences.HomeServer.Placeholder').t`host`}
                         defaultValue={homeServerConfiguration?.mysqlConfiguration?.host}
                         onChange={setMysqlHost}
                       />
                     </div>
                   </PreferencesSegment>
                   <PreferencesSegment>
-                    <Subtitle className={'mt-2'}>Database Port</Subtitle>
+                    <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Database Port`}</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
-                        placeholder={'port'}
+                        placeholder={c('B6.Preferences.HomeServer.Placeholder').t`port`}
                         defaultValue={
                           homeServerConfiguration?.mysqlConfiguration?.port
                             ? homeServerConfiguration?.mysqlConfiguration?.port.toString()
@@ -154,10 +157,10 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
                     </div>
                   </PreferencesSegment>
                   <PreferencesSegment>
-                    <Subtitle className={'mt-2'}>Database Name</Subtitle>
+                    <Subtitle className={'mt-2'}>{c('B6.Preferences.HomeServer.Subtitle').t`Database Name`}</Subtitle>
                     <div className={'mt-2'}>
                       <DecoratedInput
-                        placeholder={'name'}
+                        placeholder={c('B6.Preferences.HomeServer.Placeholder').t`name`}
                         defaultValue={homeServerConfiguration?.mysqlConfiguration?.database}
                         onChange={setMysqlDatabase}
                       />
@@ -168,7 +171,12 @@ const DatabaseConfiguration = ({ setHomeServerConfigurationChangedCallback, home
             </div>
           </div>
           {valuesChanged && (
-            <Button className="mt-3 min-w-20" primary label="Apply & Restart" onClick={handleConfigurationChange} />
+            <Button
+              className="mt-3 min-w-20"
+              primary
+              label={c('B6.Preferences.HomeServer.Action').t`Apply & Restart`}
+              onClick={handleConfigurationChange}
+            />
           )}
         </AccordionItem>
       </PreferencesSegment>

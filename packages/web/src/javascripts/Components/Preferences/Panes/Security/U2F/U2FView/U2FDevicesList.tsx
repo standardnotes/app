@@ -5,6 +5,7 @@ import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content
 import { WebApplication } from '@/Application/WebApplication'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -35,7 +36,7 @@ const U2FDevicesList: FunctionComponent<Props> = ({ application, devices, onErro
     <div>
       {devices.length > 0 && (
         <>
-          <Subtitle>Devices</Subtitle>
+          <Subtitle>{c('B6.Preferences.Security.Subtitle').t`Devices`}</Subtitle>
           <div className="flex flex-grow flex-col divide-y divide-border">
             {devices.map((device) => (
               <div className="flex items-center py-2" key={`device-${device.id}`}>
@@ -44,7 +45,7 @@ const U2FDevicesList: FunctionComponent<Props> = ({ application, devices, onErro
                 <Button
                   small
                   key={device.id}
-                  label="Delete"
+                  label={c('B6.Preferences.Security.Action').t`Delete`}
                   onClick={async () => handleDeleteButtonOnClick(device.id)}
                 ></Button>
               </div>

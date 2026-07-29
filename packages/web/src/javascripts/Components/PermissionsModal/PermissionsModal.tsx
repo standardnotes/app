@@ -1,8 +1,11 @@
 import { ComponentInterface } from '@standardnotes/snjs'
 import { useCallback } from 'react'
+import { c } from 'ttag'
 import Button from '@/Components/Button/Button'
 import ModalDialogButtons from '../Modal/ModalDialogButtons'
 import Modal from '../Modal/Modal'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 type Props = {
   callback: (approved: boolean) => void
@@ -24,12 +27,12 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
 
   return (
     <Modal
-      title="Activate Plugin"
+      title={c('B2.NavSharedUI.Title').t`Activate Plugin`}
       close={deny}
       actions={[
-        { label: 'Cancel', onClick: deny, type: 'cancel', mobileSlot: 'left' },
+        { label: c('B2.NavSharedUI.Action').t`Cancel`, onClick: deny, type: 'cancel', mobileSlot: 'left' },
         {
-          label: 'Continue',
+          label: c('B2.NavSharedUI.Action').t`Continue`,
           onClick: accept,
           type: 'primary',
           mobileSlot: 'right',
@@ -38,20 +41,24 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
       customFooter={
         <ModalDialogButtons className="hidden md:flex">
           <Button primary fullWidth onClick={accept} className="block">
-            Continue
+            {c('B2.NavSharedUI.Action').t`Continue`}
           </Button>
         </ModalDialogButtons>
       }
     >
       <div className="px-4 py-4">
         <div className="text-base">
-          <strong>{component.displayName}</strong>
-          {' would like to interact with your '}
-          {permissionsString}
+          <strong>
+            {jtString(
+              c('B2.NavSharedUI.Info')
+                .jt`${component.displayName} would like to interact with your ${permissionsString}`,
+            )}
+          </strong>
         </div>
         <div className="sk-panel-row [word-break:break-word]">
           <p className="sk-p">
-            Plugins use an offline messaging system to communicate and can only access the current note.
+            {c('B2.NavSharedUI.Info')
+              .t`Plugins use an offline messaging system to communicate and can only access the current note.`}
           </p>
         </div>
       </div>

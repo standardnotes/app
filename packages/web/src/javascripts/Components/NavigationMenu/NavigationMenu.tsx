@@ -1,4 +1,5 @@
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
+import { c } from 'ttag'
 import useIsTabletOrMobileScreen from '@/Hooks/useIsTabletOrMobileScreen'
 import { StatusServiceEvent, classNames } from '@standardnotes/snjs'
 import RoundIconButton from '../Button/RoundIconButton'
@@ -33,7 +34,7 @@ export const NavigationMenuButton = () => {
         onClick={() => {
           setPaneLayout(PaneLayout.TagSelection)
         }}
-        label="Open navigation menu"
+        label={c('B2.NavSharedUI.AriaLabel').t`Open navigation menu`}
         icon="menu-variant"
       />
       {isMobile && bubbleCount && <CountBubble position="right" count={bubbleCount} />}

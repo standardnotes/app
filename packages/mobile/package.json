@@ -22,7 +22,8 @@
     "start": "react-native start",
     "tsc": "tsc --noEmit",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",
-    "bundle:web": "mkdir -p html/Web.bundle/src/web-src/ && cp -r ../web/dist/. html/Web.bundle/src/web-src/"
+    "bundle:web": "mkdir -p html/Web.bundle/src/web-src/ && cp -r ../web/dist/. html/Web.bundle/src/web-src/",
+    "i18n:extract": "echo 'ttag: extract mobile'; mkdir -p po && ttag extract src -o po/template.pot"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
@@ -77,6 +78,7 @@
   "dependencies": {
     "@notifee/react-native": "^9.1.8",
     "react-native-safe-area-context": "^5.5.1",
-    "react-native-store-review": "^0.4.3"
+    "react-native-store-review": "^0.4.3",
+    "ttag": "^1.8.12"
   }
 }

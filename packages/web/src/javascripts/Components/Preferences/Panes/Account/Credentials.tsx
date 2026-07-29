@@ -42,20 +42,24 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>{c('B1.Account.Session.Title').t`Credentials`}</Title>
-          <Subtitle>{c('B1.Account.Session.Subtitle').t`Email`}</Subtitle>
-          <Text>{c('B1.Account.Session.Info').jt`You're signed in as ${emailSpan}`}</Text>
+          <Title>{c('B6.Preferences.Account.Title').t`Credentials`}</Title>
+          <Subtitle>{c('B6.Preferences.Account.Subtitle').t`Email`}</Subtitle>
+          <Text>{c('B6.Preferences.Account.Info').jt`You're signed in as ${emailSpan}`}</Text>
           <Button
             className="mt-3 min-w-20"
-            label={c('B1.Account.Session.Action').t`Change email`}
+            label={c('B6.Preferences.Account.Action').t`Change email`}
             onClick={() => {
               setIsChangeEmailDialogOpen(true)
             }}
           />
           <HorizontalSeparator classes="my-4" />
-          <Subtitle>{c('B1.Account.Password.Subtitle').t`Password`}</Subtitle>
-          <Text>{c('B1.Account.Password.Info').jt`Current password was set on ${passwordDateSpan}`}</Text>
-          <Button className="mt-3 min-w-20" label={c('B1.Account.Password.Action').t`Change password`} onClick={presentPasswordWizard} />
+          <Subtitle>{c('B6.Preferences.Account.Subtitle').t`Password`}</Subtitle>
+          <Text>{c('B6.Preferences.Account.Info').jt`Current password was set on ${passwordDateSpan}`}</Text>
+          <Button
+            className="mt-3 min-w-20"
+            label={c('B6.Preferences.Account.Action').t`Change password`}
+            onClick={presentPasswordWizard}
+          />
           <ModalOverlay isOpen={isChangeEmailDialogOpen} close={closeChangeEmailDialog}>
             <ChangeEmail onCloseDialog={closeChangeEmailDialog} application={application} />
           </ModalOverlay>

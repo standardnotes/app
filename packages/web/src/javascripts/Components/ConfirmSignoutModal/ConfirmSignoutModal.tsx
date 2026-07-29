@@ -87,7 +87,9 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
           {c('B1.Account.Session.Action').t`Cancel`}
         </Button>
         <Button primary colorStyle="danger" onClick={confirm}>
-          {application.hasAccount() ? c('B1.Account.Session.Action').t`Sign Out` : c('B1.Account.Session.Action').t`Delete Workspace`}
+          {application.hasAccount()
+            ? c('B1.Account.Session.Action').t`Sign Out`
+            : c('B1.Account.Session.Action').t`Delete Workspace`}
         </Button>
       </div>
     </AlertDialog>

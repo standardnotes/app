@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isString, AlertService, uniqueArray } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 const STORE_NAME = 'items'
 const READ_WRITE = 'readwrite'
 
-const OUT_OF_SPACE =
-  'Unable to save changes locally because your device is out of space. ' +
-  'Please free up some disk space and try again, otherwise, your data may end ' +
-  'up in an inconsistent state.'
+const OUT_OF_SPACE = () =>
+  c('B2.NavSharedUI.Error')
+    .t`Unable to save changes locally because your device is out of space. Please free up some disk space and try again, otherwise, your data may end up in an inconsistent state.`
 
-const DB_DELETION_BLOCKED =
-  'Your browser is blocking Standard Notes from deleting the local database. ' +
-  'Make sure there are no other open windows of this app and try again. ' +
-  'If the issue persists, please manually delete app data to sign out.'
+const DB_DELETION_BLOCKED = () =>
+  c('B2.NavSharedUI.Error')
+    .t`Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out.`
 
 const QUOTE_EXCEEDED_ERROR = 'QuotaExceededError'
 
@@ -82,7 +81,7 @@ export class Database {
       request.onerror = (event) => {
         const target = event.target as any
         if (target.errorCode) {
-          this.showAlert('Offline database issue: ' + target.errorCode)
+          this.showAlert(c('B2.NavSharedUI.Error').jt`Offline database issue: ${target.errorCode}` as unknown as string)
         } else {
           this.displayOfflineAlert()
         }
@@ -219,7 +218,7 @@ export class Database {
         const target = event.target as any
         const error = target.error
         if (error.name === QUOTE_EXCEEDED_ERROR) {
-          this.showAlert(OUT_OF_SPACE)
+          this.showAlert(OUT_OF_SPACE())
         } else {
           this.showGenericError(error)
         }
@@ -264,7 +263,7 @@ export class Database {
         resolve()
       }
       deleteRequest.onblocked = (_event) => {
-        this.showAlert(DB_DELETION_BLOCKED)
+        this.showAlert(DB_DELETION_BLOCKED())
         reject(Error('Delete request blocked'))
       }
     })
@@ -279,20 +278,19 @@ export class Database {
   }
 
   private showGenericError(error: { code: number; name: string }) {
-    const message =
-      'Unable to save changes locally due to an unknown system issue. ' +
-      `Issue Code: ${error.code} Issue Name: ${error.name}.`
+    const message = c('B2.NavSharedUI.Error')
+      .jt`Unable to save changes locally due to an unknown system issue. Issue Code: ${error.code} Issue Name: ${error.name}.` as unknown as string
 
     this.showAlert(message)
   }
 
   private displayOfflineAlert() {
-    const message =
-      'There was an issue loading your offline database. This could happen for two reasons:' +
-      "\n\n1. You're in a private window in your browser. We can't save your data without " +
-      'access to the local database. Please use a non-private window.' +
-      '\n\n2. You have two windows of the app open at the same time. ' +
-      'Please close any other app instances and reload the page.'
+    const message = c('B2.NavSharedUI.Error')
+      .t`There was an issue loading your offline database. This could happen for two reasons:
+
+1. You're in a private window in your browser. We can't save your data without access to the local database. Please use a non-private window.
+
+2. You have two windows of the app open at the same time. Please close any other app instances and reload the page.`
 
     this.showAlert(message)
   }
