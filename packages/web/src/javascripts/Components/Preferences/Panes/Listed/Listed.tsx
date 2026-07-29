@@ -9,6 +9,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { AppName, ListedName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -36,8 +37,10 @@ const Listed = ({ application }: Props) => {
       const account = await application.listed.requestNewListedAccount()
       if (account) {
         const openSettings = await application.alerts.confirm(
-          c('B6.Preferences.Listed.Info')
-            .t`Your new Listed blog has been successfully created! You can publish a new post to your blog from Standard Notes via the <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.`,
+          jtString(
+            c('B6.Preferences.Listed.Info')
+              .jt`Your new ${ListedName} blog has been successfully created! You can publish a new post to your blog from ${AppName} via the <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.`,
+          ),
           undefined,
           c('B6.Preferences.Listed.Action').t`Open Settings`,
           ButtonType.Info,
@@ -64,8 +67,8 @@ const Listed = ({ application }: Props) => {
           <PreferencesSegment>
             <Title>
               {accounts.length === 1
-                ? c('B6.Preferences.Listed.Title').t`Your blog on Listed`
-                : c('B6.Preferences.Listed.Title').t`Your blogs on Listed`}
+                ? jtString(c('B6.Preferences.Listed.Title').jt`Your blog on ${ListedName}`)
+                : jtString(c('B6.Preferences.Listed.Title').jt`Your blogs on ${ListedName}`)}
             </Title>
             <div className="h-2 w-full" />
             {accounts.map((item, index, array) => {
@@ -83,14 +86,18 @@ const Listed = ({ application }: Props) => {
       )}
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>{c('B6.Preferences.Other.Title').t`About Listed`}</Title>
+          <Title>{jtString(c('B6.Preferences.Other.Title').jt`About ${ListedName}`)}</Title>
           <div className="h-2 w-full" />
-          <Subtitle>{c('B6.Preferences.Other.Subtitle').t`What is Listed?`}</Subtitle>
+          <Subtitle>{jtString(c('B6.Preferences.Other.Subtitle').jt`What is ${ListedName}?`)}</Subtitle>
           <Text>
-            {c('B6.Preferences.Listed.Info')
-              .t`Listed is a free blogging platform that allows you to create a public journal published directly from your notes.`}{' '}
+            {jtString(
+              c('B6.Preferences.Listed.Info')
+                .jt`${ListedName} is a free blogging platform that allows you to create a public journal published directly from your notes.`,
+            )}{' '}
             {!application.sessions.getUser() &&
-              c('B6.Preferences.Listed.Info').t`To get started, sign in or register for a Standard Notes account.`}
+              jtString(
+                c('B6.Preferences.Listed.Info').jt`To get started, sign in or register for a ${AppName} account.`,
+              )}
           </Text>
           <a className="mt-2 text-info" target="_blank" href="https://listed.to" rel="noreferrer noopener">
             {c('B6.Preferences.Listed.Action').t`Learn more`}
@@ -101,7 +108,11 @@ const Listed = ({ application }: Props) => {
             <HorizontalSeparator classes="my-4" />
             <PreferencesSegment>
               <Subtitle>{c('B6.Preferences.Other.Subtitle').t`Get Started`}</Subtitle>
-              <Text>{c('B6.Preferences.Other.Action').t`Create a free Listed author account to get started.`}</Text>
+              <Text>
+                {jtString(
+                  c('B6.Preferences.Other.Action').jt`Create a free ${ListedName} author account to get started.`,
+                )}
+              </Text>
               <Button
                 className="mt-3"
                 disabled={requestingAccount}

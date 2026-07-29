@@ -16,6 +16,7 @@ import Switch from '@/Components/Switch/Switch'
 import AccordionItem from '@/Components/Shared/AccordionItem'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const HomeServerSettings = () => {
@@ -395,8 +396,10 @@ const HomeServerSettings = () => {
                         .t`Activate Premium Features`}</h1>
                     </div>
                     <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
-                      {c('B6.Preferences.HomeServer.Info')
-                        .t`Enter your purchased offline subscription code to activate all the features offered by your home server, likes files support and Super notes.`}
+                      {jtString(
+                        c('B6.Preferences.HomeServer.Info')
+                          .jt`Enter your purchased offline subscription code to activate all the features offered by your home server, likes files support and ${SuperName} notes.`,
+                      )}
                     </p>
                     <Button
                       primary

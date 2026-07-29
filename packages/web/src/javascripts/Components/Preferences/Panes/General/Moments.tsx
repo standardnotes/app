@@ -12,6 +12,7 @@ import { ContentType, DecryptedItem, PrefKey, SNTag } from '@standardnotes/snjs'
 import usePreference from '@/Hooks/usePreference'
 import LinkedItemBubble from '@/Components/LinkedItems/LinkedItemBubble'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
+import { ProfessionalPlanName } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -82,7 +83,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
           <div className="flex items-start">
             <Title>{c('B6.Preferences.General.Title').t`Moments`}</Title>
             <Pill style={'success'}>{c('B6.Preferences.General.Label').t`Labs`}</Pill>
-            <Pill style={'info'}>{c('B6.Preferences.General.Label').t`Professional`}</Pill>
+            <Pill style={'info'}>{ProfessionalPlanName}</Pill>
           </div>
           <Switch onChange={toggle} checked={momentsEnabled} />
         </div>

@@ -3,13 +3,14 @@ import { FunctionComponent } from 'react'
 import { HistoryLockedIllustration } from '@standardnotes/icons'
 import Button from '@/Components/Button/Button'
 import { useApplication } from '../ApplicationProvider'
+import { CorePlanName, PlusPlanName } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const getPlanHistoryDuration = (planName: string | undefined) => {
   switch (planName) {
-    case 'Core':
+    case CorePlanName:
       return c('B4.Notes.History.Label').t`30 days`
-    case 'Plus':
+    case PlusPlanName:
       return c('B4.Notes.History.Label').t`365 days`
     default:
       return c('B4.Notes.History.Label').t`the current session's changes`

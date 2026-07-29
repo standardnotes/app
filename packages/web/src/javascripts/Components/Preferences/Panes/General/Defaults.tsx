@@ -10,6 +10,7 @@ import usePreference from '@/Hooks/usePreference'
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -111,10 +112,14 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
           <>
             <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
-                <Subtitle>{c('B6.Preferences.General.Subtitle').t`Use always-visible toolbar in Super notes`}</Subtitle>
+                <Subtitle>
+                  {jtString(c('B6.Preferences.General.Subtitle').jt`Use always-visible toolbar in ${SuperName} notes`)}
+                </Subtitle>
                 <Text>
-                  {c('B6.Preferences.General.Info')
-                    .t`When enabled, the Super toolbar will always be shown at the top of the note. It can be temporarily toggled using Cmd/Ctrl+Shift+K. When disabled, the Super toolbar will only be shown as a floating toolbar when text is selected.`}
+                  {jtString(
+                    c('B6.Preferences.General.Info')
+                      .jt`When enabled, the ${SuperName} toolbar will always be shown at the top of the note. It can be temporarily toggled using Cmd/Ctrl+Shift+K. When disabled, the ${SuperName} toolbar will only be shown as a floating toolbar when text is selected.`,
+                  )}
                 </Text>
               </div>
               <Switch
@@ -130,10 +135,12 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
           </>
         )}
         <div>
-          <Subtitle>{c('B6.Preferences.General.Subtitle').t`Default image alignment in Super notes`}</Subtitle>
+          <Subtitle>
+            {jtString(c('B6.Preferences.General.Subtitle').jt`Default image alignment in ${SuperName} notes`)}
+          </Subtitle>
           <div className="mt-2">
             <Dropdown
-              label={c('B6.Preferences.General.Info').t`Default image alignment in super notes`}
+              label={jtString(c('B6.Preferences.General.Info').jt`Default image alignment in ${SuperName} notes`)}
               items={imageAlignmentOptions}
               value={defaultSuperImageAlignment}
               onChange={(alignment) => {

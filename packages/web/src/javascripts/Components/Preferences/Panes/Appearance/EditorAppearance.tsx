@@ -5,6 +5,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { EditorFontSize, EditorLineHeight, EditorLineWidth, LocalPrefKey } from '@standardnotes/snjs'
 import { useCallback, useMemo } from 'react'
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -65,14 +66,22 @@ const EditorDefaults = ({ application }: Props) => {
           <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">
               <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Monospace Font`}</Subtitle>
-              <Text>{c('B6.Preferences.Appearance.Info').t`Toggles the font style in plaintext and Super notes`}</Text>
+              <Text>
+                {jtString(
+                  c('B6.Preferences.Appearance.Info').jt`Toggles the font style in plaintext and ${SuperName} notes`,
+                )}
+              </Text>
             </div>
             <Switch onChange={toggleMonospaceFont} checked={monospaceFont} />
           </div>
           <HorizontalSeparator classes="my-4" />
           <div>
             <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Font size`}</Subtitle>
-            <Text>{c('B6.Preferences.Appearance.Action').t`Sets the font size in plaintext and Super notes`}</Text>
+            <Text>
+              {jtString(
+                c('B6.Preferences.Appearance.Action').jt`Sets the font size in plaintext and ${SuperName} notes`,
+              )}
+            </Text>
             <div className="mt-2">
               <Dropdown
                 label={c('B6.Preferences.Appearance.Action').t`Select the font size for plaintext notes`}
@@ -85,8 +94,12 @@ const EditorDefaults = ({ application }: Props) => {
           <HorizontalSeparator classes="my-4" />
           <div>
             <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Line height`}</Subtitle>
-            <Text>{c('B6.Preferences.Appearance.Action')
-              .t`Sets the line height (leading) in plaintext and Super notes`}</Text>
+            <Text>
+              {jtString(
+                c('B6.Preferences.Appearance.Action')
+                  .jt`Sets the line height (leading) in plaintext and ${SuperName} notes`,
+              )}
+            </Text>
             <div className="mt-2">
               <Dropdown
                 label={c('B6.Preferences.Appearance.Action').t`Select the line height for plaintext notes`}

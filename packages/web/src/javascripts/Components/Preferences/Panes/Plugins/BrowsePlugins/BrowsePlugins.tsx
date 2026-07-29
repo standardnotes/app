@@ -8,6 +8,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { ContentType } from '@standardnotes/snjs'
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { PreferencesPremiumOverlay } from '@/Components/Preferences/PremiumOverlay'
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const BrowsePlugins: FunctionComponent = () => {
@@ -36,7 +37,7 @@ const BrowsePlugins: FunctionComponent = () => {
         <Text className="text-neutral">
           {c('B6.Preferences.Plugins.Info')
             .t`Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing experiences, but in most cases, the`}{' '}
-          <strong>{c('B6.Preferences.Other.Label').t`built-in Super note type`}</strong>{' '}
+          <strong>{jtString(c('B6.Preferences.Other.Label').jt`built-in ${SuperName} note type`)}</strong>{' '}
           {c('B6.Preferences.Plugins.Info').t`can encapsulate any functionality found in plugins.`}
         </Text>
 

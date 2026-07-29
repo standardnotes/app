@@ -10561,6 +10561,7 @@ __metadata:
     "@standardnotes/bold-editor": ^1.7.11
     "@standardnotes/classic-code-editor": ^1.6.12
     "@standardnotes/dynamic-theme": ^1.2.8
+    "@standardnotes/features": "workspace:*"
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/focus-theme": ^1.4.6
     "@standardnotes/futura-theme": ^1.4.6

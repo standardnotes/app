@@ -1,4 +1,5 @@
 import { PrefKey, PrefValue } from '@standardnotes/snjs'
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 import { useApplication } from '../ApplicationProvider'
 import Modal from '../Modal/Modal'
@@ -63,13 +64,13 @@ const ModalContent = observer(() => {
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <div className="text-base">
             {notes.length > 1
-              ? c('B4.Notes.EditorOptions.Label').t`Choose export format for Super notes`
+              ? jtString(c('B4.Notes.EditorOptions.Label').jt`Choose export format for ${SuperName} notes`)
               : c('B4.Notes.EditorOptions.Label').t`Choose export format`}
           </div>
           <Dropdown
             label={c('B4.Notes.EditorOptions.Label').t`Export format`}
             items={[
-              { label: c('B4.Notes.EditorOptions.Label').t`Super (.json)`, value: 'json' },
+              { label: jtString(c('B4.Notes.EditorOptions.Label').jt`${SuperName} (.json)`), value: 'json' },
               { label: c('B4.Notes.EditorOptions.Label').t`Markdown (.md)`, value: 'md' },
               { label: c('B4.Notes.EditorOptions.Label').t`HTML`, value: 'html' },
               { label: c('B4.Notes.EditorOptions.Label').t`PDF`, value: 'pdf' },

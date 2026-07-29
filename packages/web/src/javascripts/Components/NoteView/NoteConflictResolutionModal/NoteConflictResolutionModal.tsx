@@ -26,6 +26,7 @@ import StyledTooltip from '../../StyledTooltip/StyledTooltip'
 import { DiffView } from './DiffView'
 import { ReadonlyNoteContent } from '../ReadonlyNoteContent'
 import { ConflictListItem } from './ConflictListItem'
+import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type ConflictAction = 'move-to-trash' | 'delete-permanently'
@@ -389,8 +390,10 @@ const NoteConflictResolutionModal = ({
                 label={
                   <>
                     <div className="mb-2">
-                      {c('B3.Notes.NoteActions.Info')
-                        .t`Super notes use JSON under the hood to create rich and flexible documents. While neatly organized, it's not ideal to read or compare manually. Instead, this diff compares a Markdown rendition of the notes.`}
+                      {jtString(
+                        c('B3.Notes.NoteActions.Info')
+                          .jt`${SuperName} notes use JSON under the hood to create rich and flexible documents. While neatly organized, it's not ideal to read or compare manually. Instead, this diff compares a Markdown rendition of the notes.`,
+                      )}
                     </div>
                     <label className="mb-1 flex select-none items-center gap-2">
                       <Switch

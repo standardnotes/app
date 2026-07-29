@@ -9,10 +9,19 @@ import { FillIframeEditorDefaults } from './Utilities/FillEditorComponentDefault
 import { ComponentAction } from '../Component/ComponentAction'
 import { ComponentArea } from '../Component/ComponentArea'
 import { c } from 'ttag'
+import {
+  BoldName,
+  ChecklistEditorName,
+  CodeEditorName,
+  FileSafeName,
+  jtString,
+  MarkdownEditorName,
+  RichTextEditorName,
+} from '../Strings/ProductNames'
 
 export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   const code = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Code`,
+    name: CodeEditorName,
     spellcheckControl: true,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedCodeEditor,
     permission_name: PermissionName.DeprecatedCodeEditor,
@@ -28,7 +37,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const plus = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Rich Text`,
+    name: RichTextEditorName,
     note_type: NoteType.RichText,
     file_type: 'html',
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedPlusEditor,
@@ -42,7 +51,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const markdown = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Markdown`,
+    name: MarkdownEditorName,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
@@ -56,7 +65,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const task = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Checklist`,
+    name: ChecklistEditorName,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedTaskEditor,
     note_type: NoteType.Task,
     spellcheckControl: true,
@@ -71,7 +80,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const bold: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Alternative Rich Text`,
+    name: jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`${BoldName} Editor`),
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedBoldEditor,
     note_type: NoteType.RichText,
     file_type: 'html',
@@ -99,7 +108,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const markdownBasic: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Basic Markdown`,
+    name: jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Basic ${MarkdownEditorName}`),
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownBasicEditor,
     note_type: NoteType.Markdown,
     spellcheckControl: true,
@@ -112,7 +121,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const markdownAlt: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Markdown Alternative`,
+    name: jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`${MarkdownEditorName} Alternative`),
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownVisualEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
@@ -126,7 +135,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const markdownMinimist: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Minimal Markdown`,
+    name: jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Minimal ${MarkdownEditorName}`),
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownMinimistEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
@@ -141,7 +150,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const markdownMath: EditorFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`Markdown with Math`,
+    name: jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`${MarkdownEditorName} with Math`),
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedMarkdownMathEditor,
     spellcheckControl: true,
     permission_name: PermissionName.MarkdownMathEditor,
@@ -156,7 +165,7 @@ export function GetDeprecatedFeatures(): AnyFeatureDescription[] {
   })
 
   const filesafe: IframeComponentFeatureDescription = FillIframeEditorDefaults({
-    name: c('B7.FilesSubscriptionHelp.Subscription.Info').t`FileSafe`,
+    name: FileSafeName,
     identifier: NativeFeatureIdentifier.TYPES.DeprecatedFileSafe,
     component_permissions: [
       {

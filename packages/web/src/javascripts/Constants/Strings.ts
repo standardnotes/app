@@ -1,13 +1,14 @@
 import { escapeHtmlString, Platform, SNApplication } from '@standardnotes/snjs'
 import { getPlatform, isDesktopApplication } from '../Utils'
+import { BoldName, FileSafeName, jtString } from '@standardnotes/features'
 import { c, msgid } from 'ttag'
-
-const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 /** @generic */
 export const STRING_DEFAULT_FILE_ERROR = () =>
-  c('B7.FilesSubscriptionHelp.Files.Error')
-    .t`Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.com/filesafe.`
+  jtString(
+    c('B7.FilesSubscriptionHelp.Files.Error')
+      .jt`Please use ${FileSafeName} or the ${BoldName} Editor to attach images and files. Learn more at standardnotes.com/filesafe.`,
+  )
 export const STRING_GENERIC_SYNC_ERROR = () =>
   c('B1.Account.Session.Error')
     .t`There was an error syncing. Please try again. If all else fails, try signing out and signing back in.`

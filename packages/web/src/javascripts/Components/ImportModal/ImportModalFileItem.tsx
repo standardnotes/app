@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
 import { Disclosure, DisclosureContent, DisclosureProvider } from '@ariakit/react'
+import { SuperName } from '@standardnotes/features'
 import { c, msgid } from 'ttag'
 
 const NoteImportTypeColors: Record<string, string> = {
@@ -221,7 +222,7 @@ const ImportModalFileItem = ({
                   <option value="aegis">{c('B1.Account.ImportExport.ImportSource').t`Aegis`}</option>
                   <option value="plaintext">{c('B1.Account.ImportExport.ImportSource').t`Plaintext`}</option>
                   <option value="html">{c('B1.Account.ImportExport.ImportSource').t`HTML`}</option>
-                  <option value="super">{c('B1.Account.ImportExport.ImportSource').t`Super`}</option>
+                  <option value="super">{SuperName}</option>
                 </select>
                 <button
                   aria-label={c('B1.Account.ImportExport.AriaLabel').t`Choose service`}
