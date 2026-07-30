@@ -33,6 +33,7 @@ import {
   Challenge,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
+import { jtString, SupportEmail } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type PayloadRequestHandler = (uuid: string) => TransferPayload | undefined
@@ -243,8 +244,10 @@ export class ActionsService extends AbstractService {
        * Instruct the user to email us to get this remedied.
        */
       void this.alertService.alert(
-        c('B4.Notes.History.Error')
-          .t`We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email help@standardnotes.com for assistance.`,
+        jtString(
+          c('B4.Notes.History.Error')
+            .jt`We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email ${SupportEmail} for assistance.`,
+        ),
       )
       return undefined
     }

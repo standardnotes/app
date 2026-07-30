@@ -10,6 +10,7 @@ import { classNames } from '@standardnotes/snjs'
 import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import Icon from '../Icon/Icon'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, closePreferences }) => {
@@ -71,8 +72,9 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
           data-preferences-header
         >
           <div className="hidden h-8 w-8 md:block" />
-          <h1 className="text-base font-bold md:text-lg">{c('B6.Preferences.Other.Info')
-            .t`Your preferences for Standard Notes`}</h1>
+          <h1 className="text-base font-bold md:text-lg">
+            {jtString(c('B6.Preferences.Other.Info').jt`Your preferences for ${AppName}`)}
+          </h1>
           <RoundIconButton
             onClick={() => {
               closePreferences()

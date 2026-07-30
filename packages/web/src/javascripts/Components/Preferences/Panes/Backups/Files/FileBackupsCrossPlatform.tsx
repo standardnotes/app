@@ -6,6 +6,7 @@ import { useMemo } from 'react'
 import BackupsDropZone from './BackupsDropZone'
 import FileBackupsDesktop from './FileBackupsDesktop'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -24,8 +25,11 @@ const FileBackupsCrossPlatform = ({ application }: Props) => {
           <Title>{c('B6.Preferences.Backups.Title').t`Automatic file backups`}</Title>
           <Subtitle>{c('B6.Preferences.Backups.Subtitle')
             .t`Automatically save encrypted backups of your files.`}</Subtitle>
-          <Text className="mt-3">{c('B6.Preferences.Backups.Info')
-            .t`To enable file backups, use the Standard Notes desktop application.`}</Text>
+          <Text className="mt-3">
+            {jtString(
+              c('B6.Preferences.Backups.Info').jt`To enable file backups, use the ${AppName} desktop application.`,
+            )}
+          </Text>
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>

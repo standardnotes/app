@@ -1,6 +1,6 @@
 import { ProtocolVersion } from '@standardnotes/models'
 import { c } from 'ttag'
-import { jtString, ListedName } from '@standardnotes/features'
+import { jtString, AppName, ListedName, HelpSecurityUrl, SupportEmail } from '@standardnotes/features'
 
 export const API_MESSAGE_GENERIC_INVALID_LOGIN = c('B1.Account.SignIn.Error')
   .t`A server error occurred while trying to sign in. Please try again.`
@@ -69,17 +69,23 @@ export const API_MESSAGE_FAILED_OFFLINE_ACTIVATION = c('B7.FilesSubscriptionHelp
 
 export const INVALID_EXTENSION_URL = c('B2.NavSharedUI.Error').t`Invalid extension URL.`
 
-export const UNSUPPORTED_PROTOCOL_VERSION = c('B1.Account.SignIn.Error')
-  .t`This version of the application does not support your newer account type. Please upgrade to the latest version of Standard Notes to sign in.`
+export const UNSUPPORTED_PROTOCOL_VERSION = jtString(
+  c('B1.Account.SignIn.Error')
+    .jt`This version of the application does not support your newer account type. Please upgrade to the latest version of ${AppName} to sign in.`,
+)
 
-export const EXPIRED_PROTOCOL_VERSION = c('B1.Account.SignIn.Error')
-  .t`The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.com/help/security for more information.`
+export const EXPIRED_PROTOCOL_VERSION = jtString(
+  c('B1.Account.SignIn.Error')
+    .jt`The protocol version associated with your account is outdated and no longer supported by this application. Please visit ${HelpSecurityUrl} for more information.`,
+)
 
 export const UNSUPPORTED_KEY_DERIVATION = c('B1.Account.SignIn.Error')
   .t`Your account was created on a platform with higher security capabilities than this browser supports. If we attempted to generate your login keys here, it would take hours. Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in.`
 
-export const INVALID_PASSWORD_COST = c('B1.Account.SignIn.Error')
-  .t`Unable to sign in due to insecure password parameters. Please visit standardnotes.com/help/security for more information.`
+export const INVALID_PASSWORD_COST = jtString(
+  c('B1.Account.SignIn.Error')
+    .jt`Unable to sign in due to insecure password parameters. Please visit ${HelpSecurityUrl} for more information.`,
+)
 export const INVALID_PASSWORD = c('B1.Account.SignIn.Error').t`Invalid password.`
 
 export const OUTDATED_PROTOCOL_ALERT_IGNORE = c('B1.Account.SignIn.Action').t`Sign In`
@@ -319,8 +325,10 @@ export const ErrorAlertStrings = {
     return c('B2.NavSharedUI.Error').t`Storage Error`
   },
   get StorageDecryptErrorBody() {
-    return c('B2.NavSharedUI.Error')
-      .t`We were unable to decrypt your local storage. Please restart the app and try again. If you're unable to resolve this issue, and you have an account, you may try uninstalling the app then reinstalling, then signing back into your account. Otherwise, please contact help@standardnotes.com for support.`
+    return jtString(
+      c('B2.NavSharedUI.Error')
+        .jt`We were unable to decrypt your local storage. Please restart the app and try again. If you're unable to resolve this issue, and you have an account, you may try uninstalling the app then reinstalling, then signing back into your account. Otherwise, please contact ${SupportEmail} for support.`,
+    )
   },
 }
 

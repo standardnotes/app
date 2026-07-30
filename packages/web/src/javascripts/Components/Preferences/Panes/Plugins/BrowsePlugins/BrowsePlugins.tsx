@@ -8,7 +8,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { ContentType } from '@standardnotes/snjs'
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { PreferencesPremiumOverlay } from '@/Components/Preferences/PremiumOverlay'
-import { SuperName, jtString } from '@standardnotes/features'
+import { AppName, SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const BrowsePlugins: FunctionComponent = () => {
@@ -60,8 +60,10 @@ const BrowsePlugins: FunctionComponent = () => {
       </PreferencesSegment>
       <HorizontalSeparator />
       <Text className="mt-4 text-danger">
-        {c('B6.Preferences.Other.Error')
-          .t`Plugins may not be actively maintained. Standard Notes cannot attest to the quality or user experience of these plugins, and is not responsible for any data loss that may arise from their use.`}
+        {jtString(
+          c('B6.Preferences.Other.Error')
+            .jt`Plugins may not be actively maintained. ${AppName} cannot attest to the quality or user experience of these plugins, and is not responsible for any data loss that may arise from their use.`,
+        )}
       </Text>
 
       {!hasSubscription && <PreferencesPremiumOverlay />}
