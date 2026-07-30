@@ -207,7 +207,7 @@ const CreateAccount: FunctionComponent<Props> = ({ application }) => {
           <h1 className="mb-2 mt-0 text-2xl font-bold">{c('B1.Account.SignIn.Title').t`Create your free account`}</h1>
         }
         {
-          // translator: Full sentence: "Create your free account to continue to Standard Notes."
+          // translator: Full sentence: "Create your free account to continue to {AppName}."
           <div className="mb-4 text-sm font-medium">
             {jtString(c('B1.Account.SignIn.Info').jt`to continue to ${AppName}.`)}
           </div>

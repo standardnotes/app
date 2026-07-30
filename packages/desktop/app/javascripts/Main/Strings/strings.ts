@@ -1,4 +1,5 @@
 import { c } from 'ttag'
+import { AppName, jtString } from '@standardnotes/features'
 import { Strings } from './types'
 
 export function createStrings(): Strings {
@@ -64,8 +65,10 @@ export function createStrings(): Strings {
         security: c('B8.MobileDesktopShared.Desktop.Security.Label').t`Security`,
         useKeyringtoStorePassword: c('B8.MobileDesktopShared.Desktop.Security.Label')
           .t`Use password storage to store password`,
-        enabledKeyringAccessMessage: c('B8.MobileDesktopShared.Desktop.Security.Info')
-          .t`Standard Notes will try to use your system's password storage facility to store your password the next time you start it.`,
+        enabledKeyringAccessMessage: jtString(
+          c('B8.MobileDesktopShared.Desktop.Security.Info')
+            .jt`${AppName} will try to use your system's password storage facility to store your password the next time you start it.`,
+        ),
         enabledKeyringQuitNow: c('B8.MobileDesktopShared.Desktop.Security.Action').t`Quit Now`,
         enabledKeyringPostpone: c('B8.MobileDesktopShared.Desktop.Security.Action').t`Postpone`,
       },

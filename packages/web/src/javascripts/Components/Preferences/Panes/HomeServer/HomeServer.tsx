@@ -4,6 +4,7 @@ import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import HomeServerSettings from './HomeServerSettings'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const HomeServer = () => {
@@ -36,8 +37,10 @@ const HomeServer = () => {
           <li className="mt-2">{c('B6.Preferences.HomeServer.Info')
             .t`Activate the Tailscale VPN on your mobile device.`}</li>
           <li className="mt-2">
-            {c('B6.Preferences.HomeServer.Info')
-              .t`Open Standard Notes on your mobile device and sign into your home server by specifying the sync server URL during sign in. The URL will be the Tailscale-based IP address of this computer, followed by the port number of your home server. For example, if your computer Tailscale IP address is 100.112.45.106 and your home server is running on port 3127, your sync server URL will be http://100.112.45.106:3127.`}
+            {jtString(
+              c('B6.Preferences.HomeServer.Info')
+                .jt`Open ${AppName} on your mobile device and sign into your home server by specifying the sync server URL during sign in. The URL will be the Tailscale-based IP address of this computer, followed by the port number of your home server. For example, if your computer Tailscale IP address is 100.112.45.106 and your home server is running on port 3127, your sync server URL will be http://100.112.45.106:3127.`,
+            )}
           </li>
         </ol>
       </PreferencesGroup>
@@ -56,8 +59,10 @@ const HomeServer = () => {
           <li className="mt-2">{c('B6.Preferences.HomeServer.Info').t`Restart your home server.`}</li>
         </ol>
         <Text className="mt-3">
-          {c('B6.Preferences.HomeServer.Info')
-            .t`Your Standard Notes data is always end-to-end encrypted on disk, so your cloud provider will not be able to read your notes or files.`}
+          {jtString(
+            c('B6.Preferences.HomeServer.Info')
+              .jt`Your ${AppName} data is always end-to-end encrypted on disk, so your cloud provider will not be able to read your notes or files.`,
+          )}
         </Text>
       </PreferencesGroup>
     </PreferencesPane>

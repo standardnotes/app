@@ -20,6 +20,7 @@ import { useCaptcha } from '@/Hooks/useCaptcha'
 import { isErrorResponse } from '@standardnotes/snjs'
 import MergeLocalDataCheckbox from './MergeLocalDataCheckbox'
 import ConfirmNoMergeDialog from './ConfirmNoMergeDialog'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -164,8 +165,9 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
   }, [checkIfCaptchaRequiredAndRegister])
 
   const noPasswordResetOption = (
-    <span className="text-danger">{c('B1.Account.SignIn.Info')
-      .t`Standard Notes does not have a password reset option`}</span>
+    <span className="text-danger">
+      {jtString(c('B1.Account.SignIn.Info').jt`${AppName} does not have a password reset option`)}
+    </span>
   )
 
   const confirmPasswordForm = (

@@ -1,4 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction } from 'react'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 import DecoratedInput from '@/Components/Input/DecoratedInput'
@@ -26,8 +27,10 @@ const InviteForm: FunctionComponent<Props> = ({ setInviteeEmail }) => {
 
         <p className="mt-4">
           <span className="font-bold">{c('B6.Preferences.Subscription.Info').t`Note:`} </span>
-          {c('B6.Preferences.Subscription.Info')
-            .t`The invitee must have an existing account with Standard Notes. If they do not have an account yet, instruct them to make an account first.`}
+          {jtString(
+            c('B6.Preferences.Subscription.Info')
+              .jt`The invitee must have an existing account with ${AppName}. If they do not have an account yet, instruct them to make an account first.`,
+          )}
         </p>
       </div>
     </div>

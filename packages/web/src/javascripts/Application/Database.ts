@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isString, AlertService, uniqueArray } from '@standardnotes/snjs'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const STORE_NAME = 'items'
@@ -10,8 +11,10 @@ const OUT_OF_SPACE = () =>
     .t`Unable to save changes locally because your device is out of space. Please free up some disk space and try again, otherwise, your data may end up in an inconsistent state.`
 
 const DB_DELETION_BLOCKED = () =>
-  c('B2.NavSharedUI.Error')
-    .t`Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out.`
+  jtString(
+    c('B2.NavSharedUI.Error')
+      .jt`Your browser is blocking ${AppName} from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out.`,
+  )
 
 const QUOTE_EXCEEDED_ERROR = 'QuotaExceededError'
 

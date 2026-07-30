@@ -2,6 +2,7 @@ import { FunctionComponent, useState } from 'react'
 import { LinkButton, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/WebApplication'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -31,7 +32,7 @@ const NoSubscription: FunctionComponent<Props> = ({ application }) => {
 
   return (
     <>
-      <Text>{c('B6.Preferences.Subscription.Info').t`You don't have a Standard Notes subscription yet.`}</Text>
+      <Text>{jtString(c('B6.Preferences.Subscription.Info').jt`You don't have a ${AppName} subscription yet.`)}</Text>
       {isLoadingPurchaseFlow && (
         <Text>{c('B6.Preferences.Subscription.Info').t`Redirecting you to the subscription page...`}</Text>
       )}
