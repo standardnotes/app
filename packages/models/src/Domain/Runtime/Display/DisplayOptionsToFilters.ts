@@ -2,7 +2,7 @@ import { DecryptedItem } from '../../Abstract/Item'
 import { SNTag } from '../../Syncable/Tag'
 import { CompoundPredicate } from '../Predicate/CompoundPredicate'
 import { ItemWithTags } from './Search/ItemWithTags'
-import { itemMatchesQuery, itemPassesFilters } from './Search/SearchUtilities'
+import { itemMatchesQueryPrepared, itemPassesFilters, prepareSearchQuery } from './Search/SearchUtilities'
 import { ItemFilter, ReferenceLookupCollection, SearchableDecryptedItem } from './Search/Types'
 import { NotesAndFilesDisplayOptions } from './DisplayOptions'
 import { SystemViewId } from '../../Syncable/SmartView'
@@ -73,7 +73,8 @@ export function computeFiltersForDisplayOptions(
 
   if (options.searchQuery) {
     const query = options.searchQuery
-    filters.push((item) => itemMatchesQuery(item, query, collection))
+    const prepared = prepareSearchQuery(query.query)
+    filters.push((item) => itemMatchesQueryPrepared(item, query, prepared, collection))
   }
 
   if (

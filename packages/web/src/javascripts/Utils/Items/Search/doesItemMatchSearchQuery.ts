@@ -23,11 +23,11 @@ export function doesItemMatchSearchQuery(
   item: DecryptedItemInterface<ItemContent>,
   searchQuery: string,
   application: WebApplicationInterface,
+  lowercaseQuery?: string,
 ) {
   const title = getItemSearchableString(item, application).toLowerCase()
-  const matchesQuery = title.includes(searchQuery.toLowerCase())
+  const matchesQuery = title.includes(lowercaseQuery ?? searchQuery.toLowerCase())
   const isArchivedOrTrashed = item.archived || item.trashed
-  const isValidSearchResult = matchesQuery && !isArchivedOrTrashed
 
-  return isValidSearchResult
+  return matchesQuery && !isArchivedOrTrashed
 }
