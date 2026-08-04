@@ -82,6 +82,7 @@ import {
   CreateEncryptedBackupFile,
   WebSocketsService,
   PreferencesServiceEvent,
+  AuthenticatorManager,
 } from '@standardnotes/services'
 import {
   SNNote,
@@ -953,6 +954,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   get addAuthenticator(): AddAuthenticator {
     return this.dependencies.get<AddAuthenticator>(TYPES.AddAuthenticator)
+  }
+
+  fetchAuthenticatorRegistrationOptions(): Promise<Record<string, unknown> | null> {
+    return this.dependencies.get<AuthenticatorManager>(TYPES.AuthenticatorManager).generateRegistrationOptions()
   }
 
   get listAuthenticators(): ListAuthenticators {

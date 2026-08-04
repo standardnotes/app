@@ -10,6 +10,7 @@ export const RuntimeMessageTypes = {
   ToggleScreenshotMode: 'toggle-screenshot-mode',
   CaptureVisibleTab: 'capture-visible-tab',
   RunHttpRequest: 'run-http-request',
+  OpenClipperAuthPanel: 'open-clipper-auth-panel',
 } as const
 
 export type RuntimeMessageType = (typeof RuntimeMessageTypes)[keyof typeof RuntimeMessageTypes]
@@ -33,6 +34,7 @@ export type RuntimeMessageReturnTypes = {
   [RuntimeMessageTypes.StartNodeSelection]: void
   [RuntimeMessageTypes.ToggleScreenshotMode]: void
   [RuntimeMessageTypes.RunHttpRequest]: void
+  [RuntimeMessageTypes.OpenClipperAuthPanel]: void
 }
 
 export type RuntimeMessage =
@@ -49,10 +51,15 @@ export type RuntimeMessage =
       enabled: boolean
     }
   | {
+      type: typeof RuntimeMessageTypes.OpenClipperAuthPanel
+      pane: 'sign-in' | 'register'
+    }
+  | {
       type: Exclude<
         RuntimeMessageType,
         | MessagesWithClipPayload
         | typeof RuntimeMessageTypes.ToggleScreenshotMode
         | typeof RuntimeMessageTypes.RunHttpRequest
+        | typeof RuntimeMessageTypes.OpenClipperAuthPanel
       >
     }
