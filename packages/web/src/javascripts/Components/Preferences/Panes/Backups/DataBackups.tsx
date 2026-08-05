@@ -21,6 +21,7 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Spinner from '@/Components/Spinner/Spinner'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -76,7 +77,9 @@ const DataBackups = ({ application }: Props) => {
 
     if (isBackupEncrypted) {
       const formattedDate = application.archiveService.formattedDateForExports()
-      const filename = `Standard Notes Encrypted Backup and Import File - ${formattedDate}`
+      const filename = jtString(
+        c('B6.Preferences.Backups.Label').jt`${AppName} Encrypted Backup and Import File - ${formattedDate}`,
+      )
       const sanitizedFilename = sanitizeFileName(filename) + '.txt'
       void downloadOrShareBlobBasedOnPlatform({
         archiveService: application.archiveService,
@@ -90,7 +93,7 @@ const DataBackups = ({ application }: Props) => {
     } else {
       const zippedDecryptedItemsBlob = await application.archiveService.getZippedDecryptedItemsBlob(data)
       const formattedDate = application.archiveService.formattedDateForExports()
-      const filename = `Standard Notes Backup - ${formattedDate}`
+      const filename = jtString(c('B6.Preferences.Backups.Label').jt`${AppName} Backup - ${formattedDate}`)
       const sanitizedFilename = sanitizeFileName(filename) + '.zip'
       void downloadOrShareBlobBasedOnPlatform({
         archiveService: application.archiveService,

@@ -15,7 +15,7 @@ import { useApplication } from '../ApplicationProvider'
 import MenuSection from '../Menu/MenuSection'
 import { TOGGLE_COMMAND_PALETTE, TOGGLE_KEYBOARD_SHORTCUTS_MODAL, isMobilePlatform } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
-import { AppName, jtString } from '@standardnotes/features'
+import { AppName, jtString, SupportMailtoUrl } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -75,7 +75,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
     const body = c('B1.Account.Session.MailtoBody').t`App Version: ${application.version}`
 
     application.device.openUrl(
-      `mailto:help@standardnotes.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      `${SupportMailtoUrl}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
     )
   }, [application.device, application.version])
 

@@ -11,6 +11,7 @@ import snColorsCSS from '!css-loader?{"sourceMap":false}!sass-loader!@standardno
 import exportOverridesCSS from '!css-loader?{"sourceMap":false}!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
 import { getBase64FromBlob } from './Utils'
 import { parseFileName, parseAndCreateZippableFileName, sanitizeFileName } from '@standardnotes/utils'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {
@@ -264,6 +265,6 @@ export const createNoteExport = async (
 
   return {
     blob: zippedBlob,
-    fileName: c('B4.Notes.EditorOptions.Label').t`Standard Notes Export - ${formattedDate}.zip`,
+    fileName: jtString(c('B4.Notes.EditorOptions.Label').jt`${AppName} Export - ${formattedDate}.zip`),
   }
 }
