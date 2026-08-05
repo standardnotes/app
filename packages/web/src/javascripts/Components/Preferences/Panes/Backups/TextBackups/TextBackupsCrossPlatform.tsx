@@ -25,8 +25,7 @@ const TextBackupsCrossPlatform = ({ application }: Props) => {
             .t`Automatically save encrypted and decrypted backups of your note and tag data.`}</Subtitle>
           <Text className="mt-3">
             {jtString(
-              c('B6.Preferences.Backups.Info')
-                .jt`To enable text backups, use the ${AppName} desktop application.`,
+              c('B6.Preferences.Backups.Info').jt`To enable text backups, use the ${AppName} desktop application.`,
             )}
           </Text>
         </PreferencesSegment>

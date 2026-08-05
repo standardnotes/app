@@ -5,7 +5,17 @@ import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 import { WebApplication } from '@/Application/WebApplication'
 import { MouseEventHandler } from 'react'
-import { AppName, jtString, DiscordUrl, ForumUrl, HelpOfflineUrl, HelpUrl, PrivacyPolicyUrl, SupportEmail, SupportMailtoUrl } from '@standardnotes/features'
+import {
+  AppName,
+  jtString,
+  DiscordUrl,
+  ForumUrl,
+  HelpOfflineUrl,
+  HelpUrl,
+  PrivacyPolicyUrl,
+  SupportEmail,
+  SupportMailtoUrl,
+} from '@standardnotes/features'
 import { c } from 'ttag'
 
 const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
@@ -32,12 +42,7 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
           <Text>
             {c('B7.FilesSubscriptionHelp.Help.Info')
               .t`Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read`}{' '}
-            <a
-              target="_blank"
-              className="underline hover:no-underline"
-              href={PrivacyPolicyUrl}
-              onClick={handleClick}
-            >
+            <a target="_blank" className="underline hover:no-underline" href={PrivacyPolicyUrl} onClick={handleClick}>
               {c('B7.FilesSubscriptionHelp.Help.Info').t`Privacy Manifesto.`}
             </a>
           </Text>
@@ -79,12 +84,7 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
               c('B7.FilesSubscriptionHelp.Help.Info')
                 .jt`${AppName} can be used totally offline without an account, and without an internet connection. You can find`,
             )}{' '}
-            <a
-              target="_blank"
-              className="underline hover:no-underline"
-              href={HelpOfflineUrl}
-              onClick={handleClick}
-            >
+            <a target="_blank" className="underline hover:no-underline" href={HelpOfflineUrl} onClick={handleClick}>
               {c('B7.FilesSubscriptionHelp.Help.Info').t`more details here.`}
             </a>
           </Text>

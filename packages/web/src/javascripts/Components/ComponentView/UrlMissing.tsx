@@ -22,11 +22,7 @@ const UrlMissing: FunctionComponent<Props> = ({ componentName }) => {
               )}
             </p>
             <br />
-            <p>
-              {jtString(
-                c('B2.NavSharedUI.Info').jt`Please contact ${SupportEmail} to remedy this issue.`,
-              )}
-            </p>
+            <p>{jtString(c('B2.NavSharedUI.Info').jt`Please contact ${SupportEmail} to remedy this issue.`)}</p>
           </div>
         </div>
       </div>

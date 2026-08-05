@@ -12,7 +12,6 @@ import {
   SyncServiceInterface,
 } from '@standardnotes/services'
 import { FeaturesService } from '@Lib/Services'
-import { AppName, jtString } from '@standardnotes/features'
 import { c, msgid } from 'ttag'
 import {
   ActionObserver,
@@ -56,6 +55,8 @@ import {
 } from './Types'
 import { ComponentViewerRequiresComponentManagerProperties } from './ComponentViewerRequiresComponentManagerFunctions'
 import {
+  AppName,
+  jtString,
   ComponentAction,
   ComponentPermission,
   ComponentArea,

@@ -23,8 +23,7 @@ const PlaintextBackupsCrossPlatform = () => {
             .t`Automatically save backups of all your notes into plaintext, non-encrypted folders.`}</Subtitle>
           <Text className="mt-3">
             {jtString(
-              c('B6.Preferences.Backups.Info')
-                .jt`To enable plaintext backups, use the ${AppName} desktop application.`,
+              c('B6.Preferences.Backups.Info').jt`To enable plaintext backups, use the ${AppName} desktop application.`,
             )}
           </Text>
         </PreferencesSegment>
