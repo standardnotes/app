@@ -10001,7 +10001,6 @@ __metadata:
     "@standardnotes/config": ^2.4.3
     "@standardnotes/react-native-utils": 1.0.1
     "@standardnotes/snjs": "workspace:*"
-    "@standardnotes/utils": "workspace:*"
     "@standardnotes/web": "workspace:*"
     "@tsconfig/react-native": ^3.0.2
     "@types/react": ^19.1.2
