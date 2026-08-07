@@ -1,5 +1,5 @@
 import SNReactNative from '@standardnotes/react-native-utils'
-import { sanitizeFileNameForNativeWrite } from '@standardnotes/utils'
+import { sanitizeFileNameForNativeWrite } from './Utils'
 import {
   AppleIAPProductId,
   AppleIAPReceipt,

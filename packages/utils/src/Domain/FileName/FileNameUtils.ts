@@ -14,11 +14,6 @@ export function sanitizeFileName(name: string): string {
   return name.trim().replace(/[.\\/:"?*|<>]/g, '_')
 }
 
-export function sanitizeFileNameForNativeWrite(filename: string): string {
-  const { name, ext } = parseFileName(filename)
-  return `${sanitizeFileName(name)}.${ext}`
-}
-
 export function truncateFileName(name: string, maxLength: number): string {
   return name.length > maxLength ? name.slice(0, maxLength) : name
 }
