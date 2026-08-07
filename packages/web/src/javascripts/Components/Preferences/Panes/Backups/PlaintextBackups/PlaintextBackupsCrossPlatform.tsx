@@ -5,6 +5,7 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { useMemo } from 'react'
 import PlaintextBackupsDesktop from './PlaintextBackupsDesktop'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const PlaintextBackupsCrossPlatform = () => {
@@ -20,8 +21,11 @@ const PlaintextBackupsCrossPlatform = () => {
           <Title>{c('B6.Preferences.Backups.Title').t`Automatic plaintext backups`}</Title>
           <Subtitle>{c('B6.Preferences.Backups.Subtitle')
             .t`Automatically save backups of all your notes into plaintext, non-encrypted folders.`}</Subtitle>
-          <Text className="mt-3">{c('B6.Preferences.Backups.Info')
-            .t`To enable plaintext backups, use the Standard Notes desktop application.`}</Text>
+          <Text className="mt-3">
+            {jtString(
+              c('B6.Preferences.Backups.Info').jt`To enable plaintext backups, use the ${AppName} desktop application.`,
+            )}
+          </Text>
         </PreferencesSegment>
       </PreferencesGroup>
     </>

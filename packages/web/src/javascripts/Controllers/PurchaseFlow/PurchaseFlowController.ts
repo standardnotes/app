@@ -8,6 +8,7 @@ import {
 import { LoggingDomain, log } from '@/Logging'
 import { AppleIAPProductId, InternalEventBusInterface } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
+import { jtString, SupportEmail } from '@standardnotes/features'
 import { c } from 'ttag'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { PurchaseFlowPane } from './PurchaseFlowPane'
@@ -89,8 +90,10 @@ export class PurchaseFlowController extends AbstractViewController {
 
     const showGenericError = () => {
       void this.alerts.alert(
-        c('B7.FilesSubscriptionHelp.Subscription.Error')
-          .t`There was an error confirming your purchase. Please contact support at help@standardnotes.com.`,
+        jtString(
+          c('B7.FilesSubscriptionHelp.Subscription.Error')
+            .jt`There was an error confirming your purchase. Please contact support at ${SupportEmail}.`,
+        ),
       )
     }
 

@@ -1,13 +1,13 @@
 import { escapeHtmlString, Platform, SNApplication } from '@standardnotes/snjs'
 import { getPlatform, isDesktopApplication } from '../Utils'
-import { BoldName, FileSafeName, jtString } from '@standardnotes/features'
+import { BoldName, FileSafeName, FileSafeHelpUrl, HelpSecurityUrl, jtString } from '@standardnotes/features'
 import { c, msgid } from 'ttag'
 
 /** @generic */
 export const STRING_DEFAULT_FILE_ERROR = () =>
   jtString(
     c('B7.FilesSubscriptionHelp.Files.Error')
-      .jt`Please use ${FileSafeName} or the ${BoldName} Editor to attach images and files. Learn more at standardnotes.com/filesafe.`,
+      .jt`Please use ${FileSafeName} or the ${BoldName} Editor to attach images and files. Learn more at ${FileSafeHelpUrl}.`,
   )
 export const STRING_GENERIC_SYNC_ERROR = () =>
   c('B1.Account.Session.Error')
@@ -117,8 +117,10 @@ export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL = () =>
 
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE = () => c('B1.Account.Password.Title').t`Encryption upgrade available`
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT = () =>
-  c('B1.Account.Password.Info')
-    .t`Encryption version 004 is available. This version strengthens the encryption algorithms your account and local storage use. To learn more about this upgrade, visit our <a href="https://standardnotes.com/help/security" target="_blank">Security Upgrade page.</a>`
+  jtString(
+    c('B1.Account.Password.Info')
+      .jt`Encryption version 004 is available. This version strengthens the encryption algorithms your account and local storage use. To learn more about this upgrade, visit our <a href="${HelpSecurityUrl}" target="_blank">Security Upgrade page.</a>`,
+  )
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = () => c('B1.Account.Password.Action').t`Upgrade`
 
 export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION = () =>

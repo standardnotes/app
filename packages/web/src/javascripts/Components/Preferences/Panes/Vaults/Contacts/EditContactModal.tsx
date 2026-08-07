@@ -3,6 +3,7 @@ import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { ClientDisplayableError, InviteRecord, TrustedContactInterface } from '@standardnotes/snjs'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -132,8 +133,10 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
 
         {!editContactUuid && (
           <p>
-            {c('B6.Preferences.Vaults.Info')
-              .t`Ask your contact for their Standard Notes CollaborationID via secure email or chat. Then, enter it here to add them as a contact.`}
+            {jtString(
+              c('B6.Preferences.Vaults.Info')
+                .jt`Ask your contact for their ${AppName} CollaborationID via secure email or chat. Then, enter it here to add them as a contact.`,
+            )}
           </p>
         )}
       </div>

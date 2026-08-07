@@ -55,6 +55,8 @@ import {
 } from './Types'
 import { ComponentViewerRequiresComponentManagerProperties } from './ComponentViewerRequiresComponentManagerFunctions'
 import {
+  AppName,
+  jtString,
   ComponentAction,
   ComponentPermission,
   ComponentArea,
@@ -461,8 +463,10 @@ export class ComponentViewer implements ComponentViewerInterface {
       if (essential) {
         const componentDisplayName = this.componentOrFeature.displayName
         void this.services.alerts.alert(
-          c('B4.Notes.EditingUI.Error')
-            .t`Standard Notes is trying to communicate with ${componentDisplayName}, but an error is occurring. Please restart this extension and try again.`,
+          jtString(
+            c('B4.Notes.EditingUI.Error')
+              .jt`${AppName} is trying to communicate with ${componentDisplayName}, but an error is occurring. Please restart this extension and try again.`,
+          ),
         )
       }
       return
@@ -561,8 +565,10 @@ export class ComponentViewer implements ComponentViewerInterface {
     if (!this.componentOrFeature) {
       this.services.logger.info('Component not defined for message, returning', message)
       void this.services.alerts.alert(
-        c('B4.Notes.EditingUI.Error')
-          .t`A component is trying to communicate with Standard Notes, but there is an error establishing a bridge. Please restart the app and try again.`,
+        jtString(
+          c('B4.Notes.EditingUI.Error')
+            .jt`A component is trying to communicate with ${AppName}, but there is an error establishing a bridge. Please restart the app and try again.`,
+        ),
       )
       return
     }

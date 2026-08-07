@@ -1,7 +1,6 @@
 import { FunctionComponent } from 'react'
+import { jtString, SupportEmail } from '@standardnotes/features'
 import { c } from 'ttag'
-
-const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 type Props = {
   componentName: string
@@ -23,7 +22,7 @@ const UrlMissing: FunctionComponent<Props> = ({ componentName }) => {
               )}
             </p>
             <br />
-            <p>{c('B2.NavSharedUI.Info').t`Please contact help@standardnotes.com to remedy this issue.`}</p>
+            <p>{jtString(c('B2.NavSharedUI.Info').jt`Please contact ${SupportEmail} to remedy this issue.`)}</p>
           </div>
         </div>
       </div>
