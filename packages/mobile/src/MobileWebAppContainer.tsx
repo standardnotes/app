@@ -11,6 +11,7 @@ import { AppStateObserverService } from './AppStateObserverService'
 import { ColorSchemeObserverService } from './ColorSchemeObserverService'
 import CustomAndroidWebView from './CustomAndroidWebView'
 import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
+import { postReplyToWebView } from './BridgeMessaging'
 import { IsDev } from './Lib/Utils'
 import { ReceivedSharedItemsHandler } from './ReceivedSharedItemsHandler'
 import { ReviewService } from './ReviewService'
@@ -309,6 +310,8 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const messageSender = new WebProcessMessageSender();
   window.reactNativeDevice = new WebProcessDeviceInterface(messageSender);
 
+  const chunkBuffers = {}
+
   const handleMessageFromReactNative = (event) => {
     const message = event.data
 
@@ -318,6 +321,22 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
       if (messageType === 'reply') {
         messageSender.handleReplyFromReactNative(messageId, returnValue)
+        return
+      }
+
+      if (messageType === 'reply-chunk') {
+        if (!chunkBuffers[messageId]) {
+          chunkBuffers[messageId] = new Array(parsed.totalChunks)
+        }
+        chunkBuffers[messageId][parsed.chunkIndex] = parsed.chunk
+        return
+      }
+
+      if (messageType === 'reply-done') {
+        const fullJson = chunkBuffers[messageId].join('')
+        delete chunkBuffers[messageId]
+        const { returnValue: reassembledReturnValue } = JSON.parse(fullJson)
+        messageSender.handleReplyFromReactNative(messageId, reassembledReturnValue)
       }
 
     } catch (error) {
@@ -359,7 +378,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       // eslint-disable-next-line no-console
       console.log(`Native device function ${functionName} called`)
     }
-    webViewRef.current?.postMessage(JSON.stringify({ messageId, returnValue, messageType: 'reply' }))
+    postReplyToWebView(webViewRef, messageId, returnValue)
   }
 
   const onShouldStartLoadWithRequest: OnShouldStartLoadWithRequest = (request) => {
