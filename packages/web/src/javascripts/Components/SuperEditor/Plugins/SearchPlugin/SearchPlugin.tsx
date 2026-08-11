@@ -1,4 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { c } from 'ttag'
 import { useLexicalEditable } from '@lexical/react/useLexicalEditable'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useApplication } from '../../../ApplicationProvider'
@@ -122,7 +123,7 @@ export function SearchPlugin() {
       {
         command: SUPER_TOGGLE_SEARCH,
         category: 'Super notes',
-        description: 'Search in current note',
+        description: c('B3.Notes.EditorToolbar.Action').t`Search in current note`,
         onKeyDown: (event) => {
           event.preventDefault()
           event.stopPropagation()
@@ -132,7 +133,7 @@ export function SearchPlugin() {
       {
         command: SUPER_SEARCH_TOGGLE_REPLACE_MODE,
         category: 'Super notes',
-        description: 'Search and replace in current note',
+        description: c('B3.Notes.EditorToolbar.Action').t`Search and replace in current note`,
         onKeyDown: (event) => {
           if (!isEditable) {
             return
@@ -151,7 +152,7 @@ export function SearchPlugin() {
       {
         command: SUPER_SEARCH_NEXT_RESULT,
         category: 'Super notes',
-        description: 'Go to next search result',
+        description: c('B3.Notes.EditorToolbar.Action').t`Go to next search result`,
         onKeyDown(event) {
           event.preventDefault()
           event.stopPropagation()
@@ -161,7 +162,7 @@ export function SearchPlugin() {
       {
         command: SUPER_SEARCH_PREVIOUS_RESULT,
         category: 'Super notes',
-        description: 'Go to previous search result',
+        description: c('B3.Notes.EditorToolbar.Action').t`Go to previous search result`,
         onKeyDown(event) {
           event.preventDefault()
           event.stopPropagation()
@@ -325,7 +326,9 @@ export function SearchPlugin() {
           <button
             className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
             onClick={toggleReplaceMode}
-            title={`Toggle Replace Mode (${toggleReplaceShortcut})`}
+            title={
+              c('B3.Notes.EditorToolbar.Label').jt`Toggle Replace Mode (${toggleReplaceShortcut})` as unknown as string
+            }
           >
             {isReplaceMode ? (
               <ArrowDownIcon className="h-4 w-4 fill-text" />
@@ -344,7 +347,7 @@ export function SearchPlugin() {
         >
           <div className="flex items-center gap-2">
             <DecoratedInput
-              placeholder="Search"
+              placeholder={c('B3.Notes.EditorToolbar.Label').t`Search`}
               className={{
                 container: classNames('flex-grow !text-[length:inherit]', !query.length && '!py-1'),
                 right: '!py-1',
@@ -377,7 +380,9 @@ export function SearchPlugin() {
                 'relative flex items-center rounded border px-1.5 py-1 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
                 isCaseSensitive ? 'border-info bg-info text-info-contrast' : 'border-border hover:bg-contrast',
               )}
-              title={`Case sensitive (${caseSensitivityShortcut})`}
+              title={
+                c('B3.Notes.EditorToolbar.Label').jt`Case sensitive (${caseSensitivityShortcut})` as unknown as string
+              }
             >
               <input
                 type="checkbox"
@@ -386,13 +391,13 @@ export function SearchPlugin() {
                 onChange={toggleCaseSensitivity}
               />
               <span aria-hidden>Aa</span>
-              <span className="sr-only">Case sensitive</span>
+              <span className="sr-only">{c('B3.Notes.EditorToolbar.Label').t`Case sensitive`}</span>
             </label>
             <button
               className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
               onClick={goToPrevResult}
               disabled={results.length < 1}
-              title="Previous result (Shift + Enter)"
+              title={c('B3.Notes.EditorToolbar.Label').t`Previous result (Shift + Enter)`}
             >
               <ArrowUpIcon className="h-4 w-4 fill-current text-text" />
             </button>
@@ -400,7 +405,7 @@ export function SearchPlugin() {
               className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
               onClick={goToNextResult}
               disabled={results.length < 1}
-              title="Next result (Enter)"
+              title={c('B3.Notes.EditorToolbar.Label').t`Next result (Enter)`}
             >
               <ArrowDownIcon className="h-4 w-4 fill-current text-text" />
             </button>
@@ -409,7 +414,7 @@ export function SearchPlugin() {
               onClick={() => {
                 closeDialog()
               }}
-              title={`Close (${searchToggleShortcut})`}
+              title={c('B3.Notes.EditorToolbar.Label').jt`Close (${searchToggleShortcut})` as unknown as string}
             >
               <CloseIcon className="h-4 w-4 fill-current text-text" />
             </button>
@@ -418,7 +423,7 @@ export function SearchPlugin() {
             <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
               <input
                 type="text"
-                placeholder="Replace"
+                placeholder={c('B3.Notes.EditorToolbar.Label').t`Replace`}
                 onChange={(e) => {
                   setReplaceQuery(e.target.value)
                 }}
@@ -440,17 +445,17 @@ export function SearchPlugin() {
                 small
                 onClick={replaceCurrentResult}
                 disabled={results.length < 1 || replaceQuery.length < 1}
-                title="Replace (Ctrl + Enter)"
+                title={c('B3.Notes.EditorToolbar.Label').t`Replace (Ctrl + Enter)`}
               >
-                Replace
+                {c('B3.Notes.EditorToolbar.Action').t`Replace`}
               </Button>
               <Button
                 small
                 onClick={replaceAllResults}
                 disabled={results.length < 1 || replaceQuery.length < 1}
-                title="Replace all (Ctrl + Alt + Enter)"
+                title={c('B3.Notes.EditorToolbar.Label').t`Replace all (Ctrl + Alt + Enter)`}
               >
-                Replace all
+                {c('B3.Notes.EditorToolbar.Action').t`Replace all`}
               </Button>
             </div>
           )}
@@ -462,11 +467,12 @@ export function SearchPlugin() {
                 checked={shouldHighlightAll}
                 onChange={(e) => setShouldHighlightAll(e.target.checked)}
               />
-              <div>Highlight all results</div>
+              <div>{c('B3.Notes.EditorToolbar.Label').t`Highlight all results`}</div>
             </label>
             {!canUseCSSHiglights && (
               <StyledTooltip
-                label="May lead to performance degradation, especially on large documents."
+                label={c('B3.Notes.EditorToolbar.Info')
+                  .t`May lead to performance degradation, especially on large documents.`}
                 className="!z-modal"
                 showOnMobile
               >

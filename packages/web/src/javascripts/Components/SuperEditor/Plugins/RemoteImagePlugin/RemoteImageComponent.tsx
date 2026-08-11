@@ -14,6 +14,7 @@ import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection'
 import usePreference from '@/Hooks/usePreference'
 import { getCSSValueFromAlignment, ImageAlignmentOptions } from '@/Components/FilePreview/ImageAlignmentOptions'
 import { getOverflows } from '@/Components/Popover/Utils/Collisions'
+import { c } from 'ttag'
 
 type Props = {
   src: string
@@ -163,12 +164,12 @@ const RemoteImageComponent = ({ className, src, alt, node, format, nodeKey, setF
             {isSaving ? (
               <>
                 <Spinner className="h-4 w-4" />
-                Saving...
+                {c('B4.Notes.EditingUI.Status').t`Saving...`}
               </>
             ) : (
               <>
                 <Icon type="download" />
-                Save image to Files
+                {c('B4.Notes.EditingUI.Action').t`Save image to Files`}
               </>
             )}
           </button>

@@ -5,6 +5,7 @@ import Icon from '../Icon/Icon'
 import { CompoundPredicateBuilderController } from './CompoundPredicateBuilderController'
 import { PredicateKeypath, PredicateKeypathLabels, PredicateKeypathTypes } from './PredicateKeypaths'
 import PredicateValue from './PredicateValue'
+import { c } from 'ttag'
 
 type Props = {
   controller: CompoundPredicateBuilderController
@@ -27,7 +28,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
               setOperator(event.target.value as PredicateCompoundOperator)
             }}
           />
-          Should match ALL conditions
+          {c('B4.Notes.TagsLinkedItems.Label').t`Should match ALL conditions`}
         </label>
         <label className="flex items-center gap-2">
           <input
@@ -39,13 +40,19 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
               setOperator(event.target.value as PredicateCompoundOperator)
             }}
           />
-          Should match ANY conditions
+          {c('B4.Notes.TagsLinkedItems.Label').t`Should match ANY conditions`}
         </label>
       </div>
       {predicates.map((predicate, index) => (
         <div className="flex flex-col gap-2.5" key={index}>
           <div className="flex w-full flex-col gap-2 md:flex-row md:items-center">
-            {index !== 0 && <div className="mr-2 text-sm font-semibold">{operator === 'and' ? 'AND' : 'OR'}</div>}
+            {index !== 0 && (
+              <div className="mr-2 text-sm font-semibold">
+                {operator === 'and'
+                  ? c('B4.Notes.TagsLinkedItems.Label').t`AND`
+                  : c('B4.Notes.TagsLinkedItems.Label').t`OR`}
+              </div>
+            )}
             <select
               className="flex-grow rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
               value={predicate.keypath}
@@ -84,7 +91,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
             {index !== 0 && (
               <button
                 className="rounded border border-border p-1 text-danger"
-                aria-label="Remove condition"
+                aria-label={c('B4.Notes.TagsLinkedItems.Action').t`Remove condition`}
                 onClick={() => {
                   removePredicate(index)
                 }}
@@ -100,21 +107,23 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
                 addPredicate()
               }}
             >
-              Add another condition
+              {c('B4.Notes.TagsLinkedItems.Action').t`Add another condition`}
             </Button>
           )}
         </div>
       ))}
       {predicates.some((predicate) => PredicateKeypathTypes[predicate.keypath as PredicateKeypath] === 'date') && (
         <div className="flex flex-col gap-2 rounded-md border-2 border-info-backdrop bg-info-backdrop px-4 py-3 [&_code]:rounded [&_code]:bg-default [&_code]:px-1.5 [&_code]:py-1">
-          <div className="text-sm font-semibold">Date Examples:</div>
+          <div className="text-sm font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Date Examples:`}</div>
           <ul className="space-y-2 pl-4">
             <li>
-              To get all the items modified within the last 7 days, you can use <code>User Modified Date</code>{' '}
-              <code>&gt;</code> <code>7.days.ago</code>
+              {c('B4.Notes.TagsLinkedItems.Info').t`To get all the items modified within the last 7 days, you can use`}{' '}
+              <code>{c('B4.Notes.TagsLinkedItems.Label').t`User Modified Date`}</code> <code>&gt;</code>{' '}
+              <code>7.days.ago</code>
             </li>
             <li>
-              To get all the items created before June 2022, you can use <code>Created At</code> <code>&lt;</code>{' '}
+              {c('B4.Notes.TagsLinkedItems.Info').t`To get all the items created before June 2022, you can use`}{' '}
+              <code>{c('B4.Notes.TagsLinkedItems.Action').t`Created At`}</code> <code>&lt;</code>{' '}
               <code>06/01/2022</code>
             </li>
           </ul>

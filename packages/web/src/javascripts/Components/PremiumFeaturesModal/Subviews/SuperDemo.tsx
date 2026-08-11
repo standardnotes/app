@@ -9,6 +9,7 @@ import { SuperDemoInitialValue } from './SuperDemoInitialValue'
 import { UpgradePrompt } from './UpgradePrompt'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
+import { FeatureName, getFeatureNameLabel } from '@/Controllers/FeatureName'
 
 const SuperDemo = ({ hasSubscription, onClose }: { hasSubscription: boolean; onClose: () => void }) => {
   const application = useApplication()
@@ -33,7 +34,7 @@ const SuperDemo = ({ hasSubscription, onClose }: { hasSubscription: boolean; onC
         )}
       >
         <UpgradePrompt
-          featureName="Super notes"
+          featureName={getFeatureNameLabel(FeatureName.Super)}
           ctaRef={ctaRef}
           application={application}
           hasSubscription={hasSubscription}

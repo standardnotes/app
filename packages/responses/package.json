@@ -35,6 +35,7 @@
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
     "@standardnotes/features": "workspace:*",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "ttag": "^1.8.12"
   }
 }

@@ -16,6 +16,7 @@ import { ReceivedSharedItemsHandler } from './ReceivedSharedItemsHandler'
 import { ReviewService } from './ReviewService'
 import notifee, { EventType } from '@notifee/react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { c } from 'ttag'
 
 const LoggingEnabled = IsDev
 
@@ -437,7 +438,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
             marginBottom: 20,
           }}
         >
-          Could not load app
+          {c('B8.MobileDesktopShared.Mobile.WebView.Title').t`Could not load app`}
         </Text>
         <Text
           style={{
@@ -447,10 +448,11 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
             textAlign: 'center',
           }}
         >
-          Please make sure your Android System Webview is updated to the latest version
+          {c('B8.MobileDesktopShared.Mobile.WebView.Info')
+            .t`Please make sure your Android System Webview is updated to the latest version`}
         </Text>
         <Button
-          title={'Update'}
+          title={c('B8.MobileDesktopShared.Mobile.WebView.Action').t`Update`}
           onPress={() => {
             setShowAndroidWebviewUpdatePrompt(false)
             device.openUrl('https://play.google.com/store/apps/details?id=com.google.android.webview')

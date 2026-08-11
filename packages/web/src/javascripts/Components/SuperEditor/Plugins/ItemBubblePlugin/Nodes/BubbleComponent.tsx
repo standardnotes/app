@@ -7,6 +7,7 @@ import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { useResponsiveAppPane } from '@/Components/Panes/ResponsivePaneProvider'
 import { LexicalNode } from 'lexical'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { c } from 'ttag'
 
 export type BubbleComponentProps = Readonly<{
   itemUuid: string
@@ -37,7 +38,7 @@ export function BubbleComponent({ itemUuid, node }: BubbleComponentProps) {
   }, [linkingController, node, editor])
 
   if (!item) {
-    return <div>Unable to find item {itemUuid}</div>
+    return <div>{c('B4.Notes.EditingUI.Info').jt`Unable to find item ${itemUuid}`}</div>
   }
 
   const link = createLinkFromItem(item, 'linked')

@@ -1,4 +1,5 @@
 import { action, makeAutoObservable, observable } from 'mobx'
+import { c } from 'ttag'
 import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from '../Panes/Plugins/PackageProvider'
 import { securityPrefsHasBubble } from '../Panes/Security/securityPrefsHasBubble'
@@ -26,11 +27,16 @@ export class PreferencesSessionController {
       : READY_PREFERENCES_MENU_ITEMS.slice()
 
     if (application.featuresController.isVaultsEnabled()) {
-      menuItems.push({ id: 'vaults', label: 'Vaults', icon: 'safe-square', order: 5 })
+      menuItems.push({ id: 'vaults', label: c('B6.Preferences.Other.Label').t`Vaults`, icon: 'safe-square', order: 5 })
     }
 
     if (isDesktopApplication()) {
-      menuItems.push({ id: 'home-server', label: 'Home Server', icon: 'server', order: 5 })
+      menuItems.push({
+        id: 'home-server',
+        label: c('B6.Preferences.HomeServer.Label').t`Home Server`,
+        icon: 'server',
+        order: 5,
+      })
     }
 
     this._menu = menuItems.sort((a, b) => a.order - b.order)

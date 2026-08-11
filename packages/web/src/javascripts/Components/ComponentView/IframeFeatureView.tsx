@@ -9,6 +9,7 @@ import {
 } from '@standardnotes/snjs'
 import { KeyboardKeyEvent, type KeyboardModifier } from '@standardnotes/ui-services'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { c } from 'ttag'
 import { observer } from 'mobx-react-lite'
 import OfflineRestricted from '@/Components/ComponentView/OfflineRestricted'
 import UrlMissing from '@/Components/ComponentView/UrlMissing'
@@ -289,7 +290,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({
           sandbox={sandboxAttributes.join(' ')}
           {...(usedInModal && { 'data-used-in-modal': true })}
         >
-          Loading
+          {c('B2.NavSharedUI.Info').t`Loading`}
         </iframe>
       )}
       {isLoading && <div className={'loading-overlay'} />}

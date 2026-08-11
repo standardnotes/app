@@ -1,4 +1,5 @@
 import { SNNote } from '@standardnotes/models'
+import { c } from 'ttag'
 import { Converter, HTMLToSuperConverterFunction, InsertNoteFn } from '../Converter'
 
 type Content =
@@ -64,7 +65,7 @@ export class GoogleKeepConverter implements Converter {
       }
     }
 
-    throw new Error('Could not parse Google Keep backup file')
+    throw new Error(c('B1.Account.ImportExport.Error').t`Could not parse Google Keep backup file`)
   }
 
   async tryParseAsHtml(
@@ -84,7 +85,7 @@ export class GoogleKeepConverter implements Converter {
 
     const contentElement = rootElement.getElementsByClassName('content')[0]
     if (!contentElement) {
-      throw new Error('Could not parse content. Content element not found.')
+      throw new Error(c('B1.Account.ImportExport.Error').t`Could not parse content. Content element not found.`)
     }
 
     let content: string | null
@@ -121,7 +122,7 @@ export class GoogleKeepConverter implements Converter {
     }
 
     if (!content) {
-      throw new Error('Could not parse content')
+      throw new Error(c('B1.Account.ImportExport.Error').t`Could not parse content`)
     }
 
     const title = rootElement.getElementsByClassName('title')[0]?.textContent || file.name

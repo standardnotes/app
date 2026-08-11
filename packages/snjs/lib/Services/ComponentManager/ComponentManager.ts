@@ -57,6 +57,7 @@ import { RunWithPermissionsUseCase } from './UseCase/RunWithPermissionsUseCase'
 import { EditorForNoteUseCase } from './UseCase/EditorForNote'
 import { GetDefaultEditorIdentifier } from './UseCase/GetDefaultEditorIdentifier'
 import { DoesEditorChangeRequireAlertUseCase } from './UseCase/DoesEditorChangeRequireAlert'
+import { c } from 'ttag'
 
 declare global {
   interface Window {
@@ -542,9 +543,9 @@ export class ComponentManager
 
   async showEditorChangeAlert(): Promise<boolean> {
     const shouldChangeEditor = await this.alerts.confirm(
-      'Doing so might result in minor formatting changes.',
-      "Are you sure you want to change this note's type?",
-      'Yes, change it',
+      c('B4.Notes.EditingUI.Confirmation').t`Doing so might result in minor formatting changes.`,
+      c('B4.Notes.EditingUI.Confirmation').t`Are you sure you want to change this note's type?`,
+      c('B4.Notes.EditingUI.Confirmation').t`Yes, change it`,
     )
 
     return shouldChangeEditor

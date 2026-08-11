@@ -12,6 +12,8 @@ import { ContentType, DecryptedItem, PrefKey, SNTag } from '@standardnotes/snjs'
 import usePreference from '@/Hooks/usePreference'
 import LinkedItemBubble from '@/Components/LinkedItems/LinkedItemBubble'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
+import { ProfessionalPlanName } from '@standardnotes/features'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -79,14 +81,14 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
       <PreferencesSegment>
         <div className="flex items-center justify-between">
           <div className="flex items-start">
-            <Title>Moments</Title>
-            <Pill style={'success'}>Labs</Pill>
-            <Pill style={'info'}>Professional</Pill>
+            <Title>{c('B6.Preferences.General.Title').t`Moments`}</Title>
+            <Pill style={'success'}>{c('B6.Preferences.General.Label').t`Labs`}</Pill>
+            <Pill style={'info'}>{ProfessionalPlanName}</Pill>
           </div>
           <Switch onChange={toggle} checked={momentsEnabled} />
         </div>
 
-        <Subtitle>Your personal photo journal</Subtitle>
+        <Subtitle>{c('B6.Preferences.General.Subtitle').t`Your personal photo journal`}</Subtitle>
 
         {momentsEnabled && (
           <div className="mb-2 flex items-center">
@@ -103,7 +105,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
             )}
             <ItemSelectionDropdown
               onSelection={selectTag}
-              placeholder="Select tag to save Moments to..."
+              placeholder={c('B6.Preferences.General.Placeholder').t`Select tag to save Moments to...`}
               contentTypes={[ContentType.TYPES.Tag]}
             />
           </div>
@@ -113,15 +115,13 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
           <div className="flex flex-col"></div>
           <PreferencesSegment>
             <Text>
-              Moments lets you capture photos of yourself throughout the day, creating a visual record of your life, one
-              photo at a time. Using your webcam or mobile selfie-cam, Moments takes a photo of you every half hour. All
-              photos are end-to-end encrypted and stored in your files. Enable Moments on a per-device basis to get
-              started.
+              {c('B6.Preferences.General.Info')
+                .t`Moments lets you capture photos of yourself throughout the day, creating a visual record of your life, one photo at a time. Using your webcam or mobile selfie-cam, Moments takes a photo of you every half hour. All photos are end-to-end encrypted and stored in your files. Enable Moments on a per-device basis to get started.`}
             </Text>
 
             <div className="mt-5 flex flex-row flex-wrap gap-3">
               <Button colorStyle="info" onClick={takePhoto}>
-                Capture Present Moment
+                {c('B6.Preferences.General.Label').t`Capture Present Moment`}
               </Button>
             </div>
           </PreferencesSegment>

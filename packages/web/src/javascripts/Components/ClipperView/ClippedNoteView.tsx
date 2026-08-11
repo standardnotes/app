@@ -10,6 +10,7 @@ import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContaine
 import { LinkingController } from '@/Controllers/LinkingController'
 import Button from '../Button/Button'
 import Spinner from '../Spinner/Spinner'
+import { c } from 'ttag'
 
 const ClippedNoteView = ({
   note,
@@ -66,7 +67,7 @@ const ClippedNoteView = ({
   const discardNote = useCallback(async () => {
     if (
       await confirmDialog({
-        text: 'Are you sure you want to discard this clip?',
+        text: c('B4.Notes.EditingUI.Confirmation').t`Are you sure you want to discard this clip?`,
         confirmButtonText: 'Discard',
         confirmButtonStyle: 'danger',
       })
@@ -93,7 +94,7 @@ const ClippedNoteView = ({
           {!isFirefoxPopup && (
             <Button className="flex items-center justify-center" fullWidth onClick={clearClip} disabled={isDiscarding}>
               <Icon type="arrow-left" className="mr-2" />
-              Back
+              {c('B4.Notes.EditingUI.Action').t`Back`}
             </Button>
           )}
           <Button
@@ -109,7 +110,7 @@ const ClippedNoteView = ({
             ) : (
               <>
                 <Icon type="trash-filled" className="mr-2" />
-                Discard
+                {c('B4.Notes.EditingUI.Action').t`Discard`}
               </>
             )}
           </Button>

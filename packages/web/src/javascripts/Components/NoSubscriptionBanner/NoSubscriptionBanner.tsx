@@ -1,5 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { classNames } from '@standardnotes/utils'
+import { c } from 'ttag'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
@@ -32,7 +33,7 @@ const NoSubscriptionBanner = ({
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">{message}</p>
       {application.canShowPurchaseFlow() && (
         <Button primary small className="col-start-1 col-end-3 mt-3 justify-self-start uppercase" onClick={onClick}>
-          Upgrade Features
+          {c('B7.FilesSubscriptionHelp.Subscription.Action').t`Upgrade Features`}
         </Button>
       )}
     </div>

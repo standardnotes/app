@@ -26,6 +26,7 @@ import { Pill } from '../Preferences/PreferencesComponents/Content'
 import ModalOverlay from '../Modal/ModalOverlay'
 import SuperNoteConverter from '../SuperEditor/SuperNoteConverter'
 import MenuSection from '../Menu/MenuSection'
+import { c } from 'ttag'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -168,7 +169,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       }
 
       if (note.locked) {
-        application.alerts.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
+        application.alerts.alert(STRING_EDIT_LOCKED_ATTEMPT()).catch(console.error)
         return
       }
 
@@ -252,19 +253,20 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
 
   return (
     <>
-      <Menu className="pb-1 pt-0.5" a11yLabel="Change note type menu">
+      <Menu className="pb-1 pt-0.5" a11yLabel={c('B4.Notes.EditingUI.Label').t`Change note type menu`}>
         <MenuSection>
           <div className="flex items-center justify-between py-3 pr-4 md:pb-1 md:pt-0">
             <div className="px-3">
-              <h2 className="text-base font-bold">Choose a note type</h2>
+              <h2 className="text-base font-bold">{c('B4.Notes.EditingUI.Label').t`Choose a note type`}</h2>
               {unableToFindEditor && (
                 <p className="mr-2 pt-1 text-xs text-warning">
-                  Unable to find system editor for this note. Select Manage Plugins to reinstall this editor.
+                  {c('B4.Notes.EditingUI.Error')
+                    .t`Unable to find system editor for this note. Select Manage Plugins to reinstall this editor.`}
                 </p>
               )}
             </div>
             <button className="cursor-pointer whitespace-nowrap text-right text-xs text-info" onClick={managePlugins}>
-              Manage Plugins
+              {c('B4.Notes.EditingUI.Action').t`Manage Plugins`}
             </button>
           </div>
         </MenuSection>
@@ -295,14 +297,14 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                           {menuItem.uiFeature.displayName}
                           {menuItem.isLabs && (
                             <Pill className="px-1.5 py-0.5" style="success">
-                              Labs
+                              {c('B4.Notes.EditingUI.Label').t`Labs`}
                             </Pill>
                           )}
                           {menuItem.uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.SuperEditor &&
                             !isSelected(menuItem) &&
                             recommendSuper && (
                               <Pill className="px-1.5 py-0.5 text-[0.5625rem]" style="info">
-                                Recommended
+                                {c('B4.Notes.EditingUI.Label').t`Recommended`}
                               </Pill>
                             )}
                         </div>

@@ -13,6 +13,7 @@ import { BlockEditorNodes, SuperExportNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html'
 import { $createFileExportNode } from '../Lexical/Nodes/FileExportNode'
+import { c } from 'ttag'
 import { $createInlineFileNode } from '../Plugins/InlineFilePlugin/InlineFileNode'
 import { $convertFromMarkdownString } from '@lexical/markdown'
 import { $convertToMarkdownString } from '../Lexical/Utils/MarkdownExport'
@@ -188,7 +189,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     })
 
     if (didThrow || typeof content !== 'string') {
-      throw new Error('Could not export note')
+      throw new Error(c('B4.Notes.EditorOptions.Error').t`Could not export note`)
     }
 
     return content
@@ -280,7 +281,7 @@ export class HeadlessSuperConverter implements SuperConverterServiceInterface {
     }
 
     if (didThrow) {
-      throw new Error('Could not import note. Check error console for details.')
+      throw new Error(c('B4.Notes.EditorOptions.Error').t`Could not import note. Check error console for details.`)
     }
 
     return JSON.stringify(this.importEditor.getEditorState())

@@ -4,6 +4,18 @@ import Icon from '@/Components/Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import { classNames } from '@standardnotes/snjs'
 import { requestCloseAllOpenModalsAndPopovers } from '@/Utils/CloseOpenModalsAndPopovers'
+import {
+  AppName,
+  AuthenticatorName,
+  ChecklistEditorName,
+  jtString,
+  MarkdownEditorName,
+  RichTextEditorName,
+  SpreadsheetName,
+  SuperName,
+  ProfessionalPlanName,
+} from '@standardnotes/features'
+import { c } from 'ttag'
 
 type Props = {
   featureName?: string
@@ -49,6 +61,8 @@ export const UpgradePrompt = ({
     }
   }, [application, hasSubscription, onClose, onClick])
 
+  const featureNameBold = featureName ? <span className="font-semibold">{featureName}</span> : undefined
+
   return (
     <div className={preferHorizontalLayout ? 'flex flex-wrap items-center gap-4 md:flex-nowrap' : ''}>
       {!inline && (
@@ -56,7 +70,7 @@ export const UpgradePrompt = ({
           <button
             className="flex cursor-pointer border-0 bg-transparent p-0"
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={c('B2.NavSharedUI.AriaLabel').t`Close modal`}
           >
             <Icon className="text-neutral" type="close" />
           </button>
@@ -77,34 +91,48 @@ export const UpgradePrompt = ({
       </div>
       <div className={preferHorizontalLayout ? '' : 'mb-2'}>
         <div className={classNames('mb-1 text-lg font-bold', preferHorizontalLayout ? 'text-left' : 'text-center')}>
-          Enable Advanced Features
+          {c('B7.FilesSubscriptionHelp.Subscription.Title').t`Enable Advanced Features`}
         </div>
         <div
           className={classNames('text-sm text-passive-1', preferHorizontalLayout ? 'text-left' : 'px-4.5 text-center')}
         >
-          {featureName && (
+          {featureNameBold && (
             <span>
-              To take advantage of <span className="font-semibold">{featureName}</span> and other advanced features,
-              upgrade your current plan.
+              {jtString(
+                c('B7.FilesSubscriptionHelp.Subscription.Info')
+                  .jt`To take advantage of ${featureNameBold} and other advanced features, upgrade your current plan.`,
+              )}
             </span>
           )}
-          {!featureName && (
+          {!featureNameBold && (
             <span>
-              To take advantage of all the advanced features Standard Notes has to offer, upgrade your current plan.
+              {jtString(
+                c('B7.FilesSubscriptionHelp.Subscription.Info')
+                  .jt`To take advantage of all the advanced features ${AppName} has to offer, upgrade your current plan.`,
+              )}
             </span>
           )}
           {application.isNativeIOS() && (
             <div className="mt-2">
-              <div className="mb-2 font-bold">The Professional Plan costs $119.99/year and includes benefits like</div>
+              <div className="mb-2 font-bold">
+                {jtString(
+                  c('B7.FilesSubscriptionHelp.Subscription.Info')
+                    .jt`The ${ProfessionalPlanName} Plan costs $119.99/year and includes benefits like`,
+                )}
+              </div>
               <ul className="list-inside list-[circle]">
-                <li>100GB encrypted file storage</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`100GB encrypted file storage`}</li>
                 <li>
-                  Access to all note types, including Super, markdown, rich text, authenticator, tasks, and spreadsheets
+                  {jtString(
+                    c('B7.FilesSubscriptionHelp.Subscription.Info')
+                      .jt`Access to all note types, including ${SuperName}, ${MarkdownEditorName}, ${RichTextEditorName}, ${AuthenticatorName}, ${ChecklistEditorName}, and ${SpreadsheetName}`,
+                  )}
                 </li>
-                <li>Access to Daily Notebooks and Moments journals</li>
-                <li>Note history going back indefinitely</li>
-                <li>Nested folders for your tags</li>
-                <li>Premium support</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info')
+                  .t`Access to Daily Notebooks and Moments journals`}</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Note history going back indefinitely`}</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Nested folders for your tags`}</li>
+                <li>{c('B7.FilesSubscriptionHelp.Subscription.Info').t`Premium support`}</li>
               </ul>
             </div>
           )}
@@ -119,7 +147,7 @@ export const UpgradePrompt = ({
           )}
           ref={ctaRef}
         >
-          Upgrade
+          {c('B7.FilesSubscriptionHelp.Subscription.Action').t`Upgrade`}
         </button>
       )}
     </div>

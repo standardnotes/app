@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Title } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -30,7 +31,7 @@ const Persistence = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title className="mb-2">When opening the app, show...</Title>
+        <Title className="mb-2">{c('B6.Preferences.General.Title').t`When opening the app, show...`}</Title>
         <label className="mb-2 flex items-center gap-2 text-base font-medium md:text-sm">
           <StyledRadioInput
             name="state-persistence"
@@ -39,7 +40,7 @@ const Persistence = ({ application }: Props) => {
               toggleStatePersistence(!event.target.checked)
             }}
           />
-          The first note in the list
+          {c('B6.Preferences.General.Info').t`The first note in the list`}
         </label>
         <label className="flex items-center gap-2 text-base font-medium md:text-sm">
           <StyledRadioInput
@@ -49,7 +50,7 @@ const Persistence = ({ application }: Props) => {
               toggleStatePersistence(event.target.checked)
             }}
           />
-          The last viewed note
+          {c('B6.Preferences.General.Label').t`The last viewed note`}
         </label>
       </PreferencesSegment>
     </PreferencesGroup>

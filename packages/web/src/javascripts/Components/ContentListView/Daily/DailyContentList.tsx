@@ -18,6 +18,7 @@ import InfiniteCalendar, { InfiniteCalendarInterface } from '../Calendar/Infinit
 import { InfiniteScrollerInterface, InfinteScroller } from '../InfiniteScroller/InfiniteScroller'
 import { LoggingDomain, log } from '@/Logging'
 import { isMobileScreen } from '@/Utils'
+import { c } from 'ttag'
 
 type Props = {
   itemListController: ItemListController
@@ -190,9 +191,10 @@ const DailyContentList: FunctionComponent<Props> = ({
       >
         {currentStreak > 0 && (
           <div className="flex w-full items-center justify-center border-t border-solid border-border bg-secondary-background p-2">
-            <span className="opacity-50">Current Streak</span>
+            <span className="opacity-50">{c('B3.Notes.NoteList.Label').t`Current Streak`}</span>
             <span className="ml-1.5 font-bold">
-              {currentStreak} {pluralize(currentStreak, 'Day', 'Days')}
+              {currentStreak}{' '}
+              {pluralize(currentStreak, c('B3.Notes.NoteList.Label').t`Day`, c('B3.Notes.NoteList.Label').t`Days`)}
             </span>
           </div>
         )}

@@ -12,6 +12,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBanner'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import { c } from 'ttag'
 
 type Props = {
   auth: TwoFactorAuth
@@ -24,13 +25,13 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application, canDis
 
   const activationModalTitle = shouldShowActivationModal
     ? auth.status.activationStep === 'scan-qr-code'
-      ? 'Step 1 of 3 - Scan QR code'
+      ? c('B6.Preferences.Security.Title').t`Step 1 of 3 - Scan QR code`
       : auth.status.activationStep === 'save-secret-key'
-      ? 'Step 2 of 3 - Save secret key'
+      ? c('B6.Preferences.Security.Title').t`Step 2 of 3 - Save secret key`
       : auth.status.activationStep === 'verification'
-      ? 'Step 3 of 3 - Verification'
+      ? c('B6.Preferences.Security.Title').t`Step 3 of 3 - Verification`
       : auth.status.activationStep === 'success'
-      ? 'Successfully Enabled'
+      ? c('B6.Preferences.Security.Title').t`Successfully Enabled`
       : ''
     : ''
 
@@ -50,14 +51,14 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application, canDis
   const activationModalActions: ModalAction[] = shouldShowActivationModal
     ? [
         {
-          label: 'Cancel',
+          label: c('B6.Preferences.Security.Action').t`Cancel`,
           onClick: auth.status.cancelActivation,
           type: 'cancel',
           mobileSlot: 'left',
           hidden: auth.status.activationStep !== 'scan-qr-code',
         },
         {
-          label: 'Back',
+          label: c('B6.Preferences.Security.Action').t`Back`,
           onClick:
             auth.status.activationStep === 'save-secret-key'
               ? auth.status.openScanQRCode
@@ -67,7 +68,7 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application, canDis
           hidden: auth.status.activationStep !== 'save-secret-key' && auth.status.activationStep !== 'verification',
         },
         {
-          label: 'Next',
+          label: c('B6.Preferences.Security.Action').t`Next`,
           onClick:
             auth.status.activationStep === 'scan-qr-code'
               ? auth.status.openSaveSecretKey
@@ -79,7 +80,7 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application, canDis
           hidden: auth.status.activationStep === 'success',
         },
         {
-          label: 'Finish',
+          label: c('B6.Preferences.Security.Action').t`Finish`,
           onClick: auth.status.finishActivation,
           type: 'primary',
           mobileSlot: 'right',

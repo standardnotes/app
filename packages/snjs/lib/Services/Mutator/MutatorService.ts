@@ -51,6 +51,7 @@ import {
   VaultListingInterface,
 } from '@standardnotes/models'
 import { UuidGenerator, Uuids } from '@standardnotes/utils'
+import { c } from 'ttag'
 
 export class MutatorService extends AbstractService implements MutatorClientInterface {
   constructor(
@@ -622,7 +623,10 @@ export class MutatorService extends AbstractService implements MutatorClientInte
       file.key_system_identifier !== note.key_system_identifier
 
     if (isVaultConflict) {
-      void this.alerts.alert('The items you are trying to link belong to different vaults and cannot be linked')
+      void this.alerts.alert(
+        c('B4.Notes.TagsLinkedItems.Error')
+          .t`The items you are trying to link belong to different vaults and cannot be linked`,
+      )
       return undefined
     }
 
@@ -639,7 +643,10 @@ export class MutatorService extends AbstractService implements MutatorClientInte
 
   public async addTagToNote(note: SNNote, tag: SNTag, addHierarchy: boolean): Promise<SNTag[] | undefined> {
     if (tag.key_system_identifier !== note.key_system_identifier) {
-      void this.alerts.alert('The items you are trying to link belong to different vaults and cannot be linked')
+      void this.alerts.alert(
+        c('B4.Notes.TagsLinkedItems.Error')
+          .t`The items you are trying to link belong to different vaults and cannot be linked`,
+      )
       return undefined
     }
 
@@ -661,7 +668,10 @@ export class MutatorService extends AbstractService implements MutatorClientInte
 
   public async addTagToFile(file: FileItem, tag: SNTag, addHierarchy: boolean): Promise<SNTag[] | undefined> {
     if (tag.key_system_identifier !== file.key_system_identifier) {
-      void this.alerts.alert('The items you are trying to link belong to different vaults and cannot be linked')
+      void this.alerts.alert(
+        c('B4.Notes.TagsLinkedItems.Error')
+          .t`The items you are trying to link belong to different vaults and cannot be linked`,
+      )
       return undefined
     }
 

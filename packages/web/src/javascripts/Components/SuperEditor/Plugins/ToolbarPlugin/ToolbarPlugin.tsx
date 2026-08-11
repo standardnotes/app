@@ -1,4 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
+import { c } from 'ttag'
+import { SuperName, jtString } from '@standardnotes/features'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import useModal from '../../Lexical/Hooks/useModal'
 import { InsertTableDialog } from '../TablePlugin'
@@ -82,18 +84,18 @@ import { CREATE_NOTE_FROM_SELECTION_COMMAND } from '../NoteFromSelectionPlugin'
 const TOGGLE_LINK_AND_EDIT_COMMAND = createCommand<string | null>('TOGGLE_LINK_AND_EDIT_COMMAND')
 
 const blockTypeToBlockName = {
-  bullet: 'Bulleted List',
-  check: 'Check List',
-  code: 'Code Block',
-  h1: 'Heading 1',
-  h2: 'Heading 2',
-  h3: 'Heading 3',
-  h4: 'Heading 4',
-  h5: 'Heading 5',
-  h6: 'Heading 6',
-  number: 'Numbered List',
-  paragraph: 'Normal',
-  quote: 'Quote',
+  bullet: c('B3.Notes.EditorToolbar.Label').t`Bulleted List`,
+  check: c('B3.Notes.EditorToolbar.Label').t`Check List`,
+  code: c('B3.Notes.EditorToolbar.Label').t`Code Block`,
+  h1: c('B3.Notes.EditorToolbar.Label').t`Heading 1`,
+  h2: c('B3.Notes.EditorToolbar.Label').t`Heading 2`,
+  h3: c('B3.Notes.EditorToolbar.Label').t`Heading 3`,
+  h4: c('B3.Notes.EditorToolbar.Label').t`Heading 4`,
+  h5: c('B3.Notes.EditorToolbar.Label').t`Heading 5`,
+  h6: c('B3.Notes.EditorToolbar.Label').t`Heading 6`,
+  number: c('B3.Notes.EditorToolbar.Label').t`Numbered List`,
+  paragraph: c('B3.Notes.EditorToolbar.Label').t`Normal`,
+  quote: c('B3.Notes.EditorToolbar.Label').t`Quote`,
 }
 
 const blockTypeToIconName = {
@@ -607,7 +609,7 @@ const ToolbarPlugin = () => {
     return application.keyboardService.addCommandHandler({
       command: SUPER_TOGGLE_TOOLBAR,
       category: 'Super notes',
-      description: 'Toggle Super note toolbar',
+      description: jtString(c('B3.Notes.EditorToolbar.Action').jt`Toggle ${SuperName} note toolbar`),
       onKeyDown(event) {
         if (isMobile) {
           return
@@ -687,25 +689,25 @@ const ToolbarPlugin = () => {
             {canShowAllItems && (
               <>
                 <ToolbarButton
-                  name="Table of Contents"
+                  name={c('B3.Notes.EditorToolbar.Label').t`Table of Contents`}
                   iconName="toc"
                   active={isTOCOpen}
                   onSelect={() => setIsTOCOpen(!isTOCOpen)}
                   ref={tocAnchorRef}
                 />
                 <ToolbarButton
-                  name="Search"
+                  name={c('B3.Notes.EditorToolbar.Action').t`Search`}
                   iconName="search"
                   onSelect={() => application.keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)}
                 />
                 <ToolbarButton
-                  name="Undo"
+                  name={c('B3.Notes.EditorToolbar.Action').t`Undo`}
                   iconName="undo"
                   disabled={!canUndo}
                   onSelect={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
                 />
                 <ToolbarButton
-                  name="Redo"
+                  name={c('B3.Notes.EditorToolbar.Action').t`Redo`}
                   iconName="redo"
                   disabled={!canRedo}
                   onSelect={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
@@ -713,7 +715,7 @@ const ToolbarPlugin = () => {
               </>
             )}
             <ToolbarButton
-              name="Formatting options"
+              name={c('B3.Notes.EditorToolbar.Label').t`Formatting options`}
               onSelect={() => {
                 setIsTextStyleMenuOpen(!isTextStyleMenuOpen)
               }}
@@ -724,25 +726,25 @@ const ToolbarPlugin = () => {
               <Icon type="chevron-down" size="custom" className="ml-2 h-4 w-4 md:h-3.5 md:w-3.5" />
             </ToolbarButton>
             <ToolbarButton
-              name="Bold"
+              name={c('B3.Notes.EditorToolbar.Action').t`Bold`}
               iconName="bold"
               active={isBold}
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
             />
             <ToolbarButton
-              name="Italic"
+              name={c('B3.Notes.EditorToolbar.Action').t`Italic`}
               iconName="italic"
               active={isItalic}
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')}
             />
             <ToolbarButton
-              name="Underline"
+              name={c('B3.Notes.EditorToolbar.Action').t`Underline`}
               iconName="underline"
               active={isUnderline}
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')}
             />
             <ToolbarButton
-              name="Link"
+              name={c('B3.Notes.EditorToolbar.Action').t`Link`}
               iconName="link"
               active={!!linkNode}
               onSelect={() => {
@@ -750,13 +752,13 @@ const ToolbarPlugin = () => {
               }}
             />
             <ToolbarButton
-              name="Inline Code"
+              name={c('B3.Notes.EditorToolbar.Action').t`Inline Code`}
               iconName="code-tags"
               active={isCode}
               onSelect={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code')}
             />
             <ToolbarButton
-              name="Text style"
+              name={c('B3.Notes.EditorToolbar.Label').t`Text style`}
               onSelect={() => {
                 setIsTextFormatMenuOpen(!isTextFormatMenuOpen)
               }}
@@ -767,7 +769,7 @@ const ToolbarPlugin = () => {
               <Icon type="chevron-down" size="custom" className="ml-1 h-4 w-4 md:h-3.5 md:w-3.5" />
             </ToolbarButton>
             <ToolbarButton
-              name="Alignment"
+              name={c('B3.Notes.EditorToolbar.Label').t`Alignment`}
               onSelect={() => {
                 setIsAlignmentMenuOpen(!isAlignmentMenuOpen)
               }}
@@ -789,7 +791,7 @@ const ToolbarPlugin = () => {
             />
             {canShowAllItems && (
               <ToolbarButton
-                name="Insert"
+                name={c('B3.Notes.EditorToolbar.Label').t`Insert`}
                 onSelect={() => {
                   setIsInsertMenuOpen(!isInsertMenuOpen)
                 }}
@@ -803,10 +805,12 @@ const ToolbarPlugin = () => {
             <ToolbarButton
               name={
                 <>
-                  <div className="mb-1 font-semibold">Create new note from selection</div>
+                  <div className="mb-1 font-semibold">
+                    {c('B3.Notes.EditorToolbar.Info').t`Create new note from selection`}
+                  </div>
                   <div className="max-w-[35ch] text-xs">
-                    Creates a new note containing the current selection and replaces the selection with a link to the
-                    new note.
+                    {c('B3.Notes.EditorToolbar.Info')
+                      .t`Creates a new note containing the current selection and replaces the selection with a link to the new note.`}
                   </div>
                 </>
               }
@@ -820,7 +824,7 @@ const ToolbarPlugin = () => {
           {isMobile && (
             <button
               className="flex flex-shrink-0 items-center justify-center rounded border-l border-border px-3 py-3"
-              aria-label="Dismiss keyboard"
+              aria-label={c('B3.Notes.EditorToolbar.Action').t`Dismiss keyboard`}
               ref={dismissButtonRef}
             >
               <Icon type="keyboard-close" size="medium" />
@@ -829,7 +833,7 @@ const ToolbarPlugin = () => {
         </div>
       </div>
       <Popover
-        title="Table of contents"
+        title={c('B3.Notes.EditorToolbar.Label').t`Table of contents`}
         anchorElement={tocAnchorRef}
         open={isTOCOpen}
         togglePopover={() => setIsTOCOpen(!isTOCOpen)}
@@ -842,15 +846,17 @@ const ToolbarPlugin = () => {
         portal={false}
         documentElement={popoverDocumentElement}
       >
-        <div className="mb-1.5 mt-1 px-3 text-sm font-semibold uppercase text-text">Table of Contents</div>
+        <div className="mb-1.5 mt-1 px-3 text-sm font-semibold uppercase text-text">
+          {c('B3.Notes.EditorToolbar.Label').t`Table of Contents`}
+        </div>
         <TableOfContentsPlugin>
           {(tableOfContents) => {
             if (!tableOfContents.length) {
-              return <div className="py-2 text-center">No headings found</div>
+              return <div className="py-2 text-center">{c('B3.Notes.EditorToolbar.Label').t`No headings found`}</div>
             }
 
             return (
-              <Menu a11yLabel="Table of contents" className="!px-0">
+              <Menu a11yLabel={c('B3.Notes.EditorToolbar.Label').t`Table of contents`} className="!px-0">
                 {tableOfContents.map(([key, text, tag]) => {
                   const level = parseInt(tag.slice(1)) || 1
                   if (level > 3) {
@@ -894,7 +900,7 @@ const ToolbarPlugin = () => {
         </TableOfContentsPlugin>
       </Popover>
       <Popover
-        title="Text formatting options"
+        title={c('B3.Notes.EditorToolbar.Label').t`Text formatting options`}
         anchorElement={textFormatAnchorRef}
         open={isTextFormatMenuOpen}
         togglePopover={() => setIsTextFormatMenuOpen(!isTextFormatMenuOpen)}
@@ -907,36 +913,44 @@ const ToolbarPlugin = () => {
         portal={false}
         documentElement={popoverDocumentElement}
       >
-        <Menu a11yLabel="Text formatting options" className="!px-0" onClick={() => setIsTextFormatMenuOpen(false)}>
+        <Menu
+          a11yLabel={c('B3.Notes.EditorToolbar.Action').t`Text formatting options`}
+          className="!px-0"
+          onClick={() => setIsTextFormatMenuOpen(false)}
+        >
           <ToolbarMenuItem
-            name="Highlight"
+            name={c('B3.Notes.EditorToolbar.Action').t`Highlight`}
             iconName="draw"
             active={isHighlight}
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'highlight')}
           />
           <ToolbarMenuItem
-            name="Strikethrough"
+            name={c('B3.Notes.EditorToolbar.Action').t`Strikethrough`}
             iconName="strikethrough"
             active={isStrikethrough}
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')}
           />
           <ToolbarMenuItem
-            name="Subscript"
+            name={c('B3.Notes.EditorToolbar.Action').t`Subscript`}
             iconName="subscript"
             active={isSubscript}
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')}
           />
           <ToolbarMenuItem
-            name="Superscript"
+            name={c('B3.Notes.EditorToolbar.Action').t`Superscript`}
             iconName="superscript"
             active={isSuperscript}
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript')}
           />
-          <ToolbarMenuItem name="Clear formatting" iconName="trash" onClick={clearFormatting} />
+          <ToolbarMenuItem
+            name={c('B3.Notes.EditorToolbar.Label').t`Clear formatting`}
+            iconName="trash"
+            onClick={clearFormatting}
+          />
         </Menu>
       </Popover>
       <Popover
-        title="Block style"
+        title={c('B3.Notes.EditorToolbar.Label').t`Block style`}
         anchorElement={textStyleAnchorRef}
         open={isTextStyleMenuOpen}
         togglePopover={() => setIsTextStyleMenuOpen(!isTextStyleMenuOpen)}
@@ -949,59 +963,63 @@ const ToolbarPlugin = () => {
         portal={false}
         documentElement={popoverDocumentElement}
       >
-        <Menu a11yLabel="Block style" className="!px-0" onClick={() => setIsTextStyleMenuOpen(false)}>
+        <Menu
+          a11yLabel={c('B3.Notes.EditorToolbar.Label').t`Block style`}
+          className="!px-0"
+          onClick={() => setIsTextStyleMenuOpen(false)}
+        >
           <ToolbarMenuItem
-            name="Normal"
+            name={c('B3.Notes.EditorToolbar.Label').t`Normal`}
             iconName="paragraph"
             active={blockType === 'paragraph'}
             onClick={() => ParagraphBlock.onSelect(editor)}
           />
           <ToolbarMenuItem
-            name="Heading 1"
+            name={c('B3.Notes.EditorToolbar.Label').t`Heading 1`}
             iconName="h1"
             active={blockType === 'h1'}
             onClick={() => H1Block.onSelect(editor)}
           />
           <ToolbarMenuItem
-            name="Heading 2"
+            name={c('B3.Notes.EditorToolbar.Label').t`Heading 2`}
             iconName="h2"
             active={blockType === 'h2'}
             onClick={() => H2Block.onSelect(editor)}
           />
           <ToolbarMenuItem
-            name="Heading 3"
+            name={c('B3.Notes.EditorToolbar.Label').t`Heading 3`}
             iconName="h3"
             active={blockType === 'h3'}
             onClick={() => H3Block.onSelect(editor)}
           />
           <MenuItemSeparator />
           <ToolbarMenuItem
-            name="Bulleted List"
+            name={c('B3.Notes.EditorToolbar.Label').t`Bulleted List`}
             iconName="list-bulleted"
             active={blockType === 'bullet'}
             onClick={() => BulletedListBlock.onSelect(editor)}
           />
           <ToolbarMenuItem
-            name="Numbered List"
+            name={c('B3.Notes.EditorToolbar.Label').t`Numbered List`}
             iconName="list-numbered"
             active={blockType === 'number'}
             onClick={() => NumberedListBlock.onSelect(editor)}
           />
           <ToolbarMenuItem
-            name="Check List"
+            name={c('B3.Notes.EditorToolbar.Label').t`Check List`}
             iconName="list-check"
             active={blockType === 'check'}
             onClick={() => ChecklistBlock.onSelect(editor)}
           />
           <MenuItemSeparator />
           <ToolbarMenuItem
-            name="Quote"
+            name={c('B3.Notes.EditorToolbar.Label').t`Quote`}
             iconName="quote"
             active={blockType === 'quote'}
             onClick={() => QuoteBlock.onSelect(editor)}
           />
           <ToolbarMenuItem
-            name="Code Block"
+            name={c('B3.Notes.EditorToolbar.Label').t`Code Block`}
             iconName="code"
             active={blockType === 'code'}
             onClick={() => CodeBlock.onSelect(editor)}
@@ -1009,7 +1027,7 @@ const ToolbarPlugin = () => {
         </Menu>
       </Popover>
       <Popover
-        title="Alignment"
+        title={c('B3.Notes.EditorToolbar.Label').t`Alignment`}
         anchorElement={alignmentAnchorRef}
         open={isAlignmentMenuOpen}
         togglePopover={() => setIsAlignmentMenuOpen(!isAlignmentMenuOpen)}
@@ -1022,27 +1040,31 @@ const ToolbarPlugin = () => {
         portal={false}
         documentElement={popoverDocumentElement}
       >
-        <Menu a11yLabel="Alignment" className="!px-0" onClick={() => setIsAlignmentMenuOpen(false)}>
+        <Menu
+          a11yLabel={c('B3.Notes.EditorToolbar.Label').t`Alignment`}
+          className="!px-0"
+          onClick={() => setIsAlignmentMenuOpen(false)}
+        >
           <ToolbarMenuItem
-            name="Left align"
+            name={c('B3.Notes.EditorToolbar.Action').t`Left align`}
             iconName="align-left"
             active={elementFormat === 'left'}
             onClick={() => LeftAlignBlock.onSelect(editor)}
           />
           <ToolbarMenuItem
-            name="Center align"
+            name={c('B3.Notes.EditorToolbar.Action').t`Center align`}
             iconName="align-center"
             active={elementFormat === 'center'}
             onClick={() => CenterAlignBlock.onSelect(editor)}
           />
           <ToolbarMenuItem
-            name="Right align"
+            name={c('B3.Notes.EditorToolbar.Action').t`Right align`}
             iconName="align-right"
             active={elementFormat === 'right'}
             onClick={() => RightAlignBlock.onSelect(editor)}
           />
           <ToolbarMenuItem
-            name="Justify"
+            name={c('B3.Notes.EditorToolbar.Action').t`Justify`}
             iconName="align-justify"
             active={elementFormat === 'justify'}
             onClick={() => JustifyAlignBlock.onSelect(editor)}
@@ -1050,7 +1072,7 @@ const ToolbarPlugin = () => {
         </Menu>
       </Popover>
       <Popover
-        title="Insert"
+        title={c('B3.Notes.EditorToolbar.Label').t`Insert`}
         anchorElement={insertAnchorRef}
         open={isInsertMenuOpen}
         togglePopover={() => setIsInsertMenuOpen(!isInsertMenuOpen)}
@@ -1063,24 +1085,32 @@ const ToolbarPlugin = () => {
         portal={false}
         documentElement={popoverDocumentElement}
       >
-        <Menu a11yLabel="Insert" className="!px-0" onClick={() => setIsInsertMenuOpen(false)}>
+        <Menu
+          a11yLabel={c('B3.Notes.EditorToolbar.Label').t`Insert`}
+          className="!px-0"
+          onClick={() => setIsInsertMenuOpen(false)}
+        >
           <ToolbarMenuItem
-            name="Table"
+            name={c('B3.Notes.EditorToolbar.Action').t`Table`}
             iconName="table"
             onClick={() =>
-              showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />)
+              showModal(c('B3.Notes.EditorToolbar.Action').t`Insert Table`, (onClose) => (
+                <InsertTableDialog activeEditor={editor} onClose={onClose} />
+              ))
             }
           />
           <ToolbarMenuItem
-            name="Upload file"
+            name={c('B3.Notes.EditorToolbar.Action').t`Upload file`}
             iconName="file"
             onClick={() => activeEditor.dispatchCommand(OPEN_FILE_UPLOAD_MODAL_COMMAND, undefined)}
           />
           <ToolbarMenuItem
-            name="Image from URL"
+            name={c('B3.Notes.EditorToolbar.Action').t`Image from URL`}
             iconName="image"
             onClick={() =>
-              showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
+              showModal(c('B3.Notes.EditorToolbar.Label').t`Insert image from URL`, (onClose) => (
+                <InsertRemoteImageDialog onClose={onClose} />
+              ))
             }
           />
           <ToolbarMenuItem

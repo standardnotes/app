@@ -1,4 +1,5 @@
 import { classNames } from '@standardnotes/utils'
+import { c } from 'ttag'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { useRef, useState } from 'react'
 import Icon from '../Icon/Icon'
@@ -38,7 +39,7 @@ const CopyableCodeBlock = ({ code }: Props) => {
               () => {
                 addToast({
                   type: ToastType.Error,
-                  message: 'Failed to copy to clipboard',
+                  message: c('B2.NavSharedUI.Error').t`Failed to copy to clipboard`,
                 })
                 setDidCopy(false)
               },
@@ -53,7 +54,7 @@ const CopyableCodeBlock = ({ code }: Props) => {
             'absolute right-0 top-full min-w-max translate-x-2 translate-y-1 select-none rounded border border-border bg-default px-3 py-1.5 text-left md:peer-hover:block',
           )}
         >
-          {didCopy ? 'Copied!' : 'Copy example to clipboard'}
+          {didCopy ? c('B2.NavSharedUI.Status').t`Copied!` : c('B2.NavSharedUI.Action').t`Copy example to clipboard`}
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { ChallengePrompt } from '@standardnotes/services'
 import { RefObject, useState } from 'react'
+import { c } from 'ttag'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { InputValue } from './InputValue'
@@ -31,10 +32,10 @@ const BiometricsPrompt = ({ application, onValueChange, prompt, buttonRef }: Pro
         {authenticated ? (
           <span className="flex items-center justify-center gap-3">
             <Icon type="check-circle" />
-            Biometrics successful
+            {c('B5.SecuritySync.Challenge.Info').t`Biometrics successful`}
           </span>
         ) : (
-          'Tap to use biometrics'
+          c('B5.SecuritySync.Challenge.Action').t`Tap to use biometrics`
         )}
       </Button>
     </div>

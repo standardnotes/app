@@ -7,6 +7,7 @@ import { useCallback, useState } from 'react'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { VisuallyHidden } from '@ariakit/react'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
+import { c } from 'ttag'
 
 type Props = {
   contact: TrustedContactInterface
@@ -21,7 +22,11 @@ const ContactItem = ({ contact }: Props) => {
   const collaborationID = application.contacts.getCollaborationIDForTrustedContact(contact)
 
   const deleteContact = useCallback(async () => {
-    if (await application.alerts.confirm('Are you sure you want to delete this contact?')) {
+    if (
+      await application.alerts.confirm(
+        c('B6.Preferences.Vaults.Confirmation').t`Are you sure you want to delete this contact?`,
+      )
+    ) {
       const result = await application.contacts.deleteContact(contact)
       if (result.isFailed()) {
         application.alerts
@@ -55,16 +60,16 @@ const ContactItem = ({ contact }: Props) => {
           </span>
         </div>
         <div className="flex gap-3">
-          <StyledTooltip label="Edit contact">
+          <StyledTooltip label={c('B6.Preferences.Vaults.Action').t`Edit contact`}>
             <Button className="!px-2 py-2" onClick={() => setIsContactModalOpen(true)}>
-              <VisuallyHidden>Edit</VisuallyHidden>
+              <VisuallyHidden>{c('B6.Preferences.Vaults.Action').t`Edit`}</VisuallyHidden>
               <Icon type="pencil-filled" size="medium" />
             </Button>
           </StyledTooltip>
           {!contact.isMe && (
-            <StyledTooltip label="Delete contact">
+            <StyledTooltip label={c('B6.Preferences.Vaults.Action').t`Delete contact`}>
               <Button className="!px-2 py-2" onClick={deleteContact}>
-                <VisuallyHidden>Delete</VisuallyHidden>
+                <VisuallyHidden>{c('B6.Preferences.Vaults.Action').t`Delete`}</VisuallyHidden>
                 <Icon type="trash-filled" className="text-danger" size="medium" />
               </Button>
             </StyledTooltip>

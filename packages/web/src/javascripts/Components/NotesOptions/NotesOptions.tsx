@@ -31,6 +31,7 @@ import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import MenuSection from '../Menu/MenuSection'
 import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
+import { c } from 'ttag'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -146,6 +147,8 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     return null
   }
 
+  const trashedNotesCount = String(notesController.trashedNotesCount)
+
   return (
     <>
       {notes.length === 1 && (
@@ -153,14 +156,14 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           <MenuSection>
             <MenuItem onClick={openRevisionHistoryModal}>
               <Icon type="history" className={iconClass} />
-              Note history
+              {c('B4.Notes.History.Action').t`Note history`}
               {historyShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={historyShortcut} />}
             </MenuItem>
           </MenuSection>
           <MenuSection>
             <MenuItem onClick={toggleLineWidthModal} disabled={areSomeNotesInReadonlySharedVault}>
               <Icon type="line-width" className={iconClass} />
-              Editor width
+              {c('B4.Notes.EditorOptions.Action').t`Editor width`}
               {editorWidthShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={editorWidthShortcut} />}
             </MenuItem>
           </MenuSection>
@@ -175,7 +178,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="pencil-off" className={iconClass} />
-          Prevent editing
+          {c('B4.Notes.EditorOptions.Action').t`Prevent editing`}
         </MenuSwitchButtonItem>
         <MenuSwitchButtonItem
           checked={!hidePreviews}
@@ -185,7 +188,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="rich-text" className={iconClass} />
-          Show preview
+          {c('B4.Notes.EditorOptions.Action').t`Show preview`}
         </MenuSwitchButtonItem>
         <MenuSwitchButtonItem
           checked={protect}
@@ -195,7 +198,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="lock" className={iconClass} />
-          Password protect
+          {c('B4.Notes.EditorOptions.Label').t`Password protect`}
         </MenuSwitchButtonItem>
       </MenuSection>
       {notes.length === 1 && (
@@ -234,7 +237,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
           disabled={areSomeNotesInReadonlySharedVault}
         >
           <Icon type="star" className={iconClass} />
-          {starred ? 'Unstar' : 'Star'}
+          {starred ? c('B3.Notes.NoteActions.Action').t`Unstar` : c('B3.Notes.NoteActions.Action').t`Star`}
           {starShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={starShortcut} />}
         </MenuItem>
 
@@ -246,7 +249,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             disabled={areSomeNotesInReadonlySharedVault}
           >
             <Icon type="pin" className={iconClass} />
-            Pin to top
+            {c('B3.Notes.NoteActions.Action').t`Pin to top`}
             {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
           </MenuItem>
         )}
@@ -258,23 +261,23 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             disabled={areSomeNotesInReadonlySharedVault}
           >
             <Icon type="unpin" className={iconClass} />
-            Unpin
+            {c('B3.Notes.NoteActions.Action').t`Unpin`}
             {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
           </MenuItem>
         )}
         <MenuItem onClick={notesController.exportSelectedNotes}>
           <Icon type="download" className={iconClass} />
-          Export
+          {c('B4.Notes.EditorOptions.Action').t`Export`}
         </MenuItem>
         {application.platform === Platform.Android && (
           <MenuItem onClick={shareSelectedItems}>
             <Icon type="share" className={iconClass} />
-            Share
+            {c('B4.Notes.EditorOptions.Action').t`Share`}
           </MenuItem>
         )}
         <MenuItem onClick={duplicateSelectedNotes} disabled={areSomeNotesInReadonlySharedVault}>
           <Icon type="copy" className={iconClass} />
-          Duplicate
+          {c('B3.Notes.NoteActions.Action').t`Duplicate`}
         </MenuItem>
         {unarchived && (
           <MenuItem
@@ -285,7 +288,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             disabled={areSomeNotesInReadonlySharedVault}
           >
             <Icon type="archive" className={iconClassWarning} />
-            <span className="text-warning">Archive</span>
+            <span className="text-warning">{c('B3.Notes.NoteActions.Action').t`Archive`}</span>
           </MenuItem>
         )}
         {archived && (
@@ -297,7 +300,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
             disabled={areSomeNotesInReadonlySharedVault}
           >
             <Icon type="unarchive" className={iconClassWarning} />
-            <span className="text-warning">Unarchive</span>
+            <span className="text-warning">{c('B3.Notes.NoteActions.Action').t`Unarchive`}</span>
           </MenuItem>
         )}
         {notTrashed &&
@@ -310,7 +313,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               }}
             >
               <Icon type="close" className="mr-2 text-danger" />
-              <span className="text-danger">Delete permanently</span>
+              <span className="text-danger">{c('B3.Notes.NoteActions.Action').t`Delete permanently`}</span>
             </MenuItem>
           ) : (
             <MenuItem
@@ -321,7 +324,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               disabled={areSomeNotesInReadonlySharedVault}
             >
               <Icon type="trash" className={iconClassDanger} />
-              <span className="text-danger">Move to trash</span>
+              <span className="text-danger">{c('B3.Notes.NoteActions.Action').t`Move to trash`}</span>
             </MenuItem>
           ))}
         {trashed && (
@@ -334,7 +337,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               disabled={areSomeNotesInReadonlySharedVault}
             >
               <Icon type="restore" className={iconClassSuccess} />
-              <span className="text-success">Restore</span>
+              <span className="text-success">{c('B3.Notes.NoteActions.Action').t`Restore`}</span>
             </MenuItem>
             <MenuItem
               disabled={areSomeNotesInReadonlySharedVault}
@@ -344,7 +347,7 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               }}
             >
               <Icon type="close" className="mr-2 text-danger" />
-              <span className="text-danger">Delete permanently</span>
+              <span className="text-danger">{c('B3.Notes.NoteActions.Action').t`Delete permanently`}</span>
             </MenuItem>
             <MenuItem
               onClick={async () => {
@@ -356,8 +359,10 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
               <div className="flex items-start">
                 <Icon type="trash-sweep" className="mr-2 text-danger" />
                 <div className="flex-row">
-                  <div className="text-danger">Empty Trash</div>
-                  <div className="text-xs">{notesController.trashedNotesCount} notes in Trash</div>
+                  <div className="text-danger">{c('B3.Notes.NoteActions.Action').t`Empty Trash`}</div>
+                  <div className="text-xs">
+                    {c('B3.Notes.NoteActions.Info').jt`${trashedNotesCount} notes in Trash`}
+                  </div>
                 </div>
               </div>
             </MenuItem>

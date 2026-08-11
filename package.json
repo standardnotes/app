@@ -36,7 +36,8 @@
     "changelog:json": "node scripts/ChangelogToJson.js && git add .",
     "postversion": "./scripts/push-tags-one-by-one.sh",
     "workspace:list": " yarn lerna list -all",
-    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run upgrade:snjs"
+    "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run upgrade:snjs",
+    "i18n:extract": "yarn workspace @standardnotes/web i18n:extract && yarn workspace @standardnotes/desktop i18n:extract && yarn workspace @standardnotes/mobile i18n:extract && echo 'translations extracted'"
   },
   "resolutions": {
     "@types/styled-components/@types/react": "17.0.2",
@@ -70,6 +71,7 @@
     "npm-check-updates": "^16.10.17",
     "prettier": "3.0.0",
     "sass-loader": "^13.3.2",
+    "ttag-cli": "^1.11.2",
     "typescript": "5.8.3",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",

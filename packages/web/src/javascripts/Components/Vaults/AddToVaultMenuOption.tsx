@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useCallback, useRef, useState } from 'react'
+import { c } from 'ttag'
 import Icon from '@/Components/Icon/Icon'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
@@ -7,6 +8,8 @@ import { classNames, DecryptedItemInterface, VaultListingInterface } from '@stan
 import { useApplication } from '../ApplicationProvider'
 import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
   const application = useApplication()
@@ -57,7 +60,7 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
   const singleItemVault = items.length === 1 ? application.vaults.getItemVault(items[0]) : undefined
 
   return (
-    <Menu a11yLabel="Vault selection menu">
+    <Menu a11yLabel={c('B2.NavSharedUI.Label').t`Vault selection menu`}>
       {doSomeItemsBelongToVault && (
         <MenuItem
           onClick={() => {
@@ -65,10 +68,15 @@ const VaultMenu = observer(({ items }: { items: DecryptedItemInterface[] }) => {
           }}
         >
           <Icon type="close" className="mr-2 text-neutral" />
-          Move out of {singleItemVault ? singleItemVault.name : 'vaults'}
+          {singleItemVault
+            ? jtString(c('B2.NavSharedUI.Action').jt`Move out of ${singleItemVault.name}`)
+            : c('B2.NavSharedUI.Action').t`Move out of vaults`}
         </MenuItem>
       )}
-      {!vaults.length && <div className="flex flex-col items-center justify-center py-1">No vaults found</div>}
+      {!vaults.length && (
+        <div className="flex flex-col items-center justify-center py-1">{c('B2.NavSharedUI.Info')
+          .t`No vaults found`}</div>
+      )}
       {vaults.map((vault) => {
         if (singleItemVault) {
           return null
@@ -139,12 +147,12 @@ const AddToVaultMenuOption = ({
       >
         <div className="flex items-center">
           <Icon type="safe-square" className={iconClassName} />
-          Move to vault
+          {c('B2.NavSharedUI.Action').t`Move to vault`}
         </div>
         <Icon type="chevron-right" className="text-neutral" />
       </MenuItem>
       <Popover
-        title="Move to vault"
+        title={c('B2.NavSharedUI.Title').t`Move to vault`}
         togglePopover={toggleSubMenu}
         anchorElement={buttonRef}
         open={isSubMenuOpen}

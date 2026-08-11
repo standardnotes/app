@@ -12,6 +12,7 @@ import {
   NativeFeatureIdentifier,
 } from '@standardnotes/snjs'
 import { useCallback, useMemo, useState } from 'react'
+import { c } from 'ttag'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconName, PremiumFeatureIconClass } from '../Icon/PremiumFeatureIcon'
 import Menu from '../Menu/Menu'
@@ -71,7 +72,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
       }
 
       if (hasSelectedLockedNotes) {
-        void application.alerts.alert(STRING_EDIT_LOCKED_ATTEMPT)
+        void application.alerts.alert(STRING_EDIT_LOCKED_ATTEMPT())
         return
       }
 
@@ -138,7 +139,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
 
   return (
     <>
-      <Menu a11yLabel="Change note type">
+      <Menu a11yLabel={c('B4.Notes.EditingUI.Label').t`Change note type`}>
         {groupsWithItems.map((group) => (
           <MenuSection key={getGroupId(group)}>
             {group.items.map((item) => {
@@ -157,7 +158,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
                       {item.uiFeature.displayName}
                       {item.isLabs && (
                         <Pill className="px-1.5 py-0.5" style="success">
-                          Labs
+                          {c('B4.Notes.EditingUI.Label').t`Labs`}
                         </Pill>
                       )}
                     </div>
