@@ -2,6 +2,11 @@ name: Mobile Release Closed Beta
 
 on:
   workflow_dispatch:
+    inputs:
+      beta_label:
+        description: Feature label for this beta build (e.g. offline-sync)
+        required: true
+        type: string
 
 jobs:
   android:
@@ -21,7 +26,12 @@ jobs:
       - name: Export version for closed beta
         run: |
           BASE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)
-          echo "PACKAGE_VERSION=${BASE_VERSION}-beta.${{ github.run_number }}" >> $GITHUB_ENV
+          BETA_LABEL=$(echo "${{ inputs.beta_label }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed 's/[^a-z0-9-]//g')
+          if [ -z "$BETA_LABEL" ]; then
+            echo "beta_label must contain at least one alphanumeric character"
+            exit 1
+          fi
+          echo "PACKAGE_VERSION=${BASE_VERSION}-beta-${BETA_LABEL}" >> $GITHUB_ENV
       - name: Setup react-native kernel and increase watchers
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
       - name: Decode Production Android keystore
