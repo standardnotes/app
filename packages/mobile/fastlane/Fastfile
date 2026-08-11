@@ -115,6 +115,10 @@ platform :ios do
 end
 
 platform :android do
+  def android_package_name(variant)
+    variant == 'dev' ? 'com.standardnotes.dev' : 'com.standardnotes'
+  end
+
   def build_android(variant, versionCode)
     gradle(
       task: 'bundle',
@@ -132,6 +136,7 @@ platform :android do
     sh('yarn run android:bundle')
     build_android(variant, versionCode)
     upload_to_play_store(
+      package_name: android_package_name(variant),
       track: track,
       json_key_data: (ENV['GOOGLE_PLAY_JSON_KEY_DATA']).to_s,
       skip_upload_metadata: true,
