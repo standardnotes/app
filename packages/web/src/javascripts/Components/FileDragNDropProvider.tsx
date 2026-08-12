@@ -7,6 +7,7 @@ import { FileItem, SNNote } from '@standardnotes/snjs'
 import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext, memo } from 'react'
 import Portal from './Portal/Portal'
 import { ElementIds } from '@/Constants/ElementIDs'
+import { FeatureName, getFeatureNameLabel } from '@/Controllers/FeatureName'
 import { c } from 'ttag'
 
 type FileDragTargetCommonData = {
@@ -198,7 +199,7 @@ const FileDragNDropProvider = ({ application, children }: Props) => {
       resetState()
 
       if (!application.featuresController.entitledToFiles) {
-        premiumModal.activate('Files')
+        premiumModal.activate(getFeatureNameLabel(FeatureName.Files))
         return
       }
 

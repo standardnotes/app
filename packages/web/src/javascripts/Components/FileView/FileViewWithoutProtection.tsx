@@ -75,7 +75,8 @@ const FileViewWithoutProtection = ({ application, file }: FileViewProps) => {
 
     if (target) {
       addDragTarget(target, {
-        tooltipText: 'Drop your files to upload and link them to the current file',
+        tooltipText: c('B7.FilesSubscriptionHelp.Files.Info')
+          .t`Drop your files to upload and link them to the current file`,
         async callback(uploadedFile) {
           await application.linkingController.linkItems(uploadedFile, file)
         },
