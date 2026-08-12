@@ -216,12 +216,12 @@ const ImportModalFileItem = ({
                   className="mr-2 rounded border border-border bg-default px-2 py-1 text-sm"
                   defaultValue={file.service ? file.service : undefined}
                 >
-                  <option value="evernote">{c('B1.Account.ImportExport.ImportSource').t`Evernote`}</option>
-                  <option value="simplenote">{c('B1.Account.ImportExport.ImportSource').t`Simplenote`}</option>
-                  <option value="google-keep">{c('B1.Account.ImportExport.ImportSource').t`Google Keep`}</option>
-                  <option value="aegis">{c('B1.Account.ImportExport.ImportSource').t`Aegis`}</option>
+                  <option value="evernote">Evernote</option>
+                  <option value="simplenote">Simplenote</option>
+                  <option value="google-keep">Google Keep</option>
+                  <option value="aegis">Aegis</option>
                   <option value="plaintext">{c('B1.Account.ImportExport.ImportSource').t`Plaintext`}</option>
-                  <option value="html">{c('B1.Account.ImportExport.ImportSource').t`HTML`}</option>
+                  <option value="html">HTML</option>
                   <option value="super">{SuperName}</option>
                 </select>
                 <button
