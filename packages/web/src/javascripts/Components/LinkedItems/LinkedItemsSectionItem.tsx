@@ -7,6 +7,7 @@ import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { KeyboardKey } from '@standardnotes/ui-services'
+import { c } from 'ttag'
 import { useRef, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -98,7 +99,7 @@ export const LinkedItemsSectionItem = ({
         <Icon type="more" className="text-neutral" />
       </button>
       <Popover
-        title="Options"
+        title={c('B4.Notes.TagsLinkedItems.Label').t`Options`}
         open={isMenuOpen}
         togglePopover={toggleMenu}
         anchorElement={menuButtonRef}
@@ -113,7 +114,7 @@ export const LinkedItemsSectionItem = ({
           }}
         >
           <Icon type="link-off" className="mr-2 text-danger" />
-          Unlink
+          {c('B4.Notes.TagsLinkedItems.Action').t`Unlink`}
         </MenuItem>
         {item instanceof FileItem && (
           <LinkedFileMenuOptions
@@ -126,17 +127,20 @@ export const LinkedItemsSectionItem = ({
         <HorizontalSeparator classes="my-2" />
         <div className="mt-1 px-3 py-1 text-xs font-medium text-neutral">
           <div className="mb-1">
-            <span className="font-semibold">Created at:</span> {formatDateForContextMenu(item.created_at)}
+            <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Created at:`}</span>{' '}
+            {formatDateForContextMenu(item.created_at)}
           </div>
           <div className="mb-1">
-            <span className="font-semibold">Modified at:</span> {formatDateForContextMenu(item.userModifiedDate)}
+            <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Modified at:`}</span>{' '}
+            {formatDateForContextMenu(item.userModifiedDate)}
           </div>
           <div className="mb-1">
-            <span className="font-semibold">ID:</span> {item.uuid}
+            <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`ID:`}</span> {item.uuid}
           </div>
           {item instanceof FileItem && (
             <div>
-              <span className="font-semibold">Size:</span> {formatSizeToReadableString(item.decryptedSize)}
+              <span className="font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Size:`}</span>{' '}
+              {formatSizeToReadableString(item.decryptedSize)}
             </div>
           )}
         </div>

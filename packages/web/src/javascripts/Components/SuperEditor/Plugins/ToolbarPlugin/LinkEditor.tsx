@@ -22,6 +22,7 @@ import { useElementResize } from '@/Hooks/useElementRect'
 import { createPortal } from 'react-dom'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { getAdjustedStylesForNonPortalPopover } from '@/Components/Popover/Utils/getAdjustedStylesForNonPortal'
+import { c } from 'ttag'
 
 export const $isLinkTextNode = (
   node: ReturnType<typeof getSelectedNode>,
@@ -235,7 +236,7 @@ const LinkEditor = ({
           />
         </div>
         <div className="flex items-center justify-end gap-1.5">
-          <StyledTooltip showOnMobile showOnHover label="Cancel editing">
+          <StyledTooltip showOnMobile showOnHover label={c('B3.Notes.EditorToolbar.Action').t`Cancel editing`}>
             <Button
               onClick={() => {
                 setIsEditingLink(false)
@@ -243,12 +244,12 @@ const LinkEditor = ({
               }}
               onMouseDown={(event) => event.preventDefault()}
             >
-              Cancel
+              {c('B3.Notes.EditorToolbar.Action').t`Cancel`}
             </Button>
           </StyledTooltip>
-          <StyledTooltip showOnMobile showOnHover label="Save link">
+          <StyledTooltip showOnMobile showOnHover label={c('B3.Notes.EditorToolbar.Action').t`Save link`}>
             <Button primary onClick={handleSubmission} onMouseDown={(event) => event.preventDefault()}>
-              Apply
+              {c('B3.Notes.EditorToolbar.Action').t`Apply`}
             </Button>
           </StyledTooltip>
         </div>

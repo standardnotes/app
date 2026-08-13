@@ -1,4 +1,5 @@
 import { Environment, Platform, UuidGenerator } from '@standardnotes/snjs'
+import { ComponentKeyboardEventInit } from './ComponentKeyboardEventInit'
 import { eventMatchesKeyAndModifiers } from './eventMatchesKeyAndModifiers'
 import { KeyboardCommand } from './KeyboardCommands'
 import { KeyboardKeyEvent } from './KeyboardKeyEvent'
@@ -99,6 +100,12 @@ export class KeyboardService {
 
   public handleComponentKeyUp = (modifier: KeyboardModifier | undefined): void => {
     this.removeActiveModifier(modifier)
+  }
+
+  public handleComponentKeyboardEvent = (eventInit: ComponentKeyboardEventInit, keyEvent: KeyboardKeyEvent): void => {
+    const event = new KeyboardEvent(keyEvent === KeyboardKeyEvent.Down ? 'keydown' : 'keyup', eventInit)
+    this.updateAllModifiersFromEvent(event)
+    this.handleKeyboardEvent(event, keyEvent)
   }
 
   private handleKeyDown = (event: KeyboardEvent): void => {

@@ -6,6 +6,9 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { HomeServerServiceInterface } from '@standardnotes/snjs'
 import { useEffect, useState } from 'react'
+import { c } from 'ttag'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 type Props = {
   status: Status | undefined
@@ -42,22 +45,33 @@ const StatusIndicator = ({ status, className, homeServerService }: Props) => {
       const signedInUser = application.sessions.getUser()
       if (signedInUser) {
         const isUsingHomeServer = await application.isUsingHomeServer()
+        const email = signedInUser.email
         if (isUsingHomeServer) {
-          setSignInStatusMessage(`You are currently signed into your home server under ${signedInUser.email}`)
+          setSignInStatusMessage(
+            jtString(
+              c('B6.Preferences.HomeServer.Status').jt`You are currently signed into your home server under ${email}`,
+            ),
+          )
           setSignInStatusClassName('bg-success text-success-contrast')
           setSignInStatusIcon('check')
         } else {
+          const url = await homeServerService.getHomeServerUrl()
           setSignInStatusMessage(
-            `You are not currently signed into your home server. To use your home server, sign out of ${
-              signedInUser.email
-            }, then sign in or register using ${await homeServerService.getHomeServerUrl()}.`,
+            jtString(
+              c('B6.Preferences.HomeServer.Info')
+                .jt`You are not currently signed into your home server. To use your home server, sign out of ${email}, then sign in or register using ${url}.`,
+            ),
           )
           setSignInStatusClassName('bg-warning text-warning-contrast')
           setSignInStatusIcon('warning')
         }
       } else {
+        const url = await homeServerService.getHomeServerUrl()
         setSignInStatusMessage(
-          `You are not currently signed into your home server. To use your home server, sign in or register using ${await homeServerService.getHomeServerUrl()}`,
+          jtString(
+            c('B6.Preferences.HomeServer.Info')
+              .jt`You are not currently signed into your home server. To use your home server, sign in or register using ${url}`,
+          ),
         )
         setSignInStatusClassName('bg-warning text-warning-contrast')
         setSignInStatusIcon('warning')

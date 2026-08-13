@@ -1,4 +1,5 @@
 import { doesItemMatchSearchQuery } from '@/Utils/Items/Search/doesItemMatchSearchQuery'
+import { c } from 'ttag'
 import {
   Combobox,
   ComboboxItem,
@@ -68,7 +69,7 @@ const ItemSelectionDropdown = ({
 
   return (
     <div>
-      <VisuallyHidden>Select an item</VisuallyHidden>
+      <VisuallyHidden>{c('B2.NavSharedUI.AriaLabel').t`Select an item`}</VisuallyHidden>
       <Combobox
         store={combobox}
         placeholder={placeholder}
@@ -99,7 +100,7 @@ const ItemSelectionDropdown = ({
             </ComboboxItem>
           ))
         ) : (
-          <div className="px-2">No results found</div>
+          <div className="px-2">{c('B2.NavSharedUI.Info').t`No results found`}</div>
         )}
       </ComboboxPopover>
     </div>

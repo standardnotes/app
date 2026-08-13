@@ -2,6 +2,7 @@ import { getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
 import { ContentType, naturalSort, NoteType, SNTag } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import { PredicateKeypath, PredicateKeypathTypes } from './PredicateKeypaths'
+import { c } from 'ttag'
 
 type Props = {
   keypath: PredicateKeypath
@@ -73,8 +74,8 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
         setValue(event.target.value)
       }}
     >
-      <option value="true">True</option>
-      <option value="false">False</option>
+      <option value="true">{c('B4.Notes.TagsLinkedItems.Label').t`True`}</option>
+      <option value="false">{c('B4.Notes.TagsLinkedItems.Label').t`False`}</option>
     </select>
   ) : type === 'number' ? (
     <input

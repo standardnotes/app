@@ -7,7 +7,7 @@ import {
   IsGlobalSpellcheckEnabled,
   IsMobileDevice,
   IsNativeIOS,
-  IsNativeAndroid,
+  IsAndroid,
   IsNativeMobileWeb,
   KeyboardService,
   PluginsService,
@@ -78,8 +78,8 @@ export class WebDependencies extends DependencyContainer {
       return new IsNativeIOS(application.environment, application.platform)
     })
 
-    this.bind(Web_TYPES.IsNativeAndroid, () => {
-      return new IsNativeAndroid(application.environment, application.platform)
+    this.bind(Web_TYPES.IsAndroid, () => {
+      return new IsAndroid(application.platform)
     })
 
     this.bind(Web_TYPES.OpenSubscriptionDashboard, () => {
@@ -336,7 +336,7 @@ export class WebDependencies extends DependencyContainer {
         application.mobileDevice,
         this.get<LoadPurchaseFlowUrl>(Web_TYPES.LoadPurchaseFlowUrl),
         this.get<IsNativeIOS>(Web_TYPES.IsNativeIOS),
-        this.get<IsNativeAndroid>(Web_TYPES.IsNativeAndroid),
+        this.get<IsAndroid>(Web_TYPES.IsAndroid),
         application.events,
       )
     })

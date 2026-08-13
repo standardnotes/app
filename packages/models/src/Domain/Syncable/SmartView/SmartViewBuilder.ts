@@ -11,6 +11,7 @@ import { PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { NotesAndFilesDisplayOptions } from '../../Runtime/Display'
 import { FileItem } from '../File'
 import { ContentType } from '@standardnotes/domain-core'
+import { c } from 'ttag'
 
 export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView[] {
   const notes = new SmartView(
@@ -19,7 +20,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: 'Notes',
+        title: c('B4.Notes.TagsLinkedItems.Label').t`Notes`,
         predicate: allNotesPredicate(options).toJson(),
       }),
     }),
@@ -31,7 +32,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: 'Files',
+        title: c('B4.Notes.TagsLinkedItems.Label').t`Files`,
         predicate: filesPredicate(options).toJson(),
       }),
     }),
@@ -43,7 +44,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: 'Archived',
+        title: c('B4.Notes.TagsLinkedItems.Action').t`Archived`,
         predicate: archivedNotesPredicate(options).toJson(),
       }),
     }),
@@ -55,7 +56,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: 'Trash',
+        title: c('B4.Notes.TagsLinkedItems.Action').t`Trash`,
         predicate: trashedNotesPredicate(options).toJson(),
       }),
     }),
@@ -67,7 +68,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: 'Untagged',
+        title: c('B4.Notes.TagsLinkedItems.Label').t`Untagged`,
         predicate: untaggedNotesPredicate(options).toJson(),
       }),
     }),
@@ -79,7 +80,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: 'Starred',
+        title: c('B4.Notes.TagsLinkedItems.Action').t`Starred`,
         predicate: starredNotesPredicate(options).toJson(),
       }),
     }),
@@ -91,7 +92,7 @@ export function BuildSmartViews(options: NotesAndFilesDisplayOptions): SmartView
       content_type: ContentType.TYPES.SmartView,
       ...PayloadTimestampDefaults(),
       content: FillItemContent<SmartViewContent>({
-        title: 'Conflicts',
+        title: c('B4.Notes.TagsLinkedItems.Label').t`Conflicts`,
         predicate: conflictsPredicate(options).toJson(),
       }),
     }),

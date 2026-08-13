@@ -5,6 +5,7 @@ import { DropdownItem } from '../Dropdown/DropdownItem'
 import PreferencesMenuItem from './PreferencesComponents/MenuItem'
 import { PreferencesSessionController } from './Controller/PreferencesSessionController'
 import { PreferencePaneId } from '@standardnotes/services'
+import { c } from 'ttag'
 
 type Props = {
   menu: PreferencesSessionController
@@ -43,7 +44,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
       <div className="md:hidden">
         <Dropdown
           items={dropdownMenuItems}
-          label="Preferences Menu"
+          label={c('B6.Preferences.Other.Label').t`Preferences Menu`}
           value={selectedPaneId}
           onChange={(paneId) => {
             selectPane(paneId as PreferencePaneId)

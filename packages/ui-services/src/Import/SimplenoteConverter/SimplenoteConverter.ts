@@ -1,4 +1,5 @@
 import { Converter, InsertNoteFn } from '../Converter'
+import { c } from 'ttag'
 
 type SimplenoteItem = {
   creationDate: string
@@ -56,7 +57,7 @@ export class SimplenoteConverter implements Converter {
     const notes = await this.parse(content, createNote, convertMarkdownToSuper)
 
     if (!notes) {
-      throw new Error('Could not parse notes')
+      throw new Error(c('B1.Account.ImportExport.Error').t`Could not parse notes`)
     }
 
     return {

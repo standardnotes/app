@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { getBase64FromBlob } from '@/Utils'
 import { FileItem, classNames } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
+import { c } from 'ttag'
 import Button from '../Button/Button'
 import { createObjectURLWithRef } from './CreateObjectURLWithRef'
 import ImagePreview from './ImagePreview'
@@ -70,10 +71,10 @@ const PreviewComponent: FunctionComponent<Props> = ({
     return (
       <div className="flex flex-grow flex-col items-center justify-center">
         <div className="max-w-[30ch] text-center text-base font-bold">
-          This file can only be previewed in an external app
+          {c('B7.FilesSubscriptionHelp.Files.Info').t`This file can only be previewed in an external app`}
         </div>
         <Button className="mt-3" primary onClick={openNativeFilePreview}>
-          Open file preview
+          {c('B7.FilesSubscriptionHelp.Files.Action').t`Open file preview`}
         </Button>
       </div>
     )

@@ -1,0 +1,19 @@
+name: Desktop Manual Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform to build
+        required: true
+        type: choice
+        options:
+          - mac
+          - linux
+          - windows
+
+jobs:
+  build:
+    uses: ./.github/workflows/desktop.build.reuse.yml
+    with:
+      platform: ${{ inputs.platform }}

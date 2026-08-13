@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.58.3",
+  "version": "1.58.4",
   "publishConfig": {
     "access": "public"
   },
@@ -25,7 +25,8 @@
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:^",
     "@standardnotes/utils": "workspace:^",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "ttag": "^1.8.12"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",

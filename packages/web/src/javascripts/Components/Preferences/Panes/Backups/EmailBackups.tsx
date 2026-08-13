@@ -10,6 +10,7 @@ import { EmailBackupFrequency, SettingName } from '@standardnotes/snjs'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Spinner from '@/Components/Spinner/Spinner'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -86,22 +87,23 @@ const EmailBackups = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Email backups</Title>
+        <Title>{c('B6.Preferences.Backups.Title').t`Email backups`}</Title>
         {!isDesktopApplication() && (
           <Text className="mb-3">
-            Receive daily encrypted email backups of all your notes directly in your email inbox.
+            {c('B6.Preferences.Backups.Info')
+              .t`Receive daily encrypted email backups of all your notes directly in your email inbox.`}
           </Text>
         )}
 
         <div className={`${!hasAccount ? 'pointer-events-none cursor-default opacity-50' : ''}`}>
-          <Subtitle>Frequency</Subtitle>
-          <Text>How often to receive backups.</Text>
+          <Subtitle>{c('B6.Preferences.Backups.Subtitle').t`Frequency`}</Subtitle>
+          <Text>{c('B6.Preferences.Backups.Info').t`How often to receive backups.`}</Text>
           <div className="mt-2">
             {isLoading ? (
               <Spinner className="h-5 w-5 flex-shrink-0" />
             ) : (
               <Dropdown
-                label="Select email frequency"
+                label={c('B6.Preferences.Backups.Action').t`Select email frequency`}
                 items={emailFrequencyOptions}
                 value={emailFrequency}
                 onChange={handleEmailFrequencyChange}

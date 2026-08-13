@@ -16,6 +16,8 @@ import Switch from '@/Components/Switch/Switch'
 import AccordionItem from '@/Components/Shared/AccordionItem'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
+import { SuperName, jtString } from '@standardnotes/features'
+import { c } from 'ttag'
 
 const HomeServerSettings = () => {
   const SERVER_SYNTHEIC_CHANGE_DELAY = 1500
@@ -46,17 +48,22 @@ const HomeServerSettings = () => {
     const result = await homeServerService.getHomeServerStatus()
     setStatus({
       state: result.status === 'on' ? 'online' : result.errorMessage ? 'error' : 'offline',
-      message: result.status === 'on' ? 'Online' : result.errorMessage ? 'Offline' : 'Starting...',
+      message:
+        result.status === 'on'
+          ? c('B6.Preferences.HomeServer.Status').t`Online`
+          : result.errorMessage
+          ? c('B6.Preferences.HomeServer.Status').t`Offline`
+          : c('B6.Preferences.HomeServer.Status').t`Starting...`,
       description:
         result.status === 'on' ? (
           <>
-            Accessible on local network at{' '}
+            {c('B6.Preferences.HomeServer.Info').t`Accessible on local network at`}{' '}
             <a href={result.url} className="font-bold text-info" target="_blank">
               {result.url}
             </a>
           </>
         ) : (
-          result.errorMessage ?? 'Your home server is offline.'
+          result.errorMessage ?? c('B6.Preferences.HomeServer.Info').t`Your home server is offline.`
         ),
     })
   }, [homeServerService, setStatus])
@@ -76,7 +83,7 @@ const HomeServerSettings = () => {
     }
 
     if (homeServerEnabled) {
-      setStatus({ state: 'restarting', message: 'Shutting down...' })
+      setStatus({ state: 'restarting', message: c('B6.Preferences.HomeServer.Status').t`Shutting down...` })
 
       const result = await homeServerService.disableHomeServer()
 
@@ -92,7 +99,7 @@ const HomeServerSettings = () => {
 
       await refreshStatus()
     } else {
-      setStatus({ state: 'restarting', message: 'Starting...' })
+      setStatus({ state: 'restarting', message: c('B6.Preferences.HomeServer.Status').t`Starting...` })
 
       await homeServerService.enableHomeServer()
 
@@ -158,7 +165,10 @@ const HomeServerSettings = () => {
   const handleHomeServerConfigurationChange = useCallback(
     async (changedServerConfiguration: HomeServerEnvironmentConfiguration) => {
       try {
-        setStatus({ state: 'restarting', message: 'Applying changes and restarting...' })
+        setStatus({
+          state: 'restarting',
+          message: c('B6.Preferences.HomeServer.Status').t`Applying changes and restarting...`,
+        })
 
         setHomeServerConfiguration(changedServerConfiguration)
 
@@ -192,9 +202,11 @@ const HomeServerSettings = () => {
           const oldLocation = await homeServerService.getHomeServerDataLocation()
           const newLocationOrError = await homeServerService.changeHomeServerDataLocation()
           if (newLocationOrError.isFailed()) {
+            const locationError = newLocationOrError.getError()
             setStatus({
               state: 'error',
-              message: `${newLocationOrError.getError()}. Restoring to initial location in a moment...`,
+              message: c('B6.Preferences.HomeServer.Error')
+                .t`${locationError}. Restoring to initial location in a moment...`,
             })
 
             await sleep(2 * SERVER_SYNTHEIC_CHANGE_DELAY)
@@ -206,7 +218,10 @@ const HomeServerSettings = () => {
           location = newLocationOrError.getValue()
         }
 
-        setStatus({ state: 'restarting', message: 'Applying changes and restarting...' })
+        setStatus({
+          state: 'restarting',
+          message: c('B6.Preferences.HomeServer.Status').t`Applying changes and restarting...`,
+        })
 
         await sleep(SERVER_SYNTHEIC_CHANGE_DELAY)
 
@@ -295,13 +310,14 @@ const HomeServerSettings = () => {
     <>
       <div className="flex items-center justify-between">
         <div className="flex items-start">
-          <Title>Home Server</Title>
-          <Pill style={'success'}>Labs</Pill>
+          <Title>{c('B6.Preferences.HomeServer.Title').t`Home Server`}</Title>
+          <Pill style={'success'}>{c('B6.Preferences.HomeServer.Label').t`Labs`}</Pill>
         </div>
       </div>
       <div className="flex items-center justify-between">
         <div className="mr-10 flex flex-col">
-          <Subtitle>Sync your data on a private cloud running on your home computer.</Subtitle>
+          <Subtitle>{c('B6.Preferences.HomeServer.Subtitle')
+            .t`Sync your data on a private cloud running on your home computer.`}</Subtitle>
         </div>
         <Switch disabled={status?.state === 'restarting'} onChange={toggleHomeServer} checked={homeServerEnabled} />
       </div>
@@ -313,18 +329,23 @@ const HomeServerSettings = () => {
             <>
               <HorizontalSeparator classes="my-4" />
               <>
-                <Text className="mb-3">Home server is enabled. All data is stored at:</Text>
+                <Text className="mb-3">{c('B6.Preferences.HomeServer.Info')
+                  .t`Home server is enabled. All data is stored at:`}</Text>
 
                 <EncryptionStatusItem
-                  status={homeServerDataLocation || 'Not Set'}
+                  status={homeServerDataLocation || c('B6.Preferences.HomeServer.Status').t`Not Set`}
                   icon={<Icon type="attachment-file" className="min-h-5 min-w-5" />}
                   checkmark={false}
                 />
 
                 <div className="mt-2.5 flex flex-row">
-                  <Button label="Open Location" className={'mr-3 text-xs'} onClick={openHomeServerDataLocation} />
                   <Button
-                    label="Change Location"
+                    label={c('B6.Preferences.HomeServer.Action').t`Open Location`}
+                    className={'mr-3 text-xs'}
+                    onClick={openHomeServerDataLocation}
+                  />
+                  <Button
+                    label={c('B6.Preferences.HomeServer.Action').t`Change Location`}
                     className={'mr-3 text-xs'}
                     onClick={() => changeHomeServerDataLocation()}
                   />
@@ -333,7 +354,7 @@ const HomeServerSettings = () => {
               <HorizontalSeparator classes="my-4" />
               <PreferencesGroup>
                 <PreferencesSegment>
-                  <AccordionItem title={'Logs'} onClick={handleShowLogs}>
+                  <AccordionItem title={c('B6.Preferences.HomeServer.Title').t`Logs`} onClick={handleShowLogs}>
                     <div className="flex flex-row items-center">
                       <div className="flex max-w-full flex-grow flex-col">
                         <textarea
@@ -371,11 +392,14 @@ const HomeServerSettings = () => {
                         className={classNames('-ml-1 mr-1 h-5 w-5', PremiumFeatureIconClass)}
                         type={PremiumFeatureIconName}
                       />
-                      <h1 className="sk-h3 m-0 text-sm font-semibold">Activate Premium Features</h1>
+                      <h1 className="sk-h3 m-0 text-sm font-semibold">{c('B6.Preferences.HomeServer.Title')
+                        .t`Activate Premium Features`}</h1>
                     </div>
                     <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
-                      Enter your purchased offline subscription code to activate all the features offered by your home
-                      server, likes files support and Super notes.
+                      {jtString(
+                        c('B6.Preferences.HomeServer.Info')
+                          .jt`Enter your purchased offline subscription code to activate all the features offered by your home server, likes files support and ${SuperName} notes.`,
+                      )}
                     </p>
                     <Button
                       primary
@@ -385,7 +409,9 @@ const HomeServerSettings = () => {
                         setShowOfflineSubscriptionActivation(!showOfflineSubscriptionActivation)
                       }}
                     >
-                      {showOfflineSubscriptionActivation ? 'Close' : 'Activate Premium Features'}
+                      {showOfflineSubscriptionActivation
+                        ? c('B6.Preferences.HomeServer.Action').t`Close`
+                        : c('B6.Preferences.HomeServer.Action').t`Activate Premium Features`}
                     </Button>
 
                     {showOfflineSubscriptionActivation && (

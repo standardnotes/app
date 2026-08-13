@@ -6,6 +6,7 @@ import ConfirmCustomPlugin from './ConfirmCustomPlugin'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { ThirdPartyFeatureDescription } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 type Props = {
   className?: string
@@ -47,7 +48,7 @@ const InstallCustomPlugin: FunctionComponent<Props> = ({ className = '' }) => {
           <PreferencesSegment>
             <div>
               <DecoratedInput
-                placeholder={'Enter Plugin URL'}
+                placeholder={c('B6.Preferences.Other.Label').t`Enter Plugin URL`}
                 value={customUrl}
                 onChange={(value) => {
                   setCustomUrl(value)
@@ -59,7 +60,7 @@ const InstallCustomPlugin: FunctionComponent<Props> = ({ className = '' }) => {
               disabled={customUrl.length === 0}
               className="mt-4 min-w-20"
               primary
-              label="Install"
+              label={c('B6.Preferences.Other.Action').t`Install`}
               onClick={() => submitPluginUrl(customUrl)}
             />
           </PreferencesSegment>

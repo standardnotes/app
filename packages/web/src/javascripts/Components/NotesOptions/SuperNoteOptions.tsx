@@ -6,6 +6,7 @@ import MenuSection from '../Menu/MenuSection'
 import { SUPER_SHOW_MARKDOWN_PREVIEW, SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useMemo, useCallback } from 'react'
 import { useKeyboardService } from '../KeyboardServiceProvider'
+import { c } from 'ttag'
 
 type Props = {
   closeMenu: () => void
@@ -34,12 +35,12 @@ const SuperNoteOptions = ({ closeMenu }: Props) => {
     <MenuSection>
       <MenuItem onClick={findInNote}>
         <Icon type="search" className={iconClass} />
-        Find in note
+        {c('B4.Notes.EditorOptions.Action').t`Find in note`}
         {findShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={findShortcut} />}
       </MenuItem>
       <MenuItem onClick={enableSuperMarkdownPreview}>
         <Icon type="markdown" className={iconClass} />
-        Show Markdown
+        {c('B4.Notes.EditorOptions.Action').t`Show Markdown`}
         {markdownShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={markdownShortcut} />}
       </MenuItem>
     </MenuSection>

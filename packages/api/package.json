@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/api",
-  "version": "1.26.97",
+  "version": "1.26.98",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -40,6 +40,7 @@
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/utils": "workspace:*",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "ttag": "^1.8.12"
   }
 }

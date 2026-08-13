@@ -1,4 +1,5 @@
 import { $insertList, $isListItemNode, INSERT_CHECK_LIST_COMMAND, ListNode } from '@lexical/list'
+import { c } from 'ttag'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { calculateZoomLevel, isHTMLElement, mergeRegister } from '@lexical/utils'
 import {
@@ -160,7 +161,7 @@ export function CheckListPlugin(): null {
         modifiers: [primaryModifier],
         key: 'Enter',
         category: 'Super notes',
-        description: 'Toggle checklist item',
+        description: c('B3.Notes.EditorToolbar.Action').t`Toggle checklist item`,
       }),
     )
   }, [application.keyboardService, application.platform, editor])

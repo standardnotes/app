@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/encryption",
-  "version": "1.21.113",
+  "version": "1.21.114",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -34,6 +34,7 @@
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:*",
     "@standardnotes/utils": "workspace:*",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "ttag": "^1.8.12"
   }
 }

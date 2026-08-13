@@ -3,9 +3,10 @@ import { $getSelection, $isRangeSelection, LexicalEditor } from 'lexical'
 import { $createHeadingNode } from '@lexical/rich-text'
 import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
 import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
+import { c } from 'ttag'
 
 export const H1Block = {
-  name: 'Heading 1',
+  name: c('B3.Notes.EditorToolbar.Label').t`Heading 1`,
   iconName: 'h1',
   keywords: ['heading', 'header', 'h1'],
   onSelect: (editor: LexicalEditor) =>
@@ -26,7 +27,7 @@ export function GetH1BlockOption(editor: LexicalEditor) {
 }
 
 export const H2Block = {
-  name: 'Heading 2',
+  name: c('B3.Notes.EditorToolbar.Label').t`Heading 2`,
   iconName: 'h2',
   keywords: ['heading', 'header', 'h2'],
   onSelect: (editor: LexicalEditor) =>
@@ -47,7 +48,7 @@ export function GetH2BlockOption(editor: LexicalEditor) {
 }
 
 export const H3Block = {
-  name: 'Heading 3',
+  name: c('B3.Notes.EditorToolbar.Label').t`Heading 3`,
   iconName: 'h3',
   keywords: ['heading', 'header', 'h3'],
   onSelect: (editor: LexicalEditor) =>

@@ -8,6 +8,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
 import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
+import { c } from 'ttag'
 import { classNames, compareArrayReferences, pluralize } from '@standardnotes/utils'
 import {
   ApplicationEvent,
@@ -394,8 +395,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       case ApplicationEvent.LocalDatabaseWriteError:
         this.controller.showErrorSyncStatus({
           type: 'error',
-          message: 'Offline Saving Issue',
-          description: 'Changes not saved',
+          message: c('B4.Notes.EditingUI.Error').t`Offline Saving Issue`,
+          description: c('B4.Notes.EditingUI.Error').t`Changes not saved`,
         })
         break
       case ApplicationEvent.UnprotectedSessionBegan: {
@@ -595,16 +596,16 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   async deleteNote(permanently: boolean) {
     if (this.controller.isTemplateNote) {
-      this.application.alerts.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT).catch(console.error)
+      this.application.alerts.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT()).catch(console.error)
       return
     }
 
     if (this.note.locked) {
-      this.application.alerts.alert(STRING_DELETE_LOCKED_ATTEMPT).catch(console.error)
+      this.application.alerts.alert(STRING_DELETE_LOCKED_ATTEMPT()).catch(console.error)
       return
     }
 
-    const title = this.note.title.length ? `'${this.note.title}'` : 'this note'
+    const title = this.note.title.length ? `'${this.note.title}'` : c('B3.Notes.NoteActions.Label').t`this note`
     const text = StringDeleteNote(title, permanently)
     if (
       await confirmDialog({
@@ -835,7 +836,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     const shouldShowConflictsButton = this.state.conflictedNotes.length > 0 && !this.state.readonly
 
     return (
-      <div aria-label="Note" className="section editor sn-component h-full md:max-h-full" ref={this.noteViewElementRef}>
+      <div
+        aria-label={c('B4.Notes.EditingUI.Label').t`Note`}
+        className="section editor sn-component h-full md:max-h-full"
+        ref={this.noteViewElementRef}
+      >
         {this.note && (
           <NoteViewFileDropTarget
             note={this.note}
@@ -848,7 +853,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         {this.state.readonly && (
           <div className="bg-warning-faded flex items-center px-3.5 py-2 text-sm text-accessory-tint-3">
             <Icon type="pencil-off" className="mr-3" />
-            You don't have permission to edit this note
+            {c('B4.Notes.EditingUI.Label').t`You don't have permission to edit this note`}
           </div>
         )}
 
@@ -906,7 +911,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 >
                   <Icon type="merge" size="small" className="mr-2" />
                   {this.state.conflictedNotes.length}{' '}
-                  {pluralize(this.state.conflictedNotes.length, 'conflict', 'conflicts')}
+                  {pluralize(
+                    this.state.conflictedNotes.length,
+                    c('B3.Notes.NoteActions.Label').t`conflict`,
+                    c('B3.Notes.NoteActions.Label').t`conflicts`,
+                  )}
                 </Button>
               )}
               <div className="note-view-options-buttons flex items-center gap-3">

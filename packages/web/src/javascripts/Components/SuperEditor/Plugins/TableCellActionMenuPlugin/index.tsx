@@ -47,6 +47,7 @@ import RoundIconButton from '@/Components/Button/RoundIconButton'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
+import { c } from 'ttag'
 
 function computeSelectionCount(selection: TableSelection): {
   columns: number
@@ -377,9 +378,14 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
   let mergeCellButton: null | JSX.Element = null
   if (cellMerge) {
     if (canMergeCells) {
-      mergeCellButton = <MenuItem onClick={mergeTableCellsAtSelection}>Merge cells</MenuItem>
+      mergeCellButton = (
+        <MenuItem onClick={mergeTableCellsAtSelection}>{c('B3.Notes.EditorToolbar.Action').t`Merge cells`}</MenuItem>
+      )
     } else if (canUnmergeCell) {
-      mergeCellButton = <MenuItem onClick={unmergeTableCellsAtSelection}>Unmerge cells</MenuItem>
+      mergeCellButton = (
+        <MenuItem onClick={unmergeTableCellsAtSelection}>{c('B3.Notes.EditorToolbar.Action')
+          .t`Unmerge cells`}</MenuItem>
+      )
     }
   }
 
@@ -387,34 +393,49 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
   const isCurrentCellColumnHeader =
     (tableCellNode.__headerState & TableCellHeaderStates.COLUMN) === TableCellHeaderStates.COLUMN
 
+  const insertRowsAboveLabel =
+    selectionCounts.rows === 1
+      ? c('B3.Notes.EditorToolbar.Action').t`Insert row above`
+      : c('B3.Notes.EditorToolbar.Label').jt`Insert ${selectionCounts.rows} rows above`
+  const insertRowsBelowLabel =
+    selectionCounts.rows === 1
+      ? c('B3.Notes.EditorToolbar.Action').t`Insert row below`
+      : c('B3.Notes.EditorToolbar.Label').jt`Insert ${selectionCounts.rows} rows below`
+  const insertColumnsLeftLabel =
+    selectionCounts.columns === 1
+      ? c('B3.Notes.EditorToolbar.Label').t`Insert column left`
+      : c('B3.Notes.EditorToolbar.Action').jt`Insert ${selectionCounts.columns} columns left`
+  const insertColumnsRightLabel =
+    selectionCounts.columns === 1
+      ? c('B3.Notes.EditorToolbar.Action').t`Insert column right`
+      : c('B3.Notes.EditorToolbar.Action').jt`Insert ${selectionCounts.columns} columns right`
+
   return (
-    <Menu className="dropdown !px-0" ref={dropDownRef} a11yLabel="Table actions menu">
+    <Menu
+      className="dropdown !px-0"
+      ref={dropDownRef}
+      a11yLabel={c('B3.Notes.EditorToolbar.Label').t`Table actions menu`}
+    >
       {mergeCellButton}
       {!!mergeCellButton && <MenuItemSeparator />}
-      <MenuItem onClick={() => insertTableRowAtSelection(false)}>
-        Insert {selectionCounts.rows === 1 ? 'row' : `${selectionCounts.rows} rows`} above
-      </MenuItem>
-      <MenuItem onClick={() => insertTableRowAtSelection(true)}>
-        Insert {selectionCounts.rows === 1 ? 'row' : `${selectionCounts.rows} rows`} below
-      </MenuItem>
+      <MenuItem onClick={() => insertTableRowAtSelection(false)}>{insertRowsAboveLabel}</MenuItem>
+      <MenuItem onClick={() => insertTableRowAtSelection(true)}>{insertRowsBelowLabel}</MenuItem>
       <MenuItemSeparator />
-      <MenuItem onClick={() => insertTableColumnAtSelection(false)}>
-        Insert {selectionCounts.columns === 1 ? 'column' : `${selectionCounts.columns} columns`} left
-      </MenuItem>
-      <MenuItem onClick={() => insertTableColumnAtSelection(true)}>
-        Insert {selectionCounts.columns === 1 ? 'column' : `${selectionCounts.columns} columns`} right
-      </MenuItem>
+      <MenuItem onClick={() => insertTableColumnAtSelection(false)}>{insertColumnsLeftLabel}</MenuItem>
+      <MenuItem onClick={() => insertTableColumnAtSelection(true)}>{insertColumnsRightLabel}</MenuItem>
       <MenuItemSeparator />
-      <MenuItem onClick={deleteTableColumnAtSelection}>Delete column</MenuItem>
-      <MenuItem onClick={deleteTableRowAtSelection}>Delete row</MenuItem>
-      <MenuItem onClick={deleteTableAtSelection}>Delete table</MenuItem>
+      <MenuItem onClick={deleteTableColumnAtSelection}>{c('B3.Notes.EditorToolbar.Action').t`Delete column`}</MenuItem>
+      <MenuItem onClick={deleteTableRowAtSelection}>{c('B3.Notes.EditorToolbar.Action').t`Delete row`}</MenuItem>
+      <MenuItem onClick={deleteTableAtSelection}>{c('B3.Notes.EditorToolbar.Action').t`Delete table`}</MenuItem>
       <MenuItemSeparator />
       <MenuItem
         onClick={() => {
           toggleTableRowIsHeader(isCurrentCellRowHeader ? TableCellHeaderStates.NO_STATUS : TableCellHeaderStates.ROW)
         }}
       >
-        {isCurrentCellRowHeader ? 'Remove' : 'Add'} row header
+        {isCurrentCellRowHeader
+          ? c('B3.Notes.EditorToolbar.Action').t`Remove row header`
+          : c('B3.Notes.EditorToolbar.Action').t`Add row header`}
       </MenuItem>
       <MenuItem
         onClick={() => {
@@ -423,7 +444,9 @@ function TableActionMenu({ onClose, tableCellNode: _tableCellNode, cellMerge }: 
           )
         }}
       >
-        {isCurrentCellColumnHeader ? 'Remove' : 'Add'} column header
+        {isCurrentCellColumnHeader
+          ? c('B3.Notes.EditorToolbar.Action').t`Remove column header`
+          : c('B3.Notes.EditorToolbar.Action').t`Add column header`}
       </MenuItem>
     </Menu>
   )
@@ -556,7 +579,7 @@ function TableCellActionMenuContainer({
       {tableCellNode != null && (
         <>
           <RoundIconButton
-            label="Open table actions menu"
+            label={c('B3.Notes.EditorToolbar.Label').t`Open table actions menu`}
             icon="chevron-down"
             iconProps={{
               size: 'small',
@@ -570,7 +593,7 @@ function TableCellActionMenuContainer({
           />
           <Popover
             open={isMenuOpen}
-            title="Table actions"
+            title={c('B3.Notes.EditorToolbar.Label').t`Table actions`}
             className="py-1"
             anchorElement={menuRootRef}
             disableMobileFullscreenTakeover

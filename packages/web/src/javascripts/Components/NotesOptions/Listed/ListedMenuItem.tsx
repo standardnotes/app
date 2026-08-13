@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { Action, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useState } from 'react'
+import { c } from 'ttag'
 import Spinner from '@/Components/Spinner/Spinner'
 import { ListedMenuGroup } from './ListedMenuGroup'
 
@@ -46,9 +47,7 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
           <div className="font-semibold">{action.label}</div>
           {action.access_type && (
             <div className="mt-0.5 text-xs text-passive-0">
-              {'Uses '}
-              <strong>{action.access_type}</strong>
-              {' access to this note.'}
+              {c('B4.Notes.EditingUI.Info').jt`Uses ${action.access_type} access to this note.`}
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { ButtonType, InvitationStatus } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 import { SubtitleLight, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
@@ -24,15 +25,18 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
   const handleCancel = async (invitationUuid: string) => {
     if (lockContinue) {
-      application.alerts.alert('Cancelation already in progress.').catch(console.error)
+      application.alerts
+        .alert(c('B6.Preferences.Subscription.Error').t`Cancelation already in progress.`)
+        .catch(console.error)
 
       return
     }
 
     const confirmed = await application.alerts.confirm(
-      'All uploaded files of this user will be removed. This action cannot be undone.',
-      'Are you sure you want to cancel this invitation?',
-      'Cancel Invitation',
+      c('B6.Preferences.Subscription.Confirmation')
+        .t`All uploaded files of this user will be removed. This action cannot be undone.`,
+      c('B6.Preferences.Subscription.Confirmation').t`Are you sure you want to cancel this invitation?`,
+      c('B6.Preferences.Subscription.Confirmation').t`Cancel Invitation`,
       ButtonType.Danger,
     )
     if (!confirmed) {
@@ -47,25 +51,36 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
     if (!success) {
       application.alerts
-        .alert('Could not cancel invitation. Please try again or contact support if the issue persists.')
+        .alert(
+          c('B6.Preferences.Subscription.Error')
+            .t`Could not cancel invitation. Please try again or contact support if the issue persists.`,
+        )
         .catch(console.error)
     }
   }
 
   if (usedInvitationsCount === 0) {
-    return <Text className="mb-3 mt-1">Make your first subscription invite below.</Text>
+    return (
+      <Text className="mb-3 mt-1">{c('B6.Preferences.Subscription.Info')
+        .t`Make your first subscription invite below.`}</Text>
+    )
   }
 
   return (
     <div>
-      <SubtitleLight className="mb-2 text-info">Active Invites</SubtitleLight>
+      <SubtitleLight className="mb-2 text-info">{c('B6.Preferences.Subscription.Info')
+        .t`Active Invites`}</SubtitleLight>
       {activeSubscriptions?.map((invitation) => (
         <div key={invitation.uuid} className="mb-4 mt-1">
           <Text>
             {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
           </Text>
           {invitation.status !== InvitationStatus.Canceled && (
-            <Button className="mt-2 min-w-20" label="Cancel" onClick={() => handleCancel(invitation.uuid)} />
+            <Button
+              className="mt-2 min-w-20"
+              label={c('B6.Preferences.Subscription.Label').t`Cancel`}
+              onClick={() => handleCancel(invitation.uuid)}
+            />
           )}
         </div>
       ))}

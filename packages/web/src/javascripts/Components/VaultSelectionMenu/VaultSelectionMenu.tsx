@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
+import { c } from 'ttag'
 import Menu from '../Menu/Menu'
 import RadioButtonGroup from '@/Components/RadioButtonGroup/RadioButtonGroup'
 import ManyVaultSelectionMenu from './ManyVaultSelectionMenu'
@@ -28,11 +29,11 @@ const VaultSelectionMenu = () => {
   }
 
   return (
-    <Menu a11yLabel="Vault selection menu">
+    <Menu a11yLabel={c('B2.NavSharedUI.Label').t`Vault selection menu`}>
       <RadioButtonGroup
         items={[
-          { label: 'Multiple', value: 'many' },
-          { label: 'One', value: 'single' },
+          { label: c('B2.NavSharedUI.Label').t`Multiple`, value: 'many' },
+          { label: c('B2.NavSharedUI.Label').t`One`, value: 'single' },
         ]}
         value={mode}
         onChange={(value) => changeSelectionMode(value)}
@@ -47,7 +48,7 @@ const VaultSelectionMenu = () => {
           application.preferencesController.openPreferences('vaults')
         }}
       >
-        Open vault settings
+        {c('B2.NavSharedUI.Action').t`Open vault settings`}
       </MenuItem>
     </Menu>
   )

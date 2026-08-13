@@ -2,6 +2,7 @@ import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import { SmartView } from '@standardnotes/snjs'
 import { useCallback } from 'react'
+import { c } from 'ttag'
 
 type Props = {
   view: SmartView
@@ -17,10 +18,10 @@ const SmartViewItem = ({ view, onEdit, onDelete }: Props) => {
       <Icon type={view.iconString} size="custom" className="h-5.5 w-5.5 flex-shrink-0" />
       <span className="mr-auto overflow-hidden text-ellipsis text-sm">{view.title}</span>
       <Button small onClick={onEdit}>
-        Edit
+        {c('B6.Preferences.General.Action').t`Edit`}
       </Button>
       <Button small onClick={onClickDelete}>
-        Delete
+        {c('B6.Preferences.General.Action').t`Delete`}
       </Button>
     </div>
   )

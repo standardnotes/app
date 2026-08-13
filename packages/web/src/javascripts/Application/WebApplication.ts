@@ -37,7 +37,7 @@ import {
   IsGlobalSpellcheckEnabled,
   IsMobileDevice,
   IsNativeIOS,
-  IsNativeAndroid,
+  IsAndroid,
   IsNativeMobileWeb,
   KeyboardService,
   PluginsServiceInterface,
@@ -54,6 +54,7 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { VisibilityObserver } from './VisibilityObserver'
 import { DevMode } from './DevMode'
 import { ToastType, addToast, dismissToast } from '@standardnotes/toast'
+import { c } from 'ttag'
 import { WebDependencies } from './Dependencies/WebDependencies'
 import { Web_TYPES } from './Dependencies/Types'
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
@@ -258,12 +259,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.deps.get<IsNativeIOS>(Web_TYPES.IsNativeIOS).execute().getValue()
   }
 
-  isNativeAndroid(): boolean {
-    return this.deps.get<IsNativeAndroid>(Web_TYPES.IsNativeAndroid).execute().getValue()
+  isAndroid(): boolean {
+    return this.deps.get<IsAndroid>(Web_TYPES.IsAndroid).execute().getValue()
   }
 
   canShowPurchaseFlow(): boolean {
-    return !this.isNativeAndroid()
+    return !this.isAndroid()
   }
 
   get isMobileDevice(): boolean {
@@ -271,7 +272,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   get hideOutboundSubscriptionLinks() {
-    return this.isNativeIOS() || this.isNativeAndroid()
+    return this.isNativeIOS() || this.isAndroid()
   }
 
   get mobileDevice(): MobileDeviceInterface {
@@ -410,7 +411,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     addToast({
       type: ToastType.Success,
-      message: 'Successfully created note from shared text',
+      message: c('B8.MobileDesktopShared.Mobile.Info').t`Successfully created note from shared text`,
     })
   }
 
@@ -423,12 +424,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (isImagePath) {
       const fetchToastUuid = addToast({
         type: ToastType.Loading,
-        message: 'Fetching image from link...',
+        message: c('B8.MobileDesktopShared.Mobile.Info').t`Fetching image from link...`,
       })
       try {
         const imgResponse = await fetch(link)
         if (!imgResponse.ok) {
-          throw new Error(`${imgResponse.status}: Could not fetch image`)
+          throw new Error(c('B4.Notes.EditingUI.Error').t`${imgResponse.status}: Could not fetch image`)
         }
         const imgBlob = await imgResponse.blob()
         const file = new File([imgBlob], finalPath, {

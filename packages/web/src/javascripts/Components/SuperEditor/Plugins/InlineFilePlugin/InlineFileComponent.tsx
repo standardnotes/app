@@ -12,6 +12,7 @@ import Spinner from '@/Components/Spinner/Spinner'
 import usePreference from '@/Hooks/usePreference'
 import { getCSSValueFromAlignment, ImageAlignmentOptions } from '@/Components/FilePreview/ImageAlignmentOptions'
 import { getOverflows } from '@/Components/Popover/Utils/Collisions'
+import { c } from 'ttag'
 
 type Props = {
   fileName: string | undefined
@@ -138,12 +139,12 @@ const InlineFileComponent = ({ className, src, mimeType, fileName, format, setFo
         {isSaving ? (
           <>
             <Spinner className="h-4 w-4" />
-            Saving...
+            {c('B4.Notes.EditingUI.Status').t`Saving...`}
           </>
         ) : (
           <>
             <Icon type="download" />
-            Save to Files
+            {c('B4.Notes.EditingUI.Action').t`Save to Files`}
           </>
         )}
       </button>
