@@ -4,12 +4,37 @@ import { $getNodeByKey, $getSelection, $isRangeSelection, $isRootOrShadowRoot, N
 import { useCallback, useEffect, useState } from 'react'
 import { $isCodeNode, CODE_LANGUAGE_MAP, CODE_LANGUAGE_FRIENDLY_NAME_MAP, normalizeCodeLang } from '@lexical/code'
 import Dropdown from '@/Components/Dropdown/Dropdown'
+import { c } from 'ttag'
+
+const CODE_LANGUAGE_LABEL_GETTERS: Partial<Record<string, () => string>> = {
+  c: () => 'C',
+  clike: () => 'C-like',
+  cpp: () => 'C++',
+  css: () => 'CSS',
+  html: () => 'HTML',
+  java: () => 'Java',
+  js: () => 'JavaScript',
+  markdown: () => 'Markdown',
+  objc: () => 'Objective-C',
+  plain: () => c('B3.Notes.EditorToolbar.Label').t`Plain Text`,
+  powershell: () => 'PowerShell',
+  py: () => 'Python',
+  rust: () => 'Rust',
+  sql: () => 'SQL',
+  swift: () => 'Swift',
+  typescript: () => 'TypeScript',
+  xml: () => 'XML',
+}
+
+function getCodeLanguageLabel(lang: string, fallback: string): string {
+  return CODE_LANGUAGE_LABEL_GETTERS[lang]?.() ?? fallback
+}
 
 function getCodeLanguageOptions(): [string, string][] {
   const options: [string, string][] = []
 
   for (const [lang, friendlyName] of Object.entries(CODE_LANGUAGE_FRIENDLY_NAME_MAP)) {
-    options.push([lang, friendlyName])
+    options.push([lang, getCodeLanguageLabel(lang, friendlyName)])
   }
 
   return options
@@ -95,7 +120,7 @@ const CodeOptionsPlugin = () => {
     <>
       <div className="absolute right-6 top-13 rounded border border-border bg-default p-2">
         <Dropdown
-          label="Change code block language"
+          label={c('B3.Notes.EditorToolbar.Label').t`Change code block language`}
           items={CODE_LANGUAGE_OPTIONS.map(([value, label]) => ({
             label,
             value,

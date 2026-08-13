@@ -1,4 +1,5 @@
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
+import { c } from 'ttag'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useCallback, KeyboardEventHandler, useRef } from 'react'
 import SearchOptions from '@/Components/SearchOptions/SearchOptions'
@@ -52,7 +53,7 @@ const SearchBar = ({ itemListController, searchOptionsController, hideOptions = 
           container: 'px-1',
           input: 'text-base placeholder:text-passive-0 lg:text-sm',
         }}
-        placeholder={'Search...'}
+        placeholder={c('B2.NavSharedUI.Placeholder').t`Search...`}
         value={noteFilterText}
         ref={searchInputRef}
         onChange={onNoteFilterTextChange}

@@ -6,6 +6,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/Constants/Strings'
 import { ButtonType, ClientDisplayableError } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -40,7 +41,9 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
 
     if (homeServerEnabled) {
       if (!homeServerIsRunning) {
-        await application.alerts.alert('Please start your home server before activating offline features.')
+        await application.alerts.alert(
+          c('B6.Preferences.HomeServer.Error').t`Please start your home server before activating offline features.`,
+        )
 
         return
       }
@@ -96,11 +99,11 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
   const handleRemoveClick = async () => {
     application.alerts
       .confirm(
-        STRING_REMOVE_OFFLINE_KEY_CONFIRMATION,
-        'Remove offline key?',
-        'Remove Offline Key',
+        STRING_REMOVE_OFFLINE_KEY_CONFIRMATION(),
+        c('B6.Preferences.General.Confirmation').t`Remove offline key?`,
+        c('B6.Preferences.General.Action').t`Remove Offline Key`,
         ButtonType.Danger,
-        'Cancel',
+        c('B6.Preferences.General.Confirmation').t`Cancel`,
       )
       .then(async (shouldRemove: boolean) => {
         if (shouldRemove) {
@@ -121,14 +124,17 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
       <div className="flex items-center justify-between">
         <div className="mt-3 flex w-full flex-col">
           <div className="flex flex-row items-center justify-between">
-            <Subtitle>{!hasUserPreviouslyStoredCode && 'Activate'} Offline Subscription</Subtitle>
+            <Subtitle>
+              {!hasUserPreviouslyStoredCode && c('B6.Preferences.General.Subtitle').t`Activate`}{' '}
+              {c('B6.Preferences.General.Label').t`Offline Subscription`}
+            </Subtitle>
             <a
               href="https://standardnotes.com/help/59/can-i-use-standard-notes-totally-offline"
               target="_blank"
               rel="noreferrer"
               className="text-info"
             >
-              Learn more
+              {c('B6.Preferences.General.Action').t`Learn more`}
             </a>
           </div>
           <form onSubmit={handleSubscriptionCodeSubmit}>
@@ -136,7 +142,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
               {!hasUserPreviouslyStoredCode && (
                 <DecoratedInput
                   onChange={(code) => setActivationCode(code)}
-                  placeholder={'Offline Subscription Code'}
+                  placeholder={c('B6.Preferences.General.Label').t`Offline Subscription Code`}
                   value={activationCode}
                   disabled={isSuccessfullyActivated}
                   className={{ container: 'mb-3' }}
@@ -145,14 +151,14 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
             </div>
             {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
               <div className={'info mb-3 mt-3'}>
-                Your offline subscription code has been successfully {isSuccessfullyActivated ? 'activated' : 'removed'}
-                .
+                {c('B6.Preferences.General.Info').t`Your offline subscription code has been successfully`}{' '}
+                {isSuccessfullyActivated ? 'activated' : 'removed'}.
               </div>
             )}
             {hasUserPreviouslyStoredCode && (
               <Button
                 colorStyle="danger"
-                label="Remove offline key"
+                label={c('B6.Preferences.General.Action').t`Remove offline key`}
                 onClick={() => {
                   handleRemoveClick().catch(console.error)
                 }}
@@ -161,7 +167,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
             {!hasUserPreviouslyStoredCode && !isSuccessfullyActivated && (
               <Button
                 hidden={activationCode.length === 0}
-                label={'Submit'}
+                label={c('B6.Preferences.General.Action').t`Submit`}
                 primary
                 disabled={activationCode === ''}
                 onClick={(event) => handleSubscriptionCodeSubmit(event)}

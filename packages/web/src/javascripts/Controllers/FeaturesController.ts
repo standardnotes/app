@@ -1,5 +1,5 @@
 import { FeaturesClientInterface, InternalEventHandlerInterface } from '@standardnotes/services'
-import { FeatureName } from './FeatureName'
+import { FeatureName, getFeatureNameLabel } from './FeatureName'
 import { PremiumFeatureModalType } from '@/Components/PremiumFeaturesModal/PremiumFeatureModalType'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
@@ -93,7 +93,11 @@ export class FeaturesController extends AbstractViewController implements Intern
   }
 
   public async showPremiumAlert(featureName?: FeatureName | string): Promise<void> {
-    this.premiumAlertFeatureName = featureName
+    if (featureName === FeatureName.Files || featureName === FeatureName.Super) {
+      this.premiumAlertFeatureName = getFeatureNameLabel(featureName)
+    } else {
+      this.premiumAlertFeatureName = featureName
+    }
     this.premiumAlertType = PremiumFeatureModalType.UpgradePrompt
 
     return when(() => this.premiumAlertType === undefined)

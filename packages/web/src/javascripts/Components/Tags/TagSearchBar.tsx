@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { classNames } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 type Props = {
   navigationController: NavigationController
@@ -63,7 +64,7 @@ const TagSearchBar = ({ navigationController }: Props) => {
           container: '!bg-default px-1',
           input: 'text-base placeholder:text-passive-0 lg:text-sm',
         }}
-        placeholder={'Search tags...'}
+        placeholder={c('B4.Notes.TagsLinkedItems.Label').t`Search tags...`}
         value={searchQuery}
         onChange={setSearchQuery}
         left={[<Icon type="search" className="mr-1 h-4.5 w-4.5 flex-shrink-0 text-passive-1" />]}

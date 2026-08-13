@@ -8,10 +8,12 @@ import {
 import { LoggingDomain, log } from '@/Logging'
 import { AppleIAPProductId, InternalEventBusInterface } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
+import { jtString, SupportEmail } from '@standardnotes/features'
+import { c } from 'ttag'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { PurchaseFlowPane } from './PurchaseFlowPane'
 import { LoadPurchaseFlowUrl } from '@/Application/UseCase/LoadPurchaseFlowUrl'
-import { IsNativeIOS } from '@standardnotes/ui-services'
+import { IsNativeIOS, IsAndroid } from '@standardnotes/ui-services'
 
 export class PurchaseFlowController extends AbstractViewController {
   isOpen = false
@@ -25,6 +27,7 @@ export class PurchaseFlowController extends AbstractViewController {
     private mobileDevice: MobileDeviceInterface | undefined,
     private _loadPurchaseFlowUrl: LoadPurchaseFlowUrl,
     private _isNativeIOS: IsNativeIOS,
+    private _isAndroid: IsAndroid,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -44,6 +47,10 @@ export class PurchaseFlowController extends AbstractViewController {
   }
 
   openPurchaseFlow = async (plan = AppleIAPProductId.ProPlanYearly) => {
+    if (this._isAndroid.execute().getValue()) {
+      return
+    }
+
     const user = this.sessions.getUser()
     if (!user) {
       this.isOpen = true
@@ -58,6 +65,10 @@ export class PurchaseFlowController extends AbstractViewController {
   }
 
   openPurchaseWebpage = async () => {
+    if (this._isAndroid.execute().getValue()) {
+      return
+    }
+
     const result = await this._loadPurchaseFlowUrl.execute()
     if (result.isFailed()) {
       console.error(result.getError())
@@ -71,13 +82,18 @@ export class PurchaseFlowController extends AbstractViewController {
     log(LoggingDomain.Purchasing, 'BeginIosIapPurchaseFlow result', result)
 
     if (!result) {
-      void this.alerts.alert('Your purchase was canceled or failed. Please try again.')
+      void this.alerts.alert(
+        c('B7.FilesSubscriptionHelp.Subscription.Error').t`Your purchase was canceled or failed. Please try again.`,
+      )
       return
     }
 
     const showGenericError = () => {
       void this.alerts.alert(
-        'There was an error confirming your purchase. Please contact support at help@standardnotes.com.',
+        jtString(
+          c('B7.FilesSubscriptionHelp.Subscription.Error')
+            .jt`There was an error confirming your purchase. Please contact support at ${SupportEmail}.`,
+        ),
       )
     }
 
@@ -97,8 +113,9 @@ export class PurchaseFlowController extends AbstractViewController {
 
     if (confirmResult) {
       void this.alerts.alert(
-        'Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.',
-        'Your purchase was successful!',
+        c('B7.FilesSubscriptionHelp.Subscription.Info')
+          .t`Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.`,
+        c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your purchase was successful!`,
       )
     } else {
       showGenericError()

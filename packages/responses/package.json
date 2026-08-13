@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/responses",
-  "version": "1.13.56",
+  "version": "1.13.57",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -35,6 +35,7 @@
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
     "@standardnotes/features": "workspace:*",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "ttag": "^1.8.12"
   }
 }

@@ -143,6 +143,71 @@ test("doesn't download anything when two install/uninstall tasks are queued", as
   t.is(downloadFileCallCount, 1)
 })
 
+test('does not uninstall paths outside extensions from poisoned mapping', async (t) => {
+  await packageManager.syncComponents([fakeComponent()])
+  await new Promise((resolve) => setTimeout(resolve, 200))
+
+  const escapeDir = path.join(tmpDir.path, 'escape')
+  const markerPath = path.join(escapeDir, 'marker.txt')
+  await ensureDirectoryExists(escapeDir)
+  await fs.writeFile(markerPath, 'keep')
+
+  const poisonedLocations = [path.join('Extensions', '..', 'escape'), path.join('..', 'escape')]
+
+  for (const location of poisonedLocations) {
+    await fs.writeFile(
+      path.join(contentDir, 'mapping.json'),
+      JSON.stringify({
+        [uuid]: { location, version },
+      }),
+    )
+
+    await packageManager.syncComponents([fakeComponent({ deleted: true })])
+    await new Promise((resolve) => setTimeout(resolve, 200))
+
+    t.true(await fs.stat(markerPath).then(() => true), `marker preserved for location ${location}`)
+    t.deepEqual(await readJSONFile(path.join(contentDir, 'mapping.json')), {
+      [uuid]: { location, version },
+    })
+  }
+
+  t.true(await fs.stat(path.join(contentDir, identifier)).then(() => true))
+})
+
+test('rejects path traversal in package identifier', async (t) => {
+  const traversalIdentifiers = ['../escape', 'foo/../../escape', '..', '.', 'foo/bar']
+  const extensionsParent = path.dirname(contentDir)
+
+  for (const badIdentifier of traversalIdentifiers) {
+    const before = await fs.readdir(contentDir)
+    const parentBefore = await fs.readdir(extensionsParent)
+
+    downloadFileCallCount = 0
+    await packageManager.syncComponents([
+      {
+        ...fakeComponent({ modifier: badIdentifier }),
+        content: {
+          ...fakeComponent().content,
+          name: `Bad ${badIdentifier}`,
+          package_info: {
+            ...fakeComponent().content.package_info,
+            identifier: badIdentifier,
+          },
+        },
+      },
+    ])
+    await new Promise((resolve) => setTimeout(resolve, 200))
+
+    t.is(downloadFileCallCount, 0, `should not download for identifier ${badIdentifier}`)
+    t.deepEqual(await fs.readdir(contentDir), before, `extensions dir unchanged for ${badIdentifier}`)
+    t.deepEqual(
+      await fs.readdir(extensionsParent),
+      parentBefore,
+      `no directory escape for ${badIdentifier}`,
+    )
+  }
+})
+
 test("Relies on download_url's version field to store the version number", async (t) => {
   await packageManager.syncComponents([fakeComponent()])
   await new Promise((resolve) => setTimeout(resolve, 200))

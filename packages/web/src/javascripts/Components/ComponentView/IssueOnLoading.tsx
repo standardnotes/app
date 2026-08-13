@@ -1,5 +1,8 @@
 import { FunctionComponent } from 'react'
+import { c } from 'ttag'
 import Button from '@/Components/Button/Button'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 type Props = {
   componentName: string
@@ -12,12 +15,14 @@ const IssueOnLoading: FunctionComponent<Props> = ({ componentName, reloadIframe 
       <div className="flex min-h-[1.625rem] w-full select-none items-center justify-between border-b border-border bg-contrast px-2 py-2.5 text-text">
         <div className={'left'}>
           <div className={'sk-app-bar-item'}>
-            <div className={'sk-label.warning'}>There was an issue loading {componentName}.</div>
+            <div className={'sk-label.warning'}>
+              {jtString(c('B2.NavSharedUI.Error').jt`There was an issue loading ${componentName}.`)}
+            </div>
           </div>
         </div>
         <div className={'right'}>
           <Button primary onClick={reloadIframe} small>
-            Reload
+            {c('B2.NavSharedUI.Action').t`Reload`}
           </Button>
         </div>
       </div>

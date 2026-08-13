@@ -18,6 +18,7 @@ import {
 import { PluginsServiceInterface } from './PluginsServiceInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { isString } from '@standardnotes/utils'
+import { c } from 'ttag'
 
 const PluginsUrl = 'https://raw.githubusercontent.com/standardnotes/plugins/main/cdn/dist/packages.json'
 
@@ -98,14 +99,18 @@ export class PluginsService implements PluginsServiceInterface {
 
     const nativeFeature = FindNativeFeature(plugin.identifier)
     if (nativeFeature && !nativeFeature.deprecated) {
-      void this.alerts.alert('Unable to install plugin due to a conflict with a native feature.')
+      void this.alerts.alert(
+        c('B2.NavSharedUI.Error').t`Unable to install plugin due to a conflict with a native feature.`,
+      )
       return
     }
 
     if (plugin.url) {
       for (const nativeFeature of GetFeatures()) {
         if (plugin.url.includes(nativeFeature.identifier) && !nativeFeature.deprecated) {
-          void this.alerts.alert('Unable to install plugin due to a conflict with a native feature.')
+          void this.alerts.alert(
+            c('B2.NavSharedUI.Error').t`Unable to install plugin due to a conflict with a native feature.`,
+          )
           return
         }
       }
@@ -162,14 +167,18 @@ export class PluginsService implements PluginsServiceInterface {
   ): Promise<ComponentInterface | undefined> {
     const nativeFeature = FindNativeFeature(plugin.identifier)
     if (nativeFeature) {
-      await this.alerts.alert('Unable to install external plugin due to a conflict with a native feature.')
+      await this.alerts.alert(
+        c('B2.NavSharedUI.Error').t`Unable to install external plugin due to a conflict with a native feature.`,
+      )
       return
     }
 
     if (plugin.url) {
       for (const nativeFeature of GetFeatures()) {
         if (plugin.url.includes(nativeFeature.identifier)) {
-          await this.alerts.alert('Unable to install external plugin due to a conflict with a native feature.')
+          await this.alerts.alert(
+            c('B2.NavSharedUI.Error').t`Unable to install external plugin due to a conflict with a native feature.`,
+          )
           return
         }
       }

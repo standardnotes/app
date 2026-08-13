@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { createPortal } from 'react-dom'
+import { c } from 'ttag'
 
 type Props = {
   linkNode: LinkNode
@@ -135,7 +136,7 @@ const LinkViewer = ({ isMobile, editor, linkNode, setIsEditingLink }: Props) => 
           <Icon type="open-in" className="ml-1 flex-shrink-0" />
           <div className="max-w-[35ch] overflow-hidden text-ellipsis">{linkUrl}</div>
         </a>
-        <StyledTooltip showOnMobile showOnHover label="Copy link">
+        <StyledTooltip showOnMobile showOnHover label={c('B3.Notes.EditorToolbar.Action').t`Copy link`}>
           <button
             className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
             onClick={() => {
@@ -148,7 +149,7 @@ const LinkViewer = ({ isMobile, editor, linkNode, setIsEditingLink }: Props) => 
         </StyledTooltip>
         {!isAutoLink && (
           <>
-            <StyledTooltip showOnMobile showOnHover label="Edit link">
+            <StyledTooltip showOnMobile showOnHover label={c('B3.Notes.EditorToolbar.Action').t`Edit link`}>
               <button
                 className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
                 onClick={() => {
@@ -159,7 +160,7 @@ const LinkViewer = ({ isMobile, editor, linkNode, setIsEditingLink }: Props) => 
                 <Icon type="pencil-filled" size="medium" />
               </button>
             </StyledTooltip>
-            <StyledTooltip showOnMobile showOnHover label="Remove link">
+            <StyledTooltip showOnMobile showOnHover label={c('B3.Notes.EditorToolbar.Action').t`Remove link`}>
               <button
                 className="flex select-none items-center justify-center rounded p-2 enabled:hover:bg-default disabled:opacity-50 md:border md:border-transparent enabled:hover:md:translucent-ui:border-[--popover-border-color]"
                 onClick={() => {

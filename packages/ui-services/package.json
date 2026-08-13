@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/ui-services",
-  "version": "1.39.2",
+  "version": "1.39.8",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -25,7 +25,8 @@
     "@standardnotes/toast": "workspace:^",
     "@standardnotes/utils": "workspace:^",
     "mobx": "^6.8.0",
-    "mobx-react-lite": "^3.4.2"
+    "mobx-react-lite": "^3.4.2",
+    "ttag": "^1.8.12"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",

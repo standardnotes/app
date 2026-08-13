@@ -2,6 +2,7 @@ import { RevisionType } from '@/Components/RevisionHistoryModal/RevisionType'
 import { sortRevisionListIntoGroups } from '@/Components/RevisionHistoryModal/utils'
 import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
+import { c } from 'ttag'
 import {
   Action,
   ActionVerb,
@@ -163,7 +164,7 @@ export class NoteHistoryController {
 
     try {
       if (!entry.subactions?.[0]) {
-        throw new Error('Could not find revision action url')
+        throw new Error(c('B4.Notes.History.Error').t`Could not find revision action url`)
       }
 
       this.setSelectedEntry(entry)
@@ -171,7 +172,7 @@ export class NoteHistoryController {
       const response = await this.actions.runAction(entry.subactions[0], this.note)
 
       if (!response) {
-        throw new Error('Could not fetch revision')
+        throw new Error(c('B4.Notes.History.Error').t`Could not fetch revision`)
       }
 
       this.setSelectedRevision(response.item as unknown as HistoryEntry)
@@ -320,12 +321,13 @@ export class NoteHistoryController {
     const originalNote = this.items.findItem<SNNote>(revision.payload.uuid)
 
     if (originalNote?.locked) {
-      this.alerts.alert(STRING_RESTORE_LOCKED_ATTEMPT).catch(console.error)
+      this.alerts.alert(STRING_RESTORE_LOCKED_ATTEMPT()).catch(console.error)
       return
     }
 
     const didConfirm = await confirmDialog({
-      text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
+      text: c('B4.Notes.History.Label')
+        .t`Are you sure you want to replace the current note's contents with what you see in this preview?`,
       confirmButtonStyle: 'danger',
     })
 
@@ -360,11 +362,11 @@ export class NoteHistoryController {
 
   deleteRemoteRevision = async (revisionEntry: RevisionMetadata) => {
     const shouldDelete = await this.alerts.confirm(
-      'Are you sure you want to delete this revision?',
-      'Delete revision?',
-      'Delete revision',
+      c('B4.Notes.History.Label').t`Are you sure you want to delete this revision?`,
+      c('B4.Notes.History.Label').t`Delete revision?`,
+      c('B4.Notes.History.Action').t`Delete revision`,
       ButtonType.Danger,
-      'Cancel',
+      c('B4.Notes.History.Action').t`Cancel`,
     )
 
     if (!shouldDelete || !this.note) {

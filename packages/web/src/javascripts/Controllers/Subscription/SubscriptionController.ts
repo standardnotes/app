@@ -36,6 +36,7 @@ export class SubscriptionController extends AbstractViewController implements In
       hasAccount: observable,
       onlineSubscription: observable,
 
+      isSharedSubscription: computed,
       usedInvitationsCount: computed,
       allowedInvitationsCount: computed,
       allInvitationsUsed: computed,
@@ -94,6 +95,10 @@ export class SubscriptionController extends AbstractViewController implements In
       return offline
     }
     return !!this.subscriptions.getOnlineSubscription() || offline
+  }
+
+  get isSharedSubscription(): boolean {
+    return this.onlineSubscription?.subscriptionType === 'shared'
   }
 
   get usedInvitationsCount(): number {

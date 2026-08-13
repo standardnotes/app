@@ -1,5 +1,6 @@
 import { KeySystemRootKeyStorageMode, classNames } from '@standardnotes/snjs'
 import StyledRadioInput from '@/Components/Radio/StyledRadioInput'
+import { c } from 'ttag'
 
 type KeyStorageOption = {
   value: KeySystemRootKeyStorageMode
@@ -7,24 +8,24 @@ type KeyStorageOption = {
   description: string
 }
 
-const options: KeyStorageOption[] = [
+const getOptions = (): KeyStorageOption[] => [
   {
     value: KeySystemRootKeyStorageMode.Synced,
-    label: 'Synced (Recommended)',
-    description:
-      'Your vault key will be encrypted and synced to your account and automatically available on your other devices.',
+    label: c('B6.Preferences.Vaults.Label').t`Synced (Recommended)`,
+    description: c('B6.Preferences.Vaults.Info')
+      .t`Your vault key will be encrypted and synced to your account and automatically available on your other devices.`,
   },
   {
     value: KeySystemRootKeyStorageMode.Local,
-    label: 'Local',
-    description:
-      'Your vault key will be encrypted and saved locally on this device. You will need to manually enter your vault key on your other devices.',
+    label: c('B6.Preferences.Vaults.Label').t`Local`,
+    description: c('B6.Preferences.Vaults.Info')
+      .t`Your vault key will be encrypted and saved locally on this device. You will need to manually enter your vault key on your other devices.`,
   },
   {
     value: KeySystemRootKeyStorageMode.Ephemeral,
-    label: 'Ephemeral',
-    description:
-      'Your vault key will only be stored in memory and will be forgotten when you close the app. You will need to manually enter your vault key on your other devices.',
+    label: c('B6.Preferences.Vaults.Label').t`Ephemeral`,
+    description: c('B6.Preferences.Vaults.Info')
+      .t`Your vault key will only be stored in memory and will be forgotten when you close the app. You will need to manually enter your vault key on your other devices.`,
   },
 ]
 
@@ -35,9 +36,11 @@ export const KeyStoragePreference = ({
   value: KeySystemRootKeyStorageMode
   onChange: (value: KeySystemRootKeyStorageMode) => void
 }) => {
+  const options = getOptions()
+
   return (
     <div>
-      <div className="mb-3 text-lg">Vault Key Storage Mode</div>
+      <div className="mb-3 text-lg">{c('B6.Preferences.Vaults.Title').t`Vault Key Storage Mode`}</div>
       <div className="space-y-3">
         {options.map((option) => {
           const isSelected = value === option.value

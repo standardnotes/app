@@ -1,4 +1,5 @@
 import { Dispatch, FunctionComponent, Ref, SetStateAction, forwardRef, useState } from 'react'
+import { c } from 'ttag'
 import DecoratedInput from './DecoratedInput'
 import IconButton from '@/Components/Button/IconButton'
 import { DecoratedInputProps } from './DecoratedInputProps'
@@ -11,7 +12,7 @@ const Toggle: FunctionComponent<{
     className="h-5 w-5 justify-center rounded-full p-0 text-neutral hover:bg-passive-4"
     icon={isToggled ? 'eye-off' : 'eye'}
     iconClassName="w-3.5 h-3.5"
-    title="Show/hide password"
+    title={c('B2.NavSharedUI.AriaLabel').t`Show/hide password`}
     onClick={() => setIsToggled((isToggled) => !isToggled)}
     focusable={true}
   />

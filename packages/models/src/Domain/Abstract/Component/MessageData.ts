@@ -27,4 +27,10 @@ export type MessageData = Partial<{
   content_type?: string
   /** Related to key-pressed action */
   keyboardModifier?: KeyboardModifier
+  key?: string
+  code?: string
+  ctrlKey?: boolean
+  metaKey?: boolean
+  shiftKey?: boolean
+  altKey?: boolean
 }>

@@ -15,7 +15,6 @@ platform :ios do
   end
 
   def build_ios(scheme)
-    xcversion(version: "26.0")
     increment_version_number(
       version_number: ENV['PACKAGE_VERSION'],
       xcodeproj: 'ios/StandardNotes.xcodeproj'
@@ -116,6 +115,10 @@ platform :ios do
 end
 
 platform :android do
+  def android_package_name(variant)
+    variant == 'dev' ? 'com.standardnotes.dev' : 'com.standardnotes'
+  end
+
   def build_android(variant, versionCode)
     gradle(
       task: 'bundle',
@@ -133,6 +136,7 @@ platform :android do
     sh('yarn run android:bundle')
     build_android(variant, versionCode)
     upload_to_play_store(
+      package_name: android_package_name(variant),
       track: track,
       json_key_data: (ENV['GOOGLE_PLAY_JSON_KEY_DATA']).to_s,
       skip_upload_metadata: true,
@@ -161,5 +165,11 @@ platform :android do
   lane :prod do
     version = 3_004_000 + ENV['BUILD_NUMBER'].to_i
     deploy_android 'prod', version
+  end
+
+  desc 'Deploy production app to Play Store closed testing (alpha track)'
+  lane :closed_beta do
+    version = 3_004_000 + ENV['BUILD_NUMBER'].to_i
+    deploy_android 'prod', version, 'alpha'
   end
 end

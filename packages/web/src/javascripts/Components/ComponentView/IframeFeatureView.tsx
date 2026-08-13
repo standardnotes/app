@@ -7,7 +7,9 @@ import {
   ComponentInterface,
   SubscriptionManagerEvent,
 } from '@standardnotes/snjs'
+import { KeyboardKeyEvent, type KeyboardModifier } from '@standardnotes/ui-services'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { c } from 'ttag'
 import { observer } from 'mobx-react-lite'
 import OfflineRestricted from '@/Components/ComponentView/OfflineRestricted'
 import UrlMissing from '@/Components/ComponentView/UrlMissing'
@@ -153,12 +155,50 @@ const IframeFeatureView: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const removeActionObserver = componentViewer.addActionObserver((action, data) => {
+      const keyboardData = data as {
+        key?: string
+        code?: string
+        ctrlKey?: boolean
+        metaKey?: boolean
+        shiftKey?: boolean
+        altKey?: boolean
+        keyboardModifier?: KeyboardModifier
+      }
+
       switch (action) {
         case ComponentAction.KeyDown:
-          application.keyboardService.handleComponentKeyDown(data.keyboardModifier)
+          if (keyboardData.key !== undefined && keyboardData.code !== undefined) {
+            application.keyboardService.handleComponentKeyboardEvent(
+              {
+                key: keyboardData.key,
+                code: keyboardData.code,
+                ctrlKey: keyboardData.ctrlKey ?? false,
+                metaKey: keyboardData.metaKey ?? false,
+                shiftKey: keyboardData.shiftKey ?? false,
+                altKey: keyboardData.altKey ?? false,
+              },
+              KeyboardKeyEvent.Down,
+            )
+          } else {
+            application.keyboardService.handleComponentKeyDown(keyboardData.keyboardModifier)
+          }
           break
         case ComponentAction.KeyUp:
-          application.keyboardService.handleComponentKeyUp(data.keyboardModifier)
+          if (keyboardData.key !== undefined && keyboardData.code !== undefined) {
+            application.keyboardService.handleComponentKeyboardEvent(
+              {
+                key: keyboardData.key,
+                code: keyboardData.code,
+                ctrlKey: keyboardData.ctrlKey ?? false,
+                metaKey: keyboardData.metaKey ?? false,
+                shiftKey: keyboardData.shiftKey ?? false,
+                altKey: keyboardData.altKey ?? false,
+              },
+              KeyboardKeyEvent.Up,
+            )
+          } else {
+            application.keyboardService.handleComponentKeyUp(keyboardData.keyboardModifier)
+          }
           break
         case ComponentAction.Click:
           application.notesController.setContextMenuOpen(false)
@@ -250,7 +290,7 @@ const IframeFeatureView: FunctionComponent<Props> = ({
           sandbox={sandboxAttributes.join(' ')}
           {...(usedInModal && { 'data-used-in-modal': true })}
         >
-          Loading
+          {c('B2.NavSharedUI.Info').t`Loading`}
         </iframe>
       )}
       {isLoading && <div className={'loading-overlay'} />}

@@ -12,6 +12,7 @@ import { EvernoteConverter } from './EvernoteConverter/EvernoteConverter'
 import { GoogleKeepConverter } from './GoogleKeepConverter/GoogleKeepConverter'
 import { PlaintextConverter } from './PlaintextConverter/PlaintextConverter'
 import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
+import { assertImportFileWithinSizeLimit, MaxImportFileSizeBytes } from './ImportLimits'
 import { readFileAsText } from './Utils'
 import {
   DecryptedItemInterface,
@@ -74,6 +75,9 @@ export class Importer {
   }
 
   detectService = async (file: File): Promise<string | null> => {
+    if (file.size > MaxImportFileSizeBytes) {
+      return null
+    }
     const content = await readFileAsText(file)
 
     const { ext } = parseFileName(file.name)
@@ -231,6 +235,8 @@ export class Importer {
     if (type === 'super' && !canUseSuper) {
       throw new Error('Importing Super notes requires a subscription')
     }
+
+    assertImportFileWithinSizeLimit(file)
 
     const successful: ConversionResult['successful'] = []
     const errored: ConversionResult['errored'] = []

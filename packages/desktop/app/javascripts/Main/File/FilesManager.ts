@@ -5,6 +5,7 @@ import { debounce } from 'lodash'
 import path from 'path'
 import yauzl from 'yauzl'
 import { Result } from '@standardnotes/domain-core'
+import { c } from 'ttag'
 
 import { removeFromArray } from '../Utils/Utils'
 
@@ -106,7 +107,7 @@ export class FilesManager implements FilesManagerInterface {
     try {
       fse.removeSync(dirPath)
 
-      return Result.ok('Directory deleted successfully')
+      return Result.ok(c('B8.MobileDesktopShared.Desktop.Info').t`Directory deleted successfully`)
     } catch (error) {
       return Result.fail((error as Error).message)
     }
@@ -153,7 +154,7 @@ export class FilesManager implements FilesManagerInterface {
     try {
       await fse.move(dir, destination, { overwrite: true })
 
-      return Result.ok('Directory moved successfully')
+      return Result.ok(c('B8.MobileDesktopShared.Desktop.Info').t`Directory moved successfully`)
     } catch (error) {
       return Result.fail((error as Error).message)
     }
@@ -197,11 +198,14 @@ export class FilesManager implements FilesManagerInterface {
         destDir,
       )
 
-      return Result.ok('Directory contents moved successfully')
+      return Result.ok(c('B8.MobileDesktopShared.Desktop.Info').t`Directory contents moved successfully`)
     } catch (error) {
       console.error(error)
 
-      return Result.fail(`Could not move directory contentes: ${(error as Error).message}`)
+      const errorMessage = (error as Error).message
+      return Result.fail(
+        c('B8.MobileDesktopShared.Desktop.Error').t`Could not move directory contents: ${errorMessage}`,
+      )
     }
   }
 

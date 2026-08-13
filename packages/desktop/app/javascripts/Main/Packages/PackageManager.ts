@@ -386,8 +386,31 @@ async function installComponent(
   }
 }
 
+function validatePackageIdentifier(identifier: string) {
+  if (!identifier) {
+    throw new Error('Package identifier must not be empty')
+  }
+
+  if (identifier.includes('/') || identifier.includes('\\') || identifier === '.' || identifier === '..') {
+    throw new Error(`Invalid package identifier: ${identifier}`)
+  }
+}
+
+function assertPathWithinExtensions(absolutePath: string) {
+  const extensionsRoot = path.resolve(Paths.userDataDir, Paths.extensionsDirRelative)
+  const resolvedPath = path.resolve(absolutePath)
+  const relativeToExtensions = path.relative(extensionsRoot, resolvedPath)
+
+  if (relativeToExtensions.startsWith('..') || path.isAbsolute(relativeToExtensions)) {
+    throw new Error(`Path escapes extensions directory: ${absolutePath}`)
+  }
+}
+
 function pathsForComponent(component: Pick<Component, 'content'>) {
-  const relativePath = path.join(Paths.extensionsDirRelative, component.content!.package_info.identifier)
+  const identifier = component.content!.package_info.identifier
+  validatePackageIdentifier(identifier)
+
+  const relativePath = path.join(Paths.extensionsDirRelative, identifier)
   const absolutePath = path.join(Paths.userDataDir, relativePath)
   const downloadPath = path.join(Paths.tempDir, AppName, 'downloads', component.content!.name + '.zip')
 
@@ -404,7 +427,9 @@ async function uninstallComponent(mapping: MappingFileHandler, uuid: string) {
     /** No mapping for component */
     return
   }
-  const result = await new FilesManager().deleteDir(path.join(Paths.userDataDir, componentMapping.location))
+  const absolutePath = path.join(Paths.userDataDir, componentMapping.location)
+  assertPathWithinExtensions(absolutePath)
+  const result = await new FilesManager().deleteDir(absolutePath)
   if (!result.isFailed()) {
     mapping.remove(uuid)
   }

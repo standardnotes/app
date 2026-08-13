@@ -1,5 +1,6 @@
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { debounce, destroyAllObjectProperties, isMobileScreen } from '@/Utils'
+import { c } from 'ttag'
 import {
   ApplicationEvent,
   CollectionSort,
@@ -66,6 +67,8 @@ import { RecentActionsState } from '../../Application/Recents'
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
 const ElementIdScrollContainer = 'notes-scrollable'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 export class ItemListController
   extends AbstractViewController
@@ -598,6 +601,9 @@ export class ItemListController
 
         log(LoggingDomain.Selection, 'Selecting next item after closing active one')
         this.selectNextItem({ userTriggered: false })
+      } else if (this.paneController.isInMobileView && !this.itemManager.findItem(activeItem.uuid)) {
+        log(LoggingDomain.Selection, 'Navigating back to item list because active note was deleted remotely')
+        void this.paneController.setPaneLayout(PaneLayout.ItemSelection)
       }
     } else if (activeItem && this.shouldSelectActiveItem(activeItem)) {
       log(LoggingDomain.Selection, 'Selecting active item')
@@ -791,7 +797,8 @@ export class ItemListController
       this.preferences.getValue(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
 
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
-      return `Note ${this.notes.length + 1}`
+      const noteNumber = this.notes.length + 1
+      return jtString(c('B3.Notes.NoteList.Label').jt`Note ${noteNumber}`)
     }
 
     if (titleFormat === NewNoteTitleFormat.CustomFormat) {
@@ -838,13 +845,13 @@ export class ItemListController
 
   get optionsSubtitle(): string | undefined {
     if (!this.displayOptions.includePinned && !this.displayOptions.includeProtected) {
-      return 'Excluding pinned and protected'
+      return c('B3.Notes.NoteList.Label').t`Excluding pinned and protected`
     }
     if (!this.displayOptions.includePinned) {
-      return 'Excluding pinned'
+      return c('B3.Notes.NoteList.Label').t`Excluding pinned`
     }
     if (!this.displayOptions.includeProtected) {
-      return 'Excluding protected'
+      return c('B3.Notes.NoteList.Label').t`Excluding protected`
     }
 
     return undefined

@@ -71,7 +71,7 @@ $heading-height: 75px;
   }
 
   #save-status {
-    font-size: calc(var(--sn-stylekit-base-font-size) - 2px);
+    font-size: calc(var(--sn-stylekit-base-font-size) - 0.125rem);
     text-transform: none;
     font-weight: normal;
 

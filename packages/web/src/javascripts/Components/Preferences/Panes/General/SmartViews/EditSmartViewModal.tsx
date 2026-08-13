@@ -7,6 +7,7 @@ import { Platform, SmartViewDefaultIconName, VectorIconNameOrEmoji } from '@stan
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { EditSmartViewModalController } from './EditSmartViewModalController'
+import { c } from 'ttag'
 
 type Props = {
   controller: EditSmartViewModalController
@@ -62,13 +63,13 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Delete',
+        label: c('B6.Preferences.General.Action').t`Delete`,
         onClick: deleteView,
         disabled: isSaving,
         type: 'destructive',
       },
       {
-        label: 'Cancel',
+        label: c('B6.Preferences.General.Action').t`Cancel`,
         onClick: closeDialog,
         disabled: isSaving,
         type: 'cancel',
@@ -89,12 +90,18 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
     return null
   }
 
+  const viewTitle = view.title
+
   return (
-    <Modal title={`Edit Smart View "${view.title}"`} close={closeDialog} actions={modalActions}>
+    <Modal
+      title={c('B6.Preferences.General.Title').t`Edit Smart View "${viewTitle}"`}
+      close={closeDialog}
+      actions={modalActions}
+    >
       <div className="px-4 py-4">
         <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="text-sm font-semibold">Title:</div>
+            <div className="text-sm font-semibold">{c('B6.Preferences.General.Label').t`Title:`}</div>
             <input
               className="rounded border border-border bg-default px-2 py-1 md:translucent-ui:bg-transparent"
               value={title}
@@ -105,17 +112,17 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
             />
           </div>
           <div className="flex items-center gap-2.5">
-            <div className="text-sm font-semibold">Icon:</div>
+            <div className="text-sm font-semibold">{c('B6.Preferences.General.Label').t`Icon:`}</div>
             <button
               className="rounded border border-border p-2"
-              aria-label="Change icon"
+              aria-label={c('B6.Preferences.General.Action').t`Change icon`}
               onClick={toggleIconPicker}
               ref={iconPickerButtonRef}
             >
               <Icon type={icon || SmartViewDefaultIconName} />
             </button>
             <Popover
-              title="Choose icon"
+              title={c('B6.Preferences.General.Title').t`Choose icon`}
               open={shouldShowIconPicker}
               anchorElement={iconPickerButtonRef}
               togglePopover={toggleIconPicker}
@@ -136,7 +143,7 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
             </Popover>
           </div>
           <div className="flex flex-grow flex-col gap-2.5">
-            <div className="text-sm font-semibold">Predicate:</div>
+            <div className="text-sm font-semibold">{c('B6.Preferences.General.Label').t`Predicate:`}</div>
             <div className="flex flex-grow flex-col overflow-hidden rounded-md border border-border">
               <textarea
                 className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default px-2.5 py-1.5 font-mono text-sm md:translucent-ui:bg-transparent"
@@ -150,7 +157,7 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
               />
               {!isPredicateJsonValid && (
                 <div className="border-t border-border px-2.5 py-1.5 text-sm text-danger">
-                  Invalid JSON. Double check your entry and try again.
+                  {c('B6.Preferences.General.Info').t`Invalid JSON. Double check your entry and try again.`}
                 </div>
               )}
             </div>

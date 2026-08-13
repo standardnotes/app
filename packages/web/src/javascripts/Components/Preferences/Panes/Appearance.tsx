@@ -15,6 +15,7 @@ import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import EditorAppearance from './Appearance/EditorAppearance'
 import { GetAllThemesUseCase } from '@standardnotes/ui-services'
 import { useLocalPreference } from '@/Hooks/usePreference'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -41,7 +42,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
     const dropdownItems: DropdownItem[] = []
 
     dropdownItems.push({
-      label: 'Default',
+      label: c('B6.Preferences.Appearance.Label').t`Default`,
       value: 'Default',
     })
 
@@ -103,30 +104,32 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
     <PreferencesPane>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Themes</Title>
+          <Title>{c('B6.Preferences.Appearance.Title').t`Themes`}</Title>
           <div className="mt-2">
             <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
-                <Subtitle>Disable translucent UI</Subtitle>
-                <Text>Use opaque style for UI elements instead of translucency</Text>
+                <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Disable translucent UI`}</Subtitle>
+                <Text>{c('B6.Preferences.Appearance.Info')
+                  .t`Use opaque style for UI elements instead of translucency`}</Text>
               </div>
               <Switch onChange={toggleTranslucentUI} checked={!useTranslucentUI} />
             </div>
             <HorizontalSeparator classes="my-4" />
             <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
-                <Subtitle>Use system color scheme</Subtitle>
-                <Text>Automatically change active theme based on your system settings.</Text>
+                <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Use system color scheme`}</Subtitle>
+                <Text>{c('B6.Preferences.Appearance.Info')
+                  .t`Automatically change active theme based on your system settings.`}</Text>
               </div>
               <Switch onChange={toggleUseDeviceSettings} checked={useDeviceSettings} />
             </div>
             <HorizontalSeparator classes="my-4" />
             <div>
-              <Subtitle>Automatic Light Theme</Subtitle>
-              <Text>Theme to be used for system light mode:</Text>
+              <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Automatic Light Theme`}</Subtitle>
+              <Text>{c('B6.Preferences.Appearance.Info').t`Theme to be used for system light mode:`}</Text>
               <div className="mt-2">
                 <Dropdown
-                  label="Select the automatic light theme"
+                  label={c('B6.Preferences.Appearance.Label').t`Select the automatic light theme`}
                   items={themeItems}
                   value={autoLightTheme}
                   onChange={changeAutoLightTheme}
@@ -136,11 +139,11 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
             </div>
             <HorizontalSeparator classes="my-4" />
             <div>
-              <Subtitle>Automatic Dark Theme</Subtitle>
-              <Text>Theme to be used for system dark mode:</Text>
+              <Subtitle>{c('B6.Preferences.Appearance.Subtitle').t`Automatic Dark Theme`}</Subtitle>
+              <Text>{c('B6.Preferences.Appearance.Info').t`Theme to be used for system dark mode:`}</Text>
               <div className="mt-2">
                 <Dropdown
-                  label="Select the automatic dark theme"
+                  label={c('B6.Preferences.Appearance.Label').t`Select the automatic dark theme`}
                   items={themeItems}
                   value={autoDarkTheme}
                   onChange={changeAutoDarkTheme}

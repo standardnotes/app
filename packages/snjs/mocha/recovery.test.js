@@ -26,21 +26,25 @@ describe('account recovery', function () {
   })
 
   it('should get the same recovery code at each consecutive call', async () => {
-    let recoveryCodesSetting = await application.settings.getSetting(SettingName.create(SettingName.NAMES.RecoveryCodes).getValue())
+    const recoveryCodesSettingName = SettingName.create(SettingName.NAMES.RecoveryCodes).getValue()
+    const rootKey = await application.encryption.computeRootKey(context.password, await application.encryption.getRootKeyParams())
+    const serverPassword = rootKey.serverPassword
+
+    let recoveryCodesSetting = await application.settings.getSetting(recoveryCodesSettingName, serverPassword)
     expect(recoveryCodesSetting).to.equal(undefined)
 
-    const generatedRecoveryCodesAfterFirstCall = await application.getRecoveryCodes.execute()
+    const generatedRecoveryCodesAfterFirstCall = await application.getRecoveryCodes.execute({ password: context.password })
     expect(generatedRecoveryCodesAfterFirstCall.getValue().length).to.equal(49)
 
-    recoveryCodesSetting = await application.settings.getSetting(SettingName.create(SettingName.NAMES.RecoveryCodes).getValue())
+    recoveryCodesSetting = await application.settings.getSetting(recoveryCodesSettingName, serverPassword)
     expect(recoveryCodesSetting).to.equal(generatedRecoveryCodesAfterFirstCall.getValue())
 
-    const fetchedRecoveryCodesOnTheSecondCall = await application.getRecoveryCodes.execute()
+    const fetchedRecoveryCodesOnTheSecondCall = await application.getRecoveryCodes.execute({ password: context.password })
     expect(generatedRecoveryCodesAfterFirstCall.getValue()).to.equal(fetchedRecoveryCodesOnTheSecondCall.getValue())
   })
 
   it('should allow to sign in with recovery code', async () => {
-    const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
+    const generatedRecoveryCodes = await application.getRecoveryCodes.execute({ password: context.password })
 
     application = await context.signout()
 
@@ -56,7 +60,7 @@ describe('account recovery', function () {
   })
 
   it('should automatically generate new recovery code after recovery sign in', async () => {
-    const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
+    const generatedRecoveryCodes = await application.getRecoveryCodes.execute({ password: context.password })
 
     application = await context.signout()
 
@@ -66,7 +70,7 @@ describe('account recovery', function () {
       password: context.password,
     })
 
-    const recoveryCodesAfterRecoverySignIn = await application.getRecoveryCodes.execute()
+    const recoveryCodesAfterRecoverySignIn = await application.getRecoveryCodes.execute({ password: context.password })
     expect(recoveryCodesAfterRecoverySignIn.getValue()).not.to.equal(generatedRecoveryCodes.getValue())
   })
 
@@ -78,7 +82,7 @@ describe('account recovery', function () {
 
     expect(await application.mfa.isMfaActivated()).to.equal(true)
 
-    const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
+    const generatedRecoveryCodes = await application.getRecoveryCodes.execute({ password: context.password })
 
     application = await context.signout()
 
@@ -92,7 +96,7 @@ describe('account recovery', function () {
   })
 
   it('should not allow to sign in with recovery code and invalid credentials', async () => {
-    const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
+    const generatedRecoveryCodes = await application.getRecoveryCodes.execute({ password: context.password })
 
     application = await context.signout()
 
@@ -108,7 +112,7 @@ describe('account recovery', function () {
   })
 
   it('should not allow to sign in with invalid recovery code', async () => {
-    await application.getRecoveryCodes.execute()
+    await application.getRecoveryCodes.execute({ password: context.password })
 
     application = await context.signout()
 

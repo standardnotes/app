@@ -24,6 +24,8 @@ import {
   classNames,
 } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
+import { ClipperName, jtString } from '@standardnotes/features'
+import { c } from 'ttag'
 import { getSuperJSONFromClipPayload } from './getSuperJSONFromClipHTML'
 import ClippedNoteView from './ClippedNoteView'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
@@ -137,11 +139,11 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
   const showSignOutConfirmation = useCallback(async () => {
     if (
       await confirmDialog({
-        title: 'Sign Out',
-        text: 'Are you sure you want to sign out?',
-        confirmButtonText: 'Sign Out',
+        title: c('B1.Account.Session.Title').t`Sign Out`,
+        text: c('B1.Account.Session.Info').t`Are you sure you want to sign out?`,
+        confirmButtonText: c('B1.Account.Session.Action').t`Sign Out`,
         confirmButtonStyle: 'danger',
-        cancelButtonText: 'Cancel',
+        cancelButtonText: c('B1.Account.Session.Action').t`Cancel`,
       })
     ) {
       await application.user.signOut()
@@ -205,7 +207,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
       if (!clipPayload.content) {
         addToast({
           type: ToastType.Error,
-          message: 'No content to clip',
+          message: c('B7.FilesSubscriptionHelp.Help.Error').t`No content to clip`,
         })
         return
       }
@@ -245,7 +247,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
 
       addToast({
         type: ToastType.Success,
-        message: 'Note clipped successfully',
+        message: c('B7.FilesSubscriptionHelp.Help.Info').t`Note clipped successfully`,
       })
 
       const syncRequest = await application.sync.getRawSyncRequestForExternalUse([insertedNote])
@@ -290,16 +292,19 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
         >
           <Icon className={`h-12 w-12 ${PremiumFeatureIconClass}`} size={'custom'} type={PremiumFeatureIconName} />
         </div>
-        <div className="mb-1 text-center text-lg font-bold">Enable Advanced Features</div>
+        <div className="mb-1 text-center text-lg font-bold">{c('B7.FilesSubscriptionHelp.Subscription.Title')
+          .t`Enable Advanced Features`}</div>
         <div className="mb-3 text-center">
-          To take advantage of <span className="font-semibold">Web Clipper</span> and other advanced features, upgrade
-          your current plan.
+          {jtString(
+            c('B7.FilesSubscriptionHelp.Subscription.Info')
+              .jt`To take advantage of ${ClipperName} and other advanced features, upgrade your current plan.`,
+          )}
         </div>
         <Button className="mb-2" fullWidth primary onClick={upgradePlan}>
-          Upgrade
+          {c('B7.FilesSubscriptionHelp.Subscription.Action').t`Upgrade`}
         </Button>
         <Button fullWidth onClick={showSignOutConfirmation}>
-          Sign out
+          {c('B1.Account.Session.Action').t`Sign out`}
         </Button>
       </div>
     )
@@ -328,14 +333,14 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
         />
       </div>
     ) : (
-      <Menu a11yLabel="User account menu">
+      <Menu a11yLabel={c('B1.Account.Session.Label').t`User account menu`}>
         <MenuItem onClick={activateRegisterPane}>
           <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
-          Create free account
+          {c('B1.Account.Session.Action').t`Create free account`}
         </MenuItem>
         <MenuItem onClick={activateSignInPane}>
           <Icon type="signIn" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
-          Sign in
+          {c('B1.Account.Session.Action').t`Sign in`}
         </MenuItem>
       </Menu>
     )
@@ -343,7 +348,10 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
 
   return (
     <div className="bg-contrast p-3">
-      <Menu a11yLabel="Extension menu" className="rounded border border-border bg-default">
+      <Menu
+        a11yLabel={c('B7.FilesSubscriptionHelp.Help.Label').t`Extension menu`}
+        className="rounded border border-border bg-default"
+      >
         {hasSelection && (
           <MenuItem
             className="border-b border-border"
@@ -357,7 +365,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
             }}
           >
             <Icon type="paragraph" className="mr-2 text-info" />
-            Clip text selection
+            {c('B7.FilesSubscriptionHelp.Help.Action').t`Clip text selection`}
           </MenuItem>
         )}
         <MenuItem
@@ -370,7 +378,9 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           }}
         >
           <Icon type="notes-filled" className="mr-2 text-info" />
-          {isScreenshotMode ? 'Capture visible' : 'Clip full page'}
+          {isScreenshotMode
+            ? c('B7.FilesSubscriptionHelp.Help.Action').t`Capture visible`
+            : c('B7.FilesSubscriptionHelp.Help.Action').t`Clip full page`}
         </MenuItem>
         <MenuItem
           disabled={isScreenshotMode}
@@ -383,7 +393,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           }}
         >
           <Icon type="rich-text" className="mr-2 text-info" />
-          Clip article
+          {c('B7.FilesSubscriptionHelp.Help.Action').t`Clip article`}
         </MenuItem>
         <MenuItem
           onClick={async () => {
@@ -392,7 +402,9 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           }}
         >
           <Icon type="dashboard" className="mr-2 text-info" />
-          Select elements to {isScreenshotMode ? 'capture' : 'clip'}
+          {isScreenshotMode
+            ? c('B7.FilesSubscriptionHelp.Help.Action').t`Select elements to capture`
+            : c('B7.FilesSubscriptionHelp.Help.Action').t`Select elements to clip`}
         </MenuItem>
         <MenuSwitchButtonItem
           checked={isScreenshotMode}
@@ -402,7 +414,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           className="flex-row-reverse gap-2"
           forceDesktopStyle={true}
         >
-          Clip as screenshot
+          {c('B7.FilesSubscriptionHelp.Help.Action').t`Clip as screenshot`}
         </MenuSwitchButtonItem>
         <div className="border-t border-border px-3 py-3  text-foreground">
           {defaultTag && (
@@ -413,7 +425,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
                 unlinkItem={unselectTag}
                 isBidirectional={false}
               />
-              <StyledTooltip label="Remove default tag" gutter={2}>
+              <StyledTooltip label={c('B7.FilesSubscriptionHelp.Help.Label').t`Remove default tag`} gutter={2}>
                 <button
                   className="rounded-full p-1 text-neutral hover:bg-contrast hover:text-info"
                   onClick={unselectTag}
@@ -425,7 +437,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
           )}
           <ItemSelectionDropdown
             onSelection={selectTag}
-            placeholder="Select tag to save clipped notes to..."
+            placeholder={c('B7.FilesSubscriptionHelp.Help.Placeholder').t`Select tag to save clipped notes to...`}
             contentTypes={[ContentType.TYPES.Tag]}
             className={{
               input: 'text-[0.85rem]',
@@ -450,13 +462,15 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
             {isSyncing && (
               <>
                 <Spinner className="mx-2.5 h-4 w-4" />
-                <div className="flex-grow py-2 text-sm font-semibold text-info">Syncing...</div>
+                <div className="flex-grow py-2 text-sm font-semibold text-info">{c('B2.NavSharedUI.Status')
+                  .t`Syncing...`}</div>
               </>
             )}
             {hasSyncError && (
               <>
                 <Icon type="warning" className="mx-2.5" />
-                <div className="flex-grow py-2 text-sm font-semibold">Unable to sync</div>
+                <div className="flex-grow py-2 text-sm font-semibold">{c('B2.NavSharedUI.Error')
+                  .t`Unable to sync`}</div>
               </>
             )}
           </div>

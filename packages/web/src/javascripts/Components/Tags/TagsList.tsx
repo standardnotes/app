@@ -7,6 +7,7 @@ import { TagsListItem } from './TagsListItem'
 import { useApplication } from '../ApplicationProvider'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { c } from 'ttag'
 
 type Props = {
   type: TagListSectionType
@@ -56,8 +57,8 @@ const TagsList: FunctionComponent<Props> = ({ type }: Props) => {
     return (
       <div className="px-4 text-base opacity-50 lg:text-sm">
         {application.navigationController.isSearching
-          ? 'No tags found. Try a different search.'
-          : 'No tags or folders. Create one using the add button above.'}
+          ? c('B4.Notes.TagsLinkedItems.Label').t`No tags found. Try a different search.`
+          : c('B4.Notes.TagsLinkedItems.Label').t`No tags or folders. Create one using the add button above.`}
       </div>
     )
   }

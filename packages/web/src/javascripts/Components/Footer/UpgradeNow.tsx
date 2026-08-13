@@ -3,6 +3,7 @@ import { FeaturesController } from '@/Controllers/FeaturesController'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { observer } from 'mobx-react-lite'
 import { useCallback } from 'react'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -18,6 +19,8 @@ const UpgradeNow = ({ application, featuresController, subscriptionContoller }: 
   const onClick = useCallback(() => {
     if (hasAccount && application.isNativeIOS()) {
       application.showPremiumModal()
+    } else if (!application.canShowPurchaseFlow() && !hasAccount) {
+      application.showAccountMenu()
     } else {
       void application.openPurchaseFlow()
     }
@@ -27,13 +30,19 @@ const UpgradeNow = ({ application, featuresController, subscriptionContoller }: 
     return null
   }
 
+  if (!application.canShowPurchaseFlow() && hasAccount) {
+    return null
+  }
+
   return (
     <div className="flex h-full items-center px-2">
       <button
         className="rounded bg-info px-1.5 py-0.5 text-sm font-bold uppercase text-info-contrast hover:brightness-125 lg:text-xs"
         onClick={onClick}
       >
-        {!hasAccount ? 'Sign up to sync' : 'Unlock features'}
+        {!hasAccount
+          ? c('B7.FilesSubscriptionHelp.Subscription.Info').t`Sign up to sync`
+          : c('B7.FilesSubscriptionHelp.Subscription.Info').t`Unlock features`}
       </button>
     </div>
   )

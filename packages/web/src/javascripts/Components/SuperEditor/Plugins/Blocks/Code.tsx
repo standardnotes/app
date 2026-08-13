@@ -3,9 +3,10 @@ import { $getSelection, $isRangeSelection, LexicalEditor } from 'lexical'
 import { $createCodeNode } from '@lexical/code'
 import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
 import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
+import { c } from 'ttag'
 
 export const CodeBlock = {
-  name: 'Code Block',
+  name: c('B3.Notes.EditorToolbar.Label').t`Code Block`,
   iconName: 'code' as LexicalIconName,
   keywords: ['javascript', 'python', 'js', 'codeblock'],
   onSelect: (editor: LexicalEditor) =>
@@ -13,10 +14,10 @@ export const CodeBlock = {
       const selection = $getSelection()
       if ($isRangeSelection(selection)) {
         if (selection.isCollapsed()) {
-          $setBlocksType(selection, () => $createCodeNode())
+          $setBlocksType(selection, () => $createCodeNode('plain'))
         } else {
           const textContent = selection.getTextContent()
-          const codeNode = $createCodeNode()
+          const codeNode = $createCodeNode('plain')
           selection.insertNodes([codeNode])
           selection.insertRawText(textContent)
         }

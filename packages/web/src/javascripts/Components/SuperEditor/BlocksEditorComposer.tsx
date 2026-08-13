@@ -2,6 +2,7 @@ import { FunctionComponent } from 'react'
 import { LexicalComposer, InitialEditorStateType } from '@lexical/react/LexicalComposer'
 import BlocksEditorTheme from './Lexical/Theme/Theme'
 import { BlockEditorNodes } from './Lexical/Nodes/AllNodes'
+import { highlightHtmlImport } from './Lexical/Utils/highlightHtmlImport'
 import { Klass, LexicalNode } from 'lexical'
 
 type BlocksEditorComposerProps = {
@@ -26,6 +27,9 @@ export const BlocksEditorComposer: FunctionComponent<BlocksEditorComposerProps> 
         onError: (error: Error) => console.error(error),
         editorState: typeof initialValue === 'string' && initialValue.length === 0 ? undefined : initialValue,
         nodes: [...nodes, ...BlockEditorNodes],
+        html: {
+          import: highlightHtmlImport,
+        },
       }}
     >
       <>{children}</>

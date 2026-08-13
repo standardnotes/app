@@ -9,6 +9,7 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import ContactInviteModal from '../Invites/ContactInviteModal'
 import EditVaultModal from './VaultModal/EditVaultModal'
 import { useVault } from '@/Hooks/useVault'
+import { c } from 'ttag'
 
 type Props = {
   vault: VaultListingInterface
@@ -30,8 +31,8 @@ const VaultItem = ({ vault }: Props) => {
 
   const deleteVault = useCallback(async () => {
     const confirm = await application.alerts.confirm(
-      'Deleting a vault will permanently delete all its items and files.',
-      'Are you sure you want to delete this vault?',
+      c('B6.Preferences.Vaults.Confirmation').t`Deleting a vault will permanently delete all its items and files.`,
+      c('B6.Preferences.Vaults.Confirmation').t`Are you sure you want to delete this vault?`,
       undefined,
       ButtonType.Danger,
     )
@@ -54,7 +55,7 @@ const VaultItem = ({ vault }: Props) => {
     } else {
       const success = await application.vaults.deleteVault(vault)
       if (!success) {
-        void application.alerts.alert('Unable to delete vault. Please try again.')
+        void application.alerts.alert(c('B6.Preferences.Vaults.Error').t`Unable to delete vault. Please try again.`)
       }
     }
   }, [application.alerts, application.sharedVaults, application.vaults, vault])
@@ -65,8 +66,8 @@ const VaultItem = ({ vault }: Props) => {
     }
 
     const confirm = await application.alerts.confirm(
-      'All items and files in this vault will be removed from your account.',
-      'Are you sure you want to leave this vault?',
+      c('B6.Preferences.Vaults.Confirmation').t`All items and files in this vault will be removed from your account.`,
+      c('B6.Preferences.Vaults.Confirmation').t`Are you sure you want to leave this vault?`,
       undefined,
       ButtonType.Danger,
     )
@@ -76,7 +77,7 @@ const VaultItem = ({ vault }: Props) => {
 
     const response = await application.vaultUsers.leaveSharedVault(vault)
     if (isClientDisplayableError(response)) {
-      void application.alerts.alert('Unable to leave vault. Please try again.')
+      void application.alerts.alert(c('B6.Preferences.Vaults.Error').t`Unable to leave vault. Please try again.`)
       console.error(response)
     }
   }, [application, vault])
@@ -116,22 +117,37 @@ const VaultItem = ({ vault }: Props) => {
         <div className="flex flex-col gap-1.5 py-1.5">
           <span className="overflow-hidden text-ellipsis text-base font-bold">{vault.name}</span>
           {vault.description && <span className="overflow-hidden text-ellipsis text-sm">{vault.description}</span>}
-          <span className="overflow-hidden text-ellipsis text-sm">Vault ID: {vault.systemIdentifier}</span>
+          <span className="overflow-hidden text-ellipsis text-sm">
+            {c('B6.Preferences.Vaults.Label').t`Vault ID:`} {vault.systemIdentifier}
+          </span>
           {!!vault.sharing?.fileBytesUsed && (
             <span className="overflow-hidden text-ellipsis text-sm">
-              File storage used: {formatSizeToReadableString(vault.sharing?.fileBytesUsed ?? 0)}
+              {c('B6.Preferences.Vaults.Label').t`File storage used:`}{' '}
+              {formatSizeToReadableString(vault.sharing?.fileBytesUsed ?? 0)}
             </span>
           )}
           <div className="mt-2 flex w-full flex-wrap gap-3">
-            <Button label="Edit" onClick={openEditModal} />
+            <Button label={c('B6.Preferences.Vaults.Action').t`Edit`} onClick={openEditModal} />
             {canShowLockOption && <Button label={isLocked ? 'Unlock' : 'Lock'} onClick={toggleLock} />}
-            {isCurrentUserOwner && <Button colorStyle="danger" label="Delete" onClick={deleteVault} />}
-            {!isCurrentUserOwner && vault.isSharedVaultListing() && <Button label="Leave Vault" onClick={leaveVault} />}
+            {isCurrentUserOwner && (
+              <Button colorStyle="danger" label={c('B6.Preferences.Vaults.Action').t`Delete`} onClick={deleteVault} />
+            )}
+            {!isCurrentUserOwner && vault.isSharedVaultListing() && (
+              <Button label={c('B6.Preferences.Vaults.Label').t`Leave Vault`} onClick={leaveVault} />
+            )}
             {isCurrentUserAdmin ? (
               vault.isSharedVaultListing() ? (
-                <Button colorStyle="info" label="Invite Contacts" onClick={openInviteModal} />
+                <Button
+                  colorStyle="info"
+                  label={c('B6.Preferences.Vaults.Label').t`Invite Contacts`}
+                  onClick={openInviteModal}
+                />
               ) : canEnableCollaboration ? (
-                <Button colorStyle="info" label="Enable Collaboration" onClick={convertToSharedVault} />
+                <Button
+                  colorStyle="info"
+                  label={c('B6.Preferences.Vaults.Action').t`Enable Collaboration`}
+                  onClick={convertToSharedVault}
+                />
               ) : null
             ) : null}
           </div>

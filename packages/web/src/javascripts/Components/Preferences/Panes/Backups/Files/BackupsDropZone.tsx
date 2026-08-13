@@ -9,6 +9,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import Spinner from '@/Components/Spinner/Spinner'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -50,15 +51,18 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     const result = await application.files.readBackupFileAndSaveDecrypted(binaryFile, decryptedFileItem, fileSystem)
 
     if (result === 'success') {
+      const decryptedFileName = decryptedFileItem.name
       void application.alerts.alert(
-        `<strong>${decryptedFileItem.name}</strong> has been successfully decrypted and saved to your chosen directory.`,
+        c('B6.Preferences.Backups.Info')
+          .t`<strong>${decryptedFileName}</strong> has been successfully decrypted and saved to your chosen directory.`,
       )
       setBinaryFile(undefined)
       setDecryptedFileItem(undefined)
       setDroppedFile(undefined)
     } else if (result === 'failed') {
       void application.alerts.alert(
-        'Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.',
+        c('B6.Preferences.Backups.Error')
+          .t`Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.`,
       )
     }
 
@@ -74,7 +78,9 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
       }
 
       if (type === 'binary') {
-        void application.alerts.alert('Please drag the metadata file instead of the encrypted data file.')
+        void application.alerts.alert(
+          c('B6.Preferences.Backups.Info').t`Please drag the metadata file instead of the encrypted data file.`,
+        )
         return
       }
 
@@ -141,8 +147,8 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     return (
       <>
         <Text className="mb-2">
-          To decrypt a backup file, drag and drop the file's respective <i>metadata.sn.json</i> file here or select it
-          below.
+          {c('B6.Preferences.Backups.Info')
+            .t`To decrypt a backup file, drag and drop the file's respective <i>metadata.sn.json</i> file here or select it below.`}
         </Text>
         <Button
           onClick={() => {
@@ -157,7 +163,7 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
               .catch(console.error)
           }}
         >
-          Select file
+          {c('B6.Preferences.Backups.Action').t`Select file`}
         </Button>
       </>
     )
@@ -166,11 +172,13 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
   return (
     <>
       <PreferencesSegment>
-        {!decryptedFileItem && <Text>Attempting to decrypt metadata file...</Text>}
+        {!decryptedFileItem && (
+          <Text>{c('B6.Preferences.Backups.Action').t`Attempting to decrypt metadata file...`}</Text>
+        )}
 
         {decryptedFileItem && (
           <>
-            <Title>Backup Decryption</Title>
+            <Title>{c('B6.Preferences.Backups.Title').t`Backup Decryption`}</Title>
 
             <EncryptionStatusItem
               status={decryptedFileItem.name}
@@ -182,14 +190,14 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
             <div className="flex items-center justify-between">
               <div>
-                <Subtitle>1. Choose related data file</Subtitle>
+                <Subtitle>{c('B6.Preferences.Backups.Subtitle').t`1. Choose related data file`}</Subtitle>
                 <Text className={`em mr-3 text-xs ${binaryFile ? 'success font-bold' : ''}`}>
                   {droppedFile.file.uuid}/{FileBackupsConstantsV1.BinaryFileName}
                 </Text>
               </div>
               <div>
                 <Button
-                  label="Choose"
+                  label={c('B6.Preferences.Backups.Action').t`Choose`}
                   className={'min-w-40 px-1 text-xs'}
                   onClick={chooseRelatedBinaryFile}
                   disabled={!!binaryFile}
@@ -200,11 +208,11 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
             <HorizontalSeparator classes={'mt-3 mb-3'} />
 
             <div className="flex items-center justify-between">
-              <Subtitle>2. Decrypt and save file to your computer</Subtitle>
+              <Subtitle>{c('B6.Preferences.Backups.Subtitle').t`2. Decrypt and save file to your computer`}</Subtitle>
 
               <div>
                 <Button
-                  label={isSavingAsDecrypted ? undefined : 'Save'}
+                  label={isSavingAsDecrypted ? undefined : c('B6.Preferences.Backups.Action').t`Save`}
                   className={'min-w-40 px-1 text-xs'}
                   onClick={downloadBinaryFileAsDecrypted}
                   disabled={isSavingAsDecrypted || !binaryFile}

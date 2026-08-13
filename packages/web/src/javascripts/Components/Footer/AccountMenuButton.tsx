@@ -1,5 +1,6 @@
 import { classNames } from '@standardnotes/utils'
 import { useEffect, useRef } from 'react'
+import { c } from 'ttag'
 import AccountMenu, { AccountMenuProps } from '../AccountMenu/AccountMenu'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
@@ -27,7 +28,7 @@ const AccountMenuButton = ({ hasError, controller, mainApplicationGroup, onClick
 
   return (
     <>
-      <StyledTooltip label="Open account menu">
+      <StyledTooltip label={c('B2.NavSharedUI.Label').t`Open account menu`}>
         <button
           ref={buttonRef}
           onClick={toggleMenu}
@@ -42,7 +43,7 @@ const AccountMenuButton = ({ hasError, controller, mainApplicationGroup, onClick
         </button>
       </StyledTooltip>
       <Popover
-        title="Account"
+        title={c('B2.NavSharedUI.Label').t`Account`}
         anchorElement={buttonRef}
         open={isOpen}
         togglePopover={toggleMenu}

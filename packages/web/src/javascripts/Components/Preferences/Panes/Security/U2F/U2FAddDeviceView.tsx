@@ -6,6 +6,7 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Modal from '@/Components/Modal/Modal'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { c } from 'ttag'
 
 type Props = {
   addAuthenticator: AddAuthenticator
@@ -25,13 +26,13 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
   const handleAddDeviceClick = useCallback(async () => {
     if (!deviceName) {
-      setErrorMessage('Device name is required')
+      setErrorMessage(c('B6.Preferences.Security.Error').t`Device name is required`)
       return
     }
 
     const user = application.sessions.getUser()
     if (user === undefined) {
-      setErrorMessage('User not found')
+      setErrorMessage(c('B6.Preferences.Security.Error').t`User not found`)
       return
     }
 
@@ -56,11 +57,11 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
   return (
     <Modal
-      title="Add Security Key"
+      title={c('B6.Preferences.Security.Title').t`Add Security Key`}
       close={closeModal}
       actions={[
         {
-          label: 'Cancel',
+          label: c('B6.Preferences.Security.Action').t`Cancel`,
           type: 'cancel',
           onClick: closeModal,
           mobileSlot: 'left',
@@ -69,7 +70,8 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
         {
           label: (
             <>
-              Add <span className="hidden md:inline">Device</span>
+              {c('B6.Preferences.Security.Action').t`Add`}{' '}
+              <span className="hidden md:inline">{c('B6.Preferences.Security.Label').t`Device`}</span>
             </>
           ),
           type: 'primary',
@@ -81,7 +83,7 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
       <div className="flex px-4 py-4">
         <div className="ml-4 flex flex-grow flex-col gap-1">
           <label htmlFor="u2f-device-name" className="mb-2 text-sm font-semibold">
-            Device Name
+            {c('B6.Preferences.Security.Label').t`Device Name`}
           </label>
           <DecoratedInput
             autofocus
