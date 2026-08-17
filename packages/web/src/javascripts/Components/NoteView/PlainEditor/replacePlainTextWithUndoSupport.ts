@@ -1,32 +1,67 @@
 import { applyTextReplacements } from '../UniversalSearch/applyTextReplacements'
 import { TextRange } from '../UniversalSearch/types'
 
-function refocusIfConnected(element: Element | null) {
-  if (element instanceof HTMLElement && element.isConnected) {
-    element.focus()
-  }
+type PendingUndo = {
+  previousFocus: HTMLElement
+  isUndoSelection: (textarea: HTMLTextAreaElement) => boolean
 }
 
-function insertTextAtRangeWithUndoSupport(
+const pendingUndo = new WeakMap<HTMLTextAreaElement, PendingUndo>()
+
+function moveFocusOutOfEditor(textarea: HTMLTextAreaElement, previousFocus: HTMLElement) {
+  textarea.setSelectionRange(0, 0)
+  previousFocus.focus()
+}
+
+function handleUndoInput(event: Event) {
+  const textarea = event.currentTarget as HTMLTextAreaElement
+  const pending = pendingUndo.get(textarea)
+
+  if (!pending || !(event instanceof InputEvent) || event.inputType !== 'historyUndo') {
+    return
+  }
+
+  if (!pending.isUndoSelection(textarea) || !pending.previousFocus.isConnected) {
+    return
+  }
+
+  pendingUndo.delete(textarea)
+
+  // The browser restores the undone selection after this event, so it can only be cleared next frame.
+  requestAnimationFrame(() => moveFocusOutOfEditor(textarea, pending.previousFocus))
+}
+
+function replaceSelection(
   textarea: HTMLTextAreaElement,
   start: number,
   end: number,
   text: string,
-): void {
+  isUndoSelection: PendingUndo['isUndoSelection'],
+): string {
   const previousFocus = document.activeElement
+
+  // Re-registering the same listener reference is a no-op, so no bookkeeping is needed.
+  textarea.addEventListener('input', handleUndoInput)
 
   textarea.focus()
   textarea.setSelectionRange(start, end)
 
-  const insertedWithUndo =
-    document.queryCommandSupported('insertText') && document.execCommand('insertText', false, text)
-
-  if (!insertedWithUndo) {
+  const hasNativeUndoEntry = document.execCommand('insertText', false, text)
+  if (!hasNativeUndoEntry) {
     textarea.value = textarea.value.slice(0, start) + text + textarea.value.slice(end)
-    textarea.setSelectionRange(start + text.length, start + text.length)
   }
 
-  refocusIfConnected(previousFocus)
+  if (!(previousFocus instanceof HTMLElement) || previousFocus === textarea || !previousFocus.isConnected) {
+    return textarea.value
+  }
+
+  if (hasNativeUndoEntry) {
+    pendingUndo.set(textarea, { previousFocus, isUndoSelection })
+  }
+
+  moveFocusOutOfEditor(textarea, previousFocus)
+
+  return textarea.value
 }
 
 export function replaceTextRangeWithUndoSupport(
@@ -35,8 +70,13 @@ export function replaceTextRangeWithUndoSupport(
   end: number,
   replacement: string,
 ): string {
-  insertTextAtRangeWithUndoSupport(textarea, start, end, replacement)
-  return textarea.value
+  return replaceSelection(
+    textarea,
+    start,
+    end,
+    replacement,
+    (target) => target.selectionStart === start && target.selectionEnd === end,
+  )
 }
 
 export function replaceAllTextRangesWithUndoSupport(
@@ -48,21 +88,13 @@ export function replaceAllTextRangesWithUndoSupport(
     return textarea.value
   }
 
-  const previousFocus = document.activeElement
   const nextText = applyTextReplacements(textarea.value, ranges, replacement)
 
-  textarea.focus()
-  textarea.setSelectionRange(0, textarea.value.length)
-
-  const replacedWithUndo =
-    document.queryCommandSupported('insertText') && document.execCommand('insertText', false, nextText)
-
-  if (!replacedWithUndo) {
-    textarea.value = nextText
-    textarea.setSelectionRange(nextText.length, nextText.length)
-  }
-
-  refocusIfConnected(previousFocus)
-
-  return textarea.value
+  return replaceSelection(
+    textarea,
+    0,
+    textarea.value.length,
+    nextText,
+    (target) => target.selectionStart === 0 && target.selectionEnd === target.value.length && target.value.length > 0,
+  )
 }
