@@ -174,7 +174,8 @@ export class MomentsService extends AbstractViewController implements InternalEv
       }
     }
 
-    const filename = `Moment ${dateToStringStyle1(new Date())}.png`
+    const date = dateToStringStyle1(new Date())
+    const filename = jtString(c('B4.Notes.EditingUI.Label').jt`Moment ${date}.png`)
     const camera = new PhotoRecorder()
     await camera.initialize()
 

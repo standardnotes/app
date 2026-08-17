@@ -2,6 +2,7 @@ import { RevisionType } from '@/Components/RevisionHistoryModal/RevisionType'
 import { sortRevisionListIntoGroups } from '@/Components/RevisionHistoryModal/utils'
 import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
+import { jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 import {
   Action,
@@ -352,7 +353,9 @@ export class NoteHistoryController {
 
     const duplicatedItem = await this.mutator.duplicateItem(originalNote, false, {
       ...revision.payload.content,
-      title: revision.payload.content.title ? revision.payload.content.title + ' (copy)' : undefined,
+      title: revision.payload.content.title
+        ? jtString(c('B4.Notes.History.Label').jt`${revision.payload.content.title} (copy)`)
+        : undefined,
     })
 
     void this.sync.sync()

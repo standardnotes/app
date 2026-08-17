@@ -158,7 +158,10 @@ export class FeaturesController extends AbstractViewController implements Intern
   }
 
   isSearchEnhancementsEnabled(): boolean {
-    // todo: remove this once the feature is released
+    return true
+  }
+
+  isUniversalSearchEnabled(): boolean {
     return true
   }
 }

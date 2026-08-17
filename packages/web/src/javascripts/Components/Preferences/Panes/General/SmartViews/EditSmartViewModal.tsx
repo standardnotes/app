@@ -76,7 +76,7 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
         mobileSlot: 'left',
       },
       {
-        label: isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save',
+        label: isSaving ? <Spinner className="h-4.5 w-4.5" /> : c('B6.Preferences.General.Action').t`Save`,
         onClick: saveSmartView,
         disabled: isSaving,
         type: 'primary',

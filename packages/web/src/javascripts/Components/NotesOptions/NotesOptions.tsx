@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { NoteType, Platform } from '@standardnotes/snjs'
+import { isUIFeatureAnIframeFeature, NoteType, Platform } from '@standardnotes/snjs'
 import {
   CHANGE_EDITOR_WIDTH_COMMAND,
   OPEN_NOTE_HISTORY_COMMAND,
@@ -24,6 +24,7 @@ import { SpellcheckOptions } from './SpellcheckOptions'
 import { NoteSizeWarning } from './NoteSizeWarning'
 import { iconClass } from './ClassNames'
 import SuperNoteOptions from './SuperNoteOptions'
+import PlainNoteOptions from './PlainNoteOptions'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuItem from '../Menu/MenuItem'
 import { useApplication } from '../ApplicationProvider'
@@ -373,6 +374,11 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
       {notes.length === 1 && (
         <>
           {notes[0].noteType === NoteType.Super && <SuperNoteOptions closeMenu={closeMenu} />}
+
+          {notes[0].noteType !== NoteType.Super &&
+            editorForNote &&
+            !isUIFeatureAnIframeFeature(editorForNote) &&
+            application.featuresController.isUniversalSearchEnabled() && <PlainNoteOptions closeMenu={closeMenu} />}
 
           {!areSomeNotesInSharedVault && (
             <MenuSection>

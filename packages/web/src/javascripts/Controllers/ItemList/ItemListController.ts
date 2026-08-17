@@ -1,6 +1,6 @@
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { debounce, destroyAllObjectProperties, isMobileScreen } from '@/Utils'
-import { c } from 'ttag'
+import { c, msgid } from 'ttag'
 import {
   ApplicationEvent,
   CollectionSort,
@@ -80,7 +80,7 @@ export class ItemListController
   items: ListableContentItem[] = []
   notesToDisplay = 0
   pageSize = 0
-  panelTitle = 'Notes'
+  panelTitle = c('B4.Notes.TagsLinkedItems.Label').t`Notes`
   renderedItems: ListableContentItem[] = []
   searchSubmitted = false
   showDisplayOptionsMenu = false
@@ -419,13 +419,19 @@ export class ItemListController
   }
 
   reloadPanelTitle = () => {
-    let title = this.panelTitle
+    let title = c('B4.Notes.TagsLinkedItems.Label').t`Notes`
 
     if (this.isFiltering) {
       const resultCount = this.items.length
-      title = `${resultCount} search results`
+      title = jtString(
+        c('B3.Notes.NoteList.Info').ngettext(
+          msgid`${resultCount} search result`,
+          `${resultCount} search results`,
+          resultCount,
+        ),
+      )
     } else if (this.navigationController.selected) {
-      title = `${this.navigationController.selected.title}`
+      title = this.navigationController.selected.title
     }
 
     this.panelTitle = title

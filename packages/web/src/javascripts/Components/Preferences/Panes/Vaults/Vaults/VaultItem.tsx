@@ -128,7 +128,12 @@ const VaultItem = ({ vault }: Props) => {
           )}
           <div className="mt-2 flex w-full flex-wrap gap-3">
             <Button label={c('B6.Preferences.Vaults.Action').t`Edit`} onClick={openEditModal} />
-            {canShowLockOption && <Button label={isLocked ? 'Unlock' : 'Lock'} onClick={toggleLock} />}
+            {canShowLockOption && (
+              <Button
+                label={isLocked ? c('B2.NavSharedUI.Action').t`Unlock vault` : c('B2.NavSharedUI.Action').t`Lock vault`}
+                onClick={toggleLock}
+              />
+            )}
             {isCurrentUserOwner && (
               <Button colorStyle="danger" label={c('B6.Preferences.Vaults.Action').t`Delete`} onClick={deleteVault} />
             )}
