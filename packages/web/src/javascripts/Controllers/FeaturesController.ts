@@ -13,7 +13,7 @@ import {
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { CrossControllerEvent } from './CrossControllerEvent'
-import { featureTrunkSearchEnhancementsEnabled, featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 export class FeaturesController extends AbstractViewController implements InternalEventHandlerInterface {
   hasFolders: boolean
@@ -158,9 +158,7 @@ export class FeaturesController extends AbstractViewController implements Intern
   }
 
   isSearchEnhancementsEnabled(): boolean {
-    return (
-      featureTrunkSearchEnhancementsEnabled() ||
-      this.features.hasRole(RoleName.create(RoleName.NAMES.InternalTeamUser).getValue())
-    )
+    // todo: remove this once the feature is released
+    return true
   }
 }
