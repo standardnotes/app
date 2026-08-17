@@ -159,7 +159,6 @@ describe('GetFeatureStatusUseCase', () => {
       ).toEqual(FeatureStatus.InCurrentPlanButExpired)
     })
   })
-
   describe('third party features', () => {
     it('should return Entitled for third-party features', () => {
       const mockComponent = {

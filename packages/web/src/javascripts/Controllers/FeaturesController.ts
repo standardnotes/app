@@ -156,4 +156,8 @@ export class FeaturesController extends AbstractViewController implements Intern
 
     return featureTrunkVaultsEnabled() || isEntitledToFeature
   }
+
+  isUniversalSearchEnabled(): boolean {
+    return true
+  }
 }

@@ -9,6 +9,7 @@ export const KEYBOARD_SHORTCUT_CATEGORY_ORDER: KeyboardShortcutCategory[] = [
   'Super notes',
   'Notes list',
   'General',
+  'Search',
 ]
 
 /** Localized label for a stable keyboard shortcut category id. */
@@ -24,5 +25,7 @@ export function translateKeyboardShortcutCategory(category: KeyboardShortcutCate
       return jtString(c('B2.NavSharedUI.Label').jt`${SuperName} notes`)
     case 'Formatting':
       return c('B2.NavSharedUI.Label').t`Formatting`
+    case 'Search':
+      return c('B2.NavSharedUI.Label').t`Search`
   }
 }
