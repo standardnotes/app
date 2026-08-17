@@ -11,6 +11,16 @@ const getEmptyPredicate = (): PredicateJsonForm => {
   }
 }
 
+const toTagsPredicate = (tagTitle: PredicateJsonForm['value']): PredicateJsonForm => ({
+  keypath: 'tags',
+  operator: 'includes',
+  value: {
+    keypath: 'title',
+    operator: '=',
+    value: tagTitle,
+  },
+})
+
 export class CompoundPredicateBuilderController {
   operator: PredicateCompoundOperator = 'and'
   predicates: PredicateJsonForm[] = [getEmptyPredicate()]
@@ -64,6 +74,9 @@ export class CompoundPredicateBuilderController {
         case 'date':
           this.setPredicate(index, { value: '1.days.ago' })
           break
+        case 'tag':
+          this.setPredicate(index, { value: '' })
+          break
       }
     }
 
@@ -81,7 +94,12 @@ export class CompoundPredicateBuilderController {
   toJson(): PredicateJsonForm {
     return {
       operator: this.operator,
-      value: this.predicates,
+      value: this.predicates.map((predicate) => {
+        if (predicate.keypath === 'tags') {
+          return toTagsPredicate(predicate.value)
+        }
+        return predicate
+      }),
     }
   }
 

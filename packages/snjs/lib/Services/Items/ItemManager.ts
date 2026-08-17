@@ -170,6 +170,17 @@ export class ItemManager extends Services.AbstractService implements Services.It
       })
       .filter((tag) => tag != undefined)
 
+    const mostRecentVersionOfSearchQuery = options.searchQuery
+      ? {
+          ...options.searchQuery,
+          tagFilters: options.searchQuery.tagFilters
+            ?.map((tag) => {
+              return this.collection.find(tag.uuid) as Models.SNTag
+            })
+            .filter((tag) => tag != undefined),
+        }
+      : undefined
+
     const mostRecentVersionOfViews = options.views
       ?.map((view) => {
         if (Models.isSystemView(view)) {
@@ -184,6 +195,7 @@ export class ItemManager extends Services.AbstractService implements Services.It
       ...override,
       ...{
         tags: mostRecentVersionOfTags,
+        searchQuery: mostRecentVersionOfSearchQuery,
         views: mostRecentVersionOfViews,
         hiddenContentTypes: [ContentType.TYPES.Tag],
       },
