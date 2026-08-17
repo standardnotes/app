@@ -5,7 +5,7 @@ import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { NativeFeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
-import { SuperName, jtString } from '@standardnotes/features'
+import { SuperName } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -37,19 +37,19 @@ const ImportModalInitialPage = ({ setFiles, selectFiles }: Props) => {
       <div className="flex flex-wrap items-center justify-center gap-4">
         <Button className="flex items-center !py-2" onClick={() => selectFiles('evernote')}>
           <Icon type="evernote" className="mr-2 text-[#14cc45]" />
-          {c('B1.Account.ImportExport.ImportSource').t`Evernote`}
+          Evernote
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('google-keep')}>
           <Icon type="gkeep" className="mr-2 text-[#fbbd00]" />
-          {c('B1.Account.ImportExport.ImportSource').t`Google Keep`}
+          Google Keep
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('simplenote')}>
           <Icon type="simplenote" className="mr-2 text-[#3360cc]" />
-          {c('B1.Account.ImportExport.ImportSource').t`Simplenote`}
+          Simplenote
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('aegis')}>
           <Icon type="aegis" className="mr-2 rounded bg-[#0d47a1] p-1 text-[#fff]" size="normal" />
-          {c('B1.Account.ImportExport.ImportSource').t`Aegis`}
+          Aegis
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('plaintext')}>
           <Icon type="plain-text" className="mr-2 text-info" />
@@ -57,7 +57,7 @@ const ImportModalInitialPage = ({ setFiles, selectFiles }: Props) => {
         </Button>
         <Button className="flex items-center !py-2" onClick={() => selectFiles('html')}>
           <Icon type="rich-text" className="mr-2 text-accessory-tint-2" />
-          {c('B1.Account.ImportExport.ImportSource').t`HTML`}
+          HTML
         </Button>
         <Button
           className="flex items-center !py-2"
@@ -74,7 +74,7 @@ const ImportModalInitialPage = ({ setFiles, selectFiles }: Props) => {
           }}
         >
           <Icon type="file-doc" className="mr-2 text-accessory-tint-1" />
-          {jtString(c('B1.Account.ImportExport.ImportSource').jt`${SuperName} (JSON)`)}
+          {`${SuperName} (JSON)`}
         </Button>
       </div>
     </>

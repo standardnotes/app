@@ -38,7 +38,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
 
   const enable = useCallback(() => {
     if (!application.featuresController.entitledToFiles) {
-      premiumModal.activate('Moments')
+      premiumModal.activate(c('B6.Preferences.General.Title').t`Moments`)
       return
     }
     void application.momentsService.enableMoments()
@@ -58,7 +58,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
 
   const takePhoto = useCallback(() => {
     if (!application.featuresController.entitledToFiles) {
-      premiumModal.activate('Moments')
+      premiumModal.activate(c('B6.Preferences.General.Title').t`Moments`)
       return
     }
 

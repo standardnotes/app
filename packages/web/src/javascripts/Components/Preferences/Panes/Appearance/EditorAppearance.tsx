@@ -17,6 +17,51 @@ type Props = {
   application: WebApplication
 }
 
+function getEditorFontSizeLabel(fontSize: EditorFontSize): string {
+  switch (fontSize) {
+    case EditorFontSize.ExtraSmall:
+      return c('B6.Preferences.Appearance.Label').t`Extra small`
+    case EditorFontSize.Small:
+      return c('B6.Preferences.Appearance.Label').t`Small`
+    case EditorFontSize.Normal:
+      return c('B6.Preferences.Appearance.Label').t`Normal`
+    case EditorFontSize.Medium:
+      return c('B6.Preferences.Appearance.Label').t`Medium`
+    case EditorFontSize.Large:
+      return c('B6.Preferences.Appearance.Label').t`Large`
+  }
+}
+
+function getEditorLineHeightLabel(lineHeight: EditorLineHeight): string {
+  switch (lineHeight) {
+    case EditorLineHeight.None:
+      return c('B6.Preferences.Appearance.Label').t`None`
+    case EditorLineHeight.Tight:
+      return c('B6.Preferences.Appearance.Label').t`Tight`
+    case EditorLineHeight.Snug:
+      return c('B6.Preferences.Appearance.Label').t`Snug`
+    case EditorLineHeight.Normal:
+      return c('B6.Preferences.Appearance.Label').t`Normal`
+    case EditorLineHeight.Relaxed:
+      return c('B6.Preferences.Appearance.Label').t`Relaxed`
+    case EditorLineHeight.Loose:
+      return c('B6.Preferences.Appearance.Label').t`Loose`
+  }
+}
+
+function getEditorLineWidthLabel(width: EditorLineWidth): string {
+  switch (width) {
+    case EditorLineWidth.Narrow:
+      return c('B4.Notes.EditorOptions.Label').t`Narrow`
+    case EditorLineWidth.Wide:
+      return c('B4.Notes.EditorOptions.Label').t`Wide`
+    case EditorLineWidth.Dynamic:
+      return c('B4.Notes.EditorOptions.Label').t`Dynamic`
+    case EditorLineWidth.FullWidth:
+      return c('B4.Notes.EditorOptions.Label').t`Full width`
+  }
+}
+
 const EditorDefaults = ({ application }: Props) => {
   const [lineHeight, setLineHeight] = useLocalPreference(LocalPrefKey.EditorLineHeight)
 
@@ -27,7 +72,7 @@ const EditorDefaults = ({ application }: Props) => {
   const lineHeightDropdownOptions = useMemo(
     () =>
       Object.values(EditorLineHeight).map((lineHeight) => ({
-        label: lineHeight,
+        label: getEditorLineHeightLabel(lineHeight),
         value: lineHeight,
       })),
     [],
@@ -46,7 +91,7 @@ const EditorDefaults = ({ application }: Props) => {
   const fontSizeDropdownOptions = useMemo(
     () =>
       Object.values(EditorFontSize).map((fontSize) => ({
-        label: fontSize,
+        label: getEditorFontSizeLabel(fontSize),
         value: fontSize,
       })),
     [],
@@ -118,7 +163,7 @@ const EditorDefaults = ({ application }: Props) => {
                 className="flex w-full min-w-55 items-center justify-between rounded border border-border bg-default px-3.5 py-1.5 text-left text-base text-foreground md:w-fit lg:text-sm"
                 onClick={toggleEditorWidthModal}
               >
-                {editorWidth === EditorLineWidth.FullWidth ? 'Full width' : editorWidth}
+                {getEditorLineWidthLabel(editorWidth)}
                 <Icon type="chevron-down" size="normal" />
               </button>
             </div>

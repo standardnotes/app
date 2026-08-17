@@ -68,7 +68,7 @@ const ClippedNoteView = ({
     if (
       await confirmDialog({
         text: c('B4.Notes.EditingUI.Confirmation').t`Are you sure you want to discard this clip?`,
-        confirmButtonText: 'Discard',
+        confirmButtonText: c('B4.Notes.EditingUI.Action').t`Discard`,
         confirmButtonStyle: 'danger',
       })
     ) {
