@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.40.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.8...@standardnotes/ui-services@1.40.0) (2026-08-17)
+
+### Features
+
+* Adds in-note search for plain text notes ([#3038](https://github.com/standardnotes/app/issues/3038)) ([1ea8da6](https://github.com/standardnotes/app/commit/1ea8da6009df6c3f01067a639e27bba9f0321707))
+
 ## [1.39.8](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.39.7...@standardnotes/ui-services@1.39.8) (2026-07-18)
 
 ### Bug Fixes

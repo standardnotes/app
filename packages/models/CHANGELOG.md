@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.59.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.58.4...@standardnotes/models@1.59.0) (2026-08-17)
+
+### Features
+
+* Adds new search filter options: search titles only and tag filters ([#3039](https://github.com/standardnotes/app/issues/3039)) ([f7f947a](https://github.com/standardnotes/app/commit/f7f947a8552b85ef00a15e4920e07eeb272bb63c))
+
 ## [1.58.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.58.3...@standardnotes/models@1.58.4) (2026-07-18)
 
 ### Bug Fixes
