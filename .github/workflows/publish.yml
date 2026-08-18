@@ -276,7 +276,7 @@ jobs:
           fi
 
           echo "Publishing ${PACKAGE} (${TAGS[0]})..."
-          yarn workspace "$PACKAGE" npm publish --access public --registry https://registry.npmjs.org
+          yarn workspace "$PACKAGE" npm publish --access public
 
   publish-docker:
     name: Publish to Docker Hub
