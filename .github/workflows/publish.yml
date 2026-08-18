@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      skip_packages:
+        description: 'Packages to skip (comma-separated, e.g. @standardnotes/features)'
+        required: false
+        type: string
+        default: ''
 
 # Use commit message "[snjs docker only]" to build/push only standardnotes/snjs (:sha + :latest) for E2E; skips full build, web image, and NPM.
 # Manual dispatch publishes tagged packages from an existing release commit without bumping versions.
@@ -248,7 +254,21 @@ jobs:
         run: yarn build:all
 
       - name: Publish tagged packages
-        run: yarn publish:prod
+        env:
+          SKIP_PACKAGES: ${{ inputs.skip_packages }}
+        run: |
+          IGNORE_ARGS=()
+          if [ -n "$SKIP_PACKAGES" ]; then
+            IFS=',' read -ra PACKAGES <<< "$SKIP_PACKAGES"
+            for pkg in "${PACKAGES[@]}"; do
+              pkg="$(echo "$pkg" | xargs)"
+              if [ -n "$pkg" ]; then
+                IGNORE_ARGS+=(--ignore "$pkg")
+              fi
+            done
+          fi
+
+          yarn lerna publish from-git --yes --loglevel verbose --registry https://registry.npmjs.org "${IGNORE_ARGS[@]}"
 
   publish-docker:
     name: Publish to Docker Hub
