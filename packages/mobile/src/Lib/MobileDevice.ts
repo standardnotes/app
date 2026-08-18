@@ -1,4 +1,5 @@
 import SNReactNative from '@standardnotes/react-native-utils'
+import { sanitizeFileNameForNativeWrite } from './Utils'
 import {
   AppleIAPProductId,
   AppleIAPReceipt,
@@ -502,7 +503,8 @@ export class MobileDevice implements MobileDeviceInterface {
       directory = saveInTempLocation ? CachesDirectoryPath : DownloadDirectoryPath
     }
 
-    return `${directory}/${filename}`
+    const safeFilename = sanitizeFileNameForNativeWrite(filename)
+    return `${directory}/${safeFilename}`
   }
 
   async downloadBase64AsFile(

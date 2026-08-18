@@ -9,7 +9,6 @@ import ImagePreview from './ImagePreview'
 import { OptionalSuperEmbeddedImageProps } from './OptionalSuperEmbeddedImageProps'
 import { PreviewableTextFileTypes, RequiresNativeFilePreview } from './isFilePreviewable'
 import TextPreview from './TextPreview'
-import { parseFileName, sanitizeFileName } from '@standardnotes/utils'
 import VideoPreview from './VideoPreview'
 
 type Props = {
@@ -60,11 +59,7 @@ const PreviewComponent: FunctionComponent<Props> = ({
       }),
     )
 
-    const { name, ext } = parseFileName(file.name)
-    const sanitizedName = sanitizeFileName(name)
-    const filename = `${sanitizedName}.${ext}`
-
-    void application.mobileDevice.previewFile(fileBase64, filename)
+    void application.mobileDevice.previewFile(fileBase64, file.name)
   }, [application, bytes, file.mimeType, file.name, isNativeMobileWeb])
 
   if (isNativeMobileWeb && requiresNativePreview) {
