@@ -7,6 +7,10 @@
   "description": "Features SDK for Standard Notes projects",
   "main": "dist/index.js",
   "author": "Standard Notes.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/standardnotes/app"
+  },
   "types": "dist/index.d.ts",
   "files": [
     "dist"
