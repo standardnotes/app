@@ -5,11 +5,10 @@ on:
     branches: [main]
   workflow_dispatch:
     inputs:
-      skip_packages:
-        description: 'Packages to skip (comma-separated, e.g. @standardnotes/features)'
-        required: false
+      package:
+        description: 'Package to publish (e.g. @standardnotes/releases)'
+        required: true
         type: string
-        default: ''
 
 # Use commit message "[snjs docker only]" to build/push only standardnotes/snjs (:sha + :latest) for E2E; skips full build, web image, and NPM.
 # Manual dispatch publishes tagged packages from an existing release commit without bumping versions.
@@ -253,22 +252,31 @@ jobs:
       - name: Build
         run: yarn build:all
 
-      - name: Publish tagged packages
+      - name: Publish tagged package
         env:
-          SKIP_PACKAGES: ${{ inputs.skip_packages }}
+          PACKAGE: ${{ inputs.package }}
         run: |
-          IGNORE_ARGS=()
-          if [ -n "$SKIP_PACKAGES" ]; then
-            IFS=',' read -ra PACKAGES <<< "$SKIP_PACKAGES"
-            for pkg in "${PACKAGES[@]}"; do
-              pkg="$(echo "$pkg" | xargs)"
-              if [ -n "$pkg" ]; then
-                IGNORE_ARGS+=(--ignore "$pkg")
-              fi
-            done
+          set -euo pipefail
+
+          PACKAGE="$(echo "$PACKAGE" | xargs)"
+          if [ -z "$PACKAGE" ]; then
+            echo "Package name is required."
+            exit 1
           fi
 
-          yarn lerna publish from-git --yes --loglevel verbose --registry https://registry.npmjs.org "${IGNORE_ARGS[@]}"
+          mapfile -t TAGS < <(git tag --points-at HEAD --list "${PACKAGE}@*")
+          if [ "${#TAGS[@]}" -eq 0 ]; then
+            echo "No release tag found for ${PACKAGE} at the release commit."
+            exit 1
+          fi
+
+          if [ "${#TAGS[@]}" -gt 1 ]; then
+            echo "Multiple release tags found for ${PACKAGE}: ${TAGS[*]}"
+            exit 1
+          fi
+
+          echo "Publishing ${PACKAGE} (${TAGS[0]})..."
+          yarn workspace "$PACKAGE" npm publish --access public --registry https://registry.npmjs.org
 
   publish-docker:
     name: Publish to Docker Hub
