@@ -84,7 +84,7 @@ export class Database {
       request.onerror = (event) => {
         const target = event.target as any
         if (target.errorCode) {
-          this.showAlert(c('B2.NavSharedUI.Error').jt`Offline database issue: ${target.errorCode}` as unknown as string)
+          this.showAlert(jtString(c('B2.NavSharedUI.Error').jt`Offline database issue: ${target.errorCode}`))
         } else {
           this.displayOfflineAlert()
         }
@@ -281,8 +281,10 @@ export class Database {
   }
 
   private showGenericError(error: { code: number; name: string }) {
-    const message = c('B2.NavSharedUI.Error')
-      .jt`Unable to save changes locally due to an unknown system issue. Issue Code: ${error.code} Issue Name: ${error.name}.` as unknown as string
+    const message = jtString(
+      c('B2.NavSharedUI.Error')
+        .jt`Unable to save changes locally due to an unknown system issue. Issue Code: ${error.code} Issue Name: ${error.name}.`,
+    )
 
     this.showAlert(message)
   }
