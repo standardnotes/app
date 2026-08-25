@@ -98,10 +98,8 @@ export const UpgradePrompt = ({
         >
           {featureNameBold && (
             <span>
-              {jtString(
-                c('B7.FilesSubscriptionHelp.Subscription.Info')
-                  .jt`To take advantage of ${featureNameBold} and other advanced features, upgrade your current plan.`,
-              )}
+              {c('B7.FilesSubscriptionHelp.Subscription.Info')
+                .jt`To take advantage of ${featureNameBold} and other advanced features, upgrade your current plan.`}
             </span>
           )}
           {!featureNameBold && (
