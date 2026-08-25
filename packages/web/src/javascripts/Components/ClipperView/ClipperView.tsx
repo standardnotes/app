@@ -66,7 +66,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
       })
       .catch(console.error)
   }, [])
-  const isDetachedPanel = currentWindow?.type === 'detached_panel'
+  const isDetachedPanel = (currentWindow?.type as string | undefined) === 'detached_panel'
   const isFirefoxAuthPanel = IS_FIREFOX && getAuthPaneFromUrl() !== undefined
   const isFirefoxPopup = !!currentWindow && currentWindow.type === 'popup' && currentWindow.incognito === false
 

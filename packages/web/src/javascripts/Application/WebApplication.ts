@@ -131,10 +131,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       allowNoteSelectionStatePersistence: deviceInterface.environment !== Environment.Mobile,
       u2fAuthenticatorRegistrationPromptFunction: ((registrationOptions: Record<string, unknown>) =>
         startRegistration(
-          prepareWebAuthnRegistrationOptions(registrationOptions) as unknown as Parameters<
-            typeof startRegistration
-          >[0],
-        )) as (registrationOptions: Record<string, unknown>) => Promise<Record<string, unknown>>,
+          prepareWebAuthnRegistrationOptions(registrationOptions) as unknown as Parameters<typeof startRegistration>[0],
+        )) as unknown as (registrationOptions: Record<string, unknown>) => Promise<Record<string, unknown>>,
       u2fAuthenticatorVerificationPromptFunction: startAuthentication as unknown as (
         authenticationOptions: Record<string, unknown>,
       ) => Promise<Record<string, unknown>>,
