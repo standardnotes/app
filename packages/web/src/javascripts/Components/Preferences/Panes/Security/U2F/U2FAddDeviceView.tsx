@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { AddAuthenticator } from '@standardnotes/snjs'
 
@@ -19,6 +19,27 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
   const [deviceName, setDeviceName] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [registrationOptions, setRegistrationOptions] = useState<Record<string, unknown> | null>(null)
+  const [isLoadingOptions, setIsLoadingOptions] = useState(true)
+
+  useEffect(() => {
+    let isActive = true
+
+    void application.fetchAuthenticatorRegistrationOptions().then((options) => {
+      if (!isActive) {
+        return
+      }
+      setRegistrationOptions(options)
+      setIsLoadingOptions(false)
+      if (options === null) {
+        setErrorMessage(c('B6.Preferences.Security.Error').t`Could not prepare security key registration`)
+      }
+    })
+
+    return () => {
+      isActive = false
+    }
+  }, [application])
 
   const handleDeviceNameChange = useCallback((deviceName: string) => {
     setDeviceName(deviceName)
@@ -27,6 +48,11 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
   const handleAddDeviceClick = useCallback(async () => {
     if (!deviceName) {
       setErrorMessage(c('B6.Preferences.Security.Error').t`Device name is required`)
+      return
+    }
+
+    if (!registrationOptions) {
+      setErrorMessage(c('B6.Preferences.Security.Error').t`Could not prepare security key registration`)
       return
     }
 
@@ -39,6 +65,7 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
     const authenticatorAddedOrError = await addAuthenticator.execute({
       userUuid: user.uuid,
       authenticatorName: deviceName,
+      registrationOptions,
     })
     if (authenticatorAddedOrError.isFailed()) {
       setErrorMessage(authenticatorAddedOrError.getError())
@@ -47,7 +74,15 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
     onDeviceAddingModalToggle(false)
     await onDeviceAdded()
-  }, [deviceName, setErrorMessage, application, addAuthenticator, onDeviceAddingModalToggle, onDeviceAdded])
+  }, [
+    deviceName,
+    registrationOptions,
+    setErrorMessage,
+    application,
+    addAuthenticator,
+    onDeviceAddingModalToggle,
+    onDeviceAdded,
+  ])
 
   const closeModal = () => {
     onDeviceAddingModalToggle(false)
@@ -77,6 +112,7 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
           type: 'primary',
           onClick: handleAddDeviceClick,
           mobileSlot: 'right',
+          disabled: isLoadingOptions || registrationOptions === null,
         },
       ]}
     >

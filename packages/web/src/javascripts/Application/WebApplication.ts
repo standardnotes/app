@@ -29,6 +29,7 @@ import { action, computed, makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { getBlobFromBase64, isDesktopApplication, isDev } from '@/Utils'
+import { prepareWebAuthnRegistrationOptions } from '@/Utils/prepareWebAuthnRegistrationOptions'
 import {
   ArchiveManager,
   AutolockService,
@@ -128,9 +129,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         deviceInterface.environment === Environment.Mobile ? 250 : ApplicationOptionsDefaults.sleepBetweenBatches,
       allowMultipleSelection: deviceInterface.environment !== Environment.Mobile,
       allowNoteSelectionStatePersistence: deviceInterface.environment !== Environment.Mobile,
-      u2fAuthenticatorRegistrationPromptFunction: startRegistration as unknown as (
-        registrationOptions: Record<string, unknown>,
-      ) => Promise<Record<string, unknown>>,
+      u2fAuthenticatorRegistrationPromptFunction: ((registrationOptions: Record<string, unknown>) =>
+        startRegistration(
+          prepareWebAuthnRegistrationOptions(registrationOptions) as unknown as Parameters<typeof startRegistration>[0],
+        )) as unknown as (registrationOptions: Record<string, unknown>) => Promise<Record<string, unknown>>,
       u2fAuthenticatorVerificationPromptFunction: startAuthentication as unknown as (
         authenticationOptions: Record<string, unknown>,
       ) => Promise<Record<string, unknown>>,

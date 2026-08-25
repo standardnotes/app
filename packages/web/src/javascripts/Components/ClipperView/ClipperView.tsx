@@ -39,6 +39,18 @@ import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import Spinner from '../Spinner/Spinner'
+import { IS_FIREFOX } from '@/Components/SuperEditor/Lexical/Shared/environment'
+
+const getAuthPaneFromUrl = () => {
+  const pane = new URLSearchParams(window.location.search).get('pane')
+  if (pane === 'sign-in') {
+    return AccountMenuPane.SignIn
+  }
+  if (pane === 'register') {
+    return AccountMenuPane.Register
+  }
+  return undefined
+}
 
 const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGroup }) => {
   const application = useApplication()
@@ -54,6 +66,8 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
       })
       .catch(console.error)
   }, [])
+  const isDetachedPanel = (currentWindow?.type as string | undefined) === 'detached_panel'
+  const isFirefoxAuthPanel = IS_FIREFOX && getAuthPaneFromUrl() !== undefined
   const isFirefoxPopup = !!currentWindow && currentWindow.type === 'popup' && currentWindow.incognito === false
 
   const [user, setUser] = useState(() => application.sessions.getUser())
@@ -74,6 +88,16 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
     return application.addEventObserver(async (event) => {
       switch (event) {
         case ApplicationEvent.SignedIn:
+          setUser(application.sessions.getUser())
+          setIsEntitled(
+            application.features.getFeatureStatus(
+              NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.Clipper).getValue(),
+            ) === FeatureStatus.Entitled,
+          )
+          if (isFirefoxAuthPanel) {
+            window.close()
+          }
+          break
         case ApplicationEvent.SignedOut:
         case ApplicationEvent.UserRolesChanged:
           setUser(application.sessions.getUser())
@@ -126,15 +150,37 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
     void application.setPreference(PrefKey.ClipperDefaultTagUuid, undefined)
   }, [application])
 
-  const [menuPane, setMenuPane] = useState<AccountMenuPane>()
+  const [menuPane, setMenuPane] = useState<AccountMenuPane | undefined>(getAuthPaneFromUrl)
+
+  const openFirefoxAuthPanel = useCallback(async (pane: 'sign-in' | 'register') => {
+    try {
+      await runtime.sendMessage({ type: RuntimeMessageTypes.OpenClipperAuthPanel, pane })
+    } catch (error) {
+      console.error(error)
+      setMenuPane(pane === 'sign-in' ? AccountMenuPane.SignIn : AccountMenuPane.Register)
+      return
+    }
+
+    window.close()
+  }, [])
 
   const activateRegisterPane = useCallback(() => {
+    if (IS_FIREFOX && !isFirefoxAuthPanel && !isDetachedPanel) {
+      void openFirefoxAuthPanel('register')
+      return
+    }
+
     setMenuPane(AccountMenuPane.Register)
-  }, [setMenuPane])
+  }, [isDetachedPanel, isFirefoxAuthPanel, openFirefoxAuthPanel])
 
   const activateSignInPane = useCallback(() => {
+    if (IS_FIREFOX && !isFirefoxAuthPanel && !isDetachedPanel) {
+      void openFirefoxAuthPanel('sign-in')
+      return
+    }
+
     setMenuPane(AccountMenuPane.SignIn)
-  }, [setMenuPane])
+  }, [isDetachedPanel, isFirefoxAuthPanel, openFirefoxAuthPanel])
 
   const showSignOutConfirmation = useCallback(async () => {
     if (
@@ -155,7 +201,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
     void sendMessageToActiveTab({
       type: RuntimeMessageTypes.ToggleScreenshotMode,
       enabled: isScreenshotMode,
-    })
+    }).catch(() => undefined)
   }, [isScreenshotMode])
 
   const [hasSelection, setHasSelection] = useState(false)
@@ -323,16 +369,26 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
   }
 
   if (!user) {
-    return menuPane ? (
-      <div className="py-1">
-        <MenuPaneSelector
-          mainApplicationGroup={applicationGroup}
-          menuPane={menuPane}
-          setMenuPane={setMenuPane}
-          closeMenu={() => setMenuPane(undefined)}
-        />
-      </div>
-    ) : (
+    if (menuPane || isFirefoxAuthPanel) {
+      return (
+        <div className="py-1">
+          <MenuPaneSelector
+            mainApplicationGroup={applicationGroup}
+            menuPane={menuPane ?? AccountMenuPane.SignIn}
+            setMenuPane={(pane) => {
+              if (isFirefoxAuthPanel && pane === AccountMenuPane.GeneralMenu) {
+                window.close()
+                return
+              }
+              setMenuPane(pane)
+            }}
+            closeMenu={() => (isFirefoxAuthPanel ? window.close() : setMenuPane(undefined))}
+          />
+        </div>
+      )
+    }
+
+    return (
       <Menu a11yLabel={c('B1.Account.Session.Label').t`User account menu`}>
         <MenuItem onClick={activateRegisterPane}>
           <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
