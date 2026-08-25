@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.212.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.0...@standardnotes/snjs@2.212.1) (2026-08-25)
+
+### Bug Fixes
+
+* Fixes web clipper hardware key auth for Firefox ([#3040](https://github.com/standardnotes/app/issues/3040)) ([369b1f0](https://github.com/standardnotes/app/commit/369b1f001ff1691240fc8e4c19c169bc7e34b838))
+
 # [2.212.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.8...@standardnotes/snjs@2.212.0) (2026-08-17)
 
 ### Features

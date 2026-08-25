@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.26.100](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.99...@standardnotes/api@1.26.100) (2026-08-25)
+
+**Note:** Version bump only for package @standardnotes/api
+
 ## [1.26.99](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.98...@standardnotes/api@1.26.99) (2026-08-17)
 
 **Note:** Version bump only for package @standardnotes/api

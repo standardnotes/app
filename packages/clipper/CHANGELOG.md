@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.596](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.595...@standardnotes/clipper@1.1.596) (2026-08-25)
+
+### Bug Fixes
+
+* Fixes web clipper hardware key auth for Firefox ([#3040](https://github.com/standardnotes/app/issues/3040)) ([369b1f0](https://github.com/standardnotes/app/commit/369b1f001ff1691240fc8e4c19c169bc7e34b838))
+
 ## [1.1.595](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.594...@standardnotes/clipper@1.1.595) (2026-08-17)
 
 **Note:** Version bump only for package @standardnotes/clipper

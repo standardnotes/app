@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.202.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.0...@standardnotes/web@3.202.1) (2026-08-25)
+
+### Bug Fixes
+
+* Fixes upgrade prompt string ([#3041](https://github.com/standardnotes/app/issues/3041)) ([6a0a404](https://github.com/standardnotes/app/commit/6a0a404114e9755f1de8bdf53da8f7dd3b7bba5b))
+* Fixes web clipper hardware key auth for Firefox ([#3040](https://github.com/standardnotes/app/issues/3040)) ([369b1f0](https://github.com/standardnotes/app/commit/369b1f001ff1691240fc8e4c19c169bc7e34b838))
+* Sanitizes filename on iOS file share ([#3036](https://github.com/standardnotes/app/issues/3036)) ([cf5ca47](https://github.com/standardnotes/app/commit/cf5ca4718546dd2fd08da8777b2398044721f1f3))
+
 # [3.202.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.35...@standardnotes/web@3.202.0) (2026-08-17)
 
 ### Features

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.263](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.262...@standardnotes/mobile@3.58.263) (2026-08-25)
+
+### Bug Fixes
+
+* Sanitizes filename on iOS file share ([#3036](https://github.com/standardnotes/app/issues/3036)) ([cf5ca47](https://github.com/standardnotes/app/commit/cf5ca4718546dd2fd08da8777b2398044721f1f3))
+
 ## [3.58.262](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.261...@standardnotes/mobile@3.58.262) (2026-08-17)
 
 **Note:** Version bump only for package @standardnotes/mobile

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.110.201](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.202.0...@standardnotes/desktop@3.110.201) (2026-08-25)
+
+### Bug Fixes
+
+* preferences sidebar unclickable when opened in focus mode ([#3034](https://github.com/standardnotes/app/issues/3034)) ([025ca51](https://github.com/standardnotes/app/commit/025ca517f61ed415760bdba2152d09f75a07f631))
+
 ## [3.110.200](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.201.35...@standardnotes/desktop@3.110.200) (2026-08-17)
 
 **Note:** Version bump only for package @standardnotes/desktop
