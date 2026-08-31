@@ -7,7 +7,7 @@ import { SearchOptionsController } from '../SearchOptionsController'
 import { ItemListController } from './ItemListController'
 import { ItemsReloadSource } from './ItemsReloadSource'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
-import { runInAction } from 'mobx'
+import { observable, runInAction } from 'mobx'
 
 describe('item list controller', () => {
   let application: WebApplication
@@ -56,7 +56,7 @@ describe('item list controller', () => {
       controller.getFirstNonProtectedItem = jest.fn()
 
       runInAction(() => {
-        controller.selectedUuids = new Set()
+        controller.selectedUuids = observable(new Set<string>())
       })
     })
 
@@ -105,7 +105,7 @@ describe('item list controller', () => {
       } as jest.Mocked<SNTag>
 
       runInAction(() => {
-        controller.selectedUuids = new Set(['123'])
+        controller.selectedUuids = observable(new Set(['123']))
       })
 
       Object.defineProperty(application.navigationController, 'selected', {
