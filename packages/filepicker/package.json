@@ -23,7 +23,7 @@
     "jest": "^29.3.1",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
-    "typescript": "*"
+    "typescript": "5.8.3"
   },
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
