@@ -75,15 +75,19 @@ export function stringToArrayBuffer(string: string): Uint8Array {
  * @param {ArrayBuffer} arrayBuffer
  */
 export function arrayBufferToString(arrayBuffer: ArrayBuffer): string {
-  return to_string(arrayBuffer as Uint8Array)
+  return to_string(new Uint8Array(arrayBuffer))
 }
 
 /**
  * Converts an ArrayBuffer into a hex string
  * @param arrayBuffer
  */
-export function arrayBufferToHexString(arrayBuffer: ArrayBuffer): string {
-  return to_hex(Buffer.from(arrayBuffer))
+export function arrayBufferToHexString(arrayBuffer: ArrayBuffer | ArrayBufferView): string {
+  const bytes =
+    arrayBuffer instanceof ArrayBuffer
+      ? new Uint8Array(arrayBuffer)
+      : new Uint8Array(arrayBuffer.buffer, arrayBuffer.byteOffset, arrayBuffer.byteLength)
+  return to_hex(bytes)
 }
 
 /**
@@ -107,8 +111,12 @@ export function base64ToArrayBuffer(base64: string): Uint8Array {
  * Converts an ArrayBuffer into a base64 string
  * @param buffer
  */
-export function arrayBufferToBase64(arrayBuffer: ArrayBuffer): string {
-  return to_base64(Buffer.from(arrayBuffer), SN_BASE64_VARIANT)
+export function arrayBufferToBase64(arrayBuffer: ArrayBuffer | ArrayBufferView): string {
+  const bytes =
+    arrayBuffer instanceof ArrayBuffer
+      ? new Uint8Array(arrayBuffer)
+      : new Uint8Array(arrayBuffer.buffer, arrayBuffer.byteOffset, arrayBuffer.byteLength)
+  return to_base64(bytes, SN_BASE64_VARIANT)
 }
 
 /**
@@ -156,9 +164,12 @@ export function base64Decode(base64String: string): string {
 
 const RFC4648 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
 
-export function base32Encode(input: ArrayBuffer): string {
-  const length = input.byteLength
-  const buffer = new Uint8Array(input)
+export function base32Encode(input: ArrayBuffer | ArrayBufferView): string {
+  const buffer =
+    input instanceof ArrayBuffer
+      ? new Uint8Array(input)
+      : new Uint8Array(input.buffer, input.byteOffset, input.byteLength)
+  const length = buffer.byteLength
 
   let bitIdx = 0
   let currentVal = 0

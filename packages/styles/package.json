@@ -9,7 +9,8 @@
   "scripts": {
     "build": "webpack --mode='production' && yarn run tsc",
     "start": "webpack --watch --mode='development'",
-    "lint": "prettier --check *.js"
+    "lint": "prettier --check *.js",
+    "tsc": "tsc --project tsconfig.json"
   },
   "devDependencies": {
     "css-loader": "*",

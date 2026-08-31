@@ -47,7 +47,7 @@
     "serve-static": "^1.15.0",
     "ts-loader": "^9.4.1",
     "typedarray-to-buffer": "^4.0.0",
-    "typescript": "*",
+    "typescript": "5.1.6",
     "uuid": "^9.0.0",
     "webpack": "*",
     "webpack-cli": "*"
