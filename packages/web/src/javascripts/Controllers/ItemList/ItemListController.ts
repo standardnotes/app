@@ -103,7 +103,7 @@ export class ItemListController
   private reloadItemsPromise?: Promise<unknown>
 
   lastSelectedItem: ListableContentItem | undefined
-  selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
+  selectedUuids: Set<UuidString> = observable(new Set<UuidString>()) as Set<UuidString>
   selectedItems: Record<UuidString, ListableContentItem> = {}
 
   isMultipleSelectionMode = false

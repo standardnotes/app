@@ -38,7 +38,7 @@ const HomeServerSettings = () => {
   const [isAPremiumUser, setIsAPremiumUser] = useState(false)
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [showOfflineSubscriptionActivation, setShowOfflineSubscriptionActivation] = useState(false)
-  const [logsIntervalRef, setLogsIntervalRef] = useState<NodeJS.Timer | null>(null)
+  const [logsIntervalRef, setLogsIntervalRef] = useState<ReturnType<typeof setInterval> | null>(null)
   const [homeServerConfiguration, setHomeServerConfiguration] = useState<HomeServerEnvironmentConfiguration | null>(
     null,
   )
