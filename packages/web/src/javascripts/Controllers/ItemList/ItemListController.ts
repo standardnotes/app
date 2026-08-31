@@ -1079,7 +1079,7 @@ export class ItemListController
     this.selectedItems = Object.fromEntries(this.getSelectedItems().map((item) => [item.uuid, item]))
   }
 
-  setSelectedUuids = (selectedUuids: ReadonlySet<UuidString>) => {
+  setSelectedUuids = (selectedUuids: ObservableSet<UuidString> | Set<UuidString>) => {
     log(LoggingDomain.Selection, 'Setting selected uuids', selectedUuids)
     this.selectedUuids = observable(new Set(selectedUuids))
     this.setSelectedItems()
