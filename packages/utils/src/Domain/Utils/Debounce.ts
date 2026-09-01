@@ -46,7 +46,7 @@ export function debounce<Args extends any[], F extends (...args: Args) => any>(
 ): DebouncedFunction<Args, F> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined
   const isImmediate = options.isImmediate ?? false
-  const callback = options.callback ?? false
+  const callback = options.callback
   const maxWait = options.maxWait
   let lastInvokeTime = Date.now()
 
