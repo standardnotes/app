@@ -27,7 +27,7 @@ if (userDataPathIndex > 0) {
     /** Make sure the path is actually a writeable folder */
     try {
       fs.closeSync(fs.openSync(path.join(userDataPath, 'sn-test-file'), 'w'))
-    } catch (e) {
+    } catch {
       console.error('Failed to write to provided user data path. Aborting')
       app.exit(1)
     }
