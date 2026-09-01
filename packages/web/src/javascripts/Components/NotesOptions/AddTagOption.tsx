@@ -85,7 +85,11 @@ const AddTagOption: FunctionComponent<Props> = ({
               <MenuItem
                 key={tag.uuid}
                 onClick={() => {
-                  isTagLinkedToSelectedItems(tag) ? unlinkTagFromSelectedItems(tag) : linkTagToSelectedItems(tag)
+                  if (isTagLinkedToSelectedItems(tag)) {
+                    unlinkTagFromSelectedItems(tag)
+                  } else {
+                    linkTagToSelectedItems(tag)
+                  }
                 }}
               >
                 {tag.iconString && (

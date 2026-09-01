@@ -263,7 +263,8 @@ const IframeFeatureView: FunctionComponent<Props> = ({
         <IssueOnLoading
           componentName={uiFeature.displayName}
           reloadIframe={() => {
-            reloadValidityStatus(), requestReload?.(componentViewer, true)
+            reloadValidityStatus()
+            requestReload?.(componentViewer, true)
           }}
         />
       )}

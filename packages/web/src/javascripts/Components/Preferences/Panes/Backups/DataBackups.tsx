@@ -120,7 +120,7 @@ const DataBackups = ({ application }: Props) => {
         try {
           const data = JSON.parse(e.target?.result as string)
           resolve(data)
-        } catch (e) {
+        } catch {
           application.alerts.alert(STRING_INVALID_IMPORT_FILE()).catch(console.error)
         }
       }

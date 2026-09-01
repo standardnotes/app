@@ -154,7 +154,7 @@ const SignInPane: FunctionComponent<Props> = ({ setMenuPane }) => {
               setCaptchaURL(parsed.captchaURL)
               return
             }
-          } catch (e) {
+          } catch {
             setCaptchaURL('')
           }
           throw new Error(error)
