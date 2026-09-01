@@ -510,7 +510,7 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     let components = null
     try {
       components = JSON.parse(dsl.substring(1, dsl.length))
-    } catch (e) {
+    } catch {
       throw Error('Invalid smart view syntax')
     }
 

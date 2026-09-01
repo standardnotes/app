@@ -136,8 +136,8 @@ export class PluginsService implements PluginsServiceInterface {
     let url = urlOrCode
     try {
       url = this.crypto.base64Decode(urlOrCode)
-    } catch (err) {
-      void err
+    } catch {
+      url = urlOrCode
     }
 
     const response = await this.api.downloadFeatureUrl(url)
@@ -146,13 +146,14 @@ export class PluginsService implements PluginsServiceInterface {
       return undefined
     }
 
-    let rawFeature = response.data as ThirdPartyFeatureDescription
+    let rawFeature: ThirdPartyFeatureDescription | string = response.data as ThirdPartyFeatureDescription | string
 
     if (isString(rawFeature)) {
       try {
-        rawFeature = JSON.parse(rawFeature)
-        // eslint-disable-next-line no-empty
-      } catch (error) {}
+        rawFeature = JSON.parse(rawFeature) as ThirdPartyFeatureDescription
+      } catch {
+        return undefined
+      }
     }
 
     if (!rawFeature.content_type) {

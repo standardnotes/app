@@ -9,7 +9,7 @@ export class LiveItem<T extends DecryptedItemInterface> {
   constructor(uuid: string, items: ItemManagerInterface, onChange?: (item: T) => void) {
     this.item = items.findSureItem(uuid)
 
-    onChange && onChange(this.item)
+    onChange?.(this.item)
 
     this.removeObserver = items.streamItems(this.item.content_type, ({ changed, inserted }) => {
       const matchingItem = [...changed, ...inserted].find((item) => {
@@ -18,7 +18,7 @@ export class LiveItem<T extends DecryptedItemInterface> {
 
       if (matchingItem) {
         this.item = matchingItem as T
-        onChange && onChange(this.item)
+        onChange?.(this.item)
       }
     })
   }

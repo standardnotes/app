@@ -37,7 +37,7 @@ export class AuthApiService implements AuthApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(AuthApiOperations.GenerateRecoveryCodes, false)
@@ -64,7 +64,7 @@ export class AuthApiService implements AuthApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(AuthApiOperations.GetRecoveryKeyParams, false)
@@ -95,7 +95,7 @@ export class AuthApiService implements AuthApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(AuthApiOperations.SignInWithRecoveryCodes, false)

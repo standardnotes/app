@@ -282,7 +282,7 @@ export class FeaturesService
         extensionKey,
         subscriptionId,
       }
-    } catch (error) {
+    } catch {
       return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
     }
   }

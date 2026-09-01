@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import { base64_variants, from_base64, from_hex, from_string, to_base64, to_hex, to_string } from './libsodium'
-import { Buffer } from 'buffer'
 import { v4 as uuidv4 } from 'uuid'
 
 const SN_BASE64_VARIANT = base64_variants.ORIGINAL

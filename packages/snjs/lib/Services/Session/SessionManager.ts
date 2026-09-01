@@ -218,7 +218,7 @@ export class SessionManager
   isUserMissingKeyPair(): boolean {
     try {
       return this.getPublicKey() == undefined
-    } catch (error) {
+    } catch {
       return true
     }
   }
