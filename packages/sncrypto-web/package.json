@@ -37,7 +37,7 @@
     "@types/libsodium-wrappers": "0.7.10",
     "@types/node": "^18.11.9",
     "@types/uuid": "^8.3.4",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/eslint-plugin": "*",
     "babel-loader": "^9.1.0",
     "chai": "^4.3.7",
     "connect": "^3.7.0",
@@ -47,7 +47,7 @@
     "serve-static": "^1.15.0",
     "ts-loader": "^9.4.1",
     "typedarray-to-buffer": "^4.0.0",
-    "typescript": "*",
+    "typescript": "5.1.6",
     "uuid": "^9.0.0",
     "webpack": "*",
     "webpack-cli": "*"

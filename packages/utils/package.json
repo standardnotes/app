@@ -36,12 +36,12 @@
     "@types/jsdom": "^20.0.1",
     "@types/lodash": "^4.14.189",
     "@types/node": "^18.11.9",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/eslint-plugin": "*",
     "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^29.3.1",
     "jsdom": "^20.0.2",
     "ts-jest": "^29.0.3",
-    "typescript": "*"
+    "typescript": "5.8.3"
   }
 }

@@ -36,7 +36,7 @@ import {
   ChallengeReason,
   KeyboardModifier,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, ObservableSet, reaction, runInAction } from 'mobx'
 import { WebDisplayOptions } from './WebDisplayOptions'
 import { NavigationController } from '../Navigation/NavigationController'
 import { CrossControllerEvent } from '../CrossControllerEvent'
@@ -103,7 +103,7 @@ export class ItemListController
   private reloadItemsPromise?: Promise<unknown>
 
   lastSelectedItem: ListableContentItem | undefined
-  selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
+  selectedUuids: ObservableSet<UuidString> = observable(new Set<UuidString>())
   selectedItems: Record<UuidString, ListableContentItem> = {}
 
   isMultipleSelectionMode = false
@@ -1079,9 +1079,9 @@ export class ItemListController
     this.selectedItems = Object.fromEntries(this.getSelectedItems().map((item) => [item.uuid, item]))
   }
 
-  setSelectedUuids = (selectedUuids: Set<UuidString>) => {
+  setSelectedUuids = (selectedUuids: ObservableSet<UuidString> | Set<UuidString>) => {
     log(LoggingDomain.Selection, 'Setting selected uuids', selectedUuids)
-    this.selectedUuids = new Set(selectedUuids)
+    this.selectedUuids = observable(new Set(selectedUuids))
     this.setSelectedItems()
   }
 

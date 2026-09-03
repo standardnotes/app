@@ -18,7 +18,7 @@ export class LegacyKeyValueStore {
     if (item) {
       try {
         return JSON.parse(item)
-      } catch (e) {
+      } catch {
         return item as T
       }
     }

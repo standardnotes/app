@@ -31,7 +31,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
       const response = await this.authenticatorServer.list({})
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(AuthenticatorApiOperations.List, false)
@@ -51,7 +51,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(AuthenticatorApiOperations.Delete, false)
@@ -69,7 +69,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
       const response = await this.authenticatorServer.generateRegistrationOptions()
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(AuthenticatorApiOperations.GenerateRegistrationOptions, false)
@@ -95,7 +95,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(AuthenticatorApiOperations.VerifyRegistrationResponse, false)
@@ -117,7 +117,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(AuthenticatorApiOperations.GenerateAuthenticationOptions, false)

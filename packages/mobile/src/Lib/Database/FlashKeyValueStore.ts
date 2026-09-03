@@ -28,7 +28,7 @@ export class FlashKeyValueStore {
     if (item) {
       try {
         return JSON.parse(item)
-      } catch (e) {
+      } catch {
         return item as T
       }
     }

@@ -129,7 +129,7 @@ export class EditSmartViewModalController {
       } else {
         this.setIsPredicateJsonValid(false)
       }
-    } catch (error) {
+    } catch {
       this.setIsPredicateJsonValid(false)
       return
     }

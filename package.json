@@ -45,7 +45,9 @@
     "@types/react-native-vector-icons/@types/react": "17.0.2",
     "@types/react-native/@types/react": "17.0.2",
     "@types/hoist-non-react-statics/@types/react": "17.0.2",
-    "node-abi": "^4.2.0"
+    "node-abi": "^4.2.0",
+    "@typescript-eslint/eslint-plugin": "8.32.1",
+    "@typescript-eslint/parser": "8.32.1"
   },
   "dependencies": {
     "@standardnotes/snjs": "workspace:*"
@@ -61,11 +63,11 @@
     "@lerna-lite/run": "^4.10.5",
     "@lerna-lite/version": "^4.10.5",
     "@standardnotes/config": "^2.4.3",
-    "@typescript-eslint/eslint-plugin": "^6.2.0",
-    "@typescript-eslint/parser": "^6.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.32.0",
+    "@typescript-eslint/parser": "^8.32.0",
     "changelog-parser": "^2.8.1",
     "css-loader": "^6.8.1",
-    "eslint": "^8.45.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-prettier": "^5.0.0",
     "lint-staged": "^13.2.3",
     "npm-check-updates": "^16.10.17",

@@ -16,7 +16,7 @@ export const useDocumentRect = (): DOMRect => {
     const handleWindowResize = () => {
       window.clearTimeout(debounceTimeout)
 
-      window.setTimeout(() => {
+      debounceTimeout = window.setTimeout(() => {
         setDocumentRect(getBoundingClientRect())
       }, DebounceTimeInMs)
     }

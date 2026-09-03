@@ -142,7 +142,7 @@ export class SubscriptionManager
       }
 
       return result.data
-    } catch (error) {
+    } catch {
       return {
         success: false,
         message: c('B7.FilesSubscriptionHelp.Subscription.Error').t`Could not accept invitation.`,
@@ -159,7 +159,7 @@ export class SubscriptionManager
       }
 
       return result.data.invitations ?? []
-    } catch (error) {
+    } catch {
       return []
     }
   }
@@ -173,7 +173,7 @@ export class SubscriptionManager
       }
 
       return result.data.success === true
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -187,7 +187,7 @@ export class SubscriptionManager
       }
 
       return result.data.success === true
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -249,7 +249,7 @@ export class SubscriptionManager
       }
 
       return result.data
-    } catch (error) {
+    } catch {
       return { success: false, message: c('B7.FilesSubscriptionHelp.Subscription.Error').t`Could not confirm IAP.` }
     }
   }

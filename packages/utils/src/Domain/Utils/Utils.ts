@@ -369,7 +369,7 @@ export function jsonParseEmbeddedKeys(object: AnyRecord) {
     let value
     try {
       value = JSON.parse(object[key] as string)
-    } catch (error) {
+    } catch {
       value = object[key]
     }
     result[key] = value
@@ -496,7 +496,7 @@ export function isValidUrl(url: string): boolean {
   try {
     new URL(url)
     return true
-  } catch (error) {
+  } catch {
     return false
   }
 }

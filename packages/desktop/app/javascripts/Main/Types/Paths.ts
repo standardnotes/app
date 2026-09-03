@@ -39,14 +39,14 @@ export const Paths = {
   get homeDir(): string | undefined {
     try {
       return app.getPath('home')
-    } catch (error) {
+    } catch {
       return undefined
     }
   },
   get documentsDir(): string | undefined {
     try {
       return app.getPath('documents')
-    } catch (error) {
+    } catch {
       return undefined
     }
   },

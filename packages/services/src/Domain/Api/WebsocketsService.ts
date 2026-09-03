@@ -13,7 +13,7 @@ export class WebSocketsService extends AbstractService<WebSocketsServiceEvent, D
   private HEARTBEAT_DELAY = 360_000
 
   private webSocket?: WebSocket
-  private webSocketHeartbeatInterval?: NodeJS.Timer
+  private webSocketHeartbeatInterval?: ReturnType<typeof setInterval>
 
   constructor(
     private storageService: StorageServiceInterface,

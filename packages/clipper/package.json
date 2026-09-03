@@ -26,7 +26,7 @@
     "eslint": "*",
     "eslint-config-prettier": "^8.9.0",
     "ts-loader": "^9.4.2",
-    "typescript": "*",
+    "typescript": "5.8.3",
     "web-ext": "^7.5.0",
     "webextension-polyfill": "^0.10.0",
     "webpack": "*"

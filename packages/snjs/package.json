@@ -83,7 +83,7 @@
     "ts-loader": "^9.4.1",
     "ts-node": "^10.9.1",
     "tscpaths": "0.0.9",
-    "typescript": "*",
+    "typescript": "5.8.3",
     "uuid": "^9.0.0",
     "webpack": "*",
     "webpack-cli": "*",

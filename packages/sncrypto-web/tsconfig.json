@@ -11,7 +11,7 @@
     "outDir": "./dist",
     "inlineSourceMap": true,
     "types": ["node"],
-    "typeRoots": ["node_modules/@types", "typings"]
+    "typeRoots": ["node_modules/@types", "../../node_modules/@types", "typings"]
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "test/**/*"]

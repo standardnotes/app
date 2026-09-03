@@ -345,7 +345,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     try {
       const functionData = JSON.parse(message)
       void onFunctionMessage(functionData.functionName, functionData.messageId, functionData.args)
-    } catch (error) {
+    } catch {
       if (LoggingEnabled) {
         // eslint-disable-next-line no-console
         console.log('onGeneralMessage', JSON.stringify(message))

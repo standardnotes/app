@@ -61,7 +61,7 @@ const EmailBackups = ({ application }: Props) => {
     try {
       await application.settings.updateSetting(settingName, payload, false)
       return true
-    } catch (e) {
+    } catch {
       application.alerts.alert(STRING_FAILED_TO_UPDATE_USER_SETTING()).catch(console.error)
       return false
     }

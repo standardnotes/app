@@ -38,6 +38,6 @@
     "eslint-plugin-prettier": "*",
     "jest": "^29.3.1",
     "ts-jest": "^29.0.3",
-    "typescript": "*"
+    "typescript": "5.8.3"
   }
 }

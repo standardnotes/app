@@ -120,7 +120,7 @@ export class Database {
         objectStore.transaction.oncomplete = () => {
           /* Ready to store values in the newly created objectStore. */
           if (db.version === 1 && onNewDatabase) {
-            onNewDatabase && onNewDatabase()
+            onNewDatabase?.()
           }
         }
       }

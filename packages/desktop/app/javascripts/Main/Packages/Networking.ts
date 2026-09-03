@@ -47,7 +47,7 @@ export async function getJSON<T>(url: string): Promise<T | undefined> {
         try {
           const parsed = JSON.parse(data)
           resolve(parsed)
-        } catch (error) {
+        } catch {
           resolve(undefined)
         }
       })

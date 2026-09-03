@@ -25,7 +25,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
       } else {
         void application.openPurchaseFlow()
       }
-    } catch (e) {
+    } catch {
       setPurchaseFlowError(errorMessage)
     } finally {
       setIsLoadingPurchaseFlow(false)

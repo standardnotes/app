@@ -286,7 +286,7 @@ export class UserService
       }
 
       return result.data.success
-    } catch (error) {
+    } catch {
       return false
     }
   }

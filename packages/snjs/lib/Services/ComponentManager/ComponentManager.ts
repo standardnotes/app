@@ -122,12 +122,16 @@ export class ComponentManager
       }),
     )
 
-    window.addEventListener
-      ? window.addEventListener('focus', this.detectFocusChange, true)
-      : window.attachEvent('onfocusout', this.detectFocusChange)
-    window.addEventListener
-      ? window.addEventListener('blur', this.detectFocusChange, true)
-      : window.attachEvent('onblur', this.detectFocusChange)
+    if (window.addEventListener) {
+      window.addEventListener('focus', this.detectFocusChange, true)
+    } else {
+      window.attachEvent('onfocusout', this.detectFocusChange)
+    }
+    if (window.addEventListener) {
+      window.addEventListener('blur', this.detectFocusChange, true)
+    } else {
+      window.attachEvent('onblur', this.detectFocusChange)
+    }
 
     window.addEventListener('message', this.onWindowMessage, true)
   }

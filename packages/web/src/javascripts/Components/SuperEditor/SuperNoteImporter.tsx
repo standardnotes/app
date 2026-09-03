@@ -25,7 +25,7 @@ type Props = {
 function isValidJson(string: string) {
   try {
     JSON.parse(string)
-  } catch (e) {
+  } catch {
     return false
   }
   return true
