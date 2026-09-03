@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/WebApplication'
 import StyledRadioInput from '@/Components/Radio/StyledRadioInput'
 import { useState } from 'react'
-import { Title } from '../../PreferencesComponents/Content'
+import { Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { c } from 'ttag'
@@ -52,6 +52,12 @@ const Persistence = ({ application }: Props) => {
           />
           {c('B6.Preferences.General.Label').t`The last viewed note`}
         </label>
+        {application.isNativeMobileWeb() && (
+          <Text className="mt-2">
+            {c('B6.Preferences.General.Info')
+              .t`Only applies to web and desktop apps. On mobile, notes don't open automatically at launch.`}
+          </Text>
+        )}
       </PreferencesSegment>
     </PreferencesGroup>
   )
