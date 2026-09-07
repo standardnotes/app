@@ -25,7 +25,7 @@
   "scripts": {
     "start": "webpack -w --config webpack.dev.js",
     "start:test-server": "yarn node e2e-server.js",
-    "clean": "rm -fr dist",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "prebuild": "yarn clean",
     "build": "yarn tsc && webpack --config webpack.prod.js",
     "watch": "webpack --config webpack.prod.js --watch",
