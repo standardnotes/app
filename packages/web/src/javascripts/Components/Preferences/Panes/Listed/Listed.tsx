@@ -4,6 +4,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { ButtonType, ListedAccount } from '@standardnotes/snjs'
 import { useCallback, useEffect, useState } from 'react'
 import ListedAccountItem from './ListedAccountItem'
+import ListedSunsettingBanner from './ListedSunsettingBanner'
 import Button from '@/Components/Button/Button'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
@@ -62,6 +63,7 @@ const Listed = ({ application }: Props) => {
 
   return (
     <PreferencesPane>
+      <ListedSunsettingBanner />
       {accounts.length > 0 && (
         <PreferencesGroup>
           <PreferencesSegment>

@@ -8,6 +8,7 @@ import { ListedMenuGroup } from './ListedMenuGroup'
 import ListedMenuItem from './ListedMenuItem'
 import Spinner from '@/Components/Spinner/Spinner'
 import MenuSection from '@/Components/Menu/MenuSection'
+import ListedSunsettingBanner from '@/Components/Preferences/Panes/Listed/ListedSunsettingBanner'
 
 type ListedActionsMenuProps = {
   application: WebApplication
@@ -121,6 +122,7 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
 
   return (
     <>
+      <ListedSunsettingBanner variant="menu" />
       {isFetchingAccounts && (
         <div className="flex w-full items-center justify-center p-4">
           <Spinner className="h-5 w-5" />
