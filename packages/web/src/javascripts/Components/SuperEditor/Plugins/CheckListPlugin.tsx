@@ -9,10 +9,13 @@ import {
   COMMAND_PRIORITY_LOW,
   KEY_ENTER_COMMAND,
   SKIP_DOM_SELECTION_TAG,
+  SKIP_SCROLL_INTO_VIEW_TAG,
+  SKIP_SELECTION_FOCUS_TAG,
 } from 'lexical'
 import { useEffect } from 'react'
 import { useApplication } from '../../ApplicationProvider'
 import { getPrimaryModifier } from '@standardnotes/ui-services'
+import { isMobileScreen } from '@/Utils'
 
 export function CheckListPlugin(): null {
   const application = useApplication()
@@ -81,7 +84,8 @@ export function CheckListPlugin(): null {
 
         function handleClick(event: Event) {
           handleCheckItemEvent(event as PointerEvent, () => {
-            const isTouchEvent = (event as PointerEvent).pointerType === 'touch'
+            const isMobileToggle =
+              (event as PointerEvent).pointerType === 'touch' || application.isNativeMobileWeb() || isMobileScreen()
             if (!editor.isEditable()) {
               return
             }
@@ -100,7 +104,7 @@ export function CheckListPlugin(): null {
                 }
 
                 const isFocusWithinEditor = editor.getRootElement()?.contains(document.activeElement)
-                if (!isTouchEvent && !isFocusWithinEditor) {
+                if (!isMobileToggle && !isFocusWithinEditor) {
                   // on desktop, we want to focus & select the list item so that if you then press the up or down arrow keys,
                   // the caret moves in the editor instead of triggering the note navigation shortcuts.
                   // however on mobile, focusing the editor brings up the keyboard even if you just want to quickly toggle
@@ -111,8 +115,11 @@ export function CheckListPlugin(): null {
                 node.toggleChecked()
               },
               {
-                // without this lexical will reconcile the new selection to the dom and focus the editor causing the keyboard to show up
-                tag: isTouchEvent ? SKIP_DOM_SELECTION_TAG : undefined,
+                // without these lexical will reconcile the stale selection to the dom, focus the editor,
+                // and scroll to the last cursor position when toggling a checkbox on mobile
+                tag: isMobileToggle
+                  ? [SKIP_DOM_SELECTION_TAG, SKIP_SCROLL_INTO_VIEW_TAG, SKIP_SELECTION_FOCUS_TAG]
+                  : undefined,
               },
             )
           })
