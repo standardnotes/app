@@ -233,7 +233,7 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
     },
     {
       command: TOGGLE_COMMAND_PALETTE,
-      code: 'Semicolon',
+      key: ':',
       modifiers: [primaryModifier, KeyboardModifier.Shift],
     },
   ]
