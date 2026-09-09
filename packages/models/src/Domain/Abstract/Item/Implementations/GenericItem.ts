@@ -180,7 +180,7 @@ export abstract class GenericItem<P extends PayloadInterface = PayloadInterface>
           return ConflictStrategy.KeepBase
         }
       }
-      const twentySeconds = 20_000
+      const sixtySeconds = 60_000
       if (
         /**
          * If the incoming item comes from an import, treat it as
@@ -191,10 +191,14 @@ export abstract class GenericItem<P extends PayloadInterface = PayloadInterface>
          * If the user is actively editing our item, duplicate the incoming item
          * to avoid creating surprises in the client's UI.
          */
-        Date.now() - this.userModifiedDate.getTime() < twentySeconds
+        Date.now() - this.userModifiedDate.getTime() < sixtySeconds
       ) {
         return ConflictStrategy.KeepBaseDuplicateApply
       } else {
+        if (this.dirty === false) {
+          // local item was already synced, just a stale server copy
+          return ConflictStrategy.KeepApply
+        }
         return ConflictStrategy.DuplicateBaseKeepApply
       }
     } else {

@@ -59,13 +59,14 @@ export class ConflictDelta {
        * uploading the changes until after the multi-page request completes, we may have
        * already conflicted this item.
        */
-      const existingConflict = this.baseCollection.conflictsOf(this.applyPayload.uuid)[0]
-      if (
-        existingConflict &&
-        isDecryptedPayload(existingConflict) &&
-        isDecryptedPayload(this.applyPayload) &&
-        PayloadContentsEqual(existingConflict, this.applyPayload)
-      ) {
+      const existingConflicts = this.baseCollection.conflictsOf(this.applyPayload.uuid)
+      const hasMatchingConflict = existingConflicts.some(
+        (conflict) =>
+          isDecryptedPayload(conflict) &&
+          isDecryptedPayload(this.applyPayload) &&
+          PayloadContentsEqual(conflict, this.applyPayload),
+      )
+      if (hasMatchingConflict) {
         /** Conflict exists and its contents are the same as incoming value, do not make duplicate */
         return ConflictStrategy.KeepBase
       } else {
