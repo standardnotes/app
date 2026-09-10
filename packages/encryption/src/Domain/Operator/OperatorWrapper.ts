@@ -1,4 +1,5 @@
 import {
+  compareVersions,
   DecryptedPayloadInterface,
   ItemsKeyInterface,
   RootKeyInterface,
@@ -44,6 +45,13 @@ export async function decryptPayload<C extends ItemContent = ItemContent>(
   key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   operatorManager: EncryptionOperatorsInterface,
 ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
+  if (compareVersions(payload.version, key.keyVersion) < 0) {
+    return {
+      uuid: payload.uuid,
+      errorDecrypting: true,
+    }
+  }
+
   const operator = operatorManager.operatorForVersion(payload.version)
 
   try {
