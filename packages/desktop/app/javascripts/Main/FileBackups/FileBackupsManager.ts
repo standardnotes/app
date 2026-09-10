@@ -319,7 +319,12 @@ export class FilesBackupManager implements FileBackupsDevice {
       const relativePath = forTag ?? ''
       const filenameWithSlashesEscaped = filename.replace(/\//g, '\u2215')
       const sanitizedFilename = sanitizeFileName(filenameWithSlashesEscaped)
-      const fileAbsolutePath = path.join(absolutePath, relativePath, sanitizedFilename)
+      const fileAbsolutePath = path.resolve(absolutePath, relativePath, sanitizedFilename)
+
+      if (!this.filesManager.isChildOfDir(path.resolve(absolutePath), fileAbsolutePath)) {
+        throw new Error(`Plaintext backup path escapes backup directory: ${forTag}`)
+      }
+
       await this.filesManager.writeFile(fileAbsolutePath, data)
 
       const existingRecord = findMappingRecord(forTag)
