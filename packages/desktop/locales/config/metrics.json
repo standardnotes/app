@@ -1,0 +1,1410 @@
+{
+  "files": {
+    "/3- Drive/Standard Notes/packages/web/app.xliff": {
+      "event_id": 1476114,
+      "file_id": 62703,
+      "values": [
+        {
+          "event_id": 1476114,
+          "locale": "ar",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "be",
+          "translation_progress": 49,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "bg",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ca",
+          "translation_progress": 100,
+          "approval_progress": 5,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "cs",
+          "translation_progress": 7,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "da",
+          "translation_progress": 63,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "de",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "el",
+          "translation_progress": 41,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "es",
+          "translation_progress": 7,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "es-419",
+          "translation_progress": 100,
+          "approval_progress": 99,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "et",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "eu",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fa",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fi",
+          "translation_progress": 8,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fil",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fr",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "gl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "he",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hi",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hr",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hu",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hy",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "id",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "is",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "it",
+          "translation_progress": 25,
+          "approval_progress": 25,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ja",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ka",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "kab",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ko",
+          "translation_progress": 1,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "lt",
+          "translation_progress": 1,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "lv",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "mk",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "nl",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "no",
+          "translation_progress": 5,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "pl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "pt",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "pt-BR",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ro",
+          "translation_progress": 100,
+          "approval_progress": 100,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ru",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "si",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sk",
+          "translation_progress": 11,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sl",
+          "translation_progress": 4,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sr-Cyrl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sr-Latn",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sv",
+          "translation_progress": 12,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "th",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "tr",
+          "translation_progress": 100,
+          "approval_progress": 100,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "uk",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "vi",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "zh-CN",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "zh-TW",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/web/app.xliff",
+          "file_id": 62703,
+          "created_at": "2026-09-14 00:04:24"
+        }
+      ]
+    },
+    "/3- Drive/Standard Notes/packages/mobile/app.xliff": {
+      "event_id": 1476114,
+      "file_id": 67958,
+      "values": [
+        {
+          "event_id": 1476114,
+          "locale": "ar",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "be",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "bg",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ca",
+          "translation_progress": 100,
+          "approval_progress": 2,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "cs",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "da",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "de",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "el",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "es",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "es-419",
+          "translation_progress": 100,
+          "approval_progress": 100,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "et",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "eu",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fa",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fi",
+          "translation_progress": 6,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fil",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fr",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "gl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "he",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hi",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hr",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hu",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hy",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "id",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "is",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "it",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ja",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ka",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "kab",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ko",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "lt",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "lv",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "mk",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "nl",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "no",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "pl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "pt",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "pt-BR",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ro",
+          "translation_progress": 100,
+          "approval_progress": 100,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ru",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "si",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sk",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sr-Cyrl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sr-Latn",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sv",
+          "translation_progress": 12,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "th",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "tr",
+          "translation_progress": 100,
+          "approval_progress": 100,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "uk",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "vi",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "zh-CN",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "zh-TW",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/mobile/app.xliff",
+          "file_id": 67958,
+          "created_at": "2026-09-14 00:04:24"
+        }
+      ]
+    },
+    "/3- Drive/Standard Notes/packages/desktop/app.xliff": {
+      "event_id": 1476114,
+      "file_id": 67962,
+      "values": [
+        {
+          "event_id": 1476114,
+          "locale": "ar",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "be",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "bg",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ca",
+          "translation_progress": 100,
+          "approval_progress": 3,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "cs",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "da",
+          "translation_progress": 4,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "de",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "el",
+          "translation_progress": 95,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "es",
+          "translation_progress": 4,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "es-419",
+          "translation_progress": 100,
+          "approval_progress": 100,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "et",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "eu",
+          "translation_progress": 11,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fa",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fi",
+          "translation_progress": 4,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fil",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "fr",
+          "translation_progress": 100,
+          "approval_progress": 4,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "gl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "he",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hi",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hr",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hu",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "hy",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "id",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "is",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "it",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ja",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ka",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "kab",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ko",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "lt",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "lv",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "mk",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "nl",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "no",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "pl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "pt",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "pt-BR",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ro",
+          "translation_progress": 100,
+          "approval_progress": 100,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "ru",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "si",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sk",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sr-Cyrl",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sr-Latn",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "sv",
+          "translation_progress": 6,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "th",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "tr",
+          "translation_progress": 100,
+          "approval_progress": 100,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "uk",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "vi",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "zh-CN",
+          "translation_progress": 100,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        },
+        {
+          "event_id": 1476114,
+          "locale": "zh-TW",
+          "translation_progress": 0,
+          "approval_progress": 0,
+          "file_path": "/3- Drive/Standard Notes/packages/desktop/app.xliff",
+          "file_id": 67962,
+          "created_at": "2026-09-14 00:04:24"
+        }
+      ]
+    }
+  },
+  "event_id": 1476114,
+  "languages": [
+    "zh-CN",
+    "en",
+    "fr",
+    "de",
+    "ja",
+    "pt-BR",
+    "es-419",
+    "tr"
+  ]
+}

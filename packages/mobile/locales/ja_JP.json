@@ -1,0 +1,83 @@
+{
+  "headers": {
+    "plural-forms": "nplurals=1; plural=0;",
+    "language": "ja_JP"
+  },
+  "contexts": {
+    "B8.MobileDesktopShared.Mobile.Database.Info": {
+      "The following items could not be loaded. This may happen if you are in low-memory conditions, or if the note is very large in size. We recommend breaking up large notes into smaller chunks using the desktop or web app.\n\nItems:\n${ items }": [
+        "次のアイテムを読み込めませんでした。メモリが不足している場合や、メモのサイズが非常に大きい場合に発生することがあります。大きなメモはデスクトップアプリまたはウェブアプリを使って小さなチャンクに分割することをおすすめします。\n\nアイテム:\n${ items }"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Database.Title": {
+      "Unable to load item(s)": [
+        "アイテムを読み込めませんでした"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Device.Action": {
+      "Close": [
+        "閉じる"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Device.Confirmation": {
+      "Do you want to close the app?": [
+        "アプリを閉じますか?"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Device.Error": {
+      "Authentication failed. Tap to try again.": [
+        "認証に失敗しました。タップしてもう一度試してください。"
+      ],
+      "Authentication failed. Wait 30 seconds to try again.": [
+        "認証に失敗しました。30秒待ってからもう一度試してください。"
+      ],
+      "Unable to open URL ${ url }.": [
+        "URL ${ url } を開けません。"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Device.Info": {
+      "Biometrics are required to access your notes.": [
+        "メモにアクセスするには生体認証が必要です。"
+      ],
+      "This is required to access your notes.": [
+        "メモへのアクセスに必要です。"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Device.Label": {
+      "Cancel": [
+        "キャンセル"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Device.Title": {
+      "Close app": [
+        "アプリを終了"
+      ],
+      "Unable to Open": [
+        "開けません"
+      ],
+      "Unsuccessful": [
+        "失敗"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Notifications.Label": {
+      "File Upload/Download": [
+        "ファイルのアップロード/ダウンロード"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.WebView.Action": {
+      "Update": [
+        "更新"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.WebView.Info": {
+      "Please make sure your Android System Webview is updated to the latest version": [
+        "Android System Webviewが最新バージョンに更新されていることをご確認ください"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.WebView.Title": {
+      "Could not load app": [
+        "アプリを読み込めませんでした"
+      ]
+    }
+  }
+}
