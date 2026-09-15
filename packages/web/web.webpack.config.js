@@ -13,6 +13,7 @@ module.exports = (env) => {
   mergeWithEnvDefaults(env)
 
   const copyPluginPatterns = [
+    { from: 'locales', to: 'locales' },
     { from: 'src/favicon', to: 'favicon' },
     { from: 'src/vendor', to: 'dist' },
     { from: 'src/404.html' },
