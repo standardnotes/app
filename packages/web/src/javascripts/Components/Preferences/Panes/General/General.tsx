@@ -8,6 +8,7 @@ import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import Persistence from './Persistence'
 import SmartViews from './SmartViews/SmartViews'
 import Moments from './Moments'
+import Language from './Language'
 import NewNoteDefaults from './NewNoteDefaults'
 import { useApplication } from '@/Components/ApplicationProvider'
 
@@ -21,6 +22,7 @@ const General: FunctionComponent = () => {
       <NewNoteDefaults />
       <Tools application={application} />
       <SmartViews application={application} featuresController={application.featuresController} />
+      <Language application={application} />
       <Moments application={application} />
       <LabsPane application={application} />
       <OfflineActivation />

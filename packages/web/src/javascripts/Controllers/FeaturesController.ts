@@ -148,6 +148,10 @@ export class FeaturesController extends AbstractViewController implements Intern
     )
   }
 
+  isLocalizationEnabled(): boolean {
+    return this.features.isExperimentalFeatureEnabled(NativeFeatureIdentifier.TYPES.Localization)
+  }
+
   isEntitledToSharedVaults(): boolean {
     const status = this.features.getFeatureStatus(
       NativeFeatureIdentifier.create(NativeFeatureIdentifier.TYPES.SharedVaults).getValue(),

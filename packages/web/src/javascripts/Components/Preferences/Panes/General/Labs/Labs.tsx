@@ -65,6 +65,10 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
         }
       })
       .filter((feature) => {
+        if (feature.identifier === NativeFeatureIdentifier.TYPES.Localization) {
+          return false
+        }
+
         if (feature.identifier !== NativeFeatureIdentifier.TYPES.Vaults) {
           return true
         }
