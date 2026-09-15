@@ -10,6 +10,7 @@ import { PhotoRecorder } from '@/Controllers/Moments/PhotoRecorder'
 import { classNames } from '@standardnotes/snjs'
 import { useEffect, useRef, useState } from 'react'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
+import { c } from 'ttag'
 
 type Props = {
   isDailyEntry: boolean
@@ -69,7 +70,7 @@ const AddItemMenuButton = ({
       </StyledTooltip>
       {canShowMenu && (
         <Popover
-          title="Add item"
+          title={c('B3.Notes.NoteList.Label').t`Add item`}
           open={isMenuOpen}
           anchorElement={addItemButtonRef}
           togglePopover={() => {
@@ -79,7 +80,7 @@ const AddItemMenuButton = ({
           align="center"
           className="py-2"
         >
-          <Menu a11yLabel={'test'}>
+          <Menu a11yLabel={c('B3.Notes.NoteList.Label').t`Add item menu`}>
             <MenuItem
               onClick={() => {
                 addNewItem()
@@ -96,7 +97,7 @@ const AddItemMenuButton = ({
               }}
             >
               <Icon type="camera" className="mr-2" />
-              Take photo
+              {c('B3.Notes.NoteList.Action').t`Take photo`}
             </MenuItem>
             <MenuItem
               onClick={async () => {
@@ -105,7 +106,7 @@ const AddItemMenuButton = ({
               }}
             >
               <Icon type="camera" className="mr-2" />
-              Record video
+              {c('B3.Notes.NoteList.Label').t`Record video`}
             </MenuItem>
           </Menu>
         </Popover>

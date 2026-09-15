@@ -14,6 +14,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 import { useApplication } from '../ApplicationProvider'
 import { DecryptedItem, SNNote } from '@standardnotes/snjs'
+import { c } from 'ttag'
 import { Combobox, ComboboxItem, ComboboxPopover, useComboboxStore, VisuallyHidden } from '@ariakit/react'
 import LinkedItemMeta from './LinkedItemMeta'
 import { LinkedItemSearchResultsAddTagOption } from './LinkedItemSearchResultsAddTagOption'
@@ -85,10 +86,10 @@ const ItemLinkAutocompleteInput = forwardRef(
       <div>
         <form onSubmit={onFormSubmit}>
           <label>
-            <VisuallyHidden>Link tags, notes or files</VisuallyHidden>
+            <VisuallyHidden>{c('B4.Notes.TagsLinkedItems.Label').t`Link tags, notes or files`}</VisuallyHidden>
             <Combobox
               store={combobox}
-              placeholder="Link tags, notes, files..."
+              placeholder={c('B4.Notes.TagsLinkedItems.Label').t`Link tags, notes, files...`}
               className={classNames(
                 `${tagsLinkedToItem.length > 0 ? 'w-80' : 'mr-10 w-70'}`,
                 'h-7 w-70 bg-transparent text-sm text-text focus:border-b-2 focus:border-info focus:shadow-none focus:outline-none lg:text-xs',

@@ -5,11 +5,15 @@ import { calculateReadTime } from './Utils/calculateReadTime'
 import { countNoteAttributes } from './Utils/countNoteAttributes'
 import { WebApplicationInterface } from '@standardnotes/ui-services'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
+import { c } from 'ttag'
 
 export const useNoteAttributes = (application: WebApplicationInterface, note: SNNote) => {
   const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])
 
-  const readTime = useMemo(() => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'), [words])
+  const readTime = useMemo(
+    () => (typeof words === 'number' ? calculateReadTime(words) : c('B4.Notes.EditorOptions.Label').t`N/A`),
+    [words],
+  )
 
   const userModifiedDate = useMemo(() => formatDateForContextMenu(note.userModifiedDate), [note.userModifiedDate])
   const serverUpdatedAt = useMemo(() => formatDateForContextMenu(note.serverUpdatedAt), [note.serverUpdatedAt])
@@ -51,24 +55,25 @@ export const NoteAttributes: FunctionComponent<{
       {canShowWordCount ? (
         <>
           <div className="mb-1">
-            {words} words · {characters} characters · {paragraphs} paragraphs
+            {c('B4.Notes.EditorOptions.Info').jt`${words} words · ${characters} characters · ${paragraphs} paragraphs`}
           </div>
           <div className="mb-1">
-            <span className="font-semibold">Read time:</span> {readTime}
+            <span className="font-semibold">{c('B4.Notes.EditorOptions.Label').t`Read time:`}</span> {readTime}
           </div>
         </>
       ) : null}
       <div className="mb-1">
-        <span className="font-semibold">Last modified:</span> {userModifiedDate}
+        <span className="font-semibold">{c('B4.Notes.EditorOptions.Label').t`Last modified:`}</span> {userModifiedDate}
       </div>
       <div className="mb-1">
-        <span className="font-semibold">Created:</span> {dateCreated}
+        <span className="font-semibold">{c('B4.Notes.EditorOptions.Label').t`Created:`}</span> {dateCreated}
       </div>
       <div className="mb-1">
-        <span className="font-semibold">Note ID:</span> {note.uuid}
+        <span className="font-semibold">{c('B4.Notes.EditorOptions.Label').t`Note ID:`}</span> {note.uuid}
       </div>
       <div>
-        <span className="font-semibold">Size:</span> {formatSizeToReadableString(size)}
+        <span className="font-semibold">{c('B4.Notes.EditorOptions.Label').t`Size:`}</span>{' '}
+        {formatSizeToReadableString(size)}
       </div>
     </div>
   )

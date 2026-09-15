@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/standardnotes/app/compare/@standardnotes/toast@1.5.0...@standardnotes/toast@1.5.1) (2026-09-03)
+
+**Note:** Version bump only for package @standardnotes/toast
+
 # [1.5.0](https://github.com/standardnotes/app/compare/@standardnotes/toast@1.4.2...@standardnotes/toast@1.5.0) (2024-01-24)
 
 ### Features

@@ -8,6 +8,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { getSectionItems } from './getSectionItems'
 import { isDesktopApplication } from '@/Utils'
 import { compareSemVersions } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 const WhatsNewSection = ({ items, sectionName }: { items: string[] | undefined; sectionName: string }) => {
   if (!items) {
@@ -44,7 +45,7 @@ const WhatsNew = ({ application }: { application: WebApplication }) => {
   if (!changelog) {
     return (
       <div className="flex h-full w-full items-center text-center">
-        <span className="w-full font-bold">Loading...</span>
+        <span className="w-full font-bold">{c('B6.Preferences.Other.Info').t`Loading...`}</span>
       </div>
     )
   }
@@ -81,31 +82,31 @@ const WhatsNew = ({ application }: { application: WebApplication }) => {
                   <Title className="mb-3 flex">{version.version}</Title>
                   {version.version === appVersion && (
                     <div className="ml-2 select-none rounded bg-info px-2 py-1 text-[0.625rem] font-bold text-info-contrast">
-                      Your Version
+                      {c('B6.Preferences.Other.Label').t`Your Version`}
                     </div>
                   )}
                   {isLatest && (
                     <div className="ml-2 select-none rounded bg-success px-2 py-1 text-[0.625rem] font-bold text-success-contrast">
-                      Latest Version
+                      {c('B6.Preferences.Other.Label').t`Latest Version`}
                     </div>
                   )}
                   {isUnreadVersion && (
                     <div className="ml-2 select-none rounded bg-success px-2 py-1 text-[0.625rem] font-bold text-success-contrast">
-                      New
+                      {c('B6.Preferences.Other.Label').t`New`}
                     </div>
                   )}
                 </div>
                 {showDownloadLink && (
                   <LinkButton
-                    label={'Open Downloads'}
+                    label={c('B6.Preferences.Other.Action').t`Open Downloads`}
                     link={application.changelogService.getDesktopDownloadsUrl(version.version)}
                     className="mb-3"
                   />
                 )}
               </div>
-              <WhatsNewSection sectionName="Features" items={features} />
+              <WhatsNewSection sectionName={c('B6.Preferences.Other.Subtitle').t`Features`} items={features} />
               {features && bugFixes && <HorizontalSeparator classes="my-4" />}
-              <WhatsNewSection sectionName="Bug Fixes" items={bugFixes} />
+              <WhatsNewSection sectionName={c('B6.Preferences.Other.Subtitle').t`Bug Fixes`} items={bugFixes} />
             </div>
           </PreferencesGroup>
         )

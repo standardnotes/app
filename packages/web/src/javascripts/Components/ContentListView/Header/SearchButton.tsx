@@ -1,4 +1,5 @@
 import RoundIconButton from '@/Components/Button/RoundIconButton'
+import { c } from 'ttag'
 import ClearInputButton from '@/Components/ClearInputButton/ClearInputButton'
 import Icon from '@/Components/Icon/Icon'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
@@ -31,7 +32,7 @@ const SearchButton = ({ itemListController }: Props) => {
           ),
           input: 'text-base placeholder:text-passive-0 lg:text-sm',
         }}
-        placeholder={'Search...'}
+        placeholder={c('B3.Notes.NoteList.Placeholder').t`Search...`}
         value={noteFilterText}
         ref={(node) => {
           if (node && document.activeElement !== node) {
@@ -50,7 +51,7 @@ const SearchButton = ({ itemListController }: Props) => {
           setIsSearchBarVisible(!isSearchBarVisible)
         }}
         icon={isSearchBarVisible ? 'close' : 'search'}
-        label="Search"
+        label={c('B3.Notes.NoteList.AriaLabel').t`Search`}
       />
     </>
   )

@@ -1,4 +1,5 @@
 import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
+import { c } from 'ttag'
 import { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
@@ -29,7 +30,7 @@ const PanelSettingsSection = () => {
         onChange={toggleNavigationPane}
         shortcut={navigationShortcut}
       >
-        Show Tags Panel
+        {c('B2.NavSharedUI.Label').t`Show Tags Panel`}
       </MenuSwitchButtonItem>
       <MenuSwitchButtonItem
         className="items-center"
@@ -37,7 +38,7 @@ const PanelSettingsSection = () => {
         onChange={toggleListPane}
         shortcut={listShortcut}
       >
-        Show Notes Panel
+        {c('B2.NavSharedUI.Label').t`Show Notes Panel`}
       </MenuSwitchButtonItem>
     </div>
   )

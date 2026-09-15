@@ -2,23 +2,34 @@ import { useCallback, useEffect, useState } from 'react'
 import Button from '../Button/Button'
 import { startAuthentication } from '@simplewebauthn/browser'
 import { log, LoggingDomain } from '@/Logging'
+import { c } from 'ttag'
+
+const CHROME_CLIPPER_EXTENSION_ORIGIN = 'chrome-extension://heapafmadojoodklnkhjanbinemaagok'
+const FIREFOX_CLIPPER_EXTENSION_ORIGIN = 'moz-extension://2a461925-d1b1-4ed3-99a6-91fe7633cc2c'
+
+const ALLOWED_PARENT_ORIGINS = ['file://', CHROME_CLIPPER_EXTENSION_ORIGIN, FIREFOX_CLIPPER_EXTENSION_ORIGIN]
+
+const isAllowedParentOrigin = (origin: string): boolean => {
+  return ALLOWED_PARENT_ORIGINS.includes(origin)
+}
 
 /**
- * An iframe for use in the desktop and mobile application that allows them to load app.standardnotes.com to perform
- * U2F authentication. Web applications do not need this iframe, as they can perform U2F authentication directly.
+ * An iframe for use in the desktop app and web clipper extension that allows them to load app.standardnotes.com
+ * to perform U2F authentication. Web applications do not need this iframe, as they can perform U2F authentication
+ * directly.
  */
 const U2FAuthIframe = () => {
   const [username, setUsername] = useState('')
   const [apiHost, setApiHost] = useState<string | null>(null)
   const [source, setSource] = useState<MessageEvent['source'] | null>(null)
-  const NATIVE_CLIENT_ORIGIN = 'file://'
+  const [parentOrigin, setParentOrigin] = useState<string | null>(null)
 
   useEffect(() => {
     window.parent.postMessage(
       {
         mountedAuthView: true,
       },
-      NATIVE_CLIENT_ORIGIN,
+      '*',
     )
   }, [])
 
@@ -26,9 +37,8 @@ const U2FAuthIframe = () => {
     const messageHandler = (event: MessageEvent) => {
       log(LoggingDomain.U2F, 'U2F iframe received message', event)
 
-      const eventDoesNotComeFromNativeClient = event.origin !== NATIVE_CLIENT_ORIGIN
-      if (eventDoesNotComeFromNativeClient) {
-        log(LoggingDomain.U2F, 'Not setting username; origin does not match', event.origin, NATIVE_CLIENT_ORIGIN)
+      if (!isAllowedParentOrigin(event.origin)) {
+        log(LoggingDomain.U2F, 'Not setting username; origin is not allowed', event.origin)
         return
       }
 
@@ -36,6 +46,7 @@ const U2FAuthIframe = () => {
         setUsername(event.data.username)
         setApiHost(event.data.apiHost)
         setSource(event.source)
+        setParentOrigin(event.origin)
       }
     }
 
@@ -54,8 +65,8 @@ const U2FAuthIframe = () => {
     setError('')
 
     try {
-      if (!username || !source) {
-        throw new Error('No username provided')
+      if (!username || !source || !parentOrigin) {
+        throw new Error(c('B1.Account.SignIn.Error').t`No username provided`)
       }
 
       const response = await fetch(`${apiHost}/v1/authenticators/generate-authentication-options`, {
@@ -70,10 +81,10 @@ const U2FAuthIframe = () => {
 
       const jsonResponse = await response.json()
       if (!jsonResponse.data || !jsonResponse.data.options) {
-        throw new Error('No options returned from server')
+        throw new Error(c('B1.Account.SignIn.Error').t`No options returned from server`)
       }
 
-      setInfo('Waiting for security key...')
+      setInfo(c('B1.Account.SignIn.Status').t`Waiting for security key...`)
 
       const assertionResponse = await startAuthentication(jsonResponse.data.options)
 
@@ -81,10 +92,10 @@ const U2FAuthIframe = () => {
         {
           assertionResponse,
         },
-        NATIVE_CLIENT_ORIGIN,
+        parentOrigin,
       )
 
-      setInfo('Authentication successful!')
+      setInfo(c('B1.Account.SignIn.Info').t`Authentication successful!`)
     } catch (error) {
       if (!error) {
         return
@@ -92,14 +103,14 @@ const U2FAuthIframe = () => {
       setError(JSON.stringify(error))
       console.error(error)
     }
-  }, [source, username, apiHost])
+  }, [source, username, apiHost, parentOrigin])
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
       <div className="mb-2 text-center">
-        Insert your hardware security key, then press the button below to authenticate.
+        {c('B1.Account.SignIn.Info').t`Insert your hardware security key, then press the button below to authenticate.`}
       </div>
-      <Button onClick={beginAuthentication}>Authenticate</Button>
+      <Button onClick={beginAuthentication}>{c('B1.Account.SignIn.Action').t`Authenticate`}</Button>
       <div className="mt-2">
         <div>{info}</div>
         <div className="text-danger">{error}</div>

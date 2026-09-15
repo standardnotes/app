@@ -181,7 +181,7 @@ describe('ApplicationEventObserver', () => {
       await createObserver().handle(ApplicationEvent.Launched)
 
       expect(subscriptionManager.acceptInvitation).toHaveBeenCalledWith('1-2-3')
-      expect(toastService.showToast).toHaveBeenCalledWith(ToastType.Success, JoinWorkspaceSuccessString)
+      expect(toastService.showToast).toHaveBeenCalledWith(ToastType.Success, JoinWorkspaceSuccessString())
       expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.AcceptSubscriptionInvite)
     })
 
@@ -287,7 +287,7 @@ describe('ApplicationEventObserver', () => {
       await createObserver().handle(ApplicationEvent.SignedIn)
 
       expect(subscriptionManager.acceptInvitation).toHaveBeenCalledWith('1-2-3')
-      expect(toastService.showToast).toHaveBeenCalledWith(ToastType.Success, JoinWorkspaceSuccessString)
+      expect(toastService.showToast).toHaveBeenCalledWith(ToastType.Success, JoinWorkspaceSuccessString())
       expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.AcceptSubscriptionInvite)
     })
 

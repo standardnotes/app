@@ -1,5 +1,6 @@
 import { FunctionComponent, useState } from 'react'
 import Icon from '../Icon/Icon'
+import { c } from 'ttag'
 
 type Props = {
   onClick: () => void
@@ -13,7 +14,9 @@ const EditingDisabledBanner: FunctionComponent<Props> = ({ onClick, noteLocked }
   const iconColor = showDisabledCopy ? 'text-accessory-tint-3' : 'text-accessory-tint-1'
   const textColor = showDisabledCopy ? 'text-warning' : 'text-accessory-tint-1'
 
-  const text = showDisabledCopy ? 'Note editing disabled.' : 'Enable editing'
+  const text = showDisabledCopy
+    ? c('B4.Notes.EditingUI.Status').t`Note editing disabled.`
+    : c('B4.Notes.EditingUI.Action').t`Enable editing`
 
   return (
     <div

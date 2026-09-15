@@ -1,5 +1,6 @@
 import { ChallengeService } from './../Challenge/ChallengeService'
 import { SNLog } from '@Lib/Log'
+import { c } from 'ttag'
 import {
   DecryptedItem,
   DecryptedItemInterface,
@@ -304,12 +305,12 @@ export class ProtectionService
   getMobilePasscodeTimingOptions(): TimingDisplayOption[] {
     return [
       {
-        title: 'Immediately',
+        title: c('B5.SecuritySync.Autolock.Label').t`Immediately`,
         key: MobileUnlockTiming.Immediately,
         selected: this.mobilePasscodeTiming === MobileUnlockTiming.Immediately,
       },
       {
-        title: 'On Quit',
+        title: c('B5.SecuritySync.Autolock.Label').t`On Quit`,
         key: MobileUnlockTiming.OnQuit,
         selected: this.mobilePasscodeTiming === MobileUnlockTiming.OnQuit,
       },
@@ -319,12 +320,12 @@ export class ProtectionService
   getMobileBiometricsTimingOptions(): TimingDisplayOption[] {
     return [
       {
-        title: 'Immediately',
+        title: c('B5.SecuritySync.Autolock.Label').t`Immediately`,
         key: MobileUnlockTiming.Immediately,
         selected: this.mobileBiometricsTiming === MobileUnlockTiming.Immediately,
       },
       {
-        title: 'On Quit',
+        title: c('B5.SecuritySync.Autolock.Label').t`On Quit`,
         key: MobileUnlockTiming.OnQuit,
         selected: this.mobileBiometricsTiming === MobileUnlockTiming.OnQuit,
       },

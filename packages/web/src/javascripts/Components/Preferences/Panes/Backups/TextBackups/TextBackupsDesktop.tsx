@@ -10,6 +10,7 @@ import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/Pre
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { BackupServiceInterface } from '@standardnotes/snjs'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { c } from 'ttag'
 
 type Props = {
   backupsService: BackupServiceInterface
@@ -48,12 +49,13 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Automatic Encrypted Text Backups</Title>
+          <Title>{c('B6.Preferences.Backups.Title').t`Automatic Encrypted Text Backups`}</Title>
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">
               <Subtitle>
-                Automatically save encrypted text backups of all your note and tag data to this computer.
+                {c('B6.Preferences.Backups.Subtitle')
+                  .t`Automatically save encrypted text backups of all your note and tag data to this computer.`}
               </Subtitle>
             </div>
             <Switch onChange={toggleBackups} checked={backupsEnabled} />
@@ -62,7 +64,8 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
           {!backupsEnabled && (
             <>
               <HorizontalSeparator classes="mt-2.5 mb-4" />
-              <Text>Text backups are not enabled. Enable to choose where your data is backed up.</Text>
+              <Text>{c('B6.Preferences.Backups.Status')
+                .t`Text backups are not enabled. Enable to choose where your data is backed up.`}</Text>
             </>
           )}
         </PreferencesSegment>
@@ -73,7 +76,8 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
 
             <PreferencesSegment>
               <>
-                <Text className="mb-3">Text backups are enabled and saved to:</Text>
+                <Text className="mb-3">{c('B6.Preferences.Backups.Status')
+                  .t`Text backups are enabled and saved to:`}</Text>
 
                 <EncryptionStatusItem
                   status={backupsLocation || 'Not Set'}
@@ -82,18 +86,31 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
                 />
 
                 <div className="mt-2.5 flex flex-row">
-                  <Button label="Open Location" className={'mr-3 text-xs'} onClick={openBackupsLocation} />
-                  <Button label="Change Location" className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
+                  <Button
+                    label={c('B6.Preferences.Backups.Action').t`Open Location`}
+                    className={'mr-3 text-xs'}
+                    onClick={openBackupsLocation}
+                  />
+                  <Button
+                    label={c('B6.Preferences.Backups.Action').t`Change Location`}
+                    className={'mr-3 text-xs'}
+                    onClick={changeBackupsLocation}
+                  />
                 </div>
               </>
 
               <HorizontalSeparator classes="my-4" />
 
               <Text className="mb-3">
-                Backups are saved automatically throughout the day. You can perform a one-time backup now below.
+                {c('B6.Preferences.Backups.Info')
+                  .t`Backups are saved automatically throughout the day. You can perform a one-time backup now below.`}
               </Text>
               <div className="flex flex-row">
-                <Button label="Perform Backup" className={'mr-3 text-xs'} onClick={performBackup} />
+                <Button
+                  label={c('B6.Preferences.Backups.Label').t`Perform Backup`}
+                  className={'mr-3 text-xs'}
+                  onClick={performBackup}
+                />
               </div>
             </PreferencesSegment>
           </>

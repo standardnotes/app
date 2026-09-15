@@ -1,4 +1,5 @@
 import { VaultListingInterface } from '@standardnotes/snjs'
+import { c } from 'ttag'
 import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
 import Icon from '../Icon/Icon'
@@ -24,15 +25,15 @@ const VaultOptionsMenu = ({ vault }: Props) => {
 
   return (
     <>
-      <Menu a11yLabel="Vault options menu">
+      <Menu a11yLabel={c('B2.NavSharedUI.Label').t`Vault options menu`}>
         <MenuItem onClick={openEditModal}>
           <Icon type="pencil-filled" className="mr-2" />
-          Edit vault
+          {c('B2.NavSharedUI.Action').t`Edit vault`}
         </MenuItem>
         {canShowLockOption && (
           <MenuItem onClick={toggleLock}>
             <Icon type="lock" className="mr-2" />
-            {isLocked ? 'Unlock' : 'Lock'} vault
+            {isLocked ? c('B2.NavSharedUI.Action').t`Unlock vault` : c('B2.NavSharedUI.Action').t`Lock vault`}
           </MenuItem>
         )}
       </Menu>

@@ -1,5 +1,6 @@
 import { classNames } from '@standardnotes/utils'
 import { useRef, useState } from 'react'
+import { c } from 'ttag'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
@@ -22,12 +23,12 @@ const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigati
 
   return (
     <>
-      <StyledTooltip label="Open vault selection menu">
+      <StyledTooltip label={c('B2.NavSharedUI.Label').t`Open vault selection menu`}>
         {isMobileNavigation ? (
           <RoundIconButton
             className="ml-2.5 bg-default"
             onClick={toggleMenu}
-            label="Go to vaults menu"
+            label={c('B2.NavSharedUI.Label').t`Go to vaults menu`}
             icon="safe-square"
           />
         ) : (
@@ -54,7 +55,7 @@ const VaultSelectionButton = ({ isMobileNavigation = false }: { isMobileNavigati
         )}
       </StyledTooltip>
       <Popover
-        title="Vault options"
+        title={c('B2.NavSharedUI.Label').t`Vault options`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}

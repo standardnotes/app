@@ -1,4 +1,5 @@
 import { AppPaneId } from '../Panes/AppPaneMetadata'
+import { c } from 'ttag'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { classNames, IconType } from '@standardnotes/snjs'
 import RoundIconButton from '../Button/RoundIconButton'
@@ -14,7 +15,11 @@ const MobileItemsListButton = () => {
 
   const iconType: IconType = isTablet && !itemsShown ? 'chevron-right' : 'chevron-left'
 
-  const label = isTablet ? (itemsShown ? 'Hide items list' : 'Show items list') : 'Go to items list'
+  const label = isTablet
+    ? itemsShown
+      ? c('B3.Notes.NoteList.AriaLabel').t`Hide items list`
+      : c('B3.Notes.NoteList.AriaLabel').t`Show items list`
+    : c('B3.Notes.NoteList.AriaLabel').t`Go to items list`
 
   return (
     <RoundIconButton

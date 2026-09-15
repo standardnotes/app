@@ -8,6 +8,7 @@ import BrowsePlugins from './BrowsePlugins/BrowsePlugins'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import { Title } from '../../PreferencesComponents/Content'
 import ManagePlugins from './ManagePlugins/ManagePlugins'
+import { c } from 'ttag'
 
 type Props = {
   pluginsLatestVersions: PackageProvider
@@ -24,14 +25,14 @@ const PluginsPane: FunctionComponent<Props> = ({ pluginsLatestVersions }) => {
 
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Manage Plugins</Title>
+          <Title>{c('B6.Preferences.Other.Title').t`Manage Plugins`}</Title>
           <ManagePlugins className={'mt-3'} pluginsLatestVersions={pluginsLatestVersions} />
         </PreferencesSegment>
       </PreferencesGroup>
 
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Install Custom Plugin</Title>
+          <Title>{c('B6.Preferences.Other.Title').t`Install Custom Plugin`}</Title>
           <InstallCustomPlugin className={'mt-3'} />
         </PreferencesSegment>
       </PreferencesGroup>

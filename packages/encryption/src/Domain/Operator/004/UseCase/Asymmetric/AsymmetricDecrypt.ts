@@ -41,7 +41,7 @@ export class AsymmetricDecrypt004 {
         signaturePublicKey: additionalData.signingData.publicKey,
         senderPublicKey: additionalData.senderPublicKey,
       }
-    } catch (error) {
+    } catch {
       return null
     }
   }

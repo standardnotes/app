@@ -16,6 +16,7 @@ import { iconClass } from '../NotesOptions/ClassNames'
 import { useApplication } from '../ApplicationProvider'
 import MenuSection from '../Menu/MenuSection'
 import { ToastType, addToast } from '@standardnotes/toast'
+import { c } from 'ttag'
 
 type Props = {
   closeMenu: () => void
@@ -84,7 +85,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   })
 
   if (selectedFiles.length === 0) {
-    return <div className="text-center">No files selected</div>
+    return <div className="text-center">{c('B7.FilesSubscriptionHelp.Files.Info').t`No files selected`}</div>
   }
 
   return (
@@ -94,12 +95,12 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           {isFileAttachedToNote ? (
             <MenuItem onClick={onDetach}>
               <Icon type="link-off" className="mr-2 text-neutral" />
-              Detach from note
+              {c('B7.FilesSubscriptionHelp.Files.Info').t`Detach from note`}
             </MenuItem>
           ) : shouldShowAttachOption ? (
             <MenuItem onClick={onAttach}>
               <Icon type="link" className="mr-2 text-neutral" />
-              Attach to note
+              {c('B7.FilesSubscriptionHelp.Files.Info').t`Attach to note`}
             </MenuItem>
           ) : null}
         </MenuSection>
@@ -127,7 +128,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           disabled={areSomeFilesInReadonlySharedVault}
         >
           <Icon type="lock" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-          Password protect
+          {c('B7.FilesSubscriptionHelp.Files.Info').t`Password protect`}
         </MenuSwitchButtonItem>
       </MenuSection>
       <MenuSection>
@@ -138,7 +139,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           }}
         >
           <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-          Download {canShowZipDownloadOption ? 'separately' : ''}
+          {c('B7.FilesSubscriptionHelp.Files.Action').t`Download`} {canShowZipDownloadOption ? 'separately' : ''}
         </MenuItem>
         {canShowZipDownloadOption && (
           <MenuItem
@@ -150,14 +151,15 @@ const FileMenuOptions: FunctionComponent<Props> = ({
                 console.error(error)
                 addToast({
                   type: ToastType.Error,
-                  message: error.message || 'Failed to download files as archive',
+                  message:
+                    error.message || c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to download files as archive`,
                 })
               })
               closeMenu()
             }}
           >
             <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-            Download as archive
+            {c('B7.FilesSubscriptionHelp.Files.Action').t`Download as archive`}
           </MenuItem>
         )}
         {shouldShowRenameOption && (
@@ -168,7 +170,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
             disabled={areSomeFilesInReadonlySharedVault}
           >
             <Icon type="pencil" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
-            Rename
+            {c('B7.FilesSubscriptionHelp.Files.Info').t`Rename`}
           </MenuItem>
         )}
         <MenuItem
@@ -179,7 +181,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           disabled={areSomeFilesInReadonlySharedVault}
         >
           <Icon type="trash" className={`mr-2 text-danger ${MenuItemIconSize}`} />
-          <span className="text-danger">Delete permanently</span>
+          <span className="text-danger">{c('B7.FilesSubscriptionHelp.Files.Action').t`Delete permanently`}</span>
         </MenuItem>
       </MenuSection>
 
@@ -188,11 +190,16 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <div className="px-3 pb-0.5 pt-1 text-xs font-medium text-neutral">
         {!hasSelectedMultipleFiles && (
           <div className="mb-1">
-            <span className="font-semibold">File ID:</span> {selectedFiles[0].uuid}
+            <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Files.Info').t`File ID:`}</span>{' '}
+            {selectedFiles[0].uuid}
           </div>
         )}
         <div>
-          <span className="font-semibold">{hasSelectedMultipleFiles ? 'Total Size:' : 'Size:'}</span>{' '}
+          <span className="font-semibold">
+            {hasSelectedMultipleFiles
+              ? c('B7.FilesSubscriptionHelp.Files.Info').t`Total Size:`
+              : c('B7.FilesSubscriptionHelp.Files.Info').t`Size:`}
+          </span>{' '}
           {formatSizeToReadableString(totalFileSize)}
         </div>
       </div>

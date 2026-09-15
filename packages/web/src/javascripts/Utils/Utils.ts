@@ -31,7 +31,7 @@ export function getPlatformString() {
       trimmed = 'linux'
     }
     return trimmed + (isDesktopApplication() ? '-desktop' : '-web')
-  } catch (e) {
+  } catch {
     return 'unknown-platform'
   }
 }
@@ -150,7 +150,7 @@ export function destroyAllObjectProperties(object: any): void {
     try {
       delete object[prop]
       // eslint-disable-next-line no-empty
-    } catch (error) {}
+    } catch {}
   }
 }
 

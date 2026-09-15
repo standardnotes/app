@@ -14,6 +14,7 @@ import {
   UserServiceInterface,
 } from '@standardnotes/snjs'
 import { ToastType } from '@standardnotes/toast'
+import { c } from 'ttag'
 
 import { PurchaseFlowController } from '@/Controllers/PurchaseFlow/PurchaseFlowController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
@@ -23,7 +24,8 @@ import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 import { EventObserverInterface } from './EventObserverInterface'
 
-export const JoinWorkspaceSuccessString = 'Successfully joined a shared subscription.'
+export const JoinWorkspaceSuccessString = () =>
+  c('B1.Account.Session.Info').t`Successfully joined a shared subscription.`
 
 export class ApplicationEventObserver implements EventObserverInterface {
   constructor(
@@ -126,14 +128,17 @@ export class ApplicationEventObserver implements EventObserverInterface {
   }
 
   private async acceptSubscriptionInvitation(route: RouteParserInterface): Promise<void> {
-    const processingToastId = this.toastService.showToast(ToastType.Loading, 'Accepting invitation...')
+    const processingToastId = this.toastService.showToast(
+      ToastType.Loading,
+      c('B1.Account.Session.Status').t`Accepting invitation...`,
+    )
 
     const acceptResult = await this.subscriptionManager.acceptInvitation(route.subscriptionInviteParams.inviteUuid)
 
     this.toastService.hideToast(processingToastId)
 
     const toastType = acceptResult.success ? ToastType.Success : ToastType.Error
-    const toastMessage = acceptResult.success ? JoinWorkspaceSuccessString : acceptResult.message
+    const toastMessage = acceptResult.success ? JoinWorkspaceSuccessString() : acceptResult.message
 
     this.toastService.showToast(toastType, toastMessage)
 
@@ -141,7 +146,10 @@ export class ApplicationEventObserver implements EventObserverInterface {
   }
 
   private async sendUserRequest(route: RouteParserInterface): Promise<void> {
-    const processingToastId = this.toastService.showToast(ToastType.Loading, 'Processing your request...')
+    const processingToastId = this.toastService.showToast(
+      ToastType.Loading,
+      c('B2.NavSharedUI.Status').t`Processing your request...`,
+    )
 
     const requestSubmittedSuccessfully = await this.userService.submitUserRequest(route.userRequestParams.requestType)
 
@@ -149,8 +157,9 @@ export class ApplicationEventObserver implements EventObserverInterface {
 
     const toastType = requestSubmittedSuccessfully ? ToastType.Success : ToastType.Error
     const toastMessage = requestSubmittedSuccessfully
-      ? 'We have received your request. Please check your email for further instructions.'
-      : 'We could not process your request. Please try again or contact support if the issue persists.'
+      ? c('B2.NavSharedUI.Info').t`We have received your request. Please check your email for further instructions.`
+      : c('B2.NavSharedUI.Error')
+          .t`We could not process your request. Please try again or contact support if the issue persists.`
 
     this.toastService.showToast(toastType, toastMessage)
 

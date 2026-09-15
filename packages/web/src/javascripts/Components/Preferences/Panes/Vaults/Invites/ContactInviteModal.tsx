@@ -9,6 +9,7 @@ import {
 } from '@standardnotes/snjs'
 import Spinner from '@/Components/Spinner/Spinner'
 import Dropdown from '@/Components/Dropdown/Dropdown'
+import { c } from 'ttag'
 
 type Props = {
   vault: SharedVaultListingInterface
@@ -79,7 +80,11 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: isInvitingContacts ? <Spinner className="h-5 w-5 border-info-contrast" /> : 'Invite Selected Contacts',
+        label: isInvitingContacts ? (
+          <Spinner className="h-5 w-5 border-info-contrast" />
+        ) : (
+          c('B6.Preferences.Vaults.Action').t`Invite Selected Contacts`
+        ),
         onClick: inviteSelectedContacts,
         type: 'primary',
         mobileSlot: 'right',
@@ -87,7 +92,7 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
         hidden: contacts.length === 0,
       },
       {
-        label: 'Cancel',
+        label: c('B6.Preferences.Vaults.Action').t`Cancel`,
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
@@ -97,7 +102,7 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
   )
 
   return (
-    <Modal title="Add New Contact" close={handleDialogClose} actions={modalActions}>
+    <Modal title={c('B6.Preferences.Vaults.Title').t`Add New Contact`} close={handleDialogClose} actions={modalActions}>
       <div className={classNames('flex w-full flex-col gap-3 px-4.5 py-4', isLoadingContacts && 'items-center')}>
         {isLoadingContacts ? (
           <Spinner className="h-5 w-5" />
@@ -125,7 +130,7 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
                 {isSelected && (
                   <Dropdown
                     showLabel
-                    label={'Permission:'}
+                    label={c('B6.Preferences.Vaults.Label').t`Permission:`}
                     classNameOverride={{
                       wrapper: 'col-start-2',
                     }}
@@ -154,7 +159,7 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
             )
           })
         ) : (
-          <div className="text-sm">No contacts available to invite.</div>
+          <div className="text-sm">{c('B6.Preferences.Vaults.Info').t`No contacts available to invite.`}</div>
         )}
       </div>
     </Modal>

@@ -23,6 +23,7 @@ import {
 import { SubscriptionManagerEvent } from './SubscriptionManagerEvent'
 import { ApplicationStageChangedEventPayload } from '../Event/ApplicationStageChangedEventPayload'
 import { IsApplicationUsingThirdPartyHost } from '../UseCase/IsApplicationUsingThirdPartyHost'
+import { c } from 'ttag'
 
 export class SubscriptionManager
   extends AbstractService<SubscriptionManagerEvent>
@@ -141,8 +142,11 @@ export class SubscriptionManager
       }
 
       return result.data
-    } catch (error) {
-      return { success: false, message: 'Could not accept invitation.' }
+    } catch {
+      return {
+        success: false,
+        message: c('B7.FilesSubscriptionHelp.Subscription.Error').t`Could not accept invitation.`,
+      }
     }
   }
 
@@ -155,7 +159,7 @@ export class SubscriptionManager
       }
 
       return result.data.invitations ?? []
-    } catch (error) {
+    } catch {
       return []
     }
   }
@@ -169,7 +173,7 @@ export class SubscriptionManager
       }
 
       return result.data.success === true
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -183,7 +187,7 @@ export class SubscriptionManager
       }
 
       return result.data.success === true
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -245,8 +249,8 @@ export class SubscriptionManager
       }
 
       return result.data
-    } catch (error) {
-      return { success: false, message: 'Could not confirm IAP.' }
+    } catch {
+      return { success: false, message: c('B7.FilesSubscriptionHelp.Subscription.Error').t`Could not confirm IAP.` }
     }
   }
 }

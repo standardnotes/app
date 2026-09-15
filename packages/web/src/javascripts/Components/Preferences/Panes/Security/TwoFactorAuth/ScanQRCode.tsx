@@ -7,6 +7,7 @@ import AuthAppInfoTooltip from './AuthAppInfoPopup'
 import CopyButton from './CopyButton'
 import Bullet from './Bullet'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { c } from 'ttag'
 
 type Props = {
   activation: TwoFactorActivation
@@ -29,7 +30,8 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
           <Bullet />
           <div className="min-w-1" />
           <div className="text-sm">
-            Open your <b>authenticator app</b>.
+            {c('B6.Preferences.Security.Label').t`Open your`}{' '}
+            <b>{c('B6.Preferences.Security.Label').t`authenticator app`}</b>.
           </div>
           <div className="min-w-2" />
           <AuthAppInfoTooltip />
@@ -38,7 +40,8 @@ const ScanQRCode: FunctionComponent<Props> = ({ activation: act }) => {
           <Bullet className="mt-2 self-start" />
           <div className="min-w-1" />
           <div className="flex-grow text-sm">
-            <b>Scan this QR code</b> or <b>add this secret key</b>:
+            <b>{c('B6.Preferences.Security.Label').t`Scan this QR code`}</b> {c('B6.Preferences.Security.Label').t`or`}{' '}
+            <b>{c('B6.Preferences.Security.Action').t`add this secret key`}</b>:
           </div>
         </div>
         <DecoratedInput

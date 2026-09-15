@@ -3,6 +3,7 @@ import Spinner from '@/Components/Spinner/Spinner'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { SettingName } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
+import { c } from 'ttag'
 import { Subtitle, Title } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -44,8 +45,8 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Files</Title>
-        <Subtitle>Storage Quota</Subtitle>
+        <Title>{c('B6.Preferences.Account.Info').t`Files`}</Title>
+        <Subtitle>{c('B6.Preferences.Account.Info').t`Storage Quota`}</Subtitle>
         {isLoading ? (
           <div className="mt-2">
             <Spinner className="h-3 w-3" />
@@ -53,17 +54,18 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
         ) : (
           <>
             <div className="mb-1 mt-1">
-              <span className="font-semibold">{formatSizeToReadableString(filesQuotaUsed)}</span> of{' '}
+              <span className="font-semibold">{formatSizeToReadableString(filesQuotaUsed)}</span>{' '}
+              {c('B6.Preferences.Account.Info').t`of`}{' '}
               <span>
                 {application.sessions.isSignedIntoFirstPartyServer()
                   ? formatSizeToReadableString(filesQuotaTotal)
                   : '∞'}
               </span>{' '}
-              used
+              {c('B6.Preferences.Account.Info').t`used`}
             </div>
             <progress
               className="progress-bar w-full"
-              aria-label="Files storage used"
+              aria-label={c('B6.Preferences.Account.Label').t`Files storage used`}
               value={filesQuotaUsed}
               max={filesQuotaTotal}
             />

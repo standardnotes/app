@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { c } from 'ttag'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
@@ -85,11 +86,11 @@ class Footer extends AbstractComponent<Props, State> {
           }
           break
         case WebAppEvent.BeganBackupDownload:
-          statusService.setMessage('Saving local backup…')
+          statusService.setMessage(c('B6.Preferences.Backups.Status').t`Saving local backup…`)
           break
         case WebAppEvent.EndedBackupDownload: {
-          const successMessage = 'Successfully saved backup.'
-          const errorMessage = 'Unable to save local backup.'
+          const successMessage = c('B6.Preferences.Backups.Status').t`Successfully saved backup.`
+          const errorMessage = c('B6.Preferences.Backups.Error').t`Unable to save local backup.`
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           statusService.setMessage((data as any).success ? successMessage : errorMessage)
 
@@ -208,7 +209,7 @@ class Footer extends AbstractComponent<Props, State> {
         this.setState({
           failedSyncError: getErrorMessageFromErrorResponseBody(
             data as HttpErrorResponseBody,
-            'Sync error. Please try again later.',
+            c('B2.NavSharedUI.Error').t`Sync error. Please try again later.`,
           ),
         })
         break
@@ -222,7 +223,7 @@ class Footer extends AbstractComponent<Props, State> {
         break
       case ApplicationEvent.WillSync:
         if (!this.completedInitialSync) {
-          this.application.status.setMessage('Syncing…')
+          this.application.status.setMessage(c('B2.NavSharedUI.Status').t`Syncing…`)
         }
         break
     }
@@ -233,14 +234,15 @@ class Footer extends AbstractComponent<Props, State> {
     const syncStatus = this.application.sync.getSyncStatus()
     const stats = syncStatus.getStats()
     if (syncStatus.hasError()) {
-      statusManager.setMessage('Unable to Sync')
+      statusManager.setMessage(c('B2.NavSharedUI.Error').t`Unable to Sync`)
     } else if (stats.downloadCount > 20) {
-      const text = `Downloading ${stats.downloadCount} items. Keep app open.`
+      const text = c('B2.NavSharedUI.Status')
+        .jt`Downloading ${stats.downloadCount} items. Keep app open.` as unknown as string
       statusManager.setMessage(text)
       this.showingDownloadStatus = true
     } else if (this.showingDownloadStatus) {
       this.showingDownloadStatus = false
-      statusManager.setMessage('Download Complete.')
+      statusManager.setMessage(c('B2.NavSharedUI.Status').t`Download Complete.`)
       setTimeout(() => {
         statusManager.setMessage('')
       }, 2000)
@@ -252,7 +254,10 @@ class Footer extends AbstractComponent<Props, State> {
         style: 'percent',
       })
 
-      statusManager.setMessage(`Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`)
+      statusManager.setMessage(
+        c('B2.NavSharedUI.Status')
+          .jt`Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)` as unknown as string,
+      )
     } else {
       statusManager.setMessage('')
     }
@@ -267,8 +272,11 @@ class Footer extends AbstractComponent<Props, State> {
       statusManager.setMessage('')
       return
     }
-    const notesString = `${stats.localDataCurrent}/${stats.localDataTotal} items...`
-    const loadingStatus = encryption ? `Decrypting ${notesString}` : `Loading ${notesString}`
+    const notesString = c('B2.NavSharedUI.Status')
+      .jt`${stats.localDataCurrent}/${stats.localDataTotal} items...` as unknown as string
+    const loadingStatus = encryption
+      ? (c('B2.NavSharedUI.Status').jt`Decrypting ${notesString}` as unknown as string)
+      : (c('B2.NavSharedUI.Status').jt`Loading ${notesString}` as unknown as string)
     statusManager.setMessage(loadingStatus)
   }
 
@@ -327,13 +335,14 @@ class Footer extends AbstractComponent<Props, State> {
     this.setState({
       newUpdateAvailable: false,
     })
-    this.application.alerts.alert(STRING_NEW_UPDATE_READY).catch(console.error)
+    this.application.alerts.alert(STRING_NEW_UPDATE_READY()).catch(console.error)
   }
 
   betaMessageClickHandler = () => {
     alertDialog({
-      title: 'You are using a beta version of the app',
-      text: 'If you wish to go back to a stable version, make sure to sign out ' + 'of this beta app first.',
+      title: c('B2.NavSharedUI.Info').t`You are using a beta version of the app`,
+      text: c('B2.NavSharedUI.Info')
+        .t`If you wish to go back to a stable version, make sure to sign out of this beta app first.`,
     }).catch(console.error)
   }
 
@@ -387,7 +396,7 @@ class Footer extends AbstractComponent<Props, State> {
               <Fragment>
                 <div className="relative z-footer-bar-item ml-3 flex select-none items-center border-l border-solid border-border pl-3">
                   <a onClick={this.betaMessageClickHandler} className="no-decoration title text-xs font-bold">
-                    You are using a beta version of the app
+                    {c('B2.NavSharedUI.Info').t`You are using a beta version of the app`}
                   </a>
                 </div>
               </Fragment>
@@ -403,7 +412,7 @@ class Footer extends AbstractComponent<Props, State> {
           <div className="right flex h-full flex-shrink-0">
             {this.state.failedSyncError && (
               <div className="relative z-footer-bar-item flex select-none items-center text-xs font-bold text-neutral">
-                Sync error: {this.state.failedSyncError}
+                {c('B2.NavSharedUI.Error').jt`Sync error: ${this.state.failedSyncError}`}
               </div>
             )}
             {this.state.dataUpgradeAvailable && (
@@ -411,7 +420,7 @@ class Footer extends AbstractComponent<Props, State> {
                 onClick={this.securityUpdateClickHandler}
                 className="relative z-footer-bar-item flex select-none items-center text-xs font-bold text-success"
               >
-                Encryption upgrade available.
+                {c('B2.NavSharedUI.Label').t`Encryption upgrade available.`}
               </div>
             )}
             {this.state.newUpdateAvailable && (
@@ -419,14 +428,14 @@ class Footer extends AbstractComponent<Props, State> {
                 onClick={this.newUpdateClickHandler}
                 className="relative z-footer-bar-item ml-3 flex select-none items-center text-xs font-bold text-info"
               >
-                New update available.
+                {c('B2.NavSharedUI.Label').t`New update available.`}
               </div>
             )}
             {(this.state.outOfSync || this.state.showSyncResolution) && (
               <div className="relative z-footer-bar-item ml-3 flex flex-shrink-0 select-none items-center">
                 {this.state.outOfSync && (
                   <div onClick={this.syncResolutionClickHandler} className="text-xs font-bold text-warning">
-                    Potentially Out of Sync
+                    {c('B2.NavSharedUI.Status').t`Potentially Out of Sync`}
                   </div>
                 )}
                 {this.state.showSyncResolution && (
@@ -436,15 +445,15 @@ class Footer extends AbstractComponent<Props, State> {
             )}
             {this.state.offline && (
               <div className="relative z-footer-bar-item ml-3 flex flex-shrink-0 select-none items-center text-xs font-bold">
-                Offline
+                {c('B2.NavSharedUI.Status').t`Offline`}
               </div>
             )}
             {this.state.hasPasscode && (
-              <StyledTooltip label="Lock application">
+              <StyledTooltip label={c('B2.NavSharedUI.AriaLabel').t`Lock application`}>
                 <div
                   id="lock-item"
                   onClick={this.lockClickHandler}
-                  title="Locks application and wipes unencrypted data from memory."
+                  title={c('B2.NavSharedUI.AriaLabel').t`Locks application and wipes unencrypted data from memory.`}
                   className="relative z-footer-bar-item ml-3 flex cursor-pointer select-none items-center border-l border-solid border-border pl-2 hover:text-info"
                 >
                   <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />

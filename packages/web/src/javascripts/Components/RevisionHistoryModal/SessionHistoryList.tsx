@@ -1,8 +1,10 @@
 import { Fragment, FunctionComponent, useMemo, useState } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
+import { formatRevisionGroupTitle } from './utils'
 import { observer } from 'mobx-react-lite'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
+import { c } from 'ttag'
 
 type Props = {
   noteHistoryController: NoteHistoryController
@@ -33,7 +35,7 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController, o
           return (
             <Fragment key={group.title}>
               <div className="mb-1 mt-2.5 select-none px-3 text-sm font-semibold uppercase text-passive-0">
-                {group.title}
+                {formatRevisionGroupTitle(group.title)}
               </div>
               {group.entries.map((entry, index) => (
                 <HistoryListItem
@@ -53,7 +55,10 @@ const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController, o
           return null
         }
       })}
-      {!sessionHistoryLength && <div className="select-none text-sm text-passive-0">No session history found</div>}
+      {!sessionHistoryLength && (
+        <div className="select-none text-sm text-passive-0">{c('B4.Notes.History.Label')
+          .t`No session history found`}</div>
+      )}
     </div>
   )
 }

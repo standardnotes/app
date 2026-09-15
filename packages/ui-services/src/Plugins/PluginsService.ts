@@ -18,6 +18,7 @@ import {
 import { PluginsServiceInterface } from './PluginsServiceInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { isString } from '@standardnotes/utils'
+import { c } from 'ttag'
 
 const PluginsUrl = 'https://raw.githubusercontent.com/standardnotes/plugins/main/cdn/dist/packages.json'
 
@@ -98,14 +99,18 @@ export class PluginsService implements PluginsServiceInterface {
 
     const nativeFeature = FindNativeFeature(plugin.identifier)
     if (nativeFeature && !nativeFeature.deprecated) {
-      void this.alerts.alert('Unable to install plugin due to a conflict with a native feature.')
+      void this.alerts.alert(
+        c('B2.NavSharedUI.Error').t`Unable to install plugin due to a conflict with a native feature.`,
+      )
       return
     }
 
     if (plugin.url) {
       for (const nativeFeature of GetFeatures()) {
         if (plugin.url.includes(nativeFeature.identifier) && !nativeFeature.deprecated) {
-          void this.alerts.alert('Unable to install plugin due to a conflict with a native feature.')
+          void this.alerts.alert(
+            c('B2.NavSharedUI.Error').t`Unable to install plugin due to a conflict with a native feature.`,
+          )
           return
         }
       }
@@ -131,8 +136,8 @@ export class PluginsService implements PluginsServiceInterface {
     let url = urlOrCode
     try {
       url = this.crypto.base64Decode(urlOrCode)
-    } catch (err) {
-      void err
+    } catch {
+      url = urlOrCode
     }
 
     const response = await this.api.downloadFeatureUrl(url)
@@ -141,13 +146,14 @@ export class PluginsService implements PluginsServiceInterface {
       return undefined
     }
 
-    let rawFeature = response.data as ThirdPartyFeatureDescription
+    let rawFeature: ThirdPartyFeatureDescription | string = response.data as ThirdPartyFeatureDescription | string
 
     if (isString(rawFeature)) {
       try {
-        rawFeature = JSON.parse(rawFeature)
-        // eslint-disable-next-line no-empty
-      } catch (error) {}
+        rawFeature = JSON.parse(rawFeature) as ThirdPartyFeatureDescription
+      } catch {
+        return undefined
+      }
     }
 
     if (!rawFeature.content_type) {
@@ -162,14 +168,18 @@ export class PluginsService implements PluginsServiceInterface {
   ): Promise<ComponentInterface | undefined> {
     const nativeFeature = FindNativeFeature(plugin.identifier)
     if (nativeFeature) {
-      await this.alerts.alert('Unable to install external plugin due to a conflict with a native feature.')
+      await this.alerts.alert(
+        c('B2.NavSharedUI.Error').t`Unable to install external plugin due to a conflict with a native feature.`,
+      )
       return
     }
 
     if (plugin.url) {
       for (const nativeFeature of GetFeatures()) {
         if (plugin.url.includes(nativeFeature.identifier)) {
-          await this.alerts.alert('Unable to install external plugin due to a conflict with a native feature.')
+          await this.alerts.alert(
+            c('B2.NavSharedUI.Error').t`Unable to install external plugin due to a conflict with a native feature.`,
+          )
           return
         }
       }

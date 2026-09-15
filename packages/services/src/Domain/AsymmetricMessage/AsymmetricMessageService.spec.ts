@@ -57,6 +57,8 @@ describe('AsymmetricMessageService', () => {
     mutator = {} as jest.Mocked<MutatorClientInterface>
     mutator.changeItem = jest.fn()
 
+    sessions = {} as jest.Mocked<SessionsClientInterface>
+
     const eventBus = {} as jest.Mocked<InternalEventBusInterface>
     eventBus.addEventHandler = jest.fn()
 

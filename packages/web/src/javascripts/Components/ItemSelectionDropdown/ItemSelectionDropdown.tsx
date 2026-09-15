@@ -1,4 +1,5 @@
 import { doesItemMatchSearchQuery } from '@/Utils/Items/Search/doesItemMatchSearchQuery'
+import { c } from 'ttag'
 import {
   Combobox,
   ComboboxItem,
@@ -9,7 +10,7 @@ import {
 } from '@ariakit/react'
 import { classNames, DecryptedItem, naturalSort } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useDeferredValue, useEffect, useState } from 'react'
+import { useDeferredValue, useEffect, useRef, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import LinkedItemMeta from '../LinkedItems/LinkedItemMeta'
 
@@ -17,6 +18,7 @@ type Props = {
   contentTypes: string[]
   placeholder: string
   onSelection: (item: DecryptedItem) => void
+  excludeUuids?: string[]
   className?: {
     input?: string
     popover?: string
@@ -24,32 +26,50 @@ type Props = {
   comboboxProps?: ComboboxStoreProps
 }
 
-const ItemSelectionDropdown = ({ contentTypes, placeholder, onSelection, comboboxProps, className = {} }: Props) => {
+const ItemSelectionDropdown = ({
+  contentTypes,
+  placeholder,
+  onSelection,
+  excludeUuids = [],
+  comboboxProps,
+  className = {},
+}: Props) => {
   const application = useApplication()
 
   const combobox = useComboboxStore(comboboxProps)
   const value = combobox.useState('value')
   const open = combobox.useState('open')
+  const previousValueRef = useRef(value)
+
   useEffect(() => {
-    if (value.length < 1 && open) {
+    const valueWasCleared = previousValueRef.current.length > 0 && value.length < 1
+
+    if (valueWasCleared && open) {
       combobox.setOpen(false)
     }
-  }, [combobox, open, value.length])
+
+    previousValueRef.current = value
+  }, [combobox, open, value])
 
   const searchQuery = useDeferredValue(value)
   const [items, setItems] = useState<DecryptedItem[]>([])
 
   useEffect(() => {
+    const excludedUuids = new Set(excludeUuids)
     const searchableItems = naturalSort(application.items.getItems(contentTypes), 'title')
     const filteredItems = searchableItems.filter((item) => {
+      if (excludedUuids.has(item.uuid)) {
+        return false
+      }
+
       return doesItemMatchSearchQuery(item, searchQuery, application)
     })
     setItems(filteredItems)
-  }, [searchQuery, application, contentTypes])
+  }, [searchQuery, application, contentTypes, excludeUuids])
 
   return (
     <div>
-      <VisuallyHidden>Select an item</VisuallyHidden>
+      <VisuallyHidden>{c('B2.NavSharedUI.AriaLabel').t`Select an item`}</VisuallyHidden>
       <Combobox
         store={combobox}
         placeholder={placeholder}
@@ -80,7 +100,7 @@ const ItemSelectionDropdown = ({ contentTypes, placeholder, onSelection, combobo
             </ComboboxItem>
           ))
         ) : (
-          <div className="px-2">No results found</div>
+          <div className="px-2">{c('B2.NavSharedUI.Info').t`No results found`}</div>
         )}
       </ComboboxPopover>
     </div>

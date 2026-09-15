@@ -4,6 +4,7 @@ import { FeaturesController } from '@/Controllers/FeaturesController'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import { c } from 'ttag'
 
 type Props = {
   features: FeaturesController
@@ -21,7 +22,7 @@ const TagsSectionTitle: FunctionComponent<Props> = ({ features }) => {
     return (
       <>
         <div className="title text-base md:text-sm">
-          <span className="font-bold">Folders</span>
+          <span className="font-bold">{c('B4.Notes.TagsLinkedItems.Label').t`Folders`}</span>
         </div>
       </>
     )
@@ -30,10 +31,10 @@ const TagsSectionTitle: FunctionComponent<Props> = ({ features }) => {
   return (
     <>
       <div className="title text-base md:text-sm">
-        <span className="font-bold">Tags</span>
+        <span className="font-bold">{c('B4.Notes.TagsLinkedItems.Label').t`Tags`}</span>
         <StyledTooltip label={TAG_FOLDERS_FEATURE_TOOLTIP}>
           <label className="ml-1 cursor-pointer font-bold text-passive-2" onClick={showPremiumAlert}>
-            Folders
+            {c('B4.Notes.TagsLinkedItems.Label').t`Folders`}
           </label>
         </StyledTooltip>
       </div>

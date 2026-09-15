@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.599](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.598...@standardnotes/clipper@1.1.599) (2026-09-07)
+
+**Note:** Version bump only for package @standardnotes/clipper
+
+## [1.1.598](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.597...@standardnotes/clipper@1.1.598) (2026-09-04)
+
+**Note:** Version bump only for package @standardnotes/clipper
+
+## [1.1.597](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.596...@standardnotes/clipper@1.1.597) (2026-09-03)
+
+**Note:** Version bump only for package @standardnotes/clipper
+
+## [1.1.596](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.595...@standardnotes/clipper@1.1.596) (2026-08-25)
+
+### Bug Fixes
+
+* Fixes web clipper hardware key auth for Firefox ([#3040](https://github.com/standardnotes/app/issues/3040)) ([369b1f0](https://github.com/standardnotes/app/commit/369b1f001ff1691240fc8e4c19c169bc7e34b838))
+
+## [1.1.595](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.594...@standardnotes/clipper@1.1.595) (2026-08-17)
+
+**Note:** Version bump only for package @standardnotes/clipper
+
+## [1.1.594](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.593...@standardnotes/clipper@1.1.594) (2026-07-20)
+
+**Note:** Version bump only for package @standardnotes/clipper
+
+## [1.1.593](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.592...@standardnotes/clipper@1.1.593) (2026-07-18)
+
+**Note:** Version bump only for package @standardnotes/clipper
+
+## [1.1.592](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.591...@standardnotes/clipper@1.1.592) (2026-07-18)
+
+**Note:** Version bump only for package @standardnotes/clipper
+
 ## [1.1.591](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.1.590...@standardnotes/clipper@1.1.591) (2026-07-06)
 
 **Note:** Version bump only for package @standardnotes/clipper

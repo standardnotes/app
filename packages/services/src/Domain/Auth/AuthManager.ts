@@ -23,7 +23,7 @@ export class AuthManager extends AbstractService implements AuthClientInterface 
       }
 
       return result.data.recoveryCodes
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -40,7 +40,7 @@ export class AuthManager extends AbstractService implements AuthClientInterface 
       }
 
       return result.data.keyParams as AnyKeyParamsContent
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -73,7 +73,7 @@ export class AuthManager extends AbstractService implements AuthClientInterface 
         session: result.data.session,
         user: result.data.user,
       }
-    } catch (error) {
+    } catch {
       return {
         success: false,
         captchaURL: '',

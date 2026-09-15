@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { c } from 'ttag'
 import { FunctionComponent, useCallback, useMemo } from 'react'
 import { isMobileScreen } from '@/Utils'
 import { TOGGLE_FOCUS_MODE_COMMAND } from '@standardnotes/ui-services'
@@ -30,7 +31,7 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
 
   return (
     <MenuSwitchButtonItem onChange={toggle} shortcut={shortcut} checked={isEnabled}>
-      Focus Mode
+      {c('B2.NavSharedUI.Label').t`Focus Mode`}
     </MenuSwitchButtonItem>
   )
 }

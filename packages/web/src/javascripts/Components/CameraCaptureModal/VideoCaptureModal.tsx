@@ -4,6 +4,7 @@ import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { c } from 'ttag'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
 import Modal from '../Modal/Modal'
@@ -87,37 +88,37 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
 
   return (
     <Modal
-      title="Record a video"
+      title={c('B2.NavSharedUI.Title').t`Record a video`}
       close={close}
       actions={[
         {
-          label: 'Cancel',
+          label: c('B2.NavSharedUI.Action').t`Cancel`,
           onClick: close,
           type: 'cancel',
           mobileSlot: 'left',
         },
         {
-          label: 'Record',
+          label: c('B2.NavSharedUI.Action').t`Record`,
           onClick: startRecording,
           type: 'primary',
           mobileSlot: 'right',
           hidden: !!capturedVideo || isRecording,
         },
         {
-          label: 'Stop',
+          label: c('B2.NavSharedUI.Action').t`Stop`,
           onClick: stopRecording,
           type: 'primary',
           mobileSlot: 'right',
           hidden: !!capturedVideo || !isRecording,
         },
         {
-          label: 'Retry',
+          label: c('B2.NavSharedUI.Action').t`Retry`,
           onClick: retryRecording,
           type: 'secondary',
           hidden: !capturedVideo,
         },
         {
-          label: 'Upload',
+          label: c('B2.NavSharedUI.Action').t`Upload`,
           onClick: saveVideo,
           type: 'primary',
           mobileSlot: 'right',
@@ -128,7 +129,7 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
       <div className="px-4 py-4">
         <div className="mb-4 flex flex-col">
           <label className="text-sm font-medium text-neutral">
-            File name:
+            {c('B2.NavSharedUI.Label').t`File name:`}
             <DecoratedInput
               className={{
                 container: 'mt-1',
@@ -140,12 +141,12 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
           </label>
         </div>
         <div className="mt-2">
-          <div className="text-sm font-medium text-neutral">Preview:</div>
+          <div className="text-sm font-medium text-neutral">{c('B2.NavSharedUI.Label').t`Preview:`}</div>
           {!isRecorderReady && (
             <div className="mt-1 w-full">
               <div className="flex h-64 w-full items-center justify-center gap-2 rounded-md bg-contrast text-base">
                 <Icon type="camera" className="text-neutral-300" />
-                Initializing...
+                {c('B2.NavSharedUI.Info').t`Initializing...`}
               </div>
             </div>
           )}

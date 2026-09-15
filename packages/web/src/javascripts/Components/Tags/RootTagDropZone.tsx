@@ -4,6 +4,7 @@ import { classNames } from '@standardnotes/utils'
 import { observer } from 'mobx-react-lite'
 import { DragEventHandler, FunctionComponent, useCallback, useState } from 'react'
 import { TagDragDataFormat } from './DragNDrop'
+import { c } from 'ttag'
 
 type Props = {
   tagsState: NavigationController
@@ -47,8 +48,9 @@ const RootTagDropZone: FunctionComponent<Props> = ({ tagsState }) => {
     >
       <Icon className="text-neutral" type="link-off" />
       <p className="content">
-        Move the tag here to <br />
-        remove it from its folder.
+        {c('B4.Notes.TagsLinkedItems.Action').t`Move the tag here to`}
+        <br />
+        {c('B4.Notes.TagsLinkedItems.Action').t`remove it from its folder.`}
       </p>
     </div>
   )

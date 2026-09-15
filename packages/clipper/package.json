@@ -1,7 +1,7 @@
 {
   "name": "@standardnotes/clipper",
   "description": "Web clipper browser extension for Standard Notes",
-  "version": "1.1.591",
+  "version": "1.1.599",
   "private": true,
   "scripts": {
     "build-mv2": "yarn clean && webpack --config ./webpack.config.prod.js",
@@ -26,7 +26,7 @@
     "eslint": "*",
     "eslint-config-prettier": "^8.9.0",
     "ts-loader": "^9.4.2",
-    "typescript": "*",
+    "typescript": "5.8.3",
     "web-ext": "^7.5.0",
     "webextension-polyfill": "^0.10.0",
     "webpack": "*"

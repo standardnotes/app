@@ -28,6 +28,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { useApplication } from '../ApplicationProvider'
 import { mergeRefs } from '../../Hooks/mergeRefs'
 import { getTitleForLinkedTag } from '../../Utils/Items/Display/getTitleForLinkedTag'
+import { c } from 'ttag'
 
 type Props = {
   tag: SNTag
@@ -221,7 +222,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
       if (target) {
         addDragTarget(target, {
-          tooltipText: `Drop your files to upload and link them to tag "${tag.title}"`,
+          tooltipText: c('B4.Notes.TagsLinkedItems.Info')
+            .jt`Drop your files to upload and link them to tag "${tag.title}"` as unknown as string,
           async callback(file) {
             await linkingController.linkItems(file, tag)
           },
@@ -423,7 +425,11 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             </div>
           </div>
 
-          {tag.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
+          {tag.conflictOf && (
+            <div className="-mt-1 text-[0.625rem] font-bold text-danger">
+              {c('B4.Notes.TagsLinkedItems.Label').t`Conflicted Copy`}
+            </div>
+          )}
         </div>
         {isAddingSubtag && (
           <div

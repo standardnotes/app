@@ -16,6 +16,9 @@ export * from './Feature/UIFeatureDescription'
 export * from './Permission/Permission'
 export * from './Permission/PermissionName'
 
+export * from './Strings/ProductNames'
+export * from './Strings/ExternalLinks'
+
 export * from './Component/ComponentAction'
 export * from './Component/ComponentArea'
 export * from './Component/ComponentFlag'

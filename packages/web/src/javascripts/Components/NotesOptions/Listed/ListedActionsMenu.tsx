@@ -1,11 +1,14 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { Action, SNNote } from '@standardnotes/snjs'
 import { useCallback, useEffect, useState } from 'react'
+import { ListedName, jtString } from '@standardnotes/features'
+import { c } from 'ttag'
 import Icon from '@/Components/Icon/Icon'
 import { ListedMenuGroup } from './ListedMenuGroup'
 import ListedMenuItem from './ListedMenuItem'
 import Spinner from '@/Components/Spinner/Spinner'
 import MenuSection from '@/Components/Menu/MenuSection'
+import ListedSunsettingBanner from '@/Components/Preferences/Panes/Listed/ListedSunsettingBanner'
 
 type ListedActionsMenuProps = {
   application: WebApplication
@@ -119,6 +122,7 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
 
   return (
     <>
+      <ListedSunsettingBanner variant="menu" />
       {isFetchingAccounts && (
         <div className="flex w-full items-center justify-center p-4">
           <Spinner className="h-5 w-5" />
@@ -147,7 +151,9 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
                   />
                 ))
               ) : (
-                <div className="select-none px-3 py-2 text-sm text-passive-0">No actions available</div>
+                <div className="select-none px-3 py-2 text-sm text-passive-0">
+                  {c('B3.Notes.NoteList.Info').t`No actions available`}
+                </div>
               )}
             </MenuSection>
           ))}
@@ -155,7 +161,9 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
       ) : null}
       {!isFetchingAccounts && !menuGroups.length ? (
         <div className="flex w-full items-center justify-center px-4 py-6">
-          <div className="select-none text-sm text-passive-0">No Listed accounts found</div>
+          <div className="select-none text-sm text-passive-0">
+            {jtString(c('B3.Notes.NoteList.Info').jt`No ${ListedName} accounts found`)}
+          </div>
         </div>
       ) : null}
     </>

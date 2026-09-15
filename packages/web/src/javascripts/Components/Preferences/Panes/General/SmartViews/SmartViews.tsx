@@ -16,6 +16,7 @@ import { EditSmartViewModalController } from './EditSmartViewModalController'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import { c } from 'ttag'
 
 type NewType = {
   application: WebApplication
@@ -43,7 +44,7 @@ const SmartViews = ({ application, featuresController }: Props) => {
   const deleteItem = useCallback(
     async (view: SmartView) => {
       const shouldDelete = await confirmDialog({
-        text: STRING_DELETE_TAG,
+        text: STRING_DELETE_TAG(),
         confirmButtonStyle: 'danger',
       })
       if (shouldDelete) {
@@ -60,13 +61,14 @@ const SmartViews = ({ application, featuresController }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Smart Views</Title>
+          <Title>{c('B6.Preferences.General.Title').t`Smart Views`}</Title>
           {!featuresController.hasSmartViews && (
             <NoSubscriptionBanner
               className="mt-2"
               application={application}
-              title="Upgrade for smart views"
-              message="Create smart views to organize your notes according to conditions you define."
+              title={c('B6.Preferences.General.Title').t`Upgrade for smart views`}
+              message={c('B6.Preferences.General.Action')
+                .t`Create smart views to organize your notes according to conditions you define.`}
             />
           )}
           {featuresController.hasSmartViews && (
@@ -86,7 +88,7 @@ const SmartViews = ({ application, featuresController }: Props) => {
                   addSmartViewModalController.setIsAddingSmartView(true)
                 }}
               >
-                Create Smart View
+                {c('B6.Preferences.General.Action').t`Create Smart View`}
               </Button>
             </>
           )}

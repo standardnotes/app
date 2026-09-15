@@ -1,4 +1,5 @@
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
+import { c } from 'ttag'
 import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode, useMemo, useRef, useState } from 'react'
@@ -129,7 +130,7 @@ const Modal = ({
                     </div>
                   </MobileModalAction>
                   <Popover
-                    title="Advanced"
+                    title={c('B2.NavSharedUI.Title').t`Advanced`}
                     open={showAdvanced}
                     anchorElement={advancedOptionRef}
                     disableMobileFullscreenTakeover={true}

@@ -31,7 +31,8 @@ export class AddAuthenticator implements UseCaseInterface<void> {
       )
     }
 
-    const registrationOptions = await this.authenticatorClient.generateRegistrationOptions()
+    const registrationOptions =
+      dto.registrationOptions ?? (await this.authenticatorClient.generateRegistrationOptions())
     if (registrationOptions === null) {
       return Result.fail('Could not generate authenticator registration options')
     }

@@ -1,4 +1,5 @@
 import { FocusEvent, useCallback, useRef, useState } from 'react'
+import { c } from 'ttag'
 import { observer } from 'mobx-react-lite'
 import NotesOptions from './NotesOptions'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
@@ -38,21 +39,21 @@ const NotesOptionsPanel = ({ notesController, onClick, onClickPreprocessing, onB
     <>
       <RoundIconButton
         id={ElementIds.NoteOptionsButton}
-        label="Note options menu"
+        label={c('B3.Notes.NoteActions.Label').t`Note options menu`}
         onClick={toggleMenu}
         onBlur={onButtonBlur}
         ref={buttonRef}
         icon="more"
       />
       <Popover
-        title="Note options"
+        title={c('B3.Notes.NoteActions.Label').t`Note options`}
         disableClickOutside={disableClickOutside}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}
         className="select-none"
       >
-        <Menu a11yLabel="Note options menu">
+        <Menu a11yLabel={c('B3.Notes.NoteActions.Label').t`Note options menu`}>
           <NotesOptions
             notes={notesController.selectedNotes}
             requestDisableClickOutside={handleDisableClickOutsideRequest}

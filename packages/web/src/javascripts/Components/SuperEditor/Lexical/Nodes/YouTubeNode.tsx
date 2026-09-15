@@ -20,6 +20,7 @@ import type {
 
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
+import { c } from 'ttag'
 
 type YouTubeComponentProps = Readonly<{
   className: Readonly<{
@@ -41,7 +42,7 @@ function YouTubeComponent({ className, format, nodeKey, videoID }: YouTubeCompon
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen={true}
-        title="YouTube video"
+        title={c('B4.Notes.EditingUI.Label').t`YouTube video`}
       />
     </BlockWithAlignableContents>
   )
@@ -102,7 +103,7 @@ export class YouTubeNode extends DecoratorBlockNode {
       'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
     )
     element.setAttribute('allowfullscreen', 'true')
-    element.setAttribute('title', 'YouTube video')
+    element.setAttribute('title', c('B4.Notes.EditingUI.Label').t`YouTube video`)
     return { element }
   }
 

@@ -1,5 +1,8 @@
 import { AnyFeatureDescription, FeatureStatus, dateToLocalizedString } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback } from 'react'
+import { c } from 'ttag'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 import Button from '@/Components/Button/Button'
 import { WarningCircle } from '../UIElements/WarningCircle'
 import { useApplication } from '../ApplicationProvider'
@@ -13,16 +16,28 @@ const statusString = (featureStatus: FeatureStatus, expiredDate: Date | undefine
   switch (featureStatus) {
     case FeatureStatus.InCurrentPlanButExpired:
       if (expiredDate) {
-        return `Your subscription expired on ${dateToLocalizedString(expiredDate)}`
+        const expiredDateString = dateToLocalizedString(expiredDate)
+        return jtString(
+          c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Your subscription expired on ${expiredDateString}`,
+        )
       } else {
-        return 'Your subscription expired.'
+        return c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your subscription expired.`
       }
     case FeatureStatus.NoUserSubscription:
-      return 'You do not have an active subscription'
-    case FeatureStatus.NotInCurrentPlan:
-      return `Please upgrade your plan to access ${featureName}`
-    default:
-      return `${featureName} is valid and you should not be seeing this message`
+      return c('B7.FilesSubscriptionHelp.Subscription.Info').t`You do not have an active subscription`
+    case FeatureStatus.NotInCurrentPlan: {
+      const featureNameLabel = featureName
+      return jtString(
+        c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Please upgrade your plan to access ${featureNameLabel}`,
+      )
+    }
+    default: {
+      const featureNameLabel = featureName
+      return jtString(
+        c('B7.FilesSubscriptionHelp.Subscription.Info')
+          .jt`${featureNameLabel} is valid and you should not be seeing this message`,
+      )
+    }
   }
 }
 
@@ -45,14 +60,16 @@ const NotEntitledBanner: FunctionComponent<Props> = ({ featureStatus, feature })
             </div>
             <div className="ml-2">
               <strong>{statusString(featureStatus, expiredDate, feature.name)}</strong>
-              <div className={'sk-p'}>{feature.name} is in a read-only state.</div>
+              <div className={'sk-p'}>
+                {jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`${feature.name} is in a read-only state.`)}
+              </div>
             </div>
           </div>
         </div>
         <div className={'right'}>
           {application.canShowPurchaseFlow() && (
             <Button onClick={manageSubscription} primary colorStyle="success" small>
-              Manage subscription
+              {c('B7.FilesSubscriptionHelp.Subscription.Label').t`Manage subscription`}
             </Button>
           )}
         </div>

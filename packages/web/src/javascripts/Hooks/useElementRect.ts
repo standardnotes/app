@@ -30,7 +30,7 @@ export const useAutoElementRect = (
         windowResizeHandler = () => {
           window.clearTimeout(windowResizeDebounceTimeout)
 
-          window.setTimeout(() => {
+          windowResizeDebounceTimeout = window.setTimeout(() => {
             setRect(element.getBoundingClientRect())
           }, DebounceTimeInMs)
         }
@@ -66,7 +66,7 @@ export const useElementResize = (element: HTMLElement | null | undefined, callba
       windowResizeHandler = () => {
         window.clearTimeout(windowResizeDebounceTimeout)
 
-        window.setTimeout(() => {
+        windowResizeDebounceTimeout = window.setTimeout(() => {
           callback()
         }, DebounceTimeInMs)
       }

@@ -44,7 +44,7 @@ export class UserApiService implements UserApiServiceInterface {
       this.unlockOperation(UserApiOperations.DeletingAccount)
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     }
   }
@@ -64,7 +64,7 @@ export class UserApiService implements UserApiServiceInterface {
       this.unlockOperation(UserApiOperations.SubmittingRequest)
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     }
   }
@@ -91,7 +91,7 @@ export class UserApiService implements UserApiServiceInterface {
       this.unlockOperation(UserApiOperations.Registering)
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericRegistrationFail)
     }
   }
@@ -108,7 +108,7 @@ export class UserApiService implements UserApiServiceInterface {
       this.unlockOperation(UserApiOperations.UpdatingUser)
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     }
   }

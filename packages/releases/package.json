@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/releases",
-  "version": "1.4.898",
+  "version": "1.4.906",
   "repository": {
     "type": "git",
     "url": "https://github.com/standardnotes/app",
@@ -26,6 +26,6 @@
     "@standardnotes/mobile": "workspace:*",
     "@standardnotes/web": "workspace:*",
     "@types/node": "*",
-    "typescript": "*"
+    "typescript": "5.8.3"
   }
 }

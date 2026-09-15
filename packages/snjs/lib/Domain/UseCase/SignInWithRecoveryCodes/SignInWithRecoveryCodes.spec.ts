@@ -1,6 +1,7 @@
 import {
   AuthClientInterface,
   EncryptionProviderInterface,
+  EXPIRED_PROTOCOL_VERSION,
   InternalEventBusInterface,
   KeyValueStoreInterface,
   SessionsClientInterface,
@@ -160,9 +161,7 @@ describe('SignInWithRecoveryCodes', () => {
     })
 
     expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toEqual(
-      'The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.com/help/security for more information.',
-    )
+    expect(result.getError()).toEqual(EXPIRED_PROTOCOL_VERSION)
   })
 
   it('should fail if the sign in with recovery code fails', async () => {

@@ -44,7 +44,7 @@ export class AsymmetricDecryptOwnMessage004 implements SyncUseCaseInterface<Asym
         signaturePublicKey: additionalData.signingData.publicKey,
         senderPublicKey: additionalData.senderPublicKey,
       })
-    } catch (error) {
+    } catch {
       return Result.fail('Could not decrypt message')
     }
   }

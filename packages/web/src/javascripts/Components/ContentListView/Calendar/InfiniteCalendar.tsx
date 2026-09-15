@@ -3,7 +3,7 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useSta
 import Calendar from './Calendar'
 import { CalendarActivity, CalendarActivityType } from './CalendarActivity'
 import { CalendarMonth } from './CalendarMonth'
-import { CalendarMonths } from './Constants'
+import { getCalendarMonths } from './Constants'
 import { insertMonths, insertMonthsWithTarget } from './CalendarUtilts'
 import { InfiniteScrollerInterface, InfinteScroller } from '../InfiniteScroller/InfiniteScroller'
 import { classNames } from '@standardnotes/utils'
@@ -188,7 +188,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
             'text-center font-bold hover:bg-contrast',
           )}
         >
-          {CalendarMonths[activeDate.getMonth()]} {activeDate.getFullYear()}
+          {getCalendarMonths()[activeDate.getMonth()]} {activeDate.getFullYear()}
         </div>
         {expanded && (
           <InfinteScroller

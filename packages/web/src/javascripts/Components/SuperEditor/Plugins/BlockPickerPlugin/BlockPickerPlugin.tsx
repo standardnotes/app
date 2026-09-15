@@ -29,6 +29,7 @@ import { GetQuoteBlockOption } from '../Blocks/Quote'
 import { GetDividerBlockOption } from '../Blocks/Divider'
 import { GetCollapsibleBlockOption } from '../Blocks/Collapsible'
 import { GetUploadFileOption } from '../Blocks/File'
+import { c } from 'ttag'
 
 export default function BlockPickerMenuPlugin({ popoverZIndex }: { popoverZIndex?: string }): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -52,11 +53,15 @@ export default function BlockPickerMenuPlugin({ popoverZIndex }: { popoverZIndex
       GetH3BlockOption(editor),
       ...indentOutdentOptions,
       GetTableBlockOption(() =>
-        showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
+        showModal(c('B3.Notes.EditorToolbar.Label').t`Insert Table`, (onClose) => (
+          <InsertTableDialog activeEditor={editor} onClose={onClose} />
+        )),
       ),
-      GetRemoteImageBlockOption(() => {
-        showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
-      }),
+      GetRemoteImageBlockOption(() =>
+        showModal(c('B3.Notes.EditorToolbar.Label').t`Insert image from URL`, (onClose) => (
+          <InsertRemoteImageDialog onClose={onClose} />
+        )),
+      ),
       GetUploadFileOption(editor),
       GetNumberedListBlockOption(editor),
       GetBulletedListBlockOption(editor),
@@ -123,7 +128,7 @@ export default function BlockPickerMenuPlugin({ popoverZIndex }: { popoverZIndex
 
           return (
             <Popover
-              title="Block picker"
+              title={c('B3.Notes.EditorToolbar.Label').t`Block picker`}
               align="start"
               anchorElement={anchorElementRef.current}
               open={true}

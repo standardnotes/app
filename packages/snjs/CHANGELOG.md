@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.212.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.2...@standardnotes/snjs@2.212.3) (2026-09-04)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.212.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.1...@standardnotes/snjs@2.212.2) (2026-09-03)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.212.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.0...@standardnotes/snjs@2.212.1) (2026-08-25)
+
+### Bug Fixes
+
+* Fixes web clipper hardware key auth for Firefox ([#3040](https://github.com/standardnotes/app/issues/3040)) ([369b1f0](https://github.com/standardnotes/app/commit/369b1f001ff1691240fc8e4c19c169bc7e34b838))
+
+# [2.212.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.8...@standardnotes/snjs@2.212.0) (2026-08-17)
+
+### Features
+
+* Adds in-note search for plain text notes ([#3038](https://github.com/standardnotes/app/issues/3038)) ([1ea8da6](https://github.com/standardnotes/app/commit/1ea8da6009df6c3f01067a639e27bba9f0321707))
+* Adds new search filter options: search titles only and tag filters ([#3039](https://github.com/standardnotes/app/issues/3039)) ([f7f947a](https://github.com/standardnotes/app/commit/f7f947a8552b85ef00a15e4920e07eeb272bb63c))
+
+## [2.211.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.7...@standardnotes/snjs@2.211.8) (2026-07-18)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.211.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.211.6...@standardnotes/snjs@2.211.7) (2026-04-24)
 
 **Note:** Version bump only for package @standardnotes/snjs

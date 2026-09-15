@@ -1,0 +1,1714 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: src/javascripts/Utils/ErrorBoundary.tsx:30
+msgctxt "B2.SharedUI.Error"
+msgid "Something went wrong rendering this component:"
+msgstr ""
+
+#: /Users/antosgarlatta/SN/app/packages/responses/src/Domain/Http/HttpResponse.ts:61
+msgctxt "B2.SharedUI.Error"
+msgid "Unknown error"
+msgstr ""
+
+#: /Users/antosgarlatta/SN/app/packages/services/src/Domain/Strings/Messages.ts:32
+msgctxt "B2.SharedUI.Error"
+msgid ""
+"Too many successive server requests. Please wait a few minutes and try "
+"again."
+msgstr ""
+
+#: /Users/antosgarlatta/SN/app/packages/services/src/Domain/Strings/Messages.ts:79
+msgctxt "B2.SharedUI.Error"
+msgid "Unknown error."
+msgstr ""
+
+#: /Users/antosgarlatta/SN/app/packages/snjs/lib/Services/Actions/ActionsService.ts:177
+msgctxt "B2.SharedUI.Error"
+msgid "An issue occurred while processing this action. Please try again."
+msgstr ""
+
+#: src/javascripts/Components/Shared/CopyableCodeBlock.tsx:42
+msgctxt "B2.SharedUI.Error"
+msgid "Failed to copy to clipboard"
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:171
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:208
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:227
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:268
+#: src/javascripts/Components/Footer/QuickSettingsButton.tsx:37
+#: src/javascripts/Components/KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal.tsx:17
+#: src/javascripts/Components/KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal.tsx:45
+#: src/javascripts/Components/Preferences/PreferencesViewWrapper.tsx:16
+#: src/javascripts/Controllers/Navigation/NavigationController.ts:205
+#: src/javascripts/Controllers/PaneController/PaneController.ts:112
+#: src/javascripts/Controllers/PaneController/PaneController.ts:121
+#: src/javascripts/Controllers/PaneController/PaneController.ts:130
+msgctxt "B2.SharedUI.Label"
+msgid "General"
+msgstr ""
+
+#: src/javascripts/Components/ChangeEditor/ChangeEditorButton.tsx:61
+#: src/javascripts/Components/EditorWidthSelectionModal/EditorWidthSelectionModal.tsx:184
+#: src/javascripts/Components/KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal.tsx:13
+#: src/javascripts/Components/LinkedItems/LinkedItemBubblesContainer.tsx:74
+#: src/javascripts/Controllers/NoteHistory/HistoryModalController.ts:32
+#: src/javascripts/Controllers/NotesController/NotesController.ts:173
+#: src/javascripts/Controllers/NotesController/NotesController.ts:179
+msgctxt "B2.SharedUI.Label"
+msgid "Current note"
+msgstr ""
+
+#: src/javascripts/Components/KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal.tsx:15
+#: src/javascripts/Components/SuperEditor/Plugins/CheckListPlugin.tsx:163
+#: src/javascripts/Components/SuperEditor/Plugins/SearchPlugin/SearchPlugin.tsx:125
+#: src/javascripts/Components/SuperEditor/Plugins/SearchPlugin/SearchPlugin.tsx:135
+#: src/javascripts/Components/SuperEditor/Plugins/SearchPlugin/SearchPlugin.tsx:154
+#: src/javascripts/Components/SuperEditor/Plugins/SearchPlugin/SearchPlugin.tsx:164
+#: src/javascripts/Components/SuperEditor/Plugins/ToolbarPlugin/ToolbarPlugin.tsx:610
+#: src/javascripts/Components/SuperEditor/SuperEditor.tsx:109
+msgctxt "B2.SharedUI.Label"
+msgid "Super notes"
+msgstr ""
+
+#: src/javascripts/Components/KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal.tsx:14
+#: src/javascripts/Components/SuperEditor/SuperEditor.tsx:125
+#: src/javascripts/Components/SuperEditor/SuperEditor.tsx:132
+#: src/javascripts/Components/SuperEditor/SuperEditor.tsx:139
+#: src/javascripts/Components/SuperEditor/SuperEditor.tsx:146
+msgctxt "B2.SharedUI.Label"
+msgid "Formatting"
+msgstr ""
+
+#: src/javascripts/Components/QuickSettingsMenu/FocusModeSwitch.tsx:34
+msgctxt "B2.SharedUI.Label"
+msgid "Focus Mode"
+msgstr ""
+
+#: src/javascripts/Components/QuickSettingsMenu/PanelSettingsSection.tsx:33
+msgctxt "B2.SharedUI.Label"
+msgid "Show Tags Panel"
+msgstr ""
+
+#: src/javascripts/Components/QuickSettingsMenu/PanelSettingsSection.tsx:41
+msgctxt "B2.SharedUI.Label"
+msgid "Show Notes Panel"
+msgstr ""
+
+#: src/javascripts/Components/QuickSettingsMenu/QuickSettingsMenu.tsx:121
+msgctxt "B2.SharedUI.Label"
+msgid "Tools"
+msgstr ""
+
+#: src/javascripts/Components/QuickSettingsMenu/QuickSettingsMenu.tsx:136
+msgctxt "B2.SharedUI.Label"
+msgid "Appearance"
+msgstr ""
+
+#: src/javascripts/Components/QuickSettingsMenu/QuickSettingsMenu.tsx:138
+msgctxt "B2.SharedUI.Label"
+msgid "Default"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:181
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:196
+#: src/javascripts/Components/KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal.tsx:16
+msgctxt "B2.SharedUI.Label"
+msgid "Notes list"
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:67
+msgctxt "B2.SharedUI.Label"
+msgid "all"
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:68
+msgctxt "B2.SharedUI.Label"
+msgid "commands"
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:69
+msgctxt "B2.SharedUI.Label"
+msgid "notes"
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:70
+msgctxt "B2.SharedUI.Label"
+msgid "files"
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:71
+msgctxt "B2.SharedUI.Label"
+msgid "tags"
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:400
+msgctxt "B2.SharedUI.Label"
+msgid "Recent"
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:421
+msgctxt "B2.SharedUI.Label"
+msgid "All commands"
+msgstr ""
+
+#: src/javascripts/Controllers/PaneController/PaneController.ts:113
+msgctxt "B2.SharedUI.Action"
+msgid "Toggle focus mode"
+msgstr ""
+
+#: src/javascripts/Controllers/PaneController/PaneController.ts:122
+msgctxt "B2.SharedUI.Action"
+msgid "Toggle notes panel"
+msgstr ""
+
+#: src/javascripts/Controllers/PaneController/PaneController.ts:131
+msgctxt "B2.SharedUI.Action"
+msgid "Toggle tags panel"
+msgstr ""
+
+#: /Users/antosgarlatta/SN/app/packages/ui-services/src/Alert/Functions.ts:9
+msgctxt "B2.SharedUI.Action"
+msgid "Confirm"
+msgstr ""
+
+#: /Users/antosgarlatta/SN/app/packages/ui-services/src/Alert/Functions.ts:10
+#: src/javascripts/Components/KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal.tsx:57
+msgctxt "B2.SharedUI.Action"
+msgid "Cancel"
+msgstr ""
+
+#: /Users/antosgarlatta/SN/app/packages/ui-services/src/Alert/Functions.ts:48
+msgctxt "B2.SharedUI.Action"
+msgid "OK"
+msgstr ""
+
+#: src/javascripts/Components/Shared/CopyableCodeBlock.tsx:57
+msgctxt "B2.SharedUI.Action"
+msgid "Copy example to clipboard"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/PreferencesViewWrapper.tsx:17
+msgctxt "B2.SharedUI.Action"
+msgid "Open preferences"
+msgstr ""
+
+#: src/javascripts/Components/Popover/MobilePopoverContent.tsx:206
+msgctxt "B2.SharedUI.Action"
+msgid "Done"
+msgstr ""
+
+#: src/javascripts/Components/KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal.tsx:46
+msgctxt "B2.SharedUI.Action"
+msgid "Toggle keyboard shortcuts help"
+msgstr ""
+
+#: src/javascripts/Components/Footer/QuickSettingsButton.tsx:38
+msgctxt "B2.SharedUI.Action"
+msgid "Toggle dark mode"
+msgstr ""
+
+#: src/javascripts/Components/Footer/QuickSettingsButton.tsx:46
+msgctxt "B2.SharedUI.Action"
+msgid "Open quick settings menu"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:209
+#. *
+#.        * In the browser we're not allowed to override cmd/ctrl + n, so we have to
+#.        * use Control modifier as well. These rules don't apply to desktop, but
+#.        * probably better to be consistent.
+#.        
+msgctxt "B2.SharedUI.Action"
+msgid "Toggle global search"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:228
+#. *
+#.        * In the browser we're not allowed to override cmd/ctrl + n, so we have to
+#.        * use Control modifier as well. These rules don't apply to desktop, but
+#.        * probably better to be consistent.
+#.        
+msgctxt "B2.SharedUI.Action"
+msgid "Select all items"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/Header/ContentListHeader.tsx:111
+msgctxt "B2.SharedUI.Action"
+msgid "Open display options menu"
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:172
+msgctxt "B2.SharedUI.Action"
+msgid "Toggle command palette"
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:7
+msgctxt "Error"
+msgid ""
+"Please use FileSafe or the Bold Editor to attach images and files. Learn "
+"more at standardnotes.com/filesafe."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:10
+msgctxt "B1.Account.Session.Error"
+msgid ""
+"There was an error syncing. Please try again. If all else fails, try "
+"signing out and signing back in."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:116
+msgctxt "B1.Account.Session.Error"
+msgid "There was an error while trying to update your settings. Please try again."
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:40
+msgctxt "B1.Account.Session.Error"
+msgid "An unknown error occured while loading sessions."
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:75
+msgctxt "B1.Account.Session.Error"
+msgid "An unknown error occured while revoking the session."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail.tsx:39
+msgctxt "B1.Account.Session.Error"
+msgid "Please enter your current password."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail.tsx:47
+msgctxt "B1.Account.Session.Error"
+msgid "The current password you entered is not correct. Please try again."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail.tsx:78
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail.tsx:122
+msgctxt "B1.Account.Session.Error"
+msgid "Cannot close window until pending tasks are complete."
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/User.tsx:18
+#, javascript-format
+msgctxt "B1.Account.Session.Error"
+msgid ""
+"Hmm...we can't seem to sync your account. The reason: ${ "
+"application.syncStatusController.errorMessage }"
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:49
+#, javascript-format
+msgctxt "Confirmation"
+msgid "Are you sure you want to permanently delete ${ count } note?"
+msgid_plural "Are you sure you want to permanently delete ${ count } notes?"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/javascripts/Constants/Strings.ts:58
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"This action will remove this workspace and its related data from this "
+"device. Your synced data will not be affected."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:112
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"Are you sure you want to permanently delete your account? You will be asked "
+"to confirm your account password in the next step. If you have an active "
+"paid subscription, cancel the subscription first. Otherwise, if you'd like "
+"to keep the subscription, you can re-register with the same email after "
+"deletion, and your subscription will be linked back up with your account."
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:165
+#, javascript-format
+msgctxt "B1.Account.Session.Info"
+msgid "Signed in on ${ signedInDate }"
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:196
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"The associated app will be signed out and all data removed from the device "
+"when it is next launched. You can sign back in on that device at any time."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ClearSessionDataView.tsx:17
+#: src/javascripts/Components/Preferences/Panes/Account/SignOutView.tsx:38
+msgctxt "B1.Account.Session.Info"
+msgid "Remove all data related to the current workspace from the application."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Credentials.tsx:47
+#, javascript-format
+msgctxt "B1.Account.Session.Info"
+msgid "You're signed in as ${ emailSpan }"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/DeleteAccount.tsx:21
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"This action is irreversible. After deletion completes, you will be signed "
+"out on all devices."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/SignOutView.tsx:24
+msgctxt "B1.Account.Session.Info"
+msgid "Want to sign out on all devices except this one?"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Sync.tsx:37
+#, javascript-format
+msgctxt "B1.Account.Session.Info"
+msgid "on ${ lastSyncDate }"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Sync.tsx:45
+#, javascript-format
+msgctxt "B1.Account.Session.Info"
+msgid "Last synced ${ lastSyncSpan }"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Email/Email.tsx:133
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"Disables email notifications when a new sign-in occurs on your account. "
+"(Email notifications are available only to paid subscribers)."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Email/Email.tsx:141
+#, javascript-format
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"Sign-in notification emails are available only on a ${ subscriptionBold } "
+"plan. Please upgrade in order to enable sign-in notifications."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Email/Email.tsx:163
+msgctxt "B1.Account.Session.Info"
+msgid "Disables email notifications with special deals and promotions."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmailSuccess.tsx:7
+msgctxt "B1.Account.Session.Info"
+msgid "Your email has been successfully changed."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmailSuccess.tsx:9
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"Please ensure you are running the latest version of Standard Notes on all "
+"platforms to ensure maximum compatibility."
+msgstr ""
+
+#: src/javascripts/Components/ConfirmSignoutModal/ConfirmSignoutModal.tsx:54
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"Because you have other workspaces signed in, this sign out may leave logs "
+"and other metadata of your session on this device. For a more robust sign "
+"out that performs a hard clear of all app-related data, use the \"Sign out "
+"all workspaces\" option under \"Switch workspace\"."
+msgstr ""
+
+#: src/javascripts/Components/ConfirmSignoutModal/ConfirmSignoutModal.tsx:69
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"Local backups are enabled for this workspace. Review your backup files "
+"manually to decide what to keep."
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:114
+msgctxt "B1.Account.Session.Info"
+msgid "You're signed in as:"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:142
+msgctxt "B1.Account.Session.Info"
+msgid ""
+"You’re offline. Sign in to sync your notes and preferences across all your "
+"devices and enable end-to-end encryption."
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu.tsx:46
+msgctxt "B1.Account.Session.Info"
+msgid "Are you sure you want to sign out of all workspaces on this device?"
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:61
+msgctxt "B1.Account.ImportExport.Info"
+msgid ""
+"End-to-end encryption is enabled. Your data is encrypted on your device "
+"first, then synced to your private cloud."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:64
+msgctxt "B1.Account.ImportExport.Info"
+msgid ""
+"Encryption is enabled. Your data is encrypted using your passcode before it "
+"is saved to your device storage."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:67
+msgctxt "B1.Account.ImportExport.Info"
+msgid ""
+"Encryption is not enabled. Sign in, register, or add a passcode lock to "
+"enable encryption."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:70
+msgctxt "B1.Account.ImportExport.Info"
+msgid "Your data has been successfully imported."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:82
+#, javascript-format
+msgctxt "B1.Account.ImportExport.Info"
+msgid ""
+"Import complete. ${ errorCount } item was not imported because there was an "
+"error decrypting it. Make sure the password is correct and try again."
+msgid_plural ""
+"Import complete. ${ errorCount } items were not imported because there was "
+"an error decrypting them. Make sure the password is correct and try again."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:38
+#, javascript-format
+msgctxt "B1.Account.ImportExport.Info"
+msgid "${ notes } note"
+msgid_plural "${ notes } notes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:41
+#, javascript-format
+msgctxt "B1.Account.ImportExport.Info"
+msgid "${ tags } tag"
+msgid_plural "${ tags } tags"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:44
+#, javascript-format
+msgctxt "B1.Account.ImportExport.Info"
+msgid "${ files } file"
+msgid_plural "${ files } files"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:50
+#, javascript-format
+msgctxt "B1.Account.ImportExport.Info"
+msgid "Imported ${ list }"
+msgid_plural "Imported ${ list }"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:31
+msgctxt "B1.Account.ImportExport.Info"
+msgid "Drag and drop files to auto-detect and import"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:32
+msgctxt "B1.Account.ImportExport.Info"
+msgid "Or click to open file picker"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:34
+msgctxt "B1.Account.ImportExport.Info"
+msgid "or import from:"
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:75
+msgctxt "B1.Account.SignIn.Error"
+msgid "The two passwords you entered do not match. Please try again."
+msgstr ""
+
+#: src/javascripts/Components/U2FAuthIframe/U2FAuthIframe.tsx:69
+msgctxt "B1.Account.SignIn.Error"
+msgid "No username provided"
+msgstr ""
+
+#: src/javascripts/Components/U2FAuthIframe/U2FAuthIframe.tsx:84
+msgctxt "B1.Account.SignIn.Error"
+msgid "No options returned from server"
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:161
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:131
+msgctxt "B1.Account.SignIn.Error"
+msgid "Please provide a valid email."
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:184
+msgctxt "B1.Account.SignIn.Error"
+msgid "Passwords don't match. Please try again."
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:106
+msgctxt "B1.Account.SignIn.Error"
+msgid "Invalid email or password."
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/AdvancedOptions.tsx:54
+msgctxt "B1.Account.SignIn.Error"
+msgid "Unable to compute private username."
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ServerPicker/ServerPicker.tsx:53
+#: src/javascripts/Components/AccountMenu/ServerPicker/ServerPicker.tsx:62
+msgctxt "B1.Account.SignIn.Error"
+msgid ""
+"Home server is not running. Please open the prefences and home server tab "
+"to start it."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:77
+msgctxt "B1.Account.ImportExport.Error"
+msgid "Unable to open file. Ensure it is a proper JSON file and try again."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:79
+msgctxt "B1.Account.ImportExport.Error"
+msgid ""
+"The file you selected is not a valid backup file. Please extract the "
+"contents of the zip file, then upload the contained .txt file."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:89
+msgctxt "B1.Account.ImportExport.Error"
+msgid ""
+"This backup file was created using an unsupported version of the "
+"application and cannot be imported here. Please update your application and "
+"try again."
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalController.ts:179
+msgctxt "B1.Account.ImportExport.Error"
+msgid "Could not import file"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:82
+#, javascript-format
+msgctxt "B1.Account.ImportExport.Error"
+msgid "Could not import ${ count } item (click for details)"
+msgid_plural "Could not import ${ count } items (click for details)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/javascripts/Constants/Strings.ts:94
+msgctxt "B1.Account.Password.Info"
+msgid ""
+"The encryption upgrade is in progress. You may lose data if you quit the "
+"app. Are you sure you want to quit?"
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:105
+msgctxt "B1.Account.Password.Info"
+msgid ""
+"Encryption version 004 is available. This version strengthens the "
+"encryption algorithms your account and local storage use. To learn more "
+"about this upgrade, visit our <a "
+"href=\"https://standardnotes.com/help/security\" target=\"_blank\">Security "
+"Upgrade page.</a>"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Credentials.tsx:57
+#, javascript-format
+msgctxt "B1.Account.Password.Info"
+msgid "Current password was set on ${ passwordDateSpan }"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/FinishStep.tsx:12
+msgctxt "B1.Account.Password.Info"
+msgid "Your password has been successfully changed."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/FinishStep.tsx:14
+msgctxt "B1.Account.Password.Info"
+msgid ""
+"Ensure you are running the latest version of Standard Notes on all "
+"platforms for maximum compatibility."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PreprocessingStep.tsx:92
+msgctxt "B1.Account.Password.Info"
+msgid ""
+"You have pending vault invites. Changing your password will delete these "
+"invites. It is recommended you accept or decline these invites before "
+"changing your password. If you choose to continue, these invites will be "
+"deleted."
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:103
+msgctxt "B1.Account.Password.Title"
+msgid "Encryption upgrade available"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:292
+msgctxt "B1.Account.Password.Title"
+msgid "Change Password"
+msgstr ""
+
+#: src/javascripts/Constants/Strings.ts:107
+msgctxt "B1.Account.Password.Action"
+msgid "Upgrade"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Credentials.tsx:58
+msgctxt "B1.Account.Password.Action"
+msgid "Change password"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:279
+msgctxt "B1.Account.Password.Action"
+msgid "Generating Keys..."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:281
+msgctxt "B1.Account.Password.Action"
+msgid "Finish"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:284
+msgctxt "B1.Account.Password.Action"
+msgid "Continue"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:296
+msgctxt "B1.Account.Password.Action"
+msgid "Cancel"
+msgstr ""
+
+#: src/javascripts/Components/U2FAuthIframe/U2FAuthIframe.tsx:87
+msgctxt "B1.Account.SignIn.Status"
+msgid "Waiting for security key..."
+msgstr ""
+
+#: src/javascripts/Components/U2FAuthIframe/U2FAuthIframe.tsx:98
+msgctxt "B1.Account.SignIn.Info"
+msgid "Authentication successful!"
+msgstr ""
+
+#: src/javascripts/Components/U2FAuthIframe/U2FAuthIframe.tsx:111
+msgctxt "B1.Account.SignIn.Info"
+msgid ""
+"Insert your hardware security key, then press the button below to "
+"authenticate."
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:207
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:168
+#.  translator: Full sentence: "Create your free account to continue to Standard Notes."
+msgctxt "B1.Account.SignIn.Info"
+msgid "to continue to Standard Notes."
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:171
+msgctxt "B1.Account.SignIn.Info"
+msgid "Don’t have an account yet?"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Authentication.tsx:42
+msgctxt "B1.Account.SignIn.Info"
+msgid ""
+"Sign in to sync your notes and preferences across all your devices and "
+"enable end-to-end encryption."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Authentication.tsx:46
+#, javascript-format
+msgctxt "B1.Account.SignIn.Info"
+msgid "Already have an account? ${ loginLink }"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmNoMergeDialog.tsx:24
+msgctxt "B1.Account.SignIn.Info"
+msgid ""
+"You have chosen not to merge your local data. If you proceed, your local "
+"notes and tags will be permanently deleted and replaced with data from your "
+"account. This action cannot be undone."
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmNoMergeDialog.tsx:28
+msgctxt "B1.Account.SignIn.Info"
+msgid "Are you sure you want to continue without merging?"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmPassword.tsx:167
+msgctxt "B1.Account.SignIn.Info"
+msgid "Standard Notes does not have a password reset option"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmPassword.tsx:173
+#, javascript-format
+msgctxt "B1.Account.SignIn.Info"
+msgid ""
+"Because your notes are encrypted using your password, ${ "
+"noPasswordResetOption }. If you forget your password, you will permanently "
+"lose access to your data."
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/MergeLocalDataCheckbox.tsx:33
+msgctxt "B1.Account.SignIn.Info"
+msgid ""
+"If unchecked, your local notes and tags will be permanently deleted and "
+"replaced with data from your account."
+msgstr ""
+
+#: src/javascripts/Components/U2FAuthIframe/U2FAuthIframe.tsx:114
+msgctxt "B1.Account.SignIn.Action"
+msgid "Authenticate"
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:219
+#.  translator: "Instead" here refers to "instead of creating an account"
+msgctxt "B1.Account.SignIn.Action"
+msgid "Sign in instead"
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:228
+msgctxt "B1.Account.SignIn.Action"
+msgid "Subscribe without account"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmPassword.tsx:194
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:235
+msgctxt "B1.Account.SignIn.Action"
+msgid "Creating account..."
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:235
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:176
+msgctxt "B1.Account.SignIn.Action"
+msgid "Create account"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/SignIn.tsx:279
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:149
+msgctxt "B1.Account.SignIn.Action"
+msgid "Signing in..."
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/SignIn.tsx:279
+#: src/javascripts/Components/Preferences/Panes/Account/Authentication.tsx:31
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:149
+msgctxt "B1.Account.SignIn.Action"
+msgid "Sign in"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Authentication.tsx:45
+msgctxt "B1.Account.SignIn.Action"
+msgid "Create free account"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/AdvancedOptions.tsx:116
+msgctxt "B1.Account.SignIn.Action"
+msgid "Advanced options"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/AdvancedOptions.tsx:137
+#: src/javascripts/Components/AccountMenu/AdvancedOptions.tsx:172
+msgctxt "B1.Account.SignIn.Action"
+msgid "Learn more"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmNoMergeDialog.tsx:33
+msgctxt "B1.Account.SignIn.Action"
+msgid "Cancel"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmNoMergeDialog.tsx:35
+msgctxt "B1.Account.SignIn.Action"
+msgid "Delete Local Data and Continue"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmPassword.tsx:194
+msgctxt "B1.Account.SignIn.Action"
+msgid "Create account & sign in"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmPassword.tsx:222
+#: src/javascripts/Components/AccountMenu/CreateAccount.tsx:105
+#: src/javascripts/Components/AccountMenu/SignIn.tsx:329
+msgctxt "B1.Account.SignIn.Action"
+msgid "Go back"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/CreateAccount.tsx:136
+msgctxt "B1.Account.SignIn.Action"
+msgid "Next"
+msgstr ""
+
+#: src/javascripts/Components/NoteGroupView/MobileItemsListButton.tsx:22
+#: src/javascripts/Components/Tags/Navigation.tsx:97
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Go to items list"
+msgstr ""
+
+#: src/javascripts/Components/Footer/Footer.tsx:448
+#: src/javascripts/Components/Tags/Navigation.tsx:117
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Locks application and wipes unencrypted data from memory."
+msgstr ""
+
+#: src/javascripts/Components/QuickSettingsMenu/QuickSettingsMenu.tsx:119
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Quick settings menu"
+msgstr ""
+
+#: src/javascripts/Components/NoteGroupView/MobileItemsListButton.tsx:20
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Hide items list"
+msgstr ""
+
+#: src/javascripts/Components/NoteGroupView/MobileItemsListButton.tsx:21
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Show items list"
+msgstr ""
+
+#: src/javascripts/Components/NavigationMenu/NavigationMenu.tsx:37
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Open navigation menu"
+msgstr ""
+
+#: src/javascripts/Components/ItemSelectionDropdown/ItemSelectionDropdown.tsx:53
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Select an item"
+msgstr ""
+
+#: src/javascripts/Components/Input/DecoratedPasswordInput.tsx:15
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Show/hide password"
+msgstr ""
+
+#: src/javascripts/Components/Footer/Footer.tsx:444
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Lock application"
+msgstr ""
+
+#: src/javascripts/Components/Footer/PreferencesButton.tsx:61
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Go to preferences"
+msgstr ""
+
+#: src/javascripts/Components/Footer/PreferencesButton.tsx:70
+#, javascript-format
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Open preferences (${ shortcut })"
+msgstr ""
+
+#: src/javascripts/Components/Footer/QuickSettingsButton.tsx:55
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Open quick settings menu"
+msgstr ""
+
+#: src/javascripts/Components/Footer/QuickSettingsButton.tsx:60
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Go to quick settings menu"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:307
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Notes & Files"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:347
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Select all items"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:361
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Cancel multiple selection"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/Header/ContentListHeader.tsx:127
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Display options menu"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/Header/SearchButton.tsx:54
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Search"
+msgstr ""
+
+#: src/javascripts/Components/ChallengeModal/ChallengeModal.tsx:267
+msgctxt "B2.SharedUI.AriaLabel"
+msgid "Close modal"
+msgstr ""
+
+#: src/javascripts/Components/Table/Table.tsx:367
+#, javascript-format
+msgctxt "B2.SharedUI.Status"
+msgid "${ selectedRows.length } selected"
+msgstr ""
+
+#: src/javascripts/Components/Shared/CopyableCodeBlock.tsx:57
+msgctxt "B2.SharedUI.Status"
+msgid "Copied!"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:359
+#, javascript-format
+msgctxt "B2.SharedUI.Status"
+msgid "${ itemListController.selectedItemsCount } selected"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:390
+msgctxt "B2.SharedUI.Status"
+msgid "Loading..."
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:116
+msgctxt "B1.Account.Session.Action"
+msgid "Close"
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:122
+msgctxt "B1.Account.Session.Action"
+msgid "Refresh"
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:173
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:212
+msgctxt "B1.Account.Session.Action"
+msgid "Revoke"
+msgstr ""
+
+#: src/javascripts/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal.tsx:41
+#: src/javascripts/Components/ConfirmSignoutModal/ConfirmSignoutModal.tsx:87
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail.tsx:144
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:202
+msgctxt "B1.Account.Session.Action"
+msgid "Cancel"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ClearSessionDataView.tsx:21
+msgctxt "B1.Account.Session.Action"
+msgid "Clear workspace"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Credentials.tsx:50
+msgctxt "B1.Account.Session.Action"
+msgid "Change email"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/DeleteAccount.tsx:26
+msgctxt "B1.Account.Session.Action"
+msgid "Delete my account"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/SignOutView.tsx:27
+msgctxt "B1.Account.Session.Action"
+msgid "Sign out other sessions"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/SignOutView.tsx:32
+msgctxt "B1.Account.Session.Action"
+msgid "Manage sessions"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:231
+#: src/javascripts/Components/Preferences/Panes/Account/SignOutView.tsx:42
+msgctxt "B1.Account.Session.Action"
+msgid "Sign out workspace"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Sync.tsx:48
+msgctxt "B1.Account.Session.Action"
+msgid "Sync now"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail.tsx:132
+msgctxt "B1.Account.Session.Action"
+msgid "Generating Keys..."
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail.tsx:134
+msgctxt "B1.Account.Session.Action"
+msgid "Finish"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail.tsx:137
+msgctxt "B1.Account.Session.Action"
+msgid "Continue"
+msgstr ""
+
+#: src/javascripts/Components/ConfirmSignoutModal/ConfirmSignoutModal.tsx:78
+msgctxt "B1.Account.Session.Action"
+msgid "View backup files"
+msgstr ""
+
+#: src/javascripts/Components/ConfirmSignoutModal/ConfirmSignoutModal.tsx:90
+msgctxt "B1.Account.Session.Action"
+msgid "Sign Out"
+msgstr ""
+
+#: src/javascripts/Components/ConfirmSignoutModal/ConfirmSignoutModal.tsx:90
+msgctxt "B1.Account.Session.Action"
+msgid "Delete Workspace"
+msgstr ""
+
+#: src/javascripts/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal.tsx:44
+msgctxt "B1.Account.Session.Action"
+msgid "Delete my account for good"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:164
+msgctxt "B1.Account.Session.Action"
+msgid "Account settings"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:170
+msgctxt "B1.Account.Session.Action"
+msgid "Create free account"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:174
+msgctxt "B1.Account.Session.Action"
+msgid "Sign in"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:185
+msgctxt "B1.Account.Session.Action"
+msgid "Import"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:190
+msgctxt "B1.Account.Session.Action"
+msgid "Email us"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:196
+msgctxt "B1.Account.Session.Action"
+msgid "Help & feedback"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:208
+msgctxt "B1.Account.Session.Action"
+msgid "Keyboard shortcuts"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:219
+msgctxt "B1.Account.Session.Action"
+msgid "Command palette"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/User.tsx:27
+msgctxt "B1.Account.Session.Action"
+msgid "Need help?"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu.tsx:48
+msgctxt "B1.Account.Session.Action"
+msgid "Sign out all"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu.tsx:90
+msgctxt "B1.Account.Session.Action"
+msgid "Add another workspace"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu.tsx:95
+msgctxt "B1.Account.Session.Action"
+msgid "Sign out all workspaces"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherOption.tsx:29
+#: src/javascripts/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherOption.tsx:34
+msgctxt "B1.Account.Session.Action"
+msgid "Switch workspace"
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:134
+msgctxt "B1.Account.Session.Title"
+msgid "Active Sessions"
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:189
+msgctxt "B1.Account.Session.Title"
+msgid "Revoke this session?"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ClearSessionDataView.tsx:16
+msgctxt "B1.Account.Session.Title"
+msgid "Clear workspace"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Credentials.tsx:45
+msgctxt "B1.Account.Session.Title"
+msgid "Credentials"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/DeleteAccount.tsx:20
+msgctxt "B1.Account.Session.Title"
+msgid "Delete account"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/SignOutView.tsx:22
+msgctxt "B1.Account.Session.Title"
+msgid "Sign out"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Sync.tsx:44
+msgctxt "B1.Account.Session.Title"
+msgid "Sync"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Email/Email.tsx:126
+msgctxt "B1.Account.Session.Title"
+msgid "Email"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail.tsx:160
+msgctxt "B1.Account.Session.Title"
+msgid "Change Email"
+msgstr ""
+
+#: src/javascripts/Components/ConfirmSignoutModal/ConfirmSignoutModal.tsx:41
+msgctxt "B1.Account.Session.Title"
+msgid "Sign out workspace?"
+msgstr ""
+
+#: src/javascripts/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal.tsx:29
+msgctxt "B1.Account.Session.Title"
+msgid "Delete account?"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:106
+msgctxt "B1.Account.Session.Title"
+msgid "Account"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/User.tsx:16
+msgctxt "B1.Account.Session.Title"
+msgid "Sync Unreachable"
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:142
+msgctxt "B1.Account.Session.Status"
+msgid "Loading sessions"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:122
+msgctxt "B1.Account.Session.Status"
+msgid "Syncing..."
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:147
+msgctxt "B1.Account.Session.Status"
+msgid "Offline"
+msgstr ""
+
+#: src/javascripts/Components/SessionsModal/SessionsModal.tsx:162
+msgctxt "B1.Account.Session.Label"
+msgid "Current session"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Email/Email.tsx:121
+msgctxt "B1.Account.Session.Label"
+msgid "subscription"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmailForm.tsx:18
+msgctxt "B1.Account.Session.Label"
+msgid "New Email"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmailForm.tsx:30
+msgctxt "B1.Account.Session.Label"
+msgid "Current Password"
+msgstr ""
+
+#: src/javascripts/Components/ConfirmSignoutModal/ConfirmSignoutModal.tsx:53
+msgctxt "B1.Account.Session.Label"
+msgid "Note:"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:128
+msgctxt "B1.Account.Session.Label"
+msgid "Last synced:"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/Header/SearchButton.tsx:35
+#: src/javascripts/Components/SearchBar/SearchBar.tsx:56
+msgctxt "B2.SharedUI.Placeholder"
+msgid "Search..."
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:120
+msgctxt "B2.SharedUI.Placeholder"
+msgid "Search notes, files, commands, etc..."
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:233
+msgctxt "B2.SharedUI.Placeholder"
+msgid "<no title>"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/CreateAccount.tsx:119
+#: src/javascripts/Components/AccountMenu/SignIn.tsx:256
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:154
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:123
+msgctxt "B1.Account.SignIn.Label"
+msgid "Email"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/CreateAccount.tsx:130
+#: src/javascripts/Components/AccountMenu/SignIn.tsx:272
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:166
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:137
+msgctxt "B1.Account.SignIn.Label"
+msgid "Password"
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:176
+msgctxt "B1.Account.SignIn.Label"
+msgid "Repeat password"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/AdvancedOptions.tsx:149
+msgctxt "B1.Account.SignIn.Label"
+msgid "Username"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/AdvancedOptions.tsx:197
+msgctxt "B1.Account.SignIn.Label"
+msgid "Recovery code"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmPassword.tsx:184
+msgctxt "B1.Account.SignIn.Label"
+msgid "Confirm password"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ServerPicker/ServerPicker.tsx:86
+msgctxt "B1.Account.SignIn.Label"
+msgid "Sync Server"
+msgstr ""
+
+#: src/javascripts/Components/PurchaseFlow/Panes/CreateAccount.tsx:203
+#.  translator: Full sentence: "Create your free account"
+msgctxt "B1.Account.SignIn.Title"
+msgid "Create your free account"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/SignIn.tsx:336
+#: src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx:167
+msgctxt "B1.Account.SignIn.Title"
+msgid "Sign in"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Authentication.tsx:40
+msgctxt "B1.Account.SignIn.Title"
+msgid "You're not signed in"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmNoMergeDialog.tsx:16
+msgctxt "B1.Account.SignIn.Title"
+msgid "Delete local data?"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmPassword.tsx:229
+#: src/javascripts/Components/AccountMenu/SignIn.tsx:336
+msgctxt "B1.Account.SignIn.Title"
+msgid "Human verification"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmPassword.tsx:229
+msgctxt "B1.Account.SignIn.Title"
+msgid "Confirm password"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/CreateAccount.tsx:110
+msgctxt "B1.Account.SignIn.Title"
+msgid "Create account"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Backups/DataBackups.tsx:191
+msgctxt "B1.Account.ImportExport.Title"
+msgid "Data backups"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModal.tsx:81
+msgctxt "B1.Account.ImportExport.Title"
+msgid "Import"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Backups/DataBackups.tsx:192
+msgctxt "B1.Account.ImportExport.Subtitle"
+msgid "Download a backup of all your text-based data"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Backups/DataBackups.tsx:213
+msgctxt "B1.Account.ImportExport.Subtitle"
+msgid "Import a previously saved backup file"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Backups/DataBackups.tsx:199
+msgctxt "B1.Account.ImportExport.Label"
+msgid "Encrypted"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Backups/DataBackups.tsx:203
+msgctxt "B1.Account.ImportExport.Label"
+msgid "Decrypted"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModal.tsx:114
+msgctxt "B1.Account.ImportExport.Label"
+msgid "Add all imported notes to tag"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModal.tsx:128
+msgctxt "B1.Account.ImportExport.Label"
+msgid "Create new tag"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModal.tsx:142
+msgctxt "B1.Account.ImportExport.Label"
+msgid "Add to existing tag"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalController.ts:193
+#, javascript-format
+msgctxt "B1.Account.ImportExport.Label"
+msgid "Imported on ${ importedOnDate }"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Backups/DataBackups.tsx:209
+msgctxt "B1.Account.ImportExport.Action"
+msgid "Download backup"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Backups/DataBackups.tsx:216
+msgctxt "B1.Account.ImportExport.Action"
+msgid "Import backup"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModal.tsx:45
+msgctxt "B1.Account.ImportExport.Action"
+msgid "Import"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModal.tsx:53
+msgctxt "B1.Account.ImportExport.Action"
+msgid "Close"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModal.tsx:53
+msgctxt "B1.Account.ImportExport.Action"
+msgid "Cancel"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModal.tsx:105
+msgctxt "B1.Account.ImportExport.Action"
+msgid "Add files"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Credentials.tsx:46
+msgctxt "B1.Account.Session.Subtitle"
+msgid "Email"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/SignOutView.tsx:23
+msgctxt "B1.Account.Session.Subtitle"
+msgid "Other devices"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/SignOutView.tsx:37
+msgctxt "B1.Account.Session.Subtitle"
+msgid "This workspace"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Email/Email.tsx:130
+msgctxt "B1.Account.Session.Subtitle"
+msgid "Mute sign-in notification emails"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Email/Email.tsx:162
+msgctxt "B1.Account.Session.Subtitle"
+msgid "Mute marketing notification emails"
+msgstr ""
+
+#: src/javascripts/Components/Preferences/Panes/Account/Credentials.tsx:56
+msgctxt "B1.Account.Password.Subtitle"
+msgid "Password"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordStep.tsx:37
+msgctxt "B1.Account.Password.Label"
+msgid "Current Password"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordStep.tsx:51
+msgctxt "B1.Account.Password.Label"
+msgid "New Password"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordStep.tsx:64
+msgctxt "B1.Account.Password.Label"
+msgid "Confirm New Password"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:221
+msgctxt "B1.Account.Password.Error"
+msgid "Cannot close window until pending tasks are complete."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:142
+msgctxt "B1.Account.Password.Error"
+msgid "Please enter your current password."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:147
+msgctxt "B1.Account.Password.Error"
+msgid "Please enter a new password."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:152
+msgctxt "B1.Account.Password.Error"
+msgid "Your new password does not match its confirmation."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:162
+msgctxt "B1.Account.Password.Error"
+msgid ""
+"We don't have your email stored. Please sign out then log back in to fix "
+"this issue."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:173
+msgctxt "B1.Account.Password.Error"
+msgid "The current password you entered is not correct. Please try again."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:188
+msgctxt "B1.Account.Password.Status"
+msgid "Processing encryption keys…"
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:205
+msgctxt "B1.Account.Password.Status"
+msgid "Unable to process your password. Please try again."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PasswordWizard.tsx:211
+msgctxt "B1.Account.Password.Status"
+msgid "Successfully changed password."
+msgstr ""
+
+#: src/javascripts/Components/PasswordWizard/PreprocessingStep.tsx:80
+msgctxt "B1.Account.Password.Status"
+msgid "Checking for data conflicts..."
+msgstr ""
+
+#: src/javascripts/Components/Modal/Modal.tsx:133
+msgctxt "B2.SharedUI.Title"
+msgid "Advanced"
+msgstr ""
+
+#: src/javascripts/Components/Menu/MenuRadioButtonItem.tsx:47
+msgctxt "B2.SharedUI.Title"
+msgid "Info"
+msgstr ""
+
+#: src/javascripts/Components/KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal.tsx:68
+msgctxt "B2.SharedUI.Title"
+msgid "Keyboard shortcuts"
+msgstr ""
+
+#: src/javascripts/Components/Footer/QuickSettingsButton.tsx:76
+msgctxt "B2.SharedUI.Title"
+msgid "Quick settings"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/Header/ContentListHeader.tsx:135
+msgctxt "B2.SharedUI.Title"
+msgid "Display options"
+msgstr ""
+
+#: src/javascripts/Components/ItemSelectionDropdown/ItemSelectionDropdown.tsx:84
+msgctxt "B2.SharedUI.Info"
+msgid "No results found"
+msgstr ""
+
+#: src/javascripts/Components/ContentListView/ContentListView.tsx:386
+msgctxt "B2.SharedUI.Info"
+msgid "No items."
+msgstr ""
+
+#: src/javascripts/Components/CommandPalette/CommandPalette.tsx:393
+msgctxt "B2.SharedUI.Info"
+msgid "No items found"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModal.tsx:160
+msgctxt "B1.Account.ImportExport.Placeholder"
+msgid "Select tag to add imported notes to..."
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:183
+msgctxt "B1.Account.ImportExport.Status"
+msgid "Detecting service..."
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:186
+msgctxt "B1.Account.ImportExport.Status"
+msgid "Ready to import"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:189
+msgctxt "B1.Account.ImportExport.Status"
+msgid "Could not auto-detect service. Please select manually."
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:190
+msgctxt "B1.Account.ImportExport.Status"
+msgid "Parsing..."
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:191
+msgctxt "B1.Account.ImportExport.Status"
+msgid "Importing..."
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:192
+msgctxt "B1.Account.ImportExport.Status"
+msgid "Uploading and embedding files..."
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:217
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:38
+msgctxt "B1.Account.ImportExport.ImportSource"
+msgid "Evernote"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:218
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:46
+msgctxt "B1.Account.ImportExport.ImportSource"
+msgid "Simplenote"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:219
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:42
+msgctxt "B1.Account.ImportExport.ImportSource"
+msgid "Google Keep"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:220
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:50
+msgctxt "B1.Account.ImportExport.ImportSource"
+msgid "Aegis"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:221
+msgctxt "B1.Account.ImportExport.ImportSource"
+msgid "Plaintext"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:222
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:58
+msgctxt "B1.Account.ImportExport.ImportSource"
+msgid "HTML"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:223
+msgctxt "B1.Account.ImportExport.ImportSource"
+msgid "Super"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:54
+msgctxt "B1.Account.ImportExport.ImportSource"
+msgid "Plaintext / Markdown"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/InitialPage.tsx:75
+msgctxt "B1.Account.ImportExport.ImportSource"
+msgid "Super (JSON)"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:226
+msgctxt "B1.Account.ImportExport.AriaLabel"
+msgid "Choose service"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:234
+msgctxt "B1.Account.ImportExport.AriaLabel"
+msgid "Cancel"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:245
+msgctxt "B1.Account.ImportExport.AriaLabel"
+msgid "Change service"
+msgstr ""
+
+#: src/javascripts/Components/ImportModal/ImportModalFileItem.tsx:255
+msgctxt "B1.Account.ImportExport.AriaLabel"
+msgid "Remove"
+msgstr ""
+
+#: src/javascripts/Components/ApplicationView/DotOrgNotice.tsx:8
+msgctxt "B2.SharedUI.Warning"
+msgid "app.standardnotes.org is no longer maintained. Please switch to"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/AdvancedOptions.tsx:128
+msgctxt "B1.Account.SignIn.Option"
+msgid "Private username mode"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/AdvancedOptions.tsx:163
+msgctxt "B1.Account.SignIn.Option"
+msgid "Use strict sign-in"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/AdvancedOptions.tsx:183
+msgctxt "B1.Account.SignIn.Option"
+msgid "Use recovery code"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ConfirmPassword.tsx:200
+#: src/javascripts/Components/AccountMenu/SignIn.tsx:287
+msgctxt "B1.Account.SignIn.Option"
+msgid "Stay signed in"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/MergeLocalDataCheckbox.tsx:26
+#, javascript-format
+msgctxt "B1.Account.SignIn.Option"
+msgid "Merge local data (${ notesAndTagsCount } item)"
+msgid_plural "Merge local data (${ notesAndTagsCount } items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/javascripts/Components/AccountMenu/ServerPicker/ServerPicker.tsx:75
+msgctxt "B1.Account.SignIn.Option"
+msgid "Default"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ServerPicker/ServerPicker.tsx:76
+msgctxt "B1.Account.SignIn.Option"
+msgid "Custom"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/ServerPicker/ServerPicker.tsx:77
+msgctxt "B1.Account.SignIn.Option"
+msgid "Home Server"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:72
+msgctxt "B1.Account.Session.MailtoSubject"
+msgid "Standard Notes Feedback"
+msgstr ""
+
+#: src/javascripts/Components/AccountMenu/GeneralAccountMenu.tsx:74
+#, javascript-format
+msgctxt "B1.Account.Session.MailtoBody"
+msgid "App Version: ${ application.version }"
+msgstr ""

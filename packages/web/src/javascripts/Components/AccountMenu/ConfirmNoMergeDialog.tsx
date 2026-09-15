@@ -13,7 +13,7 @@ const ConfirmNoMergeDialog: FunctionComponent<Props> = ({ onClose, onConfirm }) 
   return (
     <AlertDialog closeDialog={onClose}>
       <div className="flex items-center justify-between text-lg font-bold">
-        {c('Title').t`Delete local data?`}
+        {c('B1.Account.SignIn.Title').t`Delete local data?`}
         <button className="rounded p-1 font-bold hover:bg-contrast" onClick={onClose}>
           <Icon type="close" />
         </button>
@@ -21,18 +21,18 @@ const ConfirmNoMergeDialog: FunctionComponent<Props> = ({ onClose, onConfirm }) 
       <div className="sk-panel-row">
         <div>
           <p className="text-base text-foreground lg:text-sm">
-            {c('Info')
+            {c('B1.Account.SignIn.Info')
               .t`You have chosen not to merge your local data. If you proceed, your local notes and tags will be permanently deleted and replaced with data from your account. This action cannot be undone.`}
           </p>
           <p className="mt-2 text-base font-semibold text-danger lg:text-sm">
-            {c('Info').t`Are you sure you want to continue without merging?`}
+            {c('B1.Account.SignIn.Info').t`Are you sure you want to continue without merging?`}
           </p>
         </div>
       </div>
       <div className="mt-4 flex justify-end gap-2">
-        <Button onClick={onClose}>{c('Action').t`Cancel`}</Button>
+        <Button onClick={onClose}>{c('B1.Account.SignIn.Action').t`Cancel`}</Button>
         <Button primary colorStyle="danger" onClick={onConfirm}>
-          {c('Action').t`Delete Local Data and Continue`}
+          {c('B1.Account.SignIn.Action').t`Delete Local Data and Continue`}
         </Button>
       </div>
     </AlertDialog>

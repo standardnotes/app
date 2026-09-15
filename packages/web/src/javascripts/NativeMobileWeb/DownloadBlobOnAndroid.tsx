@@ -2,6 +2,9 @@ import { getBase64FromBlob } from '@/Utils'
 import { parseFileName, sanitizeFileName } from '@standardnotes/utils'
 import { MobileDeviceInterface } from '@standardnotes/snjs'
 import { addToast, ToastType, dismissToast } from '@standardnotes/toast'
+import { c } from 'ttag'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 export const downloadBlobOnAndroid = async (
   mobileDevice: MobileDeviceInterface,
@@ -13,7 +16,7 @@ export const downloadBlobOnAndroid = async (
   if (showToast) {
     loadingToastId = addToast({
       type: ToastType.Loading,
-      message: `Downloading ${filename}..`,
+      message: jtString(c('B8.MobileDesktopShared.Mobile.Info').jt`Downloading ${filename}..`),
     })
   }
   const base64 = await getBase64FromBlob(blob)
@@ -30,12 +33,12 @@ export const downloadBlobOnAndroid = async (
   if (downloaded) {
     addToast({
       type: ToastType.Success,
-      message: `Downloaded ${filename}`,
+      message: jtString(c('B8.MobileDesktopShared.Mobile.Info').jt`Downloaded ${filename}`),
     })
   } else {
     addToast({
       type: ToastType.Error,
-      message: `Could not download ${filename}`,
+      message: jtString(c('B8.MobileDesktopShared.Mobile.Error').jt`Could not download ${filename}`),
     })
   }
 }

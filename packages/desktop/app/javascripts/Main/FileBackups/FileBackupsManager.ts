@@ -18,6 +18,7 @@ import { Paths } from '../Types/Paths'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
 import { FilesManagerInterface } from '../File/FilesManagerInterface'
 import { sanitizeFileName } from '@standardnotes/utils'
+import { AppName } from '../Strings'
 
 const TextBackupFileExtension = '.txt'
 
@@ -103,7 +104,7 @@ export class FilesBackupManager implements FileBackupsDevice {
       return savedLocation
     }
 
-    const LegacyTextBackupsDirectory = 'Standard Notes Backups'
+    const LegacyTextBackupsDirectory = `${AppName} Backups`
     const homeDir = Paths.homeDir
     if (homeDir) {
       return path.join(homeDir, LegacyTextBackupsDirectory)

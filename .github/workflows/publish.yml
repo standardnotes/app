@@ -3,8 +3,15 @@ name: Publish Packages
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to publish (e.g. @standardnotes/releases)'
+        required: true
+        type: string
 
 # Use commit message "[snjs docker only]" to build/push only standardnotes/snjs (:sha + :latest) for E2E; skips full build, web image, and NPM.
+# Manual dispatch publishes tagged packages from an existing release commit without bumping versions.
 
 permissions:
   id-token: write
@@ -12,7 +19,7 @@ permissions:
 jobs:
   build:
     name: Build & Test
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false && contains(github.event.head_commit.message, '[snjs docker only]') == false }}"
+    if: "${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'chore(release): publish') == false && contains(github.event.head_commit.message, '[snjs docker only]') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -39,7 +46,7 @@ jobs:
 
   build-docker:
     name: Build Docker Image
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
+    if: "${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -110,7 +117,7 @@ jobs:
 
   publish-web-docker:
     name: Build and publish Docker Image for Web App
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false && contains(github.event.head_commit.message, '[snjs docker only]') == false }}"
+    if: "${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'chore(release): publish') == false && contains(github.event.head_commit.message, '[snjs docker only]') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -148,7 +155,7 @@ jobs:
 
   publish:
     name: Publish to NPM
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false && contains(github.event.head_commit.message, '[snjs docker only]') == false }}"
+    if: "${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'chore(release): publish') == false && contains(github.event.head_commit.message, '[snjs docker only]') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -186,10 +193,95 @@ jobs:
       - name: Publish
         run: yarn publish:prod
 
+  publish-from-git-tags:
+    name: Publish to NPM from Git Tags
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Resolve release commit
+        id: release-commit
+        run: |
+          COMMIT="$(git log main --grep='chore(release): publish' -n 1 --format=%H)"
+
+          if [ -z "$COMMIT" ]; then
+            echo "No release commit found on main."
+            exit 1
+          fi
+
+          if ! git cat-file -e "${COMMIT}^{commit}" 2>/dev/null; then
+            echo "Commit ${COMMIT} does not exist."
+            exit 1
+          fi
+
+          TAG_COUNT="$(git tag --points-at "$COMMIT" | wc -l | tr -d ' ')"
+          if [ "$TAG_COUNT" -eq 0 ]; then
+            echo "Commit ${COMMIT} has no release tags."
+            exit 1
+          fi
+
+          echo "commit=${COMMIT}" >> "$GITHUB_OUTPUT"
+          echo "Using release commit ${COMMIT}"
+          git tag --points-at "$COMMIT"
+
+      - name: Checkout release commit
+        run: git checkout "${{ steps.release-commit.outputs.commit }}"
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Upgrade npm (trusted publishing requirement)
+        run: npm install -g npm@^11.5.1
+
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build
+        run: yarn build:all
+
+      - name: Publish tagged package
+        env:
+          PACKAGE: ${{ inputs.package }}
+        run: |
+          set -euo pipefail
+
+          PACKAGE="$(echo "$PACKAGE" | xargs)"
+          if [ -z "$PACKAGE" ]; then
+            echo "Package name is required."
+            exit 1
+          fi
+
+          mapfile -t TAGS < <(git tag --points-at HEAD --list "${PACKAGE}@*")
+          if [ "${#TAGS[@]}" -eq 0 ]; then
+            echo "No release tag found for ${PACKAGE} at the release commit."
+            exit 1
+          fi
+
+          if [ "${#TAGS[@]}" -gt 1 ]; then
+            echo "Multiple release tags found for ${PACKAGE}: ${TAGS[*]}"
+            exit 1
+          fi
+
+          echo "Publishing ${PACKAGE} (${TAGS[0]})..."
+          yarn workspace "$PACKAGE" npm publish --access public
+
   publish-docker:
     name: Publish to Docker Hub
     needs: build-docker
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
+    if: "${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub

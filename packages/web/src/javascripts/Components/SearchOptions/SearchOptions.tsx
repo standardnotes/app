@@ -1,32 +1,23 @@
-import { observer } from 'mobx-react-lite'
-import Bubble from '@/Components/Bubble/Bubble'
-import { useCallback } from 'react'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
+import { observer } from 'mobx-react-lite'
+import EnhancedSearchOptionsContent from './EnhancedSearchOptionsContent'
+import SearchBubbles from './SearchBubbles'
 
 type Props = {
   searchOptions: SearchOptionsController
+  showSearchEnhancements?: boolean
 }
 
-const SearchOptions = ({ searchOptions }: Props) => {
-  const { includeProtectedContents, includeArchived, includeTrashed } = searchOptions
+const SearchOptions = ({ searchOptions, showSearchEnhancements = false }: Props) => {
+  if (!showSearchEnhancements) {
+    return (
+      <div className="mt-3 flex flex-wrap gap-2" onMouseDown={(event) => event.preventDefault()}>
+        <SearchBubbles searchOptions={searchOptions} />
+      </div>
+    )
+  }
 
-  const toggleIncludeProtectedContents = useCallback(async () => {
-    await searchOptions.toggleIncludeProtectedContents()
-  }, [searchOptions])
-
-  return (
-    <div className="mt-3 flex flex-wrap gap-2" onMouseDown={(e) => e.preventDefault()}>
-      <Bubble
-        label="Protected Contents"
-        selected={includeProtectedContents}
-        onSelect={toggleIncludeProtectedContents}
-      />
-
-      <Bubble label="Archived" selected={includeArchived} onSelect={searchOptions.toggleIncludeArchived} />
-
-      <Bubble label="Trashed" selected={includeTrashed} onSelect={searchOptions.toggleIncludeTrashed} />
-    </div>
-  )
+  return <EnhancedSearchOptionsContent searchOptions={searchOptions} className="mt-2" />
 }
 
 export default observer(SearchOptions)

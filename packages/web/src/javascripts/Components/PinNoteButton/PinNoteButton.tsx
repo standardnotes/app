@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useMemo } from 'react'
+import { c } from 'ttag'
 import Icon from '@/Components/Icon/Icon'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { classNames } from '@standardnotes/utils'
@@ -31,7 +32,9 @@ const PinNoteButton: FunctionComponent<Props> = ({ className = '', notesControll
     [keyboardService],
   )
 
-  const label = pinned ? `Unpin note (${shortcut})` : `Pin note (${shortcut})`
+  const label = pinned
+    ? (c('B3.Notes.NoteActions.Label').jt`Unpin note (${shortcut})` as unknown as string)
+    : (c('B3.Notes.NoteActions.Label').jt`Pin note (${shortcut})` as unknown as string)
 
   return (
     <button
@@ -45,7 +48,7 @@ const PinNoteButton: FunctionComponent<Props> = ({ className = '', notesControll
       title={label}
       aria-label={label}
     >
-      <VisuallyHidden>Pin selected notes</VisuallyHidden>
+      <VisuallyHidden>{c('B3.Notes.NoteActions.Label').t`Pin selected notes`}</VisuallyHidden>
       <Icon type="pin" className="block" />
     </button>
   )

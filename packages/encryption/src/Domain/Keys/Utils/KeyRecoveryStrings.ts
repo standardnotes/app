@@ -1,4 +1,5 @@
 import { KeyParamsOrigination } from '@standardnotes/common'
+import { c } from 'ttag'
 import { SNRootKeyParams } from '../RootKey/RootKeyParams'
 
 export const KeyRecoveryStrings = {
@@ -6,27 +7,49 @@ export const KeyRecoveryStrings = {
     const dateString = keyParams.createdDate?.toLocaleString()
     switch (keyParams.origination) {
       case KeyParamsOrigination.EmailChange:
-        return `Enter your account password as it was when you changed your email on ${dateString}.`
+        return c('B5.SecuritySync.Challenge.Info')
+          .t`Enter your account password as it was when you changed your email on ${dateString}.`
       case KeyParamsOrigination.PasswordChange:
-        return `Enter your account password after it was changed on ${dateString}.`
+        return c('B5.SecuritySync.Challenge.Info').t`Enter your account password after it was changed on ${dateString}.`
       case KeyParamsOrigination.Registration:
-        return `Enter your account password as it was when you registered ${dateString}.`
+        return c('B5.SecuritySync.Challenge.Info')
+          .t`Enter your account password as it was when you registered ${dateString}.`
       case KeyParamsOrigination.ProtocolUpgrade:
-        return `Enter your account password as it was when you upgraded your encryption version on ${dateString}.`
+        return c('B5.SecuritySync.Challenge.Info')
+          .t`Enter your account password as it was when you upgraded your encryption version on ${dateString}.`
       case KeyParamsOrigination.PasscodeChange:
-        return `Enter your application passcode after it was changed on ${dateString}.`
+        return c('B5.SecuritySync.Challenge.Info')
+          .t`Enter your application passcode after it was changed on ${dateString}.`
       case KeyParamsOrigination.PasscodeCreate:
-        return `Enter your application passcode as it was when you created it on ${dateString}.`
+        return c('B5.SecuritySync.Challenge.Info')
+          .t`Enter your application passcode as it was when you created it on ${dateString}.`
       default:
         throw Error('Unhandled KeyParamsOrigination case for KeyRecoveryLoginFlowPrompt')
     }
   },
-  KeyRecoveryLoginFlowReason: 'Your account password is required to revalidate your session.',
-  KeyRecoveryLoginFlowInvalidPassword: 'Incorrect credentials entered. Please try again.',
-  KeyRecoveryRootKeyReplaced: 'Your credentials have successfully been updated.',
-  KeyRecoveryPasscodeRequiredTitle: 'Passcode Required',
-  KeyRecoveryPasscodeRequiredText: 'You must enter your passcode in order to save your new credentials.',
-  KeyRecoveryPasswordRequired: 'Your account password is required to recover an encryption key.',
-  KeyRecoveryKeyRecovered: 'Your key has successfully been recovered.',
-  KeyRecoveryUnableToRecover: 'Unable to recover your key with the attempted password. Please try again.',
+  get KeyRecoveryLoginFlowReason() {
+    return c('B5.SecuritySync.Challenge.Info').t`Your account password is required to revalidate your session.`
+  },
+  get KeyRecoveryLoginFlowInvalidPassword() {
+    return c('B5.SecuritySync.Challenge.Error').t`Incorrect credentials entered. Please try again.`
+  },
+  get KeyRecoveryRootKeyReplaced() {
+    return c('B5.SecuritySync.Challenge.Info').t`Your credentials have successfully been updated.`
+  },
+  get KeyRecoveryPasscodeRequiredTitle() {
+    return c('B5.SecuritySync.Challenge.Label').t`Passcode Required`
+  },
+  get KeyRecoveryPasscodeRequiredText() {
+    return c('B5.SecuritySync.Challenge.Info').t`You must enter your passcode in order to save your new credentials.`
+  },
+  get KeyRecoveryPasswordRequired() {
+    return c('B5.SecuritySync.Challenge.Info').t`Your account password is required to recover an encryption key.`
+  },
+  get KeyRecoveryKeyRecovered() {
+    return c('B5.SecuritySync.Challenge.Info').t`Your key has successfully been recovered.`
+  },
+  get KeyRecoveryUnableToRecover() {
+    return c('B5.SecuritySync.Challenge.Error')
+      .t`Unable to recover your key with the attempted password. Please try again.`
+  },
 }

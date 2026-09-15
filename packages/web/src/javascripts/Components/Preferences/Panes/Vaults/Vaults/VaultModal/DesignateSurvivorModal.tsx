@@ -3,6 +3,7 @@ import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import Spinner from '@/Components/Spinner/Spinner'
 import { SharedVaultUserServerHash, VaultListingInterface } from '@standardnotes/snjs'
 import { useCallback, useMemo, useState } from 'react'
+import { c } from 'ttag'
 
 const DesignateSurvivorModal = ({
   vault,
@@ -44,7 +45,11 @@ const DesignateSurvivorModal = ({
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: isDesignating ? <Spinner className="h-5 w-5 border-info-contrast" /> : 'Designate survivor',
+        label: isDesignating ? (
+          <Spinner className="h-5 w-5 border-info-contrast" />
+        ) : (
+          c('B6.Preferences.Vaults.Action').t`Designate survivor`
+        ),
         onClick: designateSelectedSurvivor,
         type: 'primary',
         mobileSlot: 'right',
@@ -52,7 +57,7 @@ const DesignateSurvivorModal = ({
         hidden: members.length === 0,
       },
       {
-        label: 'Cancel',
+        label: c('B6.Preferences.Vaults.Action').t`Cancel`,
         onClick: closeModal,
         type: 'cancel',
         mobileSlot: 'left',
@@ -62,7 +67,12 @@ const DesignateSurvivorModal = ({
   )
 
   return (
-    <Modal title="Designate survivor" close={closeModal} actions={modalActions} className="px-4.5 py-4">
+    <Modal
+      title={c('B6.Preferences.Vaults.Title').t`Designate survivor`}
+      close={closeModal}
+      actions={modalActions}
+      className="px-4.5 py-4"
+    >
       <div className="flex flex-col gap-3">
         {members.map((member) => {
           const isSelected = selectedSurvivor?.uuid === member.uuid

@@ -3,6 +3,7 @@ import { HttpResponseMeta } from './HttpResponseMeta'
 import { HttpHeaders } from './HttpHeaders'
 import { HttpStatusCode } from './HttpStatusCode'
 import { HttpError } from './HttpError'
+import { c } from 'ttag'
 
 type AnySuccessRecord = Record<string, unknown> & { error?: never }
 
@@ -35,7 +36,7 @@ export function getCaptchaHeader<T>(response: HttpResponse<T>) {
 }
 
 export function getErrorMessageFromErrorResponseBody(data: HttpErrorResponseBody, defaultMessage?: string): string {
-  let errorMessage = defaultMessage || 'Unknown error'
+  let errorMessage = defaultMessage || c('B2.NavSharedUI.Error').t`Unknown error`
   if (
     data &&
     typeof data === 'object' &&
@@ -57,6 +58,6 @@ export function getErrorFromErrorResponse(response: HttpErrorResponse): HttpErro
   }
 
   return {
-    message: 'Unknown error',
+    message: c('B2.NavSharedUI.Error').t`Unknown error`,
   }
 }

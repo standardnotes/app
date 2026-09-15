@@ -107,7 +107,7 @@ export class EditSmartViewModalController {
     this.closeDialog()
 
     const shouldDelete = await confirmDialog({
-      text: STRING_DELETE_TAG,
+      text: STRING_DELETE_TAG(),
       confirmButtonStyle: 'danger',
     })
     if (shouldDelete) {
@@ -129,7 +129,7 @@ export class EditSmartViewModalController {
       } else {
         this.setIsPredicateJsonValid(false)
       }
-    } catch (error) {
+    } catch {
       this.setIsPredicateJsonValid(false)
       return
     }

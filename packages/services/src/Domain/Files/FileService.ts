@@ -25,7 +25,8 @@ import {
   DecryptedItemInterface,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { LoggerInterface, spaceSeparatedStrings, UuidGenerator } from '@standardnotes/utils'
+import { LoggerInterface, UuidGenerator } from '@standardnotes/utils'
+import { c } from 'ttag'
 import { SNItemsKey } from '@standardnotes/encryption'
 import {
   DownloadAndDecryptFileOperation,
@@ -131,7 +132,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     })
 
     if (isErrorResponse(valetTokenResponse)) {
-      return new ClientDisplayableError('Could not create valet token')
+      return new ClientDisplayableError(c('B7.FilesSubscriptionHelp.Files.Error').t`Could not create valet token`)
     }
 
     return valetTokenResponse.data.valetToken
@@ -158,13 +159,13 @@ export class FileService extends AbstractService implements FilesClientInterface
     const moveResult = await this.api.moveFile(valetTokenResult)
 
     if (!moveResult) {
-      return new ClientDisplayableError('Could not move file')
+      return new ClientDisplayableError(c('B7.FilesSubscriptionHelp.Files.Error').t`Could not move file`)
     }
   }
 
   public async moveFileOutOfSharedVault(file: FileItem): Promise<void | ClientDisplayableError> {
     if (!file.shared_vault_uuid) {
-      return new ClientDisplayableError('File is not in a shared vault')
+      return new ClientDisplayableError(c('B7.FilesSubscriptionHelp.Files.Error').t`File is not in a shared vault`)
     }
 
     const valetTokenResult = await this.createSharedVaultValetToken({
@@ -182,7 +183,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     const moveResult = await this.api.moveFile(valetTokenResult)
 
     if (!moveResult) {
-      return new ClientDisplayableError('Could not move file')
+      return new ClientDisplayableError(c('B7.FilesSubscriptionHelp.Files.Error').t`Could not move file`)
     }
   }
 
@@ -232,7 +233,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
 
     if (!uploadSessionStarted.data.uploadId) {
-      return new ClientDisplayableError('Could not start upload session')
+      return new ClientDisplayableError(c('B7.FilesSubscriptionHelp.Files.Error').t`Could not start upload session`)
     }
 
     return uploadOperation
@@ -247,7 +248,9 @@ export class FileService extends AbstractService implements FilesClientInterface
     const success = await operation.pushBytes(bytes, chunkId, isFinalChunk)
 
     if (!success) {
-      return new ClientDisplayableError('Failed to push file bytes to server')
+      return new ClientDisplayableError(
+        c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to push file bytes to server`,
+      )
     }
 
     return undefined
@@ -268,7 +271,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
 
     if (!uploadSessionClosed) {
-      return new ClientDisplayableError('Could not close upload session')
+      return new ClientDisplayableError(c('B7.FilesSubscriptionHelp.Files.Error').t`Could not close upload session`)
     }
 
     const result = operation.getResult()
@@ -410,14 +413,10 @@ export class FileService extends AbstractService implements FilesClientInterface
 
     if (isErrorResponse(result)) {
       const deleteAnyway = await this.alertService.confirm(
-        spaceSeparatedStrings(
-          'This file could not be deleted from the server, possibly because you are attempting to delete a file item',
-          'that was imported from another account. Would you like to remove this file item from your account anyway?',
-          "If you're sure the file is yours and still exists on the server, do not choose this option,",
-          'and instead try to delete it again.',
-        ),
-        'Unable to Delete',
-        'Delete Anyway',
+        c('B7.FilesSubscriptionHelp.Files.Confirmation')
+          .t`This file could not be deleted from the server, possibly because you are attempting to delete a file item that was imported from another account. Would you like to remove this file item from your account anyway? If you're sure the file is yours and still exists on the server, do not choose this option, and instead try to delete it again.`,
+        c('B7.FilesSubscriptionHelp.Files.Confirmation').t`Unable to Delete`,
+        c('B7.FilesSubscriptionHelp.Files.Confirmation').t`Delete Anyway`,
         ButtonType.Danger,
       )
 

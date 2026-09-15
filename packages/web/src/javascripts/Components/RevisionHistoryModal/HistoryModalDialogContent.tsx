@@ -13,6 +13,7 @@ import Popover from '../Popover/Popover'
 import MobileModalHeader from '../Modal/MobileModalHeader'
 import { useApplication } from '../ApplicationProvider'
 import { useItemVaultInfo } from '@/Hooks/useItemVaultInfo'
+import { c } from 'ttag'
 
 const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalContentProps) => {
   const application = useApplication()
@@ -53,7 +54,7 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
           </div>
         </MobileModalAction>
         <Popover
-          title="Advanced"
+          title={c('B4.Notes.History.Label').t`Advanced`}
           open={showTabMenu}
           anchorElement={tabOptionRef}
           disableMobileFullscreenTakeover={true}
@@ -69,7 +70,7 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
             }}
             className="p-1.5 text-base font-semibold hover:bg-contrast focus:bg-info-backdrop focus:shadow-none focus:outline-none"
           >
-            List
+            {c('B4.Notes.History.Label').t`List`}
           </button>
           <button
             onClick={() => {
@@ -78,12 +79,12 @@ const HistoryModalDialogContent = ({ dismissModal, note }: RevisionHistoryModalC
             }}
             className="p-1.5 text-base font-semibold hover:bg-contrast focus:bg-info-backdrop focus:shadow-none focus:outline-none"
           >
-            Content
+            {c('B4.Notes.History.Label').t`Content`}
           </button>
         </Popover>
-        <div className="text-center text-base font-semibold">History</div>
+        <div className="text-center text-base font-semibold">{c('B4.Notes.History.Action').t`History`}</div>
         <MobileModalAction type="primary" slot="right" action={dismissModal}>
-          Done
+          {c('B4.Notes.History.Action').t`Done`}
         </MobileModalAction>
       </MobileModalHeader>
       <div className="flex min-h-0 flex-grow">

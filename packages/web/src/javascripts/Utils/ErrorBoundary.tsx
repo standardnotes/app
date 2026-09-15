@@ -1,4 +1,5 @@
 import React from 'react'
+import { c } from 'ttag'
 
 type State = {
   error?: Error
@@ -26,7 +27,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.error) {
       return (
         <div className="text-danger">
-          <span>Something went wrong rendering this component: </span>
+          <span>{c('B2.NavSharedUI.Error').t`Something went wrong rendering this component:`} </span>
           <span className="font-bold">{this.state.error.message}</span>
         </div>
       )

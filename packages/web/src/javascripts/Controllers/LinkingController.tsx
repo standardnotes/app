@@ -26,6 +26,7 @@ import {
   VaultServiceInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
+import { c } from 'ttag'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { FilesController } from './FilesController'
@@ -241,7 +242,7 @@ export class LinkingController extends AbstractViewController implements Interna
     if (isNote(item)) {
       if (isNote(itemToLink) && !this.isEntitledToNoteLinking) {
         void this.publishCrossControllerEventSync(CrossControllerEvent.DisplayPremiumModal, {
-          featureName: 'Note linking',
+          featureName: c('B4.Notes.LinkedItems.Label').t`Note linking`,
         })
         return
       }
@@ -282,7 +283,7 @@ export class LinkingController extends AbstractViewController implements Interna
     const cannotLinkItem = !this.isEntitledToNoteLinking && itemToLink instanceof SNNote
     if (cannotLinkItem) {
       void this.publishCrossControllerEventSync(CrossControllerEvent.DisplayPremiumModal, {
-        featureName: 'Note linking',
+        featureName: c('B4.Notes.LinkedItems.Label').t`Note linking`,
       })
       return false
     }

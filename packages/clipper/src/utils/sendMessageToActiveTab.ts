@@ -4,11 +4,15 @@ import { RuntimeMessage, RuntimeMessageReturnTypes } from '../types/message'
 export default async function sendMessageToActiveTab<T extends RuntimeMessage>(
   message: T,
 ): Promise<RuntimeMessageReturnTypes[T['type']] | undefined> {
-  const [activeTab] = await tabs.query({ active: true, currentWindow: true, windowType: 'normal' })
+  const [activeTab] = await tabs.query({ active: true, lastFocusedWindow: true })
 
-  if (!activeTab || !activeTab.id) {
+  if (!activeTab?.id) {
     return
   }
 
-  return await tabs.sendMessage(activeTab.id, message)
+  try {
+    return await tabs.sendMessage(activeTab.id, message)
+  } catch {
+    return
+  }
 }

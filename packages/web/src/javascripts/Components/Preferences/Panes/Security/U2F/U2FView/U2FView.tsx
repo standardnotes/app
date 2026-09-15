@@ -12,6 +12,7 @@ import U2FAddDeviceView from '../U2FAddDeviceView'
 import U2FDevicesList from './U2FDevicesList'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBanner'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -65,7 +66,7 @@ const U2FView: FunctionComponent<Props> = ({ application, is2FAEnabled, loadAuth
           <Button
             className="mt-1"
             disabled={!application.isFullU2FClient || !is2FAEnabled}
-            label="Add Device"
+            label={c('B6.Preferences.Security.Action').t`Add Device`}
             primary
             onClick={handleAddDeviceClick}
           />

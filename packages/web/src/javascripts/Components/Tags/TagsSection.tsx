@@ -4,6 +4,7 @@ import { FunctionComponent } from 'react'
 import TagsSectionAddButton from './TagsSectionAddButton'
 import TagsSectionTitle from './TagsSectionTitle'
 import { useApplication } from '../ApplicationProvider'
+import { c } from 'ttag'
 
 const TagsSection: FunctionComponent = () => {
   const application = useApplication()
@@ -15,7 +16,7 @@ const TagsSection: FunctionComponent = () => {
           <div className={'section-title-bar'}>
             <div className="section-title-bar-header">
               <div className="title text-base md:text-sm">
-                <span className="font-bold">Favorites</span>
+                <span className="font-bold">{c('B4.Notes.TagsLinkedItems.Label').t`Favorites`}</span>
               </div>
             </div>
           </div>

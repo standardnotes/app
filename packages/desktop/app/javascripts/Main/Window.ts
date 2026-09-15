@@ -260,7 +260,7 @@ function fileUrlsAreEqual(a: string, b: string): boolean {
       bPath = lowercaseDriveLetter(bPath)
     }
     return aPath === bPath
-  } catch (error) {
+  } catch {
     return false
   }
 }
@@ -275,7 +275,7 @@ async function getPreviousWindowPosition() {
   let position: WindowPosition
   try {
     position = JSON.parse(await fs.promises.readFile(path.join(Paths.userDataDir, 'window-position.json'), 'utf8'))
-  } catch (e) {
+  } catch {
     return {
       bounds: {
         width: WINDOW_DEFAULT_WIDTH,

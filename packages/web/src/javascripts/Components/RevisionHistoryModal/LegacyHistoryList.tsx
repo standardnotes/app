@@ -3,6 +3,7 @@ import { FunctionComponent, useState } from 'react'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
+import { c } from 'ttag'
 
 type Props = {
   legacyHistory: Action[] | undefined
@@ -41,7 +42,10 @@ const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistor
           </HistoryListItem>
         )
       })}
-      {!legacyHistory?.length && <div className="select-none text-sm text-passive-0">No legacy history found</div>}
+      {!legacyHistory?.length && (
+        <div className="select-none text-sm text-passive-0">{c('B4.Notes.History.Label')
+          .t`No legacy history found`}</div>
+      )}
     </div>
   )
 }

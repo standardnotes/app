@@ -330,7 +330,9 @@ jobs:
 
       - name: Install Snapcraft
         run: |
-          sudo snap install snapcraft --classic
+          # Pin to 8.x: electron-builder's legacy core22 snap target calls `snapcraft snap`,
+          # which was removed in snapcraft 9.0 (renamed to `pack`).
+          sudo snap install snapcraft --classic --channel=8.x/stable
 
       - name: Setup LXD
         uses: canonical/setup-lxd@v0.1.1
@@ -414,5 +416,5 @@ jobs:
 
       - name: Publish Snap
         run: |
-          sudo snap install snapcraft --classic
+          sudo snap install snapcraft --classic --channel=8.x/stable
           snapcraft upload dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap --release stable,candidate,beta,edge

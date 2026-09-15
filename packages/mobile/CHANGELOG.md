@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.266](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.265...@standardnotes/mobile@3.58.266) (2026-09-07)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.265](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.264...@standardnotes/mobile@3.58.265) (2026-09-04)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.264](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.263...@standardnotes/mobile@3.58.264) (2026-09-03)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.263](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.262...@standardnotes/mobile@3.58.263) (2026-08-25)
+
+### Bug Fixes
+
+* Sanitizes filename on iOS file share ([#3036](https://github.com/standardnotes/app/issues/3036)) ([cf5ca47](https://github.com/standardnotes/app/commit/cf5ca4718546dd2fd08da8777b2398044721f1f3))
+
+## [3.58.262](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.261...@standardnotes/mobile@3.58.262) (2026-08-17)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.261](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.260...@standardnotes/mobile@3.58.261) (2026-07-20)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.260](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.259...@standardnotes/mobile@3.58.260) (2026-07-18)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.259](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.258...@standardnotes/mobile@3.58.259) (2026-07-18)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.58.258](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.257...@standardnotes/mobile@3.58.258) (2026-07-06)
 
 **Note:** Version bump only for package @standardnotes/mobile

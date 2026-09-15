@@ -29,7 +29,7 @@ export class RevisionApiService implements RevisionApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(RevisionApiOperations.List, false)
@@ -50,7 +50,7 @@ export class RevisionApiService implements RevisionApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(RevisionApiOperations.Get, false)
@@ -71,7 +71,7 @@ export class RevisionApiService implements RevisionApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(RevisionApiOperations.Delete, false)

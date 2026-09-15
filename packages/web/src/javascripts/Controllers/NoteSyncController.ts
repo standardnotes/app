@@ -14,6 +14,7 @@ import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 import { LargeNoteThreshold } from '@/Constants/Constants'
 import { NoteStatus } from '@/Components/NoteView/NoteStatusIndicator'
 import { action, makeObservable, observable, runInAction } from 'mobx'
+import { c } from 'ttag'
 
 const NotePreviewCharLimit = 160
 const MinimumStatusChangeDuration = 400
@@ -72,7 +73,7 @@ export class NoteSyncController {
     this.setStatus(
       {
         type: 'saving',
-        message: 'Saving…',
+        message: c('B5.SecuritySync.Sync.Status').t`Saving…`,
       },
       false,
     )
@@ -81,7 +82,9 @@ export class NoteSyncController {
   showAllChangesSavedStatus() {
     this.setStatus({
       type: 'saved',
-      message: 'All changes saved' + (this.sessions.isSignedOut() ? ' offline' : ''),
+      message: this.sessions.isSignedOut()
+        ? (c('B3.Notes.NoteActions.Status').jt`All changes saved offline` as unknown as string)
+        : c('B3.Notes.NoteActions.Status').t`All changes saved`,
     })
   }
 
@@ -89,8 +92,9 @@ export class NoteSyncController {
     this.setStatus(
       {
         type: 'waiting',
-        message: 'Note is too large',
-        description: 'It will be synced less often. Changes will be saved offline normally.',
+        message: c('B3.Notes.NoteActions.Status').t`Note is too large`,
+        description: c('B3.Notes.NoteActions.Info')
+          .t`It will be synced less often. Changes will be saved offline normally.`,
       },
       false,
     )
@@ -100,8 +104,8 @@ export class NoteSyncController {
     if (!error) {
       error = {
         type: 'error',
-        message: 'Sync Unreachable',
-        description: 'Changes saved offline',
+        message: c('B3.Notes.NoteActions.Error').t`Sync Unreachable`,
+        description: c('B3.Notes.NoteActions.Status').t`Changes saved offline`,
       }
     }
     this.setStatus(error)

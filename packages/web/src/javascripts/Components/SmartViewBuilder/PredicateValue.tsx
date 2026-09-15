@@ -1,7 +1,8 @@
 import { getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
-import { NoteType } from '@standardnotes/snjs'
+import { ContentType, naturalSort, NoteType, SNTag } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import { PredicateKeypath, PredicateKeypathTypes } from './PredicateKeypaths'
+import { c } from 'ttag'
 
 type Props = {
   keypath: PredicateKeypath
@@ -14,7 +15,22 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
   const type = PredicateKeypathTypes[keypath]
   const editorItems = getDropdownItemsForAllEditors(application)
 
-  return type === 'noteType' ? (
+  return type === 'tag' ? (
+    <select
+      className="flex-grow truncate rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
+      value={value}
+      onChange={(event) => {
+        setValue(event.target.value)
+      }}
+    >
+      <option value="">Select a tag...</option>
+      {naturalSort(application.items.getItems<SNTag>(ContentType.TYPES.Tag), 'title').map((tag) => (
+        <option key={tag.uuid} value={tag.title}>
+          {application.items.getTagLongTitle(tag) || tag.title}
+        </option>
+      ))}
+    </select>
+  ) : type === 'noteType' ? (
     <select
       className="flex-grow rounded border border-border bg-default px-2 py-1.5 focus:outline focus:outline-1 focus:outline-info"
       value={value}
@@ -58,8 +74,8 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
         setValue(event.target.value)
       }}
     >
-      <option value="true">True</option>
-      <option value="false">False</option>
+      <option value="true">{c('B4.Notes.TagsLinkedItems.Label').t`True`}</option>
+      <option value="false">{c('B4.Notes.TagsLinkedItems.Label').t`False`}</option>
     </select>
   ) : type === 'number' ? (
     <input

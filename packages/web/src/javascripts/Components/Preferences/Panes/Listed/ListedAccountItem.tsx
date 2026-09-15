@@ -4,6 +4,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { ListedAccount, ListedAccountInfo } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
 import Spinner from '@/Components/Spinner/Spinner'
+import { c } from 'ttag'
 
 type Props = {
   account: ListedAccount
@@ -33,8 +34,16 @@ const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, a
         {isLoading ? <Spinner className="h-4 w-4" /> : null}
         {accountInfo && (
           <>
-            <LinkButton className="mr-2" label="Open Blog" link={accountInfo.author_url} />
-            <LinkButton className="mr-2" label="Settings" link={accountInfo.settings_url} />
+            <LinkButton
+              className="mr-2"
+              label={c('B6.Preferences.Other.Action').t`Open Blog`}
+              link={accountInfo.author_url}
+            />
+            <LinkButton
+              className="mr-2"
+              label={c('B6.Preferences.Other.Action').t`Settings`}
+              link={accountInfo.settings_url}
+            />
           </>
         )}
       </div>

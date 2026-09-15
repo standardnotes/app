@@ -1,6 +1,7 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
+import { c } from 'ttag'
 import Menu from '../Menu/Menu'
 import Popover from '../Popover/Popover'
 import FileMenuOptions from './FileMenuOptions'
@@ -17,14 +18,14 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, i
 
   return (
     <Popover
-      title="File options"
+      title={c('B7.FilesSubscriptionHelp.Files.Title').t`File options`}
       open={showFileContextMenu}
       anchorPoint={fileContextMenuLocation}
       togglePopover={() => setShowFileContextMenu(!showFileContextMenu)}
       align="start"
       className="md:pb-2"
     >
-      <Menu a11yLabel="File context menu">
+      <Menu a11yLabel={c('B7.FilesSubscriptionHelp.Files.Info').t`File context menu`}>
         <FileMenuOptions
           selectedFiles={selectedFiles}
           closeMenu={() => setShowFileContextMenu(false)}

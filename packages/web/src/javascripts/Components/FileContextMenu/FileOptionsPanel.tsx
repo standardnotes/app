@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
+import { c } from 'ttag'
 import FileMenuOptions from './FileMenuOptions'
 import Popover from '../Popover/Popover'
 import RoundIconButton from '../Button/RoundIconButton'
@@ -18,15 +19,20 @@ const FilesOptionsPanel = ({ itemListController }: Props) => {
 
   return (
     <>
-      <RoundIconButton label="File options menu" onClick={toggleMenu} ref={buttonRef} icon="more" />
+      <RoundIconButton
+        label={c('B7.FilesSubscriptionHelp.Files.Label').t`File options menu`}
+        onClick={toggleMenu}
+        ref={buttonRef}
+        icon="more"
+      />
       <Popover
-        title="File options"
+        title={c('B7.FilesSubscriptionHelp.Files.Title').t`File options`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}
         className="md:pb-2"
       >
-        <Menu a11yLabel="File options panel">
+        <Menu a11yLabel={c('B7.FilesSubscriptionHelp.Files.Info').t`File options panel`}>
           <FileMenuOptions
             selectedFiles={itemListController.selectedFiles}
             closeMenu={() => {

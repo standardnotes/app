@@ -16,6 +16,7 @@ import {
   isNote,
 } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { c } from 'ttag'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import Popover from '../Popover/Popover'
@@ -65,7 +66,7 @@ const ContextMenuCell = ({ items }: { items: DecryptedItemInterface[] }) => {
         <Icon type="more" />
       </button>
       <Popover
-        title="File options"
+        title={c('B3.Notes.NoteList.Label').t`File options`}
         open={contextMenuVisible}
         anchorElement={anchorElementRef}
         togglePopover={() => {
@@ -75,7 +76,7 @@ const ContextMenuCell = ({ items }: { items: DecryptedItemInterface[] }) => {
         align="start"
         className="py-2"
       >
-        <Menu a11yLabel="File context menu">
+        <Menu a11yLabel={c('B3.Notes.NoteList.Label').t`File context menu`}>
           {allItemsAreFiles && (
             <FileMenuOptions
               closeMenu={() => {
@@ -118,7 +119,7 @@ const ItemLinksCell = ({ item }: { item: DecryptedItemInterface }) => {
         <Icon type="link" />
       </button>
       <Popover
-        title="Linked items"
+        title={c('B4.Notes.TagsLinkedItems.Label').t`Linked items`}
         open={contextMenuVisible}
         anchorElement={anchorElementRef}
         togglePopover={() => {
@@ -163,7 +164,7 @@ const ItemNameCell = ({ item, hideIcon }: { item: DecryptedItemInterface; hideIc
         {backupInfo && (
           <div
             className="absolute bottom-1 right-1 translate-x-1/2 translate-y-1/2 rounded-full bg-default text-success"
-            title="File is backed up locally"
+            title={c('B3.Notes.NoteList.Info').t`File is backed up locally`}
           >
             <Icon size="small" type="check-circle-filled" />
           </div>
@@ -172,8 +173,13 @@ const ItemNameCell = ({ item, hideIcon }: { item: DecryptedItemInterface; hideIc
       <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{item.title}</span>
       <ListItemVaultInfo item={item} />
       {item.protected && (
-        <span className="flex items-center" title="File is protected">
-          <Icon ariaLabel="File is protected" type="lock-filled" className="h-3.5 w-3.5 text-passive-1" size="custom" />
+        <span className="flex items-center" title={c('B3.Notes.NoteList.Info').t`File is protected`}>
+          <Icon
+            ariaLabel={c('B3.Notes.NoteList.Label').t`File is protected`}
+            type="lock-filled"
+            className="h-3.5 w-3.5 text-passive-1"
+            size="custom"
+          />
         </span>
       )}
     </div>
@@ -196,6 +202,8 @@ const AttachedToCell = ({ item }: { item: DecryptedItemInterface }) => {
     return null
   }
 
+  const additionalLinksCount = allLinks.length - 1
+
   return (
     <div className="flex items-center gap-2 overflow-hidden">
       <LinkedItemBubble
@@ -207,7 +215,7 @@ const AttachedToCell = ({ item }: { item: DecryptedItemInterface }) => {
         }}
         isBidirectional={false}
       />
-      {allLinks.length - 1 >= 1 && <span>and {allLinks.length - 1} more...</span>}
+      {additionalLinksCount >= 1 && <span>{c('B3.Notes.NoteList.Info').jt`and ${additionalLinksCount} more...`}</span>}
     </div>
   )
 }
@@ -274,12 +282,12 @@ const ContentTableView = ({ application, items }: Props) => {
   const columnDefs: TableColumn<DecryptedItemInterface>[] = useMemo(
     () => [
       {
-        name: 'Name',
+        name: c('B3.Notes.NoteList.Label').t`Name`,
         sortBy: 'title',
         cell: (item) => <ItemNameCell item={item} hideIcon={hideIcon} />,
       },
       {
-        name: 'Upload date',
+        name: c('B3.Notes.NoteList.Label').t`Upload date`,
         sortBy: 'created_at',
         cell: (item) => {
           return formatDateForContextMenu(item.created_at)
@@ -287,7 +295,7 @@ const ContentTableView = ({ application, items }: Props) => {
         hidden: isSmallBreakpoint || hideDate,
       },
       {
-        name: 'Size',
+        name: c('B3.Notes.NoteList.Label').t`Size`,
         sortBy: 'decryptedSize',
         cell: (item) => {
           return item instanceof FileItem ? formatSizeToReadableString(item.decryptedSize) : null
@@ -295,7 +303,7 @@ const ContentTableView = ({ application, items }: Props) => {
         hidden: isSmallBreakpoint || !listHasFiles,
       },
       {
-        name: 'Attached to',
+        name: c('B3.Notes.NoteList.Label').t`Attached to`,
         hidden: isSmallBreakpoint || isMediumBreakpoint || isLargeBreakpoint || hideTags,
         cell: (item) => <AttachedToCell item={item} />,
       },
@@ -354,7 +362,7 @@ const ContentTableView = ({ application, items }: Props) => {
       <Table table={table} />
       {contextMenuPosition && contextMenuItem && (
         <Popover
-          title="Options"
+          title={c('B3.Notes.NoteList.Label').t`Options`}
           open={true}
           anchorPoint={contextMenuPosition}
           togglePopover={() => {
@@ -366,7 +374,7 @@ const ContentTableView = ({ application, items }: Props) => {
           className="py-2"
         >
           {contextMenuItem instanceof FileItem && (
-            <Menu a11yLabel="File context menu">
+            <Menu a11yLabel={c('B3.Notes.NoteList.Label').t`File context menu`}>
               <FileMenuOptions
                 closeMenu={closeContextMenu}
                 shouldShowRenameOption={false}
@@ -376,7 +384,7 @@ const ContentTableView = ({ application, items }: Props) => {
             </Menu>
           )}
           {contextMenuItem instanceof SNNote && (
-            <Menu className="select-none" a11yLabel="Note context menu">
+            <Menu className="select-none" a11yLabel={c('B3.Notes.NoteList.Label').t`Note context menu`}>
               <NotesOptions notes={[contextMenuItem]} closeMenu={closeContextMenu} />
             </Menu>
           )}

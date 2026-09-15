@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.28.138](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.28.137...@standardnotes/filepicker@1.28.138) (2026-09-03)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.28.137](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.28.136...@standardnotes/filepicker@1.28.137) (2026-08-25)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.28.136](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.28.135...@standardnotes/filepicker@1.28.136) (2026-08-17)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.28.135](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.28.134...@standardnotes/filepicker@1.28.135) (2026-07-18)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
 ## [1.28.134](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.28.133...@standardnotes/filepicker@1.28.134) (2026-04-24)
 
 **Note:** Version bump only for package @standardnotes/filepicker

@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { AddAuthenticator } from '@standardnotes/snjs'
 
@@ -6,6 +6,7 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Modal from '@/Components/Modal/Modal'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { c } from 'ttag'
 
 type Props = {
   addAuthenticator: AddAuthenticator
@@ -18,6 +19,27 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
   const [deviceName, setDeviceName] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [registrationOptions, setRegistrationOptions] = useState<Record<string, unknown> | null>(null)
+  const [isLoadingOptions, setIsLoadingOptions] = useState(true)
+
+  useEffect(() => {
+    let isActive = true
+
+    void application.fetchAuthenticatorRegistrationOptions().then((options) => {
+      if (!isActive) {
+        return
+      }
+      setRegistrationOptions(options)
+      setIsLoadingOptions(false)
+      if (options === null) {
+        setErrorMessage(c('B6.Preferences.Security.Error').t`Could not prepare security key registration`)
+      }
+    })
+
+    return () => {
+      isActive = false
+    }
+  }, [application])
 
   const handleDeviceNameChange = useCallback((deviceName: string) => {
     setDeviceName(deviceName)
@@ -25,19 +47,25 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
   const handleAddDeviceClick = useCallback(async () => {
     if (!deviceName) {
-      setErrorMessage('Device name is required')
+      setErrorMessage(c('B6.Preferences.Security.Error').t`Device name is required`)
+      return
+    }
+
+    if (!registrationOptions) {
+      setErrorMessage(c('B6.Preferences.Security.Error').t`Could not prepare security key registration`)
       return
     }
 
     const user = application.sessions.getUser()
     if (user === undefined) {
-      setErrorMessage('User not found')
+      setErrorMessage(c('B6.Preferences.Security.Error').t`User not found`)
       return
     }
 
     const authenticatorAddedOrError = await addAuthenticator.execute({
       userUuid: user.uuid,
       authenticatorName: deviceName,
+      registrationOptions,
     })
     if (authenticatorAddedOrError.isFailed()) {
       setErrorMessage(authenticatorAddedOrError.getError())
@@ -46,7 +74,15 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
     onDeviceAddingModalToggle(false)
     await onDeviceAdded()
-  }, [deviceName, setErrorMessage, application, addAuthenticator, onDeviceAddingModalToggle, onDeviceAdded])
+  }, [
+    deviceName,
+    registrationOptions,
+    setErrorMessage,
+    application,
+    addAuthenticator,
+    onDeviceAddingModalToggle,
+    onDeviceAdded,
+  ])
 
   const closeModal = () => {
     onDeviceAddingModalToggle(false)
@@ -56,11 +92,11 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
   return (
     <Modal
-      title="Add Security Key"
+      title={c('B6.Preferences.Security.Title').t`Add Security Key`}
       close={closeModal}
       actions={[
         {
-          label: 'Cancel',
+          label: c('B6.Preferences.Security.Action').t`Cancel`,
           type: 'cancel',
           onClick: closeModal,
           mobileSlot: 'left',
@@ -69,19 +105,21 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
         {
           label: (
             <>
-              Add <span className="hidden md:inline">Device</span>
+              {c('B6.Preferences.Security.Action').t`Add`}{' '}
+              <span className="hidden md:inline">{c('B6.Preferences.Security.Label').t`Device`}</span>
             </>
           ),
           type: 'primary',
           onClick: handleAddDeviceClick,
           mobileSlot: 'right',
+          disabled: isLoadingOptions || registrationOptions === null,
         },
       ]}
     >
       <div className="flex px-4 py-4">
         <div className="ml-4 flex flex-grow flex-col gap-1">
           <label htmlFor="u2f-device-name" className="mb-2 text-sm font-semibold">
-            Device Name
+            {c('B6.Preferences.Security.Label').t`Device Name`}
           </label>
           <DecoratedInput
             autofocus
