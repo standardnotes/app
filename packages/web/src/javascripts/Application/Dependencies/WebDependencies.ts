@@ -39,6 +39,7 @@ import { ImportModalController } from '@/Components/ImportModal/ImportModalContr
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { LinkingController } from '@/Controllers/LinkingController'
+import { LocalizationController } from '@/Controllers/Localization/LocalizationController'
 import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { ActionsMenuController } from '@/Controllers/ActionsMenuController'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
@@ -312,6 +313,10 @@ export class WebDependencies extends DependencyContainer {
 
     this.bind(Web_TYPES.NoAccountWarningController, () => {
       return new NoAccountWarningController(application.sessions, application.events)
+    })
+
+    this.bind(Web_TYPES.LocalizationController, () => {
+      return new LocalizationController(this.get<FeaturesController>(Web_TYPES.FeaturesController), application.events)
     })
 
     this.bind(Web_TYPES.AccountMenuController, () => {
