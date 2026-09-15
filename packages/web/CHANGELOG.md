@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.202.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.4...@standardnotes/web@3.202.5) (2026-09-15)
+
+### Bug Fixes
+
+* Fixes blank screen when tagging untagged current note on mobile ([#3047](https://github.com/standardnotes/app/issues/3047)) ([24da230](https://github.com/standardnotes/app/commit/24da23096f7fea453225bb4f680325fdb39e3ad8))
+* Fixes scroll position shift on Super checkbox toggle ([#3049](https://github.com/standardnotes/app/issues/3049)) ([d73ec83](https://github.com/standardnotes/app/commit/d73ec8378d202b63a72210357ed07b2fda17e823))
+
 ## [3.202.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.3...@standardnotes/web@3.202.4) (2026-09-07)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.40.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.40.2...@standardnotes/ui-services@1.40.3) (2026-09-15)
+
+### Bug Fixes
+
+* Fixes command palette shortcut for AZERTY layout ([#3046](https://github.com/standardnotes/app/issues/3046)) ([13e0a9d](https://github.com/standardnotes/app/commit/13e0a9dc24e170e9006cfa9a007701c313400bc7))
+
 ## [1.40.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.40.1...@standardnotes/ui-services@1.40.2) (2026-09-03)
 
 **Note:** Version bump only for package @standardnotes/ui-services
