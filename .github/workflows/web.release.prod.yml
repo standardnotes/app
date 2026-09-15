@@ -46,6 +46,6 @@ jobs:
 
     steps:
     - name: Run Discord Webhook
-      uses: johnnyhuy/actions-discord-git-webhook@344d3543a4d21067013d88ab8ee47ad498d8bb98 # main
+      uses: johnnyhuy/actions-discord-git-webhook@59b728b6b5cd1c18e4b462f4876d3a0d8e26f23a # main
       with:
         webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
