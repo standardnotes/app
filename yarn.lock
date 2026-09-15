@@ -10127,7 +10127,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/i18n@workspace:packages/i18n":
+"@standardnotes/i18n@workspace:*, @standardnotes/i18n@workspace:packages/i18n":
   version: 0.0.0-use.local
   resolution: "@standardnotes/i18n@workspace:packages/i18n"
   dependencies:
@@ -10807,6 +10807,7 @@ __metadata:
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/focus-theme": ^1.4.6
     "@standardnotes/futura-theme": ^1.4.6
+    "@standardnotes/i18n": "workspace:*"
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/markdown-basic": ^1.7.12
     "@standardnotes/markdown-hybrid": ^1.8.11
