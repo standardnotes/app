@@ -15,6 +15,9 @@
     "access": "public"
   },
   "license": "AGPL-3.0",
+  "dependencies": {
+    "ttag": "^1.8.12"
+  },
   "scripts": {
     "clean": "rm -fr dist",
     "prestart": "yarn clean",

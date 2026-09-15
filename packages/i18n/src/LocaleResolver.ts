@@ -2,7 +2,6 @@ export const DEFAULT_LOCALE = 'en_US'
 
 export type ResolveLocaleOptions = {
   availableLocales: readonly string[]
-  localizationEnabled?: boolean
   savedLocale?: string | null
 }
 
@@ -10,7 +9,7 @@ export type ResolveLocaleOptions = {
  * Finds the closest available locale for a requested code.
  * fr_BE matches fr_FR when no exact match exists, by comparing language only.
  */
-export function getClosestLocaleCode(requestedLocale: string, availableLocales: readonly string[]): string | undefined {
+function getClosestLocaleCode(requestedLocale: string, availableLocales: readonly string[]): string | undefined {
   if (availableLocales.length === 0) {
     return undefined
   }
@@ -47,16 +46,15 @@ export function getBrowserLanguages(): readonly string[] {
 }
 
 /**
- * Resolves the active locale. When `localizationEnabled` is false (the default),
- * returns `en_US` immediately. Otherwise:
+ * Resolves the best matching locale:
  * 1. Saved user preference
  * 2. Browser languages
  * 3. Default locale (en_US)
  */
 export function resolveLocale(options: ResolveLocaleOptions): string {
-  const { savedLocale, availableLocales, localizationEnabled = false } = options
+  const { savedLocale, availableLocales } = options
 
-  if (!localizationEnabled || availableLocales.length === 0) {
+  if (availableLocales.length === 0) {
     return DEFAULT_LOCALE
   }
 

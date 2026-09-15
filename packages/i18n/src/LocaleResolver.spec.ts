@@ -1,37 +1,6 @@
-import {
-  DEFAULT_LOCALE,
-  getBrowserLanguages,
-  getClosestLocaleCode,
-  resolveLocale,
-} from './LocaleResolver'
+import { DEFAULT_LOCALE, getBrowserLanguages, resolveLocale } from './LocaleResolver'
 
 const availableLocales = ['en_US', 'fr_FR', 'de_DE', 'es_LA', 'tr_TR', 'zh_CN']
-
-describe('getClosestLocaleCode', () => {
-  it('returns undefined when no locales are available', () => {
-    expect(getClosestLocaleCode('fr_FR', [])).toBeUndefined()
-  })
-
-  it('returns an exact match', () => {
-    expect(getClosestLocaleCode('fr_FR', availableLocales)).toBe('fr_FR')
-  })
-
-  it('matches by language when region differs', () => {
-    expect(getClosestLocaleCode('fr_BE', availableLocales)).toBe('fr_FR')
-  })
-
-  it('matches browser-style hyphenated locale codes', () => {
-    expect(getClosestLocaleCode('fr-FR', availableLocales)).toBe('fr_FR')
-  })
-
-  it('prefers an exact match over an earlier language match', () => {
-    expect(getClosestLocaleCode('fr_FR', ['fr_CA', 'fr_FR'])).toBe('fr_FR')
-  })
-
-  it('returns undefined when no language matches', () => {
-    expect(getClosestLocaleCode('ja_JP', availableLocales)).toBeUndefined()
-  })
-})
 
 describe('getBrowserLanguages', () => {
   const originalNavigator = global.navigator
@@ -81,32 +50,40 @@ describe('resolveLocale', () => {
     })
   })
 
-  it('returns the default locale when localization is disabled', () => {
+  it('returns the default locale when no locales are available', () => {
     expect(
       resolveLocale({
-        availableLocales,
+        availableLocales: [],
         savedLocale: 'fr_FR',
       }),
     ).toBe(DEFAULT_LOCALE)
   })
 
-  it('returns the default locale when localization is enabled but no locales are available', () => {
-    expect(
-      resolveLocale({
-        availableLocales: [],
-        localizationEnabled: true,
-      }),
-    ).toBe(DEFAULT_LOCALE)
-  })
-
-  it('uses the saved locale when localization is enabled', () => {
+  it('uses the saved locale when one is set', () => {
     expect(
       resolveLocale({
         availableLocales,
-        localizationEnabled: true,
         savedLocale: 'tr_TR',
       }),
     ).toBe('tr_TR')
+  })
+
+  it('matches by language when the saved locale region differs', () => {
+    expect(
+      resolveLocale({
+        availableLocales,
+        savedLocale: 'fr_BE',
+      }),
+    ).toBe('fr_FR')
+  })
+
+  it('prefers an exact saved locale match over an earlier language match', () => {
+    expect(
+      resolveLocale({
+        availableLocales: ['fr_CA', 'fr_FR'],
+        savedLocale: 'fr_FR',
+      }),
+    ).toBe('fr_FR')
   })
 
   it('falls back to browser languages when no saved locale is set', () => {
@@ -118,9 +95,21 @@ describe('resolveLocale', () => {
     expect(
       resolveLocale({
         availableLocales,
-        localizationEnabled: true,
       }),
     ).toBe('es_LA')
+  })
+
+  it('matches browser-style hyphenated locale codes', () => {
+    Object.defineProperty(global, 'navigator', {
+      value: { languages: ['fr-FR'] },
+      configurable: true,
+    })
+
+    expect(
+      resolveLocale({
+        availableLocales,
+      }),
+    ).toBe('fr_FR')
   })
 
   it('returns the default locale when no saved or browser locale matches', () => {
@@ -132,7 +121,6 @@ describe('resolveLocale', () => {
     expect(
       resolveLocale({
         availableLocales,
-        localizationEnabled: true,
       }),
     ).toBe(DEFAULT_LOCALE)
   })
