@@ -4,7 +4,7 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
-import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/Constants/Strings'
+import { StringRemoveOfflineKeyConfirmation } from '@/Constants/Strings'
 import { ButtonType, ClientDisplayableError } from '@standardnotes/snjs'
 import { c } from 'ttag'
 
@@ -99,7 +99,7 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
   const handleRemoveClick = async () => {
     application.alerts
       .confirm(
-        STRING_REMOVE_OFFLINE_KEY_CONFIRMATION(),
+        StringRemoveOfflineKeyConfirmation(),
         c('B6.Preferences.General.Confirmation').t`Remove offline key?`,
         c('B6.Preferences.General.Action').t`Remove Offline Key`,
         ButtonType.Danger,

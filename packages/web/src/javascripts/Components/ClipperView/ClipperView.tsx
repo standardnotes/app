@@ -24,6 +24,7 @@ import {
   classNames,
 } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
+import { StringUpgradeForFeature } from '@/Constants/Strings'
 import { ClipperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 import { getSuperJSONFromClipPayload } from './getSuperJSONFromClipHTML'
@@ -340,12 +341,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
         </div>
         <div className="mb-1 text-center text-lg font-bold">{c('B7.FilesSubscriptionHelp.Subscription.Title')
           .t`Enable Advanced Features`}</div>
-        <div className="mb-3 text-center">
-          {jtString(
-            c('B7.FilesSubscriptionHelp.Subscription.Info')
-              .jt`To take advantage of ${ClipperName} and other advanced features, upgrade your current plan.`,
-          )}
-        </div>
+        <div className="mb-3 text-center">{jtString(StringUpgradeForFeature(ClipperName))}</div>
         <Button className="mb-2" fullWidth primary onClick={upgradePlan}>
           {c('B7.FilesSubscriptionHelp.Subscription.Action').t`Upgrade`}
         </Button>

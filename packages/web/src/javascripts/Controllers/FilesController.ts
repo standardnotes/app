@@ -13,7 +13,13 @@ import {
   IsNativeMobileWeb,
   VaultDisplayServiceInterface,
 } from '@standardnotes/ui-services'
-import { Strings, StringUtils } from '@/Constants/Strings'
+import {
+  StringCannotUploadFile,
+  StringDeleteFile,
+  StringDeleteItemsPermanentlyTitle,
+  StringDeleteMultipleFiles,
+  StringUploadFileProgress,
+} from '@/Constants/Strings'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { ClassicFileReader, StreamingFileReader, StreamingFileSaver, ClassicFileSaver } from '@standardnotes/filepicker'
 import { parseAndCreateZippableFileName, parseFileName } from '@standardnotes/utils'
@@ -173,7 +179,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   deleteFile = async (file: FileItem) => {
     const shouldDelete = await confirmDialog({
-      text: StringUtils.deleteFile(file.name),
+      text: StringDeleteFile(file.name),
       confirmButtonStyle: 'danger',
     })
     if (shouldDelete) {
@@ -452,7 +458,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         .alert(
           c('B7.FilesSubscriptionHelp.Files.Error')
             .t`This file exceeds the limits supported in this browser. To upload files greater than ${maxFileSizeInMegabytes}MB, please use the desktop application or the Chrome browser.`,
-          StringUtils.cannotUploadFile(file.name),
+          StringCannotUploadFile(file.name),
         )
         .catch(console.error)
       return true
@@ -558,9 +564,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         } else {
           toastId = addToast({
             type: ToastType.Progress,
-            message: jtString(
-              c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${initialProgress}%)`,
-            ),
+            message: StringUploadFileProgress(fileName, initialProgress),
             progress: initialProgress,
           })
         }
@@ -587,9 +591,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
             })
           } else {
             updateToast(toastId, {
-              message: jtString(
-                c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${percentComplete}%)`,
-              ),
+              message: StringUploadFileProgress(fileName, percentComplete),
               progress: percentComplete,
             })
           }
@@ -707,8 +709,8 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   deleteFilesPermanently = async (files: FileItem[]) => {
-    const title = Strings.deleteItemsPermanentlyTitle
-    const text = files.length === 1 ? StringUtils.deleteFile(files[0].name) : Strings.deleteMultipleFiles
+    const title = StringDeleteItemsPermanentlyTitle()
+    const text = files.length === 1 ? StringDeleteFile(files[0].name) : StringDeleteMultipleFiles()
 
     if (
       await confirmDialog({

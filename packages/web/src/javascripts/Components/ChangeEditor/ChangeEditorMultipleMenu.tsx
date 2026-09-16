@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
+import { StringEditLockedAttempt } from '@/Constants/Strings'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { createEditorMenuGroups } from '@/Utils/createEditorMenuGroups'
 import {
@@ -72,7 +72,7 @@ const ChangeEditorMultipleMenu = ({ application, notes, setDisableClickOutside }
       }
 
       if (hasSelectedLockedNotes) {
-        void application.alerts.alert(STRING_EDIT_LOCKED_ATTEMPT())
+        void application.alerts.alert(StringEditLockedAttempt())
         return
       }
 

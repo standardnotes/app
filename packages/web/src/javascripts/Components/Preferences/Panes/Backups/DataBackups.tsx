@@ -1,13 +1,13 @@
 import { alertDialog } from '@standardnotes/ui-services'
 import {
-  STRING_IMPORT_SUCCESS,
-  STRING_INVALID_IMPORT_FILE,
-  STRING_IMPORTING_ZIP_FILE,
-  STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
+  StringEncNotEnabled,
+  StringE2EEnabled,
   StringImportError,
-  STRING_E2E_ENABLED,
-  STRING_LOCAL_ENC_ENABLED,
-  STRING_ENC_NOT_ENABLED,
+  StringImportingZipFile,
+  StringImportSuccess,
+  StringInvalidImportFile,
+  StringLocalEncEnabled,
+  StringUnsupportedBackupFileVersion,
 } from '@/Constants/Strings'
 import { BackupFile } from '@standardnotes/snjs'
 import { sanitizeFileName } from '@standardnotes/utils'
@@ -46,10 +46,10 @@ const DataBackups = ({ application }: Props) => {
     const encryptionEnabled = hasUser || hasPasscode
 
     const encryptionStatusString = hasUser
-      ? STRING_E2E_ENABLED()
+      ? StringE2EEnabled()
       : hasPasscode
-      ? STRING_LOCAL_ENC_ENABLED()
-      : STRING_ENC_NOT_ENABLED()
+      ? StringLocalEncEnabled()
+      : StringEncNotEnabled()
 
     setEncryptionStatusString(encryptionStatusString)
     setIsEncryptionEnabled(encryptionEnabled)
@@ -110,7 +110,7 @@ const DataBackups = ({ application }: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const readFile = async (file: File): Promise<any> => {
     if (file.type === 'application/zip') {
-      application.alerts.alert(STRING_IMPORTING_ZIP_FILE()).catch(console.error)
+      application.alerts.alert(StringImportingZipFile()).catch(console.error)
       return
     }
 
@@ -121,7 +121,7 @@ const DataBackups = ({ application }: Props) => {
           const data = JSON.parse(e.target?.result as string)
           resolve(data)
         } catch {
-          application.alerts.alert(STRING_INVALID_IMPORT_FILE()).catch(console.error)
+          application.alerts.alert(StringInvalidImportFile()).catch(console.error)
         }
       }
       reader.readAsText(file)
@@ -135,7 +135,7 @@ const DataBackups = ({ application }: Props) => {
 
     setIsImportDataLoading(false)
 
-    let statusText = STRING_IMPORT_SUCCESS()
+    let statusText = StringImportSuccess()
     if (result.isFailed()) {
       statusText = result.getError()
     } else if (result.getValue().errorCount) {
@@ -168,7 +168,7 @@ const DataBackups = ({ application }: Props) => {
       await performImport(data)
     } else {
       setIsImportDataLoading(false)
-      void alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION() })
+      void alertDialog({ text: StringUnsupportedBackupFileVersion() })
     }
   }
 

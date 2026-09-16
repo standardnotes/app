@@ -7,7 +7,14 @@ import {
   PIN_NOTE_COMMAND,
   STAR_NOTE_COMMAND,
 } from '@standardnotes/ui-services'
-import { StringEmptyTrash, Strings, StringUtils } from '@/Constants/Strings'
+import {
+  StringArchiveLockedNotesAttempt,
+  StringDeleteItemsPermanentlyTitle,
+  StringDeleteLockedNotesAttempt,
+  StringDeleteNotes,
+  StringEmptyTrash,
+  StringTrashItemsTitle,
+} from '@/Constants/Strings'
 import {
   SNNote,
   NoteMutator,
@@ -295,18 +302,18 @@ export class NotesController
 
   async deleteNotes(permanently: boolean): Promise<boolean> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
-      const text = StringUtils.deleteLockedNotesAttempt(this.selectedNotesCount)
+      const text = StringDeleteLockedNotesAttempt(this.selectedNotesCount)
       this.application.alerts.alert(text).catch(console.error)
       return false
     }
 
-    const title = permanently ? Strings.deleteItemsPermanentlyTitle : Strings.trashItemsTitle
+    const title = permanently ? StringDeleteItemsPermanentlyTitle() : StringTrashItemsTitle()
     let noteTitle = undefined
     if (this.selectedNotesCount === 1) {
       const selectedNote = this.getSelectedNotesList()[0]
       noteTitle = selectedNote.title.length ? `'${selectedNote.title}'` : c('B3.Notes.NoteActions.Label').t`this note`
     }
-    const text = StringUtils.deleteNotes(permanently, this.selectedNotesCount, noteTitle)
+    const text = StringDeleteNotes(permanently, this.selectedNotesCount, noteTitle)
 
     if (
       await confirmDialog({
@@ -367,7 +374,7 @@ export class NotesController
   async setArchiveSelectedNotes(archived: boolean): Promise<void> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
       this.application.alerts
-        .alert(StringUtils.archiveLockedNotesAttempt(archived, this.selectedNotesCount))
+        .alert(StringArchiveLockedNotesAttempt(archived, this.selectedNotesCount))
         .catch(console.error)
       return
     }
