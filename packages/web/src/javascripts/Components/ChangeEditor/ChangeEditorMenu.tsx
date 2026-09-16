@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
+import { StringEditLockedAttempt } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
 import {
   UIFeature,
@@ -169,7 +169,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       }
 
       if (note.locked) {
-        application.alerts.alert(STRING_EDIT_LOCKED_ATTEMPT()).catch(console.error)
+        application.alerts.alert(StringEditLockedAttempt()).catch(console.error)
         return
       }
 

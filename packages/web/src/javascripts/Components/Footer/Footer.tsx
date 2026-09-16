@@ -12,11 +12,11 @@ import {
   getErrorMessageFromErrorResponseBody,
 } from '@standardnotes/snjs'
 import {
-  STRING_NEW_UPDATE_READY,
-  STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
-  STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
-  STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE,
-  STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
+  StringConfirmAppQuitDuringUpgrade,
+  StringNewUpdateReady,
+  StringUpgradeAccountConfirmButton,
+  StringUpgradeAccountConfirmText,
+  StringUpgradeAccountConfirmTitle,
 } from '@/Constants/Strings'
 import { alertDialog, confirmDialog } from '@standardnotes/ui-services'
 import Icon from '@/Components/Icon/Icon'
@@ -295,12 +295,12 @@ class Footer extends AbstractComponent<Props, State> {
   securityUpdateClickHandler = async () => {
     if (
       await confirmDialog({
-        title: STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE(),
-        text: STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT(),
-        confirmButtonText: STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON(),
+        title: StringUpgradeAccountConfirmTitle(),
+        text: StringUpgradeAccountConfirmText(),
+        confirmButtonText: StringUpgradeAccountConfirmButton(),
       })
     ) {
-      preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE(), async () => {
+      preventRefreshing(StringConfirmAppQuitDuringUpgrade(), async () => {
         await this.application.upgradeProtocolVersion()
       }).catch(console.error)
     }
@@ -335,7 +335,7 @@ class Footer extends AbstractComponent<Props, State> {
     this.setState({
       newUpdateAvailable: false,
     })
-    this.application.alerts.alert(STRING_NEW_UPDATE_READY()).catch(console.error)
+    this.application.alerts.alert(StringNewUpdateReady()).catch(console.error)
   }
 
   betaMessageClickHandler = () => {

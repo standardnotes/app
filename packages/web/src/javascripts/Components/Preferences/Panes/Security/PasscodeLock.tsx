@@ -1,12 +1,12 @@
 import {
-  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
-  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
-  STRING_E2E_ENABLED,
-  STRING_ENC_NOT_ENABLED,
-  STRING_LOCAL_ENC_ENABLED,
-  STRING_NON_MATCHING_PASSCODES,
-  StringUtils,
-  Strings,
+  StringConfirmAppQuitDuringPasscodeChange,
+  StringConfirmAppQuitDuringPasscodeRemoval,
+  StringEncNotEnabled,
+  StringEnterPasscode,
+  StringE2EEnabled,
+  StringKeyStorageInfo,
+  StringLocalEncEnabled,
+  StringNonMatchingPasscodes,
 } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
 import { preventRefreshing } from '@/Utils'
@@ -28,7 +28,7 @@ type Props = {
 
 const PasscodeLock = ({ application }: Props) => {
   const isNativeMobileWeb = application.isNativeMobileWeb()
-  const keyStorageInfo = StringUtils.keyStorageInfo(application)
+  const keyStorageInfo = StringKeyStorageInfo(application)
 
   const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } = application.accountMenuController
 
@@ -69,10 +69,10 @@ const PasscodeLock = ({ application }: Props) => {
     const encryptionEnabled = hasUser || hasPasscode
 
     const encryptionStatusString = hasUser
-      ? STRING_E2E_ENABLED()
+      ? StringE2EEnabled()
       : hasPasscode
-      ? STRING_LOCAL_ENC_ENABLED()
-      : STRING_ENC_NOT_ENABLED()
+      ? StringLocalEncEnabled()
+      : StringEncNotEnabled()
 
     setEncryptionStatusString(encryptionStatusString)
     setIsEncryptionEnabled(encryptionEnabled)
@@ -94,7 +94,7 @@ const PasscodeLock = ({ application }: Props) => {
   }
 
   const removePasscodePressed = async () => {
-    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL(), async () => {
+    await preventRefreshing(StringConfirmAppQuitDuringPasscodeRemoval(), async () => {
       if (await application.removePasscode()) {
         if (!isNativeMobileWeb) {
           await application.autolockService?.deleteAutolockPreference()
@@ -118,7 +118,7 @@ const PasscodeLock = ({ application }: Props) => {
 
     if (!passcode || passcode.length === 0) {
       await alertDialog({
-        text: Strings.enterPasscode(),
+        text: StringEnterPasscode(),
       })
       setIsPasscodeFocused(true)
       return
@@ -126,13 +126,13 @@ const PasscodeLock = ({ application }: Props) => {
 
     if (passcode !== passcodeConfirmation) {
       await alertDialog({
-        text: STRING_NON_MATCHING_PASSCODES(),
+        text: StringNonMatchingPasscodes(),
       })
       setIsPasscodeFocused(true)
       return
     }
 
-    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE(), async () => {
+    await preventRefreshing(StringConfirmAppQuitDuringPasscodeChange(), async () => {
       const successful = application.hasPasscode()
         ? await application.changePasscode(passcode as string)
         : await application.addPasscode(passcode as string)

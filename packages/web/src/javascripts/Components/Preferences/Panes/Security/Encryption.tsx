@@ -1,4 +1,4 @@
-import { STRING_E2E_ENABLED, STRING_ENC_NOT_ENABLED, STRING_LOCAL_ENC_ENABLED } from '@/Constants/Strings'
+import { StringEncNotEnabled, StringE2EEnabled, StringLocalEncEnabled } from '@/Constants/Strings'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import { Title, Text } from '../../PreferencesComponents/Content'
@@ -16,10 +16,10 @@ const Encryption: FunctionComponent = () => {
   const isEncryptionEnabled = app.isEncryptionAvailable()
 
   const encryptionStatusString = hasUser
-    ? STRING_E2E_ENABLED()
+    ? StringE2EEnabled()
     : hasPasscode
-    ? STRING_LOCAL_ENC_ENABLED()
-    : STRING_ENC_NOT_ENABLED()
+    ? StringLocalEncEnabled()
+    : StringEncNotEnabled()
 
   return (
     <PreferencesGroup>

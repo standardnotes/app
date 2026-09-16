@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import Icon from '@/Components/Icon/Icon'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
-import { STRING_GENERIC_SYNC_ERROR } from '@/Constants/Strings'
+import { StringGenericSyncError } from '@/Constants/Strings'
 import { useCallback, useMemo, useState, FunctionComponent } from 'react'
 import { AccountMenuPane } from './AccountMenuPane'
 import Menu from '@/Components/Menu/Menu'
@@ -48,7 +48,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
         }
       })
       .catch(() => {
-        application.alerts.alert(STRING_GENERIC_SYNC_ERROR()).catch(console.error)
+        application.alerts.alert(StringGenericSyncError()).catch(console.error)
       })
       .finally(() => {
         setIsSyncingInProgress(false)

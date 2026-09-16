@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
-import { STRING_GENERIC_SYNC_ERROR } from '@/Constants/Strings'
+import { StringGenericSyncError } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -28,7 +28,7 @@ const Sync: FunctionComponent<Props> = ({ application }: Props) => {
     })
     setIsSyncingInProgress(false)
     if (response && (response as any).error) {
-      application.alerts.alert(STRING_GENERIC_SYNC_ERROR()).catch(console.error)
+      application.alerts.alert(StringGenericSyncError()).catch(console.error)
     } else {
       setLastSyncDate(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
     }

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useCallback, useRef } from 'react'
 import { c } from 'ttag'
-import { STRING_DELETE_ACCOUNT_CONFIRMATION } from '@/Constants/Strings'
+import { StringDeleteAccountConfirmation } from '@/Constants/Strings'
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/WebApplication'
 import Icon from '../Icon/Icon'
@@ -33,7 +33,7 @@ const ConfirmDeleteAccountModal = ({ application }: Props) => {
       </div>
       <div className="sk-panel-row">
         <div>
-          <p className="text-base text-foreground lg:text-sm">{STRING_DELETE_ACCOUNT_CONFIRMATION()}</p>
+          <p className="text-base text-foreground lg:text-sm">{StringDeleteAccountConfirmation()}</p>
         </div>
       </div>
       <div className="mt-4 flex justify-end gap-2">
