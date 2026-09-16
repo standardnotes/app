@@ -75,9 +75,8 @@ export function StringRestoreLockedAttempt(): string {
     .t`This note has editing disabled. If you'd like to restore it to a previous revision, enable editing and try again.`
 }
 
-export function StringPermanentlyDeleteItem(title: string): string {
-  const itemTitle = title
-  return jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to permanently delete ${itemTitle}?`)
+export function StringPermanentlyDeleteItem(noteTitle: string): string {
+  return jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to permanently delete ${noteTitle}?`)
 }
 
 export function StringDeleteNote(title: string, permanently: boolean): string {
@@ -87,13 +86,13 @@ export function StringDeleteNote(title: string, permanently: boolean): string {
     : jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to move ${noteTitle} to the trash?`)
 }
 
-export function StringUploadFileProgress(fileName: string, progress: number): string {
-  return jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${progress}%)`)
+export function StringUploadFileProgress(fileName: string, percentComplete: number): string {
+  return jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${percentComplete}%)`)
 }
 
-export function StringUpgradeForFeature(feature: unknown) {
+export function StringUpgradeForFeature(featureNameBold: unknown) {
   return c('B7.FilesSubscriptionHelp.Subscription.Info')
-    .jt`To take advantage of ${feature} and other advanced features, upgrade your current plan.`
+    .jt`To take advantage of ${featureNameBold} and other advanced features, upgrade your current plan.`
 }
 
 export function StringEmptyTrash(count: number): string {
