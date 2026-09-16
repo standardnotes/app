@@ -13,7 +13,7 @@ import {
   IsNativeMobileWeb,
   VaultDisplayServiceInterface,
 } from '@standardnotes/ui-services'
-import { Strings, StringUtils } from '@/Constants/Strings'
+import { Strings, StringUploadFileProgress, StringUtils } from '@/Constants/Strings'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { ClassicFileReader, StreamingFileReader, StreamingFileSaver, ClassicFileSaver } from '@standardnotes/filepicker'
 import { parseAndCreateZippableFileName, parseFileName } from '@standardnotes/utils'
@@ -558,9 +558,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         } else {
           toastId = addToast({
             type: ToastType.Progress,
-            message: jtString(
-              c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${initialProgress}%)`,
-            ),
+            message: StringUploadFileProgress(fileName, initialProgress),
             progress: initialProgress,
           })
         }
@@ -587,9 +585,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
             })
           } else {
             updateToast(toastId, {
-              message: jtString(
-                c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${percentComplete}%)`,
-              ),
+              message: StringUploadFileProgress(fileName, percentComplete),
               progress: percentComplete,
             })
           }

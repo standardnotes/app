@@ -53,11 +53,26 @@ export const STRING_EDIT_LOCKED_ATTEMPT = () =>
 export const STRING_RESTORE_LOCKED_ATTEMPT = () =>
   c('B3.Notes.NoteActions.Info')
     .t`This note has editing disabled. If you'd like to restore it to a previous revision, enable editing and try again.`
+
+export function StringPermanentlyDeleteItem(title: string): string {
+  const itemTitle = title
+  return jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to permanently delete ${itemTitle}?`)
+}
+
 export function StringDeleteNote(title: string, permanently: boolean) {
   const noteTitle = title
   return permanently
-    ? jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to permanently delete ${noteTitle}?`)
+    ? StringPermanentlyDeleteItem(noteTitle)
     : jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to move ${noteTitle} to the trash?`)
+}
+
+export function StringUploadFileProgress(fileName: string, progress: number): string {
+  return jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}" (${progress}%)`)
+}
+
+export function StringUpgradeForFeature(feature: unknown) {
+  return c('B7.FilesSubscriptionHelp.Subscription.Info')
+    .jt`To take advantage of ${feature} and other advanced features, upgrade your current plan.`
 }
 export function StringEmptyTrash(count: number) {
   return c('B3.Notes.NoteActions.Confirmation').ngettext(
@@ -180,7 +195,7 @@ export const StringUtils = {
     if (notesCount === 1) {
       const noteTitle = title ? escapeHtmlString(title) : c('B3.Notes.NoteActions.Label').t`this note`
       return permanently
-        ? jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to permanently delete ${noteTitle}?`)
+        ? StringPermanentlyDeleteItem(noteTitle)
         : jtString(c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to move ${noteTitle} to the trash?`)
     }
 
@@ -189,10 +204,7 @@ export const StringUtils = {
       : c('B3.Notes.NoteActions.Confirmation').t`Are you sure you want to move these notes to the trash?`
   },
   deleteFile(title: string): string {
-    const fileTitle = escapeHtmlString(title)
-    return jtString(
-      c('B3.Notes.NoteActions.Confirmation').jt`Are you sure you want to permanently delete ${fileTitle}?`,
-    )
+    return StringPermanentlyDeleteItem(escapeHtmlString(title))
   },
   archiveLockedNotesAttempt(archive: boolean, notesCount = 1): string {
     const archiveAction = archive

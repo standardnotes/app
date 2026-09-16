@@ -15,6 +15,7 @@ import {
   SuperName,
   ProfessionalPlanName,
 } from '@standardnotes/features'
+import { StringUpgradeForFeature } from '@/Constants/Strings'
 import { c } from 'ttag'
 
 type Props = {
@@ -98,8 +99,7 @@ export const UpgradePrompt = ({
         >
           {featureNameBold && (
             <span>
-              {c('B7.FilesSubscriptionHelp.Subscription.Info')
-                .jt`To take advantage of ${featureNameBold} and other advanced features, upgrade your current plan.`}
+              {StringUpgradeForFeature(featureNameBold)}
             </span>
           )}
           {!featureNameBold && (
