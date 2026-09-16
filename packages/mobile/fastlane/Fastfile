@@ -57,18 +57,19 @@ platform :ios do
 
     if is_prod && !is_testflight
       upload_to_app_store(
+        app_version: ENV['PACKAGE_VERSION'],
         build_number: build_number,
         submit_for_review: true,
         automatic_release: false,
         force: true,
-        skip_metadata: true,
         skip_screenshots: true,
         skip_binary_upload: true,
         run_precheck_before_submit: false,
-        submission_information: { add_id_info_uses_idfa: false },
+        languages: ['en-US'],
         release_notes: {
-          'en-US': 'Fixes and improvements.'
-        }
+          'en-US' => 'Fixes and improvements.'
+        },
+        submission_information: { add_id_info_uses_idfa: false }
       )
     end
   end

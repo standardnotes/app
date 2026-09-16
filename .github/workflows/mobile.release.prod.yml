@@ -21,6 +21,9 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+      - name: Setup Android SDK
+        run: |
+          echo "y" | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"
       - name: Export version from package.json
         run:
           echo "PACKAGE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
