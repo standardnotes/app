@@ -341,9 +341,7 @@ const ClipperView = ({ applicationGroup }: { applicationGroup: WebApplicationGro
         </div>
         <div className="mb-1 text-center text-lg font-bold">{c('B7.FilesSubscriptionHelp.Subscription.Title')
           .t`Enable Advanced Features`}</div>
-        <div className="mb-3 text-center">
-          {jtString(StringUpgradeForFeature(ClipperName))}
-        </div>
+        <div className="mb-3 text-center">{jtString(StringUpgradeForFeature(ClipperName))}</div>
         <Button className="mb-2" fullWidth primary onClick={upgradePlan}>
           {c('B7.FilesSubscriptionHelp.Subscription.Action').t`Upgrade`}
         </Button>

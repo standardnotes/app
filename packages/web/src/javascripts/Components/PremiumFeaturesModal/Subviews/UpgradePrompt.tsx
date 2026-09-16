@@ -97,11 +97,7 @@ export const UpgradePrompt = ({
         <div
           className={classNames('text-sm text-passive-1', preferHorizontalLayout ? 'text-left' : 'px-4.5 text-center')}
         >
-          {featureNameBold && (
-            <span>
-              {StringUpgradeForFeature(featureNameBold)}
-            </span>
-          )}
+          {featureNameBold && <span>{StringUpgradeForFeature(featureNameBold)}</span>}
           {!featureNameBold && (
             <span>
               {jtString(
