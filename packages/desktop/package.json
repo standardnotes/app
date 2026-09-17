@@ -123,21 +123,14 @@
         "zip"
       ]
     },
-    "win": {
-      "certificateSubjectName": "Standard Notes Ltd.",
-      "publisherName": "Standard Notes Ltd.",
-      "signDlls": true,
-      "sign": "./scripts/windowsSign.js"
-    },
-    "nsis": {
-      "deleteAppDataOnUninstall": true
-    },
     "linux": {
       "category": "Office",
       "icon": "build/icon/",
       "executableName": "standard-notes",
       "desktop": {
-        "StartupWMClass": "standard notes"
+        "entry": {
+          "StartupWMClass": "standard notes"
+        }
       },
       "target": [
         "AppImage",
