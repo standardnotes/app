@@ -69,7 +69,7 @@
     "ava": "^5.1.0",
     "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "^11.0.0",
-    "electron-builder": "^26.15.7",
+    "electron-builder": "^24.9.1",
     "eslint": "*",
     "eslint-config-prettier": "^8.9.0",
     "eslint-plugin-import": "^2.26.0",
@@ -128,9 +128,7 @@
       "icon": "build/icon/",
       "executableName": "standard-notes",
       "desktop": {
-        "entry": {
-          "StartupWMClass": "standard notes"
-        }
+        "StartupWMClass": "standard notes"
       },
       "target": [
         "AppImage",
