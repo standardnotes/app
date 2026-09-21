@@ -1,5 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
-import { FOCUSABLE_BUT_NOT_TABBABLE, TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE, getTagFoldersFeatureName } from '@/Constants/Constants'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
@@ -54,6 +54,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const inputRef = useRef<HTMLInputElement>(null)
     const subtagInputRef = useRef<HTMLInputElement>(null)
     const menuButtonRef = useRef<HTMLAnchorElement>(null)
+
+    const isNativeMobileWeb = application.isNativeMobileWeb()
 
     const isContextMenuOpenForTag =
       navigationController.contextMenuTag === tag &&
@@ -139,10 +141,18 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       })
     }, [navigationController, tag, type])
 
-    const onBlur = useCallback(() => {
+    const saveTag = useCallback(() => {
       navigationController.save(tag, title).catch(console.error)
       setTitle(tag.title)
-    }, [navigationController, tag, title, setTitle])
+    }, [navigationController, tag, title])
+
+    const onBlur = useCallback(() => {
+      if (isNativeMobileWeb && application.items.isTemplateItem(tag)) {
+        navigationController.undoCreateNewTag()
+        return
+      }
+      saveTag()
+    }, [application.items, saveTag, isNativeMobileWeb, navigationController, tag])
 
     const onInput: FormEventHandler = useCallback(
       (e) => {
@@ -155,11 +165,15 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const onKeyDown: KeyboardEventHandler = useCallback(
       (e) => {
         if (e.key === KeyboardKey.Enter) {
-          inputRef.current?.blur()
           e.preventDefault()
+          if (isNativeMobileWeb && application.items.isTemplateItem(tag)) {
+            saveTag()
+          } else {
+            inputRef.current?.blur()
+          }
         }
       },
-      [inputRef],
+      [application.items, saveTag, isNativeMobileWeb, inputRef, tag],
     )
 
     useEffect(() => {
@@ -279,7 +293,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             return
           }
           if (!hasFolders) {
-            premiumModal.activate(TAG_FOLDERS_FEATURE_NAME)
+            premiumModal.activate(getTagFoldersFeatureName())
             return
           }
 

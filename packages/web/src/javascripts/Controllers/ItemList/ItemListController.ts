@@ -42,6 +42,8 @@ import { NavigationController } from '../Navigation/NavigationController'
 import { CrossControllerEvent } from '../CrossControllerEvent'
 import { SearchOptionsController } from '../SearchOptionsController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
+import { getSmartViewDisplayTitle } from '@/Utils/LocalizedSystemViewTitle'
 
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
@@ -253,6 +255,15 @@ export class ItemListController
     )
 
     this.disposers.push(
+      reaction(
+        () => localizationStore.currentLocale,
+        () => {
+          this.reloadPanelTitle()
+        },
+      ),
+    )
+
+    this.disposers.push(
       this.itemManager.streamItems<SNNote | FileItem>(
         [ContentType.TYPES.Note, ContentType.TYPES.File],
         ({ changed, inserted, removed }) => {
@@ -431,7 +442,8 @@ export class ItemListController
         ),
       )
     } else if (this.navigationController.selected) {
-      title = this.navigationController.selected.title
+      const selected = this.navigationController.selected
+      title = isSmartView(selected) ? getSmartViewDisplayTitle(selected) : selected.title
     }
 
     this.panelTitle = title

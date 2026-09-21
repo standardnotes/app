@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable } from 'mobx'
+import { action, makeAutoObservable, observable, runInAction } from 'mobx'
 import { c } from 'ttag'
 import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from '../Panes/Plugins/PackageProvider'
@@ -7,7 +7,7 @@ import { PreferencePaneId, StatusServiceEvent } from '@standardnotes/services'
 import { isDesktopApplication } from '@/Utils'
 import { PreferencesMenuItem } from './PreferencesMenuItem'
 import { SelectableMenuItem } from './SelectableMenuItem'
-import { PREFERENCES_MENU_ITEMS, READY_PREFERENCES_MENU_ITEMS } from './MenuItems'
+import { buildPreferencesMenuItems } from './MenuItems'
 
 /**
  * Unlike PreferencesController, the PreferencesSessionController is ephemeral and bound to a single opening of the
@@ -15,18 +15,45 @@ import { PREFERENCES_MENU_ITEMS, READY_PREFERENCES_MENU_ITEMS } from './MenuItem
  */
 export class PreferencesSessionController {
   private _selectedPane: PreferencePaneId = 'account'
-  private _menu: PreferencesMenuItem[]
+  private _preferencesBubbleRevision = 0
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 
   constructor(
     private application: WebApplication,
     private readonly _enableUnfinishedFeatures: boolean,
   ) {
-    const menuItems = this._enableUnfinishedFeatures
-      ? PREFERENCES_MENU_ITEMS.slice()
-      : READY_PREFERENCES_MENU_ITEMS.slice()
+    this.loadLatestVersions()
 
-    if (application.featuresController.isVaultsEnabled()) {
+    makeAutoObservable<
+      PreferencesSessionController,
+      | '_selectedPane'
+      | '_preferencesBubbleRevision'
+      | '_twoFactorAuth'
+      | '_extensionPanes'
+      | '_extensionLatestVersions'
+      | 'loadLatestVersions'
+    >(this, {
+      _twoFactorAuth: observable,
+      _selectedPane: observable,
+      _preferencesBubbleRevision: observable,
+      _extensionPanes: observable.ref,
+      _extensionLatestVersions: observable.ref,
+      loadLatestVersions: action,
+    })
+
+    this.application.status.addEventObserver((event) => {
+      if (event === StatusServiceEvent.PreferencesBubbleCountChanged) {
+        runInAction(() => {
+          this._preferencesBubbleRevision += 1
+        })
+      }
+    })
+  }
+
+  private buildMenuItems(): PreferencesMenuItem[] {
+    const menuItems = buildPreferencesMenuItems(this._enableUnfinishedFeatures)
+
+    if (this.application.featuresController.isVaultsEnabled()) {
       menuItems.push({ id: 'vaults', label: c('B6.Preferences.Other.Label').t`Vaults`, icon: 'safe-square', order: 5 })
     }
 
@@ -39,41 +66,7 @@ export class PreferencesSessionController {
       })
     }
 
-    this._menu = menuItems.sort((a, b) => a.order - b.order)
-
-    this.loadLatestVersions()
-
-    makeAutoObservable<
-      PreferencesSessionController,
-      | '_selectedPane'
-      | '_twoFactorAuth'
-      | '_extensionPanes'
-      | '_extensionLatestVersions'
-      | 'loadLatestVersions'
-      | 'updateMenuBubbleCounts'
-    >(this, {
-      _twoFactorAuth: observable,
-      _selectedPane: observable,
-      _extensionPanes: observable.ref,
-      _extensionLatestVersions: observable.ref,
-      loadLatestVersions: action,
-      updateMenuBubbleCounts: action,
-    })
-
-    this.application.status.addEventObserver((event) => {
-      if (event === StatusServiceEvent.PreferencesBubbleCountChanged) {
-        this.updateMenuBubbleCounts()
-      }
-    })
-  }
-
-  private updateMenuBubbleCounts(): void {
-    this._menu = this._menu.map((item) => {
-      return {
-        ...item,
-        bubbleCount: this.application.status.getPreferencesBubbleCount(item.id),
-      }
-    })
+    return menuItems.sort((a, b) => a.order - b.order)
   }
 
   private loadLatestVersions(): void {
@@ -91,7 +84,9 @@ export class PreferencesSessionController {
   }
 
   get menuItems(): SelectableMenuItem[] {
-    const menuItems = this._menu.map((preference) => {
+    void this._preferencesBubbleRevision
+
+    return this.buildMenuItems().map((preference) => {
       const item: SelectableMenuItem = {
         ...preference,
         selected: preference.id === this._selectedPane,
@@ -100,12 +95,10 @@ export class PreferencesSessionController {
       }
       return item
     })
-
-    return menuItems
   }
 
   get selectedMenuItem(): PreferencesMenuItem | undefined {
-    return this._menu.find((item) => item.id === this._selectedPane)
+    return this.buildMenuItems().find((item) => item.id === this._selectedPane)
   }
 
   get selectedPaneId(): PreferencePaneId {

@@ -4,7 +4,7 @@ import Icon from '@/Components/Icon/Icon'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { EditorFontSize, EditorLineHeight, EditorLineWidth, LocalPrefKey } from '@standardnotes/snjs'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
@@ -69,14 +69,10 @@ const EditorDefaults = ({ application }: Props) => {
     setLineHeight(value as EditorLineHeight)
   }
 
-  const lineHeightDropdownOptions = useMemo(
-    () =>
-      Object.values(EditorLineHeight).map((lineHeight) => ({
-        label: getEditorLineHeightLabel(lineHeight),
-        value: lineHeight,
-      })),
-    [],
-  )
+  const lineHeightDropdownOptions = Object.values(EditorLineHeight).map((lineHeight) => ({
+    label: getEditorLineHeightLabel(lineHeight),
+    value: lineHeight,
+  }))
 
   const [monospaceFont, setMonospaceFont] = useLocalPreference(LocalPrefKey.EditorMonospaceEnabled)
   const toggleMonospaceFont = () => {
@@ -88,14 +84,10 @@ const EditorDefaults = ({ application }: Props) => {
     setFontSize(value as EditorFontSize)
   }
 
-  const fontSizeDropdownOptions = useMemo(
-    () =>
-      Object.values(EditorFontSize).map((fontSize) => ({
-        label: getEditorFontSizeLabel(fontSize),
-        value: fontSize,
-      })),
-    [],
-  )
+  const fontSizeDropdownOptions = Object.values(EditorFontSize).map((fontSize) => ({
+    label: getEditorFontSizeLabel(fontSize),
+    value: fontSize,
+  }))
 
   const [editorWidth] = useLocalPreference(LocalPrefKey.EditorLineWidth)
 

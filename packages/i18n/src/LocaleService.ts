@@ -59,12 +59,18 @@ export class LocaleService {
   }
 
   async setLocale(locale: string): Promise<void> {
-    if (!this.localizationEnabled) {
-      await this.applyLocale(DEFAULT_LOCALE)
-      return
+    await this.applyLocale(locale)
+  }
+
+  /** Loads locale JSON if needed and activates it. Throws when the pack cannot be loaded. */
+  async loadAndActivateLocale(locale: string): Promise<void> {
+    if (locale !== DEFAULT_LOCALE && !this.loadedLocales.has(locale)) {
+      const data = await this.fetchJson<LocaleData>(`${LOCALES_BASE_PATH}/${locale}.json`)
+      addLocale(locale, data)
+      this.loadedLocales.add(locale)
     }
 
-    await this.applyLocale(locale)
+    this.activateLocale(locale)
   }
 
   private async applyLocale(locale: string): Promise<void> {
@@ -73,7 +79,8 @@ export class LocaleService {
         const data = await this.fetchJson<LocaleData>(`${LOCALES_BASE_PATH}/${locale}.json`)
         addLocale(locale, data)
         this.loadedLocales.add(locale)
-      } catch {
+      } catch (error) {
+        console.error(`Failed to load locale ${locale}`, error)
         this.activateLocale(DEFAULT_LOCALE)
         return
       }

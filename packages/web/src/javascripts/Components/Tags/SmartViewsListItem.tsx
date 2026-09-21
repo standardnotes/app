@@ -15,7 +15,9 @@ import {
 import { classNames } from '@standardnotes/utils'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useApplication } from '../ApplicationProvider'
+import { getSmartViewDisplayTitle } from '@/Utils/LocalizedSystemViewTitle'
 import { c } from 'ttag'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 type Props = {
   view: SmartView
@@ -36,6 +38,8 @@ const getIconClass = (view: SmartView, isSelected: boolean): string => {
 }
 
 const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEditingSmartView }) => {
+  void localizationStore.currentLocale
+
   const application = useApplication()
 
   const [title, setTitle] = useState(view.title || '')
@@ -46,8 +50,12 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
   const isEditing = tagsState.editingTag === view
 
   useEffect(() => {
-    setTitle(view.title || '')
-  }, [setTitle, view])
+    if (!isSystemView(view)) {
+      setTitle(view.title || '')
+    }
+  }, [view])
+
+  const displayTitle = isEditing ? title : getSmartViewDisplayTitle(view)
 
   const selectCurrentTag = useCallback(async () => {
     await tagsState.setSelectedTag(view, 'views', {
@@ -152,7 +160,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
             className={'title overflow-hidden text-left text-mobile-navigation-list-item lg:text-navigation-list-item'}
             id={`react-tag-${view.uuid}`}
           >
-            {title}
+            {displayTitle}
           </div>
         )}
         <div className={'count text-base lg:text-sm'}>

@@ -6,12 +6,16 @@ import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import { ContentType, SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
+import { c } from 'ttag'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 type Props = {
   searchOptions: SearchOptionsController
 }
 
 const SearchTagFilters = ({ searchOptions }: Props) => {
+  void localizationStore.currentLocale
+
   const application = useApplication()
   const { tagFilterList } = searchOptions
   const selected = application.navigationController.selected
@@ -38,7 +42,7 @@ const SearchTagFilters = ({ searchOptions }: Props) => {
       ))}
       <ItemSelectionDropdown
         onSelection={(item) => searchOptions.addTagFilter(item as SNTag)}
-        placeholder="Add tag..."
+        placeholder={c('B3.Notes.NoteList.Placeholder').t`Add tag...`}
         contentTypes={[ContentType.TYPES.Tag]}
         excludeUuids={excludeUuids}
       />

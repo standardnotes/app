@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
+import { getSmartTagsFeatureName } from '@/Constants/Constants'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
@@ -13,6 +13,7 @@ import AddSmartViewModal from '../SmartViewBuilder/AddSmartViewModal'
 import { AddSmartViewModalController } from '../SmartViewBuilder/AddSmartViewModalController'
 import SmartViewsList from './SmartViewsList'
 import { c } from 'ttag'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 type Props = {
   application: WebApplication
@@ -21,13 +22,17 @@ type Props = {
 }
 
 const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationController, featuresController }) => {
+  void localizationStore.currentLocale
+
+  const createSmartViewCommandLabel = c('B4.Notes.TagsLinkedItems.Action').t`Create a new smart view`
+
   const premiumModal = usePremiumModal()
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
   const editSmartViewModalController = useMemo(() => new EditSmartViewModalController(application), [application])
 
   const createNewSmartView = useCallback(() => {
     if (!featuresController.hasSmartViews) {
-      premiumModal.activate(SMART_TAGS_FEATURE_NAME)
+      premiumModal.activate(getSmartTagsFeatureName())
       return
     }
 
@@ -36,13 +41,8 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
 
   useEffect(
     () =>
-      application.commands.add(
-        'create-smart-view',
-        c('B4.Notes.TagsLinkedItems.Action').t`Create a new smart view`,
-        createNewSmartView,
-        'add',
-      ),
-    [application.commands, createNewSmartView],
+      application.commands.add('create-smart-view', createSmartViewCommandLabel, createNewSmartView, 'add'),
+    [application.commands, createNewSmartView, createSmartViewCommandLabel],
   )
 
   return (

@@ -32,7 +32,6 @@ import { disableIosTextFieldZoom, getPlatform } from '@/Utils'
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
 import { DesktopManagerInterface, Environment, Platform, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
-import LocaleInjector from './Components/LocaleInjector/LocaleInjector'
 import { WebDevice } from './Application/Device/WebDevice'
 import { StartApplication } from './Application/Device/StartApplication'
 import { WebApplicationGroup } from './Application/WebApplicationGroup'
@@ -86,16 +85,14 @@ const startApplication: StartApplication = async function startApplication(
     }
 
     root.render(
-      <LocaleInjector>
-        <ApplicationGroupView
-          key={getKey()}
-          server={defaultSyncServerHost}
-          device={device}
-          enableUnfinished={enableUnfinishedFeatures}
-          websocketUrl={webSocketUrl}
-          onDestroy={onDestroy}
-        />
-      </LocaleInjector>,
+      <ApplicationGroupView
+        key={getKey()}
+        server={defaultSyncServerHost}
+        device={device}
+        enableUnfinished={enableUnfinishedFeatures}
+        websocketUrl={webSocketUrl}
+        onDestroy={onDestroy}
+      />,
     )
 
     if (window.ReactNativeWebView) {

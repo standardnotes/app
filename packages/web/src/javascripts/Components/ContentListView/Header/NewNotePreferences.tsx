@@ -19,7 +19,7 @@ import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
 import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
 import { classNames } from '@standardnotes/utils'
-import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
+import { getNoteTitleFormatOptions } from './NoteTitleFormatOptions'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { getDayjsFormattedString } from '@/Utils/GetDayjsFormattedString'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
@@ -196,7 +196,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
             disabled={disabled}
             fullWidth={true}
             label={c('B3.Notes.NoteList.Label').t`Select the format for the note title`}
-            items={NoteTitleFormatOptions}
+            items={getNoteTitleFormatOptions()}
             value={newNoteTitleFormat}
             onChange={setNewNoteTitleFormatChange}
           />

@@ -12,6 +12,7 @@ import { observer } from 'mobx-react-lite'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/snjs'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 type Props = {
   itemListController: ItemListController
@@ -35,7 +36,7 @@ const SearchFilterButton = ({ activeFilterCount, isOpen, onClick }: SearchFilter
     )}
     onMouseDown={(event) => event.preventDefault()}
     onClick={onClick}
-    aria-label="Search filters"
+    aria-label={c('B3.Notes.NoteList.Title').t`Search filters`}
     aria-expanded={isOpen}
   >
     <Icon type="tune" className="h-4.5 w-4.5" />
@@ -53,6 +54,8 @@ const SearchBar = ({
   hideOptions = false,
   showSearchEnhancements = false,
 }: Props) => {
+  void localizationStore.currentLocale
+
   const searchBarRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)

@@ -185,7 +185,7 @@ describe('LocaleService', () => {
     expect(service.getCurrentLocale()).toBe('fr_FR')
   })
 
-  it('forces the default locale when setLocale is called while localization is disabled', async () => {
+  it('applies the requested locale when setLocale is called directly', async () => {
     global.fetch = createFetchMock({
       '/locales/config/locales.json': catalog,
       '/locales/fr_FR.json': frenchLocaleData,
@@ -196,8 +196,7 @@ describe('LocaleService', () => {
     await service.initialize({ localizationEnabled: false })
     await service.setLocale('fr_FR')
 
-    expect(addLocale).not.toHaveBeenCalled()
-    expect(useLocale).toHaveBeenCalledWith(DEFAULT_LOCALE)
-    expect(service.getCurrentLocale()).toBe(DEFAULT_LOCALE)
+    expect(addLocale).toHaveBeenCalledWith('fr_FR', frenchLocaleData)
+    expect(service.getCurrentLocale()).toBe('fr_FR')
   })
 })

@@ -5,6 +5,8 @@ import { observer } from 'mobx-react-lite'
 import SearchBubbles from './SearchBubbles'
 import SearchOptionsSection, { ClearFilterButton } from './SearchOptionsSection'
 import SearchTagFilters from './SearchTagFilters'
+import { c } from 'ttag'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 type Props = {
   searchOptions: SearchOptionsController
@@ -12,6 +14,8 @@ type Props = {
 }
 
 const EnhancedSearchOptionsContent = ({ searchOptions, className }: Props) => {
+  void localizationStore.currentLocale
+
   const { noteTitleOnly, tagFilterList, activeSearchFilterCount } = searchOptions
 
   return (
@@ -20,16 +24,18 @@ const EnhancedSearchOptionsContent = ({ searchOptions, className }: Props) => {
         <div className="flex items-start justify-between gap-2">
           <Checkbox
             name="search-note-title-only"
-            label="Search titles only"
+            label={c('B3.Notes.NoteList.Label').t`Search titles only`}
             checked={noteTitleOnly}
             onChange={(event) => searchOptions.setNoteTitleOnly(event.target.checked)}
           />
           {activeSearchFilterCount > 0 && (
-            <ClearFilterButton onClick={searchOptions.clearAllFilters}>Clear all filters</ClearFilterButton>
+            <ClearFilterButton onClick={searchOptions.clearAllFilters}>
+              {c('B3.Notes.NoteList.Label').t`Clear all filters`}
+            </ClearFilterButton>
           )}
         </div>
 
-        <SearchOptionsSection label="Include">
+        <SearchOptionsSection label={c('B3.Notes.NoteList.Label').t`Include`}>
           <div className="flex flex-wrap gap-2">
             <SearchBubbles searchOptions={searchOptions} />
           </div>
@@ -37,10 +43,12 @@ const EnhancedSearchOptionsContent = ({ searchOptions, className }: Props) => {
       </div>
 
       <SearchOptionsSection
-        label="Filter by tag"
+        label={c('B3.Notes.NoteList.Label').t`Filter by tag`}
         action={
           tagFilterList.length > 0 ? (
-            <ClearFilterButton onClick={searchOptions.clearTagFilters}>Clear tag filters</ClearFilterButton>
+            <ClearFilterButton onClick={searchOptions.clearTagFilters}>
+              {c('B3.Notes.NoteList.Label').t`Clear tag filters`}
+            </ClearFilterButton>
           ) : undefined
         }
       >

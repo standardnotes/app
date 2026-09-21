@@ -17,6 +17,7 @@ import ContentList from '@/Components/ContentListView/ContentList'
 import NoAccountWarning from '@/Components/NoAccountWarning/NoAccountWarning'
 import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import SearchBar from '../SearchBar/SearchBar'
@@ -47,6 +48,8 @@ type Props = {
 
 const ContentListView = forwardRef<HTMLDivElement, Props>(
   ({ application, className, id, children, onPanelWidthLoad }, ref) => {
+    void localizationStore.currentLocale
+
     const {
       paneController,
       accountMenuController,
@@ -258,31 +261,32 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       [application],
     )
 
-    const addButtonLabel = useMemo(() => {
-      let shortcut = keyboardStringForShortcut(shortcutForCreate)
-      if (shortcut) {
-        shortcut = '(' + shortcut + ')'
-      }
-      return isFilesSmartView
-        ? (c('B3.Notes.NoteList.Action').jt`Upload file ${shortcut}` as unknown as string)
-        : (c('B3.Notes.NoteList.Action').jt`Create a new note in the selected tag ${shortcut}` as unknown as string)
-    }, [isFilesSmartView, shortcutForCreate])
+    let addButtonShortcut = keyboardStringForShortcut(shortcutForCreate)
+    if (addButtonShortcut) {
+      addButtonShortcut = '(' + addButtonShortcut + ')'
+    }
+    const addButtonLabel = isFilesSmartView
+      ? (c('B3.Notes.NoteList.Action').jt`Upload file ${addButtonShortcut}` as unknown as string)
+      : (c('B3.Notes.NoteList.Action')
+          .jt`Create a new note in the selected tag ${addButtonShortcut}` as unknown as string)
+
+    const createNewNoteCommandLabel = isFilesSmartView
+      ? c('B3.Notes.NoteList.Action').t`Upload file`
+      : c('B3.Notes.NoteList.Action').t`Create new note`
 
     useEffect(
       () =>
         application.commands.addWithShortcut(
           CREATE_NEW_NOTE_KEYBOARD_COMMAND,
           'General',
-          isFilesSmartView
-            ? c('B3.Notes.NoteList.Action').t`Upload file`
-            : c('B3.Notes.NoteList.Action').t`Create new note`,
+          createNewNoteCommandLabel,
           (event) => {
             event?.preventDefault()
             void addNewItem()
           },
           isFilesSmartView ? 'upload' : 'add',
         ),
-      [addNewItem, application.commands, isFilesSmartView],
+      [addNewItem, application.commands, isFilesSmartView, createNewNoteCommandLabel],
     )
 
     const dailyMode = selectedAsTag?.isDailyEntry

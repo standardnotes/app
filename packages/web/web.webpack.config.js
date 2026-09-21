@@ -90,6 +90,8 @@ module.exports = (env) => {
         '@': path.resolve(__dirname, 'src/javascripts'),
         '@Controllers': path.resolve(__dirname, 'src/javascripts/controllers'),
         '@Services': path.resolve(__dirname, 'src/javascripts/services'),
+        '@standardnotes/i18n': path.resolve(__dirname, '../i18n/src'),
+        ttag: path.resolve(__dirname, '../../node_modules/ttag'),
       },
     },
     module: {

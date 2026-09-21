@@ -40,6 +40,7 @@ import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { LocalizationController } from '@/Controllers/Localization/LocalizationController'
+import { getSavedLocaleForApplication } from '@/Utils/LocaleCookie'
 import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { ActionsMenuController } from '@/Controllers/ActionsMenuController'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
@@ -316,7 +317,12 @@ export class WebDependencies extends DependencyContainer {
     })
 
     this.bind(Web_TYPES.LocalizationController, () => {
-      return new LocalizationController(this.get<FeaturesController>(Web_TYPES.FeaturesController), application.events)
+      return new LocalizationController(
+        this.get<FeaturesController>(Web_TYPES.FeaturesController),
+        () => getSavedLocaleForApplication(application),
+        application.preferences,
+        application.events,
+      )
     })
 
     this.bind(Web_TYPES.AccountMenuController, () => {
