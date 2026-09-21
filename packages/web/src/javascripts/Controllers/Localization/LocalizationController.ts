@@ -1,8 +1,10 @@
 import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
-import { LocaleService, resolveLocale } from '@standardnotes/i18n'
+import { DEFAULT_LOCALE, LocaleService, resolveLocale } from '@standardnotes/i18n'
 import { setLocaleCookie } from '@/Utils/LocaleCookie'
+import { addToast, ToastType } from '@standardnotes/toast'
+import { c } from 'ttag'
 import {
   ApplicationEvent,
   InternalEventBusInterface,
@@ -57,14 +59,19 @@ export class LocalizationController extends AbstractViewController implements In
       return
     }
 
-    setLocaleCookie(locale)
-
     try {
       await this.loadLocale(locale)
     } catch (error) {
       console.error('Failed to load locale before reload', error)
+      await this.fallbackToDefaultLocale()
+      addToast({
+        type: ToastType.Error,
+        message: c('B6.Preferences.General.Language.Error').t`Could not load the selected language.`,
+      })
       return
     }
+
+    setLocaleCookie(locale)
 
     try {
       await this.preferences.setValue(PrefKey.Locale, locale)
@@ -77,6 +84,12 @@ export class LocalizationController extends AbstractViewController implements In
 
   async reinitialize(): Promise<void> {
     await this.initializeLocalization()
+  }
+
+  private async fallbackToDefaultLocale(): Promise<void> {
+    const localeService = this.getLocaleService()
+    await localeService.loadAndActivateLocale(DEFAULT_LOCALE)
+    localizationStore.setCurrentLocale(localeService.getCurrentLocale())
   }
 
   private async loadLocale(locale: string): Promise<void> {
