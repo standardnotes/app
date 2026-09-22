@@ -2,6 +2,7 @@ import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
 import { DEFAULT_LOCALE, LocaleService, resolveLocale } from '@standardnotes/i18n'
+import { configureDateLocale } from '@/Utils/DateLocale'
 import { setLocaleCookie } from '@/Utils/LocaleCookie'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { c } from 'ttag'
@@ -90,6 +91,7 @@ export class LocalizationController extends AbstractViewController implements In
     const localeService = this.getLocaleService()
     await localeService.loadAndActivateLocale(DEFAULT_LOCALE)
     localizationStore.setCurrentLocale(localeService.getCurrentLocale())
+    await this.syncDateFormatting(localeService.getCurrentLocale())
   }
 
   private async loadLocale(locale: string): Promise<void> {
@@ -103,6 +105,7 @@ export class LocalizationController extends AbstractViewController implements In
     await localeService.loadAndActivateLocale(resolvedLocale)
     localizationStore.setAvailableLocales(catalog)
     localizationStore.setCurrentLocale(localeService.getCurrentLocale())
+    await this.syncDateFormatting(localeService.getCurrentLocale())
   }
 
   private getLocaleService(): LocaleService {
@@ -131,5 +134,13 @@ export class LocalizationController extends AbstractViewController implements In
     }
 
     localizationStore.setCurrentLocale(localeService.getCurrentLocale())
+    await this.syncDateFormatting(localeService.getCurrentLocale())
+  }
+
+  private async syncDateFormatting(appLocale: string): Promise<void> {
+    await configureDateLocale({
+      appLocale,
+      localizationEnabled: this.featuresController.isLocalizationEnabled(),
+    })
   }
 }

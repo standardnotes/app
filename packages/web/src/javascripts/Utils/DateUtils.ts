@@ -1,46 +1,18 @@
-import { dateToLocalizedString } from '@standardnotes/snjs/'
+import {
+  dateToHoursAndMinutesTimeString,
+  dateToStringStyle1,
+  formatDateAndTimeForNote,
+  formatDateForContextMenu,
+  formatLastSyncDate,
+  getFormattingLocale,
+} from '@/Utils/LocalizedDateFormat'
 
-export const formatLastSyncDate = (lastUpdatedDate: Date) => {
-  return dateToLocalizedString(lastUpdatedDate)
-}
-
-export const formatDateForContextMenu = (date: Date | undefined) => {
-  if (!date) {
-    return
-  }
-
-  return `${date.toDateString()} ${date.toLocaleTimeString()}`
-}
-
-export const formatDateAndTimeForNote = (date: Date, includeTime = true) => {
-  const dateString = `${date.toLocaleDateString(undefined, {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })}`
-
-  if (includeTime) {
-    return `${dateString} at ${date.toLocaleTimeString(undefined, {
-      timeStyle: 'short',
-    })}`
-  } else {
-    return dateString
-  }
-}
-
-export const dateToStringStyle1 = (date: Date) => {
-  const dateString = `${date.toLocaleDateString()}`
-
-  return `${dateString} at ${date.toLocaleTimeString(undefined, {
-    timeStyle: 'short',
-  })}`
-}
-
-export const dateToHoursAndMinutesTimeString = (date: Date) => {
-  return date.toLocaleTimeString(undefined, {
-    timeStyle: 'short',
-  })
+export {
+  dateToHoursAndMinutesTimeString,
+  dateToStringStyle1,
+  formatDateAndTimeForNote,
+  formatDateForContextMenu,
+  formatLastSyncDate,
 }
 
 export function numHoursBetweenDates(date1: Date, date2: Date): number {
@@ -48,12 +20,14 @@ export function numHoursBetweenDates(date1: Date, date2: Date): number {
 }
 
 export function areDatesInSameDay(date1: Date, date2: Date): boolean {
-  return date1.toLocaleDateString() === date2.toLocaleDateString()
+  const locale = getFormattingLocale()
+  return date1.toLocaleDateString(locale) === date2.toLocaleDateString(locale)
 }
 
 export function numDaysBetweenDates(date1: Date, date2: Date): number {
   if (numHoursBetweenDates(date1, date2) < 24) {
-    const dayOfWeekDiffers = date1.toLocaleDateString() !== date2.toLocaleDateString()
+    const locale = getFormattingLocale()
+    const dayOfWeekDiffers = date1.toLocaleDateString(locale) !== date2.toLocaleDateString(locale)
     if (dayOfWeekDiffers) {
       return 1
     }
@@ -74,7 +48,7 @@ export function addCalendarMonths(date: Date, months: number) {
 }
 
 export function getWeekdayName(date: Date, format: 'long' | 'short'): string {
-  return date.toLocaleString('default', { weekday: format })
+  return date.toLocaleString(getFormattingLocale(), { weekday: format })
 }
 
 export function areDatesInSameMonth(date1: Date, date2: Date): boolean {
