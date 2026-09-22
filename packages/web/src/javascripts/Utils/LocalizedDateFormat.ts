@@ -4,6 +4,25 @@ export function getFormattingLocale(): string {
   return getIntlLocale()
 }
 
+export function capitalizeForSentenceStart(text: string): string {
+  if (!text) {
+    return text
+  }
+
+  const locale = getFormattingLocale()
+  const firstCharacter = text[0]
+
+  if (firstCharacter.toLocaleUpperCase(locale) === firstCharacter) {
+    return text
+  }
+
+  if (firstCharacter.toLocaleLowerCase(locale) === firstCharacter) {
+    return firstCharacter.toLocaleUpperCase(locale) + text.slice(1)
+  }
+
+  return text
+}
+
 export function formatDateTime(date: Date, options: Intl.DateTimeFormatOptions): string {
   return new Intl.DateTimeFormat(getFormattingLocale(), options).format(date)
 }
@@ -19,6 +38,14 @@ const lastSyncDateFormatOptions: Intl.DateTimeFormatOptions = {
 
 export function formatLastSyncDate(date: Date): string {
   return formatDateTime(date, lastSyncDateFormatOptions)
+}
+
+export function formatLastSyncDateForSentenceStart(date: Date): string {
+  return capitalizeForSentenceStart(formatLastSyncDate(date))
+}
+
+export function formatDateAndTimeForNoteTitle(date: Date, includeTime = true): string {
+  return capitalizeForSentenceStart(formatDateAndTimeForNote(date, includeTime))
 }
 
 export function formatDateAndTimeForNote(date: Date, includeTime = true): string {

@@ -616,27 +616,53 @@ export function escapeHtmlString(html: string): string {
   return escape(html)
 }
 
-let sharedDateFormatter: unknown
-export function dateToLocalizedString(date: Date): string {
-  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat && typeof navigator !== 'undefined') {
-    if (!sharedDateFormatter) {
-      const locale = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language
-      sharedDateFormatter = new Intl.DateTimeFormat(locale, {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        weekday: 'long',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-    }
-    return (sharedDateFormatter as Intl.DateTimeFormat).format(date)
-  } else {
-    // IE < 11, Safari <= 9.0.
-    // In English, this generates the string most similar to
-    // the toLocaleDateString() result above.
-    return date.toDateString() + ' ' + date.toLocaleTimeString()
+const itemDateFormatOptions: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'short',
+  day: '2-digit',
+  weekday: 'long',
+  hour: '2-digit',
+  minute: '2-digit',
+}
+
+let sharedItemDateFormattingLocale: string | undefined
+
+export function setSharedItemDateFormattingLocale(locale: string | undefined): void {
+  sharedItemDateFormattingLocale = locale
+}
+
+function getBrowserDateFormattingLocale(): string {
+  if (typeof navigator === 'undefined') {
+    return 'en-US'
   }
+
+  if (navigator.languages && navigator.languages.length > 0) {
+    return navigator.languages[0]
+  }
+
+  return navigator.language || 'en-US'
+}
+
+function resolveItemDateFormattingLocale(explicitLocale?: string): string {
+  if (explicitLocale) {
+    return explicitLocale
+  }
+
+  if (sharedItemDateFormattingLocale) {
+    return sharedItemDateFormattingLocale
+  }
+
+  return getBrowserDateFormattingLocale()
+}
+
+export function dateToLocalizedString(date: Date, locale?: string): string {
+  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+    const intlLocale = resolveItemDateFormattingLocale(locale)
+    return new Intl.DateTimeFormat(intlLocale, itemDateFormatOptions).format(date)
+  }
+
+  // IE < 11, Safari <= 9.0.
+  return date.toDateString() + ' ' + date.toLocaleTimeString()
 }
 
 export function nonSecureRandomIdentifier(): string {

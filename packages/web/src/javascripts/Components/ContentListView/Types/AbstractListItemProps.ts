@@ -21,6 +21,7 @@ export type AbstractListItemProps<I extends ListableContentItem> = {
   tags: SNTag[]
   isPreviousItemTiled?: boolean
   isNextItemTiled?: boolean
+  dateFormattingLocale: string
 }
 
 export function doListItemPropsMeritRerender(
@@ -37,6 +38,7 @@ export function doListItemPropsMeritRerender(
     'sortBy',
     'isPreviousItemTiled',
     'isNextItemTiled',
+    'dateFormattingLocale',
   ]
 
   for (const key of simpleComparison) {
@@ -95,8 +97,6 @@ function doesItemChangeMeritRerender(previous: ListableContentItem, next: Listab
   const propertiesMeritingRerender: KeysOfUnion<ListableContentItem>[] = [
     'title',
     'protected',
-    'updatedAtString',
-    'createdAtString',
     'hidePreview',
     'preview_html',
     'preview_plain',

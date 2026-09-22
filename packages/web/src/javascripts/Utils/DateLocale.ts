@@ -1,4 +1,5 @@
 import { resolveActiveDateLocales } from '@standardnotes/i18n'
+import { setSharedItemDateFormattingLocale } from '@standardnotes/utils'
 import dayjs from 'dayjs'
 import RelativeTimePlugin from 'dayjs/plugin/relativeTime'
 import UpdateLocalePlugin from 'dayjs/plugin/updateLocale'
@@ -39,6 +40,8 @@ const state: DateLocaleState = {
   localizationEnabled: false,
 }
 
+setSharedItemDateFormattingLocale(undefined)
+
 const dayjsLocaleLoaders: Record<string, () => Promise<unknown>> = {
   de: () => import('dayjs/locale/de'),
   en: () => Promise.resolve(),
@@ -68,6 +71,7 @@ export async function configureDateLocale(options: { appLocale: string; localiza
 
   const { intlLocale, dayjsLocale } = resolveActiveDateLocales(options)
   state.intlLocale = intlLocale
+  setSharedItemDateFormattingLocale(options.localizationEnabled ? intlLocale : undefined)
 
   try {
     await loadDayjsLocale(dayjsLocale)

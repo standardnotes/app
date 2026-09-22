@@ -1,5 +1,9 @@
 import { configureDateLocale } from '@/Utils/DateLocale'
-import { formatDateAndTimeForNote } from '@/Utils/LocalizedDateFormat'
+import {
+  capitalizeForSentenceStart,
+  formatDateAndTimeForNote,
+  formatDateAndTimeForNoteTitle,
+} from '@/Utils/LocalizedDateFormat'
 
 describe('LocalizedDateFormat', () => {
   const sampleDate = new Date('2024-03-15T14:30:00')
@@ -36,5 +40,18 @@ describe('LocalizedDateFormat', () => {
       value: originalNavigator,
       configurable: true,
     })
+  })
+
+  it('capitalizes the first letter for sentence-start titles', async () => {
+    await configureDateLocale({ appLocale: 'fr_FR', localizationEnabled: true })
+
+    const formatted = formatDateAndTimeForNoteTitle(sampleDate, false)
+
+    expect(formatted.charAt(0)).toBe(formatted.charAt(0).toLocaleUpperCase('fr-FR'))
+    expect(formatted).toMatch(/^V|^v/) // vendredi -> Vendredi
+  })
+
+  it('leaves already-capitalized strings unchanged', () => {
+    expect(capitalizeForSentenceStart('Friday, March 15, 2024')).toBe('Friday, March 15, 2024')
   })
 })
