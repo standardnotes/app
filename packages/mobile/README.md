@@ -27,16 +27,16 @@ This is a React Native implementation of Standard Notes. React Native allows us 
 1. Setup your environment according to [official docs](https://reactnative.dev/docs/environment-setup) and be sure you can run an example React Native project.
 2. If you would like to build the Android app, you'll need to install the Android NDK. We use native code from the Libsodium encryption library to achieve high performance. You can install the NDK inside of Android Studio. You'll need to pick the version listed [here](https://github.com/standardnotes/react-native-sodium/blob/master/android/build.gradle#L47).
 3. Install [yarn](https://yarnpkg.com/) if you haven't already.
-4. Install project dependencies via:
+4. Install project dependencies and build for mobile in the root directory:
 
 ```shell
-yarn install && yarn install:pods
+yarn install && yarn install:pods && yarn build:mobile
 ```
 
 We have two flavors of the app:
 
-- `dev` which runs connects to development syncing server. To run locally use `yarn ios-dev` or `yarn android-dev` for Android.
-- `prod` which is the equivalent of our production application. To run local use `yarn ios-prod` or `yarn android-prod` for Android.
+- `dev` which runs connects to development syncing server. To run locally, use `yarn ios-dev` or `yarn android-dev` for Android.
+- `prod` which is the equivalent of our production application. To run locally, use `yarn ios-prod` or `yarn android-prod-release` for Android.
 
 If you would like to run the application on your iOS device, you'll need to do so using Xcode.
 
