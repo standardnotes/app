@@ -1,5 +1,6 @@
 import { FunctionComponent, useState } from 'react'
 import { observer } from 'mobx-react-lite'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
@@ -16,8 +17,11 @@ type Props = {
 }
 
 const Sync: FunctionComponent<Props> = ({ application }: Props) => {
+  void localizationStore.currentLocale
+
   const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
-  const [lastSyncDate, setLastSyncDate] = useState(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
+
+  const lastSyncDate = formatLastSyncDate(application.sync.getLastSyncDate() as Date)
 
   const doSynchronization = async () => {
     setIsSyncingInProgress(true)
@@ -29,8 +33,6 @@ const Sync: FunctionComponent<Props> = ({ application }: Props) => {
     setIsSyncingInProgress(false)
     if (response && (response as any).error) {
       application.alerts.alert(STRING_GENERIC_SYNC_ERROR()).catch(console.error)
-    } else {
-      setLastSyncDate(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
     }
   }
 

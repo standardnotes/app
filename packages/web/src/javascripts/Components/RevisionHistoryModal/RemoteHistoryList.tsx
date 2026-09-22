@@ -8,6 +8,7 @@ import { FeaturesClientInterface, RevisionMetadata } from '@standardnotes/snjs'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import Spinner from '@/Components/Spinner/Spinner'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { c } from 'ttag'
 
 type RemoteHistoryListProps = {
@@ -21,6 +22,8 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
   noteHistoryController,
   onSelectRevision,
 }) => {
+  void localizationStore.currentLocale
+
   const { remoteHistory, isFetchingRemoteHistory, selectRemoteRevision, selectedEntry } = noteHistoryController
 
   const [listElement, setListElement] = useState<HTMLDivElement | null>(null)

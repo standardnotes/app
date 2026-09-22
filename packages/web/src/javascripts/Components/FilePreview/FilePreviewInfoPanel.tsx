@@ -1,6 +1,9 @@
+import { formatDefaultDateTime } from '@/Utils/LocalizedDateFormat'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
+import { observer } from 'mobx-react-lite'
 import { c } from 'ttag'
 import Icon from '@/Components/Icon/Icon'
 
@@ -9,6 +12,8 @@ type Props = {
 }
 
 const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
+  void localizationStore.currentLocale
+
   return (
     <div className="flex min-w-70 flex-col p-4">
       <div className="mb-4 flex items-center">
@@ -28,11 +33,11 @@ const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
       </div>
       <div className="mb-3">
         <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Files.Info').t`Created:`}</span>{' '}
-        {file.created_at.toLocaleString()}
+        {formatDefaultDateTime(file.created_at)}
       </div>
       <div className="mb-3">
         <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Files.Info').t`Last Modified:`}</span>{' '}
-        {file.userModifiedDate.toLocaleString()}
+        {formatDefaultDateTime(file.userModifiedDate)}
       </div>
       <div>
         <span className="font-semibold">{c('B7.FilesSubscriptionHelp.Files.Info').t`File ID:`}</span> {file.uuid}
@@ -41,4 +46,4 @@ const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
   )
 }
 
-export default FilePreviewInfoPanel
+export default observer(FilePreviewInfoPanel)

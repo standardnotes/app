@@ -62,12 +62,37 @@ export function formatDateForContextMenu(date: Date | undefined): string | undef
   return `${datePart} ${timePart}`
 }
 
-export function dateToStringStyle1(date: Date): string {
-  const locale = getFormattingLocale()
-  const datePart = new Intl.DateTimeFormat(locale).format(date)
-  const timePart = new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(date)
+export function formatDefaultDateTime(date: Date): string {
+  return new Intl.DateTimeFormat(getFormattingLocale(), {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date)
+}
 
-  return `${datePart} at ${timePart}`
+export function formatSessionAccessDate(date: Date): string {
+  return formatDateTime(date, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+    hour: 'numeric',
+    minute: 'numeric',
+  })
+}
+
+export function formatMonthAndYear(date: Date): string {
+  return formatDateTime(date, {
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+export function formatDateOnlyString(date: Date): string {
+  return date.toLocaleDateString(getFormattingLocale())
+}
+
+export function dateToStringStyle1(date: Date): string {
+  return formatDateAndTimeForNote(date, true)
 }
 
 export function dateToHoursAndMinutesTimeString(date: Date): string {

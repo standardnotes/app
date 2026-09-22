@@ -1,50 +1,55 @@
-import { AnyFeatureDescription, FeatureStatus, dateToLocalizedString } from '@standardnotes/snjs'
+import { AnyFeatureDescription, FeatureStatus } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback } from 'react'
+import { observer } from 'mobx-react-lite'
 import { c } from 'ttag'
 
 const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 import Button from '@/Components/Button/Button'
 import { WarningCircle } from '../UIElements/WarningCircle'
 import { useApplication } from '../ApplicationProvider'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
+import { formatLastSyncDate } from '@/Utils/LocalizedDateFormat'
 
 type Props = {
   feature: AnyFeatureDescription
   featureStatus: FeatureStatus
 }
 
-const statusString = (featureStatus: FeatureStatus, expiredDate: Date | undefined, featureName: string) => {
-  switch (featureStatus) {
-    case FeatureStatus.InCurrentPlanButExpired:
-      if (expiredDate) {
-        const expiredDateString = dateToLocalizedString(expiredDate)
-        return jtString(
-          c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Your subscription expired on ${expiredDateString}`,
-        )
-      } else {
-        return c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your subscription expired.`
-      }
-    case FeatureStatus.NoUserSubscription:
-      return c('B7.FilesSubscriptionHelp.Subscription.Info').t`You do not have an active subscription`
-    case FeatureStatus.NotInCurrentPlan: {
-      const featureNameLabel = featureName
-      return jtString(
-        c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Please upgrade your plan to access ${featureNameLabel}`,
-      )
-    }
-    default: {
-      const featureNameLabel = featureName
-      return jtString(
-        c('B7.FilesSubscriptionHelp.Subscription.Info')
-          .jt`${featureNameLabel} is valid and you should not be seeing this message`,
-      )
-    }
-  }
-}
-
 const NotEntitledBanner: FunctionComponent<Props> = ({ featureStatus, feature }) => {
+  void localizationStore.currentLocale
+
   const application = useApplication()
 
   const expiredDate = application.subscriptions.userSubscriptionExpirationDate
+
+  const statusString = () => {
+    switch (featureStatus) {
+      case FeatureStatus.InCurrentPlanButExpired:
+        if (expiredDate) {
+          const expiredDateString = formatLastSyncDate(expiredDate)
+          return jtString(
+            c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Your subscription expired on ${expiredDateString}`,
+          )
+        } else {
+          return c('B7.FilesSubscriptionHelp.Subscription.Info').t`Your subscription expired.`
+        }
+      case FeatureStatus.NoUserSubscription:
+        return c('B7.FilesSubscriptionHelp.Subscription.Info').t`You do not have an active subscription`
+      case FeatureStatus.NotInCurrentPlan: {
+        const featureNameLabel = feature.name
+        return jtString(
+          c('B7.FilesSubscriptionHelp.Subscription.Info').jt`Please upgrade your plan to access ${featureNameLabel}`,
+        )
+      }
+      default: {
+        const featureNameLabel = feature.name
+        return jtString(
+          c('B7.FilesSubscriptionHelp.Subscription.Info')
+            .jt`${featureNameLabel} is valid and you should not be seeing this message`,
+        )
+      }
+    }
+  }
 
   const manageSubscription = useCallback(() => {
     void application.openSubscriptionDashboard.execute()
@@ -59,7 +64,7 @@ const NotEntitledBanner: FunctionComponent<Props> = ({ featureStatus, feature })
               <WarningCircle />
             </div>
             <div className="ml-2">
-              <strong>{statusString(featureStatus, expiredDate, feature.name)}</strong>
+              <strong>{statusString()}</strong>
               <div className={'sk-p'}>
                 {jtString(c('B7.FilesSubscriptionHelp.Subscription.Info').jt`${feature.name} is in a read-only state.`)}
               </div>
@@ -78,4 +83,4 @@ const NotEntitledBanner: FunctionComponent<Props> = ({ featureStatus, feature })
   )
 }
 
-export default NotEntitledBanner
+export default observer(NotEntitledBanner)

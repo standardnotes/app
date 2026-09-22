@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
@@ -7,6 +7,7 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { SNTag, VectorIconNameOrEmoji, DefaultTagIconName } from '@standardnotes/snjs'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Popover from '../Popover/Popover'
@@ -25,6 +26,8 @@ type ContextMenuProps = {
 }
 
 const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag }: ContextMenuProps) => {
+  void localizationStore.currentLocale
+
   const application = useApplication()
 
   const premiumModal = usePremiumModal()
@@ -45,10 +48,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     navigationController.remove(selectedTag, true).catch(console.error)
   }, [navigationController, selectedTag])
 
-  const tagLastModified = useMemo(
-    () => formatDateForContextMenu(selectedTag.userModifiedDate),
-    [selectedTag.userModifiedDate],
-  )
+  const tagLastModified = formatDateForContextMenu(selectedTag.userModifiedDate)
 
   const handleIconChange = (value?: VectorIconNameOrEmoji) => {
     navigationController.setIcon(selectedTag, value || DefaultTagIconName)
@@ -59,7 +59,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     navigationController.setContextMenuOpen(false)
   }, [navigationController, selectedTag])
 
-  const tagCreatedAt = useMemo(() => formatDateForContextMenu(selectedTag.created_at), [selectedTag.created_at])
+  const tagCreatedAt = formatDateForContextMenu(selectedTag.created_at)
 
   const titleInputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {

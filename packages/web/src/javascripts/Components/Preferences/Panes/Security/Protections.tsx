@@ -1,5 +1,8 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
+import { formatDateTime } from '@/Utils/LocalizedDateFormat'
 import { FunctionComponent, useCallback, useState, useEffect } from 'react'
+import { observer } from 'mobx-react-lite'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { isSameDay } from '@/Utils'
 import Button from '@/Components/Button/Button'
@@ -13,6 +16,8 @@ type Props = {
 }
 
 const Protections: FunctionComponent<Props> = ({ application }) => {
+  const currentLocale = localizationStore.currentLocale
+
   const enableProtections = () => {
     application.clearProtectionSession().catch(console.error)
   }
@@ -23,23 +28,20 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
     const protectionExpiry = application.getProtectionSessionExpiryDate()
     const now = new Date()
     if (protectionExpiry > now) {
-      let f: Intl.DateTimeFormat
       if (isSameDay(protectionExpiry, now)) {
-        f = new Intl.DateTimeFormat(undefined, {
-          hour: 'numeric',
-          minute: 'numeric',
-        })
-      } else {
-        f = new Intl.DateTimeFormat(undefined, {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'short',
+        return formatDateTime(protectionExpiry, {
           hour: 'numeric',
           minute: 'numeric',
         })
       }
 
-      return f.format(protectionExpiry)
+      return formatDateTime(protectionExpiry, {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'short',
+        hour: 'numeric',
+        minute: 'numeric',
+      })
     }
     return null
   }, [application])
@@ -65,6 +67,10 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
       removeKeyStatusChangedObserver()
     }
   }, [application, getProtectionsDisabledUntil])
+
+  useEffect(() => {
+    setProtectionsDisabledUntil(getProtectionsDisabledUntil())
+  }, [getProtectionsDisabledUntil, currentLocale])
 
   if (!hasProtections) {
     return null
@@ -98,4 +104,4 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
   )
 }
 
-export default Protections
+export default observer(Protections)

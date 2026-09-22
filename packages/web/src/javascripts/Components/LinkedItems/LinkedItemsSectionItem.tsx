@@ -7,7 +7,9 @@ import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { KeyboardKey } from '@standardnotes/ui-services'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { c } from 'ttag'
+import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -18,7 +20,7 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import LinkedFileMenuOptions from './LinkedFileMenuOptions'
 import LinkedItemMeta from './LinkedItemMeta'
 
-export const LinkedItemsSectionItem = ({
+export const LinkedItemsSectionItem = observer(function LinkedItemsSectionItem({
   activateItem,
   item,
   searchQuery,
@@ -30,7 +32,9 @@ export const LinkedItemsSectionItem = ({
   searchQuery?: string
   unlinkItem: () => void
   handleFileAction: FilesController['handleFileAction']
-}) => {
+}) {
+  void localizationStore.currentLocale
+
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const application = useApplication()
 
@@ -147,4 +151,4 @@ export const LinkedItemsSectionItem = ({
       </Popover>
     </div>
   )
-}
+})
