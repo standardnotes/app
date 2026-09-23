@@ -58,6 +58,7 @@ module.exports = (env) => {
       }),
       new webpack.DefinePlugin({
         __WEB_VERSION__: JSON.stringify(require('./package.json').version),
+        __VERSION__: JSON.stringify(require('../snjs/package.json').version),
       }),
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
@@ -90,8 +91,12 @@ module.exports = (env) => {
         '@': path.resolve(__dirname, 'src/javascripts'),
         '@Controllers': path.resolve(__dirname, 'src/javascripts/controllers'),
         '@Services': path.resolve(__dirname, 'src/javascripts/services'),
+        '@Lib': path.resolve(__dirname, '../snjs/lib'),
+        '@standardnotes/snjs': path.resolve(__dirname, '../snjs/lib'),
         '@standardnotes/i18n': path.resolve(__dirname, '../i18n/src'),
         '@standardnotes/utils': path.resolve(__dirname, '../utils/src'),
+        '@standardnotes/services': path.resolve(__dirname, '../services/src'),
+        '@standardnotes/features': path.resolve(__dirname, '../features/src'),
         ttag: path.resolve(__dirname, '../../node_modules/ttag'),
       },
     },
