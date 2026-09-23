@@ -3,6 +3,7 @@ import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
+import { c } from 'ttag'
 import EnhancedSearchOptionsContent from './EnhancedSearchOptionsContent'
 
 type Props = {
@@ -26,7 +27,13 @@ const SearchFilterSheet = ({ open, onClose, searchOptions }: Props) => {
   }, [addAndroidBackHandler, onClose, open])
 
   return (
-    <MobilePopoverContent open={open} requestClose={onClose} title="Search filters" id="search-filters" className="p-4">
+    <MobilePopoverContent
+      open={open}
+      requestClose={onClose}
+      title={c('B3.Notes.NoteList.Title').t`Search filters`}
+      id="search-filters"
+      className="p-4"
+    >
       <EnhancedSearchOptionsContent searchOptions={searchOptions} />
     </MobilePopoverContent>
   )

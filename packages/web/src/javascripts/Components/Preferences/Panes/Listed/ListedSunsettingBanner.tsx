@@ -1,7 +1,9 @@
-export const LISTED_SUNSETTING_PREFERENCES_NOTE =
-  'Note: The Listed platform will permanently shut down December 31, 2026. Your data published on Listed will still be available in your personal Standard Notes account.'
+import { AppName, ListedName } from '@standardnotes/features'
+import { c } from 'ttag'
 
-export const LISTED_SUNSETTING_ACTIONS_NOTE = 'Listed will permanently shut down on December 31, 2026.'
+type Props = {
+  variant?: 'pane' | 'menu'
+}
 
 const LearnMoreLink = () => {
   return (
@@ -10,17 +12,18 @@ const LearnMoreLink = () => {
       className="underline hover:no-underline"
       href="https://listed.to/@Listed/76799/an-update-about-listed"
     >
-      Learn more
+      {c('B6.Preferences.Listed.Action').t`Learn more`}
     </a>
   )
 }
 
-type Props = {
-  variant?: 'pane' | 'menu'
-}
-
 const ListedSunsettingBanner = ({ variant = 'pane' }: Props) => {
-  const message = variant === 'menu' ? LISTED_SUNSETTING_ACTIONS_NOTE : LISTED_SUNSETTING_PREFERENCES_NOTE
+  const message =
+    variant === 'menu'
+      ? c('B6.Preferences.Listed.Info')
+          .jt`${ListedName} will permanently shut down on December 31, 2026.`
+      : c('B6.Preferences.Listed.Info')
+          .jt`Note: The ${ListedName} platform will permanently shut down December 31, 2026. Your data published on ${ListedName} will still be available in your personal ${AppName} account.`
 
   if (variant === 'menu') {
     return (
