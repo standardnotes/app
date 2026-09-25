@@ -45,6 +45,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
   const [showAndroidWebviewUpdatePrompt, setShowAndroidWebviewUpdatePrompt] = useState(false)
   const [didLoadEnd, setDidLoadEnd] = useState(false)
+  const [nativeLocalizationRevision, setNativeLocalizationRevision] = useState(0)
 
   const insets = useSafeAreaInsets()
 
@@ -216,6 +217,8 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     const observer = device.addMobileDeviceEventReceiver((event) => {
       if (event === MobileDeviceEvent.RequestsWebViewReload) {
         destroyAndReload()
+      } else if (event === MobileDeviceEvent.LocaleChanged) {
+        setNativeLocalizationRevision((revision) => revision + 1)
       }
     })
 
@@ -421,6 +424,8 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   }
 
   if (showAndroidWebviewUpdatePrompt) {
+    void nativeLocalizationRevision
+
     return (
       <View
         style={{

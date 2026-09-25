@@ -41,4 +41,6 @@ export interface MobileDeviceInterface extends DeviceInterface {
   canDisplayNotifications(): Promise<boolean>
   displayNotification(options: Notification): Promise<string>
   cancelNotification(notificationId: string): Promise<void>
+
+  syncMobileLocalization(state: { localizationEnabled: boolean; locale?: string | null }): Promise<void>
 }

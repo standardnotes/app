@@ -4,7 +4,9 @@ import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewContr
 import { DEFAULT_LOCALE, LOCALES_BASE_PATH, LocaleService, resolveLocale } from '@standardnotes/i18n'
 import { configureDateLocale } from '@/Utils/DateLocale'
 import { syncDesktopMainProcessLocalization } from '@/Application/Device/SyncDesktopMainProcessLocalization'
+import { syncMobileNativeLocalization } from '@/Application/Device/SyncMobileNativeLocalization'
 import { persistLocale } from '@/Utils/LocalePersistence'
+import { isDesktopApplication } from '@/Utils'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { c } from 'ttag'
 import {
@@ -107,12 +109,54 @@ export class LocalizationController extends AbstractViewController implements In
     await this.syncDateFormatting(localeService.getCurrentLocale())
   }
 
+  /** Desktop serves web from `web/`; the mobile shell serves the same dist under `web-src/`. */
+  private webLocalesBasePath(): string {
+    if (typeof window === 'undefined' || window.location.protocol !== 'file:') {
+      return LOCALES_BASE_PATH
+    }
+
+    return isDesktopApplication() ? 'web/locales' : 'web-src/locales'
+  }
+
+  private shouldUseFileDocumentFetch(): boolean {
+    return (
+      typeof window !== 'undefined' && window.location.protocol === 'file:' && !isDesktopApplication()
+    )
+  }
+
+  private async fetchJsonFromDocument<T>(resourcePath: string): Promise<T> {
+    const url = new URL(resourcePath, window.location.href).href
+
+    return new Promise((resolve, reject) => {
+      const request = new XMLHttpRequest()
+      request.open('GET', url, true)
+      request.responseType = 'text'
+      request.onload = () => {
+        const ok = request.status === 0 || (request.status >= 200 && request.status < 300)
+        if (!ok) {
+          reject(new Error(`Failed to load ${url}: HTTP ${request.status}`))
+          return
+        }
+
+        try {
+          resolve(JSON.parse(request.responseText) as T)
+        } catch (error) {
+          reject(error)
+        }
+      }
+      request.onerror = () => reject(new Error(`Failed to load ${url}`))
+      request.send()
+    })
+  }
+
   private getLocaleService(): LocaleService {
     if (!this.localeService) {
       this.localeService = new LocaleService({
         onLocaleChanged: (locale) => localizationStore.setCurrentLocale(locale),
-        localesBasePath:
-          typeof window !== 'undefined' && window.location.protocol === 'file:' ? 'web/locales' : LOCALES_BASE_PATH,
+        localesBasePath: this.webLocalesBasePath(),
+        ...(this.shouldUseFileDocumentFetch()
+          ? { fetchJson: this.fetchJsonFromDocument.bind(this) }
+          : {}),
       })
     }
 
@@ -123,27 +167,35 @@ export class LocalizationController extends AbstractViewController implements In
     const localizationEnabled = this.featuresController.isLocalizationEnabled()
     const localeService = this.getLocaleService()
 
-    await localeService.initialize({
-      localizationEnabled,
-      savedLocale: this.getSavedLocale(),
-    })
+    try {
+      await localeService.initialize({
+        localizationEnabled,
+        savedLocale: this.getSavedLocale(),
+      })
 
-    if (localizationEnabled) {
-      localizationStore.setAvailableLocales(await localeService.getAvailableLocales())
-    } else {
+      if (localizationEnabled) {
+        localizationStore.setAvailableLocales(await localeService.getAvailableLocales())
+      } else {
+        localizationStore.setAvailableLocales({})
+      }
+
+      localizationStore.setCurrentLocale(localeService.getCurrentLocale())
+      await this.syncDateFormatting(localeService.getCurrentLocale())
+      this.syncNativeShellLocalization(localizationEnabled, localeService.getCurrentLocale())
+    } catch (error) {
+      console.error('Failed to initialize localization', error)
       localizationStore.setAvailableLocales({})
     }
-
-    localizationStore.setCurrentLocale(localeService.getCurrentLocale())
-    await this.syncDateFormatting(localeService.getCurrentLocale())
-    this.syncDesktopMainProcess(localizationEnabled, localeService.getCurrentLocale())
   }
 
-  private syncDesktopMainProcess(localizationEnabled: boolean, locale: string): void {
-    syncDesktopMainProcessLocalization({
+  private syncNativeShellLocalization(localizationEnabled: boolean, locale: string): void {
+    const state = {
       localizationEnabled,
       locale: localizationEnabled ? locale : undefined,
-    })
+    }
+
+    syncDesktopMainProcessLocalization(state)
+    syncMobileNativeLocalization(state)
   }
 
   private async syncDateFormatting(appLocale: string): Promise<void> {
