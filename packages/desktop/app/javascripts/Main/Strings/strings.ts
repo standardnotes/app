@@ -5,8 +5,37 @@ import { Strings } from './types'
 export function createStrings(): Strings {
   return {
     appMenu: {
+      window: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Window`,
+      help: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Help`,
       edit: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Edit`,
       view: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`View`,
+      about(appName: string) {
+        return jtString(c('B8.MobileDesktopShared.Desktop.Menu.Label').jt`About ${appName}`)
+      },
+      services: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Services`,
+      hide(appName: string) {
+        return jtString(c('B8.MobileDesktopShared.Desktop.Menu.Label').jt`Hide ${appName}`)
+      },
+      hideOthers: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Hide Others`,
+      showAll: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Show All`,
+      quit(appName: string) {
+        return jtString(c('B8.MobileDesktopShared.Desktop.Menu.Label').jt`Quit ${appName}`)
+      },
+      startSpeaking: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Start Speaking`,
+      stopSpeaking: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Stop Speaking`,
+      undo: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Undo`,
+      redo: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Redo`,
+      cut: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Cut`,
+      copy: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Copy`,
+      paste: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Paste`,
+      pasteAndMatchStyle: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Paste and Match Style`,
+      selectAll: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Select All`,
+      reload: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Reload`,
+      toggleDeveloperTools: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Toggle Developer Tools`,
+      actualSize: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Actual Size`,
+      zoomIn: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Zoom In`,
+      zoomOut: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Zoom Out`,
+      toggleFullScreen: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Toggle Full Screen`,
       hideMenuBar: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Hide Menu Bar`,
       useThemedMenuBar: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Use Themed Menu Bar`,
       minimizeToTrayOnClose: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Minimize To Tray On Close`,

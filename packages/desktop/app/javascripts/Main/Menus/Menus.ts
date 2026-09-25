@@ -30,40 +30,26 @@ const Separator: MenuItemConstructorOptions = {
   type: 'separator',
 }
 
+function menuRole(label: string, role: string): MenuItemConstructorOptions {
+  return { label, role: role as MenuItemConstructorOptions['role'] }
+}
+
 export function buildContextMenu(webContents: WebContents, params: ContextMenuParams): Menu {
   if (!params.isEditable) {
-    return Menu.buildFromTemplate([
-      {
-        role: 'copy',
-      },
-    ])
+    return Menu.buildFromTemplate([menuRole(str().copy, Roles.Copy)])
   }
 
   return Menu.buildFromTemplate([
     ...suggestionsMenu(params.selectionText, params.misspelledWord, params.dictionarySuggestions, webContents),
     Separator,
-    {
-      role: 'undo',
-    },
-    {
-      role: 'redo',
-    },
+    menuRole(str().undo, Roles.Undo),
+    menuRole(str().redo, Roles.Redo),
     Separator,
-    {
-      role: 'cut',
-    },
-    {
-      role: 'copy',
-    },
-    {
-      role: 'paste',
-    },
-    {
-      role: 'pasteAndMatchStyle',
-    },
-    {
-      role: 'selectAll',
-    },
+    menuRole(str().cut, Roles.Cut),
+    menuRole(str().copy, Roles.Copy),
+    menuRole(str().paste, Roles.Paste),
+    menuRole(str().pasteAndMatchStyle, Roles.PasteAndMatchStyle),
+    menuRole(str().selectAll, Roles.SelectAll),
   ])
 }
 
@@ -208,28 +194,19 @@ function macAppMenu(appName: string): MenuItemConstructorOptions {
     role: 'appMenu',
     label: appName,
     submenu: [
-      {
-        role: Roles.About,
-      },
+      menuRole(str().about(appName), Roles.About),
       Separator,
       {
+        label: str().services,
         role: Roles.Services,
         submenu: [],
       },
       Separator,
-      {
-        role: Roles.Hide,
-      },
-      {
-        role: Roles.HideOthers,
-      },
-      {
-        role: Roles.UnHide,
-      },
+      menuRole(str().hide(appName), Roles.Hide),
+      menuRole(str().hideOthers, Roles.HideOthers),
+      menuRole(str().showAll, Roles.UnHide),
       Separator,
-      {
-        role: Roles.Quit,
-      },
+      menuRole(str().quit(appName), Roles.Quit),
     ],
   }
 }
@@ -249,28 +226,14 @@ function editMenu(
     role: 'editMenu',
     label: str().edit,
     submenu: [
-      {
-        role: Roles.Undo,
-      },
-      {
-        role: Roles.Redo,
-      },
+      menuRole(str().undo, Roles.Undo),
+      menuRole(str().redo, Roles.Redo),
       Separator,
-      {
-        role: Roles.Cut,
-      },
-      {
-        role: Roles.Copy,
-      },
-      {
-        role: Roles.Paste,
-      },
-      {
-        role: Roles.PasteAndMatchStyle,
-      },
-      {
-        role: Roles.SelectAll,
-      },
+      menuRole(str().cut, Roles.Cut),
+      menuRole(str().copy, Roles.Copy),
+      menuRole(str().paste, Roles.Paste),
+      menuRole(str().pasteAndMatchStyle, Roles.PasteAndMatchStyle),
+      menuRole(str().selectAll, Roles.SelectAll),
       ...(isMac() ? [Separator, macSpeechMenu()] : [spellcheckerMenu(spellcheckerManager!, reload)]),
     ],
   }
@@ -280,12 +243,8 @@ function macSpeechMenu(): MenuItemConstructorOptions {
   return {
     label: str().speech,
     submenu: [
-      {
-        role: Roles.StopSeeking,
-      },
-      {
-        role: Roles.StopSeeking,
-      },
+      menuRole(str().startSpeaking, Roles.StartSeeking),
+      menuRole(str().stopSpeaking, Roles.StopSeeking),
     ],
   }
 }
@@ -317,26 +276,14 @@ function viewMenu(window: Electron.BrowserWindow, store: Store, reload: () => vo
   return {
     label: str().view,
     submenu: [
-      {
-        role: Roles.Reload,
-      },
-      {
-        role: Roles.ToggleDevTools,
-      },
+      menuRole(str().reload, Roles.Reload),
+      menuRole(str().toggleDeveloperTools, Roles.ToggleDevTools),
       Separator,
-      {
-        role: Roles.ResetZoom,
-      },
-      {
-        role: Roles.ZoomIn,
-      },
-      {
-        role: Roles.ZoomOut,
-      },
+      menuRole(str().actualSize, Roles.ResetZoom),
+      menuRole(str().zoomIn, Roles.ZoomIn),
+      menuRole(str().zoomOut, Roles.ZoomOut),
       Separator,
-      {
-        role: Roles.ToggleFullScreen,
-      },
+      menuRole(str().toggleFullScreen, Roles.ToggleFullScreen),
       ...(isMac() ? [] : [Separator, ...menuBarOptions(window, store, reload)]),
     ],
   }
@@ -375,14 +322,11 @@ function menuBarOptions(window: Electron.BrowserWindow, store: Store, reload: ()
 
 function windowMenu(store: Store, trayManager: TrayManager, reload: () => void): MenuItemConstructorOptions {
   return {
+    label: str().window,
     role: Roles.Window,
     submenu: [
-      {
-        role: Roles.Minimize,
-      },
-      {
-        role: Roles.Close,
-      },
+      menuRole(str().minimize, Roles.Minimize),
+      menuRole(str().close, Roles.Close),
       Separator,
       ...(isMac() ? macWindowItems() : [minimizeToTrayItem(store, trayManager, reload)]),
     ],
@@ -512,6 +456,7 @@ function updateMenu(window: BrowserWindow, appState: AppState) {
 
 function helpMenu(window: Electron.BrowserWindow, shell: Electron.Shell) {
   return {
+    label: str().help,
     role: Roles.Help,
     submenu: [
       {
