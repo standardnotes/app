@@ -229,7 +229,7 @@ function CommandPalette() {
         section,
         id: UuidGenerator.GenerateUuid(),
         itemUuid: item.uuid,
-        description: item.title || c('B2.NavSharedUI.Placeholder').t`<no title>`,
+        description: item.title || c('B2.NavSharedUI.Placeholder').t`Untitled`,
         icon: <Icon type={icon[0]} className={item instanceof SNNote ? icon[1] : ''} />,
       }
     },

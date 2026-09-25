@@ -26,7 +26,7 @@ const getPremiumContentCopy = (planName: string | undefined) => {
 const RevisionContentLocked: FunctionComponent = () => {
   const application = useApplication()
 
-  let planName = 'free'
+  let planName: string | undefined
   if (application.subscriptions.hasOnlineSubscription()) {
     if (!application.subscriptions.isUserSubscriptionCanceled && !application.subscriptions.isUserSubscriptionExpired) {
       planName = application.subscriptions.userSubscriptionName

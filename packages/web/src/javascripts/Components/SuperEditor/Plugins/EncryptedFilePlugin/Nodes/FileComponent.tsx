@@ -142,8 +142,7 @@ function FileComponent({
         <div className="flex flex-col items-center justify-center gap-2 p-4 text-center" ref={blockWrapperRef}>
           <div className="flex items-center gap-2">
             <Spinner className="h-4 w-4" />
-            {c('B4.Notes.EditingUI.Status').t`Uploading file "`}
-            {uploadProgress.file.name}"... ({progress}%)
+            {c('B4.Notes.EditingUI.Status').jt`Uploading file "${uploadProgress.file.name}" (${progress}%)`}
           </div>
           <div className="w-full max-w-[50%] overflow-hidden rounded bg-contrast">
             <div
@@ -163,9 +162,7 @@ function FileComponent({
   if (!file) {
     return (
       <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
-        <div>
-          {c('B4.Notes.EditingUI.Label').t`Unable to find file`} {fileUuid}
-        </div>
+        <div>{c('B4.Notes.EditingUI.Label').jt`Unable to find file ${fileUuid}`}</div>
       </BlockWithAlignableContents>
     )
   }

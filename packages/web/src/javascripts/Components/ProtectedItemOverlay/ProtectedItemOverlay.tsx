@@ -1,8 +1,13 @@
+import { jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 import Button from '@/Components/Button/Button'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 
-const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
+function translatedProtectedItemType(itemType: 'note' | 'file'): string {
+  return itemType === 'note'
+    ? c('B3.Notes.NoteActions.Label').t`note`
+    : c('B7.FilesSubscriptionHelp.Files.Label').t`file`
+}
 
 type Props = {
   showAccountMenu: () => void
@@ -12,11 +17,13 @@ type Props = {
 }
 
 const ProtectedItemOverlay = ({ showAccountMenu, onViewItem, hasProtectionSources, itemType }: Props) => {
+  const itemTypeLabel = translatedProtectedItemType(itemType)
+
   const instructionText = hasProtectionSources
-    ? jtString(c('B2.NavSharedUI.Info').jt`Authenticate to view this ${itemType}.`)
+    ? jtString(c('B2.NavSharedUI.Info').jt`Authenticate to view this ${itemTypeLabel}.`)
     : jtString(
         c('B2.NavSharedUI.Info')
-          .jt`Add a passcode or create an account to require authentication to view this ${itemType}.`,
+          .jt`Add a passcode or create an account to require authentication to view this ${itemTypeLabel}.`,
       )
 
   return (
@@ -27,7 +34,7 @@ const ProtectedItemOverlay = ({ showAccountMenu, onViewItem, hasProtectionSource
         </div>
         <div className="mb-auto flex max-w-md flex-col items-center justify-center text-center md:mb-0">
           <h1 className="m-0 w-full text-2xl font-bold">
-            {jtString(c('B2.NavSharedUI.Title').jt`This ${itemType} is protected`)}
+            {jtString(c('B2.NavSharedUI.Title').jt`This ${itemTypeLabel} is protected`)}
           </h1>
           <p className="mt-2 w-full text-lg">{instructionText}</p>
           <div className="mt-4 flex gap-3">
@@ -45,7 +52,7 @@ const ProtectedItemOverlay = ({ showAccountMenu, onViewItem, hasProtectionSource
             <Button small onClick={onViewItem}>
               {hasProtectionSources
                 ? c('B2.NavSharedUI.Action').t`Authenticate`
-                : jtString(c('B2.NavSharedUI.Action').jt`View ${itemType}`)}
+                : jtString(c('B2.NavSharedUI.Action').jt`View ${itemTypeLabel}`)}
             </Button>
           </div>
         </div>
