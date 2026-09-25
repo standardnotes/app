@@ -1,5 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { observer } from 'mobx-react-lite'
 import { MouseEventHandler, useCallback } from 'react'
@@ -12,6 +13,8 @@ type Props = {
 }
 
 const NoAccountWarningContent = ({ accountMenuController, noAccountWarningController }: Props) => {
+  void localizationStore.currentLocale
+
   const showAccountMenu: MouseEventHandler = useCallback(
     (event) => {
       event.stopPropagation()

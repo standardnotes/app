@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { observer } from 'mobx-react-lite'
@@ -12,6 +13,8 @@ type Props = {
 }
 
 const UpgradeNow = ({ application, featuresController, subscriptionContoller }: Props) => {
+  void localizationStore.currentLocale
+
   const shouldShowCTA = !featuresController.hasFolders
   const hasAccount = subscriptionContoller.hasAccount
   const hasAccessToFeatures = subscriptionContoller.hasFirstPartyOnlineOrOfflineSubscription()
