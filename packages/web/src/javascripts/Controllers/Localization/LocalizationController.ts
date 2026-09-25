@@ -1,9 +1,10 @@
 import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
-import { DEFAULT_LOCALE, LocaleService, resolveLocale } from '@standardnotes/i18n'
+import { DEFAULT_LOCALE, LOCALES_BASE_PATH, LocaleService, resolveLocale } from '@standardnotes/i18n'
 import { configureDateLocale } from '@/Utils/DateLocale'
-import { setLocaleCookie } from '@/Utils/LocaleCookie'
+import { syncDesktopMainProcessLocalization } from '@/Application/Device/SyncDesktopMainProcessLocalization'
+import { persistLocale } from '@/Utils/LocalePersistence'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { c } from 'ttag'
 import {
@@ -26,7 +27,6 @@ export class LocalizationController extends AbstractViewController implements In
   ) {
     super(eventBus)
 
-    eventBus.addEventHandler(this, ApplicationEvent.Launched)
     eventBus.addEventHandler(this, ApplicationEvent.FeaturesAvailabilityChanged)
     eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
     eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
@@ -34,7 +34,6 @@ export class LocalizationController extends AbstractViewController implements In
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
-      case ApplicationEvent.Launched:
       case ApplicationEvent.FeaturesAvailabilityChanged:
       case ApplicationEvent.LocalDataLoaded:
       case ApplicationEvent.PreferencesChanged:
@@ -72,10 +71,10 @@ export class LocalizationController extends AbstractViewController implements In
       return
     }
 
-    setLocaleCookie(locale)
+    persistLocale(localizationStore.currentLocale)
 
     try {
-      await this.preferences.setValue(PrefKey.Locale, locale)
+      await this.preferences.setValue(PrefKey.Locale, localizationStore.currentLocale)
     } catch (error) {
       console.error('Failed to sync locale preference', error)
     }
@@ -112,6 +111,8 @@ export class LocalizationController extends AbstractViewController implements In
     if (!this.localeService) {
       this.localeService = new LocaleService({
         onLocaleChanged: (locale) => localizationStore.setCurrentLocale(locale),
+        localesBasePath:
+          typeof window !== 'undefined' && window.location.protocol === 'file:' ? 'web/locales' : LOCALES_BASE_PATH,
       })
     }
 
@@ -135,6 +136,14 @@ export class LocalizationController extends AbstractViewController implements In
 
     localizationStore.setCurrentLocale(localeService.getCurrentLocale())
     await this.syncDateFormatting(localeService.getCurrentLocale())
+    this.syncDesktopMainProcess(localizationEnabled, localeService.getCurrentLocale())
+  }
+
+  private syncDesktopMainProcess(localizationEnabled: boolean, locale: string): void {
+    syncDesktopMainProcessLocalization({
+      localizationEnabled,
+      locale: localizationEnabled ? locale : undefined,
+    })
   }
 
   private async syncDateFormatting(appLocale: string): Promise<void> {

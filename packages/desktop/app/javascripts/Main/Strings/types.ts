@@ -7,8 +7,31 @@ export interface Strings {
 }
 
 interface AppMenuStrings {
+  window: string
+  help: string
   edit: string
   view: string
+  about(appName: string): string
+  services: string
+  hide(appName: string): string
+  hideOthers: string
+  showAll: string
+  quit(appName: string): string
+  startSpeaking: string
+  stopSpeaking: string
+  undo: string
+  redo: string
+  cut: string
+  copy: string
+  paste: string
+  pasteAndMatchStyle: string
+  selectAll: string
+  reload: string
+  toggleDeveloperTools: string
+  actualSize: string
+  zoomIn: string
+  zoomOut: string
+  toggleFullScreen: string
   hideMenuBar: string
   useThemedMenuBar: string
   minimizeToTrayOnClose: string

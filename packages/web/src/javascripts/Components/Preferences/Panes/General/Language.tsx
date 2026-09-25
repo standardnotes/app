@@ -30,6 +30,7 @@ const Language: FunctionComponent<Props> = ({ application }) => {
   const toggle = useCallback(() => {
     application.features.toggleExperimentalFeature(NativeFeatureIdentifier.TYPES.Localization)
     setLocalizationEnabled(application.featuresController.isLocalizationEnabled())
+    void application.localizationController.reinitialize()
   }, [application])
 
   const onLocaleChange = useCallback(

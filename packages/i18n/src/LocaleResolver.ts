@@ -3,6 +3,8 @@ export const DEFAULT_LOCALE = 'en_US'
 export type ResolveLocaleOptions = {
   availableLocales: readonly string[]
   savedLocale?: string | null
+  /** OS or browser languages; defaults to `getBrowserLanguages()` when omitted. */
+  environmentLocales?: readonly string[]
 }
 
 /**
@@ -48,11 +50,11 @@ export function getBrowserLanguages(): readonly string[] {
 /**
  * Resolves the best matching locale:
  * 1. Saved user preference
- * 2. Browser languages
+ * 2. Environment languages (browser or OS)
  * 3. Default locale (en_US)
  */
 export function resolveLocale(options: ResolveLocaleOptions): string {
-  const { savedLocale, availableLocales } = options
+  const { savedLocale, availableLocales, environmentLocales } = options
 
   if (availableLocales.length === 0) {
     return DEFAULT_LOCALE
@@ -65,11 +67,11 @@ export function resolveLocale(options: ResolveLocaleOptions): string {
     }
   }
 
-  const browserLanguages = getBrowserLanguages()
-  for (const browserLanguage of browserLanguages) {
-    const browserMatch = getClosestLocaleCode(browserLanguage, availableLocales)
-    if (browserMatch) {
-      return browserMatch
+  const languages = environmentLocales ?? getBrowserLanguages()
+  for (const language of languages) {
+    const match = getClosestLocaleCode(language, availableLocales)
+    if (match) {
+      return match
     }
   }
 

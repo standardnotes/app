@@ -1,6 +1,6 @@
-import { getLocaleCookie, LOCALE_COOKIE_NAME, setLocaleCookie } from './LocaleCookie'
+import { getLocaleCookie, LOCALE_COOKIE_NAME, setLocaleCookie } from './LocalePersistence'
 
-describe('LocaleCookie', () => {
+describe('LocalePersistence', () => {
   afterEach(() => {
     document.cookie = `${LOCALE_COOKIE_NAME}=; path=/; max-age=0`
   })

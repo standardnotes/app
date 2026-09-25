@@ -124,4 +124,18 @@ describe('resolveLocale', () => {
       }),
     ).toBe(DEFAULT_LOCALE)
   })
+
+  it('uses explicit environment locales instead of navigator', () => {
+    Object.defineProperty(global, 'navigator', {
+      value: { languages: ['en-US'] },
+      configurable: true,
+    })
+
+    expect(
+      resolveLocale({
+        availableLocales,
+        environmentLocales: ['de-DE'],
+      }),
+    ).toBe('de_DE')
+  })
 })
