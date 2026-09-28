@@ -66,6 +66,23 @@ export function persistLocale(locale: string): void {
   setLocaleCookie(locale)
 }
 
+/** Clears bootstrapped locale storage so Labs off does not leave a saved language choice. */
+export function clearPersistedLocale(): void {
+  if (isFileProtocol()) {
+    try {
+      localStorage.removeItem(LOCALE_LOCAL_STORAGE_KEY)
+    } catch {
+      // Ignore quota / privacy errors
+    }
+  }
+
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  document.cookie = `${LOCALE_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`
+}
+
 export function getSavedLocaleForApplication(application: WebApplication): string | undefined {
   if (isFileProtocol()) {
     const storedLocale = readLocaleFromLocalStorage()

@@ -1,4 +1,4 @@
-import { getLocaleCookie, LOCALE_COOKIE_NAME, setLocaleCookie } from './LocalePersistence'
+import { clearPersistedLocale, getLocaleCookie, LOCALE_COOKIE_NAME, setLocaleCookie } from './LocalePersistence'
 
 describe('LocalePersistence', () => {
   afterEach(() => {
@@ -12,6 +12,12 @@ describe('LocalePersistence', () => {
   })
 
   it('returns undefined when the cookie is missing', () => {
+    expect(getLocaleCookie()).toBeUndefined()
+  })
+
+  it('clears the locale cookie', () => {
+    setLocaleCookie('fr_FR')
+    clearPersistedLocale()
     expect(getLocaleCookie()).toBeUndefined()
   })
 })

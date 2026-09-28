@@ -5,7 +5,7 @@ import { DEFAULT_LOCALE, LOCALES_BASE_PATH, LocaleService, resolveLocale } from 
 import { configureDateLocale } from '@/Utils/DateLocale'
 import { syncDesktopMainProcessLocalization } from '@/Application/Device/SyncDesktopMainProcessLocalization'
 import { syncMobileNativeLocalization } from '@/Application/Device/SyncMobileNativeLocalization'
-import { persistLocale } from '@/Utils/LocalePersistence'
+import { clearPersistedLocale, persistLocale } from '@/Utils/LocalePersistence'
 import { isDesktopApplication } from '@/Utils'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { c } from 'ttag'
@@ -14,6 +14,7 @@ import {
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
+  PrefDefaults,
   PrefKey,
   PreferenceServiceInterface,
 } from '@standardnotes/snjs'
@@ -84,8 +85,20 @@ export class LocalizationController extends AbstractViewController implements In
     window.location.reload()
   }
 
-  async reinitialize(): Promise<void> {
-    await this.initializeLocalization()
+  async enableLocalization(): Promise<void> {
+    window.location.reload()
+  }
+
+  async disableLocalization(): Promise<void> {
+    clearPersistedLocale()
+
+    try {
+      await this.preferences.setValue(PrefKey.Locale, PrefDefaults[PrefKey.Locale])
+    } catch (error) {
+      console.error('Failed to clear locale preference', error)
+    }
+
+    window.location.reload()
   }
 
   private async fallbackToDefaultLocale(): Promise<void> {
@@ -119,9 +132,7 @@ export class LocalizationController extends AbstractViewController implements In
   }
 
   private shouldUseFileDocumentFetch(): boolean {
-    return (
-      typeof window !== 'undefined' && window.location.protocol === 'file:' && !isDesktopApplication()
-    )
+    return typeof window !== 'undefined' && window.location.protocol === 'file:' && !isDesktopApplication()
   }
 
   private async fetchJsonFromDocument<T>(resourcePath: string): Promise<T> {
@@ -154,9 +165,7 @@ export class LocalizationController extends AbstractViewController implements In
       this.localeService = new LocaleService({
         onLocaleChanged: (locale) => localizationStore.setCurrentLocale(locale),
         localesBasePath: this.webLocalesBasePath(),
-        ...(this.shouldUseFileDocumentFetch()
-          ? { fetchJson: this.fetchJsonFromDocument.bind(this) }
-          : {}),
+        ...(this.shouldUseFileDocumentFetch() ? { fetchJson: this.fetchJsonFromDocument.bind(this) } : {}),
       })
     }
 

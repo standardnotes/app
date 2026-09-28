@@ -11,15 +11,17 @@ import Switch from '@/Components/Switch/Switch'
 import { NativeFeatureIdentifier } from '@standardnotes/snjs'
 import { c } from 'ttag'
 
+/** Lets the Labs switch paint before the localization reload. */
+const LOCALIZATION_TOGGLE_RELOAD_DELAY_MS = 200
+
 type Props = {
   application: WebApplication
 }
 
 const Language: FunctionComponent<Props> = ({ application }) => {
-  const [localizationEnabled, setLocalizationEnabled] = useState(() =>
+  const [labsSwitchChecked, setLabsSwitchChecked] = useState(() =>
     application.featuresController.isLocalizationEnabled(),
   )
-
   const localeItems: DropdownItem[] = Object.entries(localizationStore.availableLocales)
     .sort(([, leftLabel], [, rightLabel]) => leftLabel.localeCompare(rightLabel))
     .map(([localeCode, label]) => ({
@@ -29,9 +31,19 @@ const Language: FunctionComponent<Props> = ({ application }) => {
 
   const toggle = useCallback(() => {
     application.features.toggleExperimentalFeature(NativeFeatureIdentifier.TYPES.Localization)
-    setLocalizationEnabled(application.featuresController.isLocalizationEnabled())
-    void application.localizationController.reinitialize()
+    const isEnabled = application.featuresController.isLocalizationEnabled()
+    setLabsSwitchChecked(isEnabled)
+
+    window.setTimeout(() => {
+      if (isEnabled) {
+        void application.localizationController.enableLocalization()
+      } else {
+        void application.localizationController.disableLocalization()
+      }
+    }, LOCALIZATION_TOGGLE_RELOAD_DELAY_MS)
   }, [application])
+
+  const showLanguageDropdown = labsSwitchChecked && localeItems.length > 0
 
   const onLocaleChange = useCallback(
     (value: string) => {
@@ -48,7 +60,7 @@ const Language: FunctionComponent<Props> = ({ application }) => {
             <Title>{c('B6.Preferences.General.Language.Title').t`Language Settings`}</Title>
             <Pill style={'success'}>{c('B6.Preferences.General.Label').t`Labs`}</Pill>
           </div>
-          <Switch onChange={toggle} checked={localizationEnabled} />
+          <Switch onChange={toggle} checked={labsSwitchChecked} />
         </div>
 
         <Text>
@@ -56,7 +68,7 @@ const Language: FunctionComponent<Props> = ({ application }) => {
             .t`Use the app in your preferred language and customize date and time formats. Your browser language is used when no preference is set.`}
         </Text>
 
-        {localizationEnabled && (
+        {showLanguageDropdown && (
           <div className="mt-4">
             <Subtitle>{c('B6.Preferences.General.Language.Subtitle').t`App language`}</Subtitle>
             <div className="mt-2">
