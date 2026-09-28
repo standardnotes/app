@@ -3,6 +3,7 @@ import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { Pill, Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { WebApplication } from '@/Application/WebApplication'
+import { isDesktopApplication } from '@/Utils'
 import { FunctionComponent, useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -44,6 +45,7 @@ const Language: FunctionComponent<Props> = ({ application }) => {
   }, [application])
 
   const showLanguageDropdown = labsSwitchChecked && localeItems.length > 0
+  const usesOsLanguage = isDesktopApplication() || application.isNativeMobileWeb()
 
   const onLocaleChange = useCallback(
     (value: string) => {
@@ -64,8 +66,11 @@ const Language: FunctionComponent<Props> = ({ application }) => {
         </div>
 
         <Text>
-          {c('B6.Preferences.General.Language.Info')
-            .t`Use the app in your preferred language and customize date and time formats. Your browser language is used when no preference is set.`}
+          {usesOsLanguage
+            ? c('B6.Preferences.General.Language.Info')
+                .t`Use the app in your preferred language and customize date and time formats. Your OS language is used when no preference is set.`
+            : c('B6.Preferences.General.Language.Info')
+                .t`Use the app in your preferred language and customize date and time formats. Your browser language is used when no preference is set.`}
         </Text>
 
         {showLanguageDropdown && (
