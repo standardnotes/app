@@ -242,10 +242,7 @@ function editMenu(
 function macSpeechMenu(): MenuItemConstructorOptions {
   return {
     label: str().speech,
-    submenu: [
-      menuRole(str().startSpeaking, Roles.StartSeeking),
-      menuRole(str().stopSpeaking, Roles.StopSeeking),
-    ],
+    submenu: [menuRole(str().startSpeaking, Roles.StartSeeking), menuRole(str().stopSpeaking, Roles.StopSeeking)],
   }
 }
 
