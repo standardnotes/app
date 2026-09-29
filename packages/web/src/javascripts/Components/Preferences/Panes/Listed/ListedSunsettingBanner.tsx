@@ -20,8 +20,7 @@ const LearnMoreLink = () => {
 const ListedSunsettingBanner = ({ variant = 'pane' }: Props) => {
   const message =
     variant === 'menu'
-      ? c('B6.Preferences.Listed.Info')
-          .jt`${ListedName} will permanently shut down on December 31, 2026.`
+      ? c('B6.Preferences.Listed.Info').jt`${ListedName} will permanently shut down on December 31, 2026.`
       : c('B6.Preferences.Listed.Info')
           .jt`Note: The ${ListedName} platform will permanently shut down December 31, 2026. Your data published on ${ListedName} will still be available in your personal ${AppName} account.`
 
