@@ -1,10 +1,10 @@
 package com.standardnotes;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
-import android.content.res.Configuration;
+
+import androidx.activity.OnBackPressedCallback;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -12,6 +12,21 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
 public class MainActivity extends ReactActivity {
+
+    private final OnBackPressedCallback backPressedCallback =
+            new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    setEnabled(false);
+                    MainActivity.this.onBackPressed();
+                    setEnabled(true);
+                }
+            };
+
+    private boolean usesTargetSdk36BackWorkaround() {
+        return Build.VERSION.SDK_INT >= 36
+                && getApplicationInfo().targetSdkVersion >= 36;
+    }
 
     @Override
     protected String getMainComponentName() {
@@ -21,6 +36,9 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstance) {
          super.onCreate(null);
+         if (usesTargetSdk36BackWorkaround()) {
+             getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
+         }
     }
 
     /**
@@ -43,7 +61,13 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     public void invokeDefaultOnBackPressed() {
+        if (usesTargetSdk36BackWorkaround()) {
+            backPressedCallback.setEnabled(false);
+        }
         moveTaskToBack(true);
+        if (usesTargetSdk36BackWorkaround()) {
+            backPressedCallback.setEnabled(true);
+        }
     }
 
     @Override
