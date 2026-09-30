@@ -18,6 +18,10 @@ import Spinner from '@/Components/Spinner/Spinner'
 import { FilesControllerEvent } from '@/Controllers/FilesController'
 import { c } from 'ttag'
 
+function isInteractiveClickTarget(target: EventTarget | null): boolean {
+  return target instanceof Element && target.closest('button, a, input, select, textarea, [role="button"]') !== null
+}
+
 export type FileComponentProps = Readonly<{
   className: Readonly<{
     base: string
@@ -108,6 +112,10 @@ function FileComponent({
       CLICK_COMMAND,
       (event) => {
         if (blockWrapperRef.current?.contains(event.target as Node)) {
+          if (isInteractiveClickTarget(event.target)) {
+            return false
+          }
+
           event.preventDefault()
 
           $getNodeByKey(nodeKey)?.selectEnd()
