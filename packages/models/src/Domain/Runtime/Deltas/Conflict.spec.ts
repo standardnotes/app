@@ -8,6 +8,7 @@ import {
   PayloadTimestampDefaults,
 } from '../../Abstract/Payload'
 import { ItemsKeyContent } from '../../Syncable/ItemsKey/ItemsKeyInterface'
+import { NoteContent } from '../../Syncable/Note/NoteContent'
 import { ImmutablePayloadCollection } from '../Collection/Payload/ImmutablePayloadCollection'
 import { PayloadCollection } from '../Collection/Payload/PayloadCollection'
 import { HistoryMap } from '../History'
@@ -16,9 +17,11 @@ import { ConflictDelta } from './Conflict'
 describe('conflict delta', () => {
   const historyMap = {} as HistoryMap
 
-  const createBaseCollection = (payload: FullyFormedPayloadInterface) => {
+  const createBaseCollection = (...payloads: FullyFormedPayloadInterface[]) => {
     const baseCollection = new PayloadCollection()
-    baseCollection.set(payload)
+    for (const payload of payloads) {
+      baseCollection.set(payload)
+    }
     return ImmutablePayloadCollection.FromCollection(baseCollection)
   }
 
@@ -98,6 +101,43 @@ describe('conflict delta', () => {
     const delta = new ConflictDelta(baseCollection, basePayload, applyPayload, historyMap)
 
     expect(delta.getConflictStrategy()).toBe(ConflictStrategy.KeepApply)
+  })
+
+  it('should detect matching conflict even if it is not the first in the list', () => {
+    const basePayload = new DecryptedPayload<NoteContent>({
+      uuid: '123',
+      content_type: ContentType.TYPES.Note,
+      content: FillItemContent<NoteContent>({ title: 'base', text: '' }),
+      ...PayloadTimestampDefaults(),
+    })
+
+    const nonMatchingConflict = new DecryptedPayload<NoteContent>({
+      uuid: 'conflict-1',
+      content_type: ContentType.TYPES.Note,
+      content: FillItemContent<NoteContent>({ title: 'something else', text: '', conflict_of: '123' }),
+      ...PayloadTimestampDefaults(),
+    })
+
+    const matchingConflict = new DecryptedPayload<NoteContent>({
+      uuid: 'conflict-2',
+      content_type: ContentType.TYPES.Note,
+      content: FillItemContent<NoteContent>({ title: 'incoming content', text: '', conflict_of: '123' }),
+      ...PayloadTimestampDefaults(),
+    })
+
+    const baseCollection = createBaseCollection(basePayload, nonMatchingConflict, matchingConflict)
+
+    const applyPayload = new DecryptedPayload<NoteContent>({
+      uuid: '123',
+      content_type: ContentType.TYPES.Note,
+      content: FillItemContent<NoteContent>({ title: 'incoming content', text: '' }),
+      ...PayloadTimestampDefaults(),
+      updated_at_timestamp: 999,
+    })
+
+    const delta = new ConflictDelta(baseCollection, basePayload, applyPayload, historyMap)
+
+    expect(delta.getConflictStrategy()).toBe(ConflictStrategy.KeepBase)
   })
 
   it('if keep base strategy, always use the apply payloads updated_at_timestamp', () => {
