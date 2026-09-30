@@ -32,6 +32,18 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
     }
   }
 
+  const privacyPolicyLink = (
+    <a target="_blank" className="underline hover:no-underline" href={PrivacyPolicyUrl} onClick={handleClick}>
+      {c('B7.FilesSubscriptionHelp.Help.Info').t`Privacy Manifesto.`}
+    </a>
+  )
+
+  const offlineHelpLink = (
+    <a target="_blank" className="underline hover:no-underline" href={HelpOfflineUrl} onClick={handleClick}>
+      {c('B7.FilesSubscriptionHelp.Help.Info').t`more details here.`}
+    </a>
+  )
+
   return (
     <PreferencesPane>
       <PreferencesGroup>
@@ -41,10 +53,7 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
           <Subtitle>{c('B7.FilesSubscriptionHelp.Help.Confirmation').t`Who can read my private notes?`}</Subtitle>
           <Text>
             {c('B7.FilesSubscriptionHelp.Help.Info')
-              .t`Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read`}{' '}
-            <a target="_blank" className="underline hover:no-underline" href={PrivacyPolicyUrl} onClick={handleClick}>
-              {c('B7.FilesSubscriptionHelp.Help.Info').t`Privacy Manifesto.`}
-            </a>
+              .jt`Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read ${privacyPolicyLink}`}
           </Text>
           {application.isNativeIOS() && (
             <>
@@ -80,13 +89,8 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
             {jtString(c('B7.FilesSubscriptionHelp.Help.Confirmation').jt`Can I use ${AppName} totally offline?`)}
           </Subtitle>
           <Text>
-            {jtString(
-              c('B7.FilesSubscriptionHelp.Help.Info')
-                .jt`${AppName} can be used totally offline without an account, and without an internet connection. You can find`,
-            )}{' '}
-            <a target="_blank" className="underline hover:no-underline" href={HelpOfflineUrl} onClick={handleClick}>
-              {c('B7.FilesSubscriptionHelp.Help.Info').t`more details here.`}
-            </a>
+            {c('B7.FilesSubscriptionHelp.Help.Info')
+              .jt`${AppName} can be used totally offline without an account, and without an internet connection. You can find ${offlineHelpLink}`}
           </Text>
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />

@@ -151,8 +151,9 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application, onSuccess 
             </div>
             {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
               <div className={'info mb-3 mt-3'}>
-                {c('B6.Preferences.General.Info').t`Your offline subscription code has been successfully`}{' '}
-                {isSuccessfullyActivated ? 'activated' : 'removed'}.
+                {isSuccessfullyActivated
+                  ? c('B6.Preferences.General.Info').t`Your offline subscription code has been successfully activated.`
+                  : c('B6.Preferences.General.Info').t`Your offline subscription code has been successfully removed.`}
               </div>
             )}
             {hasUserPreviouslyStoredCode && (

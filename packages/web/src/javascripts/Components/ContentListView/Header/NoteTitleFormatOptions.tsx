@@ -1,6 +1,8 @@
 import { NewNoteTitleFormat } from '@standardnotes/snjs'
 import { c } from 'ttag'
 
+export const NOTE_TITLE_FORMAT_PATTERN_EXAMPLE = 'YYYY-MM-DD'
+
 export const NoteTitleFormatOptions = [
   {
     label: c('B3.Notes.NoteList.Label').t`Current date and time`,

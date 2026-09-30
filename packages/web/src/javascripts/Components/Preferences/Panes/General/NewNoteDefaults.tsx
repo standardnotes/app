@@ -16,10 +16,14 @@ import {
   classNames,
 } from '@standardnotes/snjs'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { NoteTitleFormatOptions } from '@/Components/ContentListView/Header/NoteTitleFormatOptions'
+import {
+  NOTE_TITLE_FORMAT_PATTERN_EXAMPLE,
+  NoteTitleFormatOptions,
+} from '@/Components/ContentListView/Header/NoteTitleFormatOptions'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { getDayjsFormattedString } from '@/Utils/GetDayjsFormattedString'
+import { jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const PrefChangeDebounceTimeInMs = 25
@@ -154,7 +158,9 @@ const NewNoteDefaults = () => {
                       'w-full min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-base md:w-auto md:translucent-ui:bg-transparent lg:text-sm',
                       'focus-within:ring-2 focus-within:ring-info',
                     )}
-                    placeholder={c('B6.Preferences.General.Placeholder').t`e.g. YYYY-MM-DD`}
+                    placeholder={jtString(
+                      c('B6.Preferences.General.Placeholder').jt`e.g. ${NOTE_TITLE_FORMAT_PATTERN_EXAMPLE}`,
+                    )}
                     value={customNoteTitleFormat}
                     onChange={handleCustomFormatInputChange}
                     spellCheck={false}
