@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.202.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.7...@standardnotes/web@3.202.8) (2026-09-30)
+
+### Bug Fixes
+
+* Fixes footer loading items string ([#3057](https://github.com/standardnotes/app/issues/3057)) ([b313c58](https://github.com/standardnotes/app/commit/b313c58e3410ef9860fd2b62d690981472e7ae18))
+* Fixes Open file preview button on Android ([#3056](https://github.com/standardnotes/app/issues/3056)) ([210b896](https://github.com/standardnotes/app/commit/210b896137474c80e9fc54b808976e3a8386f24f))
+
 ## [3.202.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.6...@standardnotes/web@3.202.7) (2026-09-17)
 
 **Note:** Version bump only for package @standardnotes/web

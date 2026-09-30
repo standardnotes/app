@@ -1,6 +1,22 @@
 {
   "versions": [
     {
+      "version": "3.202.8",
+      "title": "[3.202.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.7...@standardnotes/web@3.202.8) (2026-09-30)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixes footer loading items string ([#3057](https://github.com/standardnotes/app/issues/3057)) ([b313c58](https://github.com/standardnotes/app/commit/b313c58e3410ef9860fd2b62d690981472e7ae18))\n* Fixes Open file preview button on Android ([#3056](https://github.com/standardnotes/app/issues/3056)) ([210b896](https://github.com/standardnotes/app/commit/210b896137474c80e9fc54b808976e3a8386f24f))",
+      "parsed": {
+        "_": [
+          "Fixes footer loading items string (#3057) (b313c58)",
+          "Fixes Open file preview button on Android (#3056) (210b896)"
+        ],
+        "Bug Fixes": [
+          "Fixes footer loading items string (#3057) (b313c58)",
+          "Fixes Open file preview button on Android (#3056) (210b896)"
+        ]
+      }
+    },
+    {
       "version": "3.202.7",
       "title": "[3.202.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.6...@standardnotes/web@3.202.7) (2026-09-17)",
       "date": null,
