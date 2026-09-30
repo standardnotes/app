@@ -67,6 +67,7 @@ export type PlainEditorInterface = {
   replaceRange: (start: number, end: number, replacement: string) => Promise<void>
   replaceAllRanges: (ranges: TextRange[], replacement: string) => Promise<void>
   onTextChange: (callback: () => void) => Disposer
+  scrollToEnd: () => boolean
 }
 
 export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
@@ -197,6 +198,20 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
           return () => {
             textChangeObservers.current.delete(callback)
           }
+        },
+        scrollToEnd() {
+          const textarea = textareaRef.current
+          if (!textarea || locked || textarea.disabled || textarea.readOnly) {
+            return false
+          }
+
+          const textLength = textarea.value.length
+          textarea.setSelectionRange(textLength, textLength)
+          textarea.scrollTop = Math.max(0, textarea.scrollHeight - textarea.clientHeight)
+          lastEditorFocusEventSource.current = EditorEventSource.Script
+          textarea.focus()
+
+          return true
         },
       }),
       [editorText, focusEditor, locked, notifyTextChange, persistText, search?.isOpen],
