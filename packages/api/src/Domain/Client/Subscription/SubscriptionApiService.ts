@@ -43,7 +43,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(SubscriptionApiOperations.ListingInvites, false)
@@ -64,7 +64,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(SubscriptionApiOperations.CancelingInvite, false)
@@ -85,7 +85,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(SubscriptionApiOperations.Inviting, false)
@@ -105,7 +105,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
       })
 
       return response
-    } catch (error) {
+    } catch {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
       this.operationsInProgress.set(SubscriptionApiOperations.AcceptingInvite, false)

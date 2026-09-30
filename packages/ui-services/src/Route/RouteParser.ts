@@ -97,6 +97,10 @@ export class RouteParser implements RouteParserInterface {
     }
   }
 
+  private get isDemoHost(): boolean {
+    return this.url.host === 'app-demo.standardnotes.com'
+  }
+
   private parseTypeFromQueryParameters(): RouteType {
     if (this.path === RootRoutes.Onboarding) {
       return RouteType.Onboarding
@@ -119,7 +123,13 @@ export class RouteParser implements RouteParserInterface {
 
     for (const rootQueryParam of rootQueryParametersMap.keys()) {
       if (this.searchParams.has(rootQueryParam)) {
-        return rootQueryParametersMap.get(rootQueryParam) as RouteType
+        const routeType = rootQueryParametersMap.get(rootQueryParam) as RouteType
+
+        if (routeType === RouteType.Demo && !this.isDemoHost) {
+          return RouteType.None
+        }
+
+        return routeType
       }
     }
 

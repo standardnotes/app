@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { c } from 'ttag'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { useRef, useState } from 'react'
 import RoundIconButton from '../Button/RoundIconButton'
@@ -18,9 +19,14 @@ const ChangeMultipleButton = ({ application, notesController }: Props) => {
 
   return (
     <>
-      <RoundIconButton label={'Change note type'} onClick={toggleMenu} ref={changeButtonRef} icon="plain-text" />
+      <RoundIconButton
+        label={c('B4.Notes.EditingUI.Action').t`Change note type`}
+        onClick={toggleMenu}
+        ref={changeButtonRef}
+        icon="plain-text"
+      />
       <Popover
-        title="Change note type"
+        title={c('B4.Notes.EditingUI.Action').t`Change note type`}
         togglePopover={toggleMenu}
         disableClickOutside={disableClickOutside}
         anchorElement={changeButtonRef}

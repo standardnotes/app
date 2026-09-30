@@ -11,6 +11,7 @@ import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/Pre
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { BackupServiceInterface } from '@standardnotes/snjs'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { c } from 'ttag'
 
 type Props = {
   backupsService: BackupServiceInterface
@@ -45,11 +46,12 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Automatic file backups</Title>
+          <Title>{c('B6.Preferences.Backups.Title').t`Automatic file backups`}</Title>
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">
-              <Subtitle>Automatically save encrypted backups of your uploaded files to this computer.</Subtitle>
+              <Subtitle>{c('B6.Preferences.Backups.Subtitle')
+                .t`Automatically save encrypted backups of your uploaded files to this computer.`}</Subtitle>
             </div>
             <Switch onChange={toggleBackups} checked={backupsEnabled} />
           </div>
@@ -57,7 +59,8 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
           {!backupsEnabled && (
             <>
               <HorizontalSeparator classes="mt-2.5 mb-4" />
-              <Text>File backups are not enabled. Enable to choose where your files are backed up.</Text>
+              <Text>{c('B6.Preferences.Backups.Status')
+                .t`File backups are not enabled. Enable to choose where your files are backed up.`}</Text>
             </>
           )}
         </PreferencesSegment>
@@ -69,8 +72,8 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
             <PreferencesSegment>
               <>
                 <Text className="mb-3">
-                  Files backups are enabled. When you upload a new file on any device and open this application, files
-                  will be backed up in encrypted form to:
+                  {c('B6.Preferences.Backups.Info')
+                    .t`Files backups are enabled. When you upload a new file on any device and open this application, files will be backed up in encrypted form to:`}
                 </Text>
 
                 <EncryptionStatusItem
@@ -80,8 +83,16 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
                 />
 
                 <div className="mt-2.5 flex flex-row">
-                  <Button label="Open Location" className={'mr-3 text-xs'} onClick={openBackupsLocation} />
-                  <Button label="Change Location" className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
+                  <Button
+                    label={c('B6.Preferences.Backups.Action').t`Open Location`}
+                    className={'mr-3 text-xs'}
+                    onClick={openBackupsLocation}
+                  />
+                  <Button
+                    label={c('B6.Preferences.Backups.Action').t`Change Location`}
+                    className={'mr-3 text-xs'}
+                    onClick={changeBackupsLocation}
+                  />
                 </div>
               </>
             </PreferencesSegment>

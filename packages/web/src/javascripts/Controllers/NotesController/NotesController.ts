@@ -1,4 +1,5 @@
 import { destroyAllObjectProperties } from '@/Utils'
+import { c } from 'ttag'
 import {
   confirmDialog,
   GetItemTags,
@@ -6,7 +7,14 @@ import {
   PIN_NOTE_COMMAND,
   STAR_NOTE_COMMAND,
 } from '@standardnotes/ui-services'
-import { StringEmptyTrash, Strings, StringUtils } from '@/Constants/Strings'
+import {
+  StringArchiveLockedNotesAttempt,
+  StringDeleteItemsPermanentlyTitle,
+  StringDeleteLockedNotesAttempt,
+  StringDeleteNotes,
+  StringEmptyTrash,
+  StringTrashItemsTitle,
+} from '@/Constants/Strings'
 import {
   SNNote,
   NoteMutator,
@@ -34,6 +42,8 @@ import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { createNoteExport } from '../../Utils/NoteExportUtils'
 import { WebApplication } from '../../Application/WebApplication'
 import { downloadOrShareBlobBasedOnPlatform } from '../../Utils/DownloadOrShareBasedOnPlatform'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 export class NotesController
   extends AbstractViewController
@@ -88,76 +98,75 @@ export class NotesController
         (notes_count) => {
           this.disposeCommandRegisters()
 
-          const descriptionSuffix = `${pluralize(notes_count, 'current', 'selected')} ${pluralize(
-            notes_count,
-            'note',
-            'note(s)',
-          )}`
+          const noteCommandTarget =
+            notes_count === 1
+              ? c('B3.Notes.NoteActions.Label').t`current note`
+              : c('B3.Notes.NoteActions.Label').t`selected note(s)`
 
           this.commandRegisterDisposers.push(
             application.commands.add(
               'pin-current',
-              `Pin ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Pin ${noteCommandTarget}`),
               () => this.setPinSelectedNotes(true),
               'unpin',
             ),
             application.commands.add(
               'unpin-current',
-              `Unpin ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Unpin ${noteCommandTarget}`),
               () => this.setPinSelectedNotes(false),
               'pin',
             ),
             application.commands.add(
               'star-current',
-              `Star ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Star ${noteCommandTarget}`),
               () => this.setStarSelectedNotes(true),
               'star',
             ),
             application.commands.add(
               'unstar-current',
-              `Unstar ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Unstar ${noteCommandTarget}`),
               () => this.setStarSelectedNotes(false),
               'star',
             ),
             application.commands.add(
               'archive-current',
-              `Archive ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Archive ${noteCommandTarget}`),
               () => this.setArchiveSelectedNotes(true),
               'archive',
             ),
             application.commands.add(
               'unarchive-current',
-              `Unarchive ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Unarchive ${noteCommandTarget}`),
               () => this.setArchiveSelectedNotes(false),
               'unarchive',
             ),
             application.commands.add(
               'restore-current',
-              `Restore ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Restore ${noteCommandTarget}`),
               () => this.setTrashSelectedNotes(false),
               'restore',
             ),
             application.commands.add(
               'trash-current',
-              `Trash ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Trash ${noteCommandTarget}`),
               () => this.setTrashSelectedNotes(true),
               'trash',
             ),
             application.commands.add(
               'delete-current',
-              `Delete ${descriptionSuffix} permanently`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Delete ${noteCommandTarget} permanently`),
               () => this.deleteNotesPermanently(),
               'trash',
             ),
             application.commands.add(
               'export-current',
-              `Export ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Export ${noteCommandTarget}`),
               this.exportSelectedNotes,
               'download',
             ),
             application.commands.add(
               'duplicate-current',
-              `Duplicate ${descriptionSuffix}`,
+              jtString(c('B3.Notes.NoteActions.Action').jt`Duplicate ${noteCommandTarget}`),
               this.duplicateSelectedNotes,
               'copy',
             ),
@@ -170,13 +179,13 @@ export class NotesController
       application.keyboardService.addCommandHandler({
         command: PIN_NOTE_COMMAND,
         category: 'Current note',
-        description: 'Pin/unpin selected note(s)',
+        description: c('B3.Notes.NoteActions.Action').t`Pin/unpin selected note(s)`,
         onKeyDown: this.togglePinSelectedNotes,
       }),
       application.keyboardService.addCommandHandler({
         command: STAR_NOTE_COMMAND,
         category: 'Current note',
-        description: 'Star/unstar selected note(s)',
+        description: c('B3.Notes.NoteActions.Action').t`Star/unstar selected note(s)`,
         onKeyDown: this.toggleStarSelectedNotes,
       }),
     )
@@ -293,18 +302,18 @@ export class NotesController
 
   async deleteNotes(permanently: boolean): Promise<boolean> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
-      const text = StringUtils.deleteLockedNotesAttempt(this.selectedNotesCount)
+      const text = StringDeleteLockedNotesAttempt(this.selectedNotesCount)
       this.application.alerts.alert(text).catch(console.error)
       return false
     }
 
-    const title = permanently ? Strings.deleteItemsPermanentlyTitle : Strings.trashItemsTitle
+    const title = permanently ? StringDeleteItemsPermanentlyTitle() : StringTrashItemsTitle()
     let noteTitle = undefined
     if (this.selectedNotesCount === 1) {
       const selectedNote = this.getSelectedNotesList()[0]
-      noteTitle = selectedNote.title.length ? `'${selectedNote.title}'` : 'this note'
+      noteTitle = selectedNote.title.length ? `'${selectedNote.title}'` : c('B3.Notes.NoteActions.Label').t`this note`
     }
-    const text = StringUtils.deleteNotes(permanently, this.selectedNotesCount, noteTitle)
+    const text = StringDeleteNotes(permanently, this.selectedNotesCount, noteTitle)
 
     if (
       await confirmDialog({
@@ -365,7 +374,7 @@ export class NotesController
   async setArchiveSelectedNotes(archived: boolean): Promise<void> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
       this.application.alerts
-        .alert(StringUtils.archiveLockedNotesAttempt(archived, this.selectedNotesCount))
+        .alert(StringArchiveLockedNotesAttempt(archived, this.selectedNotesCount))
         .catch(console.error)
       return
     }
@@ -603,9 +612,14 @@ export class NotesController
     if (notes.length === 0) {
       return
     }
+    const noteWord = pluralize(
+      notes.length,
+      c('B3.Notes.NoteActions.Label').t`note`,
+      c('B3.Notes.NoteActions.Label').t`notes`,
+    )
     const toast = addToast({
       type: ToastType.Progress,
-      message: `Exporting ${notes.length} ${pluralize(notes.length, 'note', 'notes')}...`,
+      message: jtString(c('B3.Notes.NoteActions.Info').jt`Exporting ${notes.length} ${noteWord}...`),
     })
     try {
       const result = await createNoteExport(this.application, notes)
@@ -626,7 +640,7 @@ export class NotesController
       console.error(error)
       addToast({
         type: ToastType.Error,
-        message: 'Could not export notes',
+        message: c('B3.Notes.NoteActions.Error').t`Could not export notes`,
       })
       dismissToast(toast)
     }
@@ -653,10 +667,10 @@ export class NotesController
           .then((duplicated) =>
             addToast({
               type: ToastType.Regular,
-              message: `Duplicated note "${duplicated.title}"`,
+              message: jtString(c('B3.Notes.NoteActions.Info').jt`Duplicated note "${duplicated.title}"`),
               actions: [
                 {
-                  label: 'Open',
+                  label: c('B3.Notes.NoteActions.Action').t`Open`,
                   handler: (toastId) => {
                     this.application.itemListController.selectUuids([duplicated.uuid], true).catch(console.error)
                     dismissToast(toastId)

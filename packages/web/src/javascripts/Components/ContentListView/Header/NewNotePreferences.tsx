@@ -23,6 +23,7 @@ import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { getDayjsFormattedString } from '@/Utils/GetDayjsFormattedString'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
+import { c } from 'ttag'
 
 const PrefChangeDebounceTimeInMs = 25
 
@@ -175,12 +176,12 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   return (
     <div className="px-3 py-3">
       <div>
-        <div className="text-mobile-menu-item md:text-menu-item">Note Type</div>
+        <div className="text-mobile-menu-item md:text-menu-item">{c('B3.Notes.NoteList.Label').t`Note Type`}</div>
         <div className="mt-2">
           <Dropdown
             disabled={disabled}
             fullWidth={true}
-            label="Select the default note type"
+            label={c('B3.Notes.NoteList.Label').t`Select the default note type`}
             items={editorItems}
             value={defaultEditorIdentifier}
             onChange={(value) => selectEditorForNewNoteDefault(value as EditorOption['value'])}
@@ -188,12 +189,13 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         </div>
       </div>
       <div>
-        <div className="mt-3 text-mobile-menu-item md:text-menu-item">Title Format</div>
+        <div className="mt-3 text-mobile-menu-item md:text-menu-item">{c('B3.Notes.NoteList.Label')
+          .t`Title Format`}</div>
         <div className="mt-2">
           <Dropdown
             disabled={disabled}
             fullWidth={true}
-            label="Select the format for the note title"
+            label={c('B3.Notes.NoteList.Label').t`Select the format for the note title`}
             items={NoteTitleFormatOptions}
             value={newNoteTitleFormat}
             onChange={setNewNoteTitleFormatChange}
@@ -209,14 +211,14 @@ const NewNotePreferences: FunctionComponent<Props> = ({
                 'w-full min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm md:translucent-ui:bg-transparent',
                 'focus-within:ring-2 focus-within:ring-info',
               )}
-              placeholder="e.g. YYYY-MM-DD"
+              placeholder={c('B3.Notes.NoteList.Label').t`e.g. YYYY-MM-DD`}
               value={customNoteTitleFormat}
               onChange={handleCustomFormatInputChange}
               spellCheck={false}
             />
           </div>
           <div className="mt-3 text-neutral">
-            <span className="font-bold">Preview: </span>
+            <span className="font-bold">{c('B3.Notes.NoteList.Label').t`Preview:`} </span>
             <ErrorBoundary>
               <CustomNoteTitleFormatPreview format={customNoteTitleFormat} />
             </ErrorBoundary>
@@ -234,9 +236,10 @@ const NewNotePreferences: FunctionComponent<Props> = ({
                 }
               }}
             >
-              Options
+              {c('B3.Notes.NoteList.Action').t`Options`}
             </a>
-            . Use <code>[]</code> to escape formatting.
+            . {c('B3.Notes.NoteList.Info').t`Use`} <code>[]</code>{' '}
+            {c('B3.Notes.NoteList.Info').t`to escape formatting.`}
           </div>
         </div>
       )}

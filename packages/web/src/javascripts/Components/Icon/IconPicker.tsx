@@ -8,6 +8,7 @@ import Icon, { isIconEmoji } from './Icon'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
 import { IconPickerType } from './IconPickerType'
 import DecoratedInput from '../Input/DecoratedInput'
+import { c } from 'ttag'
 
 type Props = {
   selectedValue: VectorIconNameOrEmoji
@@ -126,9 +127,24 @@ const IconPicker = ({
   return (
     <div className={`flex h-full flex-grow flex-col ${className}`}>
       <div className="flex">
-        <TabButton label="Icon" type={'icon'} currentType={currentType} selectTab={selectTab} />
-        <TabButton label="Emoji" type={'emoji'} currentType={currentType} selectTab={selectTab} />
-        <TabButton label="Reset" type={'reset'} currentType={currentType} selectTab={selectTab} />
+        <TabButton
+          label={c('B4.Notes.EditingUI.Label').t`Icon`}
+          type={'icon'}
+          currentType={currentType}
+          selectTab={selectTab}
+        />
+        <TabButton
+          label={c('B4.Notes.EditingUI.Label').t`Emoji`}
+          type={'emoji'}
+          currentType={currentType}
+          selectTab={selectTab}
+        />
+        <TabButton
+          label={c('B4.Notes.EditingUI.Action').t`Reset`}
+          type={'reset'}
+          currentType={currentType}
+          selectTab={selectTab}
+        />
       </div>
       <div className={classNames('mt-1 h-full min-h-0', currentType === 'icon' && 'overflow-auto')}>
         {currentType === 'icon' &&
@@ -154,7 +170,7 @@ const IconPicker = ({
           ) : (
             <Dropdown
               fullWidth={true}
-              label="Change the icon for a tag"
+              label={c('B4.Notes.TagsLinkedItems.Action').t`Change the icon for a tag`}
               items={iconOptions}
               value={selectedValue as string}
               onChange={handleIconChange}
@@ -171,16 +187,16 @@ const IconPicker = ({
               onChange={(value) => handleEmojiChange(value)}
             />
             <div className="mt-2 text-sm text-passive-0 lg:text-xs">
-              Use your keyboard to enter or paste in an emoji character.
+              {c('B4.Notes.EditingUI.Info').t`Use your keyboard to enter or paste in an emoji character.`}
             </div>
             {isMacOS && (
               <div className="mt-2 text-sm text-passive-0 lg:text-xs">
-                On macOS: ⌘ + ⌃ + Space bar to bring up emoji picker.
+                {c('B4.Notes.EditingUI.Info').t`On macOS: ⌘ + ⌃ + Space bar to bring up emoji picker.`}
               </div>
             )}
             {isWindows && (
               <div className="mt-2 text-sm text-passive-0 lg:text-xs">
-                On Windows: Windows key + . to bring up emoji picker.
+                {c('B4.Notes.EditingUI.Info').t`On Windows: Windows key + . to bring up emoji picker.`}
               </div>
             )}
           </>

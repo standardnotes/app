@@ -1,20 +1,21 @@
 import { NewNoteTitleFormat } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 export const NoteTitleFormatOptions = [
   {
-    label: 'Current date and time',
+    label: c('B3.Notes.NoteList.Label').t`Current date and time`,
     value: NewNoteTitleFormat.CurrentDateAndTime,
   },
   {
-    label: 'Current note count',
+    label: c('B3.Notes.NoteList.Label').t`Current note count`,
     value: NewNoteTitleFormat.CurrentNoteCount,
   },
   {
-    label: 'Custom format',
+    label: c('B3.Notes.NoteList.Label').t`Custom format`,
     value: NewNoteTitleFormat.CustomFormat,
   },
   {
-    label: 'Empty',
+    label: c('B3.Notes.NoteList.Label').t`Empty`,
     value: NewNoteTitleFormat.Empty,
   },
 ]

@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useMemo } from 'react'
 import { useKeyboardService } from '../KeyboardServiceProvider'
 import { useApplication } from '../ApplicationProvider'
+import { c } from 'ttag'
 
 function TagsSectionAddButton() {
   const application = useApplication()
@@ -19,15 +20,12 @@ function TagsSectionAddButton() {
     [keyboardService],
   )
 
-  return (
-    <IconButton
-      focusable={true}
-      icon="add"
-      title={`Create a new tag (${shortcut})`}
-      className="p-0 text-neutral"
-      onClick={addNewTag}
-    />
+  const title = useMemo(
+    () => c('B4.Notes.TagsLinkedItems.Action').jt`Create a new tag (${shortcut})` as unknown as string,
+    [shortcut],
   )
+
+  return <IconButton focusable={true} icon="add" title={title} className="p-0 text-neutral" onClick={addNewTag} />
 }
 
 export default observer(TagsSectionAddButton)

@@ -7,6 +7,7 @@ import { mergeRegister, $wrapNodeInElement } from '@lexical/utils'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
 import { isMobileScreen } from '../../../../Utils'
+import { c } from 'ttag'
 
 export function InsertRemoteImageDialog({ onClose }: { onClose: () => void }) {
   const [url, setURL] = useState('')
@@ -30,12 +31,12 @@ export function InsertRemoteImageDialog({ onClose }: { onClose: () => void }) {
   return (
     <>
       <label className="flex flex-col gap-1.5">
-        URL:
+        {c('B4.Notes.EditingUI.Label').t`URL:`}
         <DecoratedInput value={url} onChange={setURL} ref={focusOnMount} />
       </label>
       <div className="mt-2.5 flex justify-end">
         <Button onClick={onClick} disabled={!url} small={isMobileScreen()}>
-          Confirm
+          {c('B4.Notes.EditingUI.Action').t`Confirm`}
         </Button>
       </div>
     </>

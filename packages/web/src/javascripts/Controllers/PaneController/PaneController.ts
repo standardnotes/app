@@ -1,4 +1,5 @@
 import { PanesForLayout } from './../../Application/UseCase/PanesForLayout'
+import { c } from 'ttag'
 import {
   InternalEventHandlerInterface,
   InternalEventInterface,
@@ -106,18 +107,33 @@ export class PaneController extends AbstractViewController implements InternalEv
     eventBus.addEventHandler(this, ApplicationEvent.LocalPreferencesChanged)
 
     this.disposers.push(
-      commands.addWithShortcut(TOGGLE_FOCUS_MODE_COMMAND, 'General', 'Toggle focus mode', (event) => {
-        event?.preventDefault()
-        this.toggleFocusMode()
-      }),
-      commands.addWithShortcut(TOGGLE_LIST_PANE_KEYBOARD_COMMAND, 'General', 'Toggle notes panel', (event) => {
-        event?.preventDefault()
-        this.toggleListPane()
-      }),
-      commands.addWithShortcut(TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND, 'General', 'Toggle tags panel', (event) => {
-        event?.preventDefault()
-        this.toggleNavigationPane()
-      }),
+      commands.addWithShortcut(
+        TOGGLE_FOCUS_MODE_COMMAND,
+        'General',
+        c('B2.NavSharedUI.Action').t`Toggle focus mode`,
+        (event) => {
+          event?.preventDefault()
+          this.toggleFocusMode()
+        },
+      ),
+      commands.addWithShortcut(
+        TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
+        'General',
+        c('B2.NavSharedUI.Action').t`Toggle notes panel`,
+        (event) => {
+          event?.preventDefault()
+          this.toggleListPane()
+        },
+      ),
+      commands.addWithShortcut(
+        TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
+        'General',
+        c('B2.NavSharedUI.Action').t`Toggle tags panel`,
+        (event) => {
+          event?.preventDefault()
+          this.toggleNavigationPane()
+        },
+      ),
     )
   }
 

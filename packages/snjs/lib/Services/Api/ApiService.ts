@@ -380,7 +380,7 @@ export class LegacyApiService
 
     if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
-      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL)
+      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL())
     }
 
     this.processSuccessResponseForMetaBody(response)
@@ -501,7 +501,7 @@ export class LegacyApiService
 
     if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
-      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL)
+      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL())
     }
 
     this.processSuccessResponseForMetaBody(response)
@@ -523,7 +523,7 @@ export class LegacyApiService
 
     if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
-      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL)
+      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL())
     }
 
     this.processSuccessResponseForMetaBody(response)
@@ -953,7 +953,7 @@ export class LegacyApiService
     return this.tokenRefreshableRequest<GetSingleItemResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.getSingleItem(itemUuid)),
-      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL(),
       authentication: this.getSessionAccessToken(),
     })
   }

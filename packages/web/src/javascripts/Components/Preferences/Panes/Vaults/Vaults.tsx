@@ -26,6 +26,7 @@ import EditVaultModal from './Vaults/VaultModal/EditVaultModal'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import { ToastType, addToast } from '@standardnotes/toast'
 import NoProSubscription from '../Account/NoProSubscription'
+import { c } from 'ttag'
 
 const Vaults = observer(() => {
   const application = useApplication()
@@ -155,7 +156,7 @@ const Vaults = observer(() => {
       {invites.length > 0 && (
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>Incoming Invites</Title>
+            <Title>{c('B6.Preferences.Vaults.Title').t`Incoming Invites`}</Title>
             <div className="my-2 flex flex-col gap-3.5">
               {invites.map((invite) => {
                 return <InviteItem inviteRecord={invite} key={invite.invite.uuid} />
@@ -167,7 +168,7 @@ const Vaults = observer(() => {
       {hasAccount && isSharedVaultsEnabled && (
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>Contacts</Title>
+            <Title>{c('B6.Preferences.Vaults.Title').t`Contacts`}</Title>
             {contacts.length > 0 && (
               <div className="my-2 flex flex-col gap-3.5">
                 {contacts.map((contact) => {
@@ -176,7 +177,11 @@ const Vaults = observer(() => {
               </div>
             )}
             <div className="mt-2.5 flex flex-row">
-              <Button label="Add New Contact" className="mr-3" onClick={createNewContact} />
+              <Button
+                label={c('B6.Preferences.Vaults.Action').t`Add New Contact`}
+                className="mr-3"
+                onClick={createNewContact}
+              />
             </div>
           </PreferencesSegment>
         </PreferencesGroup>
@@ -184,27 +189,28 @@ const Vaults = observer(() => {
       {hasAccount && isSharedVaultsEnabled && (
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>CollaborationID</Title>
-            <Subtitle>Share your CollaborationID with collaborators to join their vaults.</Subtitle>
+            <Title>{c('B6.Preferences.Vaults.Title').t`CollaborationID`}</Title>
+            <Subtitle>{c('B6.Preferences.Vaults.Subtitle')
+              .t`Share your CollaborationID with collaborators to join their vaults.`}</Subtitle>
             {contactService.isCollaborationEnabled() ? (
               <>
                 <code className="mt-2.5 overflow-hidden whitespace-pre-wrap break-words rounded border border-border bg-contrast p-3">
                   {contactService.getCollaborationID()}
                 </code>
                 <Button
-                  label="Copy ID"
+                  label={c('B6.Preferences.Vaults.Action').t`Copy ID`}
                   className="mt-2"
                   onClick={async () => {
                     try {
                       await navigator.clipboard.writeText(contactService.getCollaborationID())
                       addToast({
                         type: ToastType.Success,
-                        message: 'Copied to clipboard',
+                        message: c('B6.Preferences.Vaults.Status').t`Copied to clipboard`,
                       })
                     } catch (error) {
                       addToast({
                         type: ToastType.Error,
-                        message: 'Failed to copy to clipboard',
+                        message: c('B6.Preferences.Vaults.Error').t`Failed to copy to clipboard`,
                       })
                       console.error(error)
                     }
@@ -214,7 +220,7 @@ const Vaults = observer(() => {
             ) : (
               <div className="mt-2.5 flex flex-row">
                 <Button
-                  label="Enable Vault Sharing"
+                  label={c('B6.Preferences.Vaults.Action').t`Enable Vault Sharing`}
                   className="mr-3 text-xs"
                   onClick={() => contactService.enableCollaboration()}
                 />
@@ -225,7 +231,7 @@ const Vaults = observer(() => {
       )}
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Vaults</Title>
+          <Title>{c('B6.Preferences.Vaults.Title').t`Vaults`}</Title>
           {vaults.length > 0 && (
             <div className="my-2 flex flex-col gap-3.5">
               {vaults.map((vault) => {
@@ -235,16 +241,22 @@ const Vaults = observer(() => {
           )}
           {canCreateMoreVaults ? (
             <div className="mt-2.5 flex gap-3">
-              <Button label="Create Vault" onClick={createNewVault} />
+              <Button label={c('B6.Preferences.Vaults.Action').t`Create Vault`} onClick={createNewVault} />
               {hasAccount && isSharedVaultsEnabled && (
-                <Button label="Create Shared Vault" onClick={createNewSharedVault} />
+                <Button
+                  label={c('B6.Preferences.Vaults.Action').t`Create Shared Vault`}
+                  onClick={createNewSharedVault}
+                />
               )}
             </div>
           ) : (
             <div className="mt-3.5">
               <NoProSubscription
                 application={application}
-                text={<span>Please upgrade in order to increase your vault limit.</span>}
+                text={
+                  <span>{c('B6.Preferences.Vaults.Info')
+                    .t`Please upgrade in order to increase your vault limit.`}</span>
+                }
               />
             </div>
           )}
@@ -265,12 +277,13 @@ const VaultsWrapper = () => {
     return (
       <PreferencesPane>
         <PreferencesGroup>
-          <Title>Account update required</Title>
+          <Title>{c('B6.Preferences.Vaults.Title').t`Account update required`}</Title>
           <Subtitle>
-            In order to use Vaults, you must update your account to use the latest data encryption version.
+            {c('B6.Preferences.Vaults.Subtitle')
+              .t`In order to use Vaults, you must update your account to use the latest data encryption version.`}
           </Subtitle>
           <Button primary className="mt-3" onClick={() => application.upgradeProtocolVersion().catch(console.error)}>
-            Update Account
+            {c('B6.Preferences.Vaults.Action').t`Update Account`}
           </Button>
         </PreferencesGroup>
       </PreferencesPane>

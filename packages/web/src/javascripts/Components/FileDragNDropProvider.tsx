@@ -7,6 +7,8 @@ import { FileItem, SNNote } from '@standardnotes/snjs'
 import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext, memo } from 'react'
 import Portal from './Portal/Portal'
 import { ElementIds } from '@/Constants/ElementIDs'
+import { FeatureName, getFeatureNameLabel } from '@/Controllers/FeatureName'
+import { c } from 'ttag'
 
 type FileDragTargetCommonData = {
   tooltipText: string
@@ -197,7 +199,7 @@ const FileDragNDropProvider = ({ application, children }: Props) => {
       resetState()
 
       if (!application.featuresController.entitledToFiles) {
-        premiumModal.activate('Files')
+        premiumModal.activate(getFeatureNameLabel(FeatureName.Files))
         return
       }
 
@@ -273,7 +275,9 @@ const FileDragNDropProvider = ({ application, children }: Props) => {
       {isDraggingFiles ? (
         <>
           <div className="pointer-events-none absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded border-2 border-info bg-default px-5 py-3 shadow-main">
-            {tooltipText.length ? tooltipText : 'Drop your files to upload them'}
+            {tooltipText.length
+              ? tooltipText
+              : c('B7.FilesSubscriptionHelp.Files.Info').t`Drop your files to upload them`}
           </div>
         </>
       ) : null}

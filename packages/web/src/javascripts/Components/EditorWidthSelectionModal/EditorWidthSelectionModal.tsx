@@ -1,4 +1,5 @@
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { c } from 'ttag'
 import { classNames, EditorLineWidth, SNNote, PrefDefaults, LocalPrefKey } from '@standardnotes/snjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Button from '../Button/Button'
@@ -44,19 +45,19 @@ const EditorWidthSelectionModal = ({
   const options = useMemo(
     () => [
       {
-        label: 'Narrow',
+        label: c('B4.Notes.EditorOptions.Label').t`Narrow`,
         value: EditorLineWidth.Narrow,
       },
       {
-        label: 'Wide',
+        label: c('B4.Notes.EditorOptions.Label').t`Wide`,
         value: EditorLineWidth.Wide,
       },
       {
-        label: 'Dynamic',
+        label: c('B4.Notes.EditorOptions.Label').t`Dynamic`,
         value: EditorLineWidth.Dynamic,
       },
       {
-        label: 'Full width',
+        label: c('B4.Notes.EditorOptions.Label').t`Full width`,
         value: EditorLineWidth.FullWidth,
       },
     ],
@@ -71,13 +72,13 @@ const EditorWidthSelectionModal = ({
   const actions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Cancel',
+        label: c('B4.Notes.EditorOptions.Action').t`Cancel`,
         type: 'cancel',
         onClick: close,
         mobileSlot: 'left',
       },
       {
-        label: 'Done',
+        label: c('B4.Notes.EditorOptions.Action').t`Done`,
         type: 'primary',
         onClick: accept,
         mobileSlot: 'right',
@@ -97,7 +98,7 @@ const EditorWidthSelectionModal = ({
 
   return (
     <Modal
-      title="Set editor width"
+      title={c('B4.Notes.EditorOptions.Title').t`Set editor width`}
       close={close}
       customHeader={<></>}
       customFooter={<></>}
@@ -119,7 +120,7 @@ const EditorWidthSelectionModal = ({
           <div className="flex flex-col text-info">
             <div className="mb-2 text-center text-sm">
               {value === EditorLineWidth.Narrow || value === EditorLineWidth.Wide
-                ? `Max. ${EditorMaxWidths[value]}`
+                ? c('B4.Notes.EditorOptions.Info').jt`Max. ${EditorMaxWidths[value]}`
                 : EditorMaxWidths[value]}
             </div>
             <DoubleSidedArrow />
@@ -132,16 +133,18 @@ const EditorWidthSelectionModal = ({
         <div className="border-t border-border bg-default px-4 py-2">
           <label className="flex items-center gap-2">
             <Switch checked={setGlobally} onChange={setSetGlobally} />
-            Set globally {note.editorWidth != undefined && '(will not apply to current note)'}
+            {note.editorWidth != undefined
+              ? c('B4.Notes.EditorOptions.Info').t`Set globally (will not apply to current note)`
+              : c('B4.Notes.EditorOptions.Label').t`Set globally`}
           </label>
         </div>
       )}
       <ModalDialogButtons className="justify-center md:justify-between">
         <RadioButtonGroup items={options} value={value} onChange={(value) => setValue(value as EditorLineWidth)} />
         <div className="hidden items-center gap-2 md:flex">
-          <Button onClick={close}>Cancel</Button>
+          <Button onClick={close}>{c('B4.Notes.EditorOptions.Action').t`Cancel`}</Button>
           <Button onClick={accept} primary>
-            Apply
+            {c('B4.Notes.EditorOptions.Action').t`Apply`}
           </Button>
         </div>
       </ModalDialogButtons>
@@ -181,7 +184,7 @@ const EditorWidthSelectionModalWrapper = () => {
     return application.commands.addWithShortcut(
       CHANGE_EDITOR_WIDTH_COMMAND,
       'Current note',
-      'Change editor width',
+      c('B4.Notes.EditorOptions.Action').t`Change editor width`,
       (_, data) => {
         if (typeof data === 'boolean' && data) {
           setIsGlobal(data)

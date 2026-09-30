@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "alwaysStrict": true,
-    "baseUrl": ".",
+    "baseUrl": "..",
     "declaration": true,
     "declarationDir": "../dist/@types",
     "emitDeclarationOnly": true,
@@ -25,8 +25,8 @@
     "strictNullChecks": true,
     "target": "es6",
     "paths": {
-      "@Lib/*": ["*"],
-      "@Services/*": ["Services/*"]
+      "@Lib/*": ["lib/*"],
+      "@Services/*": ["lib/Services/*"]
     }
   },
   "exclude": ["../package.json"]

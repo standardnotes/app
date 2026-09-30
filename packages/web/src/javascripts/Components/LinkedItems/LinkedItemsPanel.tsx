@@ -12,6 +12,7 @@ import { LinkedItemsSectionItem } from './LinkedItemsSectionItem'
 import { DecryptedItem, SNNote } from '@standardnotes/snjs'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import { mergeRefs } from '@/Hooks/mergeRefs'
+import { c } from 'ttag'
 
 const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
   const application = useApplication()
@@ -62,7 +63,7 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
             container: classNames(!isSearching ? 'px-0.5 py-1.5' : 'py-0', 'md:translucent-ui:bg-default'),
             input: 'placeholder:text-passive-0',
           }}
-          placeholder="Search items to link..."
+          placeholder={c('B4.Notes.TagsLinkedItems.Label').t`Search items to link...`}
           value={searchQuery}
           onChange={setSearchQuery}
           ref={mergeRefs([focusInput, searchInputRef])}
@@ -83,7 +84,9 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
           <>
             {(!!unlinkedItems.length || shouldShowCreateTag) && (
               <div>
-                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Unlinked</div>
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">
+                  {c('B4.Notes.TagsLinkedItems.Label').t`Unlinked`}
+                </div>
                 <LinkedItemSearchResults
                   createAndAddNewTag={createAndAddNewTag}
                   linkItems={linkItems}
@@ -101,7 +104,9 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
             )}
             {!!linkedResults.length && (
               <div>
-                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked</div>
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">
+                  {c('B4.Notes.TagsLinkedItems.Action').t`Linked`}
+                </div>
                 <div className="my-1">
                   {linkedResults.map((link) => (
                     <LinkedItemsSectionItem
@@ -121,7 +126,9 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
           <>
             {!!tagsLinkedToItem.length && (
               <div>
-                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Tags</div>
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">
+                  {c('B4.Notes.TagsLinkedItems.Label').t`Linked Tags`}
+                </div>
                 <div className="my-1">
                   {tagsLinkedToItem.map((link) => (
                     <LinkedItemsSectionItem
@@ -138,14 +145,16 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
             )}
 
             <div>
-              <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
+              <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">
+                {c('B4.Notes.TagsLinkedItems.Label').t`Linked Files`}
+              </div>
               <div className="my-1">
                 <button
                   className="flex w-full cursor-pointer items-center gap-3 bg-transparent px-3 py-2 text-left text-base text-text hover:bg-info-backdrop hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
                   onClick={selectAndUploadFiles}
                 >
                   <Icon type="add" />
-                  Upload and link file(s)
+                  {c('B4.Notes.LinkedItems.Action').t`Upload and link file(s)`}
                 </button>
                 {filesLinkedToItem.map((link) => (
                   <LinkedItemsSectionItem
@@ -163,7 +172,7 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
             {!!filesLinkingToItem.length && (
               <div>
                 <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">
-                  Files Linking To Current File
+                  {c('B4.Notes.TagsLinkedItems.Label').t`Files Linking To Current File`}
                 </div>
                 <div className="my-1">
                   {filesLinkingToItem.map((link) => (
@@ -181,7 +190,9 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
             )}
             {!!notesLinkedToItem.length && (
               <div>
-                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Notes</div>
+                <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">
+                  {c('B4.Notes.TagsLinkedItems.Label').t`Linked Notes`}
+                </div>
                 <div className="my-1">
                   {notesLinkedToItem.map((link) => (
                     <LinkedItemsSectionItem
@@ -199,7 +210,7 @@ const LinkedItemsPanel = ({ item }: { item: DecryptedItem }) => {
             {!!notesLinkingToItem.length && (
               <div>
                 <div className="mb-1 mt-3 px-3 text-menu-item font-semibold uppercase text-passive-0">
-                  Notes Linking To This Note
+                  {c('B4.Notes.TagsLinkedItems.Label').t`Notes Linking To This Note`}
                 </div>
                 <div className="my-1">
                   {notesLinkingToItem.map((link) => (

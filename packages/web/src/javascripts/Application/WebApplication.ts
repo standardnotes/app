@@ -29,6 +29,7 @@ import { action, computed, makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { getBlobFromBase64, isDesktopApplication, isDev } from '@/Utils'
+import { prepareWebAuthnRegistrationOptions } from '@/Utils/prepareWebAuthnRegistrationOptions'
 import {
   ArchiveManager,
   AutolockService,
@@ -54,6 +55,7 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { VisibilityObserver } from './VisibilityObserver'
 import { DevMode } from './DevMode'
 import { ToastType, addToast, dismissToast } from '@standardnotes/toast'
+import { c } from 'ttag'
 import { WebDependencies } from './Dependencies/WebDependencies'
 import { Web_TYPES } from './Dependencies/Types'
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
@@ -127,9 +129,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         deviceInterface.environment === Environment.Mobile ? 250 : ApplicationOptionsDefaults.sleepBetweenBatches,
       allowMultipleSelection: deviceInterface.environment !== Environment.Mobile,
       allowNoteSelectionStatePersistence: deviceInterface.environment !== Environment.Mobile,
-      u2fAuthenticatorRegistrationPromptFunction: startRegistration as unknown as (
-        registrationOptions: Record<string, unknown>,
-      ) => Promise<Record<string, unknown>>,
+      u2fAuthenticatorRegistrationPromptFunction: ((registrationOptions: Record<string, unknown>) =>
+        startRegistration(
+          prepareWebAuthnRegistrationOptions(registrationOptions) as unknown as Parameters<typeof startRegistration>[0],
+        )) as unknown as (registrationOptions: Record<string, unknown>) => Promise<Record<string, unknown>>,
       u2fAuthenticatorVerificationPromptFunction: startAuthentication as unknown as (
         authenticationOptions: Record<string, unknown>,
       ) => Promise<Record<string, unknown>>,
@@ -410,7 +413,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     addToast({
       type: ToastType.Success,
-      message: 'Successfully created note from shared text',
+      message: c('B8.MobileDesktopShared.Mobile.Info').t`Successfully created note from shared text`,
     })
   }
 
@@ -423,12 +426,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (isImagePath) {
       const fetchToastUuid = addToast({
         type: ToastType.Loading,
-        message: 'Fetching image from link...',
+        message: c('B8.MobileDesktopShared.Mobile.Info').t`Fetching image from link...`,
       })
       try {
         const imgResponse = await fetch(link)
         if (!imgResponse.ok) {
-          throw new Error(`${imgResponse.status}: Could not fetch image`)
+          throw new Error(c('B4.Notes.EditingUI.Error').t`${imgResponse.status}: Could not fetch image`)
         }
         const imgBlob = await imgResponse.blob()
         const file = new File([imgBlob], finalPath, {

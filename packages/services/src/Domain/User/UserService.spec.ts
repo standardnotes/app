@@ -67,6 +67,9 @@ describe('UserService', () => {
 
     userApiService = {} as jest.Mocked<UserApiServiceInterface>
 
+    reencryptTypeAItems = {} as jest.Mocked<ReencryptTypeAItems>
+    decryptErroredPayloads = {} as jest.Mocked<DecryptErroredPayloads>
+
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
   })
 

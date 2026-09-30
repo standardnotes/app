@@ -57,6 +57,7 @@ import { RunWithPermissionsUseCase } from './UseCase/RunWithPermissionsUseCase'
 import { EditorForNoteUseCase } from './UseCase/EditorForNote'
 import { GetDefaultEditorIdentifier } from './UseCase/GetDefaultEditorIdentifier'
 import { DoesEditorChangeRequireAlertUseCase } from './UseCase/DoesEditorChangeRequireAlert'
+import { c } from 'ttag'
 
 declare global {
   interface Window {
@@ -121,12 +122,16 @@ export class ComponentManager
       }),
     )
 
-    window.addEventListener
-      ? window.addEventListener('focus', this.detectFocusChange, true)
-      : window.attachEvent('onfocusout', this.detectFocusChange)
-    window.addEventListener
-      ? window.addEventListener('blur', this.detectFocusChange, true)
-      : window.attachEvent('onblur', this.detectFocusChange)
+    if (window.addEventListener) {
+      window.addEventListener('focus', this.detectFocusChange, true)
+    } else {
+      window.attachEvent('onfocusout', this.detectFocusChange)
+    }
+    if (window.addEventListener) {
+      window.addEventListener('blur', this.detectFocusChange, true)
+    } else {
+      window.attachEvent('onblur', this.detectFocusChange)
+    }
 
     window.addEventListener('message', this.onWindowMessage, true)
   }
@@ -542,9 +547,9 @@ export class ComponentManager
 
   async showEditorChangeAlert(): Promise<boolean> {
     const shouldChangeEditor = await this.alerts.confirm(
-      'Doing so might result in minor formatting changes.',
-      "Are you sure you want to change this note's type?",
-      'Yes, change it',
+      c('B4.Notes.EditingUI.Confirmation').t`Doing so might result in minor formatting changes.`,
+      c('B4.Notes.EditingUI.Confirmation').t`Are you sure you want to change this note's type?`,
+      c('B4.Notes.EditingUI.Confirmation').t`Yes, change it`,
     )
 
     return shouldChangeEditor

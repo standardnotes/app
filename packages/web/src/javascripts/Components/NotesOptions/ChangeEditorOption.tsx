@@ -1,4 +1,5 @@
 import { CHANGE_EDITOR_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
+import { c } from 'ttag'
 import { WebApplication } from '@/Application/WebApplication'
 import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useMemo, useRef, useState } from 'react'
@@ -49,7 +50,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
       >
         <div className="flex items-center">
           <Icon type="dashboard" className={`${iconClassName} mr-2 text-neutral`} />
-          Change note type
+          {c('B4.Notes.EditingUI.Action').t`Change note type`}
         </div>
         <div className="flex">
           {shortcut && <KeyboardShortcutIndicator className={'mr-2'} shortcut={shortcut} />}
@@ -57,7 +58,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
         </div>
       </MenuItem>
       <Popover
-        title="Change note type"
+        title={c('B4.Notes.EditingUI.Action').t`Change note type`}
         align="start"
         anchorElement={buttonRef}
         className="md:pb-1"

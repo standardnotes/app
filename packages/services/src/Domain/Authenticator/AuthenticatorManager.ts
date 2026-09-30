@@ -39,7 +39,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
       )
 
       return nameDecoratedAuthenticators
-    } catch (error) {
+    } catch {
       return []
     }
   }
@@ -57,7 +57,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
       await this.preferencesService.setValue(PrefKey.AuthenticatorNames, JSON.stringify([...authenticatorNames]))
 
       return true
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -71,7 +71,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
       }
 
       return result.data.options
-    } catch (error) {
+    } catch {
       return null
     }
   }
@@ -98,7 +98,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
       await this.preferencesService.setValue(PrefKey.AuthenticatorNames, JSON.stringify([...authenticatorNames]))
 
       return true
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -112,7 +112,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
       }
 
       return result.data.options
-    } catch (error) {
+    } catch {
       return null
     }
   }
@@ -123,7 +123,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     if (authenticatorNamesFromPreferences !== undefined) {
       try {
         authenticatorNames = new Map(JSON.parse(authenticatorNamesFromPreferences))
-      } catch (error) {
+      } catch {
         authenticatorNames = new Map()
       }
     }

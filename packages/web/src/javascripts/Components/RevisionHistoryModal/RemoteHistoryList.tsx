@@ -3,11 +3,12 @@ import { Fragment, FunctionComponent, useMemo, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
-import { previewHistoryEntryTitle } from './utils'
+import { previewHistoryEntryTitle, formatRevisionGroupTitle } from './utils'
 import { FeaturesClientInterface, RevisionMetadata } from '@standardnotes/snjs'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import Spinner from '@/Components/Spinner/Spinner'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
+import { c } from 'ttag'
 
 type RemoteHistoryListProps = {
   features: FeaturesClientInterface
@@ -41,7 +42,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
           return (
             <Fragment key={group.title}>
               <div className="mb-1 mt-2.5 select-none px-3 text-sm font-semibold uppercase text-passive-0">
-                {group.title}
+                {formatRevisionGroupTitle(group.title)}
               </div>
               {group.entries.map((entry) => (
                 <HistoryListItem
@@ -67,7 +68,8 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
         }
       })}
       {!remoteHistoryLength && !isFetchingRemoteHistory && (
-        <div className="select-none text-sm text-passive-0">No remote history found</div>
+        <div className="select-none text-sm text-passive-0">{c('B4.Notes.History.Label')
+          .t`No remote history found`}</div>
       )}
     </div>
   )

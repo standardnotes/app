@@ -1,4 +1,5 @@
 import SmartViewsSection from '@/Components/Tags/SmartViewsSection'
+import { c } from 'ttag'
 import TagsSection from '@/Components/Tags/TagsSection'
 import { WebApplication } from '@/Application/WebApplication'
 import { ApplicationEvent, PrefKey, WebAppEvent } from '@standardnotes/snjs'
@@ -93,7 +94,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           onClick={() => {
             setPaneLayout(PaneLayout.ItemSelection)
           }}
-          label="Go to items list"
+          label={c('B4.Notes.TagsLinkedItems.AriaLabel').t`Go to items list`}
           icon="chevron-left"
         />
         <UpgradeNow
@@ -106,14 +107,14 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           onClick={() => {
             application.accountMenuController.toggleShow()
           }}
-          label="Go to account menu"
+          label={c('B4.Notes.TagsLinkedItems.Label').t`Go to account menu`}
           icon="account-circle"
         />
         {hasPasscode && (
           <RoundIconButton
             id="lock-item"
             onClick={() => application.lock()}
-            label="Locks application and wipes unencrypted data from memory."
+            label={c('B4.Notes.TagsLinkedItems.AriaLabel').t`Locks application and wipes unencrypted data from memory.`}
             className="ml-2.5 bg-default"
             icon="lock-filled"
           />

@@ -2,12 +2,13 @@ import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
 import { LexicalEditor } from 'lexical'
 import { INSERT_PASSWORD_COMMAND } from '../Commands'
 import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
+import { c } from 'ttag'
 
 const MIN_PASSWORD_LENGTH = 8
 const DEFAULT_PASSWORD_LENGTH = 16
 
 export const PasswordBlock = {
-  name: 'Generate cryptographically secure password',
+  name: c('B3.Notes.EditorToolbar.Action').t`Generate cryptographically secure password`,
   iconName: 'password',
   keywords: ['password', 'secure'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(INSERT_PASSWORD_COMMAND, String(DEFAULT_PASSWORD_LENGTH)),
@@ -39,10 +40,14 @@ export function GetDynamicPasswordBlocks(editor: LexicalEditor, queryString: str
   }
 
   return [
-    new BlockPickerOption(`Generate ${length}-character cryptographically secure password`, {
-      iconName: 'password',
-      keywords: ['password', 'secure'],
-      onSelect: () => editor.dispatchCommand(INSERT_PASSWORD_COMMAND, length.toString()),
-    }),
+    new BlockPickerOption(
+      c('B3.Notes.EditorToolbar.Action')
+        .jt`Generate ${length}-character cryptographically secure password` as unknown as string,
+      {
+        iconName: 'password',
+        keywords: ['password', 'secure'],
+        onSelect: () => editor.dispatchCommand(INSERT_PASSWORD_COMMAND, length.toString()),
+      },
+    ),
   ]
 }

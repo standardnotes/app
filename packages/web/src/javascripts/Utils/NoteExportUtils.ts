@@ -11,6 +11,8 @@ import snColorsCSS from '!css-loader?{"sourceMap":false}!sass-loader!@standardno
 import exportOverridesCSS from '!css-loader?{"sourceMap":false}!sass-loader!../Components/SuperEditor/Lexical/Theme/export-overrides.scss'
 import { getBase64FromBlob } from './Utils'
 import { parseFileName, parseAndCreateZippableFileName, sanitizeFileName } from '@standardnotes/utils'
+import { AppName, jtString } from '@standardnotes/features'
+import { c } from 'ttag'
 
 export const getNoteFormat = (application: WebApplicationInterface, note: SNNote) => {
   if (note.noteType === NoteType.Super) {
@@ -259,9 +261,10 @@ export const createNoteExport = async (
   }
 
   const zippedBlob = await zipFS.exportBlob()
+  const formattedDate = application.archiveService.formattedDateForExports()
 
   return {
     blob: zippedBlob,
-    fileName: `Standard Notes Export - ${application.archiveService.formattedDateForExports()}.zip`,
+    fileName: jtString(c('B4.Notes.EditorOptions.Label').jt`${AppName} Export - ${formattedDate}.zip`),
   }
 }

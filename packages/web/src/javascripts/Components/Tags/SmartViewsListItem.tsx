@@ -15,6 +15,7 @@ import {
 import { classNames } from '@standardnotes/utils'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useApplication } from '../ApplicationProvider'
+import { c } from 'ttag'
 
 type Props = {
   view: SmartView
@@ -163,15 +164,19 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
 
       {!isSystemView(view) && (
         <div className="meta">
-          {view.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
+          {view.conflictOf && (
+            <div className="-mt-1 text-[0.625rem] font-bold text-danger">
+              {c('B4.Notes.TagsLinkedItems.Label').t`Conflicted Copy`}
+            </div>
+          )}
 
           {isSelected && (
             <div className="menu">
               <a className="item" onClick={onClickEdit}>
-                Edit
+                {c('B4.Notes.TagsLinkedItems.Action').t`Edit`}
               </a>
               <a className="item" onClick={onClickDelete}>
-                Delete
+                {c('B4.Notes.TagsLinkedItems.Action').t`Delete`}
               </a>
             </div>
           )}

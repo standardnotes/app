@@ -1,3 +1,4 @@
+import { DiscordUrl, SupportMailtoUrl, WebsiteUrl } from '@standardnotes/features'
 import { AppState } from 'app/AppState'
 import {
   app,
@@ -194,10 +195,10 @@ const enum MenuItemTypes {
 }
 
 const Urls = {
-  Support: 'mailto:help@standardnotes.com',
-  Website: 'https://standardnotes.com',
+  Support: SupportMailtoUrl,
+  Website: WebsiteUrl,
   GitHub: 'https://github.com/standardnotes',
-  Discord: 'https://standardnotes.com/discord',
+  Discord: DiscordUrl,
   Twitter: 'https://twitter.com/StandardNotes',
   GitHubReleases: 'https://github.com/standardnotes/app/releases',
 }

@@ -1,12 +1,16 @@
 {
   "name": "@standardnotes/features",
-  "version": "1.61.3",
+  "version": "1.61.6",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
   "description": "Features SDK for Standard Notes projects",
   "main": "dist/index.js",
   "author": "Standard Notes.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/standardnotes/app"
+  },
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -27,7 +31,8 @@
   "dependencies": {
     "@standardnotes/common": "^1.50.0",
     "@standardnotes/domain-core": "^1.40.0",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "ttag": "^1.8.12"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
@@ -36,6 +41,6 @@
     "eslint-plugin-prettier": "*",
     "jest": "^29.3.1",
     "ts-jest": "^29.0.3",
-    "typescript": "*"
+    "typescript": "5.8.3"
   }
 }

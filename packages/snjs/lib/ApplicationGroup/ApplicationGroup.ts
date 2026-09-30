@@ -15,6 +15,7 @@ import { AppGroupCallback } from './AppGroupCallback'
 import { ApplicationGroupEvent, ApplicationGroupEventData } from './ApplicationGroupEvent'
 import { DescriptorRecord } from './DescriptorRecord'
 import { ApplicationDescriptor } from './ApplicationDescriptor'
+import { c } from 'ttag'
 
 export class SNApplicationGroup<D extends DeviceInterface = DeviceInterface> extends AbstractService<
   ApplicationGroupEvent,
@@ -95,7 +96,7 @@ export class SNApplicationGroup<D extends DeviceInterface = DeviceInterface> ext
     const descriptorRecord: DescriptorRecord = {
       [identifier]: {
         identifier: identifier,
-        label: 'Main Workspace',
+        label: c('B1.Account.Session.Label').t`Main Workspace`,
         primary: true,
       },
     }

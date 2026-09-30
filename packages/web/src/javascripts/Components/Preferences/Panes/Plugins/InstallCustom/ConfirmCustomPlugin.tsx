@@ -3,6 +3,7 @@ import Button from '@/Components/Button/Button'
 import { Fragment, FunctionComponent } from 'react'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
+import { c } from 'ttag'
 
 const ConfirmCustomPlugin: FunctionComponent<{
   plugin: ThirdPartyFeatureDescription
@@ -16,34 +17,34 @@ const ConfirmCustomPlugin: FunctionComponent<{
 
   const fields = [
     {
-      label: 'Name',
+      label: c('B6.Preferences.Other.Label').t`Name`,
       value: plugin.name,
     },
     {
-      label: 'Description',
+      label: c('B6.Preferences.Other.Label').t`Description`,
       value: plugin.description,
     },
     {
-      label: 'Version',
+      label: c('B6.Preferences.Other.Label').t`Version`,
       value: plugin.version,
     },
     {
-      label: 'Hosted URL',
+      label: c('B6.Preferences.Other.Label').t`Hosted URL`,
       value: plugin.url,
     },
     {
-      label: 'Download URL',
+      label: c('B6.Preferences.Other.Action').t`Download URL`,
       value: plugin.download_url,
     },
     {
-      label: 'Extension Type',
+      label: c('B6.Preferences.Other.Label').t`Extension Type`,
       value: contentTypeDisplayName,
     },
   ]
 
   return (
     <PreferencesSegment>
-      <Title>Confirm Extension</Title>
+      <Title>{c('B6.Preferences.Other.Title').t`Confirm Extension`}</Title>
 
       {fields.map((field) => {
         if (!field.value) {
@@ -58,11 +59,19 @@ const ConfirmCustomPlugin: FunctionComponent<{
       })}
 
       <div className="mt-3 flex flex-row">
-        <Button className="min-w-20" label="Cancel" onClick={() => callback(false)} />
+        <Button
+          className="min-w-20"
+          label={c('B6.Preferences.Other.Action').t`Cancel`}
+          onClick={() => callback(false)}
+        />
 
         <div className="min-w-3" />
 
-        <Button className="min-w-20" label="Install" onClick={() => callback(true)} />
+        <Button
+          className="min-w-20"
+          label={c('B6.Preferences.Other.Action').t`Install`}
+          onClick={() => callback(true)}
+        />
       </div>
     </PreferencesSegment>
   )

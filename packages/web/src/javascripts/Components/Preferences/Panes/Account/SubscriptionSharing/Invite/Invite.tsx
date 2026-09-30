@@ -7,6 +7,7 @@ import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionC
 import InviteForm from './InviteForm'
 import InviteSuccess from './InviteSuccess'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
+import { c } from 'ttag'
 
 enum SubmitButtonTitles {
   Default = 'Invite',
@@ -35,7 +36,10 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   const validateInviteeEmail = useCallback(async () => {
     if (!isEmailValid(inviteeEmail)) {
       application.alerts
-        .alert('The email you entered has an invalid format. Please review your input and try again.')
+        .alert(
+          c('B6.Preferences.Subscription.Error')
+            .t`The email you entered has an invalid format. Please review your input and try again.`,
+        )
         .catch(console.error)
 
       return false
@@ -46,7 +50,9 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
 
   const handleDialogClose = useCallback(() => {
     if (lockContinue) {
-      application.alerts.alert('Cannot close window until pending tasks are complete.').catch(console.error)
+      application.alerts
+        .alert(c('B6.Preferences.Subscription.Error').t`Cannot close window until pending tasks are complete.`)
+        .catch(console.error)
     } else {
       onCloseDialog()
     }
@@ -92,7 +98,10 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     const success = await processInvite()
     if (!success) {
       application.alerts
-        .alert('An error occurred while sending the invite. Please try again or contact support if the issue persists.')
+        .alert(
+          c('B6.Preferences.Subscription.Error')
+            .t`An error occurred while sending the invite. Please try again or contact support if the issue persists.`,
+        )
         .catch(console.error)
 
       resetProgressState()
@@ -123,7 +132,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
         disabled: lockContinue,
       },
       {
-        label: 'Cancel',
+        label: c('B6.Preferences.Subscription.Label').t`Cancel`,
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
@@ -134,7 +143,11 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   )
 
   return (
-    <Modal title="Share Your Subscription" close={handleDialogClose} actions={modalActions}>
+    <Modal
+      title={c('B6.Preferences.Subscription.Title').t`Share Your Subscription`}
+      close={handleDialogClose}
+      actions={modalActions}
+    >
       <div className="px-4.5 py-4">
         {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
         {currentStep === Steps.FinishStep && <InviteSuccess />}

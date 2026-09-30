@@ -2,9 +2,10 @@ import { $setBlocksType } from '@lexical/selection'
 import { $createParagraphNode, $getSelection, $isRangeSelection, LexicalEditor } from 'lexical'
 import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
 import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
+import { c } from 'ttag'
 
 export const ParagraphBlock = {
-  name: 'Paragraph',
+  name: c('B3.Notes.EditorToolbar.Label').t`Paragraph`,
   iconName: 'paragraph',
   keywords: ['normal', 'paragraph', 'p', 'text'],
   onSelect: (editor: LexicalEditor) =>

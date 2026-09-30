@@ -1,4 +1,5 @@
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { c } from 'ttag'
 import MenuItem from '../Menu/MenuItem'
 import { useApplication } from '../ApplicationProvider'
 import { FileBackupRecord, FileItem } from '@standardnotes/snjs'
@@ -48,7 +49,12 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
           onClick={openFileBackup}
         >
           <div className="ml-2">
-            <div className="font-semibold text-success">Backed up on {dateToStringStyle1(backupInfo.backedUpOn)}</div>
+            <div className="font-semibold text-success">
+              {(() => {
+                const backedUpOn = dateToStringStyle1(backupInfo.backedUpOn)
+                return c('B7.FilesSubscriptionHelp.Files.Info').jt`Backed up on ${backedUpOn}` as unknown as string
+              })()}
+            </div>
             <div className="text-xs text-neutral">{backupAbsolutePath}</div>
           </div>
         </MenuItem>
@@ -62,8 +68,9 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
           onClick={configureFileBackups}
         >
           <div className="ml-2">
-            <div>Configure file backups</div>
-            <div className="text-xs text-neutral">File not backed up locally</div>
+            <div>{c('B7.FilesSubscriptionHelp.Files.Action').t`Configure file backups`}</div>
+            <div className="text-xs text-neutral">{c('B7.FilesSubscriptionHelp.Files.Info')
+              .t`File not backed up locally`}</div>
           </div>
         </MenuItem>
       )}

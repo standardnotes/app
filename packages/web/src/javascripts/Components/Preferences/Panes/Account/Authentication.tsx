@@ -28,7 +28,7 @@ const Authentication: FunctionComponent<Props> = ({ application }) => {
 
   const loginLink = (
     <button className="cursor-pointer border-0 bg-default p-0 text-info underline" onClick={clickSignIn}>
-      {c('Action').t`Sign in`}
+      {c('B6.Preferences.Account.Action').t`Sign in`}
     </button>
   )
 
@@ -37,13 +37,19 @@ const Authentication: FunctionComponent<Props> = ({ application }) => {
       <PreferencesSegment>
         <div className="flex flex-col items-center px-4 md:px-12">
           <AccountIllustration className="mb-3" />
-          <Title>{c('Title').t`You're not signed in`}</Title>
+          <Title>{c('B6.Preferences.Account.Title').t`You're not signed in`}</Title>
           <div className="mb-3 text-center text-base lg:text-sm">
-            {c('Info')
+            {c('B6.Preferences.Account.Info')
               .t`Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.`}
           </div>
-          <Button primary label={c('Action').t`Create free account`} onClick={clickRegister} className="mb-3" />
-          <div className="text-base lg:text-sm">{c('Info').jt`Already have an account? ${loginLink}`}</div>
+          <Button
+            primary
+            label={c('B6.Preferences.Account.Action').t`Create free account`}
+            onClick={clickRegister}
+            className="mb-3"
+          />
+          <div className="text-base lg:text-sm">{c('B6.Preferences.Account.Info')
+            .jt`Already have an account? ${loginLink}`}</div>
         </div>
       </PreferencesSegment>
     </PreferencesGroup>

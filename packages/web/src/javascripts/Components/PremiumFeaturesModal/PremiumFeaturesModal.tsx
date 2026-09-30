@@ -7,6 +7,8 @@ import { UpgradePrompt } from './Subviews/UpgradePrompt'
 import Modal from '../Modal/Modal'
 import SuperDemo from './Subviews/SuperDemo'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { SuperName, jtString } from '@standardnotes/features'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -32,14 +34,18 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   return (
     <Modal
       close={onClose}
-      title={isShowingSuperDemo ? 'Try out Super' : 'Upgrade'}
+      title={
+        isShowingSuperDemo
+          ? jtString(c('B7.FilesSubscriptionHelp.Subscription.Title').jt`Try out ${SuperName}`)
+          : c('B7.FilesSubscriptionHelp.Subscription.Title').t`Upgrade`
+      }
       className={isShowingSuperDemo ? '' : 'px-6 py-5'}
       customHeader={isShowingSuperDemo ? undefined : <></>}
       actions={
         isShowingSuperDemo
           ? [
               {
-                label: 'Done',
+                label: c('B7.FilesSubscriptionHelp.Subscription.Action').t`Done`,
                 type: 'primary',
                 onClick: onClose,
                 hidden: !isMobileScreen,

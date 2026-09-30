@@ -26,6 +26,8 @@ import StyledTooltip from '../../StyledTooltip/StyledTooltip'
 import { DiffView } from './DiffView'
 import { ReadonlyNoteContent } from '../ReadonlyNoteContent'
 import { ConflictListItem } from './ConflictListItem'
+import { SuperName, jtString } from '@standardnotes/features'
+import { c } from 'ttag'
 
 type ConflictAction = 'move-to-trash' | 'delete-permanently'
 type MultipleSelectionMode = 'preview' | 'diff'
@@ -84,13 +86,15 @@ const NoteConflictResolutionModal = ({
   const keepOnlySelected = useCallback(async () => {
     const shouldDeletePermanently = selectedAction === 'delete-permanently'
 
-    const confirmDialogText = `This will keep only the selected versions and ${
-      shouldDeletePermanently ? 'delete the other versions permanently.' : 'move the other versions to the trash.'
-    } Are you sure?`
+    const confirmDialogText = shouldDeletePermanently
+      ? c('B3.Notes.NoteActions.Info')
+          .t`This will keep only the selected versions and delete the other versions permanently. Are you sure?`
+      : c('B3.Notes.NoteActions.Info')
+          .t`This will keep only the selected versions and move the other versions to the trash. Are you sure?`
 
     if (
       await confirmDialog({
-        title: 'Keep only selected versions?',
+        title: c('B3.Notes.NoteActions.Title').t`Keep only selected versions?`,
         text: confirmDialogText,
         confirmButtonStyle: 'danger',
       })
@@ -125,7 +129,7 @@ const NoteConflictResolutionModal = ({
   const actions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Cancel',
+        label: c('B3.Notes.NoteActions.Action').t`Cancel`,
         onClick: close,
         type: 'cancel',
         mobileSlot: 'left',
@@ -167,14 +171,14 @@ const NoteConflictResolutionModal = ({
 
   return (
     <Modal
-      title="Resolve conflicts"
+      title={c('B3.Notes.NoteActions.Title').t`Resolve conflicts`}
       className="flex flex-col overflow-x-hidden md:flex-row"
       actions={actions}
       close={close}
       customFooter={
         <ModalDialogButtons className={selectedNotes.length > 1 ? 'hidden md:flex' : ''}>
           <Button className="mr-auto hidden md:inline-block" onClick={close} disabled={isPerformingAction}>
-            Cancel
+            {c('B3.Notes.NoteActions.Action').t`Cancel`}
           </Button>
           <Toolbar className="flex w-full items-stretch text-info-contrast md:w-auto" store={toolbarStore}>
             <ToolbarItem
@@ -187,7 +191,12 @@ const NoteConflictResolutionModal = ({
                   <Spinner className="h-4 w-4 border-info-contrast" />
                 </>
               ) : (
-                <>Keep selected, {selectedAction === 'move-to-trash' ? 'trash others' : 'delete others'}</>
+                <>
+                  {c('B3.Notes.NoteActions.Action').t`Keep selected,`}{' '}
+                  {selectedAction === 'move-to-trash'
+                    ? c('B3.Notes.NoteActions.Action').t`trash others`
+                    : c('B3.Notes.NoteActions.Action').t`delete others`}
+                </>
               )}
             </ToolbarItem>
             <Select
@@ -204,7 +213,7 @@ const NoteConflictResolutionModal = ({
               store={selectStore}
             />
             <Popover
-              title="Conflict options"
+              title={c('B3.Notes.NoteActions.Title').t`Conflict options`}
               open={isSelectOpen}
               togglePopover={selectStore.toggle}
               anchorElement={selectAnchor}
@@ -225,10 +234,11 @@ const NoteConflictResolutionModal = ({
                     ) : (
                       <div className="h-3.5 w-3.5" />
                     )}
-                    Move others to trash
+                    {c('B3.Notes.NoteActions.Action').t`Move others to trash`}
                   </div>
                   <div className="ml-4.5 text-neutral">
-                    Only the selected version will be kept; others will be moved to trash.
+                    {c('B3.Notes.NoteActions.Info')
+                      .t`Only the selected version will be kept; others will be moved to trash.`}
                   </div>
                 </SelectItem>
                 <SelectItem className="px-2.5 py-2 hover:bg-passive-5" value="delete-permanently">
@@ -238,10 +248,11 @@ const NoteConflictResolutionModal = ({
                     ) : (
                       <div className="h-3.5 w-3.5" />
                     )}
-                    Delete others permanently
+                    {c('B3.Notes.NoteActions.Action').t`Delete others permanently`}
                   </div>
                   <div className="ml-4.5 text-neutral">
-                    Only the selected version will be kept; others will be deleted permanently.
+                    {c('B3.Notes.NoteActions.Info')
+                      .t`Only the selected version will be kept; others will be deleted permanently.`}
                   </div>
                 </SelectItem>
               </SelectList>
@@ -260,7 +271,7 @@ const NoteConflictResolutionModal = ({
             setSelectedMobileTab('list')
           }}
         >
-          List
+          {c('B3.Notes.NoteActions.Label').t`List`}
         </button>
         <button
           className={classNames(
@@ -271,7 +282,7 @@ const NoteConflictResolutionModal = ({
             setSelectedMobileTab('preview')
           }}
         >
-          Preview
+          {c('B3.Notes.NoteActions.Action').t`Preview`}
         </button>
       </div>
       <div
@@ -281,25 +292,32 @@ const NoteConflictResolutionModal = ({
         )}
         ref={setListElement}
       >
-        {allVersions.map((note, index) => (
-          <ConflictListItem
-            disabled={isPerformingAction}
-            isSelected={selectedVersions.includes(note.uuid)}
-            onClick={() => {
-              setSelectedVersions((versions) => {
-                if (!versions.includes(note.uuid)) {
-                  return versions.length > 1 ? versions.slice(1).concat(note.uuid) : versions.concat(note.uuid)
-                }
+        {allVersions.map((note, index) => {
+          const versionNumber = index + 1
+          return (
+            <ConflictListItem
+              disabled={isPerformingAction}
+              isSelected={selectedVersions.includes(note.uuid)}
+              onClick={() => {
+                setSelectedVersions((versions) => {
+                  if (!versions.includes(note.uuid)) {
+                    return versions.length > 1 ? versions.slice(1).concat(note.uuid) : versions.concat(note.uuid)
+                  }
 
-                return versions.length > 1 ? versions.filter((version) => version !== note.uuid) : versions
-              })
-              setSelectedMobileTab('preview')
-            }}
-            key={note.uuid}
-            title={index === 0 ? 'Current version' : `Version ${index + 1}`}
-            note={note}
-          />
-        ))}
+                  return versions.length > 1 ? versions.filter((version) => version !== note.uuid) : versions
+                })
+                setSelectedMobileTab('preview')
+              }}
+              key={note.uuid}
+              title={
+                index === 0
+                  ? c('B3.Notes.NoteActions.Label').t`Current version`
+                  : (c('B3.Notes.NoteActions.Label').jt`Version ${versionNumber}` as unknown as string)
+              }
+              note={note}
+            />
+          )
+        })}
       </div>
       <div
         className={classNames(
@@ -335,7 +353,11 @@ const NoteConflictResolutionModal = ({
             {isPreviewMode && (
               <StyledTooltip
                 className="!z-modal !max-w-[50ch]"
-                label={shouldSyncComparisonScroll ? 'Scrolling is synced' : 'Scrolling is not synced. Click to sync.'}
+                label={
+                  shouldSyncComparisonScroll
+                    ? c('B3.Notes.NoteActions.Label').t`Scrolling is synced`
+                    : c('B3.Notes.NoteActions.Label').t`Scrolling is not synced. Click to sync.`
+                }
                 showOnMobile
               >
                 <div className="relative rounded-full p-1 hover:bg-contrast">
@@ -350,7 +372,8 @@ const NoteConflictResolutionModal = ({
             )}
             {!isMobileScreen && (
               <>
-                <div className={showSuperConversionInfo ? 'ml-9' : ''}>Preview Mode</div>
+                <div className={showSuperConversionInfo ? 'ml-9' : ''}>{c('B3.Notes.NoteActions.Label')
+                  .t`Preview Mode`}</div>
                 <Switch
                   checked={!isPreviewMode}
                   onChange={function (checked: boolean): void {
@@ -359,7 +382,7 @@ const NoteConflictResolutionModal = ({
                 />
               </>
             )}
-            <div className={isPreviewMode ? 'mr-9' : ''}>Diff Mode</div>
+            <div className={isPreviewMode ? 'mr-9' : ''}>{c('B3.Notes.NoteActions.Label').t`Diff Mode`}</div>
             {showSuperConversionInfo && (
               <StyledTooltip
                 interactive
@@ -367,16 +390,17 @@ const NoteConflictResolutionModal = ({
                 label={
                   <>
                     <div className="mb-2">
-                      Super notes use JSON under the hood to create rich and flexible documents. While neatly organized,
-                      it's not ideal to read or compare manually. Instead, this diff compares a Markdown rendition of
-                      the notes.
+                      {jtString(
+                        c('B3.Notes.NoteActions.Info')
+                          .jt`${SuperName} notes use JSON under the hood to create rich and flexible documents. While neatly organized, it's not ideal to read or compare manually. Instead, this diff compares a Markdown rendition of the notes.`,
+                      )}
                     </div>
                     <label className="mb-1 flex select-none items-center gap-2">
                       <Switch
                         checked={!compareSuperMarkdown}
                         onChange={(checked) => setCompareSuperMarkdown(!checked)}
                       />
-                      Compare JSON instead
+                      {c('B3.Notes.NoteActions.Action').t`Compare JSON instead`}
                     </label>
                   </>
                 }

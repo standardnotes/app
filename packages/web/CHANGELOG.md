@@ -3,6 +3,77 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.202.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.6...@standardnotes/web@3.202.7) (2026-09-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.202.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.5...@standardnotes/web@3.202.6) (2026-09-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.202.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.4...@standardnotes/web@3.202.5) (2026-09-15)
+
+### Bug Fixes
+
+* Fixes blank screen when tagging untagged current note on mobile ([#3047](https://github.com/standardnotes/app/issues/3047)) ([24da230](https://github.com/standardnotes/app/commit/24da23096f7fea453225bb4f680325fdb39e3ad8))
+* Fixes scroll position shift on Super checkbox toggle ([#3049](https://github.com/standardnotes/app/issues/3049)) ([d73ec83](https://github.com/standardnotes/app/commit/d73ec8378d202b63a72210357ed07b2fda17e823))
+
+## [3.202.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.3...@standardnotes/web@3.202.4) (2026-09-07)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.202.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.2...@standardnotes/web@3.202.3) (2026-09-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.202.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.1...@standardnotes/web@3.202.2) (2026-09-03)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.202.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.0...@standardnotes/web@3.202.1) (2026-08-25)
+
+### Bug Fixes
+
+* Fixes upgrade prompt string ([#3041](https://github.com/standardnotes/app/issues/3041)) ([6a0a404](https://github.com/standardnotes/app/commit/6a0a404114e9755f1de8bdf53da8f7dd3b7bba5b))
+* Fixes web clipper hardware key auth for Firefox ([#3040](https://github.com/standardnotes/app/issues/3040)) ([369b1f0](https://github.com/standardnotes/app/commit/369b1f001ff1691240fc8e4c19c169bc7e34b838))
+* Sanitizes filename on iOS file share ([#3036](https://github.com/standardnotes/app/issues/3036)) ([cf5ca47](https://github.com/standardnotes/app/commit/cf5ca4718546dd2fd08da8777b2398044721f1f3))
+
+# [3.202.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.35...@standardnotes/web@3.202.0) (2026-08-17)
+
+### Features
+
+* Adds in-note search for plain text notes ([#3038](https://github.com/standardnotes/app/issues/3038)) ([1ea8da6](https://github.com/standardnotes/app/commit/1ea8da6009df6c3f01067a639e27bba9f0321707))
+* Adds new search filter options: search titles only and tag filters ([#3039](https://github.com/standardnotes/app/issues/3039)) ([f7f947a](https://github.com/standardnotes/app/commit/f7f947a8552b85ef00a15e4920e07eeb272bb63c))
+
+## [3.201.35](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.34...@standardnotes/web@3.201.35) (2026-07-20)
+
+### Bug Fixes
+
+* Fixes hardware key authentication ([#3029](https://github.com/standardnotes/app/issues/3029)) ([be928de](https://github.com/standardnotes/app/commit/be928defccdc4ff3e877ab83886cf0d7d0092246))
+
+## [3.201.34](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.33...@standardnotes/web@3.201.34) (2026-07-18)
+
+### Bug Fixes
+
+* Fixes blurry context menus on desktop ([#2882](https://github.com/standardnotes/app/issues/2882)) ([0f65f70](https://github.com/standardnotes/app/commit/0f65f7061cd0d67150a76cbb9a2bd1bf3919952b))
+* Fixes hardware key authentication on Web Clipper ([#3028](https://github.com/standardnotes/app/issues/3028)) ([09bcc2f](https://github.com/standardnotes/app/commit/09bcc2f937f90f340e84a14474fa207d13da6a3f))
+
+## [3.201.33](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.32...@standardnotes/web@3.201.33) (2026-07-18)
+
+### Bug Fixes
+
+* Fix keyboard shortcut handling from within iframe editors ([#3025](https://github.com/standardnotes/app/issues/3025)) ([ee56c85](https://github.com/standardnotes/app/commit/ee56c858ab2c0d7d5a158e29c070b4bf55c1bd8b))
+* Fixes gaps after linked items within bullet lists on Super PDF export ([#3023](https://github.com/standardnotes/app/issues/3023)) ([883cd4f](https://github.com/standardnotes/app/commit/883cd4fda968c01648b8465f5cf02cd72d16f514))
+* Fixes incorrect rendering of some special characters on Super PDF export ([#3024](https://github.com/standardnotes/app/issues/3024)) ([44a1a6c](https://github.com/standardnotes/app/commit/44a1a6c374ea1d5ee05cc938dce77afe369a1ce5))
+* Fixes text alignment in Super linked items ([#3027](https://github.com/standardnotes/app/issues/3027)) ([eec6bc2](https://github.com/standardnotes/app/commit/eec6bc2782fd3b499961f73c33b2b284a69a49b5))
+
+## [3.201.32](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.31...@standardnotes/web@3.201.32) (2026-07-06)
+
+### Bug Fixes
+
+* Fixes default language for newly created code blocks in Super notes ([#2999](https://github.com/standardnotes/app/issues/2999)) ([9d026df](https://github.com/standardnotes/app/commit/9d026df49aedc49b143e7cf91576576c73e49986))
+* Fixes Super replace functionality not correctly hidden when toggling Prevent editing on a note ([#3022](https://github.com/standardnotes/app/issues/3022)) ([386d73f](https://github.com/standardnotes/app/commit/386d73ffb839e7a6b3c4bc7578c674fa6b29f658))
+
 ## [3.201.31](https://github.com/standardnotes/app/compare/@standardnotes/web@3.201.30...@standardnotes/web@3.201.31) (2026-06-08)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+import { c } from 'ttag'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
@@ -71,10 +72,15 @@ const LinkedItemBubblesContainer = ({
       keyboardService.addCommandHandler({
         command: FOCUS_TAGS_INPUT_COMMAND,
         category: 'Current note',
-        description: 'Link tags, notes, files',
+        description: c('B4.Notes.TagsLinkedItems.Action').t`Link tags, notes, files`,
         onKeyDown: focusInput,
       }),
-      application.commands.add('link-items-current', 'Link items to current note', focusInput, 'link'),
+      application.commands.add(
+        'link-items-current',
+        c('B4.Notes.TagsLinkedItems.Action').t`Link items to current note`,
+        focusInput,
+        'link',
+      ),
     )
   }, [application.commands, keyboardService])
 
@@ -213,7 +219,9 @@ const LinkedItemBubblesContainer = ({
             readonly={readonly}
           />
         ))}
-        {isCollapsed && nonVisibleItems > 0 && <span className="flex-shrink-0">and {nonVisibleItems} more...</span>}
+        {isCollapsed && nonVisibleItems > 0 && (
+          <span className="flex-shrink-0">{c('B4.Notes.TagsLinkedItems.Info').jt`and ${nonVisibleItems} more...`}</span>
+        )}
         {!readonly && (
           <ItemLinkAutocompleteInput
             ref={linkInputRef}
@@ -221,7 +229,9 @@ const LinkedItemBubblesContainer = ({
             linkingController={linkingController}
             focusPreviousItem={focusPreviousItem}
             setFocusedId={setFocusedId}
-            hoverLabel={`Focus input to add a link (${shortcut})`}
+            hoverLabel={
+              c('B4.Notes.TagsLinkedItems.Label').jt`Focus input to add a link (${shortcut})` as unknown as string
+            }
             item={item}
           />
         )}
@@ -229,7 +239,7 @@ const LinkedItemBubblesContainer = ({
       {itemsToDisplay.length > 0 && !shouldHideToggle && (
         <RoundIconButton
           id="toggle-linking-container"
-          label="Toggle linked items container"
+          label={c('B4.Notes.TagsLinkedItems.Label').t`Toggle linked items container`}
           onClick={() => {
             setIsCollapsed((isCollapsed) => !isCollapsed)
           }}

@@ -47,6 +47,7 @@ import {
 } from './Types'
 import { serverKeyParamsAreSafe } from './Utils'
 import { ContentType } from '@standardnotes/domain-core'
+import { c } from 'ttag'
 
 /**
  * The key recovery service listens to items key changes to detect any that cannot be decrypted.
@@ -203,14 +204,15 @@ export class KeyRecoveryService
     const keyId = item.payload.items_key_id
 
     if (!keyId) {
-      return new ClientDisplayableError('This item cannot be recovered.')
+      return new ClientDisplayableError(c('B5.SecuritySync.Challenge.Error').t`This item cannot be recovered.`)
     }
 
     const key = this.payloadManager.findOne(keyId)
 
     if (!key) {
       return new ClientDisplayableError(
-        `Unable to find key ${keyId} for this item. You may try signing out and back in; if that doesn't help, check your backup files for a key with this ID and import it.`,
+        c('B5.SecuritySync.Challenge.Error')
+          .t`Unable to find key ${keyId} for this item. You may try signing out and back in; if that doesn't help, check your backup files for a key with this ID and import it.`,
       )
     }
 

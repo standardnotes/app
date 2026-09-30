@@ -1,2 +1,1 @@
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type GetOutboundAsymmetricMessagesRequestParams = {}
+export type GetOutboundAsymmetricMessagesRequestParams = Record<string, never>

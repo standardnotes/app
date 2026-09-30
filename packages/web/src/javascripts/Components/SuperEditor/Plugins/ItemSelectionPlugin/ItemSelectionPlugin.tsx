@@ -12,6 +12,7 @@ import { INSERT_BUBBLE_COMMAND, INSERT_FILE_COMMAND } from '../Commands'
 import { useLinkingController } from '../../../../Controllers/LinkingControllerProvider'
 import { isMobileScreen } from '@/Utils'
 import { useTypeaheadAllowingSpacesAndPunctuation } from './useTypeaheadAllowingSpacesAndPunctuation'
+import { c } from 'ttag'
 
 type Props = {
   currentNote: SNNote
@@ -95,7 +96,7 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
 
         return (
           <Popover
-            title="Select item"
+            title={c('B4.Notes.EditingUI.Label').t`Select item`}
             align="start"
             anchorElement={anchorElementRef}
             open={true}

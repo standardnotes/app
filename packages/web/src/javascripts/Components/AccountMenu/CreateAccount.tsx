@@ -102,12 +102,12 @@ const CreateAccount: FunctionComponent<Props> = ({ setMenuPane, email, setEmail,
       <div className="mb-3 mt-1 flex items-center px-3">
         <IconButton
           icon="arrow-left"
-          title={c('Action').t`Go back`}
+          title={c('B1.Account.SignIn.Action').t`Go back`}
           className="mr-2 flex p-0 text-neutral"
           onClick={handleClose}
           focusable={true}
         />
-        <div className="text-base font-bold">{c('Title').t`Create account`}</div>
+        <div className="text-base font-bold">{c('B1.Account.SignIn.Title').t`Create account`}</div>
       </div>
       <form onSubmit={handleRegisterFormSubmit} className="mb-1 px-3">
         <DecoratedInput
@@ -116,7 +116,7 @@ const CreateAccount: FunctionComponent<Props> = ({ setMenuPane, email, setEmail,
           left={[<Icon type="email" className="text-neutral" />]}
           onChange={handleEmailChange}
           onKeyDown={handleKeyDown}
-          placeholder={c('Label').t`Email`}
+          placeholder={c('B1.Account.SignIn.Label').t`Email`}
           ref={emailInputRef}
           type="email"
           value={email}
@@ -127,13 +127,13 @@ const CreateAccount: FunctionComponent<Props> = ({ setMenuPane, email, setEmail,
           left={[<Icon type="password" className="text-neutral" />]}
           onChange={handlePasswordChange}
           onKeyDown={handleKeyDown}
-          placeholder={c('Label').t`Password`}
+          placeholder={c('B1.Account.SignIn.Label').t`Password`}
           ref={passwordInputRef}
           value={password}
         />
         <Button
           className="mt-1"
-          label={c('Action').t`Next`}
+          label={c('B1.Account.SignIn.Action').t`Next`}
           primary
           onClick={handleRegisterFormSubmit}
           fullWidth={true}

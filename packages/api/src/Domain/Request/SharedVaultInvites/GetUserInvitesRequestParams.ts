@@ -1,2 +1,1 @@
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type GetUserInvitesRequestParams = {}
+export type GetUserInvitesRequestParams = Record<string, never>

@@ -4,12 +4,12 @@ import { observer } from 'mobx-react-lite'
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
-import { STRING_GENERIC_SYNC_ERROR } from '@/Constants/Strings'
+import { StringGenericSyncError } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
-import { c, jt } from 'ttag'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -28,24 +28,24 @@ const Sync: FunctionComponent<Props> = ({ application }: Props) => {
     })
     setIsSyncingInProgress(false)
     if (response && (response as any).error) {
-      application.alerts.alert(STRING_GENERIC_SYNC_ERROR()).catch(console.error)
+      application.alerts.alert(StringGenericSyncError()).catch(console.error)
     } else {
       setLastSyncDate(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
     }
   }
 
-  const lastSyncSpan = <span className="font-bold">{c('Info').t`on ${lastSyncDate}`}</span>
+  const lastSyncSpan = <span className="font-bold">{c('B6.Preferences.Account.Info').t`on ${lastSyncDate}`}</span>
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title>{c('Title').t`Sync`}</Title>
-            <Text>{jt`Last synced ${lastSyncSpan}`}</Text>
+            <Title>{c('B6.Preferences.Account.Title').t`Sync`}</Title>
+            <Text>{c('B6.Preferences.Account.Info').jt`Last synced ${lastSyncSpan}`}</Text>
             <Button
               className="mt-3 min-w-20"
-              label={c('Action').t`Sync now`}
+              label={c('B6.Preferences.Account.Action').t`Sync now`}
               disabled={isSyncingInProgress}
               onClick={doSynchronization}
             />

@@ -33,6 +33,8 @@ import {
   Challenge,
 } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/domain-core'
+import { jtString, SupportEmail } from '@standardnotes/features'
+import { c } from 'ttag'
 
 type PayloadRequestHandler = (uuid: string) => TransferPayload | undefined
 
@@ -173,7 +175,7 @@ export class ActionsService extends AbstractService {
       })
       .catch((response) => {
         const error = (response && response.error) || {
-          message: 'An issue occurred while processing this action. Please try again.',
+          message: c('B2.NavSharedUI.Error').t`An issue occurred while processing this action. Please try again.`,
         }
         void this.alertService.alert(error.message)
         return { error } as DeprecatedHttpResponse
@@ -194,7 +196,9 @@ export class ActionsService extends AbstractService {
     const payload = new EncryptedPayload(response.item as EncryptedTransferPayload)
 
     if (!payload.enc_item_key) {
-      void this.alertService.alert('This revision is missing its key and cannot be recovered.')
+      void this.alertService.alert(
+        c('B4.Notes.History.Error').t`This revision is missing its key and cannot be recovered.`,
+      )
       return
     }
 
@@ -240,10 +244,10 @@ export class ActionsService extends AbstractService {
        * Instruct the user to email us to get this remedied.
        */
       void this.alertService.alert(
-        'We were unable to decrypt this revision using your current keys, ' +
-          'and this revision is missing metadata that would allow us to try different ' +
-          'keys to decrypt it. This can likely be fixed with some manual intervention. ' +
-          'Please email help@standardnotes.com for assistance.',
+        jtString(
+          c('B4.Notes.History.Error')
+            .jt`We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email ${SupportEmail} for assistance.`,
+        ),
       )
       return undefined
     }
@@ -284,10 +288,18 @@ export class ActionsService extends AbstractService {
 
   private async promptForLegacyPassword(): Promise<string | undefined> {
     const challenge = new Challenge(
-      [new ChallengePrompt(ChallengeValidation.None, 'Previous Password', undefined, true)],
+      [
+        new ChallengePrompt(
+          ChallengeValidation.None,
+          c('B5.SecuritySync.Challenge.Label').t`Previous Password`,
+          undefined,
+          true,
+        ),
+      ],
       ChallengeReason.Custom,
       true,
-      'Unable to find key for revision. Please enter the account password you may have used at the time of the revision.',
+      c('B4.Notes.History.Info')
+        .t`Unable to find key for revision. Please enter the account password you may have used at the time of the revision.`,
     )
 
     const response = await this.challengeService.promptForChallengeResponse(challenge)
@@ -308,7 +320,9 @@ export class ActionsService extends AbstractService {
       })
       .catch((response) => {
         console.error('Action error response:', response)
-        void this.alertService.alert('An issue occurred while processing this action. Please try again.')
+        void this.alertService.alert(
+          c('B2.NavSharedUI.Error').t`An issue occurred while processing this action. Please try again.`,
+        )
         return response as ActionResponse
       })
   }

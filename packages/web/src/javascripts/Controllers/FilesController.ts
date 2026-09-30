@@ -13,7 +13,13 @@ import {
   IsNativeMobileWeb,
   VaultDisplayServiceInterface,
 } from '@standardnotes/ui-services'
-import { Strings, StringUtils } from '@/Constants/Strings'
+import {
+  StringCannotUploadFile,
+  StringDeleteFile,
+  StringDeleteItemsPermanentlyTitle,
+  StringDeleteMultipleFiles,
+  StringUploadFileProgress,
+} from '@/Constants/Strings'
 import { concatenateUint8Arrays } from '@/Utils/ConcatenateUint8Arrays'
 import { ClassicFileReader, StreamingFileReader, StreamingFileSaver, ClassicFileSaver } from '@standardnotes/filepicker'
 import { parseAndCreateZippableFileName, parseFileName } from '@standardnotes/utils'
@@ -37,7 +43,10 @@ import {
 } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
+import { c } from 'ttag'
 import { AbstractViewController } from './Abstract/AbstractViewController'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 import { NotesController } from './NotesController/NotesController'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
 import { truncateString } from '@/Components/SuperEditor/Utils'
@@ -170,18 +179,19 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   deleteFile = async (file: FileItem) => {
     const shouldDelete = await confirmDialog({
-      text: StringUtils.deleteFile(file.name),
+      text: StringDeleteFile(file.name),
       confirmButtonStyle: 'danger',
     })
     if (shouldDelete) {
+      const fileName = file.name
       const deletingToastId = addToast({
         type: ToastType.Loading,
-        message: `Deleting file "${file.name}"...`,
+        message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Deleting file "${fileName}"...`),
       })
       await this.files.deleteFile(file)
       addToast({
         type: ToastType.Success,
-        message: `Deleted file "${file.name}"`,
+        message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Deleted file "${fileName}"`),
       })
       dismissToast(deletingToastId)
     }
@@ -192,7 +202,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     if (!note) {
       addToast({
         type: ToastType.Error,
-        message: 'Could not attach file because selected note was deleted',
+        message: c('B7.FilesSubscriptionHelp.Files.Error').t`Could not attach file because selected note was deleted`,
       })
       return
     }
@@ -206,7 +216,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     if (!note) {
       addToast({
         type: ToastType.Error,
-        message: 'Could not attach file because selected note was deleted',
+        message: c('B7.FilesSubscriptionHelp.Files.Error').t`Could not attach file because selected note was deleted`,
       })
       return
     }
@@ -331,17 +341,19 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       }
 
       if (this.mobileDevice && canShowProgressNotification) {
+        const fileName = file.name
         downloadingToastId = await this.mobileDevice.displayNotification({
-          title: `Downloading file "${file.name}"`,
+          title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading file "${fileName}"`),
           android: {
             progress: { max: 100, current: 0, indeterminate: true },
             onlyAlertOnce: true,
           },
         })
       } else {
+        const fileName = file.name
         downloadingToastId = addToast({
           type: ToastType.Progress,
-          message: `Downloading file "${file.name}" (0%)`,
+          message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading file "${fileName}" (0%)`),
           progress: 0,
         })
       }
@@ -360,10 +372,11 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         const progressPercent = Math.floor(progress.percentComplete)
 
         if (this.mobileDevice && canShowProgressNotification) {
+          const fileName = file.name
           this.mobileDevice
             .displayNotification({
               id: downloadingToastId,
-              title: `Downloading file "${file.name}"`,
+              title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading file "${fileName}"`),
               android: {
                 progress: { max: 100, current: progressPercent, indeterminate: false },
                 onlyAlertOnce: true,
@@ -403,15 +416,17 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       }
 
       if (this.mobileDevice && canShowProgressNotification) {
+        const fileName = file.name
         await this.mobileDevice.displayNotification({
-          title: `Successfully downloaded file "${file.name}"`,
+          title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Successfully downloaded file "${fileName}"`),
         })
       } else {
         addToast({
           type: ToastType.Success,
-          message: `Successfully downloaded file${
-            lastProgress && lastProgress.source === 'local' ? ' from local backup' : ''
-          }`,
+          message:
+            lastProgress && lastProgress.source === 'local'
+              ? c('B7.FilesSubscriptionHelp.Files.Info').t`Successfully downloaded file from local backup`
+              : c('B7.FilesSubscriptionHelp.Files.Info').t`Successfully downloaded file`,
         })
       }
     } catch (error) {
@@ -423,7 +438,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       addToast({
         type: ToastType.Error,
-        message: 'There was an error while downloading the file',
+        message: c('B7.FilesSubscriptionHelp.Files.Error').t`There was an error while downloading the file`,
       })
     }
 
@@ -438,12 +453,12 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   alertIfFileExceedsSizeLimit = (file: File): boolean => {
     if (!this.shouldUseStreamingAPI && this.maxFileSize && file.size >= this.maxFileSize) {
+      const maxFileSizeInMegabytes = this.maxFileSize / BYTES_IN_ONE_MEGABYTE
       this.alerts
         .alert(
-          `This file exceeds the limits supported in this browser. To upload files greater than ${
-            this.maxFileSize / BYTES_IN_ONE_MEGABYTE
-          }MB, please use the desktop application or the Chrome browser.`,
-          StringUtils.cannotUploadFile(file.name),
+          c('B7.FilesSubscriptionHelp.Files.Error')
+            .t`This file exceeds the limits supported in this browser. To upload files greater than ${maxFileSizeInMegabytes}MB, please use the desktop application or the Chrome browser.`,
+          StringCannotUploadFile(file.name),
         )
         .catch(console.error)
       return true
@@ -537,9 +552,10 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       })
 
       if (showToast) {
+        const fileName = fileToUpload.name
         if (this.mobileDevice && canShowProgressNotification) {
           toastId = await this.mobileDevice.displayNotification({
-            title: `Uploading file "${fileToUpload.name}"`,
+            title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}"`),
             android: {
               progress: { max: 100, current: initialProgress, indeterminate: true },
               onlyAlertOnce: true,
@@ -548,7 +564,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         } else {
           toastId = addToast({
             type: ToastType.Progress,
-            message: `Uploading file "${fileToUpload.name}" (${initialProgress}%)`,
+            message: StringUploadFileProgress(fileName, initialProgress),
             progress: initialProgress,
           })
         }
@@ -563,10 +579,11 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           progress: percentComplete,
         })
         if (toastId) {
+          const fileName = fileToUpload.name
           if (this.mobileDevice && canShowProgressNotification) {
             await this.mobileDevice.displayNotification({
               id: toastId,
-              title: `Uploading file "${fileToUpload.name}"`,
+              title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploading file "${fileName}"`),
               android: {
                 progress: { max: 100, current: percentComplete, indeterminate: false },
                 onlyAlertOnce: true,
@@ -574,7 +591,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
             })
           } else {
             updateToast(toastId, {
-              message: `Uploading file "${fileToUpload.name}" (${percentComplete}%)`,
+              message: StringUploadFileProgress(fileName, percentComplete),
               progress: percentComplete,
             })
           }
@@ -613,15 +630,16 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         dismissToast(toastId)
       }
       if (showToast) {
+        const uploadedFileName = uploadedFile.name
         if (this.mobileDevice && canShowProgressNotification) {
           this.mobileDevice
             .displayNotification({
               id: uploadedFile.uuid,
-              title: `Uploaded file "${uploadedFile.name}"`,
+              title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploaded file "${uploadedFileName}"`),
               android: {
                 actions: [
                   {
-                    title: 'Open',
+                    title: c('B7.FilesSubscriptionHelp.Files.Title').t`Open`,
                     pressAction: {
                       id: 'open-file',
                     },
@@ -633,10 +651,10 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         } else {
           addToast({
             type: ToastType.Success,
-            message: `Uploaded file "${uploadedFile.name}"`,
+            message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Uploaded file "${uploadedFileName}"`),
             actions: [
               {
-                label: 'Open',
+                label: c('B7.FilesSubscriptionHelp.Files.Label').t`Open`,
                 handler: (toastId) => {
                   void this.handleFileAction({
                     type: FileItemActionType.PreviewFile,
@@ -664,13 +682,13 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       if (this.mobileDevice && canShowProgressNotification) {
         this.mobileDevice
           .displayNotification({
-            title: 'There was an error while uploading the file',
+            title: c('B7.FilesSubscriptionHelp.Files.Error').t`There was an error while uploading the file`,
           })
           .catch(console.error)
       } else {
         addToast({
           type: ToastType.Error,
-          message: 'There was an error while uploading the file',
+          message: c('B7.FilesSubscriptionHelp.Files.Error').t`There was an error while uploading the file`,
         })
       }
     }
@@ -691,8 +709,8 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   deleteFilesPermanently = async (files: FileItem[]) => {
-    const title = Strings.deleteItemsPermanentlyTitle
-    const text = files.length === 1 ? StringUtils.deleteFile(files[0].name) : Strings.deleteMultipleFiles
+    const title = StringDeleteItemsPermanentlyTitle()
+    const text = files.length === 1 ? StringDeleteFile(files[0].name) : StringDeleteMultipleFiles()
 
     if (
       await confirmDialog({
@@ -794,16 +812,17 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     const zipFileHandle = await window.showSaveFilePicker({
       types: [
         {
-          description: 'ZIP file',
+          description: c('B7.FilesSubscriptionHelp.Files.Info').t`ZIP file`,
           accept: { 'application/zip': ['.zip'] },
         },
       ],
     })
 
+    const fileCount = files.length
     const toast = addToast({
       type: ToastType.Progress,
-      title: `Downloading ${files.length} files as archive`,
-      message: 'Preparing archive...',
+      title: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading ${fileCount} files as archive`),
+      message: c('B7.FilesSubscriptionHelp.Files.Info').t`Preparing archive...`,
     })
 
     try {
@@ -835,8 +854,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         await this.files
           .downloadFile(file, async (bytesChunk, progress) => {
             await writer.write(bytesChunk)
+            const truncatedFileName = truncateString(file.name, 25)
             updateToast(toast, {
-              message: `Downloading "${truncateString(file.name, 25)}"`,
+              message: jtString(c('B7.FilesSubscriptionHelp.Files.Info').jt`Downloading "${truncatedFileName}"`),
               progress: Math.floor(progress.percentComplete),
             })
           })
@@ -852,7 +872,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
     addToast({
       type: ToastType.Success,
-      message: `Successfully downloaded ${files.length} files as archive`,
+      message: jtString(
+        c('B7.FilesSubscriptionHelp.Files.Info').jt`Successfully downloaded ${fileCount} files as archive`,
+      ),
     })
   }
 }

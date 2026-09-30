@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useState } from 'react'
 import Button from '@/Components/Button/Button'
 import Spinner from '@/Components/Spinner/Spinner'
+import { c } from 'ttag'
 
 type Props = {
   dismissModal: () => void
@@ -43,20 +44,29 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController, readonly = fa
 
   return (
     <div className="flex min-h-6 flex-shrink-0 flex-wrap items-center gap-2.5 border-t border-solid border-border px-2.5 py-2 md:justify-between">
-      <Button className="py-1.35" label="Close" onClick={dismissModal} />
+      <Button className="py-1.35" label={c('B4.Notes.History.Action').t`Close`} onClick={dismissModal} />
       {selectedRevision && selectedEntry && !readonly && (
         <>
           {(selectedEntry as RevisionMetadata).uuid && (
             <Button className="md:ml-auto" onClick={deleteSelectedRevision}>
-              {isDeletingRevision ? <Spinner className="my-1 h-3 w-3" /> : 'Delete this revision'}
+              {isDeletingRevision ? (
+                <Spinner className="my-1 h-3 w-3" />
+              ) : (
+                c('B4.Notes.History.Action').t`Delete this revision`
+              )}
             </Button>
           )}
           <Button
             className={!(selectedEntry as RevisionMetadata).uuid ? 'md:ml-auto' : ''}
-            label="Restore as a copy"
+            label={c('B4.Notes.History.Action').t`Restore as a copy`}
             onClick={restoreAsCopy}
           />
-          <Button className="" label="Restore version" onClick={restoreSelectedRevision} primary />
+          <Button
+            className=""
+            label={c('B4.Notes.History.Action').t`Restore version`}
+            onClick={restoreSelectedRevision}
+            primary
+          />
         </>
       )}
     </div>

@@ -1,4 +1,5 @@
 import { isDesktopApplication } from '@/Utils'
+import { c } from 'ttag'
 import {
   ApplicationInterface,
   IsApplicationUsingThirdPartyHost,
@@ -33,6 +34,6 @@ export class GetPurchaseFlowUrl implements UseCaseInterface<string> {
       return Result.ok(`${window.purchaseUrl}?subscription_token=${token}&success_url=${successUrl}`)
     }
 
-    return Result.fail('Could not get purchase flow URL.')
+    return Result.fail(c('B7.FilesSubscriptionHelp.Subscription.Error').t`Could not get purchase flow URL.`)
   }
 }

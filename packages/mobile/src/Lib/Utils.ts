@@ -38,3 +38,24 @@ export function isSameDay(dateA: Date, dateB: Date) {
     dateA.getDate() === dateB.getDate()
   )
 }
+
+function parseFileName(fileName: string): {
+  name: string
+  ext: string
+} {
+  const pattern = /(?:\.([^.]+))$/
+  const extMatches = pattern.exec(fileName)
+  const ext = extMatches?.[1] || ''
+  const name = fileName.includes('.') ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName
+
+  return { name, ext }
+}
+
+function sanitizeFileName(name: string): string {
+  return name.trim().replace(/[.\\/:"?*|<>]/g, '_')
+}
+
+export function sanitizeFileNameForNativeWrite(filename: string): string {
+  const { name, ext } = parseFileName(filename)
+  return `${sanitizeFileName(name)}.${ext}`
+}

@@ -14,6 +14,7 @@ import CopyableCodeBlock from '../Shared/CopyableCodeBlock'
 import { classNames } from '@standardnotes/utils'
 import Modal, { ModalAction } from '../Modal/Modal'
 import { Disclosure, DisclosureContent, useDisclosureStore } from '@ariakit/react'
+import { c } from 'ttag'
 
 type Props = {
   controller: AddSmartViewModalController
@@ -123,14 +124,20 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Cancel',
+        label: c('B2.NavSharedUI.Modal.Action').t`Cancel`,
         onClick: closeModal,
         disabled: isSaving,
         type: 'cancel',
         mobileSlot: 'left',
       },
       {
-        label: isSaving ? <Spinner className="h-4.5 w-4.5" /> : canSave ? 'Save' : 'Validate',
+        label: isSaving ? (
+          <Spinner className="h-4.5 w-4.5" />
+        ) : canSave ? (
+          c('B4.Notes.TagsLinkedItems.Action').t`Save`
+        ) : (
+          c('B4.Notes.TagsLinkedItems.Action').t`Validate`
+        ),
         onClick: save,
         disabled: isSaving,
         mobileSlot: 'right',
@@ -141,11 +148,11 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
   )
 
   return (
-    <Modal title="Add Smart View" close={closeModal} actions={modalActions}>
+    <Modal title={c('B4.Notes.TagsLinkedItems.Action').t`Add Smart View`} close={closeModal} actions={modalActions}>
       <div className="px-4 py-4">
         <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="text-sm font-semibold">Title:</div>
+            <div className="text-sm font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Title:`}</div>
             <input
               className="rounded border border-border bg-default px-2 py-1 md:translucent-ui:bg-transparent"
               value={title}
@@ -156,17 +163,17 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
             />
           </div>
           <div className="flex items-center gap-2.5">
-            <div className="text-sm font-semibold">Icon:</div>
+            <div className="text-sm font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Icon:`}</div>
             <button
               className="rounded border border-border p-2"
-              aria-label="Change icon"
+              aria-label={c('B4.Notes.TagsLinkedItems.Action').t`Change icon`}
               onClick={toggleIconPicker}
               ref={iconPickerButtonRef}
             >
               <Icon type={icon || SmartViewDefaultIconName} />
             </button>
             <Popover
-              title="Choose icon"
+              title={c('B4.Notes.TagsLinkedItems.Label').t`Choose icon`}
               open={shouldShowIconPicker}
               anchorElement={iconPickerButtonRef}
               togglePopover={toggleIconPicker}
@@ -187,17 +194,17 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
             </Popover>
           </div>
           <div className="flex flex-grow flex-col gap-2.5">
-            <div className="text-sm font-semibold">Predicate:</div>
+            <div className="text-sm font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Predicate:`}</div>
             <TabsContainer
               className="flex flex-grow flex-col"
               tabs={[
                 {
                   id: 'builder',
-                  title: 'Builder',
+                  title: c('B4.Notes.TagsLinkedItems.Label').t`Builder`,
                 },
                 {
                   id: 'custom',
-                  title: 'Custom (JSON)',
+                  title: c('B4.Notes.TagsLinkedItems.Label').t`Custom (JSON)`,
                 },
               ]}
               state={tabState}
@@ -218,7 +225,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                 />
                 {customPredicateJson && isCustomJsonValidPredicate === false && (
                   <div className="border-t border-border px-2.5 py-1.5 text-sm text-danger">
-                    Invalid JSON. Double check your entry and try again.
+                    {c('B4.Notes.TagsLinkedItems.Error').t`Invalid JSON. Double check your entry and try again.`}
                   </div>
                 )}
               </TabPanel>
@@ -229,17 +236,20 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                   store={jsonExamplesDisclosure}
                   className="flex items-center justify-between focus:shadow-none focus:outline-none"
                 >
-                  <div className="text-sm font-semibold">Examples</div>
+                  <div className="text-sm font-semibold">{c('B4.Notes.TagsLinkedItems.Label').t`Examples`}</div>
                   <Icon type={showingJsonExamples ? 'chevron-up' : 'chevron-down'} />
                 </Disclosure>
                 <DisclosureContent
                   store={jsonExamplesDisclosure}
                   className={classNames(showingJsonExamples && 'flex', 'flex-col gap-2.5')}
                 >
-                  <div className="text-sm font-medium">1. List notes that are conflicted copies of another note:</div>
+                  <div className="text-sm font-medium">
+                    {c('B4.Notes.TagsLinkedItems.Info').t`1. List notes that are conflicted copies of another note:`}
+                  </div>
                   <CopyableCodeBlock code={ConflictedNotesExampleCode} />
                   <div className="text-sm font-medium">
-                    2. List notes that have the tag `todo` but not the tag `completed`:
+                    {c('B4.Notes.TagsLinkedItems.Label')
+                      .t`2. List notes that have the tag \`todo\` but not the tag \`completed\`:`}
                   </div>
                   <CopyableCodeBlock code={ComplexCompoundExampleCode} />
                 </DisclosureContent>

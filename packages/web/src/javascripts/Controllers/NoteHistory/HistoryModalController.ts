@@ -1,4 +1,5 @@
 import { InternalEventBusInterface, SNNote } from '@standardnotes/snjs'
+import { c } from 'ttag'
 import { OPEN_NOTE_HISTORY_COMMAND } from '@standardnotes/ui-services'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
@@ -26,10 +27,15 @@ export class HistoryModalController extends AbstractViewController {
     })
 
     this.disposers.push(
-      commandService.addWithShortcut(OPEN_NOTE_HISTORY_COMMAND, 'Current note', 'Open note history', () => {
-        this.openModal(notesController.firstSelectedNote)
-        return true
-      }),
+      commandService.addWithShortcut(
+        OPEN_NOTE_HISTORY_COMMAND,
+        'Current note',
+        c('B4.Notes.History.Action').t`Open note history`,
+        () => {
+          this.openModal(notesController.firstSelectedNote)
+          return true
+        },
+      ),
     )
   }
 

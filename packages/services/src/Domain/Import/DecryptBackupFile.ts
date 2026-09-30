@@ -111,7 +111,7 @@ export class DecryptBackupFile implements UseCaseInterface<(EncryptedPayloadInte
       rootKeyBasedDecryptionResults
         .filter((x) => isItemsKey(x) || isKeySystemRootKey(x))
         .filter(isDecryptedPayload)
-        .map((p) => CreateDecryptedItemFromPayload(p))
+        .map((p) => CreateDecryptedItemFromPayload(p as DecryptedPayloadInterface))
 
     /**
      * Now handle encrypted keySystemRootKeyEncryption items (vault items keys).  For every encrypted vault items key

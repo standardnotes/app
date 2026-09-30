@@ -1,5 +1,6 @@
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { debounce, destroyAllObjectProperties, isMobileScreen } from '@/Utils'
+import { c, msgid } from 'ttag'
 import {
   ApplicationEvent,
   CollectionSort,
@@ -35,7 +36,7 @@ import {
   ChallengeReason,
   KeyboardModifier,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
+import { action, computed, makeObservable, observable, ObservableSet, reaction, runInAction } from 'mobx'
 import { WebDisplayOptions } from './WebDisplayOptions'
 import { NavigationController } from '../Navigation/NavigationController'
 import { CrossControllerEvent } from '../CrossControllerEvent'
@@ -67,6 +68,8 @@ const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
 const ElementIdScrollContainer = 'notes-scrollable'
 
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
+
 export class ItemListController
   extends AbstractViewController
   implements InternalEventHandlerInterface, Persistable<SelectionControllerPersistableValue>
@@ -77,7 +80,7 @@ export class ItemListController
   items: ListableContentItem[] = []
   notesToDisplay = 0
   pageSize = 0
-  panelTitle = 'Notes'
+  panelTitle = c('B4.Notes.TagsLinkedItems.Label').t`Notes`
   renderedItems: ListableContentItem[] = []
   searchSubmitted = false
   showDisplayOptionsMenu = false
@@ -89,7 +92,6 @@ export class ItemListController
     includeTrashed: false,
     includeProtected: true,
   }
-  private keepActiveItemOpenUuid: UuidString | undefined
   webDisplayOptions: WebDisplayOptions = {
     hideTags: true,
     hideDate: false,
@@ -100,7 +102,7 @@ export class ItemListController
   private reloadItemsPromise?: Promise<unknown>
 
   lastSelectedItem: ListableContentItem | undefined
-  selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
+  selectedUuids: ObservableSet<UuidString> = observable(new Set<UuidString>())
   selectedItems: Record<UuidString, ListableContentItem> = {}
 
   isMultipleSelectionMode = false
@@ -227,6 +229,8 @@ export class ItemListController
           this.searchOptionsController.includeProtectedContents,
           this.searchOptionsController.includeArchived,
           this.searchOptionsController.includeTrashed,
+          this.searchOptionsController.noteTitleOnly,
+          this.searchOptionsController.tagFilterList.map((tag) => tag.uuid).join(','),
         ],
         () => {
           this.reloadNotesDisplayOptions()
@@ -410,17 +414,23 @@ export class ItemListController
   }
 
   get isFiltering(): boolean {
-    return !!this.noteFilterText && this.noteFilterText.length > 0
+    return this.noteFilterText.length > 0 || this.searchOptionsController.tagFilterList.length > 0
   }
 
   reloadPanelTitle = () => {
-    let title = this.panelTitle
+    let title = c('B4.Notes.TagsLinkedItems.Label').t`Notes`
 
     if (this.isFiltering) {
       const resultCount = this.items.length
-      title = `${resultCount} search results`
+      title = jtString(
+        c('B3.Notes.NoteList.Info').ngettext(
+          msgid`${resultCount} search result`,
+          `${resultCount} search results`,
+          resultCount,
+        ),
+      )
     } else if (this.navigationController.selected) {
-      title = `${this.navigationController.selected.title}`
+      title = this.navigationController.selected.title
     }
 
     this.panelTitle = title
@@ -466,6 +476,7 @@ export class ItemListController
   /**
    * In some cases we want to keep the selected item open even if it doesn't appear in results,
    * for example if you are inside tag Foo and remove tag Foo from the note, we want to keep the note open.
+   * The same applies to system views when the open note no longer matches the view filter.
    */
   private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined, source?: ItemsReloadSource) => {
     if (source === ItemsReloadSource.UserTriggeredTagChange) {
@@ -499,11 +510,14 @@ export class ItemListController
       !activeItemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
 
     if (closeBecauseActiveItemDoesntExistInCurrentSystemView) {
-      if (activeItem && activeItem.uuid === this.keepActiveItemOpenUuid) {
-        log(LoggingDomain.Selection, 'shouldCloseActiveItem false due to keepActiveItemOpenUuid')
+      const isActivelyOpenInEditor = this.getActiveItemController()?.item?.uuid === activeItem?.uuid
+
+      if (isActivelyOpenInEditor) {
+        log(LoggingDomain.Selection, 'shouldCloseActiveItem false because item is actively open in editor')
         return false
       }
-      log(LoggingDomain.Selection, 'shouldCloseActiveItem closePreviousItemWhenSwitchingToFilesBasedView')
+
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem closeBecauseActiveItemDoesntExistInCurrentSystemView')
       return true
     }
 
@@ -512,7 +526,10 @@ export class ItemListController
   }
 
   private shouldSelectNextItemOrCreateNewNote = (activeItem: SNNote | FileItem | undefined) => {
-    if (activeItem?.uuid === this.keepActiveItemOpenUuid) {
+    const isActivelyOpenInSystemView =
+      activeItem?.uuid === this.getActiveItemController()?.item?.uuid && this.navigationController.isInAnySystemView()
+
+    if (isActivelyOpenInSystemView) {
       return false
     }
 
@@ -618,7 +635,7 @@ export class ItemListController
     const tag = this.navigationController.selected
 
     const searchText = this.noteFilterText.toLowerCase()
-    const isSearching = searchText.length
+    const isSearching = searchText.length > 0 || this.searchOptionsController.tagFilterList.length > 0
     let includeArchived: boolean
     let includeTrashed: boolean
 
@@ -630,10 +647,15 @@ export class ItemListController
       includeTrashed = this.displayOptions.includeTrashed ?? false
     }
 
+    const tags: SNTag[] = []
+    if (tag instanceof SNTag) {
+      tags.push(tag)
+    }
+
     const criteria: NotesAndFilesDisplayControllerOptions = {
       sortBy: this.displayOptions.sortBy,
       sortDirection: this.displayOptions.sortDirection,
-      tags: tag instanceof SNTag ? [tag] : [],
+      tags,
       views: tag instanceof SmartView ? [tag] : [],
       includeArchived,
       includeTrashed,
@@ -642,6 +664,11 @@ export class ItemListController
       searchQuery: {
         query: searchText,
         includeProtectedNoteText: this.searchOptionsController.includeProtectedContents,
+        noteTitleOnly: this.searchOptionsController.noteTitleOnly,
+        tagFilters:
+          this.searchOptionsController.tagFilterList.length > 0
+            ? this.searchOptionsController.tagFilterList
+            : undefined,
       },
     }
 
@@ -794,7 +821,8 @@ export class ItemListController
       this.preferences.getValue(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
 
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
-      return `Note ${this.notes.length + 1}`
+      const noteNumber = this.notes.length + 1
+      return jtString(c('B3.Notes.NoteList.Label').jt`Note ${noteNumber}`)
     }
 
     if (titleFormat === NewNoteTitleFormat.CustomFormat) {
@@ -841,13 +869,13 @@ export class ItemListController
 
   get optionsSubtitle(): string | undefined {
     if (!this.displayOptions.includePinned && !this.displayOptions.includeProtected) {
-      return 'Excluding pinned and protected'
+      return c('B3.Notes.NoteList.Label').t`Excluding pinned and protected`
     }
     if (!this.displayOptions.includePinned) {
-      return 'Excluding pinned'
+      return c('B3.Notes.NoteList.Label').t`Excluding pinned`
     }
     if (!this.displayOptions.includeProtected) {
-      return 'Excluding protected'
+      return c('B3.Notes.NoteList.Label').t`Excluding protected`
     }
 
     return undefined
@@ -952,7 +980,6 @@ export class ItemListController
   }
 
   handleTagChange = async (userTriggered: boolean) => {
-    this.clearKeepActiveItemOpenUuid()
     const activeNoteController = this.getActiveItemController()
     if (activeNoteController instanceof NoteViewController && activeNoteController.isTemplateNote) {
       this.closeItemController(activeNoteController)
@@ -1057,9 +1084,9 @@ export class ItemListController
     this.selectedItems = Object.fromEntries(this.getSelectedItems().map((item) => [item.uuid, item]))
   }
 
-  setSelectedUuids = (selectedUuids: Set<UuidString>) => {
+  setSelectedUuids = (selectedUuids: ObservableSet<UuidString> | Set<UuidString>) => {
     log(LoggingDomain.Selection, 'Setting selected uuids', selectedUuids)
-    this.selectedUuids = new Set(selectedUuids)
+    this.selectedUuids = observable(new Set(selectedUuids))
     this.setSelectedItems()
   }
 
@@ -1208,21 +1235,9 @@ export class ItemListController
       }
     }
 
-    if (this.keepActiveItemOpenUuid && uuid !== this.keepActiveItemOpenUuid) {
-      this.clearKeepActiveItemOpenUuid()
-    }
-
     return {
       didSelect: this.selectedUuids.has(uuid),
     }
-  }
-
-  keepActiveItemOpenForSystemView = (noteUuid: UuidString): void => {
-    this.keepActiveItemOpenUuid = noteUuid
-  }
-
-  private clearKeepActiveItemOpenUuid(): void {
-    this.keepActiveItemOpenUuid = undefined
   }
 
   selectItem = async (

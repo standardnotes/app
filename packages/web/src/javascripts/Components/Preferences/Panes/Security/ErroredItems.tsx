@@ -8,6 +8,9 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import { ErrorCircle } from '@/Components/UIElements/ErrorCircle'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { c } from 'ttag'
+
+const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 const ErroredItems: FunctionComponent = () => {
   const application = useApplication()
@@ -28,7 +31,7 @@ const ErroredItems: FunctionComponent = () => {
     if (display) {
       return `${display[0].toUpperCase()}${display.slice(1)}`
     } else {
-      return `Item of type ${item.content_type}`
+      return jtString(c('B6.Preferences.Security.Info').jt`Item of type ${item.content_type}`)
     }
   }
 
@@ -37,10 +40,13 @@ const ErroredItems: FunctionComponent = () => {
   }
 
   const deleteItems = async (items: EncryptedItemInterface[]): Promise<void> => {
+    const count = items.length
     const confirmed = await application.alerts.confirm(
-      `Are you sure you want to permanently delete ${items.length} item(s)?`,
+      jtString(
+        c('B6.Preferences.Security.Confirmation').jt`Are you sure you want to permanently delete ${count} item(s)?`,
+      ),
       undefined,
-      'Delete',
+      c('B6.Preferences.Security.Confirmation').t`Delete`,
       ButtonType.Danger,
     )
     if (!confirmed) {
@@ -75,13 +81,17 @@ const ErroredItems: FunctionComponent = () => {
       <PreferencesSegment>
         <Title className="flex flex-row items-center gap-2">
           <ErrorCircle />
-          Error decrypting items
+          {c('B6.Preferences.Security.Title').t`Error decrypting items`}
         </Title>
-        <Text>{`${erroredItems.length} items are errored and could not be decrypted.`}</Text>
+        <Text>
+          {jtString(
+            c('B6.Preferences.Security.Error').jt`${erroredItems.length} items are errored and could not be decrypted.`,
+          )}
+        </Text>
         <div className="flex">
           <Button
             className="mr-2 mt-3 min-w-20"
-            label="Export all"
+            label={c('B6.Preferences.Security.Action').t`Export all`}
             onClick={() => {
               void application.archiveService.downloadEncryptedItems(erroredItems)
             }}
@@ -89,7 +99,7 @@ const ErroredItems: FunctionComponent = () => {
           <Button
             className="mr-2 mt-3 min-w-20"
             colorStyle="danger"
-            label="Delete all"
+            label={c('B6.Preferences.Security.Action').t`Delete all`}
             onClick={() => {
               void deleteItems(erroredItems)
             }}
@@ -98,24 +108,33 @@ const ErroredItems: FunctionComponent = () => {
         <HorizontalSeparator classes="mt-2.5 mb-3" />
 
         {erroredItems.map((item, index) => {
+          const contentTypeDisplay = getContentTypeDisplay(item)
+          const createdAtString = item.createdAtString
+          const itemUuid = item.uuid
+          const updatedAtString = item.updatedAtString
+
           return (
             <Fragment key={item.uuid}>
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
-                  <Subtitle>{`${getContentTypeDisplay(item)} created on ${item.createdAtString}`}</Subtitle>
-                  <Text>Item ID: {item.uuid}</Text>
-                  <Text>Last Modified: {item.updatedAtString}</Text>
+                  <Subtitle>
+                    {jtString(
+                      c('B6.Preferences.Security.Info').jt`${contentTypeDisplay} created on ${createdAtString}`,
+                    )}
+                  </Subtitle>
+                  <Text>{jtString(c('B6.Preferences.Security.Info').jt`Item ID: ${itemUuid}`)}</Text>
+                  <Text>{jtString(c('B6.Preferences.Security.Info').jt`Last Modified: ${updatedAtString}`)}</Text>
                   <div className="flex">
                     <Button
                       className="mr-2 mt-3 min-w-20"
-                      label="Attempt decryption"
+                      label={c('B6.Preferences.Security.Action').t`Attempt decryption`}
                       onClick={() => {
                         attemptDecryption(item)
                       }}
                     />
                     <Button
                       className="mr-2 mt-3 min-w-20"
-                      label="Export"
+                      label={c('B6.Preferences.Security.Action').t`Export`}
                       onClick={() => {
                         void application.archiveService.downloadEncryptedItem(item)
                       }}
@@ -123,7 +142,7 @@ const ErroredItems: FunctionComponent = () => {
                     <Button
                       className="mr-2 mt-3 min-w-20"
                       colorStyle="danger"
-                      label="Delete"
+                      label={c('B6.Preferences.Security.Action').t`Delete`}
                       onClick={() => {
                         void deleteItem(item)
                       }}

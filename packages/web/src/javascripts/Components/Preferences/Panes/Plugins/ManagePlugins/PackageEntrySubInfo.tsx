@@ -3,6 +3,7 @@ import Button from '@/Components/Button/Button'
 import { FunctionComponent, useState, useRef, useEffect } from 'react'
 import { AnyPackageType } from '../AnyPackageType'
 import { ButtonType, ComponentInterface, ComponentMutator } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 type Props = {
   plugin: AnyPackageType
@@ -62,11 +63,11 @@ const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin }) => {
   const uninstall = async () => {
     application.alerts
       .confirm(
-        'Are you sure you want to uninstall this plugin?',
-        'Uninstall Plugin?',
-        'Uninstall',
+        c('B6.Preferences.Plugins.Confirmation').t`Are you sure you want to uninstall this plugin?`,
+        c('B6.Preferences.Plugins.Confirmation').t`Uninstall Plugin?`,
+        c('B6.Preferences.Other.Action').t`Uninstall`,
         ButtonType.Danger,
-        'Cancel',
+        c('B6.Preferences.Other.Action').t`Cancel`,
       )
       .then(async (shouldRemove: boolean) => {
         if (shouldRemove) {
@@ -94,10 +95,10 @@ const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin }) => {
       {isRenaming && (
         <div className="flex gap-1">
           <Button small className="cursor-pointer" onClick={confirmRename}>
-            Confirm
+            {c('B6.Preferences.Other.Action').t`Confirm`}
           </Button>
           <Button small className="cursor-pointer" onClick={cancelRename}>
-            Cancel
+            {c('B6.Preferences.Other.Action').t`Cancel`}
           </Button>
         </div>
       )}
@@ -106,10 +107,15 @@ const PluginEntrySubInfo: FunctionComponent<Props> = ({ plugin }) => {
         <div className="flex flex-row flex-wrap justify-end gap-2">
           {renameable && !isRenaming && (
             <Button small className="cursor-pointer" onClick={startRenaming}>
-              Rename
+              {c('B6.Preferences.Other.Label').t`Rename`}
             </Button>
           )}
-          <Button small className="min-w-20" label={'Uninstall'} onClick={uninstall} />
+          <Button
+            small
+            className="min-w-20"
+            label={c('B6.Preferences.Plugins.Label').t`Uninstall`}
+            onClick={uninstall}
+          />
         </div>
       )}
     </div>

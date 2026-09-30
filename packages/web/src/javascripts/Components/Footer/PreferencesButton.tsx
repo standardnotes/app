@@ -1,4 +1,5 @@
 import { compareSemVersions, StatusServiceEvent } from '@standardnotes/snjs'
+import { c } from 'ttag'
 import { keyboardStringForShortcut, OPEN_PREFERENCES_COMMAND } from '@standardnotes/ui-services'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
@@ -54,14 +55,19 @@ const PreferencesButton = ({ openPreferences }: Props) => {
   if (isMobileScreen) {
     return (
       <div className="relative">
-        <RoundIconButton className="ml-2.5 bg-default" onClick={onClick} label="Go to preferences" icon="tune" />
+        <RoundIconButton
+          className="ml-2.5 bg-default"
+          onClick={onClick}
+          label={c('B2.NavSharedUI.AriaLabel').t`Go to preferences`}
+          icon="tune"
+        />
         <CountBubble position="right" count={bubbleCount} />
       </div>
     )
   }
 
   return (
-    <StyledTooltip label={`Open preferences (${shortcut})`}>
+    <StyledTooltip label={c('B2.NavSharedUI.AriaLabel').t`Open preferences (${shortcut})`}>
       <button onClick={onClick} className="group relative flex h-full w-8 cursor-pointer items-center justify-center">
         <div className="relative h-5">
           <Icon type="tune" className="rounded group-hover:text-info" />

@@ -5,6 +5,7 @@ import { RevisionContentState } from '@/Controllers/NoteHistory/Types'
 import Spinner from '@/Components/Spinner/Spinner'
 import { ReadonlyNoteContent } from '../NoteView/ReadonlyNoteContent'
 import { SNNote } from '@standardnotes/snjs'
+import { c } from 'ttag'
 
 type Props = {
   noteHistoryController: NoteHistoryController
@@ -18,7 +19,7 @@ const HistoryModalContentPane = ({ noteHistoryController, note }: Props) => {
     case RevisionContentState.Idle:
       return (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none text-sm text-passive-0">
-          No revision selected
+          {c('B4.Notes.History.Label').t`No revision selected`}
         </div>
       )
     case RevisionContentState.Loading:

@@ -55,6 +55,16 @@ export function computeFiltersForDisplayOptions(
     }
   }
 
+  if (options.searchQuery) {
+    const query = options.searchQuery
+    filters.push((item) => itemMatchesQuery(item, query, collection))
+
+    if (query.tagFilters && query.tagFilters.length > 0) {
+      const tagFilters = query.tagFilters
+      filters.push((item) => tagFilters.some((tag) => tag.isReferencingItem(item)))
+    }
+  }
+
   if (options.includePinned === false && !viewsPredicate?.keypathIncludesString('pinned')) {
     filters.push((item) => !item.pinned)
   }
@@ -69,11 +79,6 @@ export function computeFiltersForDisplayOptions(
 
   if (options.includeArchived === false && !viewsPredicate?.keypathIncludesString('archived')) {
     filters.push((item) => !item.archived)
-  }
-
-  if (options.searchQuery) {
-    const query = options.searchQuery
-    filters.push((item) => itemMatchesQuery(item, query, collection))
   }
 
   if (

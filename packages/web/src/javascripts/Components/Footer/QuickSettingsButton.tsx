@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { c } from 'ttag'
 import { UIFeature, GetDarkThemeFeature } from '@standardnotes/snjs'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/utils'
@@ -31,22 +32,32 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
     const darkThemeFeature = new UIFeature(GetDarkThemeFeature())
 
     return mergeRegister(
-      application.commands.addWithShortcut(TOGGLE_DARK_MODE_COMMAND, 'General', 'Toggle dark mode', () => {
-        void application.componentManager.toggleTheme(darkThemeFeature)
-        return true
-      }),
-      application.commands.add('open-quick-settings-menu', 'Open quick settings menu', toggleMenu, 'themes'),
+      application.commands.addWithShortcut(
+        TOGGLE_DARK_MODE_COMMAND,
+        'General',
+        c('B2.NavSharedUI.Action').t`Toggle dark mode`,
+        () => {
+          void application.componentManager.toggleTheme(darkThemeFeature)
+          return true
+        },
+      ),
+      application.commands.add(
+        'open-quick-settings-menu',
+        c('B2.NavSharedUI.Action').t`Open quick settings menu`,
+        toggleMenu,
+        'themes',
+      ),
     )
   }, [application, isMobileNavigation, keyboardService, toggleMenu])
 
   return (
     <>
-      <StyledTooltip label="Open quick settings menu">
+      <StyledTooltip label={c('B2.NavSharedUI.AriaLabel').t`Open quick settings menu`}>
         {isMobileNavigation ? (
           <RoundIconButton
             className="ml-2.5 bg-default"
             onClick={toggleMenu}
-            label="Go to quick settings menu"
+            label={c('B2.NavSharedUI.AriaLabel').t`Go to quick settings menu`}
             icon="themes"
           />
         ) : (
@@ -62,7 +73,7 @@ const QuickSettingsButton = ({ application, isMobileNavigation = false }: Props)
         )}
       </StyledTooltip>
       <Popover
-        title="Quick settings"
+        title={c('B2.NavSharedUI.Title').t`Quick settings`}
         togglePopover={toggleMenu}
         anchorElement={buttonRef}
         open={isOpen}

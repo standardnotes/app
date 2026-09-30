@@ -46,7 +46,7 @@ export function debounce<Args extends any[], F extends (...args: Args) => any>(
 ): DebouncedFunction<Args, F> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined
   const isImmediate = options.isImmediate ?? false
-  const callback = options.callback ?? false
+  const callback = options.callback
   const maxWait = options.maxWait
   let lastInvokeTime = Date.now()
 
@@ -73,7 +73,7 @@ export function debounce<Args extends any[], F extends (...args: Args) => any>(
         lastInvokeTime = Date.now()
         if (!isImmediate) {
           const result = func.apply(context, args)
-          callback && callback(result)
+          callback?.(result)
           promises.forEach(({ resolve }) => resolve(result))
           promises = []
         }
@@ -89,7 +89,7 @@ export function debounce<Args extends any[], F extends (...args: Args) => any>(
 
       if (shouldCallNow) {
         const result = func.apply(context, args)
-        callback && callback(result)
+        callback?.(result)
         return resolve(result)
       }
       promises.push({ resolve, reject })

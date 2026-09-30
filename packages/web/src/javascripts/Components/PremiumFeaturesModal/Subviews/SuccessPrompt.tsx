@@ -1,4 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
+import { c } from 'ttag'
 
 export const SuccessPrompt = ({
   ctaRef,
@@ -14,7 +15,7 @@ export const SuccessPrompt = ({
           <button
             className="flex cursor-pointer border-0 bg-transparent p-0"
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={c('B2.NavSharedUI.AriaLabel').t`Close modal`}
           >
             <Icon className="text-neutral" type="close" />
           </button>
@@ -25,10 +26,13 @@ export const SuccessPrompt = ({
         >
           <Icon className={'h-24 w-24 px-7 py-2 text-[3.125rem]'} size={'custom'} type={'🎉'} />
         </div>
-        <div className="mb-1 text-center text-lg font-bold">Your purchase was successful!</div>
+        <div className="mb-1 text-center text-lg font-bold">{c('B7.FilesSubscriptionHelp.Subscription.Info')
+          .t`Your purchase was successful!`}</div>
       </div>
 
-      <div className="mb-2 px-4.5 text-center text-sm text-passive-1">Enjoy your new powered up experience.</div>
+      <div className="mb-2 px-4.5 text-center text-sm text-passive-1">
+        {c('B7.FilesSubscriptionHelp.Subscription.Info').t`Enjoy your new powered up experience.`}
+      </div>
 
       <div className="p-4">
         <button
@@ -36,7 +40,7 @@ export const SuccessPrompt = ({
           className="no-border w-full cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125"
           ref={ctaRef}
         >
-          Continue
+          {c('B7.FilesSubscriptionHelp.Subscription.Action').t`Continue`}
         </button>
       </div>
     </>

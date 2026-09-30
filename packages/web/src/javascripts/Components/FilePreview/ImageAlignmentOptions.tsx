@@ -1,4 +1,5 @@
 import { classNames, IconType } from '@standardnotes/snjs'
+import { c } from 'ttag'
 import IconButton from '@/Components/Button/IconButton'
 import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 import { ElementFormatType } from 'lexical'
@@ -19,15 +20,15 @@ export function getCSSValueFromAlignment(format: ElementFormatType) {
 const Options = [
   {
     alignment: 'left',
-    label: 'Left align',
+    label: c('B7.FilesSubscriptionHelp.Files.Label').t`Left align`,
   },
   {
     alignment: 'center',
-    label: 'Center align',
+    label: c('B7.FilesSubscriptionHelp.Files.Label').t`Center align`,
   },
   {
     alignment: 'right',
-    label: 'Right align',
+    label: c('B7.FilesSubscriptionHelp.Files.Label').t`Right align`,
   },
 ]
 

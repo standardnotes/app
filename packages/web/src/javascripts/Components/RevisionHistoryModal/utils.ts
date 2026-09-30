@@ -1,6 +1,7 @@
 import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/Constants/Constants'
 import { HistoryEntry, NoteHistoryEntry, RevisionMetadata } from '@standardnotes/snjs'
 import { calculateDifferenceBetweenDatesInDays } from '../../Utils/CalculateDifferenceBetweenDatesInDays'
+import { c } from 'ttag'
 
 export type HistoryModalMobileTab = 'Content' | 'List'
 
@@ -67,6 +68,19 @@ export const getGroupIndexForEntry = (entry: RevisionEntry, groups: ListGroup<Re
 const GROUP_TITLE_TODAY = 'Today'
 const GROUP_TITLE_WEEK = 'This Week'
 const GROUP_TITLE_YEAR = 'More Than A Year Ago'
+
+export const formatRevisionGroupTitle = (title: string): string => {
+  switch (title) {
+    case GROUP_TITLE_TODAY:
+      return c('B4.Notes.History.Label').t`Today`
+    case GROUP_TITLE_WEEK:
+      return c('B4.Notes.History.Label').t`This Week`
+    case GROUP_TITLE_YEAR:
+      return c('B4.Notes.History.Label').t`More Than A Year Ago`
+    default:
+      return title
+  }
+}
 
 export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(revisionList: EntryType[] | undefined) => {
   const sortedGroups: ListGroup<EntryType>[] = [

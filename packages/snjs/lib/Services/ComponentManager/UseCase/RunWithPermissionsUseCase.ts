@@ -14,6 +14,7 @@ import {
 import { AllowedBatchContentTypes, AllowedBatchStreaming } from '../Types'
 import { Copy, filterFromArray, removeFromArray, uniqueArray } from '@standardnotes/utils'
 import { permissionsStringForPermissions } from '../permissionsStringForPermissions'
+import { c } from 'ttag'
 
 export class RunWithPermissionsUseCase {
   private permissionDialogs: PermissionDialog[] = []
@@ -48,8 +49,9 @@ export class RunWithPermissionsUseCase {
         this.pendingErrorAlerts.add(componentIdentifier)
         void this.alerts
           .alert(
-            `Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
-            'An unexpected error occurred',
+            c('B4.Notes.EditingUI.Error')
+              .t`Unable to find component with ID ${componentIdentifier}. Please restart the app and try again.`,
+            c('B4.Notes.EditingUI.Error').t`An unexpected error occurred`,
           )
           .then(() => {
             this.pendingErrorAlerts.delete(componentIdentifier)
@@ -187,7 +189,7 @@ export class RunWithPermissionsUseCase {
         this.permissionDialogs = this.permissionDialogs.filter((pendingDialog) => {
           /* Remove self */
           if (pendingDialog === params) {
-            pendingDialog.actionBlock && pendingDialog.actionBlock(approved)
+            pendingDialog.actionBlock?.(approved)
             return false
           }
           const containsObjectSubset = (source: ComponentPermission[], target: ComponentPermission[]) => {
@@ -202,7 +204,7 @@ export class RunWithPermissionsUseCase {
               /* If approved, run the action block. Otherwise, if canceled, cancel any
               pending ones as well, since the user was explicit in their intentions */
               if (approved) {
-                pendingDialog.actionBlock && pendingDialog.actionBlock(approved)
+                pendingDialog.actionBlock?.(approved)
               }
               return false
             }

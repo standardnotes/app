@@ -2,9 +2,10 @@ import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
 import { LexicalEditor } from 'lexical'
 import { INSERT_TABLE_COMMAND } from '@lexical/table'
 import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
+import { c } from 'ttag'
 
 export function GetTableBlockOption(onSelect: () => void) {
-  return new BlockPickerOption('Table', {
+  return new BlockPickerOption(c('B3.Notes.EditorToolbar.Action').t`Table`, {
     iconName: 'table' as LexicalIconName,
     keywords: ['table', 'grid', 'spreadsheet', 'rows', 'columns'],
     onSelect: onSelect,
@@ -28,7 +29,7 @@ export function GetDynamicTableBlocks(editor: LexicalEditor, queryString: string
     const [rows, columns] = fullTableMatch[0].split('x').map((n: string) => parseInt(n, 10))
 
     options.push(
-      new BlockPickerOption(`${rows}x${columns} Table`, {
+      new BlockPickerOption(c('B3.Notes.EditorToolbar.Label').jt`${rows}x${columns} Table` as unknown as string, {
         iconName: 'table',
         keywords: ['table'],
         onSelect: () => editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns: String(columns), rows: String(rows) }),
@@ -40,7 +41,7 @@ export function GetDynamicTableBlocks(editor: LexicalEditor, queryString: string
     options.push(
       ...Array.from({ length: 5 }, (_, i) => i + 1).map(
         (columns) =>
-          new BlockPickerOption(`${rows}x${columns} Table`, {
+          new BlockPickerOption(c('B3.Notes.EditorToolbar.Label').jt`${rows}x${columns} Table` as unknown as string, {
             iconName: 'table',
             keywords: ['table'],
             onSelect: () =>

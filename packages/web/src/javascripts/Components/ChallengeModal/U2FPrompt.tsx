@@ -1,14 +1,17 @@
-import { Username } from '@standardnotes/snjs'
+import { Environment, Username } from '@standardnotes/snjs'
 import { ChallengePrompt } from '@standardnotes/services'
-import { RefObject, useState } from 'react'
+import { RefObject, useCallback, useState } from 'react'
+import { c } from 'ttag'
 
 import { WebApplication } from '@/Application/WebApplication'
+import { IS_FIREFOX } from '@/Components/SuperEditor/Lexical/Shared/environment'
 
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 
 import { InputValue } from './InputValue'
 import U2FPromptIframeContainer from './U2FPromptIframeContainer'
+import U2FPromptFirefoxNative from './U2FPromptFirefoxNative'
 import { isAndroid } from '@standardnotes/ui-services'
 
 type Props = {
@@ -23,11 +26,31 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
   const [authenticatorResponse, setAuthenticatorResponse] = useState<Record<string, unknown> | null>(null)
   const [error, setError] = useState('')
 
+  const handleNativeResponse = useCallback(
+    (response: Record<string, unknown>) => {
+      onValueChange(response, prompt)
+    },
+    [onValueChange, prompt],
+  )
+
   if (!application.isFullU2FClient && !isAndroid()) {
+    const apiHost = application.getHost.execute().getValue() || window.defaultSyncServer
+
+    if (application.environment === Environment.Clipper && IS_FIREFOX) {
+      return (
+        <U2FPromptFirefoxNative
+          contextData={contextData}
+          apiHost={apiHost}
+          buttonRef={buttonRef}
+          onResponse={handleNativeResponse}
+        />
+      )
+    }
+
     return (
       <U2FPromptIframeContainer
         contextData={contextData}
-        apiHost={application.getHost.execute().getValue() || window.defaultSyncServer}
+        apiHost={apiHost}
         onResponse={(response) => {
           onValueChange(response, prompt)
         }}
@@ -77,7 +100,7 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
             }
 
             if (authenticatorResponse === null) {
-              setError('Failed to obtain device response')
+              setError(c('B5.SecuritySync.Challenge.Error').t`Failed to obtain device response`)
               return
             }
 
@@ -89,10 +112,10 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
           {authenticatorResponse ? (
             <span className="flex items-center justify-center gap-3">
               <Icon type="check-circle" />
-              Obtained Device Response
+              {c('B5.SecuritySync.Challenge.Info').t`Obtained Device Response`}
             </span>
           ) : (
-            'Authenticate Device'
+            c('B5.SecuritySync.Challenge.Action').t`Authenticate Device`
           )}
         </Button>
       </div>

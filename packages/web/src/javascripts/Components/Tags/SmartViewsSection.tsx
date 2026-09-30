@@ -12,6 +12,7 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import AddSmartViewModal from '../SmartViewBuilder/AddSmartViewModal'
 import { AddSmartViewModalController } from '../SmartViewBuilder/AddSmartViewModalController'
 import SmartViewsList from './SmartViewsList'
+import { c } from 'ttag'
 
 type Props = {
   application: WebApplication
@@ -34,7 +35,13 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
   }, [addSmartViewModalController, premiumModal, featuresController.hasSmartViews])
 
   useEffect(
-    () => application.commands.add('create-smart-view', 'Create a new smart view', createNewSmartView, 'add'),
+    () =>
+      application.commands.add(
+        'create-smart-view',
+        c('B4.Notes.TagsLinkedItems.Action').t`Create a new smart view`,
+        createNewSmartView,
+        'add',
+      ),
     [application.commands, createNewSmartView],
   )
 
@@ -43,13 +50,13 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
       <div className={'section-title-bar'}>
         <div className="section-title-bar-header">
           <div className="title text-base md:text-sm">
-            <span className="font-bold">Views</span>
+            <span className="font-bold">{c('B4.Notes.TagsLinkedItems.Action').t`Views`}</span>
           </div>
           {!navigationController.isSearching && (
             <IconButton
               focusable={true}
               icon="add"
-              title="Create a new smart view"
+              title={c('B4.Notes.TagsLinkedItems.Action').t`Create a new smart view`}
               className="p-0 text-neutral"
               onClick={createNewSmartView}
             />

@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useRef } from 'react'
 import { UpgradePrompt } from '../PremiumFeaturesModal/Subviews/UpgradePrompt'
 import { useApplication } from '../ApplicationProvider'
+import { c } from 'ttag'
 
 export const PreferencesPremiumOverlay: FunctionComponent = () => {
   const ctaButtonRef = useRef<HTMLButtonElement>(null)
@@ -19,7 +20,7 @@ export const PreferencesPremiumOverlay: FunctionComponent = () => {
       <div className="absolute h-full w-full bg-default opacity-[86%]"></div>
       <div className="border-1 z-10 rounded border border-border bg-default p-5">
         <UpgradePrompt
-          featureName={'Plugin Gallery'}
+          featureName={c('B7.FilesSubscriptionHelp.Subscription.Info').t`Plugin Gallery`}
           ctaRef={ctaButtonRef}
           application={application}
           hasSubscription={hasSubscription}

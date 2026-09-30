@@ -77,7 +77,7 @@ export const PreprocessingStep = ({
     return (
       <div className="flex flex-row items-center gap-3">
         <Spinner className="h-3 w-3" />
-        <p className="">{c('Status').t`Checking for data conflicts...`}</p>
+        <p className="">{c('B1.Account.Password.Status').t`Checking for data conflicts...`}</p>
       </div>
     )
   }
@@ -89,7 +89,7 @@ export const PreprocessingStep = ({
   return (
     <div className="flex flex-col">
       <p>
-        {c('Info')
+        {c('B1.Account.Password.Info')
           .t`You have pending vault invites. Changing your password will delete these invites. It is recommended you accept or decline these invites before changing your password. If you choose to continue, these invites will be deleted.`}
       </p>
     </div>

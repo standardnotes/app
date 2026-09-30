@@ -1,4 +1,5 @@
 import { classNames } from '@standardnotes/snjs'
+import { c } from 'ttag'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useCallback, useState, useRef } from 'react'
 import { useApplication } from '../ApplicationProvider'
@@ -362,7 +363,9 @@ function Table<Data>({ table }: { table: TableType<Data> }) {
     <div className="block min-h-0 overflow-auto" onScroll={onScroll}>
       {showSelectionActions && selectedRows.length >= 2 && (
         <div className="sticky top-0 z-[2] flex items-center justify-between border-b border-border bg-default px-3 py-2">
-          <span className="text-info-0 text-sm font-medium">{selectedRows.length} selected</span>
+          <span className="text-info-0 text-sm font-medium">
+            {c('B2.NavSharedUI.Status').t`${selectedRows.length} selected`}
+          </span>
           {selectedRows.length > 0 && selectionActions}
         </div>
       )}

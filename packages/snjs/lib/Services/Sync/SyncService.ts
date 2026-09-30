@@ -155,7 +155,7 @@ export class SyncService
   public lastSyncInvokationPromise?: Promise<unknown>
   public currentSyncRequestPromise?: Promise<void>
 
-  private autoSyncInterval?: NodeJS.Timer
+  private autoSyncInterval?: ReturnType<typeof setInterval>
   private wasNotifiedOfItemsChangeOnServer = false
 
   constructor(

@@ -16,6 +16,7 @@ import LabsFeature from './LabsFeature'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import { c } from 'ttag'
 
 type ExperimentalFeatureItem = {
   identifier: string
@@ -85,12 +86,12 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Labs</Title>
+        <Title>{c('B6.Preferences.General.Title').t`Labs`}</Title>
         <div>
           {canShowPaneGesturesOption && (
             <LabsFeature
-              name="Pane switch gestures"
-              description="Allows using gestures to navigate"
+              name={c('B6.Preferences.General.Label').t`Pane switch gestures`}
+              description={c('B6.Preferences.General.Info').t`Allows using gestures to navigate`}
               isEnabled={isPaneGesturesEnabled}
               toggleFeature={() => {
                 void application.setPreference(PrefKey.PaneGesturesEnabled, !isPaneGesturesEnabled)
@@ -125,7 +126,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
           {experimentalFeatures.length === 0 && !canShowPaneGesturesOption && (
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
-                <Text>No experimental features available.</Text>
+                <Text>{c('B6.Preferences.General.Info').t`No experimental features available.`}</Text>
               </div>
             </div>
           )}

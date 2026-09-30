@@ -13,9 +13,9 @@ const User = () => {
     <div className="sk-panel-section">
       {application.syncStatusController.errorMessage && (
         <div className="sk-notification danger">
-          <div className="sk-notification-title">{c('Title').t`Sync Unreachable`}</div>
+          <div className="sk-notification-title">{c('B1.Account.Session.Title').t`Sync Unreachable`}</div>
           <div className="sk-notification-text">
-            {c('Error')
+            {c('B1.Account.Session.Error')
               .t`Hmm...we can't seem to sync your account. The reason: ${application.syncStatusController.errorMessage}`}
           </div>
           <a
@@ -24,7 +24,7 @@ const User = () => {
             rel="noopener"
             target="_blank"
           >
-            {c('Action').t`Need help?`}
+            {c('B1.Account.Session.Action').t`Need help?`}
           </a>
         </div>
       )}

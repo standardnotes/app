@@ -27,7 +27,7 @@ async function ensureKeychainAccess(store: Store): Promise<BrowserWindow | undef
     try {
       await getKeychainValue()
       store.set(StoreKeys.UseNativeKeychain, true)
-    } catch (_) {
+    } catch {
       /** Can't access keychain. */
       if (keychainAccessIsUserConfigurable) {
         return askForKeychainAccess(store)

@@ -5,6 +5,20 @@ import packageInfo from '../../package.json'
 
 const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
+const openClipperAuthPanel = async (pane: 'sign-in' | 'register') => {
+  const popupPath = await browserAction.getPopup({})
+  const url = new URL(popupPath, runtime.getURL('/'))
+  url.searchParams.set('route', 'extension')
+  url.searchParams.set('pane', pane)
+
+  await windows.create({
+    type: 'detached_panel',
+    url: url.toString(),
+    width: 350,
+    height: 300,
+  })
+}
+
 const openPopupAndClipSelection = async (payload: ClipPayload) => {
   await storage.local.set({ clip: payload })
 
@@ -33,6 +47,8 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
       return
     }
     void openPopupAndClipSelection(message.payload)
+  } else if (message.type === RuntimeMessageTypes.OpenClipperAuthPanel) {
+    await openClipperAuthPanel(message.pane)
   } else if (message.type === RuntimeMessageTypes.CaptureVisibleTab) {
     return await tabs.captureVisibleTab(undefined, {
       format: 'png',

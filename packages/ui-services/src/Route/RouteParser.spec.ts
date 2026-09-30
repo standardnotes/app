@@ -20,6 +20,13 @@ describe('route parser', () => {
     expect(parser.demoParams.token).toEqual('eyJhY2Nlc3NUb2tl')
   })
 
+  it('ignores demo-token on non-demo hosts', () => {
+    const url = 'https://app.standardnotes.com/?demo-token=eyJhY2Nlc3NUb2tl'
+    const parser = new RouteParser(url)
+
+    expect(parser.type).toEqual(RouteType.None)
+  })
+
   it('routes to settings', () => {
     const url = 'https://app.standardnotes.com/?settings=account'
     const parser = new RouteParser(url)

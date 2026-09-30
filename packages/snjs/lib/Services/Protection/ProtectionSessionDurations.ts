@@ -1,20 +1,21 @@
 import { UnprotectedAccessSecondsDuration } from './UnprotectedAccessSecondsDuration'
+import { c } from 'ttag'
 
 export const ProtectionSessionDurations = [
   {
     valueInSeconds: UnprotectedAccessSecondsDuration.OneMinute,
-    label: '1 Minute',
+    label: c('B5.SecuritySync.Protections.Label').t`1 Minute`,
   },
   {
     valueInSeconds: UnprotectedAccessSecondsDuration.FiveMinutes,
-    label: '5 Minutes',
+    label: c('B5.SecuritySync.Protections.Label').t`5 Minutes`,
   },
   {
     valueInSeconds: UnprotectedAccessSecondsDuration.OneHour,
-    label: '1 Hour',
+    label: c('B5.SecuritySync.Protections.Label').t`1 Hour`,
   },
   {
     valueInSeconds: UnprotectedAccessSecondsDuration.OneWeek,
-    label: '1 Week',
+    label: c('B5.SecuritySync.Protections.Label').t`1 Week`,
   },
 ]

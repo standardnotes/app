@@ -1,4 +1,4 @@
-import { FocusEvent, FunctionComponent, useCallback, useState } from 'react'
+import { FocusEvent, FunctionComponent, useCallback, useMemo, useState } from 'react'
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
@@ -32,6 +32,7 @@ import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 import { CheckListPlugin } from './Plugins/CheckListPlugin'
 import GoogleDocsPastePlugin from './Plugins/GoogleDocsPastePlugin/GoogleDocsPastePlugin'
+import { c } from 'ttag'
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void
@@ -81,6 +82,16 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
 
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
+  const editorPlaceholder = useMemo(() => {
+    const slashKey = <span className="rounded bg-passive-4-opacity-variant p-0.5">/</span>
+
+    return (
+      <div className="pointer-events-none absolute left-4 top-4 text-[length:--font-size] text-passive-1">
+        {c('B4.Notes.EditingUI.Label').jt`Type ${slashKey} for commands...`}
+      </div>
+    )
+  }, [])
+
   return (
     <>
       {!isMobile && <ToolbarPlugin />}
@@ -103,11 +114,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
               </div>
             </div>
           }
-          placeholder={
-            <div className="pointer-events-none absolute left-4 top-4 text-[length:--font-size] text-passive-1">
-              Type <span className="rounded bg-passive-4-opacity-variant p-0.5">/</span> for commands...
-            </div>
-          }
+          placeholder={editorPlaceholder}
           ErrorBoundary={LexicalErrorBoundary}
         />
       </div>

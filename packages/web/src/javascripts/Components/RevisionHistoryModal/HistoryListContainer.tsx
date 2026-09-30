@@ -7,6 +7,7 @@ import RemoteHistoryList from './RemoteHistoryList'
 import { RevisionType } from './RevisionType'
 import SessionHistoryList from './SessionHistoryList'
 import { HistoryModalMobileTab } from './utils'
+import { c } from 'ttag'
 
 type Props = {
   features: FeaturesClientInterface
@@ -16,6 +17,17 @@ type Props = {
 
 const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryController, selectMobileModalTab }) => {
   const { legacyHistory, currentTab, selectTab } = noteHistoryController
+
+  const revisionTypeLabel = (type: RevisionType) => {
+    switch (type) {
+      case RevisionType.Remote:
+        return c('B4.Notes.History.Label').t`Remote`
+      case RevisionType.Session:
+        return c('B4.Notes.History.Label').t`Session`
+      case RevisionType.Legacy:
+        return c('B4.Notes.History.Label').t`Legacy`
+    }
+  }
 
   const TabButton: FunctionComponent<{
     type: RevisionType
@@ -31,7 +43,7 @@ const HistoryListContainer: FunctionComponent<Props> = ({ features, noteHistoryC
           selectTab(type)
         }}
       >
-        {type}
+        {revisionTypeLabel(type)}
       </button>
     )
   }

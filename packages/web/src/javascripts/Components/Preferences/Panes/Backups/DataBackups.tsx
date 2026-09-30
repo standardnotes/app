@@ -1,13 +1,13 @@
 import { alertDialog } from '@standardnotes/ui-services'
 import {
-  STRING_IMPORT_SUCCESS,
-  STRING_INVALID_IMPORT_FILE,
-  STRING_IMPORTING_ZIP_FILE,
-  STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
+  StringEncNotEnabled,
+  StringE2EEnabled,
   StringImportError,
-  STRING_E2E_ENABLED,
-  STRING_LOCAL_ENC_ENABLED,
-  STRING_ENC_NOT_ENABLED,
+  StringImportingZipFile,
+  StringImportSuccess,
+  StringInvalidImportFile,
+  StringLocalEncEnabled,
+  StringUnsupportedBackupFileVersion,
 } from '@/Constants/Strings'
 import { BackupFile } from '@standardnotes/snjs'
 import { sanitizeFileName } from '@standardnotes/utils'
@@ -21,6 +21,7 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Spinner from '@/Components/Spinner/Spinner'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
+import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 type Props = {
@@ -45,10 +46,10 @@ const DataBackups = ({ application }: Props) => {
     const encryptionEnabled = hasUser || hasPasscode
 
     const encryptionStatusString = hasUser
-      ? STRING_E2E_ENABLED
+      ? StringE2EEnabled()
       : hasPasscode
-      ? STRING_LOCAL_ENC_ENABLED
-      : STRING_ENC_NOT_ENABLED
+      ? StringLocalEncEnabled()
+      : StringEncNotEnabled()
 
     setEncryptionStatusString(encryptionStatusString)
     setIsEncryptionEnabled(encryptionEnabled)
@@ -75,7 +76,10 @@ const DataBackups = ({ application }: Props) => {
     })
 
     if (isBackupEncrypted) {
-      const filename = `Standard Notes Encrypted Backup and Import File - ${application.archiveService.formattedDateForExports()}`
+      const formattedDate = application.archiveService.formattedDateForExports()
+      const filename = jtString(
+        c('B6.Preferences.Backups.Label').jt`${AppName} Encrypted Backup and Import File - ${formattedDate}`,
+      )
       const sanitizedFilename = sanitizeFileName(filename) + '.txt'
       void downloadOrShareBlobBasedOnPlatform({
         archiveService: application.archiveService,
@@ -88,7 +92,8 @@ const DataBackups = ({ application }: Props) => {
       })
     } else {
       const zippedDecryptedItemsBlob = await application.archiveService.getZippedDecryptedItemsBlob(data)
-      const filename = `Standard Notes Backup - ${application.archiveService.formattedDateForExports()}`
+      const formattedDate = application.archiveService.formattedDateForExports()
+      const filename = jtString(c('B6.Preferences.Backups.Label').jt`${AppName} Backup - ${formattedDate}`)
       const sanitizedFilename = sanitizeFileName(filename) + '.zip'
       void downloadOrShareBlobBasedOnPlatform({
         archiveService: application.archiveService,
@@ -105,7 +110,7 @@ const DataBackups = ({ application }: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const readFile = async (file: File): Promise<any> => {
     if (file.type === 'application/zip') {
-      application.alerts.alert(STRING_IMPORTING_ZIP_FILE()).catch(console.error)
+      application.alerts.alert(StringImportingZipFile()).catch(console.error)
       return
     }
 
@@ -115,8 +120,8 @@ const DataBackups = ({ application }: Props) => {
         try {
           const data = JSON.parse(e.target?.result as string)
           resolve(data)
-        } catch (e) {
-          application.alerts.alert(STRING_INVALID_IMPORT_FILE()).catch(console.error)
+        } catch {
+          application.alerts.alert(StringInvalidImportFile()).catch(console.error)
         }
       }
       reader.readAsText(file)
@@ -130,7 +135,7 @@ const DataBackups = ({ application }: Props) => {
 
     setIsImportDataLoading(false)
 
-    let statusText = STRING_IMPORT_SUCCESS()
+    let statusText = StringImportSuccess()
     if (result.isFailed()) {
       statusText = result.getError()
     } else if (result.getValue().errorCount) {
@@ -163,7 +168,7 @@ const DataBackups = ({ application }: Props) => {
       await performImport(data)
     } else {
       setIsImportDataLoading(false)
-      void alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION() })
+      void alertDialog({ text: StringUnsupportedBackupFileVersion() })
     }
   }
 
@@ -188,32 +193,38 @@ const DataBackups = ({ application }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>{c('Title').t`Data backups`}</Title>
-          <Subtitle>{c('Subtitle').t`Download a backup of all your text-based data`}</Subtitle>
+          <Title>{c('B6.Preferences.Backups.Title').t`Data backups`}</Title>
+          <Subtitle>{c('B6.Preferences.Backups.Subtitle').t`Download a backup of all your text-based data`}</Subtitle>
 
           {isEncryptionEnabled && (
             <form className="sk-panel-form sk-panel-row">
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
-                  <span className="text-base font-medium md:text-sm">{c('Label').t`Encrypted`}</span>
+                  <span className="text-base font-medium md:text-sm">{c('B6.Preferences.Backups.Label')
+                    .t`Encrypted`}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
-                  <span className="text-base font-medium md:text-sm">{c('Label').t`Decrypted`}</span>
+                  <span className="text-base font-medium md:text-sm">{c('B6.Preferences.Backups.Label')
+                    .t`Decrypted`}</span>
                 </label>
               </div>
             </form>
           )}
 
-          <Button onClick={downloadDataArchive} label={c('Action').t`Download backup`} className="mt-2" />
+          <Button
+            onClick={downloadDataArchive}
+            label={c('B6.Preferences.Backups.Action').t`Download backup`}
+            className="mt-2"
+          />
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>
-          <Subtitle>{c('Subtitle').t`Import a previously saved backup file`}</Subtitle>
+          <Subtitle>{c('B6.Preferences.Backups.Subtitle').t`Import a previously saved backup file`}</Subtitle>
 
           <div className="mt-3 flex flex-row items-center">
-            <Button label={c('Action').t`Import backup`} onClick={handleImportFile} />
+            <Button label={c('B6.Preferences.Backups.Action').t`Import backup`} onClick={handleImportFile} />
             <input type="file" ref={fileInputRef} onChange={importFileSelected} className="hidden" />
             {isImportDataLoading && <Spinner className="ml-4" />}
           </div>

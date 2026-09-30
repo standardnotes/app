@@ -25,7 +25,7 @@ export class StreamingFileApi implements FileSystemApi {
       const nativeHandle = await window.showDirectoryPicker()
 
       return { nativeHandle }
-    } catch (error) {
+    } catch {
       return 'aborted'
     }
   }
@@ -75,7 +75,7 @@ export class StreamingFileApi implements FileSystemApi {
       return {
         nativeHandle: file,
       }
-    } catch (_) {
+    } catch {
       return 'aborted'
     }
   }

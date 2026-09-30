@@ -1,3 +1,4 @@
+import { c } from 'ttag'
 import {
   ComponentArea,
   ComponentInterface,
@@ -115,9 +116,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ closeMenu }) => {
   }, [deactivateAnyNonLayerableTheme])
 
   return (
-    <Menu a11yLabel="Quick settings menu">
+    <Menu a11yLabel={c('B2.NavSharedUI.AriaLabel').t`Quick settings menu`}>
       {editorStackComponents.length > 0 && (
-        <MenuSection title="Tools">
+        <MenuSection title={c('B2.NavSharedUI.Label').t`Tools`}>
           {editorStackComponents.map((component) => (
             <MenuSwitchButtonItem
               onChange={() => {
@@ -132,9 +133,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ closeMenu }) => {
           ))}
         </MenuSection>
       )}
-      <MenuSection title="Appearance">
+      <MenuSection title={c('B2.NavSharedUI.Label').t`Appearance`}>
         <MenuRadioButtonItem checked={defaultThemeOn} onClick={toggleDefaultTheme} ref={defaultThemeButtonRef}>
-          Default
+          {c('B2.NavSharedUI.Label').t`Default`}
         </MenuRadioButtonItem>
         {themes.map((theme) => (
           <ThemesMenuButton uiFeature={theme} key={theme.uniqueIdentifier.value} />

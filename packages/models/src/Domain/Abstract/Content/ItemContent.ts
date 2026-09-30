@@ -2,7 +2,7 @@ import { AppData, DefaultAppDomain } from '../Item/Types/DefaultAppDomain'
 import { ContentReference } from '../Reference/ContentReference'
 import { AppDataField } from '../Item/Types/AppDataField'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface SpecializedContent {}
 
 export interface ItemContent {

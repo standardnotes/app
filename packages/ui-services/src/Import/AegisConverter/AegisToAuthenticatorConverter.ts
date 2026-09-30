@@ -1,6 +1,7 @@
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 import { Converter } from '../Converter'
 import { ConversionResult } from '../ConversionResult'
+import { c } from 'ttag'
 
 type AegisData = {
   db: {
@@ -52,7 +53,7 @@ export class AegisToAuthenticatorConverter implements Converter {
     const entries = this.parseEntries(content)
 
     if (!entries) {
-      throw new Error('Could not parse entries')
+      throw new Error(c('B1.Account.ImportExport.Error').t`Could not parse entries`)
     }
 
     const createdAt = file.lastModified ? new Date(file.lastModified) : new Date()

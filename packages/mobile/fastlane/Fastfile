@@ -57,18 +57,19 @@ platform :ios do
 
     if is_prod && !is_testflight
       upload_to_app_store(
+        app_version: ENV['PACKAGE_VERSION'],
         build_number: build_number,
         submit_for_review: true,
         automatic_release: false,
         force: true,
-        skip_metadata: true,
         skip_screenshots: true,
         skip_binary_upload: true,
         run_precheck_before_submit: false,
-        submission_information: { add_id_info_uses_idfa: false },
+        languages: ['en-US'],
         release_notes: {
-          'en-US': 'Fixes and improvements.'
-        }
+          'en-US' => 'Fixes and improvements.'
+        },
+        submission_information: { add_id_info_uses_idfa: false }
       )
     end
   end
@@ -115,6 +116,10 @@ platform :ios do
 end
 
 platform :android do
+  def android_package_name(variant)
+    variant == 'dev' ? 'com.standardnotes.dev' : 'com.standardnotes'
+  end
+
   def build_android(variant, versionCode)
     gradle(
       task: 'bundle',
@@ -132,6 +137,7 @@ platform :android do
     sh('yarn run android:bundle')
     build_android(variant, versionCode)
     upload_to_play_store(
+      package_name: android_package_name(variant),
       track: track,
       json_key_data: (ENV['GOOGLE_PLAY_JSON_KEY_DATA']).to_s,
       skip_upload_metadata: true,
@@ -160,5 +166,11 @@ platform :android do
   lane :prod do
     version = 3_004_000 + ENV['BUILD_NUMBER'].to_i
     deploy_android 'prod', version
+  end
+
+  desc 'Deploy production app to Play Store closed testing (alpha track)'
+  lane :closed_beta do
+    version = 3_004_000 + ENV['BUILD_NUMBER'].to_i
+    deploy_android 'prod', version, 'alpha'
   end
 end

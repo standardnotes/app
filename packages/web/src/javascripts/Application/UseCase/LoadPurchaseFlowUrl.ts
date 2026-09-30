@@ -1,4 +1,5 @@
 import { Environment, Result, UseCaseInterface } from '@standardnotes/snjs'
+import { c } from 'ttag'
 import { GetPurchaseFlowUrl } from './GetPurchaseFlowUrl'
 import { RouteType, WebApplicationInterface } from '@standardnotes/ui-services'
 
@@ -35,6 +36,6 @@ export class LoadPurchaseFlowUrl implements UseCaseInterface<void> {
       return Result.ok()
     }
 
-    return Result.fail('Could not load purchase flow URL.')
+    return Result.fail(c('B7.FilesSubscriptionHelp.Subscription.Error').t`Could not load purchase flow URL.`)
   }
 }

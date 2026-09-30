@@ -24,7 +24,7 @@ export class IsApplicationUsingThirdPartyHost implements SyncUseCaseInterface<bo
     try {
       const { host } = new URL(url)
       return this.APPLICATION_DEFAULT_HOSTS.includes(host) || this.FILES_DEFAULT_HOSTS.includes(host)
-    } catch (error) {
+    } catch {
       return false
     }
   }

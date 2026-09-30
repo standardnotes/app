@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { c } from 'ttag'
 import {
   ApplicationEvent,
   isPayloadSourceRetrieved,
@@ -106,7 +107,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
     return application.commands.addWithShortcut(
       SUPER_SHOW_MARKDOWN_PREVIEW,
       'Super notes',
-      'Show markdown preview for current note',
+      c('B3.Notes.EditorToolbar.Action').t`Show markdown preview for current note`,
       () => setShowMarkdownPreview((s) => !s),
       'markdown',
     )
@@ -120,28 +121,28 @@ export const SuperEditor: FunctionComponent<Props> = ({
       {
         key: 'b',
         modifiers: [primaryModifier],
-        description: 'Bold',
+        description: c('B3.Notes.EditorToolbar.Action').t`Bold`,
         category: 'Formatting',
         platform: platform,
       },
       {
         key: 'i',
         modifiers: [primaryModifier],
-        description: 'Italic',
+        description: c('B3.Notes.EditorToolbar.Action').t`Italic`,
         category: 'Formatting',
         platform: platform,
       },
       {
         key: 'u',
         modifiers: [primaryModifier],
-        description: 'Underline',
+        description: c('B3.Notes.EditorToolbar.Action').t`Underline`,
         category: 'Formatting',
         platform: platform,
       },
       {
         key: 'k',
         modifiers: [primaryModifier],
-        description: 'Link',
+        description: c('B3.Notes.EditorToolbar.Action').t`Link`,
         category: 'Formatting',
         platform: platform,
       },

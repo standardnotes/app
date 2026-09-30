@@ -4,6 +4,7 @@ import { UIFeature, EditorFeatureDescription, IframeComponentFeatureDescription,
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { iconClass } from './ClassNames'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
+import { c } from 'ttag'
 
 export const SpellcheckOptions: FunctionComponent<{
   editorForNote: UIFeature<EditorFeatureDescription | IframeComponentFeatureDescription>
@@ -28,10 +29,12 @@ export const SpellcheckOptions: FunctionComponent<{
         disabled={disabled || !spellcheckControllable}
       >
         <Icon type="notes" className={iconClass} />
-        Spellcheck
+        {c('B4.Notes.EditorOptions.Action').t`Spellcheck`}
       </MenuSwitchButtonItem>
       {!spellcheckControllable && (
-        <p className="px-3 py-1.5 text-xs">Spellcheck cannot be controlled for this editor.</p>
+        <p className="px-3 py-1.5 text-xs">
+          {c('B4.Notes.EditorOptions.Info').t`Spellcheck cannot be controlled for this editor.`}
+        </p>
       )}
     </div>
   )

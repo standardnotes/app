@@ -1,4 +1,5 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { c } from 'ttag'
 import { classNames } from '@standardnotes/snjs'
 import { PlatformedKeyboardShortcut } from '@standardnotes/ui-services'
 import {
@@ -43,7 +44,7 @@ const Tooltip = ({ text }: { text: string }) => {
       </div>
       <Popover
         open={visible}
-        title="Info"
+        title={c('B2.NavSharedUI.Title').t`Info`}
         anchorElement={anchorElement}
         disableMobileFullscreenTakeover
         className="z-modal bg-default px-3 py-1.5 text-left"

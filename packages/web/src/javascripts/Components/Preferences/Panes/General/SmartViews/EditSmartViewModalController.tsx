@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { STRING_DELETE_TAG } from '@/Constants/Strings'
+import { StringDeleteTag } from '@/Constants/Strings'
 import {
   predicateFromJson,
   PredicateJsonForm,
@@ -107,7 +107,7 @@ export class EditSmartViewModalController {
     this.closeDialog()
 
     const shouldDelete = await confirmDialog({
-      text: STRING_DELETE_TAG,
+      text: StringDeleteTag(),
       confirmButtonStyle: 'danger',
     })
     if (shouldDelete) {
@@ -129,7 +129,7 @@ export class EditSmartViewModalController {
       } else {
         this.setIsPredicateJsonValid(false)
       }
-    } catch (error) {
+    } catch {
       this.setIsPredicateJsonValid(false)
       return
     }

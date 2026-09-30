@@ -1,6 +1,7 @@
 import { classNames } from '@standardnotes/utils'
 import { ReactNode, useCallback, useRef, useState } from 'react'
 import { IconType, PrefKey, PrefDefaults, SNNote } from '@standardnotes/snjs'
+import { c } from 'ttag'
 import Icon from '../Icon/Icon'
 import { useApplication } from '../ApplicationProvider'
 import { observer } from 'mobx-react-lite'
@@ -42,10 +43,10 @@ const IndicatorWithTooltip = ({
         ref={buttonRef}
       >
         <Icon className={animateIcon ? 'animate-spin' : ''} type={icon} size="small" />
-        <VisuallyHidden>Note sync status</VisuallyHidden>
+        <VisuallyHidden>{c('B4.Notes.EditingUI.AriaLabel').t`Note sync status`}</VisuallyHidden>
       </button>
       <Popover
-        title="Note sync status"
+        title={c('B4.Notes.EditingUI.AriaLabel').t`Note sync status`}
         open={isTooltipVisible}
         togglePopover={() => setIsTooltipVisible((visible) => !visible)}
         className="px-3 py-2"
@@ -121,13 +122,17 @@ const NoteStatusIndicator = ({
             {status.description && <div className="mt-0.5">{status.description}</div>}
           </>
         ) : (
-          <div className="text-sm font-bold text-warning">Sync taking too long</div>
+          <div className="text-sm font-bold text-warning">{c('B4.Notes.EditingUI.Warning')
+            .t`Sync taking too long`}</div>
         )}
       </IndicatorWithTooltip>
     )
   }
 
   if (updateSavingIndicator && status) {
+    const lastSyncedRelativeTime =
+      status.type === 'waiting' && note.lastSyncEnd ? getRelativeTimeString(note.lastSyncEnd) : null
+
     return (
       <IndicatorWithTooltip
         className={classNames(
@@ -143,8 +148,8 @@ const NoteStatusIndicator = ({
       >
         <div className="text-sm font-bold">{status.message}</div>
         {status.description && <div className="mt-0.5">{status.description}</div>}
-        {status.type === 'waiting' && note.lastSyncEnd && (
-          <div className="mt-0.5">Last synced {getRelativeTimeString(note.lastSyncEnd)}</div>
+        {lastSyncedRelativeTime && (
+          <div className="mt-0.5">{c('B4.Notes.EditingUI.Status').jt`Last synced ${lastSyncedRelativeTime}`}</div>
         )}
         {status.type === 'waiting' ? (
           <Button
@@ -155,11 +160,11 @@ const NoteStatusIndicator = ({
               toggleTooltip()
             }}
           >
-            Sync now
+            {c('B4.Notes.EditingUI.Action').t`Sync now`}
           </Button>
         ) : (
           <Button small className="mt-1" onClick={toggleShowPreference}>
-            Disable status updates
+            {c('B4.Notes.EditingUI.Action').t`Disable status updates`}
           </Button>
         )}
       </IndicatorWithTooltip>
@@ -174,9 +179,9 @@ const NoteStatusIndicator = ({
       isTooltipVisible={isTooltipVisible}
       setIsTooltipVisible={setIsTooltipVisible}
     >
-      <div className="text-sm font-bold">Note status updates are disabled</div>
+      <div className="text-sm font-bold">{c('B4.Notes.EditingUI.Info').t`Note status updates are disabled`}</div>
       <Button small className="mt-1" onClick={toggleShowPreference}>
-        Enable status updates
+        {c('B4.Notes.EditingUI.Action').t`Enable status updates`}
       </Button>
     </IndicatorWithTooltip>
   )

@@ -19,27 +19,31 @@ const SignOutView: FunctionComponent<Props> = observer(({ application }) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>{c('Title').t`Sign out`}</Title>
-          <Subtitle>{c('Subtitle').t`Other devices`}</Subtitle>
-          <Text>{c('Info').t`Want to sign out on all devices except this one?`}</Text>
+          <Title>{c('B6.Preferences.Account.Title').t`Sign out`}</Title>
+          <Subtitle>{c('B6.Preferences.Account.Subtitle').t`Other devices`}</Subtitle>
+          <Text>{c('B6.Preferences.Account.Info').t`Want to sign out on all devices except this one?`}</Text>
           <div className="mt-3 flex flex-row flex-wrap gap-3">
             <Button
-              label={c('Action').t`Sign out other sessions`}
+              label={c('B6.Preferences.Account.Action').t`Sign out other sessions`}
               onClick={() => {
                 application.accountMenuController.setOtherSessionsSignOut(true)
               }}
             />
-            <Button label={c('Action').t`Manage sessions`} onClick={() => application.openSessionsModal()} />
+            <Button
+              label={c('B6.Preferences.Account.Action').t`Manage sessions`}
+              onClick={() => application.openSessionsModal()}
+            />
           </div>
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>
-          <Subtitle>{c('Subtitle').t`This workspace`}</Subtitle>
-          <Text>{c('Info').t`Remove all data related to the current workspace from the application.`}</Text>
+          <Subtitle>{c('B6.Preferences.Account.Subtitle').t`This workspace`}</Subtitle>
+          <Text>{c('B6.Preferences.Account.Info')
+            .t`Remove all data related to the current workspace from the application.`}</Text>
           <Button
             className="mt-3"
             colorStyle="danger"
-            label={c('Action').t`Sign out workspace`}
+            label={c('B6.Preferences.Account.Action').t`Sign out workspace`}
             onClick={() => {
               application.accountMenuController.setSigningOut(true)
             }}

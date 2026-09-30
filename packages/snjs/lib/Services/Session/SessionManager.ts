@@ -218,7 +218,7 @@ export class SessionManager
   isUserMissingKeyPair(): boolean {
     try {
       return this.getPublicKey() == undefined
-    } catch (error) {
+    } catch {
       return true
     }
   }
@@ -711,7 +711,7 @@ export class SessionManager
     const response = await this.getSessionsList()
     if (isErrorResponse(response) || !response.data) {
       const error = isErrorResponse(response) ? response.data?.error : undefined
-      throw new Error(error?.message ?? API_MESSAGE_GENERIC_SYNC_FAIL)
+      throw new Error(error?.message ?? API_MESSAGE_GENERIC_SYNC_FAIL())
     }
 
     const otherSessions = response.data.filter((session) => !session.current)
