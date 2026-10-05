@@ -13,7 +13,7 @@ import {
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { CrossControllerEvent } from './CrossControllerEvent'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import { featureTrunkLocalizationEnabled, featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 export class FeaturesController extends AbstractViewController implements InternalEventHandlerInterface {
   hasFolders: boolean
@@ -148,7 +148,18 @@ export class FeaturesController extends AbstractViewController implements Intern
     )
   }
 
+  isLocalizationFeatureAvailable(): boolean {
+    return (
+      featureTrunkLocalizationEnabled() ||
+      this.features.hasRole(RoleName.create(RoleName.NAMES.InternalTeamUser).getValue())
+    )
+  }
+
   isLocalizationEnabled(): boolean {
+    if (!this.isLocalizationFeatureAvailable()) {
+      return false
+    }
+
     return this.features.isExperimentalFeatureEnabled(NativeFeatureIdentifier.TYPES.Localization)
   }
 

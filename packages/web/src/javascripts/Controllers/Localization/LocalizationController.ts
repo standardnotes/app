@@ -93,6 +93,10 @@ export class LocalizationController extends AbstractViewController implements In
   }
 
   private reconcileLabsSpotlight(): void {
+    if (!this.featuresController.isLocalizationFeatureAvailable()) {
+      return
+    }
+
     if (!this.labsSpotlightPrefLoaded) {
       return
     }
