@@ -96,9 +96,9 @@ const Language: FunctionComponent<Props> = ({ application }) => {
         <Text>
           {usesOsLanguage
             ? c('B6.Preferences.General.Language.Info')
-                .t`Use the app in your preferred language and customize date and time formats. Your OS language is used when no preference is set.`
+                .t`Use the app in your preferred language. Your OS language is used when no preference is set.`
             : c('B6.Preferences.General.Language.Info')
-                .t`Use the app in your preferred language and customize date and time formats. Your browser language is used when no preference is set.`}
+                .t`Use the app in your preferred language. Your browser language is used when no preference is set.`}
         </Text>
 
         {showLanguageDropdown && (
