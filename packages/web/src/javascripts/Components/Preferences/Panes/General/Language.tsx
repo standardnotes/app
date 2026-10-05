@@ -4,13 +4,15 @@ import { Pill, Subtitle, Text, Title } from '@/Components/Preferences/Preference
 import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { WebApplication } from '@/Application/WebApplication'
 import { isDesktopApplication } from '@/Utils'
-import { FunctionComponent, useCallback, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Switch from '@/Components/Switch/Switch'
 import { NativeFeatureIdentifier } from '@standardnotes/snjs'
 import { c } from 'ttag'
+
+export const LANGUAGE_PREFERENCES_SECTION_ID = 'preferences-section-language'
 
 /** Lets the Labs switch paint before the localization reload. */
 const LOCALIZATION_TOGGLE_RELOAD_DELAY_MS = 200
@@ -54,8 +56,34 @@ const Language: FunctionComponent<Props> = ({ application }) => {
     [application],
   )
 
+  const { preferencesController } = application
+
+  useEffect(() => {
+    if (!preferencesController.isOpen || preferencesController.currentPane !== 'general') {
+      return
+    }
+
+    if (preferencesController.scrollToPreferencesSectionId !== LANGUAGE_PREFERENCES_SECTION_ID) {
+      return
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(LANGUAGE_PREFERENCES_SECTION_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      preferencesController.clearPreferencesSectionScrollTarget()
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+    }
+  }, [
+    preferencesController,
+    preferencesController.isOpen,
+    preferencesController.currentPane,
+    preferencesController.scrollToPreferencesSectionId,
+  ])
+
   return (
-    <PreferencesGroup>
+    <PreferencesGroup id={LANGUAGE_PREFERENCES_SECTION_ID}>
       <PreferencesSegment>
         <div className="flex items-center justify-between">
           <div className="flex items-start">

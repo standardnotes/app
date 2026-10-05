@@ -32,7 +32,7 @@ const Listed = ({ application }: Props) => {
   }, [reloadAccounts])
 
   useEffect(() => {
-    return application.addEventObserver((event) => {
+    return application.addEventObserver(async (event) => {
       if (
         event === ApplicationEvent.CompletedFullSync ||
         event === ApplicationEvent.LocalDataIncrementalLoad ||

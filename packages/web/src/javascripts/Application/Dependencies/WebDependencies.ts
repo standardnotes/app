@@ -321,6 +321,8 @@ export class WebDependencies extends DependencyContainer {
         this.get<FeaturesController>(Web_TYPES.FeaturesController),
         () => getSavedLocaleForApplication(application),
         application.preferences,
+        this.get<PreferencesController>(Web_TYPES.PreferencesController),
+        application.routeService,
         application.events,
       )
     })

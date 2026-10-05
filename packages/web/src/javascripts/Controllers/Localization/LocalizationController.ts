@@ -1,5 +1,6 @@
 import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { FeaturesController } from '@/Controllers/FeaturesController'
+import { PreferencesController } from '@/Controllers/PreferencesController'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
 import { DEFAULT_LOCALE, LOCALES_BASE_PATH, LocaleService, resolveLocale } from '@standardnotes/i18n'
 import { configureDateLocale } from '@/Utils/DateLocale'
@@ -8,7 +9,10 @@ import { syncMobileNativeLocalization } from '@/Application/Device/SyncMobileNat
 import { clearPersistedLocale, persistLocale } from '@/Utils/LocalePersistence'
 import { isDesktopApplication } from '@/Utils'
 import { addToast, ToastType } from '@standardnotes/toast'
+import { LANGUAGE_PREFERENCES_SECTION_ID } from '@/Components/Preferences/Panes/General/Language'
+import { RouteServiceInterface, RouteType } from '@standardnotes/ui-services'
 import { c } from 'ttag'
+import { action, makeObservable, observable, runInAction } from 'mobx'
 import {
   ApplicationEvent,
   InternalEventBusInterface,
@@ -22,27 +26,98 @@ import {
 export class LocalizationController extends AbstractViewController implements InternalEventHandlerInterface {
   private localeService?: LocaleService
 
+  labsSpotlightReady = false
+  labsSpotlightOpen = false
+
+  private labsSpotlightPrefLoaded = false
+
   constructor(
     private readonly featuresController: FeaturesController,
     private readonly getSavedLocale: () => string | undefined,
     private readonly preferences: PreferenceServiceInterface,
+    private readonly preferencesController: PreferencesController,
+    private readonly routeService: RouteServiceInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
 
+    makeObservable(this, {
+      labsSpotlightReady: observable,
+      labsSpotlightOpen: observable,
+      dismissLabsSpotlight: action,
+      openLanguageSettingsFromLabsSpotlight: action,
+    })
+
     eventBus.addEventHandler(this, ApplicationEvent.FeaturesAvailabilityChanged)
     eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
     eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
+    eventBus.addEventHandler(this, ApplicationEvent.Launched)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
-      case ApplicationEvent.FeaturesAvailabilityChanged:
       case ApplicationEvent.LocalDataLoaded:
+        this.labsSpotlightPrefLoaded = true
+        await this.initializeLocalization()
+        this.reconcileLabsSpotlight()
+        break
+      case ApplicationEvent.Launched:
+        this.reconcileLabsSpotlight()
+        break
+      case ApplicationEvent.FeaturesAvailabilityChanged:
       case ApplicationEvent.PreferencesChanged:
         await this.initializeLocalization()
+        this.reconcileLabsSpotlight()
         break
     }
+  }
+
+  dismissLabsSpotlight = (): void => {
+    runInAction(() => {
+      this.labsSpotlightReady = true
+      this.labsSpotlightOpen = false
+    })
+    void this.preferences.setValue(PrefKey.HasSeenLocalizationLabsSpotlight, true)
+  }
+
+  openLanguageSettingsFromLabsSpotlight = (): void => {
+    this.dismissLabsSpotlight()
+    this.preferencesController.openPreferencesAndScrollToSection(LANGUAGE_PREFERENCES_SECTION_ID, 'general')
+  }
+
+  private hasSeenLocalizationLabsSpotlight(): boolean {
+    return this.preferences.getValue(
+      PrefKey.HasSeenLocalizationLabsSpotlight,
+      PrefDefaults[PrefKey.HasSeenLocalizationLabsSpotlight],
+    )
+  }
+
+  private reconcileLabsSpotlight(): void {
+    if (!this.labsSpotlightPrefLoaded) {
+      return
+    }
+
+    runInAction(() => {
+      this.labsSpotlightReady = true
+
+      if (this.hasSeenLocalizationLabsSpotlight()) {
+        this.labsSpotlightOpen = false
+        return
+      }
+
+      if (this.featuresController.isLocalizationEnabled()) {
+        this.labsSpotlightOpen = false
+        return
+      }
+
+      const route = this.routeService.getRoute()
+      if (route.type === RouteType.Purchase || route.type === RouteType.Settings) {
+        this.labsSpotlightOpen = false
+        return
+      }
+
+      this.labsSpotlightOpen = true
+    })
   }
 
   async setLocale(locale: string): Promise<void> {

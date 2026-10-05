@@ -31,6 +31,7 @@ import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
 import EditorWidthSelectionModalWrapper from '../EditorWidthSelectionModal/EditorWidthSelectionModal'
+import LocalizationLabsSpotlightModal from '../LocalizationLabsSpotlight/LocalizationLabsSpotlightModal'
 import { ProtectionEvent } from '@standardnotes/services'
 import KeyboardShortcutsModal from '../KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal'
 import CommandPalette from '../CommandPalette/CommandPalette'
@@ -273,6 +274,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       <FilePreviewModalWrapper application={application} />
                       <PermissionsModalWrapper application={application} />
                       <EditorWidthSelectionModalWrapper />
+                      <LocalizationLabsSpotlightModal application={application} />
                       <ConfirmDeleteAccountContainer application={application} />
                       <ImportModal importModalController={application.importModalController} />
                       <KeyboardShortcutsModal keyboardService={application.keyboardService} />
