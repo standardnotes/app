@@ -55,7 +55,6 @@ export const PlainEditorSearchContainer = observer(
           await plainEditorRef.current?.replaceAllRanges(ranges, replacement)
         },
         onTextChange: (callback) => plainEditorRef.current?.onTextChange(callback) ?? (() => undefined),
-        scrollToEnd: () => plainEditorRef.current?.scrollToEnd() ?? false,
       }),
       [],
     )

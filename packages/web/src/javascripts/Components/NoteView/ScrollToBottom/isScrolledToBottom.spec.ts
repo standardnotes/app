@@ -2,11 +2,7 @@
  * @jest-environment jsdom
  */
 
-import {
-  DEFAULT_SCROLL_BOTTOM_THRESHOLD,
-  isScrolledToBottom,
-  hasVerticalOverflow,
-} from './isScrolledToBottom'
+import { DEFAULT_SCROLL_BOTTOM_THRESHOLD, isScrolledToBottom, hasVerticalOverflow } from './isScrolledToBottom'
 
 describe('isScrolledToBottom', () => {
   it('returns true when scrollTop reaches the bottom within the threshold', () => {

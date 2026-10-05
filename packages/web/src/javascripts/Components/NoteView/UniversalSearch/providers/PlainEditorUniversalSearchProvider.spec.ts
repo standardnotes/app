@@ -36,7 +36,6 @@ function createMockPlainEditor(text: string): PlainEditorInterface {
         return
       }
     },
-    scrollToEnd: jest.fn(() => false),
   }
 }
 

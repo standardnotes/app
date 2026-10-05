@@ -1,50 +1,12 @@
-import { forwardRef, useCallback, useImperativeHandle } from 'react'
+import { forwardRef, useImperativeHandle } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { $getRoot } from 'lexical'
-import { SuperEditorContentId } from '../../Constants'
+import { createSuperScrollableEditor } from '@/Components/NoteView/ScrollToBottom/scrollableEditors'
+import type { ScrollableEditor } from '@/Components/NoteView/ScrollToBottom/types'
 
-export type ScrollToEndPluginInterface = {
-  scrollToEnd: (behavior?: ScrollBehavior) => boolean
-}
-
-type Props = {
-  readonly?: boolean
-}
-
-const ScrollToEndPlugin = forwardRef<ScrollToEndPluginInterface, Props>(function ScrollToEndPlugin({ readonly }, ref) {
+const ScrollToEndPlugin = forwardRef<ScrollableEditor>(function ScrollToEndPlugin(_props, ref) {
   const [editor] = useLexicalComposerContext()
 
-  const scrollToEnd = useCallback(
-    (behavior: ScrollBehavior = 'smooth') => {
-      if (readonly) {
-        return false
-      }
-
-      editor.update(() => {
-        $getRoot().selectEnd()
-      })
-      editor.focus()
-
-      const scrollElement = document.getElementById(SuperEditorContentId)
-      if (scrollElement) {
-        scrollElement.scrollTo({
-          top: scrollElement.scrollHeight,
-          behavior,
-        })
-      }
-
-      return true
-    },
-    [editor, readonly],
-  )
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      scrollToEnd,
-    }),
-    [scrollToEnd],
-  )
+  useImperativeHandle(ref, () => createSuperScrollableEditor(editor), [editor])
 
   return null
 })

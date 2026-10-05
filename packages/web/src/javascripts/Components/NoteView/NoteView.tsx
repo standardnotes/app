@@ -32,7 +32,7 @@ import {
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, FocusEvent, KeyboardEventHandler, RefObject } from 'react'
-import { SuperEditor, SuperEditorInterface } from '../SuperEditor/SuperEditor'
+import { SuperEditor } from '../SuperEditor/SuperEditor'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
@@ -56,6 +56,9 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
 import Icon from '../Icon/Icon'
 import { EditorContentWithSafeAreaPadding } from './EditorContentWithSafeAreaPadding'
+import { NoteScrollToBottomController } from './ScrollToBottom/NoteScrollToBottomController'
+import { createComponentScrollableEditor, createPlainScrollableEditor } from './ScrollToBottom/scrollableEditors'
+import type { NoteEditorMode, ScrollableEditor } from './ScrollToBottom/types'
 
 function sortAlphabetically(array: ComponentInterface[]): ComponentInterface[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
@@ -88,6 +91,7 @@ type State = {
 
   conflictedNotes: SNNote[]
   showConflictResolutionModal: boolean
+  scrollableEditor?: ScrollableEditor
 }
 
 class NoteView extends AbstractComponent<NoteViewProps, State> {
@@ -101,7 +105,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
   private plainEditorRef?: PlainEditorInterface
-  private superEditorRef?: SuperEditorInterface
+  private componentScrollableEditor = createComponentScrollableEditor(() => this.editorContentRef?.current ?? null)
 
   constructor(props: NoteViewProps) {
     super(props, props.application)
@@ -168,7 +172,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     ;(this.debounceReloadEditorComponent as unknown) = undefined
     ;(this.editorContentRef as unknown) = undefined
     ;(this.plainEditorRef as unknown) = undefined
-    ;(this.superEditorRef as unknown) = undefined
   }
 
   getState() {
@@ -267,10 +270,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   setPlainEditorRef = (ref: PlainEditorInterface | null) => {
     this.plainEditorRef = ref || undefined
+    this.setScrollableEditor(ref ? createPlainScrollableEditor(ref) : null)
   }
 
-  setSuperEditorRef = (ref: SuperEditorInterface | null) => {
-    this.superEditorRef = ref || undefined
+  setScrollableEditor = (editor: ScrollableEditor | null) => {
+    this.setState({ scrollableEditor: editor ?? undefined })
   }
 
   override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {
@@ -831,7 +835,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const renderHeaderOptions = isMobileScreen() ? !this.state.editorFocused : true
 
-    const editorMode =
+    const editorMode: NoteEditorMode =
       this.note.noteType === NoteType.Super
         ? 'super'
         : this.state.editorStateDidLoad && !this.state.editorComponentViewer
@@ -970,47 +974,53 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         )}
 
         <EditorContentWithSafeAreaPadding editorLineWidth={this.state.editorLineWidth} ref={this.editorContentRef}>
-          {editorMode === 'component' && this.state.editorComponentViewer && (
-            <div className="component-view relative flex-grow">
-              {this.state.paneGestureEnabled && <div className="absolute left-0 top-0 h-full w-[20px] md:hidden" />}
-              <IframeFeatureView
-                key={this.state.editorComponentViewer.identifier}
-                componentViewer={this.state.editorComponentViewer}
-                onLoad={this.onEditorComponentLoad}
-                requestReload={this.editorComponentViewerRequestsReload}
-                readonly={this.state.readonly}
-              />
-            </div>
-          )}
+          <div className="relative flex min-h-0 flex-1 flex-col">
+            {editorMode === 'component' && this.state.editorComponentViewer && (
+              <div className="component-view relative flex-grow">
+                {this.state.paneGestureEnabled && <div className="absolute left-0 top-0 h-full w-[20px] md:hidden" />}
+                <IframeFeatureView
+                  key={this.state.editorComponentViewer.identifier}
+                  componentViewer={this.state.editorComponentViewer}
+                  onLoad={this.onEditorComponentLoad}
+                  requestReload={this.editorComponentViewerRequestsReload}
+                  readonly={this.state.readonly}
+                />
+              </div>
+            )}
 
-          {editorMode === 'plain' && (
-            <PlainEditorSearchContainer
-              application={this.application}
-              spellcheck={this.state.spellcheck}
-              ref={this.setPlainEditorRef}
-              controller={this.controller}
-              locked={this.state.noteLocked || !!this.state.readonly}
-              onFocus={this.onEditorFocus}
-              onBlur={this.onEditorBlur}
-            />
-          )}
-
-          {editorMode === 'super' && (
-            <div className={classNames('blocks-editor w-full flex-grow overflow-hidden')}>
-              <SuperEditor
-                key={this.note.uuid}
-                ref={this.setSuperEditorRef}
+            {editorMode === 'plain' && (
+              <PlainEditorSearchContainer
                 application={this.application}
-                linkingController={this.application.linkingController}
-                filesController={this.application.filesController}
                 spellcheck={this.state.spellcheck}
+                ref={this.setPlainEditorRef}
                 controller={this.controller}
-                readonly={this.state.readonly}
+                locked={this.state.noteLocked || !!this.state.readonly}
                 onFocus={this.onEditorFocus}
                 onBlur={this.onEditorBlur}
               />
-            </div>
-          )}
+            )}
+
+            {editorMode === 'super' && (
+              <div className={classNames('blocks-editor w-full flex-grow overflow-hidden')}>
+                <SuperEditor
+                  key={this.note.uuid}
+                  ref={this.setScrollableEditor}
+                  application={this.application}
+                  linkingController={this.application.linkingController}
+                  filesController={this.application.filesController}
+                  spellcheck={this.state.spellcheck}
+                  controller={this.controller}
+                  readonly={this.state.readonly}
+                  onFocus={this.onEditorFocus}
+                  onBlur={this.onEditorBlur}
+                />
+              </div>
+            )}
+            <NoteScrollToBottomController
+              editor={editorMode === 'component' ? this.componentScrollableEditor : this.state.scrollableEditor}
+              disabled={editorMode === 'component' || this.state.noteLocked || !!this.state.readonly}
+            />
+          </div>
         </EditorContentWithSafeAreaPadding>
 
         <div id="editor-pane-component-stack">
