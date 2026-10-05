@@ -5,22 +5,21 @@
 import { scrollNoteToBottom } from './scrollNoteToBottom'
 
 describe('scrollNoteToBottom', () => {
-  it('delegates to superScrollToEnd when provided for super notes', () => {
-    const superScrollToEnd = jest.fn()
+  it('delegates to superEditor.scrollToEnd for super notes', () => {
+    const scrollToEnd = jest.fn(() => true)
+    const superEditor = { scrollToEnd }
 
-    const didScroll = scrollNoteToBottom(
-      {
-        editorMode: 'super',
-        editorContentElement: document.createElement('div'),
-      },
-      { superScrollToEnd },
-    )
+    const didScroll = scrollNoteToBottom({
+      editorMode: 'super',
+      editorContentElement: document.createElement('div'),
+      superEditor,
+    })
 
     expect(didScroll).toBe(true)
-    expect(superScrollToEnd).toHaveBeenCalledTimes(1)
+    expect(scrollToEnd).toHaveBeenCalledWith('smooth')
   })
 
-  it('returns false for super notes without superScrollToEnd', () => {
+  it('returns false for super notes without a super editor ref', () => {
     expect(
       scrollNoteToBottom({
         editorMode: 'super',

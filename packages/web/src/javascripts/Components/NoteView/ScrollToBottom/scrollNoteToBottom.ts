@@ -1,5 +1,6 @@
 import { scrollComponentEditorToBottom } from './scrollComponentEditorToBottom'
 import { scrollPlainEditorToBottom } from './scrollPlainEditorToBottom'
+import { scrollSuperEditorToBottom } from './scrollSuperEditorToBottom'
 import type { NoteEditorScrollContext, ScrollNoteToBottomOptions } from './types'
 
 export function scrollNoteToBottom(context: NoteEditorScrollContext, options?: ScrollNoteToBottomOptions): boolean {
@@ -14,12 +15,11 @@ export function scrollNoteToBottom(context: NoteEditorScrollContext, options?: S
       return scrollPlainEditorToBottom(context.plainEditor)
     }
     case 'super': {
-      if (!options?.superScrollToEnd) {
+      if (!context.superEditor) {
         return false
       }
 
-      options.superScrollToEnd()
-      return true
+      return scrollSuperEditorToBottom(context.superEditor, behavior)
     }
     case 'component': {
       if (!context.editorContentElement) {

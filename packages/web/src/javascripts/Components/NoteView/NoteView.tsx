@@ -32,7 +32,7 @@ import {
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, FocusEvent, KeyboardEventHandler, RefObject } from 'react'
-import { SuperEditor } from '../SuperEditor/SuperEditor'
+import { SuperEditor, SuperEditorInterface } from '../SuperEditor/SuperEditor'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
@@ -101,6 +101,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
   private plainEditorRef?: PlainEditorInterface
+  private superEditorRef?: SuperEditorInterface
 
   constructor(props: NoteViewProps) {
     super(props, props.application)
@@ -167,6 +168,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     ;(this.debounceReloadEditorComponent as unknown) = undefined
     ;(this.editorContentRef as unknown) = undefined
     ;(this.plainEditorRef as unknown) = undefined
+    ;(this.superEditorRef as unknown) = undefined
   }
 
   getState() {
@@ -265,6 +267,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   setPlainEditorRef = (ref: PlainEditorInterface | null) => {
     this.plainEditorRef = ref || undefined
+  }
+
+  setSuperEditorRef = (ref: SuperEditorInterface | null) => {
+    this.superEditorRef = ref || undefined
   }
 
   override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {
@@ -993,6 +999,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             <div className={classNames('blocks-editor w-full flex-grow overflow-hidden')}>
               <SuperEditor
                 key={this.note.uuid}
+                ref={this.setSuperEditorRef}
                 application={this.application}
                 linkingController={this.application.linkingController}
                 filesController={this.application.filesController}

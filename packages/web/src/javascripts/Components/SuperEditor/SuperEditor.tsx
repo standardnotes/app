@@ -10,7 +10,16 @@ import {
   WebAppEvent,
   LocalPrefKey,
 } from '@standardnotes/snjs'
-import { CSSProperties, FocusEvent, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  CSSProperties,
+  FocusEvent,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 import { BlocksEditor } from './BlocksEditor'
 import { BlocksEditorComposer } from './BlocksEditorComposer'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
@@ -32,6 +41,7 @@ import {
 import { SUPER_SHOW_MARKDOWN_PREVIEW, getPrimaryModifier } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
+import ScrollToEndPlugin, { ScrollToEndPluginInterface } from './Plugins/ScrollToEndPlugin/ScrollToEndPlugin'
 import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
 import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
@@ -45,6 +55,10 @@ import { NoteFromSelectionPlugin } from './Plugins/NoteFromSelectionPlugin'
 
 export const SuperNotePreviewCharLimit = 160
 
+export type SuperEditorInterface = {
+  scrollToEnd: (behavior?: ScrollBehavior) => boolean
+}
+
 type Props = {
   application: WebApplication
   controller: NoteViewController
@@ -56,21 +70,16 @@ type Props = {
   onBlur?: (event: FocusEvent) => void
 }
 
-export const SuperEditor: FunctionComponent<Props> = ({
-  application,
-  linkingController,
-  filesController,
-  spellcheck,
-  controller,
-  readonly,
-  onFocus,
-  onBlur,
-}) => {
+export const SuperEditor = forwardRef<SuperEditorInterface, Props>(function SuperEditor(
+  { application, linkingController, filesController, spellcheck, controller, readonly, onFocus, onBlur },
+  ref,
+) {
   const note = useRef(controller.item)
   const changeEditorFunction = useRef<ChangeEditorFunction>()
   const ignoreNextChange = useRef(false)
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false)
   const getMarkdownPlugin = useRef<GetMarkdownPluginInterface | null>(null)
+  const scrollToEndPlugin = useRef<ScrollToEndPluginInterface | null>(null)
   const [featureStatus, setFeatureStatus] = useState<FeatureStatus>(FeatureStatus.Entitled)
 
   const reloadFeatureStatus = useCallback(() => {
@@ -102,6 +111,14 @@ export const SuperEditor: FunctionComponent<Props> = ({
 
   const keyboardService = application.keyboardService
   const isEditorReadonly = note.current.locked || Boolean(readonly) || featureStatus !== FeatureStatus.Entitled
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      scrollToEnd: (behavior) => scrollToEndPlugin.current?.scrollToEnd(behavior) ?? false,
+    }),
+    [],
+  )
 
   useEffect(() => {
     return application.commands.addWithShortcut(
@@ -222,7 +239,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const [fontSize] = useLocalPreference(LocalPrefKey.EditorFontSize)
   const responsiveFontSize = useResponsiveEditorFontSize(fontSize, false)
 
-  const ref = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const invalidURLClickFix = (event: MouseEvent) => {
@@ -235,7 +252,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
       }
     }
 
-    const element = ref.current
+    const element = containerRef.current
 
     if (element) {
       element.addEventListener('click', invalidURLClickFix)
@@ -266,7 +283,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
           '--font-size': responsiveFontSize,
         } as CSSProperties
       }
-      ref={ref}
+      ref={containerRef}
     >
       {featureStatus !== FeatureStatus.Entitled && (
         <NotEntitledBanner featureStatus={featureStatus} feature={GetSuperNoteFeature()} />
@@ -288,6 +305,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <FilePlugin currentNote={note.current} />
                 <ItemBubblePlugin />
                 <GetMarkdownPlugin ref={getMarkdownPlugin} />
+                <ScrollToEndPlugin ref={scrollToEndPlugin} readonly={isEditorReadonly} />
                 <ChangeContentCallbackPlugin
                   providerCallback={(callback) => (changeEditorFunction.current = callback)}
                 />
@@ -309,4 +327,4 @@ export const SuperEditor: FunctionComponent<Props> = ({
       </ErrorBoundary>
     </div>
   )
-}
+})
