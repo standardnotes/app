@@ -35,7 +35,7 @@ const LocalizationLabsSpotlightModal = ({ application }: Props) => {
   return (
     <AlertDialog closeDialog={dismiss}>
       <div className="flex items-center justify-between">
-        <div className="flex items-start gap-2">
+        <div className="flex items-start">
           <Title className="mb-0">{c('B6.Preferences.General.Language.Title').t`Language Settings`}</Title>
           <Pill style={'success'}>{c('B6.Preferences.General.Label').t`Labs`}</Pill>
         </div>
