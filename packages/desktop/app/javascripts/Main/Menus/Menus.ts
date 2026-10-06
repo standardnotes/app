@@ -14,10 +14,6 @@ import { autorun } from 'mobx'
 import { Store } from '../Store/Store'
 import { StoreKeys } from '../Store/StoreKeys'
 import { appMenu as str, contextMenu } from '../Strings'
-
-function menuRole(label: string, role: string): MenuItemConstructorOptions {
-  return { label, role: role as MenuItemConstructorOptions['role'] }
-}
 import { TrayManager } from '../TrayManager'
 import { autoUpdatingAvailable } from '../Types/Constants'
 import { isLinux, isMac } from '../Types/Platforms'
@@ -25,6 +21,10 @@ import { checkForUpdate, openChangelog, showUpdateInstallationDialog } from '../
 import { isDev } from '../Utils/Utils'
 import { SpellcheckerManager } from './../SpellcheckerManager'
 import { MenuManagerInterface } from './MenuManagerInterface'
+
+function menuRole(label: string, role: string): MenuItemConstructorOptions {
+  return { label, role: role as MenuItemConstructorOptions['role'] }
+}
 
 export const enum MenuId {
   SpellcheckerLanguages = 'SpellcheckerLanguages',
