@@ -11,6 +11,7 @@ import {
   MobileDeviceInterface,
   namespacedKey,
   NamespacedRootKeyInKeychain,
+  NativeLocalizationState,
   Platform as SNPlatform,
   RawKeychainValue,
   RawStorageKey,
@@ -56,7 +57,7 @@ import { LegacyKeyValueStore } from './Database/LegacyKeyValueStore'
 import Keychain from './Keychain'
 import notifee, { AuthorizationStatus, Notification, NotificationSettings } from '@notifee/react-native'
 import { c } from 'ttag'
-import { applyMobileLocalization, MobileLocalizationState } from './MobileLocalization'
+import { applyMobileLocalization } from './MobileLocalization'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
 
@@ -90,7 +91,7 @@ export class MobileDevice implements MobileDeviceInterface {
     this.reloadStatusBarStyle(false)
   }
 
-  async syncMobileLocalization(state: MobileLocalizationState): Promise<void> {
+  async syncMobileLocalization(state: NativeLocalizationState): Promise<void> {
     await applyMobileLocalization(state)
     await this.updateFilesNotificationChannel()
     this.notifyMobileDeviceEvent(MobileDeviceEvent.LocaleChanged)

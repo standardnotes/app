@@ -22,7 +22,7 @@ import { SearchManagerInterface } from '../Search/SearchManagerInterface'
 import { RemoteDataInterface } from './DataInterface'
 import { MediaManagerInterface } from '../Media/MediaManagerInterface'
 import { syncMainProcessLocalization } from '../Localization/MainProcessLocalization'
-import { MainProcessLocalizationState } from '../../Shared/MainProcessLocalizationState'
+import { NativeLocalizationState } from '@standardnotes/snjs'
 
 /**
  * Read https://github.com/electron/remote to understand how electron/remote works.
@@ -306,7 +306,7 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.homeServerManager.getHomeServerLastErrorMessage()
   }
 
-  async syncMainProcessLocalization(state: MainProcessLocalizationState): Promise<void> {
+  async syncMainProcessLocalization(state: NativeLocalizationState): Promise<void> {
     await syncMainProcessLocalization(state)
   }
 }

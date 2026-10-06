@@ -1,7 +1,7 @@
 import { addLocale, LocaleData, setDefaultLang, useLocale } from 'ttag'
 import fs from 'fs/promises'
 import path from 'path'
-import { MainProcessLocalizationState } from '../../Shared/MainProcessLocalizationState'
+import { NativeLocalizationState } from '@standardnotes/snjs'
 import { reinitializeStrings } from '../Strings'
 
 const DEFAULT_LOCALE = 'en_US'
@@ -31,7 +31,7 @@ async function activateLocale(locale: string): Promise<void> {
   useLocale(locale)
 }
 
-export async function syncMainProcessLocalization(state: MainProcessLocalizationState): Promise<void> {
+export async function syncMainProcessLocalization(state: NativeLocalizationState): Promise<void> {
   const locale = state.localizationEnabled && state.locale ? state.locale : DEFAULT_LOCALE
   if (locale === appliedLocale) {
     return

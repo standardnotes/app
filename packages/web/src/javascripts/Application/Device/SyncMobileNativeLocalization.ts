@@ -1,13 +1,9 @@
-export type MobileNativeLocalizationState = {
-  localizationEnabled: boolean
-  locale?: string | null
-}
-
+import { NativeLocalizationState } from '@standardnotes/snjs'
 type ReactNativeDeviceBridge = {
-  syncMobileLocalization?: (state: MobileNativeLocalizationState) => Promise<void>
+  syncMobileLocalization?: (state: NativeLocalizationState) => Promise<void>
 }
 
-export function syncMobileNativeLocalization(state: MobileNativeLocalizationState): void {
+export function syncMobileNativeLocalization(state: NativeLocalizationState): void {
   const device = window.reactNativeDevice as ReactNativeDeviceBridge | undefined
   if (!device?.syncMobileLocalization) {
     return

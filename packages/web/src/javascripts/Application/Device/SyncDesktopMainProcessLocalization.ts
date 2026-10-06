@@ -1,15 +1,11 @@
+import { NativeLocalizationState } from '@standardnotes/snjs'
 import { isDesktopApplication } from '@/Utils'
 
-export type DesktopMainProcessLocalizationState = {
-  localizationEnabled: boolean
-  locale?: string | null
-}
-
 type DesktopRemoteBridge = {
-  syncMainProcessLocalization?: (state: DesktopMainProcessLocalizationState) => Promise<void>
+  syncMainProcessLocalization?: (state: NativeLocalizationState) => Promise<void>
 }
 
-export function syncDesktopMainProcessLocalization(state: DesktopMainProcessLocalizationState): void {
+export function syncDesktopMainProcessLocalization(state: NativeLocalizationState): void {
   if (!isDesktopApplication()) {
     return
   }

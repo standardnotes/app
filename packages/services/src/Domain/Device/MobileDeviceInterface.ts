@@ -4,6 +4,7 @@ import { AppleIAPProductId } from './../Subscription/AppleIAPProductId'
 import { DeviceInterface } from './DeviceInterface'
 import { AppleIAPReceipt } from '../Subscription/AppleIAPReceipt'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
+import { NativeLocalizationState } from './NativeLocalizationState'
 
 import type { Notification } from '../../../../mobile/node_modules/@notifee/react-native/dist/index'
 
@@ -42,5 +43,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   displayNotification(options: Notification): Promise<string>
   cancelNotification(notificationId: string): Promise<void>
 
-  syncMobileLocalization(state: { localizationEnabled: boolean; locale?: string | null }): Promise<void>
+  syncMobileLocalization(state: NativeLocalizationState): Promise<void>
 }

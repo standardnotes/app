@@ -1,12 +1,7 @@
 import { Platform } from 'react-native'
 import { MainBundlePath, readFile, readFileAssets } from 'react-native-fs'
 import { addLocale, LocaleData, setDefaultLang, useLocale as setTtagLocale } from 'ttag'
-
-export type MobileLocalizationState = {
-  localizationEnabled: boolean
-  /** Resolved locale from the WebView (e.g. fr_FR). Ignored when localization is off. */
-  locale?: string | null
-}
+import { NativeLocalizationState } from '@standardnotes/snjs'
 
 const DEFAULT_LOCALE = 'en_US'
 
@@ -24,7 +19,7 @@ async function readMobileLocalePack(locale: string): Promise<LocaleData> {
   return JSON.parse(contents) as LocaleData
 }
 
-export async function applyMobileLocalization(state: MobileLocalizationState): Promise<void> {
+export async function applyMobileLocalization(state: NativeLocalizationState): Promise<void> {
   const locale = state.localizationEnabled && state.locale ? state.locale : DEFAULT_LOCALE
 
   if (locale !== DEFAULT_LOCALE && !loadedLocales.has(locale)) {
