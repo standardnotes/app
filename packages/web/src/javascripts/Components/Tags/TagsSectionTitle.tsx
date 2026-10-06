@@ -5,15 +5,11 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-
 type Props = {
   features: FeaturesController
 }
 
 const TagsSectionTitle: FunctionComponent<Props> = ({ features }) => {
-  void localizationStore.currentLocale
-
   const entitledToFolders = features.hasFolders
   const modal = usePremiumModal()
 

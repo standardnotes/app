@@ -13,8 +13,6 @@ import AddSmartViewModal from '../SmartViewBuilder/AddSmartViewModal'
 import { AddSmartViewModalController } from '../SmartViewBuilder/AddSmartViewModalController'
 import SmartViewsList from './SmartViewsList'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-
 type Props = {
   application: WebApplication
   navigationController: NavigationController
@@ -22,10 +20,6 @@ type Props = {
 }
 
 const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationController, featuresController }) => {
-  void localizationStore.currentLocale
-
-  const createSmartViewCommandLabel = c('B4.Notes.TagsLinkedItems.Action').t`Create a new smart view`
-
   const premiumModal = usePremiumModal()
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
   const editSmartViewModalController = useMemo(() => new EditSmartViewModalController(application), [application])
@@ -41,8 +35,13 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
 
   useEffect(
     () =>
-      application.commands.add('create-smart-view', createSmartViewCommandLabel, createNewSmartView, 'add'),
-    [application.commands, createNewSmartView, createSmartViewCommandLabel],
+      application.commands.add(
+        'create-smart-view',
+        c('B4.Notes.TagsLinkedItems.Action').t`Create a new smart view`,
+        createNewSmartView,
+        'add',
+      ),
+    [application.commands, createNewSmartView],
   )
 
   return (

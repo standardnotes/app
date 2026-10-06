@@ -9,7 +9,6 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
 import { SNTag } from '@standardnotes/snjs'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 
 type Props = {
@@ -20,8 +19,6 @@ type Props = {
 }
 
 const ContentList: FunctionComponent<Props> = ({ application, items, selectedUuids, paginate }) => {
-  const dateFormattingLocale = localizationStore.currentLocale
-
   const { filesController, itemListController, navigationController, notesController } = application
 
   const { selectPreviousItem, selectNextItem } = itemListController
@@ -113,7 +110,6 @@ const ContentList: FunctionComponent<Props> = ({ application, items, selectedUui
             onSelect={selectItem}
             tags={getTagsForItem(item)}
             notesController={notesController}
-            dateFormattingLocale={dateFormattingLocale}
           />
         )
       })}

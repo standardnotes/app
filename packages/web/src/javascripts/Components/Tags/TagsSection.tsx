@@ -5,11 +5,8 @@ import TagsSectionAddButton from './TagsSectionAddButton'
 import TagsSectionTitle from './TagsSectionTitle'
 import { useApplication } from '../ApplicationProvider'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 const TagsSection: FunctionComponent = () => {
-  void localizationStore.currentLocale
-
   const application = useApplication()
 
   return (

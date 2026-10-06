@@ -6,7 +6,6 @@ import { FunctionComponent, useState } from 'react'
 import SmartViewsListItem from './SmartViewsListItem'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 type Props = {
   navigationController: NavigationController
@@ -19,8 +18,6 @@ const SmartViewsList: FunctionComponent<Props> = ({
   featuresController,
   setEditingSmartView,
 }: Props) => {
-  void localizationStore.currentLocale
-
   const allViews = navigationController.smartViews
 
   const [container, setContainer] = useState<HTMLDivElement | null>(null)

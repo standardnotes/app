@@ -1,7 +1,5 @@
-import { observer } from 'mobx-react-lite'
 import { useMemo, FunctionComponent } from 'react'
 import { SNNote, classNames } from '@standardnotes/snjs'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { calculateReadTime } from './Utils/calculateReadTime'
 import { countNoteAttributes } from './Utils/countNoteAttributes'
@@ -10,8 +8,6 @@ import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { c } from 'ttag'
 
 export const useNoteAttributes = (application: WebApplicationInterface, note: SNNote) => {
-  void localizationStore.currentLocale
-
   const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])
 
   const readTime = useMemo(
@@ -19,9 +15,10 @@ export const useNoteAttributes = (application: WebApplicationInterface, note: SN
     [words],
   )
 
-  const userModifiedDate = formatDateForContextMenu(note.userModifiedDate)
-  const serverUpdatedAt = formatDateForContextMenu(note.serverUpdatedAt)
-  const dateCreated = formatDateForContextMenu(note.created_at)
+  const userModifiedDate = useMemo(() => formatDateForContextMenu(note.userModifiedDate), [note.userModifiedDate])
+  const serverUpdatedAt = useMemo(() => formatDateForContextMenu(note.serverUpdatedAt), [note.serverUpdatedAt])
+
+  const dateCreated = useMemo(() => formatDateForContextMenu(note.created_at), [note.created_at])
 
   const size = useMemo(() => new Blob([note.text]).size, [note.text])
 
@@ -45,7 +42,7 @@ export const NoteAttributes: FunctionComponent<{
   application: WebApplicationInterface
   note: SNNote
   className?: string
-}> = observer(({ application, note, className }) => {
+}> = ({ application, note, className }) => {
   const { size, words, characters, paragraphs, readTime, userModifiedDate, dateCreated, format } = useNoteAttributes(
     application,
     note,
@@ -80,4 +77,4 @@ export const NoteAttributes: FunctionComponent<{
       </div>
     </div>
   )
-})
+}

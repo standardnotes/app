@@ -1,8 +1,6 @@
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatLastSyncDate, formatLastSyncDateForSentenceStart } from '@/Utils/LocalizedDateFormat'
 import { CollectionSort, SortableItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
-import { observer } from 'mobx-react-lite'
 import { c } from 'ttag'
 import { ListableContentItem } from './Types/ListableContentItem'
 
@@ -17,17 +15,10 @@ type Props = {
 }
 
 const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sortBy }) => {
-  void localizationStore.currentLocale
-
   const showModifiedDate = sortBy === CollectionSort.UpdatedAt
 
-  const formattedDate = showModifiedDate
-    ? item.userModifiedDate
-      ? formatLastSyncDate(item.userModifiedDate)
-      : undefined
-    : item.created_at
-      ? formatLastSyncDateForSentenceStart(item.created_at)
-      : undefined
+  const date = showModifiedDate ? item.userModifiedDate : item.created_at
+  const formattedDate = date && (showModifiedDate ? formatLastSyncDate(date) : formatLastSyncDateForSentenceStart(date))
 
   if (hideDate && !item.protected) {
     return null
@@ -46,11 +37,9 @@ const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sortBy }) 
           {c('B3.Notes.NoteList.Label').t`Modified`} {formattedDate || c('B3.Notes.NoteList.Label').t`Now`}
         </span>
       )}
-      {!hideDate && !showModifiedDate && (
-        <span>{formattedDate || c('B3.Notes.NoteList.Label').t`Now`}</span>
-      )}
+      {!hideDate && !showModifiedDate && <span>{formattedDate || c('B3.Notes.NoteList.Label').t`Now`}</span>}
     </div>
   )
 }
 
-export default observer(ListItemMetadata)
+export default ListItemMetadata

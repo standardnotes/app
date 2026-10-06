@@ -7,15 +7,11 @@ import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import { ContentType, SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-
 type Props = {
   searchOptions: SearchOptionsController
 }
 
 const SearchTagFilters = ({ searchOptions }: Props) => {
-  void localizationStore.currentLocale
-
   const application = useApplication()
   const { tagFilterList } = searchOptions
   const selected = application.navigationController.selected

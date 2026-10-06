@@ -8,7 +8,6 @@ import { useApplication } from '../ApplicationProvider'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 type Props = {
   type: TagListSectionType
@@ -25,8 +24,6 @@ function getAllTagsForType(controller: NavigationController, type: TagListSectio
 }
 
 const TagsList: FunctionComponent<Props> = ({ type }: Props) => {
-  void localizationStore.currentLocale
-
   const application = useApplication()
 
   const allTags = getAllTagsForType(application.navigationController, type)

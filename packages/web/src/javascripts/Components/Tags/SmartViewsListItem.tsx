@@ -17,8 +17,6 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useApplication } from '../ApplicationProvider'
 import { getSmartViewDisplayTitle } from '@/Utils/LocalizedSystemViewTitle'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-
 type Props = {
   view: SmartView
   tagsState: NavigationController
@@ -38,8 +36,6 @@ const getIconClass = (view: SmartView, isSelected: boolean): string => {
 }
 
 const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEditingSmartView }) => {
-  void localizationStore.currentLocale
-
   const application = useApplication()
 
   const [title, setTitle] = useState(view.title || '')

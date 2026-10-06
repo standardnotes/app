@@ -3,8 +3,7 @@ import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-import { formatLastSyncDate } from '@/Utils/LocalizedDateFormat'
+import { dateToLocalizedString } from '@standardnotes/snjs'
 import { useCallback, useState, FunctionComponent } from 'react'
 import ChangeEmail from '@/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail'
 import PasswordWizard from '@/Components/PasswordWizard/PasswordWizard'
@@ -18,15 +17,13 @@ type Props = {
 }
 
 const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
-  void localizationStore.currentLocale
-
   const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] = useState(false)
   const [shouldShowPasswordWizard, setShouldShowPasswordWizard] = useState(false)
 
   const user = application.sessions.getUser()
 
   const passwordCreatedAtTimestamp = application.getUserPasswordCreationDate() as Date
-  const passwordCreatedOn = formatLastSyncDate(passwordCreatedAtTimestamp)
+  const passwordCreatedOn = dateToLocalizedString(passwordCreatedAtTimestamp)
 
   const presentPasswordWizard = useCallback(() => {
     setShouldShowPasswordWizard(true)

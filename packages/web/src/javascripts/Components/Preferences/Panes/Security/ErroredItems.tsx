@@ -8,14 +8,11 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import { ErrorCircle } from '@/Components/UIElements/ErrorCircle'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { c } from 'ttag'
 
 const jtString = (value: unknown): string => (Array.isArray(value) ? value.join('') : String(value))
 
 const ErroredItems: FunctionComponent = () => {
-  void localizationStore.currentLocale
-
   const application = useApplication()
   const [erroredItems, setErroredItems] = useState(application.items.invalidNonVaultedItems)
 

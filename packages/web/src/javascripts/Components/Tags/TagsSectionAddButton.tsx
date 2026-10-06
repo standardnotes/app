@@ -5,11 +5,8 @@ import { useCallback, useMemo } from 'react'
 import { useKeyboardService } from '../KeyboardServiceProvider'
 import { useApplication } from '../ApplicationProvider'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 function TagsSectionAddButton() {
-  void localizationStore.currentLocale
-
   const application = useApplication()
   const keyboardService = useKeyboardService()
 
@@ -23,7 +20,10 @@ function TagsSectionAddButton() {
     [keyboardService],
   )
 
-  const title = c('B4.Notes.TagsLinkedItems.Action').jt`Create a new tag (${shortcut})` as unknown as string
+  const title = useMemo(
+    () => c('B4.Notes.TagsLinkedItems.Action').jt`Create a new tag (${shortcut})` as unknown as string,
+    [shortcut],
+  )
 
   return <IconButton focusable={true} icon="add" title={title} className="p-0 text-neutral" onClick={addNewTag} />
 }

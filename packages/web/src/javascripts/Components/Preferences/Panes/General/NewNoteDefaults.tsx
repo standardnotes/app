@@ -20,22 +20,19 @@ import { getNoteTitleFormatOptions } from '@/Components/ContentListView/Header/N
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { getDayjsFormattedString } from '@/Utils/GetDayjsFormattedString'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-import { observer } from 'mobx-react-lite'
 import { c } from 'ttag'
 
 const PrefChangeDebounceTimeInMs = 25
 const HelpPageUrl = 'https://day.js.org/docs/en/display/format#list-of-all-available-formats'
 
-const NewNoteDefaults = observer(() => {
+const NewNoteDefaults = () => {
   const application = useApplication()
   const premiumModal = usePremiumModal()
-  void localizationStore.currentLocale
 
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
   useEffect(() => {
     setEditorItems(getDropdownItemsForAllEditors(application))
-  }, [application, localizationStore.currentLocale])
+  }, [application])
 
   const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<string>(
     NativeFeatureIdentifier.TYPES.PlainEditor,
@@ -193,6 +190,6 @@ const NewNoteDefaults = observer(() => {
       </PreferencesSegment>
     </PreferencesGroup>
   )
-})
+}
 
 export default NewNoteDefaults

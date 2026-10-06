@@ -36,8 +36,6 @@ import { ProtectionEvent } from '@standardnotes/services'
 import KeyboardShortcutsModal from '../KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal'
 import CommandPalette from '../CommandPalette/CommandPalette'
 import SuperExportModal from '../NotesOptions/SuperExportModal'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-import { observer } from 'mobx-react-lite'
 
 type Props = {
   application: WebApplication
@@ -47,8 +45,6 @@ type Props = {
 const LazyLoadedClipperView = lazy(() => import('../ClipperView/ClipperView'))
 
 const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {
-  void localizationStore.currentLocale
-
   const platformString = getPlatformString()
   const [launched, setLaunched] = useState(false)
   const [needsUnlock, setNeedsUnlock] = useState(true)
@@ -242,55 +238,55 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   return (
     <ApplicationProvider application={application}>
-        <KeyboardServiceProvider service={application.keyboardService}>
-          <AndroidBackHandlerProvider application={application}>
-            <ResponsivePaneProvider paneController={application.paneController}>
-              <PremiumModalProvider application={application}>
-                <LinkingControllerProvider controller={application.linkingController}>
-                  <div className={platformString + ' main-ui-view sn-component h-full'}>
-                    <FileDragNDropProvider application={application}>
-                      <PanesSystemComponent />
-                    </FileDragNDropProvider>
-                    <>
-                      <Footer application={application} applicationGroup={mainApplicationGroup} />
-                      <SessionsModal application={application} />
-                      <PreferencesViewWrapper application={application} />
-                      <RevisionHistoryModal application={application} />
-                    </>
-                    {renderChallenges()}
-                    <>
-                      <NotesContextMenu />
-                      <TagContextMenuWrapper
-                        navigationController={application.navigationController}
-                        featuresController={application.featuresController}
-                      />
-                      <FileContextMenuWrapper
-                        filesController={application.filesController}
-                        itemListController={application.itemListController}
-                      />
-                      <PurchaseFlowWrapper application={application} />
-                      <ConfirmSignoutContainer applicationGroup={mainApplicationGroup} application={application} />
-                      <ToastContainer />
-                      <FilePreviewModalWrapper application={application} />
-                      <PermissionsModalWrapper application={application} />
-                      <EditorWidthSelectionModalWrapper />
-                      <LocalizationLabsSpotlightModal application={application} />
-                      <ConfirmDeleteAccountContainer application={application} />
-                      <ImportModal importModalController={application.importModalController} />
-                      <KeyboardShortcutsModal keyboardService={application.keyboardService} />
-                      <SuperExportModal />
-                      <CommandPalette />
-                    </>
-                    {application.routeService.isDotOrg && <DotOrgNotice />}
-                    {isIOS() && <IosKeyboardClose />}
-                  </div>
-                </LinkingControllerProvider>
-              </PremiumModalProvider>
-            </ResponsivePaneProvider>
-          </AndroidBackHandlerProvider>
-        </KeyboardServiceProvider>
-      </ApplicationProvider>
+      <KeyboardServiceProvider service={application.keyboardService}>
+        <AndroidBackHandlerProvider application={application}>
+          <ResponsivePaneProvider paneController={application.paneController}>
+            <PremiumModalProvider application={application}>
+              <LinkingControllerProvider controller={application.linkingController}>
+                <div className={platformString + ' main-ui-view sn-component h-full'}>
+                  <FileDragNDropProvider application={application}>
+                    <PanesSystemComponent />
+                  </FileDragNDropProvider>
+                  <>
+                    <Footer application={application} applicationGroup={mainApplicationGroup} />
+                    <SessionsModal application={application} />
+                    <PreferencesViewWrapper application={application} />
+                    <RevisionHistoryModal application={application} />
+                  </>
+                  {renderChallenges()}
+                  <>
+                    <NotesContextMenu />
+                    <TagContextMenuWrapper
+                      navigationController={application.navigationController}
+                      featuresController={application.featuresController}
+                    />
+                    <FileContextMenuWrapper
+                      filesController={application.filesController}
+                      itemListController={application.itemListController}
+                    />
+                    <PurchaseFlowWrapper application={application} />
+                    <ConfirmSignoutContainer applicationGroup={mainApplicationGroup} application={application} />
+                    <ToastContainer />
+                    <FilePreviewModalWrapper application={application} />
+                    <PermissionsModalWrapper application={application} />
+                    <EditorWidthSelectionModalWrapper />
+                    <LocalizationLabsSpotlightModal application={application} />
+                    <ConfirmDeleteAccountContainer application={application} />
+                    <ImportModal importModalController={application.importModalController} />
+                    <KeyboardShortcutsModal keyboardService={application.keyboardService} />
+                    <SuperExportModal />
+                    <CommandPalette />
+                  </>
+                  {application.routeService.isDotOrg && <DotOrgNotice />}
+                  {isIOS() && <IosKeyboardClose />}
+                </div>
+              </LinkingControllerProvider>
+            </PremiumModalProvider>
+          </ResponsivePaneProvider>
+        </AndroidBackHandlerProvider>
+      </KeyboardServiceProvider>
+    </ApplicationProvider>
   )
 }
 
-export default observer(ApplicationView)
+export default ApplicationView

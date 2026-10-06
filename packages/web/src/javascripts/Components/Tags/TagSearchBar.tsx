@@ -6,15 +6,12 @@ import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { classNames } from '@standardnotes/snjs'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 type Props = {
   navigationController: NavigationController
 }
 
 const TagSearchBar = ({ navigationController }: Props) => {
-  void localizationStore.currentLocale
-
   const { searchQuery, setSearchQuery } = navigationController
 
   const inputRef = useRef<HTMLInputElement>(null)

@@ -1,7 +1,5 @@
 import { FunctionComponent, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
@@ -17,8 +15,6 @@ type Props = {
 }
 
 const Sync: FunctionComponent<Props> = ({ application }: Props) => {
-  void localizationStore.currentLocale
-
   const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
 
   const lastSyncDate = formatLastSyncDate(application.sync.getLastSyncDate() as Date)

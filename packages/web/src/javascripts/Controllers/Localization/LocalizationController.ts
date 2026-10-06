@@ -2,12 +2,12 @@ import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { PreferencesController } from '@/Controllers/PreferencesController'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
-import { DEFAULT_LOCALE, LOCALES_BASE_PATH, LocaleService, resolveLocale } from '@standardnotes/i18n'
+import { resolveLocale } from '@standardnotes/i18n'
+import { getWebLocaleService } from '@/Controllers/Localization/WebLocaleService'
 import { configureDateLocale } from '@/Utils/DateLocale'
 import { syncDesktopMainProcessLocalization } from '@/Application/Device/SyncDesktopMainProcessLocalization'
 import { syncMobileNativeLocalization } from '@/Application/Device/SyncMobileNativeLocalization'
-import { clearPersistedLocale, persistLocale } from '@/Utils/LocalePersistence'
-import { isDesktopApplication } from '@/Utils'
+import { clearPersistedLocale, getPersistedLocale, persistLocale } from '@/Utils/LocalePersistence'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { LANGUAGE_PREFERENCES_SECTION_ID } from '@/Components/Preferences/Panes/General/Language'
 import { RouteServiceInterface, RouteType } from '@standardnotes/ui-services'
@@ -24,8 +24,6 @@ import {
 } from '@standardnotes/snjs'
 
 export class LocalizationController extends AbstractViewController implements InternalEventHandlerInterface {
-  private localeService?: LocaleService
-
   labsSpotlightReady = false
   labsSpotlightOpen = false
 
@@ -124,14 +122,6 @@ export class LocalizationController extends AbstractViewController implements In
     })
   }
 
-  async setLocale(locale: string): Promise<void> {
-    if (!this.featuresController.isLocalizationEnabled()) {
-      return
-    }
-
-    await this.getLocaleService().setLocale(locale)
-  }
-
   async changeLocaleAndReload(locale: string): Promise<void> {
     if (locale === localizationStore.currentLocale) {
       return
@@ -141,11 +131,11 @@ export class LocalizationController extends AbstractViewController implements In
       return
     }
 
+    let resolvedLocale: string
     try {
-      await this.loadLocale(locale)
+      resolvedLocale = await this.loadLocale(locale)
     } catch (error) {
       console.error('Failed to load locale before reload', error)
-      await this.fallbackToDefaultLocale()
       addToast({
         type: ToastType.Error,
         message: c('B6.Preferences.General.Language.Error').t`Could not load the selected language.`,
@@ -153,10 +143,10 @@ export class LocalizationController extends AbstractViewController implements In
       return
     }
 
-    persistLocale(localizationStore.currentLocale)
+    persistLocale(resolvedLocale)
 
     try {
-      await this.preferences.setValue(PrefKey.Locale, localizationStore.currentLocale)
+      await this.preferences.setValue(PrefKey.Locale, resolvedLocale)
     } catch (error) {
       console.error('Failed to sync locale preference', error)
     }
@@ -165,6 +155,12 @@ export class LocalizationController extends AbstractViewController implements In
   }
 
   async enableLocalization(): Promise<void> {
+    try {
+      persistLocale(await this.loadLocale(this.getSavedLocale()))
+    } catch (error) {
+      console.error('Failed to load locale before reload', error)
+    }
+
     window.location.reload()
   }
 
@@ -180,15 +176,8 @@ export class LocalizationController extends AbstractViewController implements In
     window.location.reload()
   }
 
-  private async fallbackToDefaultLocale(): Promise<void> {
-    const localeService = this.getLocaleService()
-    await localeService.loadAndActivateLocale(DEFAULT_LOCALE)
-    localizationStore.setCurrentLocale(localeService.getCurrentLocale())
-    await this.syncDateFormatting(localeService.getCurrentLocale())
-  }
-
-  private async loadLocale(locale: string): Promise<void> {
-    const localeService = this.getLocaleService()
+  private async loadLocale(locale: string | undefined): Promise<string> {
+    const localeService = getWebLocaleService()
     const catalog = await localeService.getAvailableLocales()
     const resolvedLocale = resolveLocale({
       savedLocale: locale,
@@ -196,64 +185,31 @@ export class LocalizationController extends AbstractViewController implements In
     })
 
     await localeService.loadAndActivateLocale(resolvedLocale)
-    localizationStore.setAvailableLocales(catalog)
-    localizationStore.setCurrentLocale(localeService.getCurrentLocale())
-    await this.syncDateFormatting(localeService.getCurrentLocale())
+    return resolvedLocale
   }
 
-  /** Desktop serves web from `web/`; the mobile shell serves the same dist under `web-src/`. */
-  private webLocalesBasePath(): string {
-    if (typeof window === 'undefined' || window.location.protocol !== 'file:') {
-      return LOCALES_BASE_PATH
-    }
+  private updatePersistedLocale(localizationEnabled: boolean, locale: string): boolean {
+    const persistedLocale = getPersistedLocale()
 
-    return isDesktopApplication() ? 'web/locales' : 'web-src/locales'
-  }
-
-  private shouldUseFileDocumentFetch(): boolean {
-    return typeof window !== 'undefined' && window.location.protocol === 'file:' && !isDesktopApplication()
-  }
-
-  private async fetchJsonFromDocument<T>(resourcePath: string): Promise<T> {
-    const url = new URL(resourcePath, window.location.href).href
-
-    return new Promise((resolve, reject) => {
-      const request = new XMLHttpRequest()
-      request.open('GET', url, true)
-      request.responseType = 'text'
-      request.onload = () => {
-        const ok = request.status === 0 || (request.status >= 200 && request.status < 300)
-        if (!ok) {
-          reject(new Error(`Failed to load ${url}: HTTP ${request.status}`))
-          return
-        }
-
-        try {
-          resolve(JSON.parse(request.responseText) as T)
-        } catch (error) {
-          reject(error)
-        }
+    if (!localizationEnabled) {
+      if (!persistedLocale) {
+        return false
       }
-      request.onerror = () => reject(new Error(`Failed to load ${url}`))
-      request.send()
-    })
-  }
-
-  private getLocaleService(): LocaleService {
-    if (!this.localeService) {
-      this.localeService = new LocaleService({
-        onLocaleChanged: (locale) => localizationStore.setCurrentLocale(locale),
-        localesBasePath: this.webLocalesBasePath(),
-        ...(this.shouldUseFileDocumentFetch() ? { fetchJson: this.fetchJsonFromDocument.bind(this) } : {}),
-      })
+      clearPersistedLocale()
+      return true
     }
 
-    return this.localeService
+    if (persistedLocale === locale) {
+      return false
+    }
+    persistLocale(locale)
+    return true
   }
 
   private async initializeLocalization(): Promise<void> {
     const localizationEnabled = this.featuresController.isLocalizationEnabled()
-    const localeService = this.getLocaleService()
+    const localeService = getWebLocaleService()
+    const activeLocale = localeService.getCurrentLocale()
 
     try {
       await localeService.initialize({
@@ -261,15 +217,22 @@ export class LocalizationController extends AbstractViewController implements In
         savedLocale: this.getSavedLocale(),
       })
 
+      const locale = localeService.getCurrentLocale()
+
+      if (this.updatePersistedLocale(localizationEnabled, locale) && locale !== activeLocale) {
+        window.location.reload()
+        return
+      }
+
       if (localizationEnabled) {
         localizationStore.setAvailableLocales(await localeService.getAvailableLocales())
       } else {
         localizationStore.setAvailableLocales({})
       }
 
-      localizationStore.setCurrentLocale(localeService.getCurrentLocale())
-      await this.syncDateFormatting(localeService.getCurrentLocale())
-      this.syncNativeShellLocalization(localizationEnabled, localeService.getCurrentLocale())
+      await this.syncDateFormatting(locale)
+      localizationStore.setCurrentLocale(locale)
+      this.syncNativeShellLocalization(localizationEnabled, locale)
     } catch (error) {
       console.error('Failed to initialize localization', error)
       localizationStore.setAvailableLocales({})

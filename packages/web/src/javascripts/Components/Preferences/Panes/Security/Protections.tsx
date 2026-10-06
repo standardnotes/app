@@ -1,8 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatDateTime } from '@/Utils/LocalizedDateFormat'
 import { FunctionComponent, useCallback, useState, useEffect } from 'react'
-import { observer } from 'mobx-react-lite'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { isSameDay } from '@/Utils'
 import Button from '@/Components/Button/Button'
@@ -16,8 +14,6 @@ type Props = {
 }
 
 const Protections: FunctionComponent<Props> = ({ application }) => {
-  const currentLocale = localizationStore.currentLocale
-
   const enableProtections = () => {
     application.clearProtectionSession().catch(console.error)
   }
@@ -68,10 +64,6 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
     }
   }, [application, getProtectionsDisabledUntil])
 
-  useEffect(() => {
-    setProtectionsDisabledUntil(getProtectionsDisabledUntil())
-  }, [getProtectionsDisabledUntil, currentLocale])
-
   if (!hasProtections) {
     return null
   }
@@ -104,4 +96,4 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
   )
 }
 
-export default observer(Protections)
+export default Protections

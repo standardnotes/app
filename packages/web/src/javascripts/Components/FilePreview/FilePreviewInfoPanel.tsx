@@ -1,9 +1,7 @@
 import { formatDefaultDateTime } from '@/Utils/LocalizedDateFormat'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
-import { observer } from 'mobx-react-lite'
 import { c } from 'ttag'
 import Icon from '@/Components/Icon/Icon'
 
@@ -12,8 +10,6 @@ type Props = {
 }
 
 const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
-  void localizationStore.currentLocale
-
   return (
     <div className="flex min-w-70 flex-col p-4">
       <div className="mb-4 flex items-center">
@@ -46,4 +42,4 @@ const FilePreviewInfoPanel: FunctionComponent<Props> = ({ file }) => {
   )
 }
 
-export default observer(FilePreviewInfoPanel)
+export default FilePreviewInfoPanel

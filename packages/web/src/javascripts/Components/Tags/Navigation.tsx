@@ -19,7 +19,7 @@ import QuickSettingsButton from '../Footer/QuickSettingsButton'
 import VaultSelectionButton from '../Footer/VaultSelectionButton'
 import PreferencesButton from '../Footer/PreferencesButton'
 import TagSearchBar from './TagSearchBar'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
+
 type Props = {
   application: WebApplication
   className?: string
@@ -28,8 +28,6 @@ type Props = {
 }
 
 const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, children, id }, ref) => {
-  void localizationStore.currentLocale
-
   const { setPaneLayout } = useResponsiveAppPane()
 
   const [hasPasscode, setHasPasscode] = useState(() => application.hasPasscode())

@@ -16,7 +16,7 @@ import { c } from 'ttag'
 const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, closePreferences }) => {
   const menu = useMemo(
     () => new PreferencesSessionController(application, application.enableUnfinishedFeatures),
-    [application, application.enableUnfinishedFeatures],
+    [application],
   )
 
   useEffect(() => {
@@ -41,19 +41,22 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({ application, clo
 
   const { hasTopInset } = useAvailableSafeAreaPadding()
 
-  const modalActions: ModalAction[] = [
-    {
-      label: (
-        <span className="flex items-center">
-          <Icon type="chevron-left" size="large" />
-          {c('B6.Preferences.Other.Action').t`Back`}
-        </span>
-      ),
-      type: 'primary',
-      mobileSlot: 'left',
-      onClick: closePreferences,
-    },
-  ]
+  const modalActions = useMemo(
+    (): ModalAction[] => [
+      {
+        label: (
+          <span className="flex items-center">
+            <Icon type="chevron-left" size="large" />
+            {c('B6.Preferences.Other.Action').t`Back`}
+          </span>
+        ),
+        type: 'primary',
+        mobileSlot: 'left',
+        onClick: closePreferences,
+      },
+    ],
+    [closePreferences],
+  )
 
   return (
     <Modal

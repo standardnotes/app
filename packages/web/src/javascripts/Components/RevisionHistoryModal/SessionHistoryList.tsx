@@ -4,7 +4,6 @@ import HistoryListItem from './HistoryListItem'
 import { formatRevisionGroupTitle } from './utils'
 import { observer } from 'mobx-react-lite'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { c } from 'ttag'
 
 type Props = {
@@ -13,8 +12,6 @@ type Props = {
 }
 
 const SessionHistoryList: FunctionComponent<Props> = ({ noteHistoryController, onSelectRevision }) => {
-  void localizationStore.currentLocale
-
   const { sessionHistory, selectedRevision, selectSessionRevision } = noteHistoryController
 
   const [listElement, setListElement] = useState<HTMLDivElement | null>(null)

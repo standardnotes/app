@@ -15,9 +15,7 @@ import {
   isSmartView,
   isNote,
 } from '@standardnotes/snjs'
-import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { c } from 'ttag'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
@@ -228,7 +226,6 @@ type Props = {
 }
 
 const ContentTableView = ({ application, items }: Props) => {
-  void localizationStore.currentLocale
   const listHasFiles = items.some((item) => item instanceof FileItem)
 
   const { sortBy, sortDirection } = application.itemListController.displayOptions
@@ -396,4 +393,4 @@ const ContentTableView = ({ application, items }: Props) => {
     </>
   )
 }
-export default observer(ContentTableView)
+export default ContentTableView

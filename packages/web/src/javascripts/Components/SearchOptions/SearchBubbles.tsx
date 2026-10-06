@@ -3,15 +3,11 @@ import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { observer } from 'mobx-react-lite'
 import { useCallback } from 'react'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-
 type Props = {
   searchOptions: SearchOptionsController
 }
 
 const SearchBubbles = ({ searchOptions }: Props) => {
-  void localizationStore.currentLocale
-
   const { includeProtectedContents, includeArchived, includeTrashed } = searchOptions
 
   const toggleIncludeProtectedContents = useCallback(async () => {

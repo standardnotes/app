@@ -45,7 +45,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
   const [showAndroidWebviewUpdatePrompt, setShowAndroidWebviewUpdatePrompt] = useState(false)
   const [didLoadEnd, setDidLoadEnd] = useState(false)
-  const [nativeLocalizationRevision, setNativeLocalizationRevision] = useState(0)
+  const [, setNativeLocalizationRevision] = useState(0)
 
   const insets = useSafeAreaInsets()
 
@@ -424,8 +424,6 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   }
 
   if (showAndroidWebviewUpdatePrompt) {
-    void nativeLocalizationRevision
-
     return (
       <View
         style={{

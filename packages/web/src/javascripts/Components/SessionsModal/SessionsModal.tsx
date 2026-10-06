@@ -14,7 +14,6 @@ import Icon from '../Icon/Icon'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
 import AlertDialog from '../AlertDialog/AlertDialog'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatSessionAccessDate } from '@/Utils/LocalizedDateFormat'
 import { c } from 'ttag'
 
@@ -89,8 +88,6 @@ function useSessions(
 const SessionsModalContent: FunctionComponent<{
   application: WebApplication
 }> = ({ application }) => {
-  void localizationStore.currentLocale
-
   const [sessions, refresh, refreshing, revokeSession, errorMessage] = useSessions(application)
 
   const [confirmRevokingSessionUuid, setRevokingSessionUuid] = useState('')

@@ -12,8 +12,6 @@ import { observer } from 'mobx-react-lite'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/snjs'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-
 type Props = {
   itemListController: ItemListController
   searchOptionsController: SearchOptionsController
@@ -54,8 +52,6 @@ const SearchBar = ({
   hideOptions = false,
   showSearchEnhancements = false,
 }: Props) => {
-  void localizationStore.currentLocale
-
   const searchBarRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false)

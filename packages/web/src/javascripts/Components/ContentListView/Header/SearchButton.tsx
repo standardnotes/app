@@ -8,15 +8,12 @@ import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 
 type Props = {
   itemListController: ItemListController
 }
 
 const SearchButton = ({ itemListController }: Props) => {
-  void localizationStore.currentLocale
-
   const searchButtonRef = useRef<HTMLButtonElement>(null)
 
   const { noteFilterText, setNoteFilterText, clearFilterText } = itemListController

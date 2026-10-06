@@ -8,7 +8,6 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
@@ -28,8 +27,6 @@ type Props = {
 const iconClassName = `text-neutral mr-2 ${MenuItemIconSize}`
 
 const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, mainApplicationGroup }) => {
-  void localizationStore.currentLocale
-
   const application = useApplication()
 
   const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)

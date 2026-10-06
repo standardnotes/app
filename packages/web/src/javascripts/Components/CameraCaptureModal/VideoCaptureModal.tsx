@@ -1,6 +1,5 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { VideoRecorder } from '@/Controllers/Moments/VideoRecorder'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -16,12 +15,7 @@ type Props = {
 }
 
 const VideoCaptureModal = ({ filesController, close }: Props) => {
-  void localizationStore.currentLocale
-
-  const defaultFileName = formatDateAndTimeForNote(new Date())
-  const [fileNameOverride, setFileNameOverride] = useState<string>()
-  const fileName = fileNameOverride ?? defaultFileName
-
+  const [fileName, setFileName] = useState(formatDateAndTimeForNote(new Date()))
   const [recorder, setRecorder] = useState(() => new VideoRecorder(fileName))
   const [isRecorderReady, setIsRecorderReady] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
@@ -141,7 +135,7 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
                 container: 'mt-1',
               }}
               value={fileName}
-              onChange={(name) => setFileNameOverride(name)}
+              onChange={(fileName) => setFileName(fileName)}
               ref={fileNameInputRef}
             />
           </label>

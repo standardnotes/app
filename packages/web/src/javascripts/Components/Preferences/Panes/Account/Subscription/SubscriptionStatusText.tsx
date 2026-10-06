@@ -1,14 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { formatDefaultDateTime } from '@/Utils/LocalizedDateFormat'
 import { AppName } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const SubscriptionStatusText = () => {
-  void localizationStore.currentLocale
-
   const application = useApplication()
 
   const {

@@ -83,7 +83,7 @@ export function clearPersistedLocale(): void {
   document.cookie = `${LOCALE_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`
 }
 
-export function getSavedLocaleForApplication(application: WebApplication): string | undefined {
+export function getPersistedLocale(): string | undefined {
   if (isFileProtocol()) {
     const storedLocale = readLocaleFromLocalStorage()
     if (storedLocale) {
@@ -91,10 +91,9 @@ export function getSavedLocaleForApplication(application: WebApplication): strin
     }
   }
 
-  const cookieLocale = getLocaleCookie()
-  if (cookieLocale) {
-    return cookieLocale
-  }
+  return getLocaleCookie()
+}
 
-  return application.getPreference(PrefKey.Locale, PrefDefaults[PrefKey.Locale])
+export function getSavedLocaleForApplication(application: WebApplication): string | undefined {
+  return getPersistedLocale() ?? application.getPreference(PrefKey.Locale, PrefDefaults[PrefKey.Locale])
 }

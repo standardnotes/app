@@ -1,8 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { c } from 'ttag'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { observer } from 'mobx-react-lite'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Icon from '../../Icon/Icon'
 import { classNames } from '@standardnotes/utils'
 import Popover from '@/Components/Popover/Popover'
@@ -48,13 +46,6 @@ const ContentListHeader = ({
   itemListController,
   paneController,
 }: Props) => {
-  void localizationStore.currentLocale
-
-  const openDisplayOptionsMenuCommandLabel = c('B3.Notes.NoteList.Action').t`Open display options menu`
-  const displayOptionsMenuAriaLabel = c('B3.Notes.NoteList.AriaLabel').t`Display options menu`
-  const displayOptionsPopoverTitle = c('B3.Notes.NoteList.Title').t`Display options`
-  const potentiallyOutOfSyncLabel = c('B3.Notes.NoteList.Status').t`Potentially Out of Sync`
-
   const displayOptionsContainerRef = useRef<HTMLDivElement>(null)
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
   const isDailyEntry = isTag(selectedTag) && selectedTag.isDailyEntry
@@ -121,11 +112,11 @@ const ContentListHeader = ({
     () =>
       application.commands.add(
         'open-display-opts-menu',
-        openDisplayOptionsMenuCommandLabel,
+        c('B3.Notes.NoteList.Action').t`Open display options menu`,
         toggleDisplayOptionsMenu,
         'sort-descending',
       ),
-    [application.commands, toggleDisplayOptionsMenu, openDisplayOptionsMenuCommandLabel],
+    [application.commands, toggleDisplayOptionsMenu],
   )
 
   const OptionsMenu = useMemo(() => {
@@ -137,7 +128,7 @@ const ContentListHeader = ({
             onClick={toggleDisplayOptionsMenu}
             ref={displayOptionsButtonRef}
             icon="sort-descending"
-            label={displayOptionsMenuAriaLabel}
+            label={c('B3.Notes.NoteList.AriaLabel').t`Display options menu`}
           />
           <Popover
             open={showDisplayOptionsMenu}
@@ -145,7 +136,7 @@ const ContentListHeader = ({
             togglePopover={toggleDisplayOptionsMenu}
             align="start"
             className="py-2"
-            title={displayOptionsPopoverTitle}
+            title={c('B3.Notes.NoteList.Title').t`Display options`}
           >
             <DisplayOptionsMenu
               application={application}
@@ -157,16 +148,7 @@ const ContentListHeader = ({
         </div>
       </div>
     )
-  }, [
-    showDisplayOptionsMenu,
-    toggleDisplayOptionsMenu,
-    application,
-    isFilesSmartView,
-    selectedTag,
-    paneController,
-    displayOptionsMenuAriaLabel,
-    displayOptionsPopoverTitle,
-  ])
+  }, [showDisplayOptionsMenu, toggleDisplayOptionsMenu, application, isFilesSmartView, selectedTag, paneController])
 
   const AddButton = useMemo(() => {
     return (
@@ -208,7 +190,7 @@ const ContentListHeader = ({
             <div className="text-2xl font-semibold text-text md:text-lg">{panelTitle}</div>
             {showSyncSubtitle && (
               <div className={classNames('-mt-1 text-xs md:mt-0', outOfSync ? 'text-warning' : 'text-passive-0')}>
-                {outOfSync ? potentiallyOutOfSyncLabel : syncSubtitle}
+                {outOfSync ? c('B3.Notes.NoteList.Status').t`Potentially Out of Sync` : syncSubtitle}
               </div>
             )}
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
@@ -217,16 +199,7 @@ const ContentListHeader = ({
         </div>
       </div>
     )
-  }, [
-    optionsSubtitle,
-    showSyncSubtitle,
-    icon,
-    panelTitle,
-    outOfSync,
-    syncSubtitle,
-    selectedTag,
-    potentiallyOutOfSyncLabel,
-  ])
+  }, [optionsSubtitle, showSyncSubtitle, icon, panelTitle, outOfSync, syncSubtitle, selectedTag])
 
   const PhoneAndDesktopLayout = useMemo(() => {
     return (
@@ -265,4 +238,4 @@ const ContentListHeader = ({
   )
 }
 
-export default observer(ContentListHeader)
+export default memo(ContentListHeader)

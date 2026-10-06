@@ -1,7 +1,7 @@
 import { PrefKey, Platform, PrefValue } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/WebApplication'
-import { FunctionComponent, useState } from 'react'
+import { FunctionComponent, useMemo, useState } from 'react'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -19,26 +19,6 @@ type Props = {
 
 export const AndroidConfirmBeforeExitKey = 'ConfirmBeforeExit'
 
-function getSuperNoteImageAlignmentOptions(): DropdownItem[] {
-  return [
-    {
-      icon: 'format-align-left',
-      label: c('B6.Preferences.General.Label').t`Left align`,
-      value: 'left',
-    },
-    {
-      icon: 'format-align-center',
-      label: c('B6.Preferences.General.Label').t`Center align`,
-      value: 'center',
-    },
-    {
-      icon: 'format-align-right',
-      label: c('B6.Preferences.General.Label').t`Right align`,
-      value: 'right',
-    },
-  ]
-}
-
 const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [androidConfirmBeforeExit, setAndroidConfirmBeforeExit] = useState(
     () => (application.getValue(AndroidConfirmBeforeExitKey) as boolean) ?? true,
@@ -52,7 +32,26 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
 
   const alwaysShowSuperToolbar = usePreference(PrefKey.AlwaysShowSuperToolbar)
   const defaultSuperImageAlignment = usePreference(PrefKey.SuperNoteImageAlignment)
-  const imageAlignmentOptions = getSuperNoteImageAlignmentOptions()
+  const imageAlignmentOptions = useMemo(
+    (): DropdownItem[] => [
+      {
+        icon: 'format-align-left',
+        label: c('B6.Preferences.General.Label').t`Left align`,
+        value: 'left',
+      },
+      {
+        icon: 'format-align-center',
+        label: c('B6.Preferences.General.Label').t`Center align`,
+        value: 'center',
+      },
+      {
+        icon: 'format-align-right',
+        label: c('B6.Preferences.General.Label').t`Right align`,
+        value: 'right',
+      },
+    ],
+    [],
+  )
 
   const toggleSpellcheck = () => {
     application.toggleGlobalSpellcheck().catch(console.error)

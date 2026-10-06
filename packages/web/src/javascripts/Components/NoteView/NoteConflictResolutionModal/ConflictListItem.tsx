@@ -1,6 +1,4 @@
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { SNNote, classNames } from '@standardnotes/snjs'
-import { observer } from 'mobx-react-lite'
 import { c } from 'ttag'
 import { MouseEventHandler } from 'react'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
@@ -11,7 +9,7 @@ import { VisuallyHidden } from '@ariakit/react'
 import Icon from '../../Icon/Icon'
 import StyledTooltip from '../../StyledTooltip/StyledTooltip'
 
-export const ConflictListItem = observer(function ConflictListItem({
+export const ConflictListItem = ({
   isSelected,
   onClick,
   title,
@@ -23,9 +21,7 @@ export const ConflictListItem = observer(function ConflictListItem({
   onClick: MouseEventHandler<HTMLButtonElement>
   title: string
   note: SNNote
-}) {
-  void localizationStore.currentLocale
-
+}) => {
   const application = useApplication()
   const { words, characters, paragraphs, serverUpdatedAt, dateCreated, format } = useNoteAttributes(application, note)
 
@@ -106,4 +102,4 @@ export const ConflictListItem = observer(function ConflictListItem({
       </div>
     </button>
   )
-})
+}

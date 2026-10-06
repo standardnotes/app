@@ -8,7 +8,6 @@ import { observer } from 'mobx-react-lite'
 import { VisuallyHidden } from '@ariakit/react'
 import Button from '../Button/Button'
 import Popover from '../Popover/Popover'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { getRelativeTimeString } from '@/Utils/GetRelativeTimeString'
 
 export type NoteStatus = {
@@ -78,8 +77,6 @@ const NoteStatusIndicator = ({
   syncTakingTooLong,
   updateSavingIndicator = PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
 }: Props) => {
-  void localizationStore.currentLocale
-
   const application = useApplication()
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 

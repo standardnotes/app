@@ -6,16 +6,12 @@ import SearchBubbles from './SearchBubbles'
 import SearchOptionsSection, { ClearFilterButton } from './SearchOptionsSection'
 import SearchTagFilters from './SearchTagFilters'
 import { c } from 'ttag'
-import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
-
 type Props = {
   searchOptions: SearchOptionsController
   className?: string
 }
 
 const EnhancedSearchOptionsContent = ({ searchOptions, className }: Props) => {
-  void localizationStore.currentLocale
-
   const { noteTitleOnly, tagFilterList, activeSearchFilterCount } = searchOptions
 
   return (
