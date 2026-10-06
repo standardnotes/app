@@ -7,6 +7,7 @@ import { reinitializeStrings } from '../Strings'
 const DEFAULT_LOCALE = 'en_US'
 
 const loadedLocales = new Set<string>()
+let appliedLocale = DEFAULT_LOCALE
 let onStringsReloaded: (() => void) | undefined
 
 setDefaultLang(DEFAULT_LOCALE)
@@ -32,12 +33,17 @@ async function activateLocale(locale: string): Promise<void> {
 
 export async function syncMainProcessLocalization(state: MainProcessLocalizationState): Promise<void> {
   const locale = state.localizationEnabled && state.locale ? state.locale : DEFAULT_LOCALE
+  if (locale === appliedLocale) {
+    return
+  }
 
   try {
     await activateLocale(locale)
+    appliedLocale = locale
   } catch (error) {
     console.error(`Failed to load desktop locale pack for ${locale}`, error)
     useLocale(DEFAULT_LOCALE)
+    appliedLocale = DEFAULT_LOCALE
   }
 
   reinitializeStrings()

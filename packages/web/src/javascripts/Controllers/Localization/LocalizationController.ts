@@ -9,7 +9,7 @@ import { syncDesktopMainProcessLocalization } from '@/Application/Device/SyncDes
 import { syncMobileNativeLocalization } from '@/Application/Device/SyncMobileNativeLocalization'
 import { clearPersistedLocale, getPersistedLocale, persistLocale } from '@/Utils/LocalePersistence'
 import { addToast, ToastType } from '@standardnotes/toast'
-import { LANGUAGE_PREFERENCES_SECTION_ID } from '@/Components/Preferences/Panes/General/Language'
+import { ElementIds } from '@/Constants/ElementIDs'
 import { RouteServiceInterface, RouteType } from '@standardnotes/ui-services'
 import { c } from 'ttag'
 import { action, makeObservable, observable, runInAction } from 'mobx'
@@ -80,7 +80,7 @@ export class LocalizationController extends AbstractViewController implements In
 
   openLanguageSettingsFromLabsSpotlight = (): void => {
     this.dismissLabsSpotlight()
-    this.preferencesController.openPreferencesAndScrollToSection(LANGUAGE_PREFERENCES_SECTION_ID, 'general')
+    this.preferencesController.openPreferencesAndScrollToSection(ElementIds.LanguagePreferencesSection, 'general')
   }
 
   private hasSeenLocalizationLabsSpotlight(): boolean {

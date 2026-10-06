@@ -1,4 +1,5 @@
 import { getIntlLocale } from '@/Utils/DateLocale'
+import { c } from 'ttag'
 
 export function getFormattingLocale(): string {
   return getIntlLocale()
@@ -119,7 +120,11 @@ export function formatDateOnlyString(date: Date): string {
 }
 
 export function dateToStringStyle1(date: Date): string {
-  return formatDateAndTimeForNote(date, true)
+  const locale = getFormattingLocale()
+  const datePart = new Intl.DateTimeFormat(locale).format(date)
+  const timePart = new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(date)
+
+  return c('B2.NavSharedUI.Label').t`${datePart} at ${timePart}`
 }
 
 export function dateToHoursAndMinutesTimeString(date: Date): string {

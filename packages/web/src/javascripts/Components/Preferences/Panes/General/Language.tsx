@@ -11,8 +11,7 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Switch from '@/Components/Switch/Switch'
 import { NativeFeatureIdentifier } from '@standardnotes/snjs'
 import { c } from 'ttag'
-
-export const LANGUAGE_PREFERENCES_SECTION_ID = 'preferences-section-language'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 /** Lets the Labs switch paint before the localization reload. */
 const LOCALIZATION_TOGGLE_RELOAD_DELAY_MS = 200
@@ -63,12 +62,14 @@ const Language: FunctionComponent<Props> = ({ application }) => {
       return
     }
 
-    if (preferencesController.scrollToPreferencesSectionId !== LANGUAGE_PREFERENCES_SECTION_ID) {
+    if (preferencesController.scrollToPreferencesSectionId !== ElementIds.LanguagePreferencesSection) {
       return
     }
 
     const frame = window.requestAnimationFrame(() => {
-      document.getElementById(LANGUAGE_PREFERENCES_SECTION_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      document
+        .getElementById(ElementIds.LanguagePreferencesSection)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       preferencesController.clearPreferencesSectionScrollTarget()
     })
 
@@ -83,7 +84,7 @@ const Language: FunctionComponent<Props> = ({ application }) => {
   ])
 
   return (
-    <PreferencesGroup id={LANGUAGE_PREFERENCES_SECTION_ID}>
+    <PreferencesGroup id={ElementIds.LanguagePreferencesSection}>
       <PreferencesSegment>
         <div className="flex items-center justify-between">
           <div className="flex items-start">
