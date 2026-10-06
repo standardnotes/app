@@ -170,33 +170,27 @@ describe('LocaleService', () => {
     expect(service.getCurrentLocale()).toBe(DEFAULT_LOCALE)
   })
 
-  it('activates a locale when the user picks one in settings', async () => {
+  it('activates a locale loaded directly', async () => {
     global.fetch = createFetchMock({
-      '/locales/config/locales.json': catalog,
       '/locales/fr_FR.json': frenchLocaleData,
     })
 
     const service = new LocaleService()
 
-    await service.initialize({ localizationEnabled: true })
-    await service.setLocale('fr_FR')
+    await service.loadAndActivateLocale('fr_FR')
 
     expect(addLocale).toHaveBeenCalledWith('fr_FR', frenchLocaleData)
+    expect(useLocale).toHaveBeenCalledWith('fr_FR')
     expect(service.getCurrentLocale()).toBe('fr_FR')
   })
 
-  it('applies the requested locale when setLocale is called directly', async () => {
-    global.fetch = createFetchMock({
-      '/locales/config/locales.json': catalog,
-      '/locales/fr_FR.json': frenchLocaleData,
-    })
+  it('throws without changing the locale when a directly loaded pack is missing', async () => {
+    global.fetch = createFetchMock({})
 
     const service = new LocaleService()
 
-    await service.initialize({ localizationEnabled: false })
-    await service.setLocale('fr_FR')
-
-    expect(addLocale).toHaveBeenCalledWith('fr_FR', frenchLocaleData)
-    expect(service.getCurrentLocale()).toBe('fr_FR')
+    await expect(service.loadAndActivateLocale('fr_FR')).rejects.toThrow()
+    expect(useLocale).not.toHaveBeenCalled()
+    expect(service.getCurrentLocale()).toBe(DEFAULT_LOCALE)
   })
 })

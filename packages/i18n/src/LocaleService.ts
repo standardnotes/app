@@ -21,7 +21,6 @@ export type LocaleServiceOptions = {
 export class LocaleService {
   private currentLocale = DEFAULT_LOCALE
   private catalog?: LocaleCatalog
-  private localizationEnabled = false
   private readonly loadedLocales = new Set<string>()
   private readonly onLocaleChanged?: (locale: string) => void
   private readonly fetchJsonImpl: <T>(url: string) => Promise<T>
@@ -52,27 +51,21 @@ export class LocaleService {
     return this.catalog
   }
 
-  async initialize(options: InitializeLocaleOptions): Promise<void> {
-    this.localizationEnabled = options.localizationEnabled
+  async initialize({ localizationEnabled, savedLocale, environmentLocales }: InitializeLocaleOptions): Promise<void> {
+    const locale = localizationEnabled
+      ? resolveLocale({
+          savedLocale,
+          environmentLocales,
+          availableLocales: Object.keys(await this.getAvailableLocales()),
+        })
+      : DEFAULT_LOCALE
 
-    if (!this.localizationEnabled) {
-      await this.applyLocale(DEFAULT_LOCALE)
-      return
+    try {
+      await this.loadAndActivateLocale(locale)
+    } catch (error) {
+      console.error(`Failed to load locale ${locale}`, error)
+      this.activateLocale(DEFAULT_LOCALE)
     }
-
-    await this.getAvailableLocales()
-
-    const locale = resolveLocale({
-      savedLocale: options.savedLocale,
-      availableLocales: Object.keys(this.catalog!),
-      environmentLocales: options.environmentLocales,
-    })
-
-    await this.applyLocale(locale)
-  }
-
-  async setLocale(locale: string): Promise<void> {
-    await this.applyLocale(locale)
   }
 
   /** Loads locale JSON if needed and activates it. Throws when the pack cannot be loaded. */
@@ -81,22 +74,6 @@ export class LocaleService {
       const data = await this.fetchJsonImpl<LocaleData>(this.localeResourcePath(`${locale}.json`))
       addLocale(locale, data)
       this.loadedLocales.add(locale)
-    }
-
-    this.activateLocale(locale)
-  }
-
-  private async applyLocale(locale: string): Promise<void> {
-    if (locale !== DEFAULT_LOCALE && !this.loadedLocales.has(locale)) {
-      try {
-        const data = await this.fetchJsonImpl<LocaleData>(this.localeResourcePath(`${locale}.json`))
-        addLocale(locale, data)
-        this.loadedLocales.add(locale)
-      } catch (error) {
-        console.error(`Failed to load locale ${locale}`, error)
-        this.activateLocale(DEFAULT_LOCALE)
-        return
-      }
     }
 
     this.activateLocale(locale)

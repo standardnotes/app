@@ -38,5 +38,5 @@ export async function applyMobileLocalization(state: MobileLocalizationState): P
     }
   }
 
-  setTtagLocale(loadedLocales.has(locale) || locale === DEFAULT_LOCALE ? locale : DEFAULT_LOCALE)
+  setTtagLocale(locale)
 }
