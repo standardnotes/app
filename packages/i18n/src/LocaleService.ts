@@ -1,14 +1,10 @@
 import { addLocale, LocaleData, setDefaultLang, useLocale } from 'ttag'
 
-import { DEFAULT_LOCALE, resolveLocale } from './LocaleResolver'
-
-export type InitializeLocaleOptions = {
-  savedLocale?: string | null
-  localizationEnabled: boolean
-  environmentLocales?: readonly string[]
-}
+import { DEFAULT_LOCALE } from './LocaleResolver'
 
 export const LOCALES_BASE_PATH = '/locales'
+
+const LOCALE_FETCH_TIMEOUT_MS = 5000
 
 export type LocaleCatalog = Record<string, string>
 
@@ -51,23 +47,6 @@ export class LocaleService {
     return this.catalog
   }
 
-  async initialize({ localizationEnabled, savedLocale, environmentLocales }: InitializeLocaleOptions): Promise<void> {
-    const locale = localizationEnabled
-      ? resolveLocale({
-          savedLocale,
-          environmentLocales,
-          availableLocales: Object.keys(await this.getAvailableLocales()),
-        })
-      : DEFAULT_LOCALE
-
-    try {
-      await this.loadAndActivateLocale(locale)
-    } catch (error) {
-      console.error(`Failed to load locale ${locale}`, error)
-      this.activateLocale(DEFAULT_LOCALE)
-    }
-  }
-
   /** Loads locale JSON if needed and activates it. Throws when the pack cannot be loaded. */
   async loadAndActivateLocale(locale: string): Promise<void> {
     if (locale !== DEFAULT_LOCALE && !this.loadedLocales.has(locale)) {
@@ -86,12 +65,19 @@ export class LocaleService {
   }
 
   private async fetchJsonWithHttp<T>(url: string): Promise<T> {
-    const response = await fetch(url)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), LOCALE_FETCH_TIMEOUT_MS)
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${url}: ${response.status}`)
+    try {
+      const response = await fetch(url, { signal: controller.signal })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${url}: ${response.status}`)
+      }
+
+      return (await response.json()) as T
+    } finally {
+      clearTimeout(timeout)
     }
-
-    return response.json() as Promise<T>
   }
 }

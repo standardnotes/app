@@ -46,6 +46,7 @@ const Language: FunctionComponent<Props> = ({ application }) => {
   }, [application])
 
   const showLanguageDropdown = labsSwitchChecked && localeItems.length > 0
+  const showLanguageOptionsError = labsSwitchChecked && localizationStore.availableLocalesFailedToLoad
   const usesOsLanguage = isDesktopApplication() || application.isNativeMobileWeb()
 
   const onLocaleChange = useCallback(
@@ -113,6 +114,13 @@ const Language: FunctionComponent<Props> = ({ application }) => {
                 onChange={onLocaleChange}
               />
             </div>
+          </div>
+        )}
+
+        {showLanguageOptionsError && (
+          <div className="mt-4 text-danger">
+            {c('B6.Preferences.General.Language.Error')
+              .t`Failed to load language options. Please reload the app and try again.`}
           </div>
         )}
       </PreferencesSegment>

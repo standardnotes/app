@@ -2,7 +2,7 @@ import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { PreferencesController } from '@/Controllers/PreferencesController'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
-import { resolveLocale } from '@standardnotes/i18n'
+import { DEFAULT_LOCALE, resolveLocale } from '@standardnotes/i18n'
 import { getWebLocaleService } from '@/Controllers/Localization/WebLocaleService'
 import { configureDateLocale } from '@/Utils/DateLocale'
 import { syncDesktopMainProcessLocalization } from '@/Application/Device/SyncDesktopMainProcessLocalization'
@@ -27,6 +27,7 @@ export class LocalizationController extends AbstractViewController implements In
   labsSpotlightOpen = false
 
   private labsSpotlightPrefLoaded = false
+  private initializedWithLocalizationDisabled = false
 
   constructor(
     private readonly featuresController: FeaturesController,
@@ -47,6 +48,7 @@ export class LocalizationController extends AbstractViewController implements In
     eventBus.addEventHandler(this, ApplicationEvent.FeaturesAvailabilityChanged)
     eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
     eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
+    eventBus.addEventHandler(this, ApplicationEvent.SignedOut)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -60,6 +62,9 @@ export class LocalizationController extends AbstractViewController implements In
       case ApplicationEvent.PreferencesChanged:
         await this.initializeLocalization()
         this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
+        break
+      case ApplicationEvent.SignedOut:
+        clearPersistedLocale()
         break
     }
   }
@@ -189,35 +194,34 @@ export class LocalizationController extends AbstractViewController implements In
 
   private async initializeLocalization(): Promise<void> {
     const localizationEnabled = this.featuresController.isLocalizationEnabled()
+    if (!localizationEnabled && this.initializedWithLocalizationDisabled) {
+      return
+    }
+    this.initializedWithLocalizationDisabled = !localizationEnabled
+
     const localeService = getWebLocaleService()
     const activeLocale = localeService.getCurrentLocale()
 
     try {
-      await localeService.initialize({
-        localizationEnabled,
-        savedLocale: this.getSavedLocale(),
-      })
-
-      const locale = localeService.getCurrentLocale()
+      const catalog = localizationEnabled ? await localeService.getAvailableLocales() : {}
+      const locale = localizationEnabled
+        ? resolveLocale({ savedLocale: this.getSavedLocale(), availableLocales: Object.keys(catalog) })
+        : DEFAULT_LOCALE
 
       if (this.updatePersistedLocale(localizationEnabled, locale) && locale !== activeLocale) {
         window.location.reload()
         return
       }
 
-      if (localizationEnabled) {
-        localizationStore.setAvailableLocales(await localeService.getAvailableLocales())
-      } else {
-        localizationStore.setAvailableLocales({})
-      }
-
-      await this.syncDateFormatting(locale)
-      localizationStore.setCurrentLocale(locale)
-      this.syncNativeShellLocalization(localizationEnabled, locale)
+      localizationStore.setAvailableLocales(catalog)
     } catch (error) {
-      console.error('Failed to initialize localization', error)
-      localizationStore.setAvailableLocales({})
+      console.error('Failed to load locale catalog', error)
+      localizationStore.setAvailableLocalesFailedToLoad()
     }
+
+    await this.syncDateFormatting(activeLocale)
+    localizationStore.setCurrentLocale(activeLocale)
+    this.syncNativeShellLocalization(localizationEnabled, activeLocale)
   }
 
   private syncNativeShellLocalization(localizationEnabled: boolean, locale: string): void {
