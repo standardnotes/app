@@ -1,4 +1,4 @@
-import { formatLastSyncDate, formatLastSyncDateForSentenceStart } from '@/Utils/LocalizedDateFormat'
+import { formatItemDate, formatItemDateForSentenceStart } from '@/Utils/LocalizedDateFormat'
 import { CollectionSort, SortableItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
 import { c } from 'ttag'
@@ -18,7 +18,7 @@ const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sortBy }) 
   const showModifiedDate = sortBy === CollectionSort.UpdatedAt
 
   const date = showModifiedDate ? item.userModifiedDate : item.created_at
-  const formattedDate = date && (showModifiedDate ? formatLastSyncDate(date) : formatLastSyncDateForSentenceStart(date))
+  const formattedDate = date && (showModifiedDate ? formatItemDate(date) : formatItemDateForSentenceStart(date))
 
   if (hideDate && !item.protected) {
     return null

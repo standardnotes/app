@@ -25,22 +25,7 @@ dayjs.updateLocale('en', {
   },
 })
 
-type DateLocaleState = {
-  intlLocale: string
-  localizationEnabled: boolean
-}
-
-const initialResolvedLocales = resolveActiveDateLocales({
-  appLocale: 'en_US',
-  localizationEnabled: false,
-})
-
-const state: DateLocaleState = {
-  intlLocale: initialResolvedLocales.intlLocale,
-  localizationEnabled: false,
-}
-
-setSharedItemDateFormattingLocale(undefined)
+let activeIntlLocale = resolveActiveDateLocales({ appLocale: 'en_US', localizationEnabled: false }).intlLocale
 
 const dayjsLocaleLoaders: Record<string, () => Promise<unknown>> = {
   de: () => import('dayjs/locale/de'),
@@ -59,19 +44,13 @@ async function loadDayjsLocale(dayjsLocale: string): Promise<void> {
 }
 
 export function getIntlLocale(): string {
-  return state.intlLocale
-}
-
-export function isDateLocalizationEnabled(): boolean {
-  return state.localizationEnabled
+  return activeIntlLocale
 }
 
 export async function configureDateLocale(options: { appLocale: string; localizationEnabled: boolean }): Promise<void> {
-  state.localizationEnabled = options.localizationEnabled
-
   const { intlLocale, dayjsLocale } = resolveActiveDateLocales(options)
-  state.intlLocale = intlLocale
-  setSharedItemDateFormattingLocale(options.localizationEnabled ? intlLocale : undefined)
+  activeIntlLocale = intlLocale
+  setSharedItemDateFormattingLocale(intlLocale)
 
   try {
     await loadDayjsLocale(dayjsLocale)

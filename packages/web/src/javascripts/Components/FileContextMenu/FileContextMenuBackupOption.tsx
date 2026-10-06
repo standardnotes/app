@@ -3,7 +3,7 @@ import { c } from 'ttag'
 import MenuItem from '../Menu/MenuItem'
 import { useApplication } from '../ApplicationProvider'
 import { FileBackupRecord, FileItem } from '@standardnotes/snjs'
-import { dateToStringStyle1 } from '@/Utils/DateUtils'
+import { dateToStringStyle1 } from '@/Utils/LocalizedDateFormat'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import MenuSection from '../Menu/MenuSection'
 

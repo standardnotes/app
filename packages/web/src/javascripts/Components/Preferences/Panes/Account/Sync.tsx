@@ -5,7 +5,7 @@ import Button from '@/Components/Button/Button'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
 import { STRING_GENERIC_SYNC_ERROR } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
-import { formatLastSyncDate } from '@/Utils/DateUtils'
+import { formatItemDate } from '@/Utils/LocalizedDateFormat'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { c } from 'ttag'
@@ -17,7 +17,7 @@ type Props = {
 const Sync: FunctionComponent<Props> = ({ application }: Props) => {
   const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
 
-  const lastSyncDate = formatLastSyncDate(application.sync.getLastSyncDate() as Date)
+  const lastSyncDate = formatItemDate(application.sync.getLastSyncDate() as Date)
 
   const doSynchronization = async () => {
     setIsSyncingInProgress(true)

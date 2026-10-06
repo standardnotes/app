@@ -1,32 +1,17 @@
-import {
-  dateToHoursAndMinutesTimeString,
-  dateToStringStyle1,
-  formatDateAndTimeForNote,
-  formatDateForContextMenu,
-  formatLastSyncDate,
-  getFormattingLocale,
-} from '@/Utils/LocalizedDateFormat'
-
-export {
-  dateToHoursAndMinutesTimeString,
-  dateToStringStyle1,
-  formatDateAndTimeForNote,
-  formatDateForContextMenu,
-  formatLastSyncDate,
-}
+import { getIntlLocale } from '@/Utils/DateLocale'
 
 export function numHoursBetweenDates(date1: Date, date2: Date): number {
   return Math.abs(date1.getTime() - date2.getTime()) / 3600000
 }
 
 export function areDatesInSameDay(date1: Date, date2: Date): boolean {
-  const locale = getFormattingLocale()
+  const locale = getIntlLocale()
   return date1.toLocaleDateString(locale) === date2.toLocaleDateString(locale)
 }
 
 export function numDaysBetweenDates(date1: Date, date2: Date): number {
   if (numHoursBetweenDates(date1, date2) < 24) {
-    const locale = getFormattingLocale()
+    const locale = getIntlLocale()
     const dayOfWeekDiffers = date1.toLocaleDateString(locale) !== date2.toLocaleDateString(locale)
     if (dayOfWeekDiffers) {
       return 1
@@ -48,7 +33,7 @@ export function addCalendarMonths(date: Date, months: number) {
 }
 
 export function getWeekdayName(date: Date, format: 'long' | 'short'): string {
-  return date.toLocaleString(getFormattingLocale(), { weekday: format })
+  return date.toLocaleString(getIntlLocale(), { weekday: format })
 }
 
 export function areDatesInSameMonth(date1: Date, date2: Date): boolean {
