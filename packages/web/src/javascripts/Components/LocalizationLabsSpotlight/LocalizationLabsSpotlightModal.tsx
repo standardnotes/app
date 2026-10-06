@@ -24,11 +24,7 @@ const LocalizationLabsSpotlightModal = ({ application }: Props) => {
     localizationController.openLanguageSettingsFromLabsSpotlight()
   }, [localizationController])
 
-  if (
-    !application.featuresController.isLocalizationFeatureAvailable() ||
-    !localizationController.labsSpotlightReady ||
-    !localizationController.labsSpotlightOpen
-  ) {
+  if (!localizationController.labsSpotlightOpen) {
     return null
   }
 

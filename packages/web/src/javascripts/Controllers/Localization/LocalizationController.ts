@@ -24,7 +24,6 @@ import {
 } from '@standardnotes/snjs'
 
 export class LocalizationController extends AbstractViewController implements InternalEventHandlerInterface {
-  labsSpotlightReady = false
   labsSpotlightOpen = false
 
   private labsSpotlightPrefLoaded = false
@@ -40,7 +39,6 @@ export class LocalizationController extends AbstractViewController implements In
     super(eventBus)
 
     makeObservable(this, {
-      labsSpotlightReady: observable,
       labsSpotlightOpen: observable,
       dismissLabsSpotlight: action,
       openLanguageSettingsFromLabsSpotlight: action,
@@ -49,7 +47,6 @@ export class LocalizationController extends AbstractViewController implements In
     eventBus.addEventHandler(this, ApplicationEvent.FeaturesAvailabilityChanged)
     eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
     eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
-    eventBus.addEventHandler(this, ApplicationEvent.Launched)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -57,24 +54,18 @@ export class LocalizationController extends AbstractViewController implements In
       case ApplicationEvent.LocalDataLoaded:
         this.labsSpotlightPrefLoaded = true
         await this.initializeLocalization()
-        this.reconcileLabsSpotlight()
-        break
-      case ApplicationEvent.Launched:
-        this.reconcileLabsSpotlight()
+        this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
         break
       case ApplicationEvent.FeaturesAvailabilityChanged:
       case ApplicationEvent.PreferencesChanged:
         await this.initializeLocalization()
-        this.reconcileLabsSpotlight()
+        this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
         break
     }
   }
 
   dismissLabsSpotlight = (): void => {
-    runInAction(() => {
-      this.labsSpotlightReady = true
-      this.labsSpotlightOpen = false
-    })
+    this.setLabsSpotlightOpen(false)
     void this.preferences.setValue(PrefKey.HasSeenLocalizationLabsSpotlight, true)
   }
 
@@ -90,35 +81,25 @@ export class LocalizationController extends AbstractViewController implements In
     )
   }
 
-  private reconcileLabsSpotlight(): void {
-    if (!this.featuresController.isLocalizationFeatureAvailable()) {
-      return
-    }
-
+  private shouldShowLabsSpotlight(): boolean {
     if (!this.labsSpotlightPrefLoaded) {
-      return
+      return false
     }
 
+    const routeType = this.routeService.getRoute().type
+
+    return (
+      this.featuresController.isLocalizationFeatureAvailable() &&
+      !this.featuresController.isLocalizationEnabled() &&
+      !this.hasSeenLocalizationLabsSpotlight() &&
+      routeType !== RouteType.Purchase &&
+      routeType !== RouteType.Settings
+    )
+  }
+
+  private setLabsSpotlightOpen(open: boolean): void {
     runInAction(() => {
-      this.labsSpotlightReady = true
-
-      if (this.hasSeenLocalizationLabsSpotlight()) {
-        this.labsSpotlightOpen = false
-        return
-      }
-
-      if (this.featuresController.isLocalizationEnabled()) {
-        this.labsSpotlightOpen = false
-        return
-      }
-
-      const route = this.routeService.getRoute()
-      if (route.type === RouteType.Purchase || route.type === RouteType.Settings) {
-        this.labsSpotlightOpen = false
-        return
-      }
-
-      this.labsSpotlightOpen = true
+      this.labsSpotlightOpen = open
     })
   }
 
