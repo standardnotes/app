@@ -1,7 +1,7 @@
 import { Title, Subtitle, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
 import { WebApplication } from '@/Application/WebApplication'
-import { ApplicationEvent, ButtonType, ListedAccount } from '@standardnotes/snjs'
+import { ButtonType, ListedAccount } from '@standardnotes/snjs'
 import { useCallback, useEffect, useState } from 'react'
 import ListedAccountItem from './ListedAccountItem'
 import ListedSunsettingBanner from './ListedSunsettingBanner'
@@ -30,18 +30,6 @@ const Listed = ({ application }: Props) => {
   useEffect(() => {
     reloadAccounts().catch(console.error)
   }, [reloadAccounts])
-
-  useEffect(() => {
-    return application.addEventObserver(async (event) => {
-      if (
-        event === ApplicationEvent.CompletedFullSync ||
-        event === ApplicationEvent.LocalDataIncrementalLoad ||
-        event === ApplicationEvent.MajorDataChange
-      ) {
-        reloadAccounts().catch(console.error)
-      }
-    })
-  }, [application, reloadAccounts])
 
   const registerNewAccount = useCallback(() => {
     setRequestingAccount(true)

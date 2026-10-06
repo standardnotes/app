@@ -74,7 +74,7 @@ const DecoratedInput = forwardRef(
         )}
 
         <input
-          autoComplete={type === 'password' ? 'current-password' : autocomplete ? 'on' : 'off'}
+          autoComplete={autocomplete ? 'on' : 'off'}
           autoCorrect={autocomplete ? 'on' : 'off'}
           autoCapitalize={autocomplete ? 'on' : 'off'}
           autoFocus={autofocus}
