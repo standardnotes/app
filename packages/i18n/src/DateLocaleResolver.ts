@@ -1,5 +1,3 @@
-import { getBrowserLanguages } from './LocaleResolver'
-
 const INTL_LOCALE_OVERRIDES: Record<string, string> = {
   es_LA: 'es-419',
 }
@@ -10,7 +8,7 @@ const DAYJS_LOCALE_OVERRIDES: Record<string, string> = {
 }
 
 export type ResolvedDateLocales = {
-  intlLocale: string
+  intlLocale: string | undefined
   dayjsLocale: string
 }
 
@@ -27,14 +25,10 @@ export function toDayjsLocale(appLocale: string): string {
   return DAYJS_LOCALE_OVERRIDES[appLocale] ?? appLocale.split(/[-_]/)[0].toLowerCase()
 }
 
-export function getBrowserIntlLocale(): string {
-  return getBrowserLanguages()[0] ?? 'en-US'
-}
-
 export function resolveActiveDateLocales(options: ResolveActiveDateLocalesOptions): ResolvedDateLocales {
   if (!options.localizationEnabled) {
     return {
-      intlLocale: getBrowserIntlLocale(),
+      intlLocale: undefined,
       dayjsLocale: 'en',
     }
   }

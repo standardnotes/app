@@ -50,6 +50,7 @@ interface AppMenuStrings {
   clearCacheAndReload: string
   speech: string
   close: string
+  closeWindow: string
   minimize: string
   zoom: string
   bringAllToFront: string

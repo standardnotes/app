@@ -1,9 +1,8 @@
 import { dateToLocalizedString } from '@standardnotes/snjs'
-import { getIntlLocale } from '@/Utils/DateLocale'
-import { c } from 'ttag'
+import { getIntlLocale, isDateLocalizationEnabled } from '@/Utils/DateLocale'
 
 export function capitalizeForSentenceStart(text: string): string {
-  if (!text) {
+  if (!text || !isDateLocalizationEnabled()) {
     return text
   }
 
@@ -44,12 +43,16 @@ const noteDateOptions: Intl.DateTimeFormatOptions = {
   year: 'numeric',
 }
 
-export function formatDateAndTimeForNote(date: Date, includeTime = true): string {
-  const options: Intl.DateTimeFormatOptions = includeTime
-    ? { ...noteDateOptions, hour: 'numeric', minute: '2-digit' }
-    : noteDateOptions
+function formatDateAtTime(date: Date, dateOptions: Intl.DateTimeFormatOptions): string {
+  if (isDateLocalizationEnabled()) {
+    return formatDateTime(date, { ...dateOptions, hour: 'numeric', minute: '2-digit' })
+  }
 
-  return formatDateTime(date, options)
+  return `${formatDateTime(date, dateOptions)} at ${dateToHoursAndMinutesTimeString(date)}`
+}
+
+export function formatDateAndTimeForNote(date: Date, includeTime = true): string {
+  return includeTime ? formatDateAtTime(date, noteDateOptions) : formatDateTime(date, noteDateOptions)
 }
 
 export function formatDateForContextMenu(date: Date | undefined): string | undefined {
@@ -57,14 +60,17 @@ export function formatDateForContextMenu(date: Date | undefined): string | undef
     return undefined
   }
 
-  const datePart = formatDateTime(date, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
-  const timePart = dateToHoursAndMinutesTimeString(date)
+  if (!isDateLocalizationEnabled()) {
+    return `${date.toDateString()} ${date.toLocaleTimeString()}`
+  }
 
-  return `${datePart} ${timePart}`
+  const datePart = formatDateTime(date, { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' })
+
+  return `${datePart} ${date.toLocaleTimeString(getIntlLocale())}`
 }
 
 export function formatDefaultDateTime(date: Date): string {
-  return formatDateTime(date, { dateStyle: 'medium', timeStyle: 'short' })
+  return date.toLocaleString(getIntlLocale())
 }
 
 export function formatSessionAccessDate(date: Date): string {
@@ -90,10 +96,7 @@ export function formatDateOnlyString(date: Date): string {
 }
 
 export function dateToStringStyle1(date: Date): string {
-  const datePart = formatDateTime(date)
-  const timePart = dateToHoursAndMinutesTimeString(date)
-
-  return c('B2.NavSharedUI.Label').t`${datePart} at ${timePart}`
+  return formatDateAtTime(date, { year: 'numeric', month: 'numeric', day: 'numeric' })
 }
 
 export function dateToHoursAndMinutesTimeString(date: Date): string {

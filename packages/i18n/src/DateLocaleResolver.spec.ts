@@ -1,9 +1,4 @@
-import {
-  getBrowserIntlLocale,
-  resolveActiveDateLocales,
-  toDayjsLocale,
-  toIntlLocale,
-} from './DateLocaleResolver'
+import { resolveActiveDateLocales, toDayjsLocale, toIntlLocale } from './DateLocaleResolver'
 
 describe('toIntlLocale', () => {
   it('maps known app locales to BCP 47 tags', () => {
@@ -31,45 +26,7 @@ describe('toDayjsLocale', () => {
   })
 })
 
-describe('getBrowserIntlLocale', () => {
-  const originalNavigator = global.navigator
-
-  afterEach(() => {
-    Object.defineProperty(global, 'navigator', {
-      value: originalNavigator,
-      configurable: true,
-    })
-  })
-
-  it('uses the first browser language when available', () => {
-    Object.defineProperty(global, 'navigator', {
-      value: { languages: ['fr-FR', 'en-US'] },
-      configurable: true,
-    })
-
-    expect(getBrowserIntlLocale()).toBe('fr-FR')
-  })
-
-  it('falls back to en-US when navigator is unavailable', () => {
-    Object.defineProperty(global, 'navigator', {
-      value: undefined,
-      configurable: true,
-    })
-
-    expect(getBrowserIntlLocale()).toBe('en-US')
-  })
-})
-
 describe('resolveActiveDateLocales', () => {
-  const originalNavigator = global.navigator
-
-  afterEach(() => {
-    Object.defineProperty(global, 'navigator', {
-      value: originalNavigator,
-      configurable: true,
-    })
-  })
-
   it('uses app locale mappings when localization is enabled', () => {
     expect(
       resolveActiveDateLocales({
@@ -82,19 +39,14 @@ describe('resolveActiveDateLocales', () => {
     })
   })
 
-  it('uses the browser intl locale and English dayjs when localization is disabled', () => {
-    Object.defineProperty(global, 'navigator', {
-      value: { languages: ['de-DE'] },
-      configurable: true,
-    })
-
+  it('uses the runtime default intl locale and English dayjs when localization is disabled', () => {
     expect(
       resolveActiveDateLocales({
         appLocale: 'fr_FR',
         localizationEnabled: false,
       }),
     ).toEqual({
-      intlLocale: 'de-DE',
+      intlLocale: undefined,
       dayjsLocale: 'en',
     })
   })

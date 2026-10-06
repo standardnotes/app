@@ -25,7 +25,7 @@ dayjs.updateLocale('en', {
   },
 })
 
-let activeIntlLocale = resolveActiveDateLocales({ appLocale: 'en_US', localizationEnabled: false }).intlLocale
+let activeIntlLocale: string | undefined
 
 const dayjsLocaleLoaders: Record<string, () => Promise<unknown>> = {
   de: () => import('dayjs/locale/de'),
@@ -43,8 +43,12 @@ async function loadDayjsLocale(dayjsLocale: string): Promise<void> {
   await load()
 }
 
-export function getIntlLocale(): string {
+export function getIntlLocale(): string | undefined {
   return activeIntlLocale
+}
+
+export function isDateLocalizationEnabled(): boolean {
+  return activeIntlLocale !== undefined
 }
 
 export async function configureDateLocale(options: { appLocale: string; localizationEnabled: boolean }): Promise<void> {

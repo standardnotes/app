@@ -92,7 +92,10 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   async syncMobileLocalization(state: NativeLocalizationState): Promise<void> {
-    await applyMobileLocalization(state)
+    if (!(await applyMobileLocalization(state))) {
+      return
+    }
+
     await this.updateFilesNotificationChannel()
     this.notifyMobileDeviceEvent(MobileDeviceEvent.LocaleChanged)
   }

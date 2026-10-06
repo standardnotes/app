@@ -6,17 +6,28 @@ import { isDesktopApplication } from '@/Utils'
 
 let localeService: LocaleService | undefined
 
+type DesktopLocaleBridge = {
+  readWebLocaleFile: (relativePath: string) => Promise<string>
+}
+
+function isFileProtocol(): boolean {
+  return typeof window !== 'undefined' && window.location.protocol === 'file:'
+}
+
 /** Desktop serves web from `web/`; the mobile shell serves the same dist under `web-src/`. */
 function webLocalesBasePath(): string {
-  if (typeof window === 'undefined' || window.location.protocol !== 'file:') {
+  if (!isFileProtocol()) {
     return LOCALES_BASE_PATH
   }
 
   return isDesktopApplication() ? 'web/locales' : 'web-src/locales'
 }
 
-function shouldUseFileDocumentFetch(): boolean {
-  return typeof window !== 'undefined' && window.location.protocol === 'file:' && !isDesktopApplication()
+async function fetchJsonFromDesktop<T>(resourcePath: string): Promise<T> {
+  const bridge = window.electronRemoteBridge as DesktopLocaleBridge
+  const relativePath = resourcePath.slice(`${webLocalesBasePath()}/`.length)
+
+  return JSON.parse(await bridge.readWebLocaleFile(relativePath)) as T
 }
 
 function fetchJsonFromDocument<T>(resourcePath: string): Promise<T> {
@@ -44,11 +55,19 @@ function fetchJsonFromDocument<T>(resourcePath: string): Promise<T> {
   })
 }
 
+function getFileProtocolFetchJson(): (<T>(url: string) => Promise<T>) | undefined {
+  if (!isFileProtocol()) {
+    return undefined
+  }
+
+  return isDesktopApplication() ? fetchJsonFromDesktop : fetchJsonFromDocument
+}
+
 export function getWebLocaleService(): LocaleService {
   if (!localeService) {
     localeService = new LocaleService({
       localesBasePath: webLocalesBasePath(),
-      ...(shouldUseFileDocumentFetch() ? { fetchJson: fetchJsonFromDocument } : {}),
+      fetchJson: getFileProtocolFetchJson(),
     })
   }
 

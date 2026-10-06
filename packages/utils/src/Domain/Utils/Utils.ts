@@ -655,10 +655,20 @@ function resolveItemDateFormattingLocale(explicitLocale?: string): string {
   return getBrowserDateFormattingLocale()
 }
 
+const itemDateFormatters = new Map<string, Intl.DateTimeFormat>()
+
+function getItemDateFormatter(locale: string): Intl.DateTimeFormat {
+  let formatter = itemDateFormatters.get(locale)
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(locale, itemDateFormatOptions)
+    itemDateFormatters.set(locale, formatter)
+  }
+  return formatter
+}
+
 export function dateToLocalizedString(date: Date, locale?: string): string {
-  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
-    const intlLocale = resolveItemDateFormattingLocale(locale)
-    return new Intl.DateTimeFormat(intlLocale, itemDateFormatOptions).format(date)
+  if (typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function') {
+    return getItemDateFormatter(resolveItemDateFormattingLocale(locale)).format(date)
   }
 
   // IE < 11, Safari <= 9.0.

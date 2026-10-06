@@ -16,8 +16,18 @@ export function registerMainProcessLocalizationCallbacks(callbacks: { onStringsR
   onStringsReloaded = callbacks.onStringsReloaded
 }
 
+const WEB_LOCALE_FILE_PATTERN = /^(config\/locales|[a-z]{2,3}_[A-Za-z0-9]{2,4})\.json$/
+
 function getLocalesDirectory(): string {
   return path.join(__dirname, 'locales')
+}
+
+export async function readWebLocaleFile(relativePath: string): Promise<string> {
+  if (!WEB_LOCALE_FILE_PATTERN.test(relativePath)) {
+    throw new Error(`Invalid web locale file: ${relativePath}`)
+  }
+
+  return fs.readFile(path.join(__dirname, 'web', 'locales', relativePath), 'utf8')
 }
 
 async function activateLocale(locale: string): Promise<void> {

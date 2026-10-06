@@ -27,4 +27,5 @@ export interface CrossProcessBridge extends FileBackupsDevice, DirectoryManagerI
   destroyAllData(): void
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean>
   syncMainProcessLocalization(state: NativeLocalizationState): Promise<void>
+  readWebLocaleFile(relativePath: string): Promise<string>
 }

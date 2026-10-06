@@ -6,6 +6,7 @@ import { NativeLocalizationState } from '@standardnotes/snjs'
 const DEFAULT_LOCALE = 'en_US'
 
 const loadedLocales = new Set<string>()
+let appliedLocale = DEFAULT_LOCALE
 
 setDefaultLang(DEFAULT_LOCALE)
 
@@ -19,19 +20,31 @@ async function readMobileLocalePack(locale: string): Promise<LocaleData> {
   return JSON.parse(contents) as LocaleData
 }
 
-export async function applyMobileLocalization(state: NativeLocalizationState): Promise<void> {
-  const locale = state.localizationEnabled && state.locale ? state.locale : DEFAULT_LOCALE
-
+async function activateLocale(locale: string): Promise<void> {
   if (locale !== DEFAULT_LOCALE && !loadedLocales.has(locale)) {
-    try {
-      addLocale(locale, await readMobileLocalePack(locale))
-      loadedLocales.add(locale)
-    } catch (error) {
-      console.warn(`No mobile locale pack for ${locale}, using ${DEFAULT_LOCALE}`, error)
-      setTtagLocale(DEFAULT_LOCALE)
-      return
-    }
+    addLocale(locale, await readMobileLocalePack(locale))
+    loadedLocales.add(locale)
   }
 
   setTtagLocale(locale)
+}
+
+export async function applyMobileLocalization(state: NativeLocalizationState): Promise<boolean> {
+  const locale = state.localizationEnabled && state.locale ? state.locale : DEFAULT_LOCALE
+  const previousLocale = appliedLocale
+
+  if (locale === previousLocale) {
+    return false
+  }
+
+  try {
+    await activateLocale(locale)
+    appliedLocale = locale
+  } catch (error) {
+    console.warn(`No mobile locale pack for ${locale}, using ${DEFAULT_LOCALE}`, error)
+    setTtagLocale(DEFAULT_LOCALE)
+    appliedLocale = DEFAULT_LOCALE
+  }
+
+  return appliedLocale !== previousLocale
 }
