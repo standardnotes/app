@@ -189,7 +189,6 @@ function CommandPalette() {
           return
         }
         if (decryptedItem instanceof SNNote) {
-          application.itemListController.keepActiveItemOpenForSystemView(decryptedItem.uuid)
           void application.itemListController.selectItemUsingInstance(decryptedItem, true)
         } else if (decryptedItem instanceof FileItem) {
           void application.filesController.handleFileAction({
@@ -230,7 +229,7 @@ function CommandPalette() {
         section,
         id: UuidGenerator.GenerateUuid(),
         itemUuid: item.uuid,
-        description: item.title || c('B2.NavSharedUI.Placeholder').t`<no title>`,
+        description: item.title || c('B2.NavSharedUI.Placeholder').t`Untitled`,
         icon: <Icon type={icon[0]} className={item instanceof SNNote ? icon[1] : ''} />,
       }
     },

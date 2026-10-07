@@ -1,6 +1,6 @@
 import { RevisionType } from '@/Components/RevisionHistoryModal/RevisionType'
 import { sortRevisionListIntoGroups } from '@/Components/RevisionHistoryModal/utils'
-import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/Constants/Strings'
+import { StringRestoreLockedAttempt } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { jtString } from '@standardnotes/features'
 import { c } from 'ttag'
@@ -322,7 +322,7 @@ export class NoteHistoryController {
     const originalNote = this.items.findItem<SNNote>(revision.payload.uuid)
 
     if (originalNote?.locked) {
-      this.alerts.alert(STRING_RESTORE_LOCKED_ATTEMPT()).catch(console.error)
+      this.alerts.alert(StringRestoreLockedAttempt()).catch(console.error)
       return
     }
 

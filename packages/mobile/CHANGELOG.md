@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.58.270](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.269...@standardnotes/mobile@3.58.270) (2026-09-30)
+
+### Bug Fixes
+
+* Fixes Android back navigation on target SDK 36 ([#3055](https://github.com/standardnotes/app/issues/3055)) ([067080a](https://github.com/standardnotes/app/commit/067080a995591fc2bd68a62b199cb846da0582a3))
+
+## [3.58.269](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.268...@standardnotes/mobile@3.58.269) (2026-09-17)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.268](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.267...@standardnotes/mobile@3.58.268) (2026-09-16)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.267](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.266...@standardnotes/mobile@3.58.267) (2026-09-15)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.58.266](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.265...@standardnotes/mobile@3.58.266) (2026-09-07)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.58.265](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.264...@standardnotes/mobile@3.58.265) (2026-09-04)
 
 **Note:** Version bump only for package @standardnotes/mobile

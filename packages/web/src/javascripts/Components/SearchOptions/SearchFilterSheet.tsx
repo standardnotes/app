@@ -3,8 +3,8 @@ import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
-import EnhancedSearchOptionsContent from './EnhancedSearchOptionsContent'
 import { c } from 'ttag'
+import EnhancedSearchOptionsContent from './EnhancedSearchOptionsContent'
 
 type Props = {
   open: boolean

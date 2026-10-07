@@ -22,16 +22,16 @@ import { isDev } from '../Utils/Utils'
 import { SpellcheckerManager } from './../SpellcheckerManager'
 import { MenuManagerInterface } from './MenuManagerInterface'
 
-function menuRole(label: string, role: string): MenuItemConstructorOptions {
-  return { label, role: role as MenuItemConstructorOptions['role'] }
-}
-
 export const enum MenuId {
   SpellcheckerLanguages = 'SpellcheckerLanguages',
 }
 
 const Separator: MenuItemConstructorOptions = {
   type: 'separator',
+}
+
+function menuRole(label: string, role: string): MenuItemConstructorOptions {
+  return { label, role: role as MenuItemConstructorOptions['role'] }
 }
 
 export function buildContextMenu(webContents: WebContents, params: ContextMenuParams): Menu {
@@ -242,10 +242,7 @@ function editMenu(
 function macSpeechMenu(): MenuItemConstructorOptions {
   return {
     label: str().speech,
-    submenu: [
-      menuRole(str().startSpeaking, Roles.StartSeeking),
-      menuRole(str().stopSpeaking, Roles.StopSeeking),
-    ],
+    submenu: [menuRole(str().startSpeaking, Roles.StartSeeking), menuRole(str().stopSpeaking, Roles.StopSeeking)],
   }
 }
 

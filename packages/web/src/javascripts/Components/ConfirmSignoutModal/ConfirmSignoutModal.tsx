@@ -1,5 +1,5 @@
 import { FunctionComponent, useCallback, useRef } from 'react'
-import { STRING_SIGN_OUT_CONFIRMATION } from '@/Constants/Strings'
+import { StringSignOutConfirmation } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
@@ -45,7 +45,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, applicatio
       </div>
       <div className="sk-panel-row">
         <div>
-          <p className="text-base text-foreground lg:text-sm">{STRING_SIGN_OUT_CONFIRMATION()}</p>
+          <p className="text-base text-foreground lg:text-sm">{StringSignOutConfirmation()}</p>
           {showWorkspaceWarning && (
             <>
               <br />

@@ -39,7 +39,7 @@ const SearchTagFilters = ({ searchOptions }: Props) => {
       ))}
       <ItemSelectionDropdown
         onSelection={(item) => searchOptions.addTagFilter(item as SNTag)}
-        placeholder={c('B3.Notes.NoteList.Placeholder').t`Add tag...`}
+        placeholder={c('B4.Notes.TagsLinkedItems.Placeholder').t`Add tag...`}
         contentTypes={[ContentType.TYPES.Tag]}
         excludeUuids={excludeUuids}
       />

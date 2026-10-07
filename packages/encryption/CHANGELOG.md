@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.118](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.117...@standardnotes/encryption@1.21.118) (2026-09-15)
+
+### Bug Fixes
+
+* Ensures minimum encryption version when decrypting payload ([#3045](https://github.com/standardnotes/app/issues/3045)) ([e4e0f6f](https://github.com/standardnotes/app/commit/e4e0f6fd08e4edfdbbf996ad82e8bf65205f5c25))
+
 ## [1.21.117](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.116...@standardnotes/encryption@1.21.117) (2026-09-03)
 
 **Note:** Version bump only for package @standardnotes/encryption

@@ -12,7 +12,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/WebApplication'
-import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
+import { StringFailedToUpdateUserSetting } from '@/Constants/Strings'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import Spinner from '@/Components/Spinner/Spinner'
@@ -38,7 +38,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
       await application.settings.updateSetting(settingName, payload, false)
       return true
     } catch {
-      application.alerts.alert(STRING_FAILED_TO_UPDATE_USER_SETTING()).catch(console.error)
+      application.alerts.alert(StringFailedToUpdateUserSetting()).catch(console.error)
       return false
     }
   }
@@ -48,7 +48,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
       await application.settings.updateSubscriptionSetting(settingName, payload, false)
       return true
     } catch {
-      application.alerts.alert(STRING_FAILED_TO_UPDATE_USER_SETTING()).catch(console.error)
+      application.alerts.alert(StringFailedToUpdateUserSetting()).catch(console.error)
       return false
     }
   }
@@ -118,8 +118,6 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
     }
   }
 
-  const subscriptionBold = <span className="font-bold">{c('B6.Preferences.Account.Label').t`subscription`}</span>
-
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -139,7 +137,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
                   text={
                     <span>
                       {c('B6.Preferences.Account.Info')
-                        .jt`Sign-in notification emails are available only on a ${subscriptionBold} plan. Please upgrade in order to enable sign-in notifications.`}
+                        .t`Sign-in notification emails are available only on a subscription plan. Please upgrade in order to enable sign-in notifications.`}
                     </span>
                   }
                 />

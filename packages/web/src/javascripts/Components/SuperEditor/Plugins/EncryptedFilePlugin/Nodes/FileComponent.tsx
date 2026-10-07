@@ -18,6 +18,10 @@ import Spinner from '@/Components/Spinner/Spinner'
 import { FilesControllerEvent } from '@/Controllers/FilesController'
 import { c } from 'ttag'
 
+function isInteractiveClickTarget(target: EventTarget | null): boolean {
+  return target instanceof Element && target.closest('button, a, input, select, textarea, [role="button"]') !== null
+}
+
 export type FileComponentProps = Readonly<{
   className: Readonly<{
     base: string
@@ -108,6 +112,10 @@ function FileComponent({
       CLICK_COMMAND,
       (event) => {
         if (blockWrapperRef.current?.contains(event.target as Node)) {
+          if (isInteractiveClickTarget(event.target)) {
+            return false
+          }
+
           event.preventDefault()
 
           $getNodeByKey(nodeKey)?.selectEnd()
@@ -142,8 +150,7 @@ function FileComponent({
         <div className="flex flex-col items-center justify-center gap-2 p-4 text-center" ref={blockWrapperRef}>
           <div className="flex items-center gap-2">
             <Spinner className="h-4 w-4" />
-            {c('B4.Notes.EditingUI.Status').t`Uploading file "`}
-            {uploadProgress.file.name}"... ({progress}%)
+            {c('B4.Notes.EditingUI.Status').jt`Uploading file "${uploadProgress.file.name}" (${progress}%)`}
           </div>
           <div className="w-full max-w-[50%] overflow-hidden rounded bg-contrast">
             <div
@@ -163,9 +170,7 @@ function FileComponent({
   if (!file) {
     return (
       <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
-        <div>
-          {c('B4.Notes.EditingUI.Label').t`Unable to find file`} {fileUuid}
-        </div>
+        <div>{c('B4.Notes.EditingUI.Label').jt`Unable to find file ${fileUuid}`}</div>
       </BlockWithAlignableContents>
     )
   }

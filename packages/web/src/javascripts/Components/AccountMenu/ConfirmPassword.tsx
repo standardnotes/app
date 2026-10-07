@@ -1,4 +1,4 @@
-import { STRING_NON_MATCHING_PASSWORDS } from '@/Constants/Strings'
+import { StringNonMatchingPasswords } from '@/Constants/Strings'
 import { observer } from 'mobx-react-lite'
 import {
   FormEventHandler,
@@ -123,7 +123,7 @@ const ConfirmPassword: FunctionComponent<Props> = ({ setMenuPane, email, passwor
       }
 
       if (password !== confirmPassword) {
-        setError(STRING_NON_MATCHING_PASSWORDS())
+        setError(StringNonMatchingPasswords())
         setConfirmPassword('')
         passwordInputRef.current?.focus()
         return

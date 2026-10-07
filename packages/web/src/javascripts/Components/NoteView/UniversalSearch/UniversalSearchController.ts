@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
+import { c } from 'ttag'
 import {
   UniversalSearchProvider,
   UniversalSearchResult,
@@ -32,7 +33,7 @@ function errorMessage(error: unknown): string {
     return error.message
   }
 
-  return 'Search failed'
+  return c('B3.Notes.EditorToolbar.Error').t`Search failed`
 }
 
 type SetSearchResultsOptions = {

@@ -5,7 +5,7 @@ import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
 import { ElementIds } from '@/Constants/ElementIDs'
-import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
+import { StringDeleteLockedAttempt, StringDeleteNote, StringDeletePlaceholderAttempt } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
 import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
 import { c } from 'ttag'
@@ -597,12 +597,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   async deleteNote(permanently: boolean) {
     if (this.controller.isTemplateNote) {
-      this.application.alerts.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT()).catch(console.error)
+      this.application.alerts.alert(StringDeletePlaceholderAttempt()).catch(console.error)
       return
     }
 
     if (this.note.locked) {
-      this.application.alerts.alert(STRING_DELETE_LOCKED_ATTEMPT()).catch(console.error)
+      this.application.alerts.alert(StringDeleteLockedAttempt()).catch(console.error)
       return
     }
 

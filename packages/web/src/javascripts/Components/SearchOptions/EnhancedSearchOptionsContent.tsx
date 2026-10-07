@@ -2,10 +2,10 @@ import Checkbox from '@/Components/Checkbox/Checkbox'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
+import { c } from 'ttag'
 import SearchBubbles from './SearchBubbles'
 import SearchOptionsSection, { ClearFilterButton } from './SearchOptionsSection'
 import SearchTagFilters from './SearchTagFilters'
-import { c } from 'ttag'
 
 type Props = {
   searchOptions: SearchOptionsController
@@ -27,7 +27,7 @@ const EnhancedSearchOptionsContent = ({ searchOptions, className }: Props) => {
           />
           {activeSearchFilterCount > 0 && (
             <ClearFilterButton onClick={searchOptions.clearAllFilters}>
-              {c('B3.Notes.NoteList.Label').t`Clear all filters`}
+              {c('B3.Notes.NoteList.Action').t`Clear all filters`}
             </ClearFilterButton>
           )}
         </div>
@@ -44,7 +44,7 @@ const EnhancedSearchOptionsContent = ({ searchOptions, className }: Props) => {
         action={
           tagFilterList.length > 0 ? (
             <ClearFilterButton onClick={searchOptions.clearTagFilters}>
-              {c('B3.Notes.NoteList.Label').t`Clear tag filters`}
+              {c('B3.Notes.NoteList.Action').t`Clear tag filters`}
             </ClearFilterButton>
           ) : undefined
         }

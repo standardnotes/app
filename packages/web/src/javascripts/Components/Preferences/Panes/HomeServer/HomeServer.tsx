@@ -8,6 +8,12 @@ import { AppName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
 
 const HomeServer = () => {
+  const tailscaleLink = (
+    <a className="text-info" href="https://tailscale.com/">
+      Tailscale.com
+    </a>
+  )
+
   return (
     <PreferencesPane>
       <PreferencesGroup>
@@ -21,13 +27,7 @@ const HomeServer = () => {
         <Subtitle>{c('B6.Preferences.HomeServer.Subtitle')
           .t`Accessing your home server while on the go is easy and secure with Tailscale.`}</Subtitle>
         <ol className="ml-3 mt-3 list-outside list-decimal">
-          <li>
-            {c('B6.Preferences.HomeServer.Label').t`Register on`}{' '}
-            <a className="text-info" href="https://tailscale.com/">
-              Tailscale.com
-            </a>{' '}
-            {c('B6.Preferences.HomeServer.Label').t`for free.`}
-          </li>
+          <li>{c('B6.Preferences.HomeServer.Label').jt`Register on ${tailscaleLink} for free.`}</li>
           <li className="mt-2">
             {c('B6.Preferences.HomeServer.Status')
               .t`Download Tailscale on this computer and complete the Tailscale setup wizard until you are presented with the IP address of your computer. It should start with something like 100.xxx...`}

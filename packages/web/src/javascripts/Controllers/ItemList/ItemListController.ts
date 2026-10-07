@@ -93,7 +93,6 @@ export class ItemListController
     includeTrashed: false,
     includeProtected: true,
   }
-  private keepActiveItemOpenUuid: UuidString | undefined
   webDisplayOptions: WebDisplayOptions = {
     hideTags: true,
     hideDate: false,
@@ -479,6 +478,7 @@ export class ItemListController
   /**
    * In some cases we want to keep the selected item open even if it doesn't appear in results,
    * for example if you are inside tag Foo and remove tag Foo from the note, we want to keep the note open.
+   * The same applies to system views when the open note no longer matches the view filter.
    */
   private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined, source?: ItemsReloadSource) => {
     if (source === ItemsReloadSource.UserTriggeredTagChange) {
@@ -512,11 +512,14 @@ export class ItemListController
       !activeItemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
 
     if (closeBecauseActiveItemDoesntExistInCurrentSystemView) {
-      if (activeItem && activeItem.uuid === this.keepActiveItemOpenUuid) {
-        log(LoggingDomain.Selection, 'shouldCloseActiveItem false due to keepActiveItemOpenUuid')
+      const isActivelyOpenInEditor = this.getActiveItemController()?.item?.uuid === activeItem?.uuid
+
+      if (isActivelyOpenInEditor) {
+        log(LoggingDomain.Selection, 'shouldCloseActiveItem false because item is actively open in editor')
         return false
       }
-      log(LoggingDomain.Selection, 'shouldCloseActiveItem closePreviousItemWhenSwitchingToFilesBasedView')
+
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem closeBecauseActiveItemDoesntExistInCurrentSystemView')
       return true
     }
 
@@ -525,7 +528,10 @@ export class ItemListController
   }
 
   private shouldSelectNextItemOrCreateNewNote = (activeItem: SNNote | FileItem | undefined) => {
-    if (activeItem?.uuid === this.keepActiveItemOpenUuid) {
+    const isActivelyOpenInSystemView =
+      activeItem?.uuid === this.getActiveItemController()?.item?.uuid && this.navigationController.isInAnySystemView()
+
+    if (isActivelyOpenInSystemView) {
       return false
     }
 
@@ -976,7 +982,6 @@ export class ItemListController
   }
 
   handleTagChange = async (userTriggered: boolean) => {
-    this.clearKeepActiveItemOpenUuid()
     const activeNoteController = this.getActiveItemController()
     if (activeNoteController instanceof NoteViewController && activeNoteController.isTemplateNote) {
       this.closeItemController(activeNoteController)
@@ -1232,21 +1237,9 @@ export class ItemListController
       }
     }
 
-    if (this.keepActiveItemOpenUuid && uuid !== this.keepActiveItemOpenUuid) {
-      this.clearKeepActiveItemOpenUuid()
-    }
-
     return {
       didSelect: this.selectedUuids.has(uuid),
     }
-  }
-
-  keepActiveItemOpenForSystemView = (noteUuid: UuidString): void => {
-    this.keepActiveItemOpenUuid = noteUuid
-  }
-
-  private clearKeepActiveItemOpenUuid(): void {
-    this.keepActiveItemOpenUuid = undefined
   }
 
   selectItem = async (

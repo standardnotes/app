@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.202.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.7...@standardnotes/web@3.202.8) (2026-09-30)
+
+### Bug Fixes
+
+* Fixes footer loading items string ([#3057](https://github.com/standardnotes/app/issues/3057)) ([b313c58](https://github.com/standardnotes/app/commit/b313c58e3410ef9860fd2b62d690981472e7ae18))
+* Fixes Open file preview button on Android ([#3056](https://github.com/standardnotes/app/issues/3056)) ([210b896](https://github.com/standardnotes/app/commit/210b896137474c80e9fc54b808976e3a8386f24f))
+
+## [3.202.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.6...@standardnotes/web@3.202.7) (2026-09-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.202.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.5...@standardnotes/web@3.202.6) (2026-09-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.202.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.4...@standardnotes/web@3.202.5) (2026-09-15)
+
+### Bug Fixes
+
+* Fixes blank screen when tagging untagged current note on mobile ([#3047](https://github.com/standardnotes/app/issues/3047)) ([24da230](https://github.com/standardnotes/app/commit/24da23096f7fea453225bb4f680325fdb39e3ad8))
+* Fixes scroll position shift on Super checkbox toggle ([#3049](https://github.com/standardnotes/app/issues/3049)) ([d73ec83](https://github.com/standardnotes/app/commit/d73ec8378d202b63a72210357ed07b2fda17e823))
+
+## [3.202.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.3...@standardnotes/web@3.202.4) (2026-09-07)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.202.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.2...@standardnotes/web@3.202.3) (2026-09-04)
 
 **Note:** Version bump only for package @standardnotes/web

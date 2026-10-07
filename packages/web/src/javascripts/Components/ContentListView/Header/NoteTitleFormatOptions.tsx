@@ -2,6 +2,8 @@ import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { NewNoteTitleFormat } from '@standardnotes/snjs'
 import { c } from 'ttag'
 
+export const NOTE_TITLE_FORMAT_PATTERN_EXAMPLE = 'YYYY-MM-DD'
+
 export function getNoteTitleFormatOptions(): DropdownItem[] {
   return [
     {

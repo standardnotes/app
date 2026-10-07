@@ -13,7 +13,7 @@ import SmartViewItem from './SmartViewItem'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscriptionBanner'
 import { EditSmartViewModalController } from './EditSmartViewModalController'
-import { STRING_DELETE_TAG } from '@/Constants/Strings'
+import { StringDeleteTag } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import { c } from 'ttag'
@@ -44,7 +44,7 @@ const SmartViews = ({ application, featuresController }: Props) => {
   const deleteItem = useCallback(
     async (view: SmartView) => {
       const shouldDelete = await confirmDialog({
-        text: STRING_DELETE_TAG(),
+        text: StringDeleteTag(),
         confirmButtonStyle: 'danger',
       })
       if (shouldDelete) {

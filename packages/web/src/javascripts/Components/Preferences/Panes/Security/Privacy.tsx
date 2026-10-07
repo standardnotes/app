@@ -4,7 +4,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { LogSessionUserAgentOption, SettingName } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
-import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
+import { StringFailedToUpdateUserSetting } from '@/Constants/Strings'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Spinner from '@/Components/Spinner/Spinner'
@@ -25,7 +25,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
       await application.settings.updateSetting(settingName, payload, false)
       return true
     } catch {
-      application.alerts.alert(STRING_FAILED_TO_UPDATE_USER_SETTING()).catch(console.error)
+      application.alerts.alert(StringFailedToUpdateUserSetting()).catch(console.error)
       return false
     }
   }
