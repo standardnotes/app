@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import EnhancedSearchOptionsContent from './EnhancedSearchOptionsContent'
 import { c } from 'ttag'
+
 type Props = {
   open: boolean
   onClose: () => void

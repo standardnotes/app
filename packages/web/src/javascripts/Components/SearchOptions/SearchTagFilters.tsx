@@ -7,6 +7,7 @@ import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import { ContentType, SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { c } from 'ttag'
+
 type Props = {
   searchOptions: SearchOptionsController
 }

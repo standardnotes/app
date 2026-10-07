@@ -155,6 +155,10 @@ export class FeaturesController extends AbstractViewController implements Intern
     )
   }
 
+  toggleLocalization(): void {
+    this.features.toggleExperimentalFeature(NativeFeatureIdentifier.TYPES.Localization)
+  }
+
   isLocalizationEnabled(): boolean {
     if (!this.isLocalizationFeatureAvailable()) {
       return false

@@ -4,17 +4,15 @@ import { Pill, Subtitle, Text, Title } from '@/Components/Preferences/Preference
 import { localizationStore } from '@/Controllers/Localization/LocalizationStore'
 import { WebApplication } from '@/Application/WebApplication'
 import { isDesktopApplication } from '@/Utils'
-import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Switch from '@/Components/Switch/Switch'
-import { NativeFeatureIdentifier } from '@standardnotes/snjs'
 import { c } from 'ttag'
 import { ElementIds } from '@/Constants/ElementIDs'
 
-/** Lets the Labs switch paint before the localization reload. */
-const LOCALIZATION_TOGGLE_RELOAD_DELAY_MS = 200
+const LABS_SWITCH_ANIMATION_MS = 200
 
 type Props = {
   application: WebApplication
@@ -31,27 +29,35 @@ const Language: FunctionComponent<Props> = ({ application }) => {
       value: localeCode,
     }))
 
-  const toggle = useCallback(() => {
-    application.features.toggleExperimentalFeature(NativeFeatureIdentifier.TYPES.Localization)
-    const isEnabled = application.featuresController.isLocalizationEnabled()
-    setLabsSwitchChecked(isEnabled)
+  const isTogglingRef = useRef(false)
 
-    window.setTimeout(() => {
-      if (isEnabled) {
-        void application.localizationController.enableLocalization()
-      } else {
-        void application.localizationController.disableLocalization()
-      }
-    }, LOCALIZATION_TOGGLE_RELOAD_DELAY_MS)
+  const toggle = useCallback(() => {
+    if (isTogglingRef.current) {
+      return
+    }
+    isTogglingRef.current = true
+
+    setLabsSwitchChecked((checked) => !checked)
+
+    const switchAnimation = new Promise<void>((resolve) => {
+      window.setTimeout(resolve, LABS_SWITCH_ANIMATION_MS)
+    })
+    void application.localizationController.toggleLocalization(switchAnimation)
   }, [application])
 
   const showLanguageDropdown = labsSwitchChecked && localeItems.length > 0
   const showLanguageOptionsError = labsSwitchChecked && localizationStore.availableLocalesFailedToLoad
   const usesOsLanguage = isDesktopApplication() || application.isNativeMobileWeb()
 
+  const [isSwitchingLocale, setIsSwitchingLocale] = useState(false)
+
   const onLocaleChange = useCallback(
-    (value: string) => {
-      void application.localizationController.changeLocaleAndReload(value)
+    async (value: string) => {
+      setIsSwitchingLocale(true)
+      const isReloading = await application.localizationController.changeLocaleAndReload(value)
+      if (!isReloading) {
+        setIsSwitchingLocale(false)
+      }
     },
     [application],
   )
@@ -112,6 +118,7 @@ const Language: FunctionComponent<Props> = ({ application }) => {
                 items={localeItems}
                 value={localizationStore.currentLocale}
                 onChange={onLocaleChange}
+                disabled={isSwitchingLocale}
               />
             </div>
           </div>

@@ -4,6 +4,7 @@ import { WebApplication } from '@/Application/WebApplication'
 
 export const LOCALE_COOKIE_NAME = 'sn_locale'
 const LOCALE_LOCAL_STORAGE_KEY = 'sn-locale'
+const PENDING_LOCALE_SWITCH_KEY = 'sn-pending-locale-switch'
 
 const LOCALE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
 
@@ -92,6 +93,24 @@ export function getPersistedLocale(): string | undefined {
   }
 
   return getLocaleCookie()
+}
+
+export function setPendingLocaleSwitch(locale: string): void {
+  try {
+    sessionStorage.setItem(PENDING_LOCALE_SWITCH_KEY, locale)
+  } catch {
+    return
+  }
+}
+
+export function takePendingLocaleSwitch(): string | undefined {
+  try {
+    const locale = sessionStorage.getItem(PENDING_LOCALE_SWITCH_KEY)
+    sessionStorage.removeItem(PENDING_LOCALE_SWITCH_KEY)
+    return locale || undefined
+  } catch {
+    return undefined
+  }
 }
 
 export function getSavedLocaleForApplication(application: WebApplication): string | undefined {

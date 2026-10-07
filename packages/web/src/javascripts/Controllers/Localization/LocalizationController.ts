@@ -7,7 +7,13 @@ import { getWebLocaleService } from '@/Controllers/Localization/WebLocaleService
 import { configureDateLocale } from '@/Utils/DateLocale'
 import { syncDesktopMainProcessLocalization } from '@/Application/Device/SyncDesktopMainProcessLocalization'
 import { syncMobileNativeLocalization } from '@/Application/Device/SyncMobileNativeLocalization'
-import { clearPersistedLocale, getPersistedLocale, persistLocale } from '@/Utils/LocalePersistence'
+import {
+  clearPersistedLocale,
+  getPersistedLocale,
+  persistLocale,
+  setPendingLocaleSwitch,
+  takePendingLocaleSwitch,
+} from '@/Utils/LocalePersistence'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { RouteServiceInterface, RouteType } from '@standardnotes/ui-services'
@@ -28,6 +34,7 @@ export class LocalizationController extends AbstractViewController implements In
 
   private labsSpotlightPrefLoaded = false
   private initializedWithLocalizationDisabled = false
+  private isTogglingLocalization = false
 
   constructor(
     private readonly featuresController: FeaturesController,
@@ -108,13 +115,13 @@ export class LocalizationController extends AbstractViewController implements In
     })
   }
 
-  async changeLocaleAndReload(locale: string): Promise<void> {
-    if (locale === localizationStore.currentLocale) {
-      return
+  async changeLocaleAndReload(locale: string): Promise<boolean> {
+    if (locale === localizationStore.currentLocale && locale === getPersistedLocale()) {
+      return false
     }
 
     if (!this.featuresController.isLocalizationEnabled()) {
-      return
+      return false
     }
 
     let resolvedLocale: string
@@ -126,7 +133,7 @@ export class LocalizationController extends AbstractViewController implements In
         type: ToastType.Error,
         message: c('B6.Preferences.General.Language.Error').t`Could not load the selected language.`,
       })
-      return
+      return false
     }
 
     persistLocale(resolvedLocale)
@@ -137,20 +144,39 @@ export class LocalizationController extends AbstractViewController implements In
       console.error('Failed to sync locale preference', error)
     }
 
-    window.location.reload()
+    this.reloadAndShowToast(resolvedLocale)
+    return true
   }
 
-  async enableLocalization(): Promise<void> {
+  async toggleLocalization(waitBeforeReload: Promise<void>): Promise<void> {
+    this.isTogglingLocalization = true
+    this.featuresController.toggleLocalization()
+
+    const locale = this.featuresController.isLocalizationEnabled()
+      ? await this.enableLocalization()
+      : await this.disableLocalization()
+
+    await waitBeforeReload
+
+    if (locale) {
+      this.reloadAndShowToast(locale)
+    } else {
+      window.location.reload()
+    }
+  }
+
+  private async enableLocalization(): Promise<string | undefined> {
     try {
-      persistLocale(await this.loadLocale(this.getSavedLocale()))
+      const locale = await this.loadLocale(this.getSavedLocale())
+      persistLocale(locale)
+      return locale
     } catch (error) {
       console.error('Failed to load locale before reload', error)
+      return undefined
     }
-
-    window.location.reload()
   }
 
-  async disableLocalization(): Promise<void> {
+  private async disableLocalization(): Promise<string> {
     clearPersistedLocale()
 
     try {
@@ -159,7 +185,29 @@ export class LocalizationController extends AbstractViewController implements In
       console.error('Failed to clear locale preference', error)
     }
 
+    return DEFAULT_LOCALE
+  }
+
+  private reloadAndShowToast(locale: string): void {
+    if (locale !== localizationStore.currentLocale) {
+      setPendingLocaleSwitch(locale)
+    }
+
     window.location.reload()
+  }
+
+  private async showLocaleSwitchedToast(locale: string): Promise<void> {
+    let languageName = locale
+    try {
+      languageName = (await getWebLocaleService().getAvailableLocales())[locale] ?? locale
+    } catch (error) {
+      console.error('Failed to load locale catalog', error)
+    }
+
+    addToast({
+      type: ToastType.Success,
+      message: c('B6.Preferences.General.Language.Info').t`Language switched to ${languageName}`,
+    })
   }
 
   private async loadLocale(locale: string | undefined): Promise<string> {
@@ -193,6 +241,10 @@ export class LocalizationController extends AbstractViewController implements In
   }
 
   private async initializeLocalization(): Promise<void> {
+    if (this.isTogglingLocalization) {
+      return
+    }
+
     const localizationEnabled = this.featuresController.isLocalizationEnabled()
     if (!localizationEnabled && this.initializedWithLocalizationDisabled) {
       return
@@ -210,7 +262,7 @@ export class LocalizationController extends AbstractViewController implements In
 
       const persistedLocaleChanged = this.updatePersistedLocale(localizationEnabled, locale)
       if (locale !== activeLocale && (persistedLocaleChanged || !localizationEnabled)) {
-        window.location.reload()
+        this.reloadAndShowToast(locale)
         return
       }
 
@@ -218,6 +270,10 @@ export class LocalizationController extends AbstractViewController implements In
     } catch (error) {
       console.error('Failed to load locale catalog', error)
       localizationStore.setAvailableLocalesFailedToLoad()
+    }
+
+    if (takePendingLocaleSwitch() === activeLocale) {
+      void this.showLocaleSwitchedToast(activeLocale)
     }
 
     await this.syncDateFormatting(activeLocale)

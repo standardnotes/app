@@ -20,8 +20,20 @@ export function capitalizeForSentenceStart(text: string): string {
   return text
 }
 
+const dateTimeFormatters = new Map<string, Intl.DateTimeFormat>()
+
+function getDateTimeFormatter(locale: string | undefined, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  const key = `${locale ?? ''}|${JSON.stringify(options)}`
+  let formatter = dateTimeFormatters.get(key)
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(locale, options)
+    dateTimeFormatters.set(key, formatter)
+  }
+  return formatter
+}
+
 export function formatDateTime(date: Date, options: Intl.DateTimeFormatOptions = {}): string {
-  return new Intl.DateTimeFormat(getIntlLocale(), options).format(date)
+  return getDateTimeFormatter(getIntlLocale(), options).format(date)
 }
 
 export function formatItemDate(date: Date): string {

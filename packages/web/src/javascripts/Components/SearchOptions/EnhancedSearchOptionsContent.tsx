@@ -6,6 +6,7 @@ import SearchBubbles from './SearchBubbles'
 import SearchOptionsSection, { ClearFilterButton } from './SearchOptionsSection'
 import SearchTagFilters from './SearchTagFilters'
 import { c } from 'ttag'
+
 type Props = {
   searchOptions: SearchOptionsController
   className?: string

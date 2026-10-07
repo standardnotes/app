@@ -1,7 +1,7 @@
 import { SmartView, SystemViewId, isSystemView } from '@standardnotes/snjs'
 import { c } from 'ttag'
 
-export function getLocalizedSystemViewTitle(id: SystemViewId): string {
+export function getLocalizedSystemViewTitle(id: SystemViewId): string | undefined {
   switch (id) {
     case SystemViewId.AllNotes:
       return c('B4.Notes.TagsLinkedItems.Label').t`Notes`
@@ -18,13 +18,13 @@ export function getLocalizedSystemViewTitle(id: SystemViewId): string {
     case SystemViewId.Conflicts:
       return c('B4.Notes.TagsLinkedItems.Label').t`Conflicts`
     default:
-      return id
+      return undefined
   }
 }
 
 export function getSmartViewDisplayTitle(view: SmartView): string {
   if (isSystemView(view)) {
-    return getLocalizedSystemViewTitle(view.uuid as SystemViewId)
+    return getLocalizedSystemViewTitle(view.uuid as SystemViewId) ?? view.title
   }
 
   return view.title

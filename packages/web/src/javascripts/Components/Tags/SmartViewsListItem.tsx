@@ -17,6 +17,7 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useApplication } from '../ApplicationProvider'
 import { getSmartViewDisplayTitle } from '@/Utils/LocalizedSystemViewTitle'
 import { c } from 'ttag'
+
 type Props = {
   view: SmartView
   tagsState: NavigationController
