@@ -208,7 +208,8 @@ export class LocalizationController extends AbstractViewController implements In
         ? resolveLocale({ savedLocale: this.getSavedLocale(), availableLocales: Object.keys(catalog) })
         : DEFAULT_LOCALE
 
-      if (this.updatePersistedLocale(localizationEnabled, locale) && locale !== activeLocale) {
+      const persistedLocaleChanged = this.updatePersistedLocale(localizationEnabled, locale)
+      if (locale !== activeLocale && (persistedLocaleChanged || !localizationEnabled)) {
         window.location.reload()
         return
       }
