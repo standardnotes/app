@@ -11,6 +11,7 @@ import {
   MobileDeviceInterface,
   namespacedKey,
   NamespacedRootKeyInKeychain,
+  NativeLocalizationState,
   Platform as SNPlatform,
   RawKeychainValue,
   RawStorageKey,
@@ -56,11 +57,13 @@ import { LegacyKeyValueStore } from './Database/LegacyKeyValueStore'
 import Keychain from './Keychain'
 import notifee, { AuthorizationStatus, Notification, NotificationSettings } from '@notifee/react-native'
 import { c } from 'ttag'
+import { applyMobileLocalization } from './MobileLocalization'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
 
 export enum MobileDeviceEvent {
   RequestsWebViewReload = 0,
+  LocaleChanged = 1,
 }
 
 type MobileDeviceEventHandler = (event: MobileDeviceEvent) => void
@@ -88,15 +91,21 @@ export class MobileDevice implements MobileDeviceInterface {
     this.reloadStatusBarStyle(false)
   }
 
+  async syncMobileLocalization(state: NativeLocalizationState): Promise<void> {
+    if (!(await applyMobileLocalization(state))) {
+      return
+    }
+
+    await this.updateFilesNotificationChannel()
+    this.notifyMobileDeviceEvent(MobileDeviceEvent.LocaleChanged)
+  }
+
   async initializeNotifications() {
     if (Platform.OS !== 'android') {
       return
     }
 
-    await notifee.createChannel({
-      id: 'files',
-      name: c('B8.MobileDesktopShared.Mobile.Notifications.Label').t`File Upload/Download`,
-    })
+    await this.updateFilesNotificationChannel()
 
     const didAskForPermission = await this.keyValueStore.getValue<boolean>('didAskForNotificationPermission')
 
@@ -106,6 +115,17 @@ export class MobileDevice implements MobileDeviceInterface {
     }
 
     this.notificationSettings = await notifee.getNotificationSettings()
+  }
+
+  private async updateFilesNotificationChannel(): Promise<void> {
+    if (Platform.OS !== 'android') {
+      return
+    }
+
+    await notifee.createChannel({
+      id: 'files',
+      name: c('B8.MobileDesktopShared.Mobile.Notifications.Label').t`File Upload/Download`,
+    })
   }
 
   async canDisplayNotifications(): Promise<boolean> {

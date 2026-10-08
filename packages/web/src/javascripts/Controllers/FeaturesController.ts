@@ -13,7 +13,7 @@ import {
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { CrossControllerEvent } from './CrossControllerEvent'
-import { featureTrunkVaultsEnabled } from '@/FeatureTrunk'
+import { featureTrunkLocalizationEnabled, featureTrunkVaultsEnabled } from '@/FeatureTrunk'
 
 export class FeaturesController extends AbstractViewController implements InternalEventHandlerInterface {
   hasFolders: boolean
@@ -146,6 +146,25 @@ export class FeaturesController extends AbstractViewController implements Intern
       enabled ||
       this.features.hasRole(RoleName.create(RoleName.NAMES.InternalTeamUser).getValue())
     )
+  }
+
+  isLocalizationFeatureAvailable(): boolean {
+    return (
+      featureTrunkLocalizationEnabled() ||
+      this.features.hasRole(RoleName.create(RoleName.NAMES.InternalTeamUser).getValue())
+    )
+  }
+
+  toggleLocalization(): void {
+    this.features.toggleExperimentalFeature(NativeFeatureIdentifier.TYPES.Localization)
+  }
+
+  isLocalizationEnabled(): boolean {
+    if (!this.isLocalizationFeatureAvailable()) {
+      return false
+    }
+
+    return this.features.isExperimentalFeatureEnabled(NativeFeatureIdentifier.TYPES.Localization)
   }
 
   isEntitledToSharedVaults(): boolean {

@@ -4,6 +4,7 @@ import {
   HomeServerManagerInterface,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { Component } from '../Main/Packages/PackageManagerInterface'
+import { NativeLocalizationState } from '@standardnotes/snjs'
 
 export interface CrossProcessBridge extends FileBackupsDevice, DirectoryManagerInterface, HomeServerManagerInterface {
   get extServerHost(): string
@@ -25,4 +26,6 @@ export interface CrossProcessBridge extends FileBackupsDevice, DirectoryManagerI
   onSearch(text: string): void
   destroyAllData(): void
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean>
+  syncMainProcessLocalization(state: NativeLocalizationState): Promise<void>
+  readWebLocaleFile(relativePath: string): Promise<string>
 }

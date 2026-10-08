@@ -45,6 +45,8 @@ export enum PrefKey {
   AddImportsToTag = 'addImportsToTag',
   AlwaysCreateNewTagForImports = 'alwaysCreateNewTagForImports',
   ExistingTagForImports = 'existingTagForImports',
+  Locale = 'locale',
+  HasSeenLocalizationLabsSpotlight = 'hasSeenLocalizationLabsSpotlight',
   DEPRECATED_ActiveThemes = 'activeThemes',
   DEPRECATED_UseSystemColorScheme = 'useSystemColorScheme',
   DEPRECATED_UseTranslucentUI = 'useTranslucentUI',
@@ -102,5 +104,7 @@ export type PrefValue = {
   [PrefKey.AddImportsToTag]: boolean
   [PrefKey.AlwaysCreateNewTagForImports]: boolean
   [PrefKey.ExistingTagForImports]: string | undefined
+  [PrefKey.Locale]: string | undefined
+  [PrefKey.HasSeenLocalizationLabsSpotlight]: boolean
   [PrefKey.SuperNoteImageAlignment]: 'left' | 'center' | 'right'
 }

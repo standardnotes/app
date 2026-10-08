@@ -7,7 +7,7 @@ import {
   VaultDisplayServiceEvent,
 } from '@standardnotes/ui-services'
 import { StringDeleteTag, StringDeleteTagTitle } from '@/Constants/Strings'
-import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
+import { getSmartTagsFeatureName } from '@/Constants/Constants'
 import {
   ContentType,
   SmartView,
@@ -668,7 +668,7 @@ export class NavigationController
 
       if (isSmartViewTitle) {
         if (!this.featuresController.hasSmartViews) {
-          await this.featuresController.showPremiumAlert(SMART_TAGS_FEATURE_NAME)
+          await this.featuresController.showPremiumAlert(getSmartTagsFeatureName())
           return
         }
       }

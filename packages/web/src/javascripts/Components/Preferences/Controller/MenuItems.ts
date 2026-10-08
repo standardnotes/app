@@ -1,30 +1,29 @@
 import { ListedName } from '@standardnotes/features'
+import { PreferencePaneId } from '@standardnotes/services'
 import { c } from 'ttag'
 import { PreferencesMenuItem } from './PreferencesMenuItem'
 
-export const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
-  { id: 'whats-new', label: c('B6.Preferences.Other.Label').t`What's New`, icon: 'asterisk', order: 0 },
-  { id: 'account', label: c('B6.Preferences.Other.Label').t`Account`, icon: 'user', order: 1 },
-  { id: 'general', label: c('B6.Preferences.Other.Label').t`General`, icon: 'settings', order: 3 },
-  { id: 'security', label: c('B6.Preferences.Other.Label').t`Security`, icon: 'security', order: 4 },
-  { id: 'backups', label: c('B6.Preferences.Other.Action').t`Backups`, icon: 'restore', order: 5 },
-  { id: 'appearance', label: c('B6.Preferences.Other.Label').t`Appearance`, icon: 'themes', order: 6 },
-  { id: 'listed', label: ListedName, icon: 'listed', order: 7 },
-  { id: 'shortcuts', label: c('B6.Preferences.Other.Label').t`Shortcuts`, icon: 'keyboard', order: 8 },
-  { id: 'plugins', label: c('B6.Preferences.Other.Label').t`Plugins`, icon: 'dashboard', order: 8 },
-  { id: 'accessibility', label: c('B6.Preferences.Other.Label').t`Accessibility`, icon: 'accessibility', order: 9 },
-  { id: 'get-free-month', label: c('B6.Preferences.Other.Label').t`Get a free month`, icon: 'star', order: 10 },
-  { id: 'help-feedback', label: c('B6.Preferences.Other.Label').t`Help & feedback`, icon: 'help', order: 11 },
-]
+const UNFINISHED_MENU_ITEM_IDS: PreferencePaneId[] = ['shortcuts', 'accessibility', 'get-free-month']
 
-export const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
-  { id: 'whats-new', label: c('B6.Preferences.Other.Label').t`What's New`, icon: 'asterisk', order: 0 },
-  { id: 'account', label: c('B6.Preferences.Other.Label').t`Account`, icon: 'user', order: 1 },
-  { id: 'general', label: c('B6.Preferences.Other.Label').t`General`, icon: 'settings', order: 3 },
-  { id: 'security', label: c('B6.Preferences.Other.Label').t`Security`, icon: 'security', order: 4 },
-  { id: 'backups', label: c('B6.Preferences.Other.Action').t`Backups`, icon: 'restore', order: 5 },
-  { id: 'appearance', label: c('B6.Preferences.Other.Label').t`Appearance`, icon: 'themes', order: 6 },
-  { id: 'listed', label: ListedName, icon: 'listed', order: 7 },
-  { id: 'plugins', label: c('B6.Preferences.Other.Label').t`Plugins`, icon: 'dashboard', order: 8 },
-  { id: 'help-feedback', label: c('B6.Preferences.Other.Label').t`Help & feedback`, icon: 'help', order: 11 },
-]
+export function buildPreferencesMenuItems(enableUnfinishedFeatures: boolean): PreferencesMenuItem[] {
+  const menuItems: PreferencesMenuItem[] = [
+    { id: 'whats-new', label: c('B6.Preferences.Other.Label').t`What's New`, icon: 'asterisk', order: 0 },
+    { id: 'account', label: c('B6.Preferences.Other.Label').t`Account`, icon: 'user', order: 1 },
+    { id: 'general', label: c('B6.Preferences.Other.Label').t`General`, icon: 'settings', order: 3 },
+    { id: 'security', label: c('B6.Preferences.Other.Label').t`Security`, icon: 'security', order: 4 },
+    { id: 'backups', label: c('B6.Preferences.Other.Action').t`Backups`, icon: 'restore', order: 5 },
+    { id: 'appearance', label: c('B6.Preferences.Other.Label').t`Appearance`, icon: 'themes', order: 6 },
+    { id: 'listed', label: ListedName, icon: 'listed', order: 7 },
+    { id: 'shortcuts', label: c('B6.Preferences.Other.Label').t`Shortcuts`, icon: 'keyboard', order: 8 },
+    { id: 'plugins', label: c('B6.Preferences.Other.Label').t`Plugins`, icon: 'dashboard', order: 8 },
+    { id: 'accessibility', label: c('B6.Preferences.Other.Label').t`Accessibility`, icon: 'accessibility', order: 9 },
+    { id: 'get-free-month', label: c('B6.Preferences.Other.Label').t`Get a free month`, icon: 'star', order: 10 },
+    { id: 'help-feedback', label: c('B6.Preferences.Other.Label').t`Help & feedback`, icon: 'help', order: 11 },
+  ]
+
+  if (enableUnfinishedFeatures) {
+    return menuItems
+  }
+
+  return menuItems.filter((item) => !UNFINISHED_MENU_ITEM_IDS.includes(item.id))
+}

@@ -323,7 +323,7 @@ function windowMenu(store: Store, trayManager: TrayManager, reload: () => void):
     role: Roles.Window,
     submenu: [
       menuRole(str().minimize, Roles.Minimize),
-      menuRole(str().close, Roles.Close),
+      menuRole(isMac() ? str().closeWindow : str().close, Roles.Close),
       Separator,
       ...(isMac() ? macWindowItems() : [minimizeToTrayItem(store, trayManager, reload)]),
     ],

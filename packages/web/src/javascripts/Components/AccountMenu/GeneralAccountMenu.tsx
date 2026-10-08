@@ -8,7 +8,7 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
-import { formatLastSyncDate } from '@/Utils/DateUtils'
+import { formatItemDate } from '@/Utils/LocalizedDateFormat'
 import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { useApplication } from '../ApplicationProvider'
@@ -30,7 +30,8 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
   const application = useApplication()
 
   const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
-  const [lastSyncDate, setLastSyncDate] = useState(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
+
+  const lastSyncDate = formatItemDate(application.sync.getLastSyncDate() as Date)
 
   const doSynchronization = useCallback(async () => {
     setIsSyncingInProgress(true)
@@ -43,8 +44,6 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
       .then((res) => {
         if (res && (res as any).error) {
           throw new Error()
-        } else {
-          setLastSyncDate(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
         }
       })
       .catch(() => {

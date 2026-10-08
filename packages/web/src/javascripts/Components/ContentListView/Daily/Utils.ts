@@ -1,9 +1,10 @@
+import { formatDateOnlyString } from '@/Utils/LocalizedDateFormat'
 import { addDaysToDate } from '@standardnotes/utils'
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { DailyItemsDay } from './DailyItemsDaySection'
 
 export function dateToDailyDayIdentifier(date: Date): string {
-  return date.toLocaleDateString()
+  return formatDateOnlyString(date)
 }
 
 export function getDailyWritingStreak(

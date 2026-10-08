@@ -1,0 +1,40 @@
+{
+  "name": "@standardnotes/i18n",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
+  },
+  "description": "Internationalization utilities for Standard Notes",
+  "main": "dist/index.js",
+  "author": "Standard Notes",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "ttag": "^1.8.12"
+  },
+  "scripts": {
+    "clean": "rm -fr dist",
+    "prestart": "yarn clean",
+    "start": "tsc -p tsconfig.json --watch",
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src --ext .ts",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.2.3",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "*",
+    "eslint": "*",
+    "eslint-plugin-prettier": "*",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.3",
+    "typescript": "5.8.3"
+  }
+}

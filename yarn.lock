@@ -10127,6 +10127,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/i18n@workspace:*, @standardnotes/i18n@workspace:packages/i18n":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/i18n@workspace:packages/i18n"
+  dependencies:
+    "@types/jest": ^29.2.3
+    "@types/node": ^18.11.9
+    "@typescript-eslint/eslint-plugin": "*"
+    eslint: "*"
+    eslint-plugin-prettier: "*"
+    jest: ^29.3.1
+    ts-jest: ^29.0.3
+    ttag: ^1.8.12
+    typescript: 5.8.3
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/icons@workspace:*, @standardnotes/icons@workspace:packages/icons":
   version: 0.0.0-use.local
   resolution: "@standardnotes/icons@workspace:packages/icons"
@@ -10791,6 +10807,7 @@ __metadata:
     "@standardnotes/filepicker": "workspace:*"
     "@standardnotes/focus-theme": ^1.4.6
     "@standardnotes/futura-theme": ^1.4.6
+    "@standardnotes/i18n": "workspace:*"
     "@standardnotes/icons": "workspace:*"
     "@standardnotes/markdown-basic": ^1.7.12
     "@standardnotes/markdown-hybrid": ^1.8.11

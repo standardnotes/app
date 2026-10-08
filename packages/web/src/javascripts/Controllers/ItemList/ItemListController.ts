@@ -41,7 +41,8 @@ import { WebDisplayOptions } from './WebDisplayOptions'
 import { NavigationController } from '../Navigation/NavigationController'
 import { CrossControllerEvent } from '../CrossControllerEvent'
 import { SearchOptionsController } from '../SearchOptionsController'
-import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
+import { capitalizeForSentenceStart, formatDateAndTimeForNoteTitle } from '@/Utils/LocalizedDateFormat'
+import { getSmartViewDisplayTitle } from '@/Utils/LocalizedSystemViewTitle'
 
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
@@ -430,7 +431,8 @@ export class ItemListController
         ),
       )
     } else if (this.navigationController.selected) {
-      title = this.navigationController.selected.title
+      const selected = this.navigationController.selected
+      title = isSmartView(selected) ? getSmartViewDisplayTitle(selected) : selected.title
     }
 
     this.panelTitle = title
@@ -831,10 +833,10 @@ export class ItemListController
         this.preferences.getValue(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat])
 
       try {
-        return getDayjsFormattedString(createdAt, customFormat)
+        return capitalizeForSentenceStart(getDayjsFormattedString(createdAt, customFormat))
       } catch (error) {
         console.error(error)
-        return formatDateAndTimeForNote(createdAt || new Date())
+        return formatDateAndTimeForNoteTitle(createdAt || new Date())
       }
     }
 
@@ -842,7 +844,7 @@ export class ItemListController
       return ''
     }
 
-    return formatDateAndTimeForNote(createdAt || new Date())
+    return formatDateAndTimeForNoteTitle(createdAt || new Date())
   }
 
   createNewNote = async (title?: string, createdAt?: Date, autofocusBehavior?: TemplateNoteViewAutofocusBehavior) => {

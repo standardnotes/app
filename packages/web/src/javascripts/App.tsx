@@ -42,6 +42,7 @@ import { ElementIds } from './Constants/ElementIDs'
 import { setDefaultMonospaceFont } from './setDefaultMonospaceFont'
 import { RouteParser, RouteType } from '@standardnotes/ui-services'
 import U2FAuthIframe from './Components/U2FAuthIframe/U2FAuthIframe'
+import { activatePersistedLocale } from './Controllers/Localization/WebLocaleService'
 
 let keyCount = 0
 const getKey = () => {
@@ -58,6 +59,8 @@ const startApplication: StartApplication = async function startApplication(
   SNLog.onLog = console.log
   SNLog.onError = console.error
   let root: Root
+
+  await activatePersistedLocale()
 
   const onDestroy = () => {
     const rootElement = document.getElementById(ElementIds.RootId) as HTMLElement

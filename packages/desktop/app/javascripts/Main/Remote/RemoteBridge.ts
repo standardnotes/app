@@ -21,6 +21,8 @@ import { Component, PackageManagerInterface } from '../Packages/PackageManagerIn
 import { SearchManagerInterface } from '../Search/SearchManagerInterface'
 import { RemoteDataInterface } from './DataInterface'
 import { MediaManagerInterface } from '../Media/MediaManagerInterface'
+import { readWebLocaleFile, syncMainProcessLocalization } from '../Localization/MainProcessLocalization'
+import { NativeLocalizationState } from '@standardnotes/snjs'
 
 /**
  * Read https://github.com/electron/remote to understand how electron/remote works.
@@ -92,6 +94,8 @@ export class RemoteBridge implements CrossProcessBridge {
       getHomeServerLogs: this.getHomeServerLogs.bind(this),
       getHomeServerUrl: this.getHomeServerUrl.bind(this),
       getHomeServerLastErrorMessage: this.getHomeServerLastErrorMessage.bind(this),
+      syncMainProcessLocalization: this.syncMainProcessLocalization.bind(this),
+      readWebLocaleFile: this.readWebLocaleFile.bind(this),
     }
   }
 
@@ -301,5 +305,13 @@ export class RemoteBridge implements CrossProcessBridge {
 
   async getHomeServerLastErrorMessage(): Promise<string | undefined> {
     return this.homeServerManager.getHomeServerLastErrorMessage()
+  }
+
+  async syncMainProcessLocalization(state: NativeLocalizationState): Promise<void> {
+    await syncMainProcessLocalization(state)
+  }
+
+  async readWebLocaleFile(relativePath: string): Promise<string> {
+    return readWebLocaleFile(relativePath)
   }
 }
