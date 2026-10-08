@@ -71,7 +71,9 @@ export const DailyItemCell = forwardRef(
               )}
               {!item && (
                 <div className="w-full">
-                  <div className="break-word mr-2 font-semibold">{formatDateAndTimeForNoteTitle(section.date, false)}</div>
+                  <div className="break-word mr-2 font-semibold">
+                    {formatDateAndTimeForNoteTitle(section.date, false)}
+                  </div>
                   <EmptyPlaceholderBars rows={1} />
                 </div>
               )}

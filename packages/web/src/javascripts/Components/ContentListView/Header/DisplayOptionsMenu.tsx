@@ -91,9 +91,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
 }) => {
   const isRegularTag = isTag(selectedTag)
   const isSystemTag = isSmartView(selectedTag) && isSystemView(selectedTag)
-  const selectedTagLabel = isSmartView(selectedTag)
-    ? getSmartViewDisplayTitle(selectedTag)
-    : selectedTag.title
+  const selectedTagLabel = isSmartView(selectedTag) ? getSmartViewDisplayTitle(selectedTag) : selectedTag.title
   const selectedTagPreferences = isSystemTag
     ? application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
     : selectedTag.preferences

@@ -25,8 +25,7 @@ export const DAYS_IN_A_YEAR = 365
 export const BYTES_IN_ONE_KILOBYTE = 1_000
 export const BYTES_IN_ONE_MEGABYTE = 1_000_000
 
-export const getTagFoldersFeatureName = () =>
-  c('B7.FilesSubscriptionHelp.Subscription.Info').t`Tag folders`
+export const getTagFoldersFeatureName = () => c('B7.FilesSubscriptionHelp.Subscription.Info').t`Tag folders`
 
 export const getTagFoldersFeatureTooltip = () =>
   jtString(
