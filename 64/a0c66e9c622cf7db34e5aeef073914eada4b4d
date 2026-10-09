@@ -24,6 +24,20 @@ packages/desktop/scripts/merge-update-manifests.mjs
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 97,
+    "ai_accepted": 97,
+    "git_diff_deleted_lines": 1,
+    "git_diff_added_lines": 97,
+    "tool_model_breakdown": {
+      "cursor::default": {
+        "ai_additions": 97,
+        "ai_accepted": 97
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -55,6 +69,12 @@ packages/desktop/scripts/merge-update-manifests.mjs
         "cache_read_input_tokens": 4578912
       }
     }
+  },
+  "activity": {
+    "added_sloc": 85,
+    "deleted_sloc": 1,
+    "checkpoints": 8,
+    "span_seconds": 7
   },
   "proton_build": "1.7.6-proton.8"
 }
