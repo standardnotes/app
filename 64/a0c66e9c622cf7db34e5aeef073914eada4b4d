@@ -1,0 +1,60 @@
+.github/workflows/desktop.release.reuse.yml
+  s_59feaa23edabc0::t_bb1a0e650dca80 258,268
+  s_59feaa23edabc0::t_cac1e200947fe1 145,155
+  s_59feaa23edabc0::t_693a14eedfb0dc 305,315
+  s_59feaa23edabc0::t_f68f96d1a1e0e4 412-414
+  s_59feaa23edabc0::t_6a40edbe451377 61
+  s_59feaa23edabc0::t_d1b9dd0d6b72cd 45,47-49
+  s_59feaa23edabc0::t_e9f192c7030e4f 98,108
+packages/desktop/scripts/merge-update-manifests.mjs
+  s_59feaa23edabc0::t_a9935955052798 1-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "64a0c66e9c622cf7db34e5aeef073914eada4b4d",
+  "prompts": {},
+  "sessions": {
+    "s_59feaa23edabc0": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e28110c0-925d-42d7-af17-e29865c0999b",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 146614,
+        "output_tokens": 28095,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 4578912
+      },
+      "by_tool_model": {
+        "cursor::default": {
+          "input_tokens": 146614,
+          "output_tokens": 28095,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 4578912
+        }
+      },
+      "tool_uses": {
+        "grep": 17,
+        "read": 7,
+        "shell": 32,
+        "write": 11
+      }
+    },
+    "by_prompt": {
+      "s_59feaa23edabc0": {
+        "input_tokens": 146614,
+        "output_tokens": 28095,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 4578912
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
