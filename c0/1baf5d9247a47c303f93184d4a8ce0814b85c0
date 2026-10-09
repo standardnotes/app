@@ -16,5 +16,19 @@ packages/desktop/package.json
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 3,
+    "ai_accepted": 3,
+    "git_diff_deleted_lines": 4,
+    "git_diff_added_lines": 3,
+    "tool_model_breakdown": {
+      "cursor::default": {
+        "ai_additions": 3,
+        "ai_accepted": 3
+      }
+    }
+  },
   "proton_build": "1.7.6-proton.8"
 }
