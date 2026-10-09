@@ -1,0 +1,76 @@
+.github/workflows/desktop.release.dry-run.yml
+  s_59feaa23edabc0::t_298e3cfbd48d32 1-15
+.github/workflows/desktop.release.reuse.yml
+  s_59feaa23edabc0::t_d234c00c0ae46f 412,424,428-434
+  s_59feaa23edabc0::t_f8efb6376e77ca 435-436
+  s_59feaa23edabc0::t_a6441cc34c2ac3 9-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "05bc4307fcea86a4aca3fbe6d28ef0330c27c6bf",
+  "prompts": {},
+  "sessions": {
+    "s_59feaa23edabc0": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e28110c0-925d-42d7-af17-e29865c0999b",
+        "model": "default"
+      },
+      "human_author": null
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 194900,
+        "output_tokens": 19831,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 3833344
+      },
+      "by_tool_model": {
+        "cursor::default": {
+          "input_tokens": 194900,
+          "output_tokens": 19831,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 3833344
+        }
+      },
+      "tool_uses": {
+        "grep": 24,
+        "mcp:discover": 2,
+        "mcp:getaccessibleatlassianresources": 1,
+        "mcp:search": 1,
+        "mcp:searchjiraissuesusingjql": 3,
+        "read": 15,
+        "shell": 8,
+        "write": 5
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 612780,
+        "output_tokens": 37578,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 8926048
+      },
+      "by_tool_model": {
+        "cursor::default": {
+          "input_tokens": 612780,
+          "output_tokens": 37578,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 8926048
+        }
+      }
+    },
+    "by_prompt": {
+      "s_59feaa23edabc0": {
+        "input_tokens": 194900,
+        "output_tokens": 19831,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 3833344
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
