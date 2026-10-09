@@ -1,0 +1,15 @@
+name: Desktop Release (dry run)
+
+# Full desktop CI (Mac, Linux, Publish merge/sums) without GitHub release or Snap upload.
+# Uses this branch's reusable workflow — not @main.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Build:
+    uses: ./.github/workflows/desktop.release.reuse.yml
+    secrets: inherit
+    with:
+      channel: prod
+      skip_release: true
