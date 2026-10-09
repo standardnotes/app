@@ -1,0 +1,20 @@
+packages/desktop/package.json
+  s_7849b7099cb045::t_dbd80664a33c5f 101-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "c01baf5d9247a47c303f93184d4a8ce0814b85c0",
+  "prompts": {},
+  "sessions": {
+    "s_7849b7099cb045": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "8da52fd4-f361-4c95-817f-3b3946cbf0f5",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
