@@ -20,6 +20,20 @@
       "human_author": null
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 31,
+    "ai_accepted": 31,
+    "git_diff_deleted_lines": 0,
+    "git_diff_added_lines": 31,
+    "tool_model_breakdown": {
+      "cursor::default": {
+        "ai_additions": 31,
+        "ai_accepted": 31
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -71,6 +85,9 @@
         "cache_read_input_tokens": 3833344
       }
     }
+  },
+  "churn": {
+    "total": 1
   },
   "proton_build": "1.7.6-proton.8"
 }
