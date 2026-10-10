@@ -111,12 +111,22 @@ export async function createWindowState({
       event.preventDefault()
       /**
        * Handles Mac full screen issue where pressing close results
-       * in a black screen.
+       * in a black screen. Exiting full screen is asynchronous on macOS,
+       * so hiding must wait until the transition finishes; otherwise the
+       * hide is swallowed and the window is left visible in windowed mode.
+       * The window is made transparent first so the user doesn't see it
+       * shrink back to windowed mode before disappearing.
        */
       if (window.isFullScreen()) {
+        window.setOpacity(0)
+        window.once('leave-full-screen', () => {
+          window.hide()
+          window.setOpacity(1)
+        })
         window.setFullScreen(false)
+      } else {
+        window.hide()
       }
-      window.hide()
     }
   })
 
