@@ -7,7 +7,7 @@ import { PreferencePaneId, StatusServiceEvent } from '@standardnotes/services'
 import { isDesktopApplication } from '@/Utils'
 import { PreferencesMenuItem } from './PreferencesMenuItem'
 import { SelectableMenuItem } from './SelectableMenuItem'
-import { PREFERENCES_MENU_ITEMS, READY_PREFERENCES_MENU_ITEMS } from './MenuItems'
+import { buildPreferencesMenuItems } from './MenuItems'
 
 /**
  * Unlike PreferencesController, the PreferencesSessionController is ephemeral and bound to a single opening of the
@@ -22,9 +22,7 @@ export class PreferencesSessionController {
     private application: WebApplication,
     private readonly _enableUnfinishedFeatures: boolean,
   ) {
-    const menuItems = this._enableUnfinishedFeatures
-      ? PREFERENCES_MENU_ITEMS.slice()
-      : READY_PREFERENCES_MENU_ITEMS.slice()
+    const menuItems = buildPreferencesMenuItems(this._enableUnfinishedFeatures)
 
     if (application.featuresController.isVaultsEnabled()) {
       menuItems.push({ id: 'vaults', label: c('B6.Preferences.Other.Label').t`Vaults`, icon: 'safe-square', order: 5 })

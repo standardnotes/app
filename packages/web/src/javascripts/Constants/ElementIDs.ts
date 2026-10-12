@@ -16,4 +16,5 @@ export const ElementIds = {
   ConflictResolutionButton: 'conflict-resolution-button',
   SuperEditor: 'super-editor',
   SuperEditorContent: 'super-editor-content',
+  LanguagePreferencesSection: 'preferences-section-language',
 } as const

@@ -79,6 +79,7 @@ import { FilePreviewModalController } from '@/Controllers/FilePreviewModalContro
 import { OpenSubscriptionDashboard } from './UseCase/OpenSubscriptionDashboard'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
+import { LocalizationController } from '@/Controllers/Localization/LocalizationController'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { PersistenceService } from '@/Controllers/Abstract/PersistenceService'
 import { removeFromArray } from '@standardnotes/utils'
@@ -160,6 +161,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       void this.themeManager
     }
     void this.momentsService
+    void this.localizationController
     void this.routeService
 
     if (isDev) {
@@ -674,6 +676,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get noAccountWarningController(): NoAccountWarningController {
     return this.deps.get<NoAccountWarningController>(Web_TYPES.NoAccountWarningController)
+  }
+
+  get localizationController(): LocalizationController {
+    return this.deps.get<LocalizationController>(Web_TYPES.LocalizationController)
   }
 
   get searchOptionsController(): SearchOptionsController {

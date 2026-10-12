@@ -18,7 +18,7 @@ import {
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import {
   NOTE_TITLE_FORMAT_PATTERN_EXAMPLE,
-  NoteTitleFormatOptions,
+  getNoteTitleFormatOptions,
 } from '@/Components/ContentListView/Header/NoteTitleFormatOptions'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
@@ -145,7 +145,7 @@ const NewNoteDefaults = () => {
             <div className="mt-2">
               <Dropdown
                 label={c('B6.Preferences.General.Action').t`Select the format for the note title`}
-                items={NoteTitleFormatOptions}
+                items={getNoteTitleFormatOptions()}
                 value={newNoteTitleFormat}
                 onChange={setNewNoteTitleFormatChange}
               />

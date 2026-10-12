@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { formatDefaultDateTime } from '@/Utils/LocalizedDateFormat'
 import { AppName } from '@standardnotes/features'
 import { c } from 'ttag'
 
@@ -15,7 +16,9 @@ const SubscriptionStatusText = () => {
   } = application.subscriptions
   const isSharedSubscription = application.subscriptionController.isSharedSubscription
 
-  const expirationDateString = userSubscriptionExpirationDate?.toLocaleString()
+  const expirationDateString = userSubscriptionExpirationDate
+    ? formatDefaultDateTime(userSubscriptionExpirationDate)
+    : undefined
   const appNameBold = <span className="font-bold">{AppName}</span>
   const subscriptionTierBold = userSubscriptionName ? <span className="font-bold"> {userSubscriptionName}</span> : null
   const expirationDateBold = <span className="font-bold">{expirationDateString}</span>

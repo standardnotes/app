@@ -54,6 +54,7 @@ export function createStrings(): Strings {
       clearCacheAndReload: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Clear Cache and Reload`,
       speech: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Speech`,
       close: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Close`,
+      closeWindow: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Close Window`,
       minimize: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Minimize`,
       zoom: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Zoom`,
       bringAllToFront: c('B8.MobileDesktopShared.Desktop.Menu.Label').t`Bring All to Front`,

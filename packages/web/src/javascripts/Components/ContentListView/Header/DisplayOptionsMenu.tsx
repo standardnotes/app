@@ -27,6 +27,7 @@ import { Pill } from '@/Components/Preferences/PreferencesComponents/Content'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import MenuSection from '@/Components/Menu/MenuSection'
+import { getSmartViewDisplayTitle } from '@/Utils/LocalizedSystemViewTitle'
 import { c } from 'ttag'
 
 const DailyEntryModeEnabled = true
@@ -90,6 +91,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
 }) => {
   const isRegularTag = isTag(selectedTag)
   const isSystemTag = isSmartView(selectedTag) && isSystemView(selectedTag)
+  const selectedTagLabel = isSmartView(selectedTag) ? getSmartViewDisplayTitle(selectedTag) : selectedTag.title
   const selectedTagPreferences = isSystemTag
     ? application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
     : selectedTag.preferences
@@ -300,7 +302,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             setCurrentMode={setCurrentMode}
           />
           <TabButton
-            label={selectedTag.title}
+            label={selectedTagLabel}
             icon={selectedTag.iconString}
             mode="tag"
             currentMode={currentMode}

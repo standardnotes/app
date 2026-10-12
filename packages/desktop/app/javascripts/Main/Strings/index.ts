@@ -23,6 +23,11 @@ export function initializeStrings(_locale: string): void {
   strings = createStrings()
 }
 
+/** Rebuilds menu/tray strings after the active ttag locale changes. */
+export function reinitializeStrings(): void {
+  strings = createStrings()
+}
+
 export function str(): Strings {
   if (isDev()) {
     if (!strings) {

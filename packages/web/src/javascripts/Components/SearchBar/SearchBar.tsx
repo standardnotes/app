@@ -12,7 +12,6 @@ import { observer } from 'mobx-react-lite'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/snjs'
-
 type Props = {
   itemListController: ItemListController
   searchOptionsController: SearchOptionsController

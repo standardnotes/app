@@ -1,3 +1,4 @@
+import { formatItemDate, formatItemDateForSentenceStart } from '@/Utils/LocalizedDateFormat'
 import { CollectionSort, SortableItem } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
 import { c } from 'ttag'
@@ -6,8 +7,8 @@ import { ListableContentItem } from './Types/ListableContentItem'
 type Props = {
   item: {
     protected: ListableContentItem['protected']
-    updatedAtString?: ListableContentItem['updatedAtString']
-    createdAtString?: ListableContentItem['createdAtString']
+    created_at: ListableContentItem['created_at']
+    userModifiedDate: ListableContentItem['userModifiedDate']
   }
   hideDate: boolean
   sortBy: keyof SortableItem | undefined
@@ -15,6 +16,9 @@ type Props = {
 
 const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sortBy }) => {
   const showModifiedDate = sortBy === CollectionSort.UpdatedAt
+
+  const date = showModifiedDate ? item.userModifiedDate : item.created_at
+  const formattedDate = date && (showModifiedDate ? formatItemDate(date) : formatItemDateForSentenceStart(date))
 
   if (hideDate && !item.protected) {
     return null
@@ -30,10 +34,10 @@ const ListItemMetadata: FunctionComponent<Props> = ({ item, hideDate, sortBy }) 
       )}
       {!hideDate && showModifiedDate && (
         <span>
-          {c('B3.Notes.NoteList.Label').t`Modified`} {item.updatedAtString || c('B3.Notes.NoteList.Label').t`Now`}
+          {c('B3.Notes.NoteList.Label').t`Modified`} {formattedDate || c('B3.Notes.NoteList.Label').t`Now`}
         </span>
       )}
-      {!hideDate && !showModifiedDate && <span>{item.createdAtString || c('B3.Notes.NoteList.Label').t`Now`}</span>}
+      {!hideDate && !showModifiedDate && <span>{formattedDate || c('B3.Notes.NoteList.Label').t`Now`}</span>}
     </div>
   )
 }

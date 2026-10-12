@@ -1,4 +1,4 @@
-import { dateToLocalizedString, useBoolean } from '@standardnotes/utils'
+import { useBoolean } from '@standardnotes/utils'
 import { DecryptedTransferPayload } from './../../TransferPayload/Interfaces/DecryptedTransferPayload'
 import { AppDataField } from '../Types/AppDataField'
 import { ComponentDataDomain, DefaultAppDomain } from '../Types/DefaultAppDomain'
@@ -29,7 +29,6 @@ export class DecryptedItem<C extends ItemContent = ItemContent>
     this.userModifiedDate = new Date(userModVal as number | Date)
 
     this.conflictOf = payload.content.conflict_of
-    this.updatedAtString = dateToLocalizedString(this.userModifiedDate)
     this.protected = useBoolean(this.payload.content.protected, false)
     this.trashed = useBoolean(this.payload.content.trashed, false)
     this.starred = useBoolean(this.payload.content.starred, false)

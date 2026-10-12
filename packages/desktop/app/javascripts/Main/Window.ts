@@ -27,6 +27,7 @@ import { initializeZoomManager } from './ZoomManager'
 import { HomeServerManager } from './HomeServer/HomeServerManager'
 import { FilesManager } from './File/FilesManager'
 import { DirectoryManager } from './Directory/DirectoryManager'
+import { registerMainProcessLocalizationCallbacks } from './Localization/MainProcessLocalization'
 
 const WINDOW_DEFAULT_WIDTH = 1100
 const WINDOW_DEFAULT_HEIGHT = 800
@@ -222,6 +223,13 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
     trayManager,
     store: appState.store,
     spellcheckerManager,
+  })
+
+  registerMainProcessLocalizationCallbacks({
+    onStringsReloaded: () => {
+      menuManager.reload()
+      trayManager.reloadLabels()
+    },
   })
 
   const fileBackupsManager = new FilesBackupManager(appState, window.webContents, filesManager)

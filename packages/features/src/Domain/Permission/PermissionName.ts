@@ -38,6 +38,7 @@ export enum PermissionName {
   SubscriptionSharing = 'server:subscription-sharing',
   SuperEditor = 'editor:super-editor',
   Clipper = 'app:clipper',
+  Localization = 'app:localization',
   Vaults = 'app:vaults',
   SharedVaults = 'server:shared-vaults',
   ProtonTheme = 'theme:proton',

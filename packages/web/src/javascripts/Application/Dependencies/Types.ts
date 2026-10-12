@@ -29,6 +29,7 @@ export const Web_TYPES = {
   ImportModalController: Symbol.for('ImportModalController'),
   ItemListController: Symbol.for('ItemListController'),
   LinkingController: Symbol.for('LinkingController'),
+  LocalizationController: Symbol.for('LocalizationController'),
   NavigationController: Symbol.for('NavigationController'),
   NoAccountWarningController: Symbol.for('NoAccountWarningController'),
   NotesController: Symbol.for('NotesController'),

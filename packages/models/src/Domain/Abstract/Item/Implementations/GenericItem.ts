@@ -14,16 +14,12 @@ import { PersistentSignatureData } from '../../../Runtime/Encryption/PersistentS
 export abstract class GenericItem<P extends PayloadInterface = PayloadInterface> implements ItemInterface<P> {
   payload: P
   public readonly duplicateOf?: string
-  public readonly createdAtString?: string
-  public updatedAtString?: string
   public userModifiedDate: Date
 
   constructor(payload: P) {
     this.payload = payload
     this.duplicateOf = payload.duplicate_of
-    this.createdAtString = this.created_at && dateToLocalizedString(this.created_at)
     this.userModifiedDate = this.serverUpdatedAt || new Date()
-    this.updatedAtString = dateToLocalizedString(this.userModifiedDate)
 
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
@@ -41,6 +37,14 @@ export abstract class GenericItem<P extends PayloadInterface = PayloadInterface>
 
   get created_at() {
     return this.payload.created_at
+  }
+
+  get createdAtString(): string | undefined {
+    return this.created_at ? dateToLocalizedString(this.created_at) : undefined
+  }
+
+  get updatedAtString(): string {
+    return dateToLocalizedString(this.userModifiedDate)
   }
 
   get key_system_identifier(): string | undefined {
