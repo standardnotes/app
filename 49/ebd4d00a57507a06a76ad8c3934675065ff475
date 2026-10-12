@@ -16,6 +16,20 @@
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 6,
+    "ai_accepted": 6,
+    "git_diff_deleted_lines": 6,
+    "git_diff_added_lines": 6,
+    "tool_model_breakdown": {
+      "cursor::claude-opus-5-5": {
+        "ai_additions": 6,
+        "ai_accepted": 6
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -47,6 +61,11 @@
         "cache_read_input_tokens": 780186
       }
     }
+  },
+  "activity": {
+    "added_sloc": 6,
+    "deleted_sloc": 6,
+    "checkpoints": 1
   },
   "proton_build": "1.7.6-proton.8"
 }
