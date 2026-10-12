@@ -1,0 +1,33 @@
+packages/desktop/package.json
+  h_ddce7f0538b395 127-128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "1ab93272721693f0344eb6d6ab9d847a06f1ebd7",
+  "prompts": {},
+  "humans": {
+    "h_ddce7f0538b395": {
+      "author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "carried": {
+      "total": {
+        "input_tokens": 26,
+        "output_tokens": 9880,
+        "cache_creation_input_tokens": 30467,
+        "cache_read_input_tokens": 959357
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5-high": {
+          "input_tokens": 26,
+          "output_tokens": 9880,
+          "cache_creation_input_tokens": 30467,
+          "cache_read_input_tokens": 959357
+        }
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
