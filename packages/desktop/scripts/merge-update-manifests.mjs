@@ -6,14 +6,14 @@ import yaml from 'js-yaml'
 const distDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../dist')
 const metaDir = path.join(distDir, 'update-meta')
 
-/** output manifest -> preserved fragment ids in dist/update-meta/ */
+/** output manifest -> fragment ids in dist/update-meta/ (one per build job) */
 const MANIFESTS = {
   'latest-mac.yml': ['mac-x64', 'mac-arm64'],
   'latest-linux.yml': ['linux-appimage-x64', 'linux-deb-x64'],
   'latest-linux-arm64.yml': ['linux-appimage-arm64', 'linux-deb-arm64'],
 }
 
-/** preferred top-level path for electron-updater */
+/** preferred top-level path for electron-updater (only used by legacy clients that ignore `files`) */
 const PRIMARY_URL = {
   'latest-mac.yml': [/-mac-x64\.zip$/i, /-mac-arm64\.zip$/i],
   'latest-linux.yml': [/-linux-x86_64\.AppImage$/i, /-linux-amd64\.deb$/i],
@@ -25,20 +25,8 @@ function readMeta(id) {
   return fs.existsSync(filePath) ? yaml.load(fs.readFileSync(filePath, 'utf8')) : null
 }
 
-function mergeFiles(docs) {
-  const byUrl = new Map()
-  for (const doc of docs) {
-    for (const entry of doc?.files ?? []) {
-      if (entry?.url) {
-        byUrl.set(entry.url, { ...byUrl.get(entry.url), ...entry })
-      }
-    }
-  }
-  return [...byUrl.values()].sort((a, b) => a.url.localeCompare(b.url))
-}
-
 function pickPrimary(files, manifestName) {
-  for (const pattern of PRIMARY_URL[manifestName] ?? []) {
+  for (const pattern of PRIMARY_URL[manifestName]) {
     const match = files.find((f) => pattern.test(f.url))
     if (match) {
       return match
@@ -52,17 +40,18 @@ for (const [manifestName, fragmentIds] of Object.entries(MANIFESTS)) {
   if (docs.length === 0) {
     continue
   }
-
-  const versions = [...new Set(docs.map((d) => d.version).filter(Boolean))]
-  if (versions.length > 1) {
-    throw new Error(`${manifestName}: conflicting versions ${versions.join(', ')}`)
+  if (docs.length !== fragmentIds.length) {
+    throw new Error(
+      `${manifestName}: expected ${fragmentIds.length} fragments (${fragmentIds.join(', ')}), found ${docs.length}`,
+    )
   }
 
-  const files = mergeFiles(docs)
-  if (files.length === 0) {
-    continue
+  const versions = [...new Set(docs.map((d) => d.version))]
+  if (versions.length !== 1 || !versions[0]) {
+    throw new Error(`${manifestName}: expected a single version, got ${versions.join(', ')}`)
   }
 
+  const files = docs.flatMap((d) => d.files).sort((a, b) => a.url.localeCompare(b.url))
   const primary = pickPrimary(files, manifestName)
   const merged = {
     version: versions[0],
