@@ -124,8 +124,8 @@
       ]
     },
     "win": {
-      "certificateSubjectName": "Standard Notes Ltd.",
-      "publisherName": "Standard Notes Ltd.",
+      "certificateSubjectName": "Proton AG",
+      "publisherName": "Proton AG",
       "signDlls": true,
       "sign": "./scripts/windowsSign.js"
     },
