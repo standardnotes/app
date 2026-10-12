@@ -29,6 +29,24 @@ packages/desktop/scripts/fixWindowsLatestYml.js
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 60,
+    "ai_accepted": 60,
+    "git_diff_deleted_lines": 0,
+    "git_diff_added_lines": 60,
+    "tool_model_breakdown": {
+      "cursor::claude-opus-5-5": {
+        "ai_additions": 47,
+        "ai_accepted": 47
+      },
+      "cursor::default": {
+        "ai_additions": 13,
+        "ai_accepted": 13
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -88,6 +106,12 @@ packages/desktop/scripts/fixWindowsLatestYml.js
         "cache_read_input_tokens": 1781219
       }
     }
+  },
+  "activity": {
+    "added_sloc": 154,
+    "deleted_sloc": 101,
+    "checkpoints": 12,
+    "span_seconds": 39212
   },
   "proton_build": "1.7.6-proton.8"
 }
