@@ -1,0 +1,93 @@
+packages/desktop/scripts/fixWindowsLatestYml.js
+  s_fb18eaa72c7854::t_52514b03a1a931 1,4,12-19,24-32,35-40
+  s_fb18eaa72c7854::t_5056d1278a74ee 6,9
+  s_634abcb460f4fd::t_2868c317a076b7 2-3,5,7-8,10-11,20-23,33-34
+.gitlab-ci.yml
+  s_fb18eaa72c7854::t_f61f5c6bcba125 56,58
+  s_fb18eaa72c7854::t_5815dd660ea82d 44-55,57,59-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "2ac1591b6154d34dbf9bce59570fd0b824ae70bc",
+  "prompts": {},
+  "sessions": {
+    "s_634abcb460f4fd": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "21a470f5-9073-40be-97d3-b68a1f7712f3",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    },
+    "s_fb18eaa72c7854": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2c391b7a-5640-4dba-9d9c-06b91302ff0f",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 84496,
+        "output_tokens": 39652,
+        "cache_creation_input_tokens": 209291,
+        "cache_read_input_tokens": 2766083
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 94,
+          "output_tokens": 23757,
+          "cache_creation_input_tokens": 209291,
+          "cache_read_input_tokens": 1781219
+        },
+        "cursor::default": {
+          "input_tokens": 84402,
+          "output_tokens": 15895,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 984864
+        }
+      },
+      "tool_uses": {
+        "grep": 34,
+        "read": 13,
+        "shell": 16,
+        "write": 11
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 224897,
+        "output_tokens": 56748,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 9074528
+      },
+      "by_tool_model": {
+        "cursor::default": {
+          "input_tokens": 224897,
+          "output_tokens": 56748,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 9074528
+        }
+      }
+    },
+    "by_prompt": {
+      "s_634abcb460f4fd": {
+        "input_tokens": 84402,
+        "output_tokens": 15895,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 984864
+      },
+      "s_fb18eaa72c7854": {
+        "input_tokens": 94,
+        "output_tokens": 23757,
+        "cache_creation_input_tokens": 209291,
+        "cache_read_input_tokens": 1781219
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
