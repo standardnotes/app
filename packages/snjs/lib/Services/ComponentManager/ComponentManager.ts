@@ -116,7 +116,10 @@ export class ComponentManager
 
     this.eventDisposers.push(
       preferences.addEventObserver((event) => {
-        if (event === PreferencesServiceEvent.PreferencesChanged) {
+        if (
+          event === PreferencesServiceEvent.PreferencesChanged ||
+          event === PreferencesServiceEvent.LocalPreferencesChanged
+        ) {
           this.postActiveThemesToAllViewers()
         }
       }),
