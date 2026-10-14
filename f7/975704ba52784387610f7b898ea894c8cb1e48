@@ -16,6 +16,20 @@ packages/snjs/lib/Services/ComponentManager/ComponentManager.ts
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 4,
+    "ai_accepted": 4,
+    "git_diff_deleted_lines": 1,
+    "git_diff_added_lines": 4,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 4,
+        "ai_accepted": 4
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -47,6 +61,11 @@ packages/snjs/lib/Services/ComponentManager/ComponentManager.ts
         "cache_read_input_tokens": 360553
       }
     }
+  },
+  "activity": {
+    "added_sloc": 5,
+    "deleted_sloc": 1,
+    "checkpoints": 1
   },
   "proton_build": "1.7.6-proton.8"
 }
