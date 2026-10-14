@@ -1,0 +1,52 @@
+packages/snjs/lib/Services/ComponentManager/ComponentManager.ts
+  s_a43675e674aec7::t_94588aed125d90 119-122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "f7975704ba52784387610f7b898ea894c8cb1e48",
+  "prompts": {},
+  "sessions": {
+    "s_a43675e674aec7": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2700906e-8315-46bd-9661-ffc3cfaad013",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 26,
+        "output_tokens": 4063,
+        "cache_creation_input_tokens": 33905,
+        "cache_read_input_tokens": 360553
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 26,
+          "output_tokens": 4063,
+          "cache_creation_input_tokens": 33905,
+          "cache_read_input_tokens": 360553
+        }
+      },
+      "tool_uses": {
+        "grep": 11,
+        "read": 6,
+        "shell": 1,
+        "write": 1
+      }
+    },
+    "by_prompt": {
+      "s_a43675e674aec7": {
+        "input_tokens": 26,
+        "output_tokens": 4063,
+        "cache_creation_input_tokens": 33905,
+        "cache_read_input_tokens": 360553
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
