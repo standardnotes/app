@@ -1,0 +1,60 @@
+packages/ui-services/src/Keyboard/KeyboardCommands.ts
+  s_83ddbe9b6957c3::t_d1ae7eba052fe8 28
+packages/ui-services/src/Keyboard/getKeyboardShortcuts.ts
+  s_83ddbe9b6957c3::t_98a93845907d03 23
+  s_83ddbe9b6957c3::t_a62c550fbaae86 158-161
+  s_83ddbe9b6957c3::t_38c21afc09648a 157
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/NoteScrollToBottomController.tsx
+  s_83ddbe9b6957c3::t_f6900ca04fc2a0 1-2,4
+  s_83ddbe9b6957c3::t_91fc5080862d97 16
+  s_83ddbe9b6957c3::t_75e59062db4367 43-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "8c2683c98c68ae40d83e138118a011096bc1af1c",
+  "prompts": {},
+  "sessions": {
+    "s_83ddbe9b6957c3": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "57f0768f-53dc-4827-b135-bb68ab63e830",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 34,
+        "output_tokens": 8456,
+        "cache_creation_input_tokens": 32681,
+        "cache_read_input_tokens": 1278114
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 34,
+          "output_tokens": 8456,
+          "cache_creation_input_tokens": 32681,
+          "cache_read_input_tokens": 1278114
+        }
+      },
+      "tool_uses": {
+        "grep": 11,
+        "read": 3,
+        "shell": 1,
+        "write": 6
+      }
+    },
+    "by_prompt": {
+      "s_83ddbe9b6957c3": {
+        "input_tokens": 34,
+        "output_tokens": 8456,
+        "cache_creation_input_tokens": 32681,
+        "cache_read_input_tokens": 1278114
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
