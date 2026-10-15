@@ -25,6 +25,7 @@ export const OPEN_NOTE_HISTORY_COMMAND = createKeyboardCommand('OPEN_NOTE_HISTOR
 export const CAPTURE_SAVE_COMMAND = createKeyboardCommand('CAPTURE_SAVE_COMMAND')
 export const STAR_NOTE_COMMAND = createKeyboardCommand('STAR_NOTE_COMMAND')
 export const PIN_NOTE_COMMAND = createKeyboardCommand('PIN_NOTE_COMMAND')
+export const SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND = createKeyboardCommand('SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND')
 
 export const SUPER_TOGGLE_SEARCH = createKeyboardCommand('SUPER_TOGGLE_SEARCH')
 export const SUPER_TOGGLE_TOOLBAR = createKeyboardCommand('SUPER_TOGGLE_TOOLBAR')

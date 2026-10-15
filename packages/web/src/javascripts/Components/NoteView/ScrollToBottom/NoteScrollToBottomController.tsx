@@ -1,4 +1,7 @@
+import { useKeyboardService } from '@/Components/KeyboardServiceProvider'
+import { SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
 import { useEffect, useState } from 'react'
+import { c } from 'ttag'
 import { hasVerticalOverflow, isScrolledToBottom } from './isScrolledToBottom'
 import { ScrollToBottomButton } from './ScrollToBottomButton'
 import type { ScrollableEditor } from './types'
@@ -10,6 +13,7 @@ type Props = {
 }
 
 export function NoteScrollToBottomController({ editor, disabled, moveCaret }: Props) {
+  const keyboardService = useKeyboardService()
   const [showButton, setShowButton] = useState(false)
 
   useEffect(() => {
@@ -35,6 +39,24 @@ export function NoteScrollToBottomController({ editor, disabled, moveCaret }: Pr
       disposeTextChangeObserver()
     }
   }, [editor, disabled])
+
+  useEffect(() => {
+    const scrollElement = disabled ? null : editor?.getScrollElement()
+    if (!editor || !scrollElement) {
+      return
+    }
+
+    return keyboardService.addCommandHandler({
+      command: SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND,
+      category: 'Current note',
+      description: c('B4.Notes.EditingUI.Action').t`Scroll to bottom of note`,
+      element: scrollElement,
+      onKeyDown: (event) => {
+        event.preventDefault()
+        editor.scrollToEnd({ moveCaret })
+      },
+    })
+  }, [editor, disabled, moveCaret, keyboardService])
 
   if (!editor || !showButton) {
     return null
