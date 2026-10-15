@@ -1,0 +1,6322 @@
+{
+  "headers": {
+    "plural-forms": "nplurals=1; plural=0;",
+    "language": "ja_JP"
+  },
+  "contexts": {
+    "B1.Account.ImportExport.Action": {
+      "Add files": [
+        "ファイルを追加"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Close": [
+        "閉じる"
+      ],
+      "Import": [
+        "インポート"
+      ]
+    },
+    "B1.Account.ImportExport.AriaLabel": {
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Change service": [
+        "サービスを変更"
+      ],
+      "Choose service": [
+        "サービスを選択"
+      ],
+      "Remove": [
+        "削除"
+      ]
+    },
+    "B1.Account.ImportExport.Error": {
+      "Could not import ${ count } item (click for details)": [
+        "${ count }個のアイテムをインポートできませんでした (クリックで詳細を表示)"
+      ],
+      "Could not import file": [
+        "ファイルをインポートできませんでした。"
+      ],
+      "Could not parse content": [
+        "コンテンツを解析できませんでした。"
+      ],
+      "Could not parse content. Content element not found.": [
+        "コンテンツを解析できませんでした。コンテンツ要素が見つかりません。"
+      ],
+      "Could not parse entries": [
+        "エントリを解析できませんでした。"
+      ],
+      "Could not parse Google Keep backup file": [
+        "Google Keepのバックアップファイルを解析できませんでした。"
+      ],
+      "Could not parse notes": [
+        "メモを解析できませんでした。"
+      ],
+      "The file you selected is not a valid backup file. Please extract the contents of the zip file, then upload the contained .txt file.": [
+        "選択したファイルは有効なバックアップファイルではありません。zipファイルの内容を展開してから、含まれている.txtファイルをアップロードしてください。"
+      ],
+      "This backup file was created using a newer encryption version than your account's. Please run the available encryption upgrade and try again.": [
+        "このバックアップファイルは、お使いのアカウントより新しい暗号化バージョンで作成されています。利用可能な暗号化バージョンのアップグレードを実行してから、もう一度お試しください。"
+      ],
+      "This backup file was created using a newer version of the application and cannot be imported here. Please update your application and try again.": [
+        "このバックアップファイルは、より新しいバージョンのアプリで作成されたため、ここではインポートできません。アプリを更新してから、再試行してください。"
+      ],
+      "This backup file was created using an unsupported version of the application and cannot be imported here. Please update your application and try again.": [
+        "このバックアップファイルは、サポートされていないバージョンのアプリで作成されたため、インポートできません。アプリを更新してもう一度お試しください。"
+      ],
+      "Unable to open file. Ensure it is a proper JSON file and try again.": [
+        "ファイルを開けません。有効なJSONファイルであることを確認して、もう一度お試しください。"
+      ]
+    },
+    "B1.Account.ImportExport.ImportSource": {
+      "Plaintext": [
+        "プレーンテキスト"
+      ],
+      "Plaintext / Markdown": [
+        "プレーンテキスト / Markdown"
+      ]
+    },
+    "B1.Account.ImportExport.Info": {
+      "${ files } file": [
+        "${ files }個のファイル"
+      ],
+      "${ notes } note": [
+        "${ notes }個のメモ"
+      ],
+      "${ tags } tag": [
+        "${ tags }個のタグ"
+      ],
+      "Drag and drop files to auto-detect and import": [
+        "ファイルをドラッグ＆ドロップすると、自動検出してインポートできます"
+      ],
+      "Import complete. ${ errorCount } item was not imported because there was an error decrypting it. Make sure the password is correct and try again.": [
+        "インポートが完了しました。復号化中にエラーが発生したため、${ errorCount }個のアイテムはインポートされませんでした。パスワードが正しいことを確認して、もう一度お試しください。"
+      ],
+      "Imported ${ list }": [
+        "${ list }をインポートしました"
+      ],
+      "Or click to open file picker": [
+        "または、クリックしてファイルを選択"
+      ],
+      "or import from:": [
+        "または以下からインポート："
+      ],
+      "Your data has been successfully imported.": [
+        "データをインポートしました。"
+      ]
+    },
+    "B1.Account.ImportExport.Label": {
+      "Add all imported notes to tag": [
+        "インポートしたすべてのメモをタグに追加"
+      ],
+      "Add to existing tag": [
+        "既存のタグに追加"
+      ],
+      "Create new tag": [
+        "新しいタグを作成"
+      ],
+      "File account password": [
+        "バックアップファイルのアカウントパスワード"
+      ],
+      "Imported on ${ importedOnDate }": [
+        "インポート日時：${ importedOnDate }"
+      ]
+    },
+    "B1.Account.ImportExport.Placeholder": {
+      "Select tag to add imported notes to...": [
+        "インポートしたメモの追加先タグを選択..."
+      ]
+    },
+    "B1.Account.ImportExport.Status": {
+      "Could not auto-detect service. Please select manually.": [
+        "サービスを自動検出できませんでした。手動で選択してください。"
+      ],
+      "Detecting service...": [
+        "サービスを検出中..."
+      ],
+      "Importing...": [
+        "インポート中..."
+      ],
+      "Parsing...": [
+        "解析中..."
+      ],
+      "Ready to import": [
+        "インポート準備完了"
+      ],
+      "Uploading and embedding files...": [
+        "ファイルをアップロードして埋め込み中..."
+      ]
+    },
+    "B1.Account.ImportExport.Title": {
+      "Import": [
+        "インポート"
+      ]
+    },
+    "B1.Account.Password.Action": {
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Continue": [
+        "続行"
+      ],
+      "Finish": [
+        "完了"
+      ],
+      "Generating Keys...": [
+        "キーを生成中..."
+      ],
+      "Upgrade": [
+        "アップグレード"
+      ]
+    },
+    "B1.Account.Password.Error": {
+      "Cannot close window until pending tasks are complete.": [
+        "保留中のタスクが完了するまで、ウィンドウを閉じることはできません。"
+      ],
+      "Please enter a new password.": [
+        "新しいパスワードを入力してください。"
+      ],
+      "Please enter your current password.": [
+        "現在のパスワードを入力してください。"
+      ],
+      "The current password you entered is not correct. Please try again.": [
+        "入力された現在のパスワードが正しくありません。再度お試しください。"
+      ],
+      "Unable to upgrade encryption version. Please try again.": [
+        "暗号化バージョンをアップグレードできませんでした。もう一度お試しください。"
+      ],
+      "We don't have your email stored. Please sign out then log back in to fix this issue.": [
+        "メールアドレスが保存されていません。この問題を解決するには、いったんサインアウトしてから再度サインインしてください。"
+      ],
+      "Your new password does not match its confirmation.": [
+        "新しいパスワードが確認用のパスワードと一致しません。"
+      ]
+    },
+    "B1.Account.Password.Info": {
+      "Encryption version 004 is available. This version strengthens the encryption algorithms your account and local storage use. To learn more about this upgrade, visit our <a href=\"${ HelpSecurityUrl }\" target=\"_blank\">Security Upgrade page.</a>": [
+        "暗号化バージョン004が利用可能です。このバージョンでは、アカウントとローカルストレージで使用される暗号化アルゴリズムが強化されます。このアップグレードについて詳しくは、<a href=\"${ HelpSecurityUrl }\" target=\"_blank\">セキュリティアップグレードのページ</a>をご覧ください。"
+      ],
+      "Ensure you are running the latest version of ${ AppName } on all platforms for maximum compatibility.": [
+        "最大限の互換性を確保するには、すべてのプラットフォームで${ AppName }の最新バージョンをご利用ください。"
+      ],
+      "The encryption upgrade is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
+        "暗号化バージョンのアップグレード中です。アプリを終了するとデータが失われる可能性があります。本当に終了しますか？"
+      ],
+      "You have pending vault invites. Changing your password will delete these invites. It is recommended you accept or decline these invites before changing your password. If you choose to continue, these invites will be deleted.": [
+        "保留中の保管庫の招待があります。パスワードを変更すると、これらの招待は削除されます。パスワードを変更する前に、招待を承認または辞退することをおすすめします。続行を選択した場合、これらの招待は削除されます。"
+      ],
+      "Your encryption version has been successfully upgraded.": [
+        "暗号化バージョンをアップグレードしました。"
+      ],
+      "Your encryption version has been successfully upgraded. You may be asked to enter your credentials again on other devices you're signed into.": [
+        "暗号化バージョンをアップグレードしました。サインインしている他のデバイスでは、認証情報の再入力を求められる場合があります。"
+      ],
+      "Your password has been successfully changed.": [
+        "パスワードを変更しました。"
+      ]
+    },
+    "B1.Account.Password.Label": {
+      "Confirm New Password": [
+        "新しいパスワードの確認"
+      ],
+      "Current Password": [
+        "現在のパスワード"
+      ],
+      "New Password": [
+        "新しいパスワード"
+      ]
+    },
+    "B1.Account.Password.Status": {
+      "Checking for data conflicts...": [
+        "データの競合を確認中…"
+      ],
+      "Processing encryption keys…": [
+        "暗号化キーを処理中..."
+      ],
+      "Successfully changed password.": [
+        "パスワードを変更しました。"
+      ],
+      "Unable to process your password. Please try again.": [
+        "パスワードを処理できません。再度お試しください。"
+      ],
+      "Upgrading local encryption...": [
+        "ローカルの暗号化をアップグレード中..."
+      ],
+      "Upgrading your account's encryption version…": [
+        "アカウントの暗号化バージョンをアップグレード中..."
+      ]
+    },
+    "B1.Account.Password.Title": {
+      "Change Password": [
+        "パスワードを変更"
+      ],
+      "Encryption upgrade available": [
+        "暗号化バージョンをアップグレードできます"
+      ]
+    },
+    "B1.Account.Session.Action": {
+      "Account settings": [
+        "アカウント設定"
+      ],
+      "Add another workspace": [
+        "別のワークスペースを追加"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Close": [
+        "閉じる"
+      ],
+      "Command palette": [
+        "コマンドパレット"
+      ],
+      "Create free account": [
+        "無料アカウントを作成"
+      ],
+      "Delete my account for good": [
+        "アカウントを完全に削除"
+      ],
+      "Delete Workspace": [
+        "ワークスペースを削除"
+      ],
+      "Email us": [
+        "メールで問い合わせ"
+      ],
+      "End Sessions": [
+        "セッションを終了"
+      ],
+      "Finish": [
+        "完了"
+      ],
+      "Help & feedback": [
+        "ヘルプとフィードバック"
+      ],
+      "Import": [
+        "インポート"
+      ],
+      "Keyboard shortcuts": [
+        "キーボードショートカット"
+      ],
+      "Need help?": [
+        "お困りですか？"
+      ],
+      "Open Account menu": [
+        "アカウントメニューを開く"
+      ],
+      "Refresh": [
+        "再読み込み"
+      ],
+      "Revoke": [
+        "失効させる"
+      ],
+      "Show Recovery Code": [
+        "回復用コードを表示"
+      ],
+      "Sign in": [
+        "サインイン"
+      ],
+      "Sign Out": [
+        "サインアウト"
+      ],
+      "Sign out": [
+        "サインアウト"
+      ],
+      "Sign out all": [
+        "すべてからサインアウト"
+      ],
+      "Sign out all workspaces": [
+        "すべてのワークスペースからサインアウト"
+      ],
+      "Sign out workspace": [
+        "ワークスペースからサインアウト"
+      ],
+      "Switch workspace": [
+        "ワークスペースを切り替え"
+      ],
+      "View backup files": [
+        "バックアップファイルを表示"
+      ]
+    },
+    "B1.Account.Session.Confirmation": {
+      "There is ${ dirtyItemCount } item with unsynced changes. If you sign out, these changes will be lost forever. Are you sure you want to sign out?": [
+        "同期されていない変更があるアイテムが${ dirtyItemCount }件あります。サインアウトすると、これらの変更は完全に失われます。本当にサインアウトしますか？"
+      ]
+    },
+    "B1.Account.Session.Error": {
+      "A server error occurred while trying to refresh your session. Please try again.": [
+        "セッションを更新しようとした際にサーバーエラーが発生しました。もう一度お試しください。"
+      ],
+      "An unknown error occured while loading sessions.": [
+        "セッションの読み込み中に不明なエラーが発生しました。"
+      ],
+      "An unknown error occured while revoking the session.": [
+        "セッションの失効中に不明なエラーが発生しました。"
+      ],
+      "Hmm...we can't seem to sync your account. The reason: ${ application.syncStatusController.errorMessage }": [
+        "アカウントを同期できないようです。理由：${ application.syncStatusController.errorMessage }"
+      ],
+      "Missing Session": [
+        "セッションが見つかりません。"
+      ],
+      "Please sign in to an account in order to continue with your request.": [
+        "リクエストを続行するには、アカウントにサインインしてください。"
+      ],
+      "There was an error syncing. Please try again. If all else fails, try signing out and signing back in.": [
+        "同期中にエラーが発生しました。もう一度お試しください。それでも解決しない場合は、いったんサインアウトしてから再度サインインしてください。"
+      ],
+      "There was an error while trying to update your settings. Please try again.": [
+        "設定の更新中にエラーが発生しました。もう一度お試しください。"
+      ],
+      "We were unable to load your server session. This represents an inconsistency with your application state. Please take an opportunity to backup your data, then sign out and sign back in to resolve this issue.": [
+        "サーバーセッションを読み込めませんでした。アプリの状態に不整合があります。データをバックアップしてから、いったんサインアウトして再度サインインし、この問題を解決してください。"
+      ],
+      "Your account was unable to be deleted due to an error. Please try your request again.": [
+        "エラーが発生したため、アカウントを削除できませんでした。もう一度お試しください。"
+      ]
+    },
+    "B1.Account.Session.Info": {
+      "Are you sure you want to permanently delete your account? You will be asked to confirm your account password in the next step. If you have an active paid subscription, cancel the subscription first. Otherwise, if you'd like to keep the subscription, you can re-register with the same email after deletion, and your subscription will be linked back up with your account.": [
+        "アカウントを完全に削除してよろしいですか？次のステップでアカウントパスワードの確認を求められます。有効な有料サブスクリプションをお持ちの場合は、先にサブスクリプションをキャンセルしてください。サブスクリプションを維持したい場合は、削除後に同じメールアドレスで再登録すると、サブスクリプションがアカウントに再びリンクされます。"
+      ],
+      "Are you sure you want to sign out of all workspaces on this device?": [
+        "このデバイス上のすべてのワークスペースからサインアウトしてよろしいですか？"
+      ],
+      "Are you sure you want to sign out?": [
+        "本当にサインアウトしますか？"
+      ],
+      "Because you have other workspaces signed in, this sign out may leave logs and other metadata of your session on this device. For a more robust sign out that performs a hard clear of all app-related data, use the \"Sign out all workspaces\" option under \"Switch workspace\".": [
+        "他のワークスペースにサインインしているため、このサインアウトではセッションのログやその他のメタデータがこのデバイスに残る場合があります。アプリ関連のすべてのデータを完全に消去するより確実なサインアウトを行うには、「ワークスペースを切り替え」内の「すべてのワークスペースからサインアウト」オプションを使用してください。"
+      ],
+      "Encryption is enabled. Your data is encrypted using your passcode before it is saved to your device storage.": [
+        "暗号化は有効です。データはデバイスのストレージに保存される前に、パスコードを使用して暗号化されます。"
+      ],
+      "Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.": [
+        "暗号化が有効になっていません。サインインするか、登録するか、パスコードロックを追加して、暗号化を有効にしてください。"
+      ],
+      "End-to-end encryption is enabled. Your data is encrypted on your device first, then synced to your private cloud.": [
+        "エンドツーエンド暗号化が有効になっています。データはまずデバイス上で暗号化され、その後プライベートクラウドに同期されます。"
+      ],
+      "Local backups are enabled for this workspace. Review your backup files manually to decide what to keep.": [
+        "このワークスペースではローカルバックアップが有効です。バックアップファイルを手動で確認し、残すファイルを選択してください。"
+      ],
+      "Please authenticate with your hardware security key.": [
+        "物理セキュリティキーで認証してください。"
+      ],
+      "Please enter your account email and password.": [
+        "アカウントのメールアドレスとパスワードを入力してください。"
+      ],
+      "Please enter your two-factor authentication code.": [
+        "2要素認証コードを入力してください。"
+      ],
+      "Sign in or register to sync your notes to your other devices with end-to-end encryption.": [
+        "サインインまたは登録すると、エンドツーエンド暗号化によってメモを他のデバイスに同期できます。"
+      ],
+      "Signed in on ${ signedInDate }": [
+        "サインイン日時：${ signedInDate }"
+      ],
+      "Successfully joined a shared subscription.": [
+        "共有サブスクリプションに参加しました。"
+      ],
+      "The associated app will be signed out and all data removed from the device when it is next launched. You can sign back in on that device at any time.": [
+        "関連付けられたアプリは、次回起動時にサインアウトされ、そのデバイス上のデータがすべて削除されます。そのデバイスでは、いつでも再度サインインできます。"
+      ],
+      "This action will remove this workspace and its related data from this device. Your synced data will not be affected.": [
+        "この操作により、このワークスペースとその関連データがこのデバイスから削除されます。同期済みのデータには影響しません。"
+      ],
+      "This action will sign out all other devices signed into your account, and remove your data from those devices when they next regain connection to the internet. You may sign back in on those devices at any time.": [
+        "この操作を行うと、アカウントにサインインしている他のすべてのデバイスがサインアウトされ、次にインターネットに接続した際にそれらのデバイスからデータが削除されます。デバイスにはいつでも再度サインインできます。"
+      ],
+      "You have successfully revoked your sessions from other devices.": [
+        "他のデバイスのセッションを失効させました。"
+      ],
+      "You're signed in as:": [
+        "サインイン中のアカウント："
+      ],
+      "Your account has been successfully deleted.": [
+        "アカウントを削除しました。"
+      ],
+      "Your account session is being renewed with the server. Please try your request again.": [
+        "サーバーとのアカウントセッションを更新しています。もう一度リクエストを実行してください。"
+      ],
+      "Your credentials are needed for ${ email } to refresh your session with the server.": [
+        "サーバーとのセッションを再読み込みするには、${ email }の認証情報が必要です。"
+      ],
+      "Your credentials are needed to refresh your session with the server.": [
+        "サーバーとのセッションを再読み込みするには、認証情報が必要です。"
+      ],
+      "Your recovery code allows you access to your account in the event you lose your 2FA authenticating device or app. Save your recovery code in a safe place outside your account.": [
+        "回復用コードがあれば、2要素認証に使用するデバイスやアプリを紛失した場合でもアカウントにアクセスできます。回復用コードはアカウントの外にある安全な場所に保存してください。"
+      ],
+      "Your session has been revoked and all local data has been removed from this device.": [
+        "セッションは失効し、このデバイスからすべてのローカルデータが削除されました。"
+      ],
+      "Your session has been successfully restored.": [
+        "セッションを復元しました。"
+      ],
+      "You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
+        "オフラインです。サインインして、すべてのデバイスでメモと設定を同期し、エンドツーエンドの暗号化を有効にしてください。"
+      ]
+    },
+    "B1.Account.Session.Label": {
+      "Copy to clipboard": [
+        "クリップボードにコピー"
+      ],
+      "Current session": [
+        "現在のセッション"
+      ],
+      "Email": [
+        "メールアドレス"
+      ],
+      "General account menu": [
+        "アカウントメニュー"
+      ],
+      "Ignore warning": [
+        "警告を無視"
+      ],
+      "Last synced:": [
+        "最終同期："
+      ],
+      "Main Workspace": [
+        "メインワークスペース"
+      ],
+      "Note:": [
+        "注意："
+      ],
+      "Password": [
+        "パスワード"
+      ],
+      "User account menu": [
+        "ユーザーアカウントメニュー"
+      ],
+      "Workspace switcher menu": [
+        "ワークスペース切り替えメニュー"
+      ]
+    },
+    "B1.Account.Session.MailtoBody": {
+      "App Version: ${ application.version }": [
+        "アプリのバージョン：${ application.version }"
+      ]
+    },
+    "B1.Account.Session.MailtoSubject": {
+      "${ AppName } Feedback": [
+        "${ AppName }のフィードバック"
+      ]
+    },
+    "B1.Account.Session.Status": {
+      "Accepting invitation...": [
+        "招待を承認中..."
+      ],
+      "Loading sessions": [
+        "セッション読み込み中"
+      ],
+      "Locking workspace...": [
+        "ワークスペースをロック中…"
+      ],
+      "Offline": [
+        "オフライン"
+      ],
+      "Switching workspace...": [
+        "ワークスペースを切り替え中..."
+      ],
+      "Syncing...": [
+        "同期中..."
+      ]
+    },
+    "B1.Account.Session.Title": {
+      "Account": [
+        "アカウント"
+      ],
+      "Active Sessions": [
+        "アクティブなセッション"
+      ],
+      "Data not backed up": [
+        "データがバックアップされていません"
+      ],
+      "Delete account?": [
+        "アカウントを削除しますか？"
+      ],
+      "End all other sessions?": [
+        "ほかのすべてのセッションを終了しますか？"
+      ],
+      "Revoke this session?": [
+        "このセッションを失効させますか？"
+      ],
+      "Save your recovery code": [
+        "回復用コードを保存"
+      ],
+      "Sign Out": [
+        "サインアウト"
+      ],
+      "Sign out workspace?": [
+        "ワークスペースからサインアウトしますか？"
+      ],
+      "Sync Unreachable": [
+        "同期サーバーに接続できません"
+      ]
+    },
+    "B1.Account.SignIn.Action": {
+      "Advanced options": [
+        "詳細設定"
+      ],
+      "Authenticate": [
+        "認証"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Create account": [
+        "アカウントを作成"
+      ],
+      "Create account & sign in": [
+        "アカウントを作成してサインイン"
+      ],
+      "Creating account...": [
+        "アカウントを作成中..."
+      ],
+      "Delete Local Data and Continue": [
+        "ローカルデータを削除して続行"
+      ],
+      "Go back": [
+        "戻る"
+      ],
+      "Learn more": [
+        "詳細"
+      ],
+      "Next": [
+        "次へ"
+      ],
+      "Sign In": [
+        "サインイン"
+      ],
+      "Sign in": [
+        "サインイン"
+      ],
+      "Sign in instead": [
+        "代わりにサインイン"
+      ],
+      "Signing in...": [
+        "サインイン中..."
+      ],
+      "Subscribe without account": [
+        "アカウントを作成せずに登録"
+      ]
+    },
+    "B1.Account.SignIn.Error": {
+      "A server error occurred while trying to register. Please try again.": [
+        "登録中にサーバーエラーが発生しました。もう一度お試しください。"
+      ],
+      "A server error occurred while trying to sign in. Please try again.": [
+        "サインイン中にサーバーエラーが発生しました。もう一度お試しください。"
+      ],
+      "Home server is not running. Please open the prefences and home server tab to start it.": [
+        "ホームサーバーが起動していません。環境設定のホームサーバータブを開いて起動してください。"
+      ],
+      "Invalid email or password.": [
+        "無効なメールアドレスまたはパスワードです。"
+      ],
+      "Invalid password.": [
+        "無効なパスワードです。"
+      ],
+      "No options returned from server": [
+        "サーバーからオプションが返されませんでした"
+      ],
+      "No username provided": [
+        "ユーザー名が指定されていません"
+      ],
+      "Passwords don't match. Please try again.": [
+        "パスワードが一致しません。再度お試しください。"
+      ],
+      "Please provide a valid email.": [
+        "有効なメールアドレスを入力してください。"
+      ],
+      "Something went wrong while changing your credentials. Your credentials were not changed. Please try again.": [
+        "認証情報の変更中に問題が発生しました。認証情報は変更されていません。もう一度やり直してください。"
+      ],
+      "Strict Sign In has refused the server's sign-in parameters. The latest account version is ${ latest }, but the server is reporting a version of ${ current } for your account. If you'd like to proceed with sign in anyway, please disable Strict Sign In and try again.": [
+        "サインインの厳格化により、サーバーから返されたサインインパラメーターが拒否されました。最新のアカウントバージョンは${ latest }ですが、サーバーから報告されたアカウントのバージョンは${ current }です。サインインを続行する場合は、サインインの厳格化を無効化してからもう一度お試しください。"
+      ],
+      "The protocol version associated with your account is outdated and no longer supported by this application. Please visit ${ HelpSecurityUrl } for more information.": [
+        "お使いのアカウントに関連付けられているプロトコルバージョンは古く、このアプリではサポートされなくなりました。詳しくは${ HelpSecurityUrl }をご覧ください。"
+      ],
+      "The two passwords you entered do not match. Please try again.": [
+        "入力された2つのパスワードが一致しません。再度お試しください。"
+      ],
+      "This version of the application does not support your newer account type. Please upgrade to the latest version of ${ AppName } to sign in.": [
+        "このバージョンのアプリは、新しいアカウントタイプに対応していません。サインインするには、${ AppName }を最新バージョンにアップグレードしてください。"
+      ],
+      "Unable to compute private username.": [
+        "プライベートユーザー名を生成できません。"
+      ],
+      "Unable to sign in due to insecure password parameters. Please visit ${ HelpSecurityUrl } for more information.": [
+        "パスワードのパラメータが安全でないため、サインインできません。詳しくは${ HelpSecurityUrl }をご覧ください。"
+      ],
+      "Your account was created on a platform with higher security capabilities than this browser supports. If we attempted to generate your login keys here, it would take hours. Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in.": [
+        "このアカウントは、このブラウザより高度なセキュリティ機能を備えたプラットフォームで作成されました。ここでログインキーを生成しようとすると、数時間かかる可能性があります。Google ChromeやFirefoxなど、より新しいセキュリティ機能に対応したブラウザを使用してログインしてください。"
+      ],
+      "Your passcode is required in order to register for an account.": [
+        "アカウントの登録には、パスコードが必要です。"
+      ],
+      "Your password must be at least ${ minimum } characters in length. For your security, please choose a longer password or, ideally, a passphrase, and try again.": [
+        "パスワードは${ minimum }文字以上である必要があります。安全性を高めるため、より長いパスワード、できればパスフレーズを選択して、もう一度お試しください。"
+      ],
+      "Your password must be at least %LENGTH% characters in length. For your security, please choose a longer password or, ideally, a passphrase, and try again.": [
+        "パスワードは%LENGTH%文字以上である必要があります。安全性を高めるため、より長いパスワード、できればパスフレーズを選択して、もう一度お試しください。"
+      ]
+    },
+    "B1.Account.SignIn.Info": {
+      "${ AppName } does not have a password reset option": [
+        "${ AppName }にはパスワードをリセットする機能がありません"
+      ],
+      "Are you sure you want to continue without merging?": [
+        "統合せずに続行してもよろしいですか？"
+      ],
+      "Authentication successful!": [
+        "認証に成功しました！"
+      ],
+      "Because your notes are encrypted using your password, ${ noPasswordResetOption }. If you forget your password, you will permanently lose access to your data.": [
+        "メモはパスワードを使用して暗号化されているため、${ noPasswordResetOption }。パスワードを忘れると、データに永久にアクセスできなくなります。"
+      ],
+      "Don’t have an account yet?": [
+        "まだアカウントを持っていませんか？"
+      ],
+      "If unchecked, your local notes and tags will be permanently deleted and replaced with data from your account.": [
+        "チェックを外した場合、ローカルのメモとタグは完全に削除され、アカウントのデータに置き換えられます。"
+      ],
+      "Insert your hardware security key, then press the button below to authenticate.": [
+        "物理セキュリティキーを挿入し、下のボタンを押して認証してください。"
+      ],
+      "The encryption version for your account is outdated and requires upgrade. You may proceed with login, but are advised to perform a security update using the web or desktop application.\n\nIf your account was created after ${ expirationDate }, it may not be safe to continue signing in. In that case, please discontinue your sign in request and contact support.\n\nFor more information, visit ${ HelpSecurityUrl }.": [
+        "お使いのアカウントの暗号化バージョンは古く、アップグレードが必要です。サインインは続行できますが、ウェブアプリまたはデスクトップアプリを使用してセキュリティ更新を行うことをおすすめします。\n\n${ expirationDate }以降に作成されたアカウントの場合、サインイン続行は安全ではない可能性があります。その場合は、サインインを中止してサポートにお問い合わせください。\n\n詳しくは、${ HelpSecurityUrl }をご覧ください。"
+      ],
+      "to continue to ${ AppName }.": [
+        "${ AppName }を利用するには"
+      ],
+      "You have chosen not to merge your local data. If you proceed, your local notes and tags will be permanently deleted and replaced with data from your account. This action cannot be undone.": [
+        "アカウントのデータとローカルデータを統合しないことを選択しました。続行すると、ローカルのメモとタグは完全に削除され、アカウントのデータに置き換えられます。この操作は元に戻せません。"
+      ]
+    },
+    "B1.Account.SignIn.Label": {
+      "Confirm password": [
+        "パスワードの確認"
+      ],
+      "Email": [
+        "メールアドレス"
+      ],
+      "Password": [
+        "パスワード"
+      ],
+      "Recovery code": [
+        "回復用コード"
+      ],
+      "Repeat password": [
+        "パスワード（再入力）"
+      ],
+      "Sync Server": [
+        "同期サーバー"
+      ],
+      "Username": [
+        "ユーザー名"
+      ]
+    },
+    "B1.Account.SignIn.Option": {
+      "Custom": [
+        "カスタム"
+      ],
+      "Default": [
+        "デフォルト"
+      ],
+      "Home Server": [
+        "ホームサーバー"
+      ],
+      "Merge local data (${ notesAndTagsCount } item)": [
+        "ローカルデータをマージ (${ notesAndTagsCount }個のアイテム)"
+      ],
+      "Private username mode": [
+        "プライベートユーザー名モード"
+      ],
+      "Stay signed in": [
+        "サインインしたままにする"
+      ],
+      "Use recovery code": [
+        "回復用コードを使用"
+      ],
+      "Use strict sign-in": [
+        "サインインを厳格化する"
+      ]
+    },
+    "B1.Account.SignIn.Status": {
+      "An existing change credentials request is already in progress.": [
+        "認証情報の変更リクエストがすでに進行中です。"
+      ],
+      "An existing registration request is already in progress.": [
+        "登録リクエストはすでに進行中です。"
+      ],
+      "An existing sign in request is already in progress.": [
+        "サインインのリクエストはすでに処理中です。"
+      ],
+      "Waiting for security key...": [
+        "セキュリティキーを待っています..."
+      ]
+    },
+    "B1.Account.SignIn.Title": {
+      "Confirm password": [
+        "パスワードの確認"
+      ],
+      "Create account": [
+        "アカウントを作成"
+      ],
+      "Create your free account": [
+        "無料アカウントを作成"
+      ],
+      "Delete local data?": [
+        "ローカルデータを削除しますか？"
+      ],
+      "Human verification": [
+        "人間であることの確認"
+      ],
+      "Sign in": [
+        "サインイン"
+      ],
+      "Update Recommended": [
+        "更新を推奨"
+      ]
+    },
+    "B2.NavSharedUI.Action": {
+      "Authenticate": [
+        "認証"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Capture": [
+        "撮影"
+      ],
+      "Confirm": [
+        "確認"
+      ],
+      "Continue": [
+        "続行"
+      ],
+      "Copy example to clipboard": [
+        "例をクリップボードにコピー"
+      ],
+      "Dismiss": [
+        "閉じる"
+      ],
+      "Done": [
+        "完了"
+      ],
+      "Edit vault": [
+        "保管庫を編集"
+      ],
+      "Lock vault": [
+        "保管庫をロック"
+      ],
+      "Move out of ${ singleItemVault.name }": [
+        "${ singleItemVault.name }から外す"
+      ],
+      "Move out of vaults": [
+        "保管庫から外す"
+      ],
+      "Move to vault": [
+        "保管庫に移動"
+      ],
+      "OK": [
+        "OK"
+      ],
+      "Open account menu": [
+        "アカウントメニューを開く"
+      ],
+      "Open quick settings menu": [
+        "クイック設定メニューを開く"
+      ],
+      "Open vault settings": [
+        "保管庫の設定を開く"
+      ],
+      "Record": [
+        "録画"
+      ],
+      "Reload": [
+        "再読み込み"
+      ],
+      "Retry": [
+        "再試行"
+      ],
+      "Stop": [
+        "停止"
+      ],
+      "Toggle command palette": [
+        "コマンドパレットを切り替え"
+      ],
+      "Toggle dark mode": [
+        "ダークモードを切り替え"
+      ],
+      "Toggle focus mode": [
+        "フォーカスモードを切り替え"
+      ],
+      "Toggle keyboard shortcuts help": [
+        "キーボードショートカットヘルプを切り替え"
+      ],
+      "Toggle notes panel": [
+        "メモパネルを切り替え"
+      ],
+      "Toggle tags panel": [
+        "タグパネルを切り替え"
+      ],
+      "Unlock vault": [
+        "保管庫のロックを解除"
+      ],
+      "Upload": [
+        "アップロード"
+      ]
+    },
+    "B2.NavSharedUI.AriaLabel": {
+      "Close modal": [
+        "モーダルを閉じる"
+      ],
+      "Go to preferences": [
+        "設定に移動"
+      ],
+      "Go to quick settings menu": [
+        "クイック設定メニューに移動"
+      ],
+      "Lock application": [
+        "アプリをロック"
+      ],
+      "Locks application and wipes unencrypted data from memory.": [
+        "アプリをロックし、暗号化されていないデータをメモリから消去します。"
+      ],
+      "Open navigation menu": [
+        "ナビゲーションメニューを開く"
+      ],
+      "Open preferences (${ shortcut })": [
+        "設定を開く（${ shortcut }）"
+      ],
+      "Open quick settings menu": [
+        "クイック設定メニューを開く"
+      ],
+      "Quick settings menu": [
+        "クイック設定メニュー"
+      ],
+      "Select an item": [
+        "アイテムを選択"
+      ],
+      "Show/hide password": [
+        "パスワードの表示/非表示"
+      ]
+    },
+    "B2.NavSharedUI.Error": {
+      "A server error occurred. Please try again.": [
+        "サーバーエラーが発生しました。再度お試しください。"
+      ],
+      "An existing request is already in progress.": [
+        "すでに別のリクエストが処理中です。"
+      ],
+      "An issue occurred while processing this action. Please try again.": [
+        "このアクションの処理中に問題が発生しました。もう一度お試しください。"
+      ],
+      "Could not check your data integrity with the server.": [
+        "サーバーとのデータ整合性を確認できませんでした。"
+      ],
+      "Could not connect to server.": [
+        "サーバーに接続できません。"
+      ],
+      "Could not retrieve item.": [
+        "アイテムを取得できませんでした。"
+      ],
+      "Error downloading package details. Please check the extension link and try again.": [
+        "パッケージの詳細のダウンロード中にエラーが発生しました。拡張機能のリンクを確認して、もう一度お試しください。"
+      ],
+      "Failed to copy to clipboard": [
+        "クリップボードにコピーできませんでした"
+      ],
+      "Invalid extension URL.": [
+        "拡張機能のURLが無効です。"
+      ],
+      "Offline database issue: ${ target.errorCode }": [
+        "オフラインデータベースの問題：${ target.errorCode }"
+      ],
+      "Something went wrong rendering this component:": [
+        "このコンポーネントのレンダリング中にエラーが発生しました："
+      ],
+      "Storage Error": [
+        "ストレージエラー"
+      ],
+      "Sync error. Please try again later.": [
+        "同期エラーが発生しました。後ほど再度お試しください。"
+      ],
+      "Sync error: ${ this.state.failedSyncError }": [
+        "同期エラー：${ this.state.failedSyncError }"
+      ],
+      "The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.": [
+        "保存しようとしているメモが見つからないか、削除されています。加えた変更は同期されません。このメモのテキストをコピーして、新しいメモを作成してください。"
+      ],
+      "There was an issue loading ${ componentName }.": [
+        "${ componentName }の読み込み中に問題が発生しました。"
+      ],
+      "There was an issue loading your offline database. This could happen for two reasons:\n\n1. You're in a private window in your browser. We can't save your data without access to the local database. Please use a non-private window.\n\n2. You have two windows of the app open at the same time. Please close any other app instances and reload the page.": [
+        "オフラインデータベースの読み込み中に問題が発生しました。原因として次の2つが考えられます。\n\n1. ブラウザのプライベートウィンドウを使用しています。ローカルストレージにアクセスできないため、データを保存できません。通常のウィンドウを使用してください。\n\n2. アプリのウィンドウを同時に2つ開いています。ほかのアプリインスタンスを閉じて、ページを再読み込みしてください。"
+      ],
+      "This extension is missing its URL property.": [
+        "この拡張機能にはURLプロパティがありません。"
+      ],
+      "Too many requests. Please try again later.": [
+        "リクエストが多すぎます。後でもう一度お試しください。"
+      ],
+      "Too many successive server requests. Please wait a few minutes and try again.": [
+        "サーバーへのリクエストが多すぎます。数分待ってからもう一度お試しください。"
+      ],
+      "Unable to change your credentials due to a sync error. Please try again.": [
+        "同期エラーのため、認証情報を変更できません。再度お試しください。"
+      ],
+      "Unable to install external plugin due to a conflict with a native feature.": [
+        "ネイティブ機能との競合により、外部プラグインをインストールできませんでした。"
+      ],
+      "Unable to install plugin due to a conflict with a native feature.": [
+        "ネイティブ機能との競合により、プラグインをインストールできません。"
+      ],
+      "Unable to load local database. Please restart the app and try again.": [
+        "ローカルストレージを読み込めません。アプリを再起動してもう一度お試しください。"
+      ],
+      "Unable to save changes locally because your device is out of space. Please free up some disk space and try again, otherwise, your data may end up in an inconsistent state.": [
+        "デバイスの空き容量が不足しているため、変更をローカルに保存できません。ディスクの空き容量を確保してからもう一度お試しください。そのまま続行すると、データが不整合な状態になる可能性があります。"
+      ],
+      "Unable to save changes locally due to an unknown system issue. Issue Code: ${ error.code } Issue Name: ${ error.name }.": [
+        "不明なシステムエラーにより、変更をローカルに保存できません。問題コード：${ error.code } / 問題名：${ error.name }"
+      ],
+      "Unable to sync": [
+        "同期できません"
+      ],
+      "Unable to Sync": [
+        "同期できません"
+      ],
+      "Unable to write to local database. Please restart the app and try again.": [
+        "ローカルストレージに書き込めません。アプリを再起動して、もう一度お試しください。"
+      ],
+      "Unknown error": [
+        "不明なエラーが発生しました"
+      ],
+      "Unknown error.": [
+        "不明なエラーが発生しました。"
+      ],
+      "We could not process your request. Please try again or contact support if the issue persists.": [
+        "リクエストを処理できませんでした。再度お試しいただくか、問題が続く場合はサポートにお問い合わせください。"
+      ],
+      "We were unable to decrypt your local storage. Please restart the app and try again. If you're unable to resolve this issue, and you have an account, you may try uninstalling the app then reinstalling, then signing back into your account. Otherwise, please contact ${ SupportEmail } for support.": [
+        "ローカルストレージを復号化できませんでした。アプリを再起動して、もう一度お試しください。問題が解決しない場合、アカウントをお持ちであれば、アプリをアンインストールして再インストールし、アカウントに再度サインインしてみてください。それ以外の場合は、${ SupportEmail }までお問い合わせください。"
+      ],
+      "Your browser is blocking ${ AppName } from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out.": [
+        "ブラウザが${ AppName }によるローカルストレージの削除をブロックしています。このアプリのウィンドウが他に開いていないことを確認して、もう一度お試しください。問題が解決しない場合は、サインアウトするためにアプリのデータを手動で削除してください。"
+      ]
+    },
+    "B2.NavSharedUI.Info": {
+      "${ component.displayName } would like to interact with your ${ permissionsString }": [
+        "${ component.displayName }が次の項目へのアクセスを求めています：${ permissionsString }"
+      ],
+      "Enable the Hosted option for this component by opening the Preferences > General > Advanced Settings menu and toggling 'Use hosted when local is unavailable' under this component's options. Then press Reload.": [
+        "「設定」>「一般」>「詳細設定」メニューを開き、このコンポーネントのオプションにある「ローカルが利用できない場合はホスト型を使用」を切り替えることで、このコンポーネントのホスト型オプションを有効にします。その後、「再読み込み」を押してください。"
+      ],
+      "If you wish to go back to a stable version, make sure to sign out of this beta app first.": [
+        "安定版に戻る場合は、必ず先にこのベータ版アプリからサインアウトしてください。"
+      ],
+      "In order to access your note immediately, please switch from ${ componentName } to the Plain Editor.": [
+        "メモにすぐにアクセスするには、${ componentName }からプレーンエディターに切り替えてください。"
+      ],
+      "Initializing...": [
+        "初期化中..."
+      ],
+      "Loading": [
+        "読み込み中"
+      ],
+      "Locally-installed components are not available in the web application.": [
+        "ローカルにインストールされたコンポーネントは、ウェブアプリでは利用できません。"
+      ],
+      "No items found": [
+        "アイテムが見つかりません"
+      ],
+      "No results found": [
+        "結果が見つかりません"
+      ],
+      "No vaults found": [
+        "保管庫が見つかりません"
+      ],
+      "Please contact ${ SupportEmail } to remedy this issue.": [
+        "この問題を解決するには、${ SupportEmail }までお問い合わせください。"
+      ],
+      "Plugins use an offline messaging system to communicate and can only access the current note.": [
+        "プラグインはオフラインメッセージングシステムを使用して通信し、現在のメモにのみアクセスできます。"
+      ],
+      "Preparing demo...": [
+        "デモを準備中..."
+      ],
+      "This item is protected. Please authorize first.": [
+        "このアイテムは保護されています。先に認証を行ってください。"
+      ],
+      "To continue, choose from the following options:": [
+        "続行するには、次のいずれかを選択してください。"
+      ],
+      "Use the desktop application.": [
+        "デスクトップアプリを使用してください。"
+      ],
+      "We have received your request. Please check your email for further instructions.": [
+        "リクエストを受け付けました。詳細な手順についてはメールをご確認ください。"
+      ],
+      "You are using a beta version of the app": [
+        "ベータ版のアプリを使用しています"
+      ],
+      "You have restricted this component to not use a hosted version.": [
+        "このコンポーネントは、ホスト版を使用しないように制限されています。"
+      ]
+    },
+    "B2.NavSharedUI.Label": {
+      "${ SuperName } notes": [
+        "${ SuperName }メモ"
+      ],
+      "Account": [
+        "アカウント"
+      ],
+      "all": [
+        "すべて"
+      ],
+      "All commands": [
+        "すべてのコマンド"
+      ],
+      "Appearance": [
+        "外観"
+      ],
+      "Camera (${ abbreviatedDeviceId })": [
+        "カメラ（${ abbreviatedDeviceId }）"
+      ],
+      "Captured photo": [
+        "撮影した写真"
+      ],
+      "commands": [
+        "コマンド"
+      ],
+      "Current note": [
+        "現在のメモ"
+      ],
+      "Default": [
+        "デフォルト"
+      ],
+      "Device:": [
+        "デバイス："
+      ],
+      "Encryption upgrade available.": [
+        "暗号化バージョンをアップグレードできます。"
+      ],
+      "File name:": [
+        "ファイル名："
+      ],
+      "files": [
+        "ファイル"
+      ],
+      "Focus Mode": [
+        "フォーカスモード"
+      ],
+      "Formatting": [
+        "書式"
+      ],
+      "General": [
+        "一般"
+      ],
+      "Go to vaults menu": [
+        "保管庫メニューに移動"
+      ],
+      "Last edited by": [
+        "最終編集者"
+      ],
+      "Multiple": [
+        "複数"
+      ],
+      "New update available.": [
+        "新しいアップデートが利用可能です。"
+      ],
+      "notes": [
+        "メモ"
+      ],
+      "Notes list": [
+        "メモリスト"
+      ],
+      "One": [
+        "1つ"
+      ],
+      "Open account menu": [
+        "アカウントメニューを開く"
+      ],
+      "Open vault selection menu": [
+        "保管庫選択メニューを開く"
+      ],
+      "Photo Capture Device": [
+        "写真撮影に使用するデバイス"
+      ],
+      "Preview:": [
+        "プレビュー："
+      ],
+      "Protected overlay": [
+        "保護オーバーレイ"
+      ],
+      "Recent": [
+        "最近"
+      ],
+      "Search": [
+        "検索"
+      ],
+      "Shared by": [
+        "共有元"
+      ],
+      "Shared by contact": [
+        "共有相手による共有"
+      ],
+      "Shared in vault": [
+        "保管庫で共有済み"
+      ],
+      "Show Notes Panel": [
+        "メモパネルを表示"
+      ],
+      "Show Tags Panel": [
+        "タグパネルを表示"
+      ],
+      "tags": [
+        "タグ"
+      ],
+      "Tools": [
+        "ツール"
+      ],
+      "Vault name": [
+        "保管庫名"
+      ],
+      "Vault options": [
+        "保管庫のオプション"
+      ],
+      "Vault options menu": [
+        "保管庫のオプションメニュー"
+      ],
+      "Vault selection menu": [
+        "保管庫選択メニュー"
+      ]
+    },
+    "B2.NavSharedUI.Modal.Action": {
+      "Cancel": [
+        "キャンセル"
+      ]
+    },
+    "B2.NavSharedUI.Placeholder": {
+      "Search notes, files, commands, etc...": [
+        "メモ、ファイル、コマンドなどを検索..."
+      ],
+      "Search...": [
+        "検索..."
+      ]
+    },
+    "B2.NavSharedUI.Status": {
+      "${ selectedRows.length } selected": [
+        "${ selectedRows.length }行が選択済み"
+      ],
+      "${ stats.localDataCurrent }/${ stats.localDataTotal } items...": [
+        "${ stats.localDataCurrent }/${ stats.localDataTotal } アイテム..."
+      ],
+      "Copied!": [
+        "コピーしました！"
+      ],
+      "Decrypting ${ notesString }": [
+        "${ notesString }を復号化中…"
+      ],
+      "Download Complete.": [
+        "ダウンロード完了"
+      ],
+      "Downloading ${ stats.downloadCount } items. Keep app open.": [
+        "${ stats.downloadCount }個のアイテムをダウンロード中です。アプリを開いたままにしてください。"
+      ],
+      "Loading ${ notesString }": [
+        "${ notesString }を読み込み中"
+      ],
+      "Offline": [
+        "オフライン"
+      ],
+      "Potentially Out of Sync": [
+        "同期されていない可能性があります"
+      ],
+      "Processing your request...": [
+        "リクエストを処理中..."
+      ],
+      "Syncing ${ stats.uploadTotalCount } items (${ stringPercentage } complete)": [
+        "${ stats.uploadTotalCount }個のアイテムを同期中（${ stringPercentage }完了）"
+      ],
+      "Syncing...": [
+        "同期中..."
+      ],
+      "Syncing…": [
+        "同期中…"
+      ]
+    },
+    "B2.NavSharedUI.Title": {
+      "Activate Plugin": [
+        "プラグインを有効化"
+      ],
+      "Advanced": [
+        "詳細"
+      ],
+      "Info": [
+        "情報"
+      ],
+      "Keyboard shortcuts": [
+        "キーボードショートカット"
+      ],
+      "Move to vault": [
+        "保管庫に移動"
+      ],
+      "Quick settings": [
+        "クイック設定"
+      ],
+      "Record a video": [
+        "ビデオを録画"
+      ],
+      "Take a photo": [
+        "写真を撮影"
+      ],
+      "Vault options": [
+        "保管庫のオプション"
+      ]
+    },
+    "B2.NavSharedUI.Warning": {
+      "${ LegacyAppHost } is no longer maintained. Please switch to": [
+        "${ LegacyAppHost }はサポートが終了しました。今後はこちらをご利用ください："
+      ],
+      "The extension you are attempting to install comes from an untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?": [
+        "インストールしようとしている拡張機能は、信頼できないソースからのものです。信頼できない拡張機能は、データのセキュリティを低下させる可能性があります。続行しますか？"
+      ],
+      "This extension is deprecated.": [
+        "この拡張機能は非推奨です。"
+      ]
+    },
+    "B3.Notes.EditorToolbar.Action": {
+      "Add column header": [
+        "列ヘッダーを追加"
+      ],
+      "Add row header": [
+        "行ヘッダーを追加"
+      ],
+      "Align center": [
+        "中央揃え"
+      ],
+      "Align justify": [
+        "両端揃え"
+      ],
+      "Align left": [
+        "左揃え"
+      ],
+      "Align right": [
+        "右揃え"
+      ],
+      "Apply": [
+        "適用"
+      ],
+      "Bold": [
+        "太字"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Cancel editing": [
+        "編集をキャンセル"
+      ],
+      "Center align": [
+        "中央揃え"
+      ],
+      "Collapsible": [
+        "折りたたみ可能"
+      ],
+      "Confirm": [
+        "確認"
+      ],
+      "Copy link": [
+        "リンクをコピー"
+      ],
+      "Current date": [
+        "現在の日付"
+      ],
+      "Current date and time": [
+        "現在の日時"
+      ],
+      "Current time": [
+        "現在の時刻"
+      ],
+      "Delete column": [
+        "列を削除"
+      ],
+      "Delete row": [
+        "行を削除"
+      ],
+      "Delete table": [
+        "表を削除"
+      ],
+      "Dismiss keyboard": [
+        "キーボードを隠す"
+      ],
+      "Divider": [
+        "区切り線"
+      ],
+      "Edit link": [
+        "リンクを編集"
+      ],
+      "Generate ${ length }-character cryptographically secure password": [
+        "暗号学的に安全な${ length }文字のパスワードを生成"
+      ],
+      "Generate cryptographically secure password": [
+        "暗号学的に安全なパスワードを生成"
+      ],
+      "Go to next search result": [
+        "次の検索結果に移動"
+      ],
+      "Go to previous search result": [
+        "前の検索結果に移動"
+      ],
+      "Highlight": [
+        "ハイライト"
+      ],
+      "Image from URL": [
+        "URLから画像を追加"
+      ],
+      "Indent": [
+        "インデント"
+      ],
+      "Inline Code": [
+        "インラインコード"
+      ],
+      "Insert ${ selectionCounts.columns } columns left": [
+        "左に${ selectionCounts.columns }列挿入"
+      ],
+      "Insert ${ selectionCounts.columns } columns right": [
+        "右に${ selectionCounts.columns }列挿入"
+      ],
+      "Insert column right": [
+        "右に列を挿入"
+      ],
+      "Insert row above": [
+        "上に行を挿入"
+      ],
+      "Insert row below": [
+        "下に行を挿入"
+      ],
+      "Insert Table": [
+        "表を挿入"
+      ],
+      "Italic": [
+        "イタリック体"
+      ],
+      "Justify": [
+        "両端揃え"
+      ],
+      "Left align": [
+        "左揃え"
+      ],
+      "Link": [
+        "リンク"
+      ],
+      "Merge cells": [
+        "セルを結合"
+      ],
+      "Outdent": [
+        "アウトデント"
+      ],
+      "Redo": [
+        "やり直す"
+      ],
+      "Remove column header": [
+        "列ヘッダーを削除"
+      ],
+      "Remove link": [
+        "リンクを削除"
+      ],
+      "Remove row header": [
+        "行ヘッダーを削除"
+      ],
+      "Replace": [
+        "置き換える"
+      ],
+      "Replace all": [
+        "すべて置換"
+      ],
+      "Right align": [
+        "右揃え"
+      ],
+      "Save link": [
+        "リンクを保存"
+      ],
+      "Search": [
+        "検索"
+      ],
+      "Search and replace in current note": [
+        "現在のメモ内で検索と置換"
+      ],
+      "Search in current note": [
+        "現在のメモ内を検索"
+      ],
+      "Show markdown preview for current note": [
+        "現在のメモのMarkdownプレビューを表示"
+      ],
+      "Strikethrough": [
+        "取り消し線"
+      ],
+      "Subscript": [
+        "下付き文字"
+      ],
+      "Superscript": [
+        "上付き文字"
+      ],
+      "Table": [
+        "表"
+      ],
+      "Text formatting options": [
+        "テキスト書式オプション"
+      ],
+      "Toggle ${ SuperName } note toolbar": [
+        "${ SuperName }メモのツールバーを切り替え"
+      ],
+      "Toggle checklist item": [
+        "チェックリストアイテムを切り替え"
+      ],
+      "Underline": [
+        "下線"
+      ],
+      "Undo": [
+        "元に戻す"
+      ],
+      "Unmerge cells": [
+        "セルの結合を解除"
+      ],
+      "Upload file": [
+        "ファイルをアップロード"
+      ]
+    },
+    "B3.Notes.EditorToolbar.Error": {
+      "Cannot upload file \"${ fileName }\"": [
+        "ファイル「${ fileName }」をアップロードできません"
+      ]
+    },
+    "B3.Notes.EditorToolbar.Info": {
+      "Create new note from selection": [
+        "選択範囲から新しいメモを作成"
+      ],
+      "Creates a new note containing the current selection and replaces the selection with a link to the new note.": [
+        "現在の選択範囲を含む新しいメモを作成し、選択範囲をその新しいメモへのリンクに置き換えます。"
+      ],
+      "May lead to performance degradation, especially on large documents.": [
+        "特に大きなドキュメントでは、パフォーマンスが低下する可能性があります。"
+      ]
+    },
+    "B3.Notes.EditorToolbar.Label": {
+      "${ rows }x${ columns } Table": [
+        "${ rows }x${ columns }の表"
+      ],
+      "Alignment": [
+        "配置"
+      ],
+      "Block picker": [
+        "ブロックピッカー"
+      ],
+      "Block style": [
+        "ブロックスタイル"
+      ],
+      "Bulleted List": [
+        "箇条書きリスト"
+      ],
+      "Case sensitive": [
+        "大文字と小文字を区別する"
+      ],
+      "Case sensitive (${ caseSensitivityShortcut })": [
+        "大文字と小文字を区別（${ caseSensitivityShortcut }）"
+      ],
+      "Change code block language": [
+        "コードブロックの言語を変更"
+      ],
+      "Check List": [
+        "チェックリスト"
+      ],
+      "Clear formatting": [
+        "書式をクリア"
+      ],
+      "Close (${ searchToggleShortcut })": [
+        "閉じる（${ searchToggleShortcut }）"
+      ],
+      "Code Block": [
+        "コードブロック"
+      ],
+      "Columns:": [
+        "列："
+      ],
+      "Formatting options": [
+        "書式オプション"
+      ],
+      "Heading 1": [
+        "見出し 1"
+      ],
+      "Heading 2": [
+        "見出し 2"
+      ],
+      "Heading 3": [
+        "見出し 3"
+      ],
+      "Heading 4": [
+        "見出し 4"
+      ],
+      "Heading 5": [
+        "見出し 5"
+      ],
+      "Heading 6": [
+        "見出し 6"
+      ],
+      "Highlight all results": [
+        "すべての結果をハイライト"
+      ],
+      "Insert": [
+        "挿入"
+      ],
+      "Insert ${ selectionCounts.rows } rows above": [
+        "上に${ selectionCounts.rows } 行挿入"
+      ],
+      "Insert ${ selectionCounts.rows } rows below": [
+        "下に${ selectionCounts.rows }行挿入"
+      ],
+      "Insert column left": [
+        "左に列を挿入"
+      ],
+      "Insert image from URL": [
+        "URLから画像を挿入"
+      ],
+      "Insert Table": [
+        "表を挿入"
+      ],
+      "Next result (Enter)": [
+        "次の結果 (Enter)"
+      ],
+      "No headings found": [
+        "見出しが見つかりません"
+      ],
+      "Normal": [
+        "通常"
+      ],
+      "Numbered List": [
+        "番号付きリスト"
+      ],
+      "Open table actions menu": [
+        "表の操作メニューを開く"
+      ],
+      "Paragraph": [
+        "段落"
+      ],
+      "Plain Text": [
+        "プレーンテキスト"
+      ],
+      "Previous result (Shift + Enter)": [
+        "前の検索結果 (Shift + Enter)"
+      ],
+      "Quote": [
+        "引用"
+      ],
+      "Replace": [
+        "置き換える"
+      ],
+      "Replace (Ctrl + Enter)": [
+        "置換 (Ctrl + Enter)"
+      ],
+      "Replace all (Ctrl + Alt + Enter)": [
+        "すべて置換 (Ctrl + Alt + Enter)"
+      ],
+      "Rows:": [
+        "行："
+      ],
+      "Search": [
+        "検索"
+      ],
+      "Table actions": [
+        "表の操作"
+      ],
+      "Table actions menu": [
+        "表の操作メニュー"
+      ],
+      "Table of contents": [
+        "目次"
+      ],
+      "Table of Contents": [
+        "目次"
+      ],
+      "Text formatting options": [
+        "テキスト書式オプション"
+      ],
+      "Text style": [
+        "テキストスタイル"
+      ],
+      "Toggle Replace Mode (${ toggleReplaceShortcut })": [
+        "置換モードを切り替え（${ toggleReplaceShortcut }）"
+      ]
+    },
+    "B3.Notes.NoteActions.Action": {
+      "${ count } selected notes": [
+        "${ count }件のメモを選択中"
+      ],
+      "Archive": [
+        "アーカイブ"
+      ],
+      "Archive ${ noteCommandTarget }": [
+        "${ noteCommandTarget }をアーカイブ"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Cancel multiple selection": [
+        "複数選択をキャンセル"
+      ],
+      "Compare JSON instead": [
+        "代わりにJSONを比較"
+      ],
+      "Delete ${ noteCommandTarget } permanently": [
+        "${ noteCommandTarget }を完全に削除"
+      ],
+      "delete others": [
+        "その他を削除"
+      ],
+      "Delete others permanently": [
+        "その他を完全に削除"
+      ],
+      "Delete permanently": [
+        "完全に削除"
+      ],
+      "Duplicate": [
+        "複製"
+      ],
+      "Duplicate ${ noteCommandTarget }": [
+        "${ noteCommandTarget }を複製"
+      ],
+      "Empty Trash": [
+        "ごみ箱を空にする"
+      ],
+      "Export ${ noteCommandTarget }": [
+        "${ noteCommandTarget }をエクスポート"
+      ],
+      "Keep selected,": [
+        "選択したものを保持し、"
+      ],
+      "Move others to trash": [
+        "その他をごみ箱に移動"
+      ],
+      "Move to trash": [
+        "ごみ箱へ移動"
+      ],
+      "Open": [
+        "開く"
+      ],
+      "Pin ${ noteCommandTarget }": [
+        "${ noteCommandTarget }をピン留め"
+      ],
+      "Pin to top": [
+        "最上部にピン留め"
+      ],
+      "Pin/unpin selected note(s)": [
+        "選択したメモをピン留め/ピン留め解除"
+      ],
+      "Preview": [
+        "プレビュー"
+      ],
+      "Restore": [
+        "復元"
+      ],
+      "Restore ${ noteCommandTarget }": [
+        "${ noteCommandTarget }を復元する"
+      ],
+      "Star": [
+        "スターを付ける"
+      ],
+      "Star ${ noteCommandTarget }": [
+        "${ noteCommandTarget }にスターを付ける"
+      ],
+      "Star/unstar selected note(s)": [
+        "選択したメモにスターを付ける/解除する"
+      ],
+      "Trash ${ noteCommandTarget }": [
+        "${ noteCommandTarget }をごみ箱に移動"
+      ],
+      "trash others": [
+        "その他をごみ箱に移動"
+      ],
+      "Unarchive": [
+        "アーカイブを解除"
+      ],
+      "Unarchive ${ noteCommandTarget }": [
+        "${ noteCommandTarget }のアーカイブを解除"
+      ],
+      "Unpin": [
+        "ピン留めを解除"
+      ],
+      "Unpin ${ noteCommandTarget }": [
+        "${ noteCommandTarget }のピン留めを解除"
+      ],
+      "Unstar": [
+        "スターを解除"
+      ],
+      "Unstar ${ noteCommandTarget }": [
+        "${ noteCommandTarget }のスターを解除"
+      ]
+    },
+    "B3.Notes.NoteActions.Confirmation": {
+      "Are you sure you want to delete ${ itemCount } item?": [
+        "本当に${ itemCount }個のアイテムを削除しますか？"
+      ],
+      "Are you sure you want to move ${ noteTitle } to the trash?": [
+        "本当に${ noteTitle }をごみ箱に移動しますか？"
+      ],
+      "Are you sure you want to move these files to the trash?": [
+        "本当にこれらのファイルをごみ箱に移動しますか？"
+      ],
+      "Are you sure you want to move these notes to the trash?": [
+        "本当にこれらのメモをごみ箱に移動ますか？"
+      ],
+      "Are you sure you want to permanently delete ${ count } note?": [
+        "本当に${ count }個のメモを完全に削除しますか？"
+      ],
+      "Are you sure you want to permanently delete ${ noteTitle }?": [
+        "本当に${ noteTitle }を完全に削除しますか？"
+      ],
+      "Are you sure you want to permanently delete these files?": [
+        "本当にこれらのファイルを完全に削除しますか？"
+      ],
+      "Are you sure you want to permanently delete these notes?": [
+        "本当にこれらのメモを完全に削除しますか？"
+      ]
+    },
+    "B3.Notes.NoteActions.Error": {
+      "Could not export notes": [
+        "メモをエクスポートできませんでした"
+      ],
+      "Sync Unreachable": [
+        "同期サーバーに接続できません"
+      ],
+      "The item you are trying to delete cannot be found.": [
+        "削除しようとしているアイテムが見つかりません。"
+      ]
+    },
+    "B3.Notes.NoteActions.Info": {
+      "${ characters } characters": [
+        "${ characters }文字"
+      ],
+      "${ paragraphs } paragraphs": [
+        "${ paragraphs }段落"
+      ],
+      "${ SuperName } notes use JSON under the hood to create rich and flexible documents. While neatly organized, it's not ideal to read or compare manually. Instead, this diff compares a Markdown rendition of the notes.": [
+        "${ SuperName } メモは、リッチで柔軟なドキュメントを作成するために、内部的に JSON を使用しています。JSON は整然と構成されていますが、手動で読んだり比較したりするのには向いていません。そのため、この差分ではメモを Markdown に変換したものを比較しています。"
+      ],
+      "${ trashedNotesCount } notes in Trash": [
+        "ごみ箱に${ trashedNotesCount }件のメモ"
+      ],
+      "${ words } words": [
+        "${ words }語"
+      ],
+      "Duplicated note \"${ duplicated.title }\"": [
+        "メモ「${ duplicated.title }」を複製しました"
+      ],
+      "Exporting ${ notes.length } ${ noteWord }...": [
+        "${ notes.length }件の${ noteWord }をエクスポート中..."
+      ],
+      "It will be synced less often. Changes will be saved offline normally.": [
+        "同期の頻度が下がります。変更内容は通常どおりオフラインで保存されます。"
+      ],
+      "One or more of these notes have editing disabled. If you'd like to ${ archiveAction } them, make sure editing is enabled on all of them, and try again.": [
+        "これらのメモのうち、1つ以上で編集が無効になっています。${ archiveAction }するには、すべてのメモで編集を有効にしてから、再度お試しください。"
+      ],
+      "One or more of these notes have editing disabled. If you'd like to delete them, make sure editing is enabled on all of them, and try again.": [
+        "これらのメモのうち、1つ以上で編集が無効になっています。削除するには、すべてのメモで編集を有効にしてから、再度お試しください。"
+      ],
+      "Only the selected version will be kept; others will be deleted permanently.": [
+        "選択したバージョンのみが保持され、その他のバージョンは完全に削除されます。"
+      ],
+      "Only the selected version will be kept; others will be moved to trash.": [
+        "選択したバージョンのみが保持され、他のバージョンはごみ箱に移動されます。"
+      ],
+      "This note had editing disabled. If you'd like to delete it, enable editing, and try again.": [
+        "このメモは編集が無効になっています。削除するには、編集を有効にしてからもう一度お試しください。"
+      ],
+      "This note has editing disabled. If you'd like to ${ archiveAction } it, enable editing, and try again.": [
+        "このメモは編集が無効になっています。${ archiveAction }するには、編集を有効にしてからもう一度お試しください。"
+      ],
+      "This note has editing disabled. If you'd like to archive it, enable editing, and try again.": [
+        "このメモは編集が無効になっています。アーカイブするには、編集を有効にしてからもう一度お試しください。"
+      ],
+      "This note has editing disabled. If you'd like to delete it, enable editing, and try again.": [
+        "このメモは編集が無効になっています。削除するには、編集を有効にしてからもう一度お試しください。"
+      ],
+      "This note has editing disabled. If you'd like to edit its options, enable editing, and try again.": [
+        "このメモは編集が無効になっています。オプションを変更するには、編集を有効にしてからもう一度お試しください。"
+      ],
+      "This note has editing disabled. If you'd like to restore it to a previous revision, enable editing and try again.": [
+        "このメモは編集が無効になっています。以前のリビジョンに復元するには、編集を有効にしてからもう一度お試しください。"
+      ],
+      "This note has editing disabled. If you'd like to unarchive it, enable editing, and try again.": [
+        "このメモは編集が無効になっています。アーカイブを解除するには、編集を有効にしてもう一度お試しください。"
+      ],
+      "This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.": [
+        "このメモはプレースホルダーであるため、削除できません。リストから外すには、別のメモを開いてください。"
+      ],
+      "This will keep only the selected versions and delete the other versions permanently. Are you sure?": [
+        "選択したバージョンのみが保持され、他のバージョンは完全に削除されます。本当によろしいですか？"
+      ],
+      "This will keep only the selected versions and move the other versions to the trash. Are you sure?": [
+        "選択したバージョンのみが保持され、他のバージョンはごみ箱に移動されます。本当によろしいですか？"
+      ]
+    },
+    "B3.Notes.NoteActions.Label": {
+      "Actions will be performed on all selected notes.": [
+        "選択したすべてのメモに対して操作が実行されます。"
+      ],
+      "archive": [
+        "アーカイブ"
+      ],
+      "conflict": [
+        "競合"
+      ],
+      "Conflicted Copy": [
+        "競合コピー"
+      ],
+      "conflicts": [
+        "競合"
+      ],
+      "Created": [
+        "作成日時："
+      ],
+      "current note": [
+        "現在のメモ"
+      ],
+      "Current version": [
+        "現在のバージョン"
+      ],
+      "Diff Mode": [
+        "差分モード"
+      ],
+      "Last modified": [
+        "最終更新日時："
+      ],
+      "List": [
+        "リスト"
+      ],
+      "note": [
+        "メモ"
+      ],
+      "Note context menu": [
+        "メモのコンテキストメニュー"
+      ],
+      "Note ID": [
+        "メモID"
+      ],
+      "Note options": [
+        "メモのオプション"
+      ],
+      "Note options menu": [
+        "メモのオプションメニュー"
+      ],
+      "notes": [
+        "メモ"
+      ],
+      "Pin note (${ shortcut })": [
+        "メモをピン留め（${ shortcut }）"
+      ],
+      "Pin selected notes": [
+        "選択したメモをピン留め"
+      ],
+      "Preview Mode": [
+        "プレビューモード"
+      ],
+      "Scrolling is not synced. Click to sync.": [
+        "スクロールは同期されていません。クリックして同期してください。"
+      ],
+      "Scrolling is synced": [
+        "スクロールが同期されています"
+      ],
+      "selected note(s)": [
+        "選択したメモ"
+      ],
+      "this note": [
+        "このメモ"
+      ],
+      "unarchive": [
+        "アーカイブを解除"
+      ],
+      "Unpin note (${ shortcut })": [
+        "メモのピン留めを解除 (${ shortcut })"
+      ],
+      "Version ${ versionNumber }": [
+        "バージョン${ versionNumber }"
+      ]
+    },
+    "B3.Notes.NoteActions.Status": {
+      "All changes saved": [
+        "すべての変更を保存しました"
+      ],
+      "All changes saved offline": [
+        "すべての変更がオフラインで保存されました"
+      ],
+      "Changes saved offline": [
+        "オフラインで変更を保存しました"
+      ],
+      "Note is too large": [
+        "メモが大きすぎます"
+      ]
+    },
+    "B3.Notes.NoteActions.Title": {
+      "Conflict options": [
+        "競合のオプション"
+      ],
+      "Delete Permanently": [
+        "完全に削除"
+      ],
+      "Keep only selected versions?": [
+        "選択したバージョンのみ保持しますか？"
+      ],
+      "Move to Trash": [
+        "ごみ箱に移動"
+      ],
+      "Resolve conflicts": [
+        "競合を解決"
+      ]
+    },
+    "B3.Notes.NoteList.Action": {
+      "Archived": [
+        "アーカイブ済み"
+      ],
+      "Create a new note in the selected tag ${ shortcut }": [
+        "選択したタグに新しいメモを作成 ${ shortcut }"
+      ],
+      "Create new note": [
+        "新しいメモを作成"
+      ],
+      "Editing Disabled": [
+        "編集無効"
+      ],
+      "Go to next item": [
+        "次のアイテムに移動"
+      ],
+      "Go to previous item": [
+        "前のアイテムに移動"
+      ],
+      "Open display options menu": [
+        "表示オプションメニューを開く"
+      ],
+      "Options": [
+        "オプション"
+      ],
+      "Reset": [
+        "リセット"
+      ],
+      "Select all items": [
+        "すべてのアイテムを選択"
+      ],
+      "Show archived": [
+        "アーカイブ済みを表示"
+      ],
+      "Show date": [
+        "日付を表示"
+      ],
+      "Show icon": [
+        "アイコンを表示"
+      ],
+      "Show pinned": [
+        "ピン留め済みを表示"
+      ],
+      "Show protected": [
+        "保護されたメモを表示"
+      ],
+      "Show tags": [
+        "タグを表示"
+      ],
+      "Show trashed": [
+        "ゴミ箱内のアイテムを表示"
+      ],
+      "Starred": [
+        "スター付き"
+      ],
+      "Take photo": [
+        "写真を撮影"
+      ],
+      "Toggle global search": [
+        "グローバル検索を切り替え"
+      ],
+      "Trashed": [
+        "ゴミ箱に移動済み"
+      ],
+      "Upload file": [
+        "ファイルをアップロード"
+      ],
+      "Upload file ${ shortcut }": [
+        "ファイルをアップロード ${ shortcut }"
+      ]
+    },
+    "B3.Notes.NoteList.AriaLabel": {
+      "Cancel multiple selection": [
+        "複数選択をキャンセル"
+      ],
+      "Display options menu": [
+        "表示オプションメニュー"
+      ],
+      "Go to items list": [
+        "アイテムリストに移動"
+      ],
+      "Hide items list": [
+        "アイテムリストを隠す"
+      ],
+      "Notes & Files": [
+        "メモとファイル"
+      ],
+      "Search": [
+        "検索"
+      ],
+      "Select all items": [
+        "すべてのアイテムを選択"
+      ],
+      "Show items list": [
+        "アイテムリストを表示"
+      ]
+    },
+    "B3.Notes.NoteList.Info": {
+      "${ resultCount } search result": [
+        "${ resultCount } 件の検索結果"
+      ],
+      "${ selectedItemsCount } selected": [
+        "${ selectedItemsCount }件選択済み"
+      ],
+      "and ${ additionalLinksCount } more...": [
+        "ほか${ additionalLinksCount }件のリンク..."
+      ],
+      "Drop your files to upload and link them to tag \"${ tagTitle }\"": [
+        "ファイルをドロップしてアップロードし、タグ「${ tagTitle }」にリンクしてください"
+      ],
+      "Drop your files to upload and link them to the current note": [
+        "ファイルをドロップしてアップロードし、現在のメモにリンクしてください"
+      ],
+      "File is backed up locally": [
+        "ファイルはローカルにバックアップされています"
+      ],
+      "File is protected": [
+        "ファイルは保護されています"
+      ],
+      "Loading ${ localDataCurrent }/${ localDataTotal } items...": [
+        "${ localDataCurrent }/${ localDataTotal } 件のアイテムを読み込み中..."
+      ],
+      "No ${ ListedName } accounts found": [
+        "${ ListedName }アカウントが見つかりません"
+      ],
+      "No actions available": [
+        "操作は利用できません"
+      ],
+      "No items.": [
+        "アイテムがありません"
+      ],
+      "Upgrade for per-tag preferences": [
+        "タグごとの設定を利用するにはアップグレードが必要です"
+      ]
+    },
+    "B3.Notes.NoteList.Label": {
+      "${ ListedName } actions": [
+        "${ ListedName }の操作"
+      ],
+      "Add item": [
+        "アイテムを追加"
+      ],
+      "Add item menu": [
+        "アイテム追加メニュー"
+      ],
+      "April": [
+        "4月"
+      ],
+      "Attached to": [
+        "添付先"
+      ],
+      "August": [
+        "8月"
+      ],
+      "Capture new notes daily with a calendar-based layout": [
+        "カレンダーベースのレイアウトで毎日のメモを記録"
+      ],
+      "Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook calendar layout.": [
+        "タグごとの表示設定と、まったく新しいデイリーノートのカレンダーレイアウトを使って、柔軟なワークフローと情報を整理しやすいレイアウトを作成できます。"
+      ],
+      "Create powerful workflows and organizational layouts with per-tag display preferences.": [
+        "タグごとの表示設定で、柔軟なワークフローと情報を整理しやすいレイアウトを作成できます。"
+      ],
+      "Creation date": [
+        "作成日"
+      ],
+      "Current date and time": [
+        "現在の日時"
+      ],
+      "Current note count": [
+        "現在のメモ数"
+      ],
+      "Current Streak": [
+        "現在の連続記録日数"
+      ],
+      "Custom format": [
+        "カスタム形式"
+      ],
+      "Daily Notebook": [
+        "デイリーノート"
+      ],
+      "Date modified": [
+        "更新日"
+      ],
+      "Day": [
+        "日"
+      ],
+      "Days": [
+        "日"
+      ],
+      "December": [
+        "12月"
+      ],
+      "Display the notes and files in the current tag in a table layout": [
+        "現在のタグ内のメモとファイルをテーブルレイアウトで表示します。"
+      ],
+      "Empty": [
+        "空"
+      ],
+      "Excluding pinned": [
+        "ピン留め済みを除く"
+      ],
+      "Excluding pinned and protected": [
+        "ピン留め済みと保護済みを除く"
+      ],
+      "Excluding protected": [
+        "保護済みを除く"
+      ],
+      "February": [
+        "2月"
+      ],
+      "File context menu": [
+        "ファイルのコンテキストメニュー"
+      ],
+      "File is backed up locally": [
+        "ファイルはローカルにバックアップされています"
+      ],
+      "File is protected": [
+        "ファイルは保護されています"
+      ],
+      "File options": [
+        "ファイルのオプション"
+      ],
+      "Files": [
+        "ファイル"
+      ],
+      "Fr": [
+        "金"
+      ],
+      "Global": [
+        "グローバル"
+      ],
+      "January": [
+        "1月"
+      ],
+      "July": [
+        "7月"
+      ],
+      "June": [
+        "6月"
+      ],
+      "Labs": [
+        "ラボ"
+      ],
+      "March": [
+        "3月"
+      ],
+      "May": [
+        "5月"
+      ],
+      "Mo": [
+        "月"
+      ],
+      "Modified": [
+        "更新"
+      ],
+      "Name": [
+        "名前"
+      ],
+      "New note defaults": [
+        "新しいメモのデフォルト設定"
+      ],
+      "Note ${ noteNumber }": [
+        "メモ ${ noteNumber }"
+      ],
+      "Note context menu": [
+        "メモのコンテキストメニュー"
+      ],
+      "Note Type": [
+        "メモの種類"
+      ],
+      "Notes list options menu": [
+        "メモリストのオプションメニュー"
+      ],
+      "November": [
+        "11月"
+      ],
+      "Now": [
+        "現在"
+      ],
+      "October": [
+        "10月"
+      ],
+      "Options": [
+        "オプション"
+      ],
+      "Other": [
+        "その他"
+      ],
+      "Preferences for": [
+        "設定対象"
+      ],
+      "Protected": [
+        "保護済み"
+      ],
+      "Record video": [
+        "ビデオを録画"
+      ],
+      "Sa": [
+        "土"
+      ],
+      "Select the default note type": [
+        "デフォルトのメモの種類を選択"
+      ],
+      "Select the format for the note title": [
+        "メモのタイトルの形式を選択"
+      ],
+      "September": [
+        "9月"
+      ],
+      "Show note preview": [
+        "メモのプレビューを表示"
+      ],
+      "Size": [
+        "サイズ"
+      ],
+      "Sort by": [
+        "並べ替え"
+      ],
+      "Su": [
+        "日"
+      ],
+      "Table view": [
+        "表を表示"
+      ],
+      "Th": [
+        "木"
+      ],
+      "Title": [
+        "タイトル"
+      ],
+      "Title Format": [
+        "タイトルの形式"
+      ],
+      "Tu": [
+        "火"
+      ],
+      "Upload date": [
+        "アップロード日"
+      ],
+      "View": [
+        "表示"
+      ],
+      "We": [
+        "水"
+      ]
+    },
+    "B3.Notes.NoteList.Placeholder": {
+      "Search...": [
+        "検索..."
+      ]
+    },
+    "B3.Notes.NoteList.Status": {
+      "Loading...": [
+        "読み込み中…"
+      ],
+      "Potentially Out of Sync": [
+        "同期されていない可能性があります"
+      ],
+      "Syncing...": [
+        "同期中..."
+      ]
+    },
+    "B3.Notes.NoteList.Title": {
+      "Display options": [
+        "表示オプション"
+      ]
+    },
+    "B4.Notes.EditingUI.Action": {
+      "Back": [
+        "戻る"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Change note type": [
+        "メモの種類を変更"
+      ],
+      "Confirm": [
+        "確認"
+      ],
+      "Convert": [
+        "変換"
+      ],
+      "Convert As-Is": [
+        "現状のまま変換"
+      ],
+      "Copied": [
+        "コピーしました"
+      ],
+      "Copy": [
+        "コピー"
+      ],
+      "Disable status updates": [
+        "ステータス更新を無効にする"
+      ],
+      "Discard": [
+        "破棄"
+      ],
+      "Done": [
+        "完了"
+      ],
+      "Enable editing": [
+        "編集を有効にする"
+      ],
+      "Enable status updates": [
+        "ステータス更新を有効にする"
+      ],
+      "Manage Plugins": [
+        "プラグインを管理"
+      ],
+      "Reset": [
+        "リセット"
+      ],
+      "Save image to Files": [
+        "画像をファイルに保存"
+      ],
+      "Save to Files": [
+        "ファイルに保存"
+      ],
+      "Sync now": [
+        "今すぐ同期"
+      ],
+      "Upload": [
+        "アップロード"
+      ]
+    },
+    "B4.Notes.EditingUI.AriaLabel": {
+      "Note sync status": [
+        "メモの同期状態"
+      ]
+    },
+    "B4.Notes.EditingUI.Confirmation": {
+      "Are you sure you want to change this note's type?": [
+        "本当にこのメモの種類を変更しますか？"
+      ],
+      "Are you sure you want to discard this clip?": [
+        "本当にこのクリップを破棄しますか？"
+      ],
+      "Are you sure?": [
+        "本当によろしいですか？"
+      ],
+      "Doing so might result in minor formatting changes.": [
+        "これにより、書式が一部変更される可能性があります。"
+      ],
+      "Yes, change it": [
+        "変更する"
+      ]
+    },
+    "B4.Notes.EditingUI.Error": {
+      "${ AppName } is trying to communicate with ${ componentDisplayName }, but an error is occurring. Please restart this extension and try again.": [
+        "${ AppName }が${ componentDisplayName }と通信しようとしていますが、エラーが発生しています。この拡張機能を再起動して、再度お試しください。"
+      ],
+      "${ componentDisplayName } is trying to save, but it is in a locked state and cannot accept changes.": [
+        "${ componentDisplayName }は保存しようとしていますが、ロック状態のため変更を受け付けられません。"
+      ],
+      "${ imgResponse.status }: Could not fetch image": [
+        "${ imgResponse.status }：画像を取得できませんでした"
+      ],
+      "A component is trying to communicate with ${ AppName }, but there is an error establishing a bridge. Please restart the app and try again.": [
+        "コンポーネントが${ AppName }と通信しようとしていますが、ブリッジを確立できませんでした。アプリを再起動して、もう一度お試しください。"
+      ],
+      "An unexpected error occurred": [
+        "予期しないエラーが発生しました。"
+      ],
+      "Changes not saved": [
+        "変更が保存されていません"
+      ],
+      "Offline Saving Issue": [
+        "オフライン保存で問題が発生しました"
+      ],
+      "The item you are attempting to save has editing disabled.": [
+        "保存しようとしているアイテムは、編集が無効になっています。"
+      ],
+      "The items you are attempting to save have editing disabled.": [
+        "保存しようとしているアイテムは編集が無効になっています。"
+      ],
+      "The note you are attempting to save has editing disabled": [
+        "保存しようとしているメモは編集が無効になっています"
+      ],
+      "The notes you are attempting to save have editing disabled.": [
+        "保存しようとしているメモは編集が無効になっています。"
+      ],
+      "There was an error saving your note. Please try again.": [
+        "メモの保存中にエラーが発生しました。再度お試しください。"
+      ],
+      "Unable to find component with ID ${ componentIdentifier }. Please restart the app and try again.": [
+        "ID ${ componentIdentifier } のコンポーネントが見つかりません。アプリを再起動して、もう一度お試しください。"
+      ],
+      "Unable to find system editor for this note. Select Manage Plugins to reinstall this editor.": [
+        "このメモのシステムエディターが見つかりません。「プラグインを管理」を選択して、このエディターを再インストールしてください。"
+      ]
+    },
+    "B4.Notes.EditingUI.Info": {
+      "An invalid change was made inside the ${ SuperName } editor. Your change was not saved. Please report this error to the team: ${ errorDetails }": [
+        "${ SuperName }エディター内で無効な変更が行われました。変更は保存されませんでした。このエラーをチームに報告してください：${ errorDetails }"
+      ],
+      "If this is not the case, cancel this prompt.": [
+        "該当しない場合は、このダイアログをキャンセルしてください。"
+      ],
+      "Note status updates are disabled": [
+        "メモのステータス更新は無効になっています"
+      ],
+      "On macOS: ⌘ + ⌃ + Space bar to bring up emoji picker.": [
+        "macOSの場合：⌘ + ⌃ + スペースバーで絵文字ピッカーを表示します。"
+      ],
+      "On Windows: Windows key + . to bring up emoji picker.": [
+        "Windowsの場合：Windowsキー + . で絵文字ピッカーを表示します。"
+      ],
+      "Please enable Camera permissions for ${ AppName } to enable Moments.": [
+        "Momentsを有効にするには、${ AppName }にカメラへのアクセスを許可してください。"
+      ],
+      "The following is a preview of how your note will look when converted to ${ SuperName }. ${ SuperName } notes use a custom format under the hood. Converting your note will transition it from plaintext to the custom ${ SuperName } format.": [
+        "以下は、メモを${ SuperName }に変換した場合の表示のプレビューです。${ SuperName }メモは内部でカスタム形式を使用します。メモを変換すると、プレーンテキストからカスタム${ SuperName }形式に移行されます。"
+      ],
+      "This format is not human-readable. If you want to convert the note to a human-readable format, please use the \"Convert\" option instead.": [
+        "この形式は人間が読めるものではありません。メモを人間が読める形式に変換する場合は、代わりに「変換」オプションをご利用ください。"
+      ],
+      "This option is useful if you switched this note's type from ${ SuperName } to another plaintext-based format, and want to return to ${ SuperName }.": [
+        "このオプションは、このメモの種類を${ SuperName }から他のプレーンテキストベースの形式に変更した後、${ SuperName }に戻したい場合に便利です。"
+      ],
+      "This option is useful if you want to edit the note's content which is in ${ SuperName }'s JSON format directly.": [
+        "このオプションは、${ SuperName } の JSON 形式で保存されているメモの内容を直接編集する場合に便利です。"
+      ],
+      "To use this option, the preview in the convert window should display a language format known as JSON.": [
+        "このオプションを使用するには、変換ウィンドウのプレビューにJSONという言語形式が表示されている必要があります。"
+      ],
+      "Unable to find item ${ itemUuid }": [
+        "アイテム「${ itemUuid }」が見つかりません"
+      ],
+      "Use your keyboard to enter or paste in an emoji character.": [
+        "キーボードで絵文字を入力または貼り付けてください。"
+      ],
+      "Uses ${ action.access_type } access to this note.": [
+        "このメモへのアクセス権（${ action.access_type }）を使用します。"
+      ]
+    },
+    "B4.Notes.EditingUI.Label": {
+      "${ MarkdownEditorName } text": [
+        "${ MarkdownEditorName }テキスト"
+      ],
+      "Change note type": [
+        "メモの種類を変更"
+      ],
+      "Change note type (${ shortcutLabel })": [
+        "メモの種類を変更（${ shortcutLabel }）"
+      ],
+      "Change note type menu": [
+        "メモの種類変更メニュー"
+      ],
+      "Choose a note type": [
+        "メモの種類を選択"
+      ],
+      "Convert to ${ SuperName } note": [
+        "${ SuperName }メモに変換"
+      ],
+      "Convert to ${ uiFeature.displayName }": [
+        "${ uiFeature.displayName }に変換"
+      ],
+      "Emoji": [
+        "絵文字"
+      ],
+      "Empty note.": [
+        "メモは空です。"
+      ],
+      "Icon": [
+        "アイコン"
+      ],
+      "Labs": [
+        "ラボ"
+      ],
+      "Markdown Preview": [
+        "Markdownプレビュー"
+      ],
+      "Moment ${ date }.png": [
+        "Moment ${ date }.png"
+      ],
+      "Note": [
+        "メモ"
+      ],
+      "Others": [
+        "その他"
+      ],
+      "Plain text": [
+        "プレーンテキスト"
+      ],
+      "Recommended": [
+        "おすすめ"
+      ],
+      "Select item": [
+        "アイテムを選択"
+      ],
+      "Type ${ slashKey } for commands...": [
+        "コマンドを表示するには「${ slashKey }」を入力してください..."
+      ],
+      "URL:": [
+        "URL："
+      ],
+      "You don't have permission to edit this note": [
+        "このメモを編集する権限がありません"
+      ],
+      "YouTube video": [
+        "YouTube動画"
+      ]
+    },
+    "B4.Notes.EditingUI.Status": {
+      "Capturing Moment...": [
+        "Momentをキャプチャ中..."
+      ],
+      "Conversion from ${ SuperName }'s format to Markdown/Plaintext can be lossy. Please review the converted note before saving.": [
+        "${ SuperName }の形式から Markdown/プレーンテキストへの変換では、一部の情報が失われる可能性があります。保存する前に、変換後のメモを確認してください。"
+      ],
+      "Last synced ${ lastSyncedRelativeTime }": [
+        "最終同期：${ lastSyncedRelativeTime }"
+      ],
+      "Note editing disabled.": [
+        "メモの編集が無効になりました"
+      ],
+      "Saving...": [
+        "保存中..."
+      ]
+    },
+    "B4.Notes.EditingUI.Title": {
+      "Change note type": [
+        "メモの種類を変更"
+      ],
+      "Items have Editing Disabled": [
+        "アイテムの編集は無効になっています"
+      ],
+      "Note has Editing Disabled": [
+        "メモの編集が無効になっています"
+      ],
+      "Upload File": [
+        "ファイルをアップロード"
+      ]
+    },
+    "B4.Notes.EditingUI.Warning": {
+      "Sync taking too long": [
+        "同期に時間がかかりすぎています"
+      ]
+    },
+    "B4.Notes.EditorOptions.Action": {
+      "Apply": [
+        "適用"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Change editor width": [
+        "エディターの幅を変更"
+      ],
+      "Done": [
+        "完了"
+      ],
+      "Editor width": [
+        "エディターの幅"
+      ],
+      "Embedded files": [
+        "埋め込みファイル"
+      ],
+      "Export": [
+        "エクスポート"
+      ],
+      "Export separately": [
+        "個別にエクスポート"
+      ],
+      "Find in note": [
+        "メモ内を検索"
+      ],
+      "Prevent editing": [
+        "編集を防止"
+      ],
+      "Share": [
+        "共有"
+      ],
+      "Show Markdown": [
+        "Markdownを表示"
+      ],
+      "Show preview": [
+        "プレビューを表示"
+      ],
+      "Spellcheck": [
+        "スペルチェック"
+      ]
+    },
+    "B4.Notes.EditorOptions.Error": {
+      "Could not export note": [
+        "メモをエクスポートできませんでした"
+      ],
+      "Could not import note. Check error console for details.": [
+        "メモをインポートできませんでした。詳細はエラーコンソールを確認してください。"
+      ]
+    },
+    "B4.Notes.EditorOptions.Info": {
+      "${ words } words · ${ characters } characters · ${ paragraphs } paragraphs": [
+        "${ words }語 · ${ characters }文字 · ${ paragraphs }段落"
+      ],
+      "Max. ${ EditorMaxWidths[value] }": [
+        "最大 ${ EditorMaxWidths[value] }"
+      ],
+      "Note that conversion to Markdown is not lossless. Some features like collapsible blocks and formatting like superscript/subscript may not be correctly converted.": [
+        "Markdown への変換は完全に維持されるわけではない点にご注意ください。折りたたみ可能なブロックなどの機能や、上付き文字・下付き文字などの書式が正しく変換されない場合があります。"
+      ],
+      "Set globally (will not apply to current note)": [
+        "グローバルに設定（現在のメモには適用されません）"
+      ],
+      "Spellcheck cannot be controlled for this editor.": [
+        "このエディターではスペルチェックを制御できません。"
+      ]
+    },
+    "B4.Notes.EditorOptions.Label": {
+      "${ AppName } ${ exportLabel } - ${ formattedDate }.zip": [
+        "${ AppName } ${ exportLabel } - ${ formattedDate }.zip"
+      ],
+      "${ AppName } Export - ${ formattedDate }.zip": [
+        "${ AppName }エクスポート - ${ formattedDate }.zip"
+      ],
+      "${ count } minute": [
+        "${ count }分"
+      ],
+      "${ count } minutes": [
+        "${ count }分"
+      ],
+      "${ SuperName } (.json)": [
+        "${ SuperName } (.json)"
+      ],
+      "< 1 minute": [
+        "1分未満"
+      ],
+      "A3": [
+        "A3"
+      ],
+      "A4": [
+        "A4"
+      ],
+      "Choose export format": [
+        "エクスポート形式を選択"
+      ],
+      "Choose export format for ${ SuperName } notes": [
+        "${ SuperName }メモのエクスポート形式を選択"
+      ],
+      "Created:": [
+        "作成日時："
+      ],
+      "Dynamic": [
+        "ダイナミック"
+      ],
+      "Embedded files": [
+        "埋め込みファイル"
+      ],
+      "Export": [
+        "エクスポート"
+      ],
+      "Export format": [
+        "エクスポート形式"
+      ],
+      "Export notes": [
+        "メモをエクスポート"
+      ],
+      "Export with frontmatter": [
+        "frontmatter付きでエクスポート"
+      ],
+      "Full width": [
+        "全幅"
+      ],
+      "HTML": [
+        "HTML"
+      ],
+      "Inline": [
+        "インライン"
+      ],
+      "Keep as reference": [
+        "参照として保持"
+      ],
+      "Last modified:": [
+        "最終更新日時："
+      ],
+      "Legal": [
+        "リーガル"
+      ],
+      "Letter": [
+        "レター"
+      ],
+      "Markdown (.md)": [
+        "Markdown (.md)"
+      ],
+      "N/A": [
+        "該当なし"
+      ],
+      "Narrow": [
+        "狭い"
+      ],
+      "Note ID:": [
+        "メモID："
+      ],
+      "Page size": [
+        "用紙サイズ"
+      ],
+      "Password protect": [
+        "パスワードで保護"
+      ],
+      "PDF": [
+        "PDF"
+      ],
+      "Read time:": [
+        "推定読了時間："
+      ],
+      "Set globally": [
+        "グローバルに設定"
+      ],
+      "Size:": [
+        "サイズ："
+      ],
+      "Tabloid": [
+        "タブロイド"
+      ],
+      "Wide": [
+        "広い"
+      ]
+    },
+    "B4.Notes.EditorOptions.Status": {
+      "This note may have trouble syncing to the mobile application due to its size.": [
+        "このメモはサイズが大きいため、モバイルアプリとの同期で問題が生じる可能性があります。"
+      ]
+    },
+    "B4.Notes.EditorOptions.Title": {
+      "Set editor width": [
+        "エディターの幅を設定"
+      ]
+    },
+    "B4.Notes.History.Action": {
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Close": [
+        "閉じる"
+      ],
+      "Delete revision": [
+        "リビジョンを削除"
+      ],
+      "Delete this revision": [
+        "このリビジョンを削除"
+      ],
+      "Discover plans": [
+        "プランを見る"
+      ],
+      "Done": [
+        "完了"
+      ],
+      "History": [
+        "履歴"
+      ],
+      "Note history": [
+        "メモのバージョン履歴"
+      ],
+      "Open note history": [
+        "メモのバージョン履歴を開く"
+      ],
+      "Restore as a copy": [
+        "コピーとして復元"
+      ],
+      "Restore version": [
+        "バージョンを復元"
+      ]
+    },
+    "B4.Notes.History.Error": {
+      "Could not fetch revision": [
+        "リビジョンを取得できませんでした"
+      ],
+      "Could not find revision action url": [
+        "リビジョンアクションのURLが見つかりません"
+      ],
+      "This revision is missing its key and cannot be recovered.": [
+        "このリビジョンにはキーがないため、復元できません。"
+      ],
+      "We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email ${ SupportEmail } for assistance.": [
+        "現在のキーではこのリビジョンを復号化できず、別のキーで復号化を試すために必要なメタデータもありません。手動での対応により解決できる可能性があります。${ SupportEmail }までメールでお問い合わせください。"
+      ]
+    },
+    "B4.Notes.History.Info": {
+      "Unable to find key for revision. Please enter the account password you may have used at the time of the revision.": [
+        "リビジョンのキーが見つかりません。そのリビジョンの時点で使用していたと思われるアカウントパスワードを入力してください。"
+      ]
+    },
+    "B4.Notes.History.Label": {
+      "${ revision.payload.content.title } (copy)": [
+        "${ revision.payload.content.title }（コピー）"
+      ],
+      "30 days": [
+        "30日間"
+      ],
+      "365 days": [
+        "365日間"
+      ],
+      "Advanced": [
+        "詳細"
+      ],
+      "Are you sure you want to delete this revision?": [
+        "本当にこのリビジョンを削除しますか？"
+      ],
+      "Are you sure you want to replace the current note's contents with what you see in this preview?": [
+        "本当に現在のメモの内容を、このプレビューに表示されている内容に置き換えますか？"
+      ],
+      "Can't access this version": [
+        "このバージョンにアクセスできません"
+      ],
+      "Content": [
+        "内容"
+      ],
+      "Delete revision?": [
+        "リビジョンを削除しますか？"
+      ],
+      "free": [
+        "無料"
+      ],
+      "Learn more about our other plans to upgrade your history capacity.": [
+        "履歴の保存期間を延長するには、その他のプランについて詳しくご確認ください。"
+      ],
+      "Legacy": [
+        "旧履歴"
+      ],
+      "List": [
+        "リスト"
+      ],
+      "More Than A Year Ago": [
+        "1年以上前"
+      ],
+      "No legacy history found": [
+        "旧履歴が見つかりません"
+      ],
+      "No remote history found": [
+        "リモート履歴が見つかりません"
+      ],
+      "No revision selected": [
+        "リビジョンが選択されていません"
+      ],
+      "No session history found": [
+        "セッション履歴が見つかりませんでした"
+      ],
+      "Note revision history": [
+        "メモのリビジョン履歴"
+      ],
+      "Remote": [
+        "リモート"
+      ],
+      "Session": [
+        "セッション"
+      ],
+      "the current session's changes": [
+        "現在のセッションの変更"
+      ],
+      "This Week": [
+        "今週"
+      ],
+      "Today": [
+        "今日"
+      ],
+      "Version history is limited to ${ duration } in the ${ plan } plan": [
+        "${ plan }プランではバージョン履歴が${ duration }に制限されています"
+      ]
+    },
+    "B4.Notes.LinkedItems.Action": {
+      "Delete permanently": [
+        "完全に削除"
+      ],
+      "Download": [
+        "ダウンロード"
+      ],
+      "Preview file": [
+        "ファイルをプレビュー"
+      ],
+      "Rename": [
+        "名前を変更"
+      ],
+      "Upload and link file(s)": [
+        "ファイルをアップロードしてリンク"
+      ]
+    },
+    "B4.Notes.LinkedItems.Label": {
+      "Note linking": [
+        "メモのリンク"
+      ],
+      "Password protect": [
+        "パスワードで保護"
+      ]
+    },
+    "B4.Notes.TagsLinkedItems.Action": {
+      "Add another condition": [
+        "別の条件を追加する"
+      ],
+      "Add Smart View": [
+        "スマートビューを追加"
+      ],
+      "Add subtag": [
+        "サブタグを追加"
+      ],
+      "Add tag": [
+        "タグを追加"
+      ],
+      "Archived": [
+        "アーカイブ済み"
+      ],
+      "Change icon": [
+        "アイコンを変更"
+      ],
+      "Change the icon for a tag": [
+        "タグのアイコンを変更"
+      ],
+      "Conflict Of": [
+        "競合元"
+      ],
+      "Create & add tag": [
+        "タグを作成して追加"
+      ],
+      "Create a new smart view": [
+        "新しいスマートビューを作成"
+      ],
+      "Create a new tag (${ shortcut })": [
+        "新しいタグを作成（${ shortcut }）"
+      ],
+      "Create new tag": [
+        "新しいタグを作成"
+      ],
+      "Created At": [
+        "作成日時："
+      ],
+      "Delete": [
+        "削除"
+      ],
+      "Edit": [
+        "編集"
+      ],
+      "Favorite": [
+        "お気に入り"
+      ],
+      "Link items to current note": [
+        "現在のメモにアイテムをリンク"
+      ],
+      "Link tags, notes, files": [
+        "タグ、メモ、ファイルをリンク"
+      ],
+      "Linked": [
+        "リンク済み"
+      ],
+      "Move the tag here to": [
+        "タグをここに移動して"
+      ],
+      "Note Type": [
+        "メモの種類"
+      ],
+      "Open linked items panel": [
+        "リンクされたアイテムパネルを開く"
+      ],
+      "Protected": [
+        "保護済み"
+      ],
+      "Remove condition": [
+        "条件を削除"
+      ],
+      "remove it from its folder.": [
+        "フォルダーから外します。"
+      ],
+      "Save": [
+        "保存"
+      ],
+      "Save tag name": [
+        "タグ名を保存"
+      ],
+      "Starred": [
+        "スター付き"
+      ],
+      "Trash": [
+        "ごみ箱"
+      ],
+      "Trashed": [
+        "ゴミ箱に移動済み"
+      ],
+      "Unfavorite": [
+        "お気に入り解除"
+      ],
+      "Unlink": [
+        "リンクを解除"
+      ],
+      "User Modified Date": [
+        "ユーザーによる変更日時"
+      ],
+      "Validate": [
+        "検証"
+      ],
+      "Views": [
+        "ビュー"
+      ]
+    },
+    "B4.Notes.TagsLinkedItems.AriaLabel": {
+      "Go to items list": [
+        "アイテムリストに移動"
+      ],
+      "Locks application and wipes unencrypted data from memory.": [
+        "アプリをロックし、暗号化されていないデータをメモリから消去します。"
+      ]
+    },
+    "B4.Notes.TagsLinkedItems.Confirmation": {
+      "Are you sure you want to delete this tag? Deleting a tag will not delete its subtags or its notes.": [
+        "本当にこのタグを削除しますか？タグを削除しても、サブタグやそのメモは削除されません。"
+      ],
+      "Delete tag \"${ tagTitle }\"?": [
+        "タグ「${ tagTitle }」を削除しますか？"
+      ]
+    },
+    "B4.Notes.TagsLinkedItems.Error": {
+      "A tag with the name ${ tag.title } already exists at this destination. Please rename this tag before moving and try again.": [
+        "「${ tag.title }」という名前のタグは、この移動先に既に存在します。移動する前にタグの名前を変更して、もう一度お試しください。"
+      ],
+      "Invalid JSON. Double check your entry and try again.": [
+        "JSONが無効です。入力内容を確認して、もう一度お試しください。"
+      ],
+      "The items you are trying to link belong to different vaults and cannot be linked": [
+        "リンクしようとしているアイテムは異なる保管庫に属しているため、リンクできません"
+      ],
+      "We are missing a System Tag.": [
+        "システムタグが見つかりません。"
+      ]
+    },
+    "B4.Notes.TagsLinkedItems.Info": {
+      "1. List notes that are conflicted copies of another note:": [
+        "1. 別のメモの競合コピーであるメモを一覧表示："
+      ],
+      "A tag with this name already exists.": [
+        "この名前のタグは既に存在します。"
+      ],
+      "and ${ nonVisibleItems } more...": [
+        "ほか${ nonVisibleItems }件のリンク..."
+      ],
+      "Drop your files to upload and link them to tag \"${ tag.title }\"": [
+        "ファイルをドロップしてアップロードし、タグ「${ tag.title }」にリンクしてください"
+      ],
+      "To get all the items created before June 2022, you can use": [
+        "2022年6月より前に作成されたすべてのアイテムを取得するには、次の条件を使用できます："
+      ],
+      "To get all the items modified within the last 7 days, you can use": [
+        "過去7日以内に更新されたすべてのアイテムを取得するには、次の条件を使用できます："
+      ]
+    },
+    "B4.Notes.TagsLinkedItems.Label": {
+      "2. List notes that have the tag `todo` but not the tag `completed`:": [
+        "2. タグ「todo」があり、タグ「completed」がないメモを一覧表示："
+      ],
+      "AND": [
+        "かつ"
+      ],
+      "Authorized For ${ ListedName }": [
+        "${ ListedName }での公開を許可済み"
+      ],
+      "Builder": [
+        "ビルダー"
+      ],
+      "Choose icon": [
+        "アイコンを選択"
+      ],
+      "Conflicted Copy": [
+        "競合コピー"
+      ],
+      "Conflicts": [
+        "競合"
+      ],
+      "Created At": [
+        "作成日時"
+      ],
+      "Created at:": [
+        "作成日時："
+      ],
+      "Created:": [
+        "作成日時："
+      ],
+      "Custom (JSON)": [
+        "カスタム (JSON)"
+      ],
+      "Date Examples:": [
+        "日付の例："
+      ],
+      "Editor Identifier": [
+        "エディター識別子"
+      ],
+      "Examples": [
+        "例"
+      ],
+      "False": [
+        "False"
+      ],
+      "Favorites": [
+        "お気に入り"
+      ],
+      "Files": [
+        "ファイル"
+      ],
+      "Files Linking To Current File": [
+        "現在のファイルにリンクしているファイル"
+      ],
+      "Focus input to add a link (${ shortcut })": [
+        "入力にフォーカスしてリンクを追加（${ shortcut }）"
+      ],
+      "Folders": [
+        "フォルダー"
+      ],
+      "Go to account menu": [
+        "アカウントメニューに移動"
+      ],
+      "Hide Preview": [
+        "プレビューを隠す"
+      ],
+      "Icon:": [
+        "アイコン："
+      ],
+      "ID:": [
+        "ID："
+      ],
+      "Last modified:": [
+        "最終更新日時："
+      ],
+      "Link tags, notes or files": [
+        "タグ、メモ、ファイルをリンク"
+      ],
+      "Link tags, notes, files...": [
+        "タグ、メモ、ファイルをリンク..."
+      ],
+      "Linked By:": [
+        "リンク元:"
+      ],
+      "Linked Files": [
+        "リンクされたファイル"
+      ],
+      "Linked items": [
+        "リンクされたアイテム"
+      ],
+      "Linked items panel": [
+        "リンクされたアイテムパネル"
+      ],
+      "Linked Notes": [
+        "リンクされたメモ"
+      ],
+      "Linked Tags": [
+        "リンクされたタグ"
+      ],
+      "Locked": [
+        "ロック済み"
+      ],
+      "Modified at:": [
+        "更新日時："
+      ],
+      "Name": [
+        "名前"
+      ],
+      "No smart views found. Try a different search.": [
+        "スマートビューが見つかりません。別のキーワードで検索してください。"
+      ],
+      "No tags found. Try a different search.": [
+        "タグが見つかりません。別のキーワードで検索してください。"
+      ],
+      "No tags or folders. Create one using the add button above.": [
+        "タグやフォルダーはありません。上部にある追加ボタンから作成してください。"
+      ],
+      "Notes": [
+        "メモ"
+      ],
+      "Notes Linking To This Note": [
+        "このメモにリンクしているメモ"
+      ],
+      "Options": [
+        "オプション"
+      ],
+      "OR": [
+        "または"
+      ],
+      "Pinned": [
+        "ピン留め済み"
+      ],
+      "Predicate:": [
+        "述語："
+      ],
+      "Search items to link...": [
+        "リンクするアイテムを検索..."
+      ],
+      "Search tags...": [
+        "タグを検索..."
+      ],
+      "Server Updated At": [
+        "サーバー更新日時"
+      ],
+      "Should match ALL conditions": [
+        "すべての条件に一致"
+      ],
+      "Should match ANY conditions": [
+        "次のいずれかの条件に一致"
+      ],
+      "Size:": [
+        "サイズ："
+      ],
+      "Spellcheck": [
+        "スペルチェック"
+      ],
+      "Starred": [
+        "スター付き"
+      ],
+      "Tag context menu": [
+        "タグのコンテキストメニュー"
+      ],
+      "Tag ID:": [
+        "タグID："
+      ],
+      "Tag options": [
+        "タグのオプション"
+      ],
+      "Tag selection menu": [
+        "タグ選択メニュー"
+      ],
+      "Tags": [
+        "タグ"
+      ],
+      "Text": [
+        "テキスト"
+      ],
+      "Text Length": [
+        "テキストの長さ"
+      ],
+      "Title": [
+        "タイトル"
+      ],
+      "Title Length": [
+        "タイトルの長さ"
+      ],
+      "Title:": [
+        "タイトル："
+      ],
+      "Toggle linked items container": [
+        "リンクされたアイテムコンテナを切り替え"
+      ],
+      "True": [
+        "True"
+      ],
+      "Unlinked": [
+        "未リンク"
+      ],
+      "Untagged": [
+        "タグなし"
+      ],
+      "User Modified Date": [
+        "ユーザーによる変更日時"
+      ]
+    },
+    "B4.Notes.TagsLinkedItems.Title": {
+      "Linked items": [
+        "リンクされたアイテム"
+      ]
+    },
+    "B5.SecuritySync.Autolock.Info": {
+      "Authentication is required to change autolock timer duration": [
+        "オートロックタイマーの時間を変更するには認証が必要です"
+      ]
+    },
+    "B5.SecuritySync.Autolock.Label": {
+      "10m": [
+        "10分"
+      ],
+      "1h": [
+        "1時間"
+      ],
+      "1m": [
+        "1分"
+      ],
+      "5m": [
+        "5分"
+      ],
+      "Immediately": [
+        "すぐに"
+      ],
+      "Off": [
+        "オフ"
+      ],
+      "On Quit": [
+        "終了時"
+      ]
+    },
+    "B5.SecuritySync.Biometrics.Info": {
+      "Authentication is required to disable biometrics": [
+        "生体認証を無効化するには認証が必要です"
+      ]
+    },
+    "B5.SecuritySync.Challenge.Action": {
+      "Authenticate Device": [
+        "デバイスを認証"
+      ],
+      "Submit": [
+        "送信"
+      ],
+      "Switch workspace": [
+        "ワークスペースを切り替え"
+      ],
+      "Tap to use biometrics": [
+        "タップして生体認証を使用"
+      ]
+    },
+    "B5.SecuritySync.Challenge.Error": {
+      "Failed to obtain device response": [
+        "デバイスレスポンスの取得に失敗しました"
+      ],
+      "Incorrect credentials entered. Please try again.": [
+        "入力された認証情報が正しくありません。もう一度お試しください。"
+      ],
+      "Invalid authentication, please try again.": [
+        "認証が無効です。もう一度やり直してください。"
+      ],
+      "This item cannot be recovered.": [
+        "このアイテムは回復できません。"
+      ],
+      "Unable to find key ${ keyId } for this item. You may try signing out and back in; if that doesn't help, check your backup files for a key with this ID and import it.": [
+        "このアイテムのキー ${ keyId } が見つかりません。サインアウトしてから再度サインインをお試しください。それでも解決しない場合は、バックアップファイルにこのIDのキーがないか確認し、インポートしてください。"
+      ],
+      "Unable to recover your key with the attempted password. Please try again.": [
+        "入力されたパスワードではキーを回復できませんでした。もう一度お試しください。"
+      ]
+    },
+    "B5.SecuritySync.Challenge.Info": {
+      "Authentication is required to access this file": [
+        "このファイルにアクセスするには認証が必要です"
+      ],
+      "Authentication is required to add a passcode": [
+        "パスコードを追加するには認証が必要です"
+      ],
+      "Authentication is required to approve this note for ${ ListedName }": [
+        "このメモを ${ ListedName } 用に承認するには、認証が必要です"
+      ],
+      "Authentication is required to change your passcode": [
+        "パスコードを変更するには認証が必要です"
+      ],
+      "Authentication is required to delete your account": [
+        "アカウントを削除するには認証が必要です"
+      ],
+      "Authentication is required to disable two-factor authentication": [
+        "2要素認証を無効にするには認証が必要です"
+      ],
+      "Authentication is required to export a backup": [
+        "バックアップをエクスポートするには認証が必要です"
+      ],
+      "Authentication is required to import a backup file": [
+        "バックアップファイルをインポートするには認証が必要です"
+      ],
+      "Authentication is required to remove your passcode": [
+        "パスコードを削除するには認証が必要です"
+      ],
+      "Authentication is required to revoke a session": [
+        "セッションを失効させるには認証が必要です"
+      ],
+      "Authentication is required to search protected contents": [
+        "保護されたコンテンツを検索するには認証が必要です"
+      ],
+      "Authentication is required to select a protected note": [
+        "保護されたメモを選択するには認証が必要です"
+      ],
+      "Authentication is required to unlock the application": [
+        "アプリのロックを解除するには認証が必要です"
+      ],
+      "Authentication is required to unprotect a file": [
+        "ファイルの保護を解除するには、認証が必要です"
+      ],
+      "Authentication is required to unprotect a note": [
+        "メモの保護を解除するには認証が必要です"
+      ],
+      "Authentication is required to view this note": [
+        "このメモを表示するには認証が必要です"
+      ],
+      "Biometrics successful": [
+        "生体認証に成功しました"
+      ],
+      "Delete ${ vaultName }": [
+        "${ vaultName }を削除"
+      ],
+      "Enter your account password after it was changed on ${ dateString }.": [
+        "${ dateString } に変更されたアカウントパスワードを入力してください。"
+      ],
+      "Enter your account password as it was when you changed your email on ${ dateString }.": [
+        "${ dateString } にメールアドレスを変更した際のアカウントパスワードを入力してください。"
+      ],
+      "Enter your account password as it was when you registered ${ dateString }.": [
+        "${ dateString }に登録したときのアカウントパスワードを入力してください。"
+      ],
+      "Enter your account password as it was when you upgraded your encryption version on ${ dateString }.": [
+        "${ dateString } に暗号化バージョンをアップグレードしたときのアカウントパスワードを入力してください。"
+      ],
+      "Enter your application passcode after it was changed on ${ dateString }.": [
+        "${ dateString } に変更されたアプリのパスコードを入力してください。"
+      ],
+      "Enter your application passcode as it was when you created it on ${ dateString }.": [
+        "${ dateString } に作成したときと同じアプリのパスコードを入力してください。"
+      ],
+      "Obtained Device Response": [
+        "デバイスの応答を取得しました"
+      ],
+      "Unlock ${ vaultName }": [
+        "${ vaultName } のロックを解除"
+      ],
+      "You must enter your passcode in order to save your new credentials.": [
+        "新しい認証情報を保存するには、パスコードを入力する必要があります。"
+      ],
+      "Your account password is required to recover an encryption key.": [
+        "暗号鍵を回復するには、アカウントパスワードが必要です。"
+      ],
+      "Your account password is required to revalidate your session.": [
+        "セッションを再検証するには、アカウントパスワードが必要です。"
+      ],
+      "Your application passcode is required to perform an upgrade of your local data storage structure.": [
+        "ローカルデータストレージ構造のアップグレードを行うには、アプリのパスコードが必要です。"
+      ],
+      "Your credentials have successfully been updated.": [
+        "認証情報は正常に更新されました。"
+      ],
+      "Your key has successfully been recovered.": [
+        "鍵の回復に成功しました。"
+      ],
+      "Your passcode is required in order to register for an account.": [
+        "アカウントの登録にはパスコードが必要です。"
+      ],
+      "Your passcode is required in order to sign in to your account.": [
+        "アカウントにサインインするには、パスコードが必要です。"
+      ],
+      "Your passcode is required to process your credentials change.": [
+        "認証情報の変更を処理するには、パスコードが必要です。"
+      ]
+    },
+    "B5.SecuritySync.Challenge.Label": {
+      "Account Password": [
+        "アカウントパスワード"
+      ],
+      "Allow protected access for": [
+        "保護されたアクセスを許可する期間"
+      ],
+      "Application Passcode": [
+        "アプリのパスコード"
+      ],
+      "Biometrics": [
+        "生体認証"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Enter the account password associated with the import file": [
+        "インポートファイルに関連付けられたアカウントパスワードを入力してください"
+      ],
+      "Enter the password for this vault": [
+        "この保管庫のパスワードを入力してください"
+      ],
+      "Enter your account password": [
+        "アカウントパスワードを入力してください"
+      ],
+      "Enter your application passcode": [
+        "アプリのパスコードを入力"
+      ],
+      "Enter your application passcode to continue": [
+        "続行するにはアプリのパスコードを入力してください"
+      ],
+      "Enter your credentials to download a decrypted backup": [
+        "復号化されたバックアップをダウンロードするには、認証情報を入力してください"
+      ],
+      "Enter your credentials to perform encryption upgrade": [
+        "暗号化バージョンのアップグレードを実行するには、認証情報を入力してください"
+      ],
+      "Passcode Required": [
+        "パスコードは必須です"
+      ],
+      "Previous Password": [
+        "以前のパスワード"
+      ],
+      "Remember For": [
+        "保持期間"
+      ],
+      "Security Key": [
+        "セキュリティキー"
+      ],
+      "Two-factor Authentication Code": [
+        "2要素認証コード"
+      ]
+    },
+    "B5.SecuritySync.Challenge.Placeholder": {
+      "Account Password": [
+        "アカウントパスワード"
+      ],
+      "Application Passcode": [
+        "アプリのパスコード"
+      ],
+      "Two-factor authentication code": [
+        "2要素認証コード"
+      ]
+    },
+    "B5.SecuritySync.Challenge.Status": {
+      "Generating Keys...": [
+        "キー生成中..."
+      ]
+    },
+    "B5.SecuritySync.Challenge.Title": {
+      "Authenticate": [
+        "認証"
+      ],
+      "Authentication Required": [
+        "認証が必要です"
+      ],
+      "Storage Update": [
+        "ストレージの更新"
+      ],
+      "Switch workspace": [
+        "ワークスペースを切り替え"
+      ]
+    },
+    "B5.SecuritySync.Info": {
+      "Access to this note will not be restricted until you set up a passcode or account.": [
+        "パスコードまたはアカウントをセットアップするまで、このメモへのアクセスは制限されません。"
+      ]
+    },
+    "B5.SecuritySync.KeyStorage.Confirmation": {
+      "This will delete the previously saved offline key.": [
+        "保存済みのオフラインキーは削除されます。"
+      ]
+    },
+    "B5.SecuritySync.KeyStorage.Error": {
+      "Invalid Credentials": [
+        "無効な認証情報です"
+      ]
+    },
+    "B5.SecuritySync.KeyStorage.Info": {
+      "The email or password you entered is incorrect.\n\nPlease note that this sign-in request is made against the default server. If you are using a custom server, you must uninstall the app then reinstall, and sign back into your account.": [
+        "入力されたメールアドレスまたはパスワードが正しくありません。\n\nこのサインイン要求はデフォルトのサーバーに対して行われます。カスタムサーバーを使用している場合は、アプリをアンインストールしてから再インストールし、アカウントに再度サインインする必要があります。"
+      ],
+      "We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password for \"${ email }\" to restore your account keys.": [
+        "キーチェーンが消去されたことが検出されました。これはデバイスをバックアップから復元した際に発生することがあります。「${ email }」のアカウントパスワードを入力して、アカウントキーを復元してください。"
+      ]
+    },
+    "B5.SecuritySync.KeyStorage.Title": {
+      "Restore Keychain": [
+        "キーチェーンを復元"
+      ]
+    },
+    "B5.SecuritySync.Mfa.Error": {
+      "Incorrect two-factor authentication code. Please try again.": [
+        "2要素認証コードが正しくありません。もう一度お試しください。"
+      ]
+    },
+    "B5.SecuritySync.Mfa.Info": {
+      "Your sign in request has been canceled.": [
+        "サインインのリクエストはキャンセルされました。"
+      ]
+    },
+    "B5.SecuritySync.Passcode.Action": {
+      "Delete local data": [
+        "ローカルデータを削除"
+      ]
+    },
+    "B5.SecuritySync.Passcode.Confirmation": {
+      "A passcode change is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
+        "パスコードの変更が進行中です。アプリを終了するとデータが失われる可能性があります。本当に終了しますか？"
+      ],
+      "A passcode removal is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
+        "パスコードの削除を実行中です。アプリを終了するとデータが失われる可能性があります。本当に終了しますか？"
+      ]
+    },
+    "B5.SecuritySync.Passcode.Error": {
+      "Please enter a passcode.": [
+        "パスコードを入力してください。"
+      ],
+      "The two passcodes you entered do not match. Please try again.": [
+        "入力されたパスコードが一致しません。再度お試しください。"
+      ]
+    },
+    "B5.SecuritySync.Passcode.Info": {
+      "If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.": [
+        "ローカルパスコードを忘れた場合は、このデバイスからローカルデータをクリアしてアカウントに再サインインする以外に方法はありません。"
+      ],
+      "Your keys are currently stored in your operating system's ${ keychainName }. Adding a passcode prevents even your operating system from reading them.": [
+        "現在、キーはオペレーティングシステムの ${ keychainName } に保管されています。パスコードを追加すると、オペレーティングシステム自体もキーを読み取れなくなります。"
+      ]
+    },
+    "B5.SecuritySync.Passcode.Label": {
+      "credential manager": [
+        "認証情報マネージャー"
+      ],
+      "keychain": [
+        "キーチェーン"
+      ],
+      "password manager": [
+        "パスワードマネージャー"
+      ]
+    },
+    "B5.SecuritySync.Passcode.Status": {
+      "Changing passcode…": [
+        "パスコードを変更中…"
+      ],
+      "Removing passcode…": [
+        "パスコードを削除中…"
+      ],
+      "Setting passcode…": [
+        "パスコードを設定中…"
+      ]
+    },
+    "B5.SecuritySync.Passcode.Title": {
+      "Forgot passcode?": [
+        "パスコードを忘れましたか？"
+      ]
+    },
+    "B5.SecuritySync.Passcode.Warning": {
+      "Do not close the application until this process completes.": [
+        "この処理が完了するまでアプリを閉じないでください。"
+      ]
+    },
+    "B5.SecuritySync.Protections.Error": {
+      "Secure memory has destroyed this application instance. Close this browser tab and open a new one to continue.": [
+        "セキュアメモリにより、このアプリのインスタンスは破棄されました。続行するには、このブラウザタブを閉じて新しいタブを開いてください。"
+      ],
+      "Secure memory has destroyed this application instance. Restart the app to continue.": [
+        "セキュアメモリによってこのアプリケーションインスタンスは破棄されました。続行するにはアプリを再起動してください。"
+      ]
+    },
+    "B5.SecuritySync.Protections.Label": {
+      "1 Hour": [
+        "1 時間"
+      ],
+      "1 Minute": [
+        "1 分"
+      ],
+      "1 Week": [
+        "1 週間"
+      ],
+      "5 Minutes": [
+        "5 分"
+      ]
+    },
+    "B5.SecuritySync.Sync.Action": {
+      "Close": [
+        "閉じる"
+      ]
+    },
+    "B5.SecuritySync.Sync.Error": {
+      "There was an error while trying to save your items. Please contact support and share this message: ${ message }.": [
+        "アイテムの保存中にエラーが発生しました。サポートにお問い合わせのうえ、次のメッセージを共有してください: ${ message }。"
+      ]
+    },
+    "B5.SecuritySync.Sync.Info": {
+      "Quit the application and re-open it. Sometimes, this may resolve the issue.": [
+        "アプリを終了してから再度開いてください。これで問題が解決する場合があります。"
+      ],
+      "Sign out of your account, then sign back in. This will ensure your data is consistent with the server. Be sure to download a backup of your data before doing so.": [
+        "アカウントからサインアウトしてから、再度サインインしてください。これにより、データがサーバーと確実に一致するようになります。その前に、必ずデータのバックアップをダウンロードしてください。"
+      ],
+      "We've detected that the data in the current application session may not match the data on the server. An attempt was made to auto-resolve the issue, but it was unable to reconcile the differences.": [
+        "現在のアプリセッションのデータがサーバー上のデータと一致していない可能性があります。問題の自動解決を試みましたが、差分を解消できませんでした。"
+      ]
+    },
+    "B5.SecuritySync.Sync.Status": {
+      "Saving…": [
+        "保存中…"
+      ]
+    },
+    "B5.SecuritySync.Sync.Subtitle": {
+      "Option 1 — Restart Application:": [
+        "オプション1(アプリの再起動):"
+      ],
+      "Option 2 — Sign Out and Back In:": [
+        "オプション 2 - サインアウトして再度サインイン:"
+      ]
+    },
+    "B5.SecuritySync.Sync.Title": {
+      "Out of Sync": [
+        "未同期"
+      ]
+    },
+    "B5.SecuritySync.U2F.Label": {
+      "U2F": [
+        "U2F"
+      ]
+    },
+    "B6.Preferences.Account.Action": {
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Change email": [
+        "メールアドレスを変更"
+      ],
+      "Change password": [
+        "パスワードを変更する"
+      ],
+      "Clear workspace": [
+        "ワークスペースをクリア"
+      ],
+      "Continue": [
+        "続行"
+      ],
+      "Create free account": [
+        "無料アカウントを作成"
+      ],
+      "Delete my account": [
+        "アカウントを削除"
+      ],
+      "Finish": [
+        "完了"
+      ],
+      "Generating Keys...": [
+        "キー生成中..."
+      ],
+      "Manage sessions": [
+        "セッションを管理"
+      ],
+      "Sign in": [
+        "サインイン"
+      ],
+      "Sign out other sessions": [
+        "他のセッションをサインアウト"
+      ],
+      "Sign out workspace": [
+        "ワークスペースからサインアウト"
+      ],
+      "Sync now": [
+        "今すぐ同期"
+      ]
+    },
+    "B6.Preferences.Account.Error": {
+      "Cannot close window until pending tasks are complete.": [
+        "保留中のタスクが完了するまでウィンドウを閉じることはできません。"
+      ],
+      "Please enter your current password.": [
+        "現在のパスワードを入力してください。"
+      ],
+      "The current password you entered is not correct. Please try again.": [
+        "入力された現在のパスワードが正しくありません。再度お試しください。"
+      ],
+      "There was an error when attempting to redirect you to the subscription page.": [
+        "サブスクリプションページへのリダイレクト中にエラーが発生しました。"
+      ]
+    },
+    "B6.Preferences.Account.Info": {
+      "Already have an account? ${ loginLink }": [
+        "すでにアカウントをお持ちですか？${ loginLink }"
+      ],
+      "Current password was set on ${ passwordDateSpan }": [
+        "現在のパスワードは ${ passwordDateSpan } に設定されました"
+      ],
+      "Disables email notifications when a new sign-in occurs on your account. (Email notifications are available only to paid subscribers).": [
+        "アカウントで新しいサインインが発生した際のメール通知を無効化します。メール通知は有料プランの購読者のみ利用できます。"
+      ],
+      "Disables email notifications with special deals and promotions.": [
+        "特別オファーやプロモーションに関するメール通知を無効化します。"
+      ],
+      "Files": [
+        "ファイル"
+      ],
+      "Last synced ${ lastSyncSpan }": [
+        "最終同期: ${ lastSyncSpan }"
+      ],
+      "of": [
+        "/"
+      ],
+      "on ${ lastSyncDate }": [
+        "${ lastSyncDate }"
+      ],
+      "Please ensure you are running the latest version of ${ AppName } on all platforms to ensure maximum compatibility.": [
+        "最大限の互換性を確保するため、すべてのプラットフォームで${ AppName }の最新バージョンを実行していることをご確認ください。"
+      ],
+      "Redirecting you to the subscription page...": [
+        "サブスクリプションページにリダイレクトしています..."
+      ],
+      "Remove all data related to the current workspace from the application.": [
+        "アプリから現在のワークスペースに関連するすべてのデータを削除します。"
+      ],
+      "Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
+        "サインインすると、すべてのデバイスでメモと設定を同期し、エンドツーエンド暗号化を有効にできます。"
+      ],
+      "Storage Quota": [
+        "ストレージ容量"
+      ],
+      "This action is irreversible. After deletion completes, you will be signed out on all devices.": [
+        "この操作は元に戻せません。削除が完了すると、すべてのデバイスからサインアウトされます。"
+      ],
+      "used": [
+        "使用済み"
+      ],
+      "Want to sign out on all devices except this one?": [
+        "このデバイス以外のすべてのデバイスでサインアウトしますか？"
+      ],
+      "You're signed in as ${ emailSpan }": [
+        "${ emailSpan } としてサインインしています"
+      ],
+      "Your email has been successfully changed.": [
+        "メールアドレスは正常に変更されました。"
+      ]
+    },
+    "B6.Preferences.Account.Label": {
+      "Current Password": [
+        "現在のパスワード"
+      ],
+      "Files storage used": [
+        "ファイルのストレージ使用量"
+      ],
+      "Learn More": [
+        "より詳しく"
+      ],
+      "New Email": [
+        "新しいメール"
+      ],
+      "Upgrade": [
+        "アップグレード"
+      ]
+    },
+    "B6.Preferences.Account.Subtitle": {
+      "Email": [
+        "メール"
+      ],
+      "Mute marketing notification emails": [
+        "マーケティング通知メールをミュート"
+      ],
+      "Mute sign-in notification emails": [
+        "サインイン通知メールをミュート"
+      ],
+      "Other devices": [
+        "その他のデバイス"
+      ],
+      "Password": [
+        "パスワード"
+      ],
+      "This workspace": [
+        "このワークスペース"
+      ]
+    },
+    "B6.Preferences.Account.Title": {
+      "Change Email": [
+        "メールアドレスを変更"
+      ],
+      "Clear workspace": [
+        "ワークスペースをクリア"
+      ],
+      "Credentials": [
+        "認証情報"
+      ],
+      "Delete account": [
+        "アカウントを削除"
+      ],
+      "Email": [
+        "メール"
+      ],
+      "Sign out": [
+        "サインアウト"
+      ],
+      "Sync": [
+        "同期"
+      ],
+      "You're not signed in": [
+        "サインインしていません"
+      ]
+    },
+    "B6.Preferences.Appearance.Action": {
+      "Select the font size for plaintext notes": [
+        "プレーンテキストメモのフォントサイズを選択してください"
+      ],
+      "Select the line height for plaintext notes": [
+        "プレーンテキストメモの行の高さを選択"
+      ],
+      "Sets the font size in plaintext and ${ SuperName } notes": [
+        "プレーンテキストおよび${ SuperName }メモのフォントサイズを設定します"
+      ],
+      "Sets the line height (leading) in plaintext and ${ SuperName } notes": [
+        "プレーンテキストと ${ SuperName } メモの行の高さ（行送り）を設定します"
+      ],
+      "Sets the max editor width for all notes": [
+        "すべてのメモのエディターの最大幅を設定します"
+      ]
+    },
+    "B6.Preferences.Appearance.Info": {
+      "Automatically change active theme based on your system settings.": [
+        "システム設定に基づいて、アクティブなテーマを自動的に変更します。"
+      ],
+      "Theme to be used for system dark mode:": [
+        "システムのダークモードで使用するテーマ:"
+      ],
+      "Theme to be used for system light mode:": [
+        "システムのライトモードで使用するテーマ:"
+      ],
+      "Toggles the font style in plaintext and ${ SuperName } notes": [
+        "プレーンテキストと ${ SuperName } メモのフォントスタイルを切り替えます"
+      ],
+      "Use opaque style for UI elements instead of translucency": [
+        "UI 要素には、半透明ではなく不透明なスタイルを使用します"
+      ]
+    },
+    "B6.Preferences.Appearance.Label": {
+      "Default": [
+        "デフォルト"
+      ],
+      "Extra small": [
+        "極小"
+      ],
+      "Large": [
+        "大"
+      ],
+      "Loose": [
+        "広い"
+      ],
+      "Medium": [
+        "中"
+      ],
+      "None": [
+        "なし"
+      ],
+      "Normal": [
+        "通常"
+      ],
+      "Relaxed": [
+        "ゆったり"
+      ],
+      "Select the automatic dark theme": [
+        "自動ダークテーマを選択"
+      ],
+      "Select the automatic light theme": [
+        "自動ライトテーマを選択"
+      ],
+      "Small": [
+        "小"
+      ],
+      "Snug": [
+        "やや狭い"
+      ],
+      "Tight": [
+        "狭い"
+      ]
+    },
+    "B6.Preferences.Appearance.Subtitle": {
+      "Automatic Dark Theme": [
+        "自動ダークテーマ"
+      ],
+      "Automatic Light Theme": [
+        "自動ライトテーマ"
+      ],
+      "Disable translucent UI": [
+        "半透明 UI を無効化"
+      ],
+      "Editor width": [
+        "エディターの幅"
+      ],
+      "Font size": [
+        "フォントサイズ"
+      ],
+      "Line height": [
+        "行間"
+      ],
+      "Monospace Font": [
+        "等幅フォント"
+      ],
+      "Use system color scheme": [
+        "システムのカラースキームを使用"
+      ]
+    },
+    "B6.Preferences.Appearance.Title": {
+      "Editor": [
+        "エディター"
+      ],
+      "Themes": [
+        "テーマ"
+      ]
+    },
+    "B6.Preferences.Backups.Action": {
+      "Attempting to decrypt metadata file...": [
+        "メタデータファイルを復号化しています..."
+      ],
+      "Change Location": [
+        "保存先を変更"
+      ],
+      "Choose": [
+        "選択"
+      ],
+      "Download backup": [
+        "バックアップをダウンロード"
+      ],
+      "Import backup": [
+        "バックアップをインポート"
+      ],
+      "Open Location": [
+        "保存先を開く"
+      ],
+      "Save": [
+        "保存"
+      ],
+      "Select email frequency": [
+        "メールの頻度を選択"
+      ],
+      "Select file": [
+        "ファイルを選択"
+      ]
+    },
+    "B6.Preferences.Backups.Error": {
+      "Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.": [
+        "ファイルをローカルディレクトリに保存できません。復号化またはローカルへのファイル保存が失敗した可能性があります。"
+      ],
+      "Unable to save local backup.": [
+        "ローカルバックアップを保存できません。"
+      ]
+    },
+    "B6.Preferences.Backups.Info": {
+      "Automatically save encrypted and decrypted backups of your note and tag data.": [
+        "メモとタグのデータについて、暗号化済みと復号化済みの両方のバックアップを自動的に保存します。"
+      ],
+      "Backups are saved automatically throughout the day. You can perform a one-time backup now below.": [
+        "バックアップは日中を通して自動的に保存されます。以下から、今すぐ 1 回限りのバックアップを実行できます。"
+      ],
+      "Do not edit this file.": [
+        "このファイルは編集しないでください。"
+      ],
+      "Drag and drop this metadata file into the File Backups preferences pane in the ${ AppName } desktop or web application interface.": [
+        "このメタデータファイルを、${ AppName }のデスクトップアプリまたはウェブアプリのインターフェースにある「ファイルバックアップ」設定ペインにドラッグ＆ドロップしてください。"
+      ],
+      "Files backups are enabled. When you upload a new file on any device and open this application, files will be backed up in encrypted form to:": [
+        "ファイルのバックアップが有効になっています。任意のデバイスで新しいファイルをアップロードしてこのアプリを開くと、ファイルは暗号化されて次の場所にバックアップされます:"
+      ],
+      "How often to receive backups.": [
+        "バックアップを受け取る頻度。"
+      ],
+      "Please drag the metadata file instead of the encrypted data file.": [
+        "暗号化済みデータファイルではなく、メタデータファイルをドラッグしてください。"
+      ],
+      "Receive daily encrypted email backups of all your notes directly in your email inbox.": [
+        "すべてのメモの暗号化済みメールバックアップを毎日、メールの受信トレイで直接受信できます。"
+      ],
+      "The file and key data below is encrypted with your account password.": [
+        "以下のファイルとキーのデータは、アカウントパスワードで暗号化されています。"
+      ],
+      "To enable file backups, use the ${ AppName } desktop application.": [
+        "ファイルバックアップを有効にするには、${ AppName }のデスクトップアプリをご利用ください。"
+      ],
+      "To enable plaintext backups, use the ${ AppName } desktop application.": [
+        "プレーンテキストバックアップを有効にするには、${ AppName }のデスクトップアプリをご利用ください。"
+      ],
+      "To enable text backups, use the ${ AppName } desktop application.": [
+        "テキストバックアップを有効にするには、${ AppName }のデスクトップアプリをご利用ください。"
+      ]
+    },
+    "B6.Preferences.Backups.Label": {
+      "${ AppName } Backup - ${ formattedDate }": [
+        "${ AppName } バックアップ - ${ formattedDate }"
+      ],
+      "${ AppName } Backup - ${ formattedDate }.zip": [
+        "${ AppName } バックアップ - ${ formattedDate }.zip"
+      ],
+      "${ AppName } Backup and Import File": [
+        "${ AppName } バックアップ・インポートファイル"
+      ],
+      "${ AppName } Encrypted Backup and Import File - ${ formattedDate }": [
+        "${ AppName } 暗号化バックアップ・インポートファイル - ${ formattedDate }"
+      ],
+      "${ AppName } Encrypted Backup and Import File - ${ formattedDate }.txt": [
+        "${ AppName } 暗号化バックアップ・インポートファイル - ${ formattedDate }.txt"
+      ],
+      "Automatic text backups": [
+        "テキストの自動バックアップ"
+      ],
+      "Decrypted": [
+        "復号化済み"
+      ],
+      "Encrypted": [
+        "暗号化済み"
+      ],
+      "File Backups": [
+        "ファイルバックアップ"
+      ],
+      "Perform Backup": [
+        "バックアップを実行"
+      ],
+      "Plaintext Backups": [
+        "プレーンテキストバックアップ"
+      ],
+      "Text Backups": [
+        "テキストバックアップ"
+      ]
+    },
+    "B6.Preferences.Backups.Status": {
+      "File backups are not enabled. Enable to choose where your files are backed up.": [
+        "ファイルのバックアップは有効になっていません。有効にすると、ファイルのバックアップ先を選択できます。"
+      ],
+      "Plaintext backups are enabled and saved to:": [
+        "プレーンテキストバックアップが有効になっており、以下に保存されています:"
+      ],
+      "Plaintext backups are not enabled. Enable to choose where your data is backed up.": [
+        "プレーンテキストバックアップは有効になっていません。有効にすると、データのバックアップ先を選択できます。"
+      ],
+      "Saving local backup…": [
+        "ローカルバックアップを保存中…"
+      ],
+      "Successfully saved backup.": [
+        "バックアップの保存に成功しました。"
+      ],
+      "Text backups are enabled and saved to:": [
+        "テキストバックアップが有効になっており、次の場所に保存されます:"
+      ],
+      "Text backups are not enabled. Enable to choose where your data is backed up.": [
+        "テキストバックアップは有効になっていません。有効にすると、データのバックアップ先を選択できます。"
+      ]
+    },
+    "B6.Preferences.Backups.Subtitle": {
+      "1. Choose related data file": [
+        "1. 関連するデータファイルを選択"
+      ],
+      "2. Decrypt and save file to your computer": [
+        "2. ファイルを復号化してコンピューターに保存"
+      ],
+      "Automatically save backups of all your notes into plaintext, non-encrypted folders.": [
+        "すべてのメモのバックアップを、暗号化されていないプレーンテキストのフォルダーに自動的に保存します。"
+      ],
+      "Automatically save backups of all your notes to this computer into plaintext, non-encrypted folders.": [
+        "すべてのメモのバックアップを、このコンピューター上の暗号化されていないプレーンテキストフォルダーに自動的に保存します。"
+      ],
+      "Automatically save encrypted backups of your files.": [
+        "ファイルの暗号化バックアップを自動的に保存します。"
+      ],
+      "Automatically save encrypted backups of your uploaded files to this computer.": [
+        "アップロードしたファイルの暗号化バックアップをこのコンピューターに自動的に保存します。"
+      ],
+      "Automatically save encrypted text backups of all your note and tag data to this computer.": [
+        "すべてのメモとタグのデータの暗号化済みテキストバックアップを、このコンピューターに自動的に保存します。"
+      ],
+      "Download a backup of all your text-based data": [
+        "すべてのテキストベースのデータのバックアップをダウンロード"
+      ],
+      "Frequency": [
+        "間隔"
+      ],
+      "Import a previously saved backup file": [
+        "以前保存したバックアップファイルをインポート"
+      ]
+    },
+    "B6.Preferences.Backups.Title": {
+      "Automatic Encrypted Text Backups": [
+        "自動暗号化テキストバックアップ"
+      ],
+      "Automatic file backups": [
+        "自動ファイルバックアップ"
+      ],
+      "Automatic plaintext backups": [
+        "自動プレーンテキストバックアップ"
+      ],
+      "Backup Decryption": [
+        "バックアップの復号"
+      ],
+      "Data backups": [
+        "データバックアップ"
+      ],
+      "Email backups": [
+        "メールバックアップ"
+      ]
+    },
+    "B6.Preferences.Error": {
+      "Failed to get settings.": [
+        "設定の取得に失敗しました。"
+      ],
+      "Failed to update settings.": [
+        "設定の更新に失敗しました。"
+      ],
+      "Unable to register for ${ ListedName }. Please try again later.": [
+        "${ ListedName } に登録できませんでした。しばらくしてから再度お試しください。"
+      ]
+    },
+    "B6.Preferences.General.Action": {
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Change icon": [
+        "アイコンを変更する"
+      ],
+      "Create Smart View": [
+        "スマートビューを作成"
+      ],
+      "Create smart views to organize your notes according to conditions you define.": [
+        "自分で定義した条件に基づいてメモを整理するためのスマートビューを作成します。"
+      ],
+      "Delete": [
+        "削除"
+      ],
+      "Edit": [
+        "編集"
+      ],
+      "Learn more": [
+        "より詳しく"
+      ],
+      "Options": [
+        "オプション"
+      ],
+      "Remove offline key": [
+        "オフラインキーを削除"
+      ],
+      "Remove Offline Key": [
+        "オフラインキーを削除"
+      ],
+      "Save": [
+        "保存"
+      ],
+      "Select the format for the note title": [
+        "メモのタイトルの形式を選択"
+      ],
+      "Submit": [
+        "送信"
+      ]
+    },
+    "B6.Preferences.General.Confirmation": {
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Remove offline key?": [
+        "オフラインキーを削除しますか？"
+      ]
+    },
+    "B6.Preferences.General.Info": {
+      ". Use [] to escape formatting.": [
+        "。[] で書式設定をエスケープできます。"
+      ],
+      "Allows using gestures to navigate": [
+        "ジェスチャーで移動できるようになります"
+      ],
+      "Control whether the animated saving status is shown while editing. Error statuses are always shown regardless of preference.": [
+        "編集中にアニメーション付きの保存ステータスを表示するかどうかを設定します。エラーのステータスは設定に関係なく常に表示されます。"
+      ],
+      "Default image alignment in ${ SuperName } notes": [
+        "${ SuperName } メモでの画像のデフォルトの配置"
+      ],
+      "Invalid JSON. Double check your entry and try again.": [
+        "JSONが無効です。入力内容を確認してもう一度お試しください。"
+      ],
+      "Moments lets you capture photos of yourself throughout the day, creating a visual record of your life, one photo at a time. Using your webcam or mobile selfie-cam, Moments takes a photo of you every half hour. All photos are end-to-end encrypted and stored in your files. Enable Moments on a per-device basis to get started.": [
+        "Momentsでは、1日を通して自分の写真を撮影し、人生のビジュアル記録を1枚ずつ作成できます。ウェブカメラやモバイルのインカメラを使って、Momentsは30分ごとに写真を撮影します。すべての写真はエンドツーエンド暗号化され、ファイルに保管されます。開始するには、デバイスごとにMomentsを有効にしてください。"
+      ],
+      "No experimental features available.": [
+        "利用可能な実験的機能はありません。"
+      ],
+      "The default spellcheck value for new notes. Spellcheck can be configured per note from the note context menu. Spellcheck may degrade overall typing performance with long notes.": [
+        "新規メモのスペルチェックのデフォルト値です。スペルチェックは、メモのコンテキストメニューからメモごとに設定できます。長いメモでは、スペルチェックにより全体の入力パフォーマンスが低下する場合があります。"
+      ],
+      "The first note in the list": [
+        "リスト内の最初のメモ"
+      ],
+      "When enabled, adding a nested tag to a note will automatically add all associated parent tags.": [
+        "有効にすると、メモにネストされたタグを追加した際に、関連するすべての親タグが自動的に追加されます。"
+      ],
+      "When enabled, the ${ SuperName } toolbar will always be shown at the top of the note. It can be temporarily toggled using Cmd/Ctrl+Shift+K. When disabled, the ${ SuperName } toolbar will only be shown as a floating toolbar when text is selected.": [
+        "有効にすると、${ SuperName }ツールバーがメモの上部に常に表示されます。Cmd/Ctrl+Shift+Kで一時的に切り替えることもできます。無効化した場合、${ SuperName }ツールバーはテキストを選択したときにのみフローティングツールバーとして表示されます。"
+      ],
+      "Whether a confirmation dialog should be shown before closing the app.": [
+        "アプリを閉じる前に確認ダイアログを表示するかどうか。"
+      ]
+    },
+    "B6.Preferences.General.Label": {
+      "Capture Present Moment": [
+        "今この瞬間を記録"
+      ],
+      "Center align": [
+        "中央揃え"
+      ],
+      "Icon:": [
+        "アイコン:"
+      ],
+      "Labs": [
+        "ラボ"
+      ],
+      "Left align": [
+        "左揃え"
+      ],
+      "Offline activation": [
+        "オフラインアクティベーション"
+      ],
+      "Offline Subscription": [
+        "ホームサーバー用サブスクリプション"
+      ],
+      "Offline Subscription Code": [
+        "ホームサーバー用サブスクリプションコード"
+      ],
+      "Pane switch gestures": [
+        "ペイン切り替えジェスチャー"
+      ],
+      "Predicate:": [
+        "述語:"
+      ],
+      "Preview:": [
+        "プレビュー:"
+      ],
+      "Right align": [
+        "右揃え"
+      ],
+      "Select the default note type": [
+        "デフォルトのメモの種類を選択"
+      ],
+      "The last viewed note": [
+        "最後に表示したメモ"
+      ],
+      "Title:": [
+        "タイトル:"
+      ]
+    },
+    "B6.Preferences.General.Placeholder": {
+      "Select tag to save Moments to...": [
+        "Momentsの保存先タグを選択..."
+      ]
+    },
+    "B6.Preferences.General.Subtitle": {
+      "Activate": [
+        "有効化:"
+      ],
+      "Add all parent tags when adding a nested tag to a note": [
+        "メモにネストされたタグを追加する際に、すべての親タグを追加する"
+      ],
+      "Always ask before closing app (Android)": [
+        "アプリを閉じる前に常に確認 (Android)"
+      ],
+      "Default image alignment in ${ SuperName } notes": [
+        "${ SuperName } メモでの画像のデフォルトの配置"
+      ],
+      "Note Type": [
+        "メモの種類"
+      ],
+      "Show note saving status while editing": [
+        "編集中にメモの保存状態を表示"
+      ],
+      "Spellcheck": [
+        "スペルチェック"
+      ],
+      "Title Format": [
+        "タイトルの形式"
+      ],
+      "Use always-visible toolbar in ${ SuperName } notes": [
+        "${ SuperName } メモでツールバーを常に表示"
+      ],
+      "Your personal photo journal": [
+        "あなただけのフォトジャーナル"
+      ]
+    },
+    "B6.Preferences.General.Title": {
+      "Choose icon": [
+        "アイコンを選択"
+      ],
+      "Defaults": [
+        "デフォルト"
+      ],
+      "Edit Smart View \"${ viewTitle }\"": [
+        "スマートビュー \"${ viewTitle }\" を編集"
+      ],
+      "Labs": [
+        "ラボ"
+      ],
+      "Moments": [
+        "モーメンツ"
+      ],
+      "New Note Defaults": [
+        "新規メモのデフォルト設定"
+      ],
+      "Smart Views": [
+        "スマートビュー"
+      ],
+      "Tools": [
+        "ツール"
+      ],
+      "Upgrade for smart views": [
+        "アップグレードでスマートビューを利用"
+      ],
+      "When opening the app, show...": [
+        "アプリを開いたときに表示する項目..."
+      ]
+    },
+    "B6.Preferences.HomeServer.Action": {
+      "Activate Premium Features": [
+        "プレミアム機能を有効にする"
+      ],
+      "Apply & Restart": [
+        "適用して再起動"
+      ],
+      "Change Location": [
+        "場所を変更"
+      ],
+      "Close": [
+        "閉じる"
+      ],
+      "MySQL website.": [
+        "MySQLウェブサイト。"
+      ],
+      "Open Location": [
+        "場所を開く"
+      ]
+    },
+    "B6.Preferences.HomeServer.Error": {
+      "${ locationError }. Restoring to initial location in a moment...": [
+        "${ locationError }。まもなく初期位置に復元します..."
+      ],
+      "Please start your home server before activating offline features.": [
+        "オフライン機能を有効にする前に、ホームサーバーを起動してください。"
+      ]
+    },
+    "B6.Preferences.HomeServer.Info": {
+      "Accessible on local network at": [
+        "ローカルネットワークから次のアドレスでアクセスできます"
+      ],
+      "Activate the Tailscale VPN on your mobile device.": [
+        "モバイルデバイスでTailscale VPNを有効にしてください。"
+      ],
+      "Change your server's data location by selecting \"Change Location\" in the Home Server section above.": [
+        "サーバーのデータの位置を変更するには、上のホームサーバーセクションで「位置を変更」を選択してください。"
+      ],
+      "Changing the port will require you to sign out of all existing sessions.": [
+        "ポートを変更すると、既存のすべてのセッションからサインアウトする必要があります。"
+      ],
+      "Download Tailscale on your mobile device and sign into your Tailscale account.": [
+        "モバイルデバイスにTailscaleをダウンロードし、Tailscaleアカウントにサインインしてください。"
+      ],
+      "Enter your purchased offline subscription code to activate all the features offered by your home server, likes files support and ${ SuperName } notes.": [
+        "ご購入いただいたホームサーバー用サブスクリプションのコードを入力すると、ホームサーバーが提供するファイルのサポートや ${ SuperName } メモなど、すべての機能が有効になります。"
+      ],
+      "For automatic backups, you can place your server's data inside of a synced cloud folder, like Dropbox, Tresorit, or iCloud Drive.": [
+        "自動バックアップの場合は、サーバーのデータをDropbox、Tresorit、iCloud Driveなどの同期されたクラウドフォルダーに配置できます。"
+      ],
+      "Home server is enabled. All data is stored at:": [
+        "ホームサーバーが有効です。すべてのデータは次の場所に保存されています:"
+      ],
+      "In order to connect to a MySQL database, ensure that your system has MySQL installed. For detailed instructions, visit the": [
+        "MySQL データベースに接続するには、システムに MySQL がインストールされていることをご確認ください。詳細な手順については、次をご覧ください:"
+      ],
+      "Open ${ AppName } on your mobile device and sign into your home server by specifying the sync server URL during sign in. The URL will be the Tailscale-based IP address of this computer, followed by the port number of your home server. For example, if your computer Tailscale IP address is 100.112.45.106 and your home server is running on port 3127, your sync server URL will be http://100.112.45.106:3127.": [
+        "モバイルデバイスで${ AppName }を開き、サインイン時に同期サーバーのURLを指定してホームサーバーにサインインします。URLは、このコンピューターのTailscaleベースのIPアドレスの後に、ホームサーバーのポート番号を続けたものになります。たとえば、コンピューターのTailscale IPアドレスが100.112.45.106で、ホームサーバーがポート3127で実行されている場合、同期サーバーのURLはhttp://100.112.45.106:3127になります。"
+      ],
+      "Restart your home server.": [
+        "ホームサーバーを再起動してください。"
+      ],
+      "Select a cloud drive to store your server's data in.": [
+        "サーバーのデータを保存するクラウドドライブを選択してください。"
+      ],
+      "You are not currently signed into your home server. To use your home server, sign in or register using ${ url }": [
+        "現在、ホームサーバーにサインインしていません。ホームサーバーを使用するには、${ url } からサインインまたは登録してください"
+      ],
+      "You are not currently signed into your home server. To use your home server, sign out of ${ email }, then sign in or register using ${ url }.": [
+        "現在、ホームサーバーにサインインしていません。ホームサーバーを使用するには、${ email } からサインアウトし、${ url } を使用してサインインまたは登録してください。"
+      ],
+      "Your ${ AppName } data is always end-to-end encrypted on disk, so your cloud provider will not be able to read your notes or files.": [
+        "${ AppName }のデータはディスク上で常にエンドツーエンド暗号化されているため、クラウドプロバイダーがメモやファイルを読むことはできません。"
+      ],
+      "Your home server is offline.": [
+        "ホームサーバーがオフラインです。"
+      ]
+    },
+    "B6.Preferences.HomeServer.Label": {
+      "Debug": [
+        "デバッグ"
+      ],
+      "Error": [
+        "エラー"
+      ],
+      "Home Server": [
+        "ホームサーバー"
+      ],
+      "Info": [
+        "情報"
+      ],
+      "Labs": [
+        "ラボ"
+      ],
+      "Log level": [
+        "ログレベル"
+      ],
+      "MySQL": [
+        "MySQL"
+      ],
+      "SQLite": [
+        "SQLite"
+      ],
+      "Warning": [
+        "警告"
+      ]
+    },
+    "B6.Preferences.HomeServer.Placeholder": {
+      "Auth JWT Secret": [
+        "認証JWTシークレット"
+      ],
+      "Encryption Server Key": [
+        "暗号化サーバーキー"
+      ],
+      "host": [
+        "ホスト"
+      ],
+      "JWT Secret": [
+        "JWTシークレット"
+      ],
+      "name": [
+        "名前"
+      ],
+      "password": [
+        "パスワード"
+      ],
+      "port": [
+        "ポート"
+      ],
+      "Port": [
+        "ポート"
+      ],
+      "Pseudo Params Key": [
+        "疑似パラメーターキー"
+      ],
+      "username": [
+        "ユーザー名"
+      ],
+      "Valet Token Secret": [
+        "Valet Tokenシークレット"
+      ]
+    },
+    "B6.Preferences.HomeServer.Status": {
+      "Applying changes and restarting...": [
+        "変更を適用して再起動中..."
+      ],
+      "Download Tailscale on this computer and complete the Tailscale setup wizard until you are presented with the IP address of your computer. It should start with something like 100.xxx...": [
+        "このコンピューターに Tailscale をダウンロードし、Tailscale のセットアップウィザードを完了すると、コンピューターの IP アドレスが表示されます。100.xxx... のような形式で始まります。"
+      ],
+      "Not Set": [
+        "未設定"
+      ],
+      "Offline": [
+        "オフライン"
+      ],
+      "Online": [
+        "オンライン"
+      ],
+      "Shutting down...": [
+        "シャットダウン中..."
+      ],
+      "Starting...": [
+        "起動中..."
+      ],
+      "You are currently signed into your home server under ${ email }": [
+        "現在、${ email }としてホームサーバーにサインインしています"
+      ]
+    },
+    "B6.Preferences.HomeServer.Subtitle": {
+      "Accessing your home server while on the go is easy and secure with Tailscale.": [
+        "Tailscale を使えば、外出先からでもホームサーバーに簡単かつ安全にアクセスできます。"
+      ],
+      "Auth JWT Secret": [
+        "認証JWTシークレット"
+      ],
+      "Database Host": [
+        "データベースホスト"
+      ],
+      "Database Name": [
+        "データベース名"
+      ],
+      "Database Password": [
+        "データベースパスワード"
+      ],
+      "Database Port": [
+        "データベースポート"
+      ],
+      "Database Username": [
+        "データベースのユーザー名"
+      ],
+      "Encryption Server Key": [
+        "暗号化サーバーキー"
+      ],
+      "JWT Secret": [
+        "JWTシークレット"
+      ],
+      "Log Level": [
+        "ログレベル"
+      ],
+      "Port": [
+        "ポート"
+      ],
+      "Pseudo Params Key": [
+        "疑似パラメーターキー"
+      ],
+      "Sync your data on a private cloud running on your home computer.": [
+        "ホームコンピューター上で動作するプライベートクラウドにデータを同期します。"
+      ],
+      "Valet Token Secret": [
+        "Valet Tokenシークレット"
+      ]
+    },
+    "B6.Preferences.HomeServer.Title": {
+      "Activate Premium Features": [
+        "プレミアム機能を有効にする"
+      ],
+      "Advanced settings": [
+        "高度な設定"
+      ],
+      "Backing up your data": [
+        "データのバックアップ"
+      ],
+      "Database": [
+        "データベース"
+      ],
+      "Home Server": [
+        "ホームサーバー"
+      ],
+      "Logs": [
+        "ログ"
+      ],
+      "Remote access": [
+        "リモートアクセス"
+      ]
+    },
+    "B6.Preferences.Listed.Action": {
+      "Create new author": [
+        "新しい著者を作成"
+      ],
+      "Later": [
+        "後で"
+      ],
+      "Learn more": [
+        "より詳しく"
+      ],
+      "Open Settings": [
+        "設定を開く"
+      ]
+    },
+    "B6.Preferences.Listed.Info": {
+      "${ ListedName } is a free blogging platform that allows you to create a public journal published directly from your notes.": [
+        "${ ListedName } は、メモから直接公開される公開ジャーナルを作成できる無料のブログプラットフォームです。"
+      ],
+      "To get started, sign in or register for a ${ AppName } account.": [
+        "始めるには、${ AppName } アカウントにサインインまたは登録してください。"
+      ],
+      "Your new ${ ListedName } blog has been successfully created! You can publish a new post to your blog from ${ AppName } via the <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.": [
+        "新しい ${ ListedName } ブログが正常に作成されました。${ AppName } から、エディターペインの <i>アクション</i> メニューを使ってブログに新しい投稿を公開できます。ブログの設定を開いて、セットアップを始めましょう。"
+      ]
+    },
+    "B6.Preferences.Listed.Status": {
+      "Creating account...": [
+        "アカウントを作成しています..."
+      ]
+    },
+    "B6.Preferences.Listed.Title": {
+      "Your blog on ${ ListedName }": [
+        "${ ListedName } のブログ"
+      ],
+      "Your blogs on ${ ListedName }": [
+        "${ ListedName } 上のブログ"
+      ]
+    },
+    "B6.Preferences.Other.Action": {
+      "Back": [
+        "戻る"
+      ],
+      "Backups": [
+        "バックアップ"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Close preferences": [
+        "設定を閉じる"
+      ],
+      "Confirm": [
+        "確認"
+      ],
+      "Create a free ${ ListedName } author account to get started.": [
+        "始めるには、無料の ${ ListedName } 著者アカウントを作成してください。"
+      ],
+      "Download URL": [
+        "ダウンロードURL"
+      ],
+      "Install": [
+        "インストール"
+      ],
+      "Open Blog": [
+        "ブログを開く"
+      ],
+      "Open Downloads": [
+        "ダウンロードページを開く"
+      ],
+      "Open preferences": [
+        "設定を開く"
+      ],
+      "Settings": [
+        "設定"
+      ],
+      "Uninstall": [
+        "アンインストール"
+      ]
+    },
+    "B6.Preferences.Other.Error": {
+      "Failed to install plugin": [
+        "プラグインをインストールできませんでした"
+      ],
+      "Plugins may not be actively maintained. ${ AppName } cannot attest to the quality or user experience of these plugins, and is not responsible for any data loss that may arise from their use.": [
+        "プラグインは積極的にメンテナンスされていない場合があります。${ AppName }はこれらのプラグインの品質やユーザーエクスペリエンスを保証するものではなく、使用によって生じたデータ損失について一切の責任を負いません。"
+      ]
+    },
+    "B6.Preferences.Other.Info": {
+      "Loading...": [
+        "読み込み中…"
+      ],
+      "No plugins installed.": [
+        "インストール済みのプラグインはありません。"
+      ],
+      "Your preferences for ${ AppName }": [
+        "${ AppName }の設定"
+      ]
+    },
+    "B6.Preferences.Other.Label": {
+      "Accessibility": [
+        "アクセシビリティ"
+      ],
+      "Account": [
+        "アカウント"
+      ],
+      "Appearance": [
+        "外観"
+      ],
+      "Description": [
+        "説明"
+      ],
+      "Enter Plugin URL": [
+        "プラグインのURLを入力"
+      ],
+      "Extension Type": [
+        "プラグインの種類"
+      ],
+      "General": [
+        "一般"
+      ],
+      "Get a free month": [
+        "1か月無料で利用"
+      ],
+      "Help & feedback": [
+        "ヘルプとフィードバック"
+      ],
+      "Hosted URL": [
+        "ホスト URL"
+      ],
+      "Latest Version": [
+        "最新バージョン"
+      ],
+      "Name": [
+        "名前"
+      ],
+      "New": [
+        "新着"
+      ],
+      "Plugins": [
+        "プラグイン"
+      ],
+      "Preferences Menu": [
+        "設定メニュー"
+      ],
+      "Rename": [
+        "名前を変更"
+      ],
+      "Security": [
+        "セキュリティ"
+      ],
+      "Shortcuts": [
+        "ショートカット"
+      ],
+      "Vaults": [
+        "保管庫"
+      ],
+      "Version": [
+        "バージョン"
+      ],
+      "What's New": [
+        "最新情報"
+      ],
+      "Your Version": [
+        "お使いのバージョン"
+      ]
+    },
+    "B6.Preferences.Other.Subtitle": {
+      "Bug Fixes": [
+        "バグ修正"
+      ],
+      "Features": [
+        "機能"
+      ],
+      "Get Started": [
+        "始めましょう"
+      ],
+      "What is ${ ListedName }?": [
+        "${ ListedName } とは？"
+      ]
+    },
+    "B6.Preferences.Other.Title": {
+      "About ${ ListedName }": [
+        "${ ListedName } について"
+      ],
+      "Browse Plugins": [
+        "プラグインを探す"
+      ],
+      "Confirm Extension": [
+        "プラグインの確認"
+      ],
+      "Install Custom Plugin": [
+        "カスタムプラグインをインストール"
+      ],
+      "Manage Plugins": [
+        "プラグインを管理"
+      ],
+      "Preferences": [
+        "設定"
+      ]
+    },
+    "B6.Preferences.Plugins.Confirmation": {
+      "Are you sure you want to uninstall this plugin?": [
+        "このプラグインをアンインストールしますか？"
+      ],
+      "Uninstall Plugin?": [
+        "プラグインをアンインストールしますか？"
+      ]
+    },
+    "B6.Preferences.Plugins.Info": {
+      "${ pluginName } has been successfully installed.": [
+        "${ pluginName } は正常にインストールされました。"
+      ]
+    },
+    "B6.Preferences.Plugins.Label": {
+      "by": [
+        "作成者"
+      ],
+      "Uninstall": [
+        "アンインストール"
+      ]
+    },
+    "B6.Preferences.Security.Action": {
+      "Add": [
+        "追加"
+      ],
+      "Add Device": [
+        "デバイスを追加"
+      ],
+      "Add passcode": [
+        "パスコードを追加"
+      ],
+      "add this secret key": [
+        "このシークレットキーを追加する"
+      ],
+      "Attempt decryption": [
+        "復号を試行"
+      ],
+      "Back": [
+        "戻る"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Change Passcode": [
+        "パスコードを変更"
+      ],
+      "Delete": [
+        "削除"
+      ],
+      "Delete all": [
+        "すべて削除"
+      ],
+      "Disable Biometrics Lock": [
+        "生体認証ロックを無効化"
+      ],
+      "Disable Multitasking Privacy": [
+        "マルチタスク時のプライバシーを無効化"
+      ],
+      "Disable Multitasking/Screenshot Privacy": [
+        "マルチタスク/スクリーンショットプライバシーを無効化"
+      ],
+      "Enable Biometrics Lock": [
+        "生体認証ロックを有効にする"
+      ],
+      "Enable Multitasking Privacy": [
+        "マルチタスク時のプライバシーを有効にする"
+      ],
+      "Enable Multitasking/Screenshot Privacy": [
+        "マルチタスク/スクリーンショットプライバシーを有効にする"
+      ],
+      "End Unprotected Access": [
+        "保護されていないアクセスを終了"
+      ],
+      "Export": [
+        "エクスポート"
+      ],
+      "Export all": [
+        "すべてエクスポート"
+      ],
+      "Finish": [
+        "完了"
+      ],
+      "Learn more": [
+        "より詳しく"
+      ],
+      "Next": [
+        "次へ"
+      ],
+      "Remove Passcode": [
+        "パスコードを削除"
+      ],
+      "Set Passcode": [
+        "パスコードを設定"
+      ]
+    },
+    "B6.Preferences.Security.Confirmation": {
+      "Are you sure you want to permanently delete ${ count } item(s)?": [
+        "本当に${ count }個のアイテムを完全に削除しますか？"
+      ],
+      "Delete": [
+        "削除"
+      ]
+    },
+    "B6.Preferences.Security.Error": {
+      "${ erroredItems.length } items are errored and could not be decrypted.": [
+        "${ erroredItems.length } 個のアイテムでエラーが発生し、復号化できませんでした。"
+      ],
+      "Could not prepare security key registration": [
+        "セキュリティキーの登録を準備できませんでした"
+      ],
+      "Device name is required": [
+        "デバイス名は必須です"
+      ],
+      "User not found": [
+        "ユーザーが見つかりません"
+      ]
+    },
+    "B6.Preferences.Security.Info": {
+      "${ contentTypeDisplay } created on ${ createdAtString }": [
+        "${ createdAtString }に作成された${ contentTypeDisplay }"
+      ],
+      "Actions like viewing or searching protected notes, exporting decrypted backups, or revoking an active session require additional authentication such as entering your account password or application passcode.": [
+        "保護されたメモの表示や検索、復号化したバックアップのエクスポート、アクティブなセッションの失効などの操作には、アカウントパスワードやアプリのパスコードの入力など、追加の認証が必要です。"
+      ],
+      "Add a passcode to lock the application and encrypt on-device key storage.": [
+        "パスコードを追加してアプリをロックし、デバイス上のキーストレージを暗号化します。"
+      ],
+      "An extra layer of security when logging in to your account.": [
+        "アカウントへのログイン時に、追加のセキュリティレイヤーとして機能します。"
+      ],
+      "Authenticate with a hardware security key such as YubiKey.": [
+        "YubiKey などの物理セキュリティキーを使用して認証します。"
+      ],
+      "Incorrect authentication code, please try again.": [
+        "認証コードが正しくありません。もう一度お試しください。"
+      ],
+      "Incorrect secret key, please try again.": [
+        "シークレットキーが正しくありません。もう一度お試しください。"
+      ],
+      "Item ID: ${ itemUuid }": [
+        "アイテムID: ${ itemUuid }"
+      ],
+      "Item of type ${ item.content_type }": [
+        "タイプ ${ item.content_type } のアイテム"
+      ],
+      "Last Modified: ${ updatedAtString }": [
+        "最終更新：${ updatedAtString }"
+      ],
+      "Passcode lock is enabled.": [
+        "パスコードロックが有効になっています。"
+      ],
+      "Please visit the web app in order to add a hardware security key.": [
+        "物理セキュリティキーを追加するには、ウェブアプリにアクセスしてください。"
+      ],
+      "Sign in or register for an account to configure 2FA.": [
+        "2要素認証を設定するには、サインインするかアカウントを登録してください。"
+      ],
+      "Sign in or register for an account to configure hardware security keys.": [
+        "物理セキュリティキーを設定するには、サインインするかアカウントを登録してください。"
+      ],
+      "Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or get a new one.": [
+        "Google Authenticator などの一部のアプリは、デバイスを紛失したり新しいデバイスに切り替えたりした場合に、シークレットキーのバックアップと復元に対応していません。"
+      ],
+      "The autolock timer begins when the window or tab loses focus.": [
+        "オートロックのタイマーは、ウィンドウまたはタブがフォーカスを失うと開始されます。"
+      ],
+      "Two-factor authentication has been successfully enabled for your account.": [
+        "アカウントで2要素認証が正常に有効になりました。"
+      ],
+      "User agent logging allows you to identify the devices or browsers signed into your account. For increased privacy, you can disable this feature, which will remove all saved user agent values from our server, and disable future logging of this value.": [
+        "ユーザーエージェントのログを記録すると、アカウントにサインインしているデバイスやブラウザを特定できます。プライバシーを強化するため、この機能を無効化することもできます。無効化すると、サーバーに保存されているすべてのユーザーエージェントの値が削除され、今後この値のログ記録も無効化されます。"
+      ],
+      "You can use this key to generate codes if you lose access to your authenticator app.": [
+        "認証アプリにアクセスできなくなった場合、このキーを使用してコードを生成できます。"
+      ],
+      "You must enable two-factor authentication before adding a hardware security key.": [
+        "物理セキュリティキーを追加する前に、2要素認証を有効にする必要があります。"
+      ]
+    },
+    "B6.Preferences.Security.Label": {
+      "authentication code": [
+        "認証コード"
+      ],
+      "authenticator app": [
+        "認証アプリ"
+      ],
+      "Device Name": [
+        "デバイス名"
+      ],
+      "Open your": [
+        "次のアプリを開いてください:"
+      ],
+      "or": [
+        "または"
+      ],
+      "Require Biometrics": [
+        "生体認証を必須にする"
+      ],
+      "Require Passcode": [
+        "パスコードが必要です"
+      ],
+      "Scan this QR code": [
+        "この QR コードをスキャンしてください"
+      ],
+      "secret key": [
+        "シークレットキー"
+      ]
+    },
+    "B6.Preferences.Security.Placeholder": {
+      "Confirm Passcode": [
+        "パスコードの確認"
+      ],
+      "Passcode": [
+        "パスコード"
+      ]
+    },
+    "B6.Preferences.Security.Status": {
+      "Protections are enabled.": [
+        "保護機能が有効になっています。"
+      ],
+      "Unprotected access expires at ${ protectionsDisabledUntil }.": [
+        "保護されていないアクセスは${ protectionsDisabledUntil }に終了します。"
+      ]
+    },
+    "B6.Preferences.Security.Subtitle": {
+      "Devices": [
+        "デバイス"
+      ],
+      "Session user agent logging": [
+        "セッションのユーザーエージェントのログ記録"
+      ]
+    },
+    "B6.Preferences.Security.Title": {
+      "Add Security Key": [
+        "セキュリティキーを追加"
+      ],
+      "Autolock": [
+        "自動ロック"
+      ],
+      "Biometrics Lock": [
+        "生体認証ロック"
+      ],
+      "Copy to clipboard": [
+        "クリップボードにコピー"
+      ],
+      "Download": [
+        "ダウンロード"
+      ],
+      "Encryption": [
+        "暗号化"
+      ],
+      "Error decrypting items": [
+        "アイテムの復号化エラー"
+      ],
+      "Hardware security key authentication": [
+        "物理セキュリティキー認証"
+      ],
+      "Hardware security key authentication not available": [
+        "物理セキュリティキー認証を利用できません"
+      ],
+      "Multitasking Privacy": [
+        "マルチタスク時のプライバシー"
+      ],
+      "Multitasking/Screenshot Privacy": [
+        "マルチタスク/スクリーンショットのプライバシー"
+      ],
+      "Passcode Autolock": [
+        "パスコード自動ロック"
+      ],
+      "Passcode lock": [
+        "パスコードロック"
+      ],
+      "Privacy": [
+        "プライバシー"
+      ],
+      "Protections": [
+        "保護機能"
+      ],
+      "Step 1 of 3 - Scan QR code": [
+        "ステップ 1/3 - QRコードをスキャン"
+      ],
+      "Step 2 of 3 - Save secret key": [
+        "ステップ 2/3 - シークレットキーの保存"
+      ],
+      "Step 3 of 3 - Verification": [
+        "ステップ 3/3 - 確認"
+      ],
+      "Successfully Enabled": [
+        "有効化に成功しました"
+      ],
+      "Two-factor authentication": [
+        "2要素認証"
+      ],
+      "Two-factor authentication not available": [
+        "2要素認証を利用できません"
+      ]
+    },
+    "B6.Preferences.Security.Warning": {
+      "Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the \"Stay signed in\" option checked.": [
+        "一時的なセッションではパスコードの追加はサポートされていません。サインアウトした後、\"サインインしたままにする\"にチェックを入れて再度サインインしてください。"
+      ]
+    },
+    "B6.Preferences.Subscription.Confirmation": {
+      "All uploaded files of this user will be removed. This action cannot be undone.": [
+        "このユーザーがアップロードしたすべてのファイルは削除されます。この操作は元に戻せません。"
+      ],
+      "Are you sure you want to cancel this invitation?": [
+        "この招待をキャンセルしてもよろしいですか？"
+      ],
+      "Cancel Invitation": [
+        "招待のキャンセル"
+      ]
+    },
+    "B6.Preferences.Subscription.Error": {
+      "An error occurred while sending the invite. Please try again or contact support if the issue persists.": [
+        "招待の送信中にエラーが発生しました。もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。"
+      ],
+      "Cancelation already in progress.": [
+        "キャンセル処理はすでに進行中です。"
+      ],
+      "Cannot close window until pending tasks are complete.": [
+        "保留中のタスクが完了するまで、ウィンドウを閉じることはできません。"
+      ],
+      "Could not cancel invitation. Please try again or contact support if the issue persists.": [
+        "招待をキャンセルできませんでした。もう一度お試しください。問題が解決しない場合はサポートにお問い合わせください。"
+      ],
+      "The email you entered has an invalid format. Please review your input and try again.": [
+        "入力されたメールアドレスの形式が正しくありません。入力内容を確認して、もう一度お試しください。"
+      ],
+      "There was an error when attempting to redirect you to the subscription page.": [
+        "サブスクリプションページへのリダイレクト中にエラーが発生しました。"
+      ]
+    },
+    "B6.Preferences.Subscription.Info": {
+      "Active Invites": [
+        "有効な招待"
+      ],
+      "If an account is found with that email, they will receive an email with your invitation.": [
+        "そのメールアドレスでアカウントが見つかった場合、そのアカウントに招待メールが送信されます。"
+      ],
+      "Invitee Email": [
+        "招待されたユーザーのメールアドレス"
+      ],
+      "Make your first subscription invite below.": [
+        "以下から最初のサブスクリプション招待を作成してください。"
+      ],
+      "Note:": [
+        "注意:"
+      ],
+      "out of": [
+        "/"
+      ],
+      "Redirecting you to the subscription page...": [
+        "サブスクリプションページに移動しています..."
+      ],
+      "Subscription": [
+        "サブスクリプション"
+      ],
+      "subscription invites.": [
+        "サブスクリプションの招待。"
+      ],
+      "Subscription sharing": [
+        "サブスクリプションの共有"
+      ],
+      "Subscription sharing is available only on the ${ ProfessionalPlanName } plan. Please upgrade in order to share your subscription.": [
+        "サブスクリプションの共有は ${ ProfessionalPlanName } プランでのみ利用できます。サブスクリプションを共有するには、アップグレードをお願いします。"
+      ],
+      "The invitee must have an existing account with ${ AppName }. If they do not have an account yet, instruct them to make an account first.": [
+        "招待されたユーザーは、${ AppName }のアカウントをすでに持っている必要があります。まだアカウントをお持ちでない場合は、先にアカウントを作成するようご案内ください。"
+      ],
+      "This subscription has been shared with you and can only be managed by the owner.": [
+        "このサブスクリプションは共有されており、所有者のみが管理できます。"
+      ],
+      "You don't have a ${ AppName } subscription yet.": [
+        "まだ${ AppName }のサブスクリプションにご加入ではありません。"
+      ],
+      "You've used": [
+        "使用済み"
+      ]
+    },
+    "B6.Preferences.Subscription.Label": {
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Invite": [
+        "招待"
+      ],
+      "Learn More": [
+        "より詳しく"
+      ],
+      "Manage subscription": [
+        "サブスクリプションの管理"
+      ],
+      "Subscribe": [
+        "登録"
+      ]
+    },
+    "B6.Preferences.Subscription.Status": {
+      "Invite processed successfully.": [
+        "招待の処理に成功しました。"
+      ]
+    },
+    "B6.Preferences.Subscription.Title": {
+      "Share Your Subscription": [
+        "サブスクリプションを共有"
+      ]
+    },
+    "B6.Preferences.Vaults.Action": {
+      "Accept Invite": [
+        "招待を承認"
+      ],
+      "Add Contact": [
+        "共有相手を追加"
+      ],
+      "Add New Contact": [
+        "新しい共有相手を追加"
+      ],
+      "Add Trusted Contact": [
+        "信頼済みの共有相手を追加"
+      ],
+      "Cancel": [
+        "キャンセル"
+      ],
+      "Cancel Invite": [
+        "招待をキャンセルする"
+      ],
+      "Choose icon": [
+        "アイコンを選択"
+      ],
+      "Copy ID": [
+        "IDをコピー"
+      ],
+      "Create Shared Vault": [
+        "共有保管庫を作成する"
+      ],
+      "Create Vault": [
+        "保管庫を作成"
+      ],
+      "Delete": [
+        "削除"
+      ],
+      "Delete contact": [
+        "共有相手を削除"
+      ],
+      "Designate survivor": [
+        "指定承継者を指定"
+      ],
+      "Edit": [
+        "編集"
+      ],
+      "Edit contact": [
+        "共有相手を編集"
+      ],
+      "Enable Collaboration": [
+        "コラボレーションを有効化"
+      ],
+      "Enable Vault Sharing": [
+        "保管庫の共有を有効にする"
+      ],
+      "Invite Selected Contacts": [
+        "選択した共有相手を招待"
+      ],
+      "Remove From Vault": [
+        "保管庫から削除"
+      ],
+      "Save Contact": [
+        "共有相手を保存"
+      ],
+      "Save Vault": [
+        "保管庫を保存"
+      ],
+      "Update Account": [
+        "アカウントを更新"
+      ]
+    },
+    "B6.Preferences.Vaults.Confirmation": {
+      "All items and files in this vault will be removed from your account.": [
+        "この保管庫のすべてのアイテムとファイルがアカウントから削除されます。"
+      ],
+      "Are you sure you want to delete this contact?": [
+        "本当にこの共有相手を削除しますか？"
+      ],
+      "Are you sure you want to delete this vault?": [
+        "この保管庫を本当に削除してもよろしいですか?"
+      ],
+      "Are you sure you want to leave this vault?": [
+        "この保管庫から退出してもよろしいですか？"
+      ],
+      "Deleting a vault will permanently delete all its items and files.": [
+        "保管庫を削除すると、その中のすべてのアイテムとファイルが完全に削除されます。"
+      ]
+    },
+    "B6.Preferences.Vaults.Error": {
+      "Failed to copy to clipboard": [
+        "クリップボードへのコピーに失敗しました"
+      ],
+      "One or more subtags are in other vaults. Please remove those subtags from the vaults or move them to this vault first.": [
+        "1 つ以上のサブタグが他の保管庫にあります。先にそれらのサブタグを保管庫から削除するか、この保管庫に移動してください。"
+      ],
+      "This item is linked to other items that are not in the same vault. Please move those items to this vault first.": [
+        "このアイテムは、同じ保管庫にない他のアイテムにリンクされています。先にそれらのアイテムをこの保管庫に移動してください。"
+      ],
+      "Unable to create contact. Please try again.": [
+        "共有相手を作成できませんでした。もう一度お試しください。"
+      ],
+      "Unable to delete vault. Please try again.": [
+        "保管庫を削除できませんでした。もう一度お試しください。"
+      ],
+      "Unable to leave vault. Please try again.": [
+        "保管庫から退出できませんでした。もう一度お試しください。"
+      ]
+    },
+    "B6.Preferences.Vaults.Info": {
+      "Ask your contact for their ${ AppName } CollaborationID via secure email or chat. Then, enter it here to add them as a contact.": [
+        "安全なメールやチャットで、共有相手に${ AppName }のCollaborationIDを確認してください。次に、ここに入力して共有相手として追加します。"
+      ],
+      "Choose your own key for your vault. This is an advanced option and is not recommended for most users.": [
+        "保管庫に独自のキーを選択します。これは上級者向けのオプションで、ほとんどのユーザーには推奨されません。"
+      ],
+      "No contacts available to invite.": [
+        "招待できる共有相手がいません。"
+      ],
+      "Please upgrade in order to increase your vault limit.": [
+        "保管庫の上限を引き上げるには、アップグレードしてください。"
+      ],
+      "The sender of this invite is not trusted. To accept this invite, first add the sender as a trusted contact.": [
+        "この招待の差出人は信頼されていません。招待を承認するには、まず差出人を信頼済みの共有相手として追加してください。"
+      ],
+      "The vault name and description are end-to-end encrypted.": [
+        "保管庫の名前と説明はエンドツーエンドで暗号化されます。"
+      ],
+      "Vault is locked.": [
+        "保管庫はロックされています。"
+      ],
+      "Vaults that have no designated survivor will be deleted when the owner account is deleted. In order to ensure that no data is lost, please designate a survivor who will be transferred ownership of the vault.": [
+        "指定承継者が設定されていない保管庫は、オーナーのアカウントが削除されるとともに削除されます。データを失わないように、保管庫の所有権を引き継ぐ指定承継者を設定してください。"
+      ],
+      "Your vault key will be encrypted and saved locally on this device. You will need to manually enter your vault key on your other devices.": [
+        "保管庫キーは暗号化され、このデバイスにローカルで保存されます。他のデバイスでは、保管庫キーを手動で入力する必要があります。"
+      ],
+      "Your vault key will be encrypted and synced to your account and automatically available on your other devices.": [
+        "保管庫キーは暗号化されてアカウントに同期され、他のデバイスでも自動的に利用できるようになります。"
+      ],
+      "Your vault key will be randomly generated and synced to your account.": [
+        "保管庫キーはランダムに生成され、アカウントに同期されます。"
+      ],
+      "Your vault key will only be stored in memory and will be forgotten when you close the app. You will need to manually enter your vault key on your other devices.": [
+        "保管庫キーはメモリ内にのみ保存され、アプリを閉じると破棄されます。他のデバイスでは、保管庫キーを手動で入力する必要があります。"
+      ]
+    },
+    "B6.Preferences.Vaults.Label": {
+      "Advanced options": [
+        "高度な設定"
+      ],
+      "CollaborationID": [
+        "CollaborationID"
+      ],
+      "Contact Name": [
+        "共有相手の名前"
+      ],
+      "Custom (Advanced)": [
+        "カスタム（詳細）"
+      ],
+      "Designated survivor": [
+        "指定承継者"
+      ],
+      "Ephemeral": [
+        "一時的"
+      ],
+      "File storage used:": [
+        "ファイルのストレージ使用量:"
+      ],
+      "Invite Contacts": [
+        "共有相手を招待"
+      ],
+      "Leave Vault": [
+        "保管庫を退出"
+      ],
+      "Local": [
+        "ローカル"
+      ],
+      "No designated survivor": [
+        "指定承継者なし"
+      ],
+      "Pending Invites": [
+        "保留中の招待"
+      ],
+      "Permission:": [
+        "権限:"
+      ],
+      "Randomized (Recommended)": [
+        "ランダム生成 (推奨)"
+      ],
+      "Sender CollaborationID:": [
+        "差出人のCollaborationID:"
+      ],
+      "Synced (Recommended)": [
+        "同期済み(推奨)"
+      ],
+      "Trusted": [
+        "信頼済み"
+      ],
+      "Trusted Sender:": [
+        "信頼できる差出人:"
+      ],
+      "Unnamed contact": [
+        "名前のない共有相手"
+      ],
+      "Untrusted": [
+        "信頼されていない"
+      ],
+      "Vault Description:": [
+        "保管庫の説明:"
+      ],
+      "Vault ID:": [
+        "保管庫 ID:"
+      ],
+      "Vault Info": [
+        "保管庫情報"
+      ],
+      "Vault Members": [
+        "保管庫のメンバー"
+      ],
+      "Vault Name:": [
+        "保管庫名:"
+      ]
+    },
+    "B6.Preferences.Vaults.Placeholder": {
+      "Choose a password": [
+        "パスワードを入力"
+      ],
+      "Vault description": [
+        "保管庫の説明"
+      ],
+      "Vault Name": [
+        "保管庫名"
+      ]
+    },
+    "B6.Preferences.Vaults.Status": {
+      "Copied to clipboard": [
+        "クリップボードにコピーしました"
+      ],
+      "Loading collaboration info...": [
+        "コラボレーション情報を読み込み中..."
+      ]
+    },
+    "B6.Preferences.Vaults.Subtitle": {
+      "In order to use Vaults, you must update your account to use the latest data encryption version.": [
+        "保管庫を使用するには、アカウントを最新のデータ暗号化バージョンに更新する必要があります。"
+      ],
+      "Share your CollaborationID with collaborators to join their vaults.": [
+        "共有相手と CollaborationID を共有すると、その相手の保管庫に参加できます。"
+      ]
+    },
+    "B6.Preferences.Vaults.Title": {
+      "Account update required": [
+        "アカウントの更新が必要です"
+      ],
+      "Add New Contact": [
+        "新しい共有相手を追加"
+      ],
+      "Cannot move item to vault": [
+        "アイテムを保管庫に移動できません"
+      ],
+      "Choose icon": [
+        "アイコンを選択"
+      ],
+      "CollaborationID": [
+        "CollaborationID"
+      ],
+      "Contacts": [
+        "共有相手"
+      ],
+      "Create New Vault": [
+        "新しい保管庫を作成"
+      ],
+      "Designate survivor": [
+        "指定承継者を指定"
+      ],
+      "Edit Contact": [
+        "共有相手を編集"
+      ],
+      "Edit Vault": [
+        "保管庫を編集"
+      ],
+      "Incoming Invites": [
+        "受信した招待"
+      ],
+      "Vault Key Storage Mode": [
+        "保管庫キーのストレージモード"
+      ],
+      "Vault Key Type": [
+        "保管庫キーの種類"
+      ],
+      "Vaults": [
+        "保管庫"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Files.Action": {
+      "Cancel multiple selection": [
+        "複数選択をキャンセル"
+      ],
+      "Configure file backups": [
+        "ファイルのバックアップを設定"
+      ],
+      "Delete permanently": [
+        "完全に削除"
+      ],
+      "Download": [
+        "ダウンロード"
+      ],
+      "Download as archive": [
+        "アーカイブとしてダウンロード"
+      ],
+      "Hide file info": [
+        "ファイル情報を隠す"
+      ],
+      "Hide links section": [
+        "リンクセクションを隠す"
+      ],
+      "Open account menu": [
+        "アカウントメニューを開く"
+      ],
+      "Open file preview": [
+        "ファイルプレビューを開く"
+      ],
+      "Show file info": [
+        "ファイル情報を表示"
+      ],
+      "Show links section": [
+        "リンクセクションを表示"
+      ],
+      "Upload files": [
+        "ファイルをアップロード"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Files.Confirmation": {
+      "Delete Anyway": [
+        "それでも削除"
+      ],
+      "This file could not be deleted from the server, possibly because you are attempting to delete a file item that was imported from another account. Would you like to remove this file item from your account anyway? If you're sure the file is yours and still exists on the server, do not choose this option, and instead try to delete it again.": [
+        "このファイルはサーバーから削除できませんでした。別のアカウントからインポートしたファイルアイテムを削除しようとしている可能性があります。それでもこのファイルアイテムをアカウントから削除しますか?ファイルが自分のものであり、サーバーにまだ存在していることが確かな場合は、このオプションを選ばずに、もう一度削除を試みてください。"
+      ],
+      "Unable to Delete": [
+        "削除できません"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Files.Error": {
+      "Could not attach file because selected note was deleted": [
+        "選択されたメモが削除されているため、ファイルを添付できませんでした"
+      ],
+      "Could not close upload session": [
+        "アップロードセッションを閉じられませんでした"
+      ],
+      "Could not create valet token": [
+        "Valet Tokenを作成できませんでした"
+      ],
+      "Could not move file": [
+        "ファイルを移動できませんでした"
+      ],
+      "Could not start upload session": [
+        "アップロードセッションを開始できませんでした"
+      ],
+      "Failed to close an upload session.": [
+        "アップロードセッションを閉じることができませんでした。"
+      ],
+      "Failed to create file token.": [
+        "ファイルトークンの作成に失敗しました。"
+      ],
+      "Failed to delete file.": [
+        "ファイルの削除に失敗しました。"
+      ],
+      "Failed to download file chunk.": [
+        "ファイルチャンクのダウンロードに失敗しました。"
+      ],
+      "Failed to download files as archive": [
+        "アーカイブとしてのファイルのダウンロードに失敗しました"
+      ],
+      "Failed to push file bytes to server": [
+        "ファイルのバイトをサーバーにプッシュできませんでした"
+      ],
+      "Failed to start an upload session.": [
+        "アップロードセッションを開始できませんでした。"
+      ],
+      "Failed to upload file chunk.": [
+        "ファイルチャンクのアップロードに失敗しました。"
+      ],
+      "File is not in a shared vault": [
+        "ファイルが共有保管庫にありません"
+      ],
+      "Please use ${ FileSafeName } or the ${ BoldName } Editor to attach images and files. Learn more at ${ FileSafeHelpUrl }.": [
+        "画像やファイルを添付するには、${ FileSafeName }または${ BoldName }エディターをご利用ください。詳しくは ${ FileSafeHelpUrl } をご覧ください。"
+      ],
+      "There was an error loading the file. Try again, or download the file and open it using another application.": [
+        "ファイルの読み込み中にエラーが発生しました。再試行するか、ファイルをダウンロードして別のアプリで開いてください。"
+      ],
+      "There was an error while downloading the file": [
+        "ファイルのダウンロード中にエラーが発生しました"
+      ],
+      "There was an error while uploading the file": [
+        "ファイルのアップロード中にエラーが発生しました"
+      ],
+      "This file exceeds the limits supported in this browser. To upload files greater than ${ maxFileSizeInMegabytes }MB, please use the desktop application or the Chrome browser.": [
+        "このファイルは、このブラウザでサポートされている上限サイズを超えています。${ maxFileSizeInMegabytes }MBを超えるファイルをアップロードするには、デスクトップアプリまたはChromeブラウザをご使用ください。"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Files.Info": {
+      "${ count } selected files": [
+        "選択中のファイル: ${ count } 件"
+      ],
+      "Actions will be performed on all selected files.": [
+        "選択したすべてのファイルに対して操作が実行されます。"
+      ],
+      "Add a passcode or create an account to require authentication to view this file.": [
+        "このファイルの表示に認証を要求するには、パスコードを追加するかアカウントを作成してください。"
+      ],
+      "Attach to note": [
+        "メモに添付"
+      ],
+      "Authenticate": [
+        "認証"
+      ],
+      "Authenticate to view this file.": [
+        "このファイルを表示するには認証が必要です。"
+      ],
+      "Backed up on ${ backedUpOn }": [
+        "${ backedUpOn } にバックアップ済み"
+      ],
+      "Created:": [
+        "作成:"
+      ],
+      "Decrease size": [
+        "サイズを縮小"
+      ],
+      "Decrypted Size:": [
+        "復号化後のサイズ:"
+      ],
+      "Deleted file \"${ fileName }\"": [
+        "ファイル「${ fileName }」を削除しました"
+      ],
+      "Deleting file \"${ fileName }\"...": [
+        "ファイル \"${ fileName }\" を削除中..."
+      ],
+      "Detach from note": [
+        "メモから切り離す"
+      ],
+      "Downloading \"${ truncatedFileName }\"": [
+        "「${ truncatedFileName }」をダウンロード中"
+      ],
+      "Downloading ${ fileCount } files as archive": [
+        "${ fileCount } 個のファイルをアーカイブとしてダウンロード中"
+      ],
+      "Downloading file \"${ fileName }\"": [
+        "ファイル「${ fileName }」をダウンロード中"
+      ],
+      "Downloading file \"${ fileName }\" (0%)": [
+        "ファイル「${ fileName }」をダウンロード中 (0%)"
+      ],
+      "Drop your files to upload and link them to the current file": [
+        "ファイルをドロップしてアップロードし、現在のファイルにリンクします"
+      ],
+      "Drop your files to upload them": [
+        "ファイルをドロップしてアップロード"
+      ],
+      "Encrypted Size:": [
+        "暗号化済みサイズ:"
+      ],
+      "File context menu": [
+        "ファイルのコンテキストメニュー"
+      ],
+      "File ID:": [
+        "ファイル ID:"
+      ],
+      "File information": [
+        "ファイル情報"
+      ],
+      "File not backed up locally": [
+        "ファイルはローカルにバックアップされていません"
+      ],
+      "File options panel": [
+        "ファイルオプションパネル"
+      ],
+      "Files attached to your notes appear here. You can also upload files directly from this page.": [
+        "メモに添付されたファイルがここに表示されます。このページから直接ファイルをアップロードすることもできます。"
+      ],
+      "Increase size": [
+        "サイズを拡大"
+      ],
+      "Last Modified:": [
+        "最終更新:"
+      ],
+      "Loading...": [
+        "読み込み中…"
+      ],
+      "No files selected": [
+        "ファイルが選択されていません"
+      ],
+      "Password protect": [
+        "パスワードで保護"
+      ],
+      "Preparing archive...": [
+        "アーカイブを準備中..."
+      ],
+      "Rename": [
+        "名前を変更"
+      ],
+      "Size": [
+        "サイズ"
+      ],
+      "Size:": [
+        "サイズ:"
+      ],
+      "Successfully downloaded ${ fileCount } files as archive": [
+        "${ fileCount } 個のファイルをアーカイブとして正常にダウンロードしました"
+      ],
+      "Successfully downloaded file": [
+        "ファイルを正常にダウンロードしました"
+      ],
+      "Successfully downloaded file \"${ fileName }\"": [
+        "ファイル \"${ fileName }\" をダウンロードしました"
+      ],
+      "Successfully downloaded file from local backup": [
+        "ローカルバックアップからファイルをダウンロードしました"
+      ],
+      "This file can only be previewed in an external app": [
+        "このファイルは外部アプリでのみプレビューできます"
+      ],
+      "This file can't be previewed.": [
+        "このファイルはプレビューできません。"
+      ],
+      "This file is protected.": [
+        "このファイルは保護されています。"
+      ],
+      "This file is readonly": [
+        "このファイルは読み取り専用です"
+      ],
+      "This video can't be previewed.": [
+        "この動画はプレビューできません。"
+      ],
+      "To view this file, download it and open it using another application.": [
+        "このファイルを表示するには、ダウンロードして別のアプリで開いてください。"
+      ],
+      "Total Size:": [
+        "合計サイズ:"
+      ],
+      "Try again": [
+        "再試行"
+      ],
+      "Type:": [
+        "種類:"
+      ],
+      "Uploaded file \"${ uploadedFileName }\"": [
+        "アップロード済みファイル \"${ uploadedFileName }\""
+      ],
+      "Uploading file \"${ fileName }\"": [
+        "\"${ fileName }\" をアップロードしています"
+      ],
+      "Uploading file \"${ fileName }\" (${ percentComplete }%)": [
+        "ファイル「${ fileName }」をアップロード中 (${ percentComplete }%)"
+      ],
+      "View file": [
+        "ファイルを表示"
+      ],
+      "You don't have any files yet": [
+        "ファイルがまだありません。"
+      ],
+      "ZIP file": [
+        "ZIP ファイル"
+      ],
+      "Zoom": [
+        "ズーム"
+      ],
+      "Zoom In": [
+        "拡大"
+      ],
+      "Zoom Out": [
+        "縮小"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Files.Label": {
+      "Center align": [
+        "中央揃え"
+      ],
+      "Close modal": [
+        "モーダルを閉じる"
+      ],
+      "Done": [
+        "完了"
+      ],
+      "File": [
+        "ファイル"
+      ],
+      "File context menu": [
+        "ファイルのコンテキストメニュー"
+      ],
+      "File information panel": [
+        "ファイル情報パネル"
+      ],
+      "File options": [
+        "ファイルのオプション"
+      ],
+      "File options menu": [
+        "ファイルのオプションメニュー"
+      ],
+      "File preview modal": [
+        "ファイルプレビューモーダル"
+      ],
+      "Left align": [
+        "左揃え"
+      ],
+      "Open": [
+        "開く"
+      ],
+      "Rename file": [
+        "ファイル名の変更"
+      ],
+      "Right align": [
+        "右揃え"
+      ],
+      "Show file info": [
+        "ファイル情報を表示"
+      ],
+      "Show file options": [
+        "ファイルのオプションを表示"
+      ],
+      "Show linked items": [
+        "リンクされたアイテムを表示"
+      ],
+      "Submit": [
+        "送信"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Files.Title": {
+      "Details": [
+        "詳細"
+      ],
+      "File options": [
+        "ファイルのオプション"
+      ],
+      "Open": [
+        "開く"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Help.Action": {
+      "Capture visible": [
+        "表示部分をキャプチャ"
+      ],
+      "Clip article": [
+        "記事をクリップ"
+      ],
+      "Clip as screenshot": [
+        "スクリーンショットとしてクリップ"
+      ],
+      "Clip full page": [
+        "ページ全体をクリップ"
+      ],
+      "Clip text selection": [
+        "選択したテキストをクリップ"
+      ],
+      "Select elements to capture": [
+        "キャプチャする要素を選択"
+      ],
+      "Select elements to clip": [
+        "クリップする要素を選択"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Help.Confirmation": {
+      "Account related issue?": [
+        "アカウントに関する問題ですか？"
+      ],
+      "Can I collaborate with others on a note?": [
+        "メモで他のユーザーと共同作業できますか？"
+      ],
+      "Can I use ${ AppName } totally offline?": [
+        "${ AppName }は完全にオフラインで使用できますか？"
+      ],
+      "Can’t find your question here?": [
+        "お探しの質問への回答が見つかりませんか？"
+      ],
+      "Who can read my private notes?": [
+        "プライベートなメモは誰が閲覧できますか?"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Help.Error": {
+      "No content to clip": [
+        "クリップするコンテンツがありません"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Help.Info": {
+      "Because of our encrypted architecture, ${ AppName } does not currently provide a real-time collaboration solution. Multiple users can share the same account however, but editing at the same time may result in sync conflicts, which may result in the duplication of notes.": [
+        "暗号化アーキテクチャの性質上、${ AppName }は現在、リアルタイムコラボレーション機能を提供していません。ただし、複数のユーザーで同じアカウントを共有することは可能です。その場合、同時に編集すると同期の競合が発生し、メモが重複することがあります。"
+      ],
+      "Community forum": [
+        "コミュニティフォーラム"
+      ],
+      "Discord server": [
+        "Discord サーバー"
+      ],
+      "Frequently asked questions": [
+        "よくある質問"
+      ],
+      "If you have an issue, found a bug or want to suggest a feature, you can browse or post to the forum. It’s recommended for non-account related issues.": [
+        "問題が発生した場合、バグを見つけた場合、または機能の提案がある場合は、フォーラムで閲覧や投稿ができます。アカウントに関連しない問題には、フォーラムがおすすめです。"
+      ],
+      "more details here.": [
+        "さらに詳細はこちら。"
+      ],
+      "Note clipped successfully": [
+        "メモのクリップに成功"
+      ],
+      "Privacy Manifesto.": [
+        "プライバシーに関する宣言。"
+      ],
+      "Send an email to ${ SupportEmail } and we’ll sort it out.": [
+        "${ SupportEmail } までメールでご連絡ください。対応いたします。"
+      ],
+      "Want to meet other passionate note-takers and privacy enthusiasts? Want to share your feedback with us? Join the ${ AppName } Discord for discussions on security, themes, editors and more.": [
+        "ほかのメモの愛好者やプライバシーに関心のあるユーザーと交流しませんか？フィードバックを共有したい方は、${ AppName }のDiscordに参加して、セキュリティ、テーマ、エディターなどについて語り合いましょう。"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Help.Label": {
+      "Email us": [
+        "メールでお問い合わせ"
+      ],
+      "Extension menu": [
+        "拡張機能メニュー"
+      ],
+      "Go to the forum": [
+        "フォーラムへ移動"
+      ],
+      "Join our Discord": [
+        "Discord に参加する"
+      ],
+      "Open FAQ": [
+        "FAQを開く"
+      ],
+      "Privacy Policy": [
+        "プライバシーポリシー"
+      ],
+      "Remove default tag": [
+        "デフォルトタグを削除"
+      ],
+      "Terms of Use": [
+        "利用規約"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Help.Placeholder": {
+      "Select tag to save clipped notes to...": [
+        "クリップしたメモを保存するタグを選択..."
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Subscription.Action": {
+      "Continue": [
+        "続行"
+      ],
+      "Done": [
+        "完了"
+      ],
+      "Help": [
+        "ヘルプ"
+      ],
+      "Privacy": [
+        "プライバシー"
+      ],
+      "Upgrade": [
+        "アップグレード"
+      ],
+      "Upgrade Features": [
+        "機能をアップグレード"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Subscription.Error": {
+      "An unknown issue occurred during offline activation. Please download your activation code again and try once more.": [
+        "オフラインアクティベーション中に不明な問題が発生しました。アクティベーションコードを再度ダウンロードして、もう一度お試しください。"
+      ],
+      "Could not accept invitation.": [
+        "招待を承諾できませんでした。"
+      ],
+      "Could not confirm IAP.": [
+        "IAP を確認できませんでした。"
+      ],
+      "Could not get purchase flow URL.": [
+        "購入フローのURLを取得できませんでした。"
+      ],
+      "Could not get subscription token.": [
+        "サブスクリプショントークンを取得できませんでした。"
+      ],
+      "Could not load purchase flow URL.": [
+        "購入フローの URL を読み込めませんでした。"
+      ],
+      "Failed to access purchase flow.": [
+        "購入フローにアクセスできませんでした。"
+      ],
+      "Failed to get offline features.": [
+        "オフライン機能を取得できませんでした。"
+      ],
+      "Failed to get subscription's information.": [
+        "サブスクリプションの情報の取得に失敗しました。"
+      ],
+      "There was an error confirming your purchase. Please contact support at ${ SupportEmail }.": [
+        "購入の確認中にエラーが発生しました。${ SupportEmail } のサポートまでお問い合わせください。"
+      ],
+      "Your purchase was canceled or failed. Please try again.": [
+        "購入がキャンセルされたか、失敗しました。再度お試しください。"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Subscription.Info": {
+      "${ BoldName } Editor": [
+        "${ BoldName } エディター"
+      ],
+      "${ feature.name } is in a read-only state.": [
+        "${ feature.name }は読み取り専用の状態です。"
+      ],
+      "${ featureNameLabel } is valid and you should not be seeing this message": [
+        "${ featureNameLabel } は有効であるため、このメッセージは表示されないはずです"
+      ],
+      "${ ListedName } Custom Domain": [
+        "${ ListedName } カスタムドメイン"
+      ],
+      "${ MarkdownEditorName } Alternative": [
+        "代替 ${ MarkdownEditorName }"
+      ],
+      "${ MarkdownEditorName } with Math": [
+        "数式対応 ${ MarkdownEditorName }"
+      ],
+      "100GB encrypted file storage": [
+        "100GBの暗号化ファイルストレージ"
+      ],
+      "365 days note history": [
+        "365日間のメモのバージョン履歴"
+      ],
+      "A ${ PlusPlanName } or ${ ProPlanName } plan is required to enable Tag folders.": [
+        "タグフォルダーを有効にするには、${ PlusPlanName } または ${ ProPlanName } プランが必要です。"
+      ],
+      "A beautiful split-pane Markdown editor with synced-scroll, LaTeX support, and colorful syntax.": [
+        "同期スクロール、LaTeXサポート、カラフルな構文ハイライトを備えた、美しい分割ペインのMarkdownエディターです。"
+      ],
+      "A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.": [
+        "フル機能を備えた Markdown エディターで、ライブプレビュー、スタイル設定ツールバー、分割ペインに対応しています。"
+      ],
+      "A Markdown editor with dynamic split-pane preview.": [
+        "動的な分割ペインプレビューを備えた Markdown エディターです。"
+      ],
+      "A minimal Markdown editor with live rendering and in-text search via Ctrl/Cmd + F": [
+        "ライブレンダリングと Ctrl/Cmd + F によるテキスト内検索を備えたミニマルな Markdown エディター"
+      ],
+      "A powerful spreadsheet editor with formatting and formula support. Not recommended for large data sets, as encryption of such data may decrease editor performance.": [
+        "書式設定と数式をサポートする強力なスプレッドシートエディターです。データの暗号化によりエディターのパフォーマンスが低下する可能性があるため、大規模なデータセットには推奨されません。"
+      ],
+      "A simple and peaceful rich editor that helps you write and think clearly.": [
+        "書きながら思考を明確にできる、シンプルで穏やかなリッチエディターです。"
+      ],
+      "A WYSIWYG-style Markdown editor that renders Markdown in preview-mode while you type without displaying any syntax.": [
+        "入力中にプレビューモードでMarkdownをレンダリングし、構文を表示しないWYSIWYGスタイルのエディター。"
+      ],
+      "Access to all note types, including ${ SuperName }, ${ MarkdownEditorName }, ${ RichTextEditorName }, ${ AuthenticatorName }, ${ ChecklistEditorName }, and ${ SpreadsheetName }": [
+        "${ SuperName }、${ MarkdownEditorName }、${ RichTextEditorName }、${ AuthenticatorName }、${ ChecklistEditorName }、${ SpreadsheetName }を含む、すべてのメモの種類へのアクセス"
+      ],
+      "Access to Daily Notebooks and Moments journals": [
+        "デイリーノートとMomentsジャーナルへのアクセス"
+      ],
+      "Basic ${ MarkdownEditorName }": [
+        "ベーシック ${ MarkdownEditorName }"
+      ],
+      "Create smart filters for viewing notes matching specific criteria.": [
+        "特定の条件に一致するメモを表示するスマートフィルターを作成します。"
+      ],
+      "Email backups": [
+        "メールバックアップ"
+      ],
+      "Encrypt and protect your 2FA secrets for all your internet accounts. Authenticator handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.": [
+        "すべてのインターネットアカウントの2要素認証シークレットを暗号化して保護します。認証アプリが2要素認証シークレットを管理するため、シークレットを紛失したり、新しいデバイスに乗り換えたときに最初からやり直したりすることがありません。"
+      ],
+      "Encrypted attachments for your notes using your Dropbox, Google Drive, or WebDAV server. Limited to 50MB per file.": [
+        "Dropbox、Google Drive、またはWebDAVサーバーを使って、メモに暗号化済みの添付ファイルを保存できます。1ファイルあたり50MBまで。"
+      ],
+      "Encrypted files": [
+        "暗号化されたファイル"
+      ],
+      "Enjoy your new powered up experience.": [
+        "強化された新体験をお楽しみください。"
+      ],
+      "Files low storage tier": [
+        "ファイル用低容量ストレージティア"
+      ],
+      "Files maximum storage tier": [
+        "ファイルの最大ストレージティア"
+      ],
+      "Files medium storage tier": [
+        "ファイル用中容量ストレージティア"
+      ],
+      "From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.": [
+        "ハイライトからカスタムフォントサイズや色、表やリストまで、このエディターはあらゆるドキュメントの作成に最適です。"
+      ],
+      "Minimal ${ MarkdownEditorName }": [
+        "ミニマル ${ MarkdownEditorName }"
+      ],
+      "Nested folders for your tags": [
+        "タグのネストされたフォルダー"
+      ],
+      "Note history going back indefinitely": [
+        "無期限にさかのぼれるメモのバージョン履歴"
+      ],
+      "Organize your tags into folders.": [
+        "タグをフォルダーに整理しましょう。"
+      ],
+      "Plain Text": [
+        "プレーンテキスト"
+      ],
+      "Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.": [
+        "サブスクリプションの特典が有効になるまで数分かかる場合があります。サブスクリプションの準備ができると、アプリに確認アラートが表示されます。"
+      ],
+      "Please upgrade your plan to access ${ featureNameLabel }": [
+        "${ featureNameLabel } にアクセスするには、プランをアップグレードしてください。"
+      ],
+      "Plugin Gallery": [
+        "プラグインギャラリー"
+      ],
+      "Premium support": [
+        "プレミアムサポート"
+      ],
+      "Private vaults": [
+        "プライベート保管庫"
+      ],
+      "Private vaults allow you to store notes, files and tags into separate, encrypted vaults.": [
+        "プライベート保管庫では、メモ、ファイル、タグを個別の暗号化された保管庫に保存できます。"
+      ],
+      "Shared Vaults": [
+        "共有保管庫"
+      ],
+      "Sign up to sync": [
+        "サインアップして同期"
+      ],
+      "Sign-in email alerts": [
+        "サインイン時のメール通知"
+      ],
+      "Smart Filters": [
+        "スマートフィルター"
+      ],
+      "Smart Tags": [
+        "スマートタグ"
+      ],
+      "Syntax highlighting and convenient keyboard shortcuts for over 120 programming languages. Ideal for code snippets and procedures.": [
+        "120 以上のプログラミング言語に対応したシンタックスハイライトと便利なキーボードショートカット。コードスニペットや手順の記述に最適です。"
+      ],
+      "Tag folders": [
+        "タグフォルダー"
+      ],
+      "Tag Nesting": [
+        "タグのネスト"
+      ],
+      "The ${ ProfessionalPlanName } Plan costs $119.99/year and includes benefits like": [
+        "${ ProfessionalPlanName }プランの料金は$ 119.99/年で、次のような特典が含まれます:"
+      ],
+      "The best way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note. Cmd/Ctrl + F to bring up search and replace.": [
+        "メモを編集するための最良の方法です。/ を入力するとブロック選択メニューが表示され、@ を入力すると画像の埋め込みや他のタグやメモへのリンクができます。- とスペースを入力するとリストが始まり、[] とスペースを入力するとチェックリストが始まります。画像やファイルをドラッグ＆ドロップするとメモに埋め込まれます。Cmd/Ctrl + F で検索と置換を表示します。"
+      ],
+      "To take advantage of ${ featureNameBold } and other advanced features, upgrade your current plan.": [
+        "${ featureNameBold }やその他の高度な機能を利用するには、現在のプランをアップグレードしてください。"
+      ],
+      "To take advantage of all the advanced features ${ AppName } has to offer, upgrade your current plan.": [
+        "${ AppName }が提供するすべての高度な機能を活用するには、現在のプランをアップグレードしてください。"
+      ],
+      "Two factor authentication": [
+        "2要素認証"
+      ],
+      "U2F authentication": [
+        "U2F認証"
+      ],
+      "Unlimited note history": [
+        "無制限のメモのバージョン履歴"
+      ],
+      "Unlock features": [
+        "機能のロックを解除"
+      ],
+      "You do not have an active subscription": [
+        "有効なサブスクリプションがありません"
+      ],
+      "Your purchase was successful!": [
+        "購入が正常に完了しました!"
+      ],
+      "Your subscription expired on ${ expiredDateString }": [
+        "サブスクリプションは ${ expiredDateString } に有効期限が切れました"
+      ],
+      "Your subscription expired.": [
+        "サブスクリプションの有効期限が切れました。"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Subscription.Label": {
+      "${ SuperName } notes": [
+        "${ SuperName } メモ"
+      ],
+      "Encrypted File Storage": [
+        "暗号化ファイルストレージ"
+      ],
+      "Manage subscription": [
+        "サブスクリプションの管理"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Subscription.Status": {
+      "A great way to manage short-term and long-term to-do\"s. You can mark tasks as completed, change their order, and edit the text naturally in place.": [
+        "短期的なタスクから長期的なタスクまでを管理するのに最適です。タスクを完了としてマークしたり、順序を変更したり、テキストをその場で自然に編集したりできます。"
+      ]
+    },
+    "B7.FilesSubscriptionHelp.Subscription.Title": {
+      "Enable Advanced Features": [
+        "高度な機能を有効にする"
+      ],
+      "Try out ${ SuperName }": [
+        "${ SuperName } を試す"
+      ],
+      "Upgrade": [
+        "アップグレード"
+      ]
+    },
+    "B8.MobileDesktopShared.Desktop.Info": {
+      "A new update is ready to install. Please use the top-level 'Updates' menu to manage installation.": [
+        "新しい更新のインストール準備ができました。インストールを管理するには、トップレベルの \"更新\" メニューをご利用ください。"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Error": {
+      "Could not download ${ filename }": [
+        "${ filename } をダウンロードできませんでした"
+      ]
+    },
+    "B8.MobileDesktopShared.Mobile.Info": {
+      "Downloaded ${ filename }": [
+        "${ filename } をダウンロードしました"
+      ],
+      "Downloading ${ filename }..": [
+        "ダウンロード中 ${ filename }.."
+      ],
+      "Fetching image from link...": [
+        "リンクから画像を取得中..."
+      ],
+      "Successfully created note from shared text": [
+        "共有テキストからメモを正常に作成しました"
+      ]
+    }
+  }
+}

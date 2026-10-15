@@ -13,6 +13,7 @@ import { action, makeObservable, observable, runInAction } from 'mobx'
 import { NavigationController } from '../../Controllers/Navigation/NavigationController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
+import { formatDefaultDateTime } from '@/Utils/LocalizedDateFormat'
 import { c } from 'ttag'
 
 type ImportModalFileCommon = {
@@ -187,7 +188,7 @@ export class ImportModalController extends AbstractViewController {
     }
     if (this.addImportsToTag) {
       const currentDate = new Date()
-      const importedOnDate = currentDate.toLocaleString()
+      const importedOnDate = formatDefaultDateTime(currentDate)
       let importTag: SNTag | undefined
       if (this.shouldCreateTag) {
         const importTagItem = this.items.createTemplateItem<TagContent, SNTag>(ContentType.TYPES.Tag, {

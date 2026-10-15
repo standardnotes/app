@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
+import { getSmartTagsFeatureName } from '@/Constants/Constants'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
@@ -13,7 +13,6 @@ import AddSmartViewModal from '../SmartViewBuilder/AddSmartViewModal'
 import { AddSmartViewModalController } from '../SmartViewBuilder/AddSmartViewModalController'
 import SmartViewsList from './SmartViewsList'
 import { c } from 'ttag'
-
 type Props = {
   application: WebApplication
   navigationController: NavigationController
@@ -27,7 +26,7 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
 
   const createNewSmartView = useCallback(() => {
     if (!featuresController.hasSmartViews) {
-      premiumModal.activate(SMART_TAGS_FEATURE_NAME)
+      premiumModal.activate(getSmartTagsFeatureName())
       return
     }
 

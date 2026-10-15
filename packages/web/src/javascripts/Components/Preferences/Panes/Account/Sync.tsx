@@ -1,12 +1,11 @@
 import { FunctionComponent, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import { SyncQueueStrategy } from '@standardnotes/snjs'
 import { StringGenericSyncError } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/WebApplication'
-import { formatLastSyncDate } from '@/Utils/DateUtils'
+import { formatItemDate } from '@/Utils/LocalizedDateFormat'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { c } from 'ttag'
@@ -17,7 +16,8 @@ type Props = {
 
 const Sync: FunctionComponent<Props> = ({ application }: Props) => {
   const [isSyncingInProgress, setIsSyncingInProgress] = useState(false)
-  const [lastSyncDate, setLastSyncDate] = useState(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
+
+  const lastSyncDate = formatItemDate(application.sync.getLastSyncDate() as Date)
 
   const doSynchronization = async () => {
     setIsSyncingInProgress(true)
@@ -29,8 +29,6 @@ const Sync: FunctionComponent<Props> = ({ application }: Props) => {
     setIsSyncingInProgress(false)
     if (response && (response as any).error) {
       application.alerts.alert(StringGenericSyncError()).catch(console.error)
-    } else {
-      setLastSyncDate(formatLastSyncDate(application.sync.getLastSyncDate() as Date))
     }
   }
 

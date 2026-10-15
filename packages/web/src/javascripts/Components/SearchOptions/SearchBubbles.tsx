@@ -2,6 +2,7 @@ import Bubble from '@/Components/Bubble/Bubble'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { observer } from 'mobx-react-lite'
 import { useCallback } from 'react'
+import { c } from 'ttag'
 
 type Props = {
   searchOptions: SearchOptionsController
@@ -17,12 +18,20 @@ const SearchBubbles = ({ searchOptions }: Props) => {
   return (
     <>
       <Bubble
-        label="Protected Contents"
+        label={c('B3.Notes.NoteList.Label').t`Protected Contents`}
         selected={includeProtectedContents}
         onSelect={toggleIncludeProtectedContents}
       />
-      <Bubble label="Archived" selected={includeArchived} onSelect={searchOptions.toggleIncludeArchived} />
-      <Bubble label="Trashed" selected={includeTrashed} onSelect={searchOptions.toggleIncludeTrashed} />
+      <Bubble
+        label={c('B3.Notes.NoteList.Action').t`Archived`}
+        selected={includeArchived}
+        onSelect={searchOptions.toggleIncludeArchived}
+      />
+      <Bubble
+        label={c('B3.Notes.NoteList.Action').t`Trashed`}
+        selected={includeTrashed}
+        onSelect={searchOptions.toggleIncludeTrashed}
+      />
     </>
   )
 }

@@ -1,3 +1,4 @@
+import { formatDateOnlyString } from '@/Utils/LocalizedDateFormat'
 import { addCalendarMonths, numberOfMonthsBetweenDates } from '@/Utils/DateUtils'
 import { CalendarActivity } from './CalendarActivity'
 import { CalendarMonth } from './CalendarMonth'
@@ -5,7 +6,7 @@ import { CalendarMonth } from './CalendarMonth'
 type DateOnlyString = string
 
 export function dateToDateOnlyString(date: Date): DateOnlyString {
-  return date.toLocaleDateString()
+  return formatDateOnlyString(date)
 }
 
 type ActivityRecord = Record<DateOnlyString, CalendarActivity[]>

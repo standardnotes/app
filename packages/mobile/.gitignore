@@ -51,6 +51,7 @@ app-release.aab
 !Web.bundle
 html/Web.bundle/src/web-src
 html/Web.bundle/src/components
+html/Web.bundle/locales
 ios-release.bundle.map
 
 # fastlane

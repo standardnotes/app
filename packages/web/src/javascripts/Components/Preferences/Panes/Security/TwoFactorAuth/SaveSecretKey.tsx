@@ -14,20 +14,24 @@ type Props = {
 }
 
 const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
+  const safeStorageLink = (
+    <a
+      target="_blank"
+      rel="noreferrer noopener"
+      className="underline hover:no-underline"
+      href="https://standardnotes.com/help/21/where-should-i-store-my-two-factor-authentication-secret-key"
+    >
+      {c('B6.Preferences.Security.Info').t`somewhere safe`}
+    </a>
+  )
+
   return (
     <div className="h-33 flex flex-row items-center px-4 py-4">
       <div className="flex flex-grow flex-col">
         <div className="flex flex-row flex-wrap items-center gap-1">
           <Bullet />
           <div className="text-sm">
-            <b>{c('B6.Preferences.Security.Action').t`Save your secret key`}</b>{' '}
-            <a
-              target="_blank"
-              href="https://standardnotes.com/help/21/where-should-i-store-my-two-factor-authentication-secret-key"
-            >
-              {c('B6.Preferences.Security.Label').t`somewhere safe`}
-            </a>
-            :
+            {c('B6.Preferences.Security.Info').jt`Save your secret key ${safeStorageLink}:`}
           </div>
           <DecoratedInput
             disabled={true}

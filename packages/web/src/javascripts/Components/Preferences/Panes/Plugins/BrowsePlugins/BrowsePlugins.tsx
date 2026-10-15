@@ -36,9 +36,7 @@ const BrowsePlugins: FunctionComponent = () => {
         <Title>{c('B6.Preferences.Other.Title').t`Browse Plugins`}</Title>
         <Text className="text-neutral">
           {c('B6.Preferences.Plugins.Info')
-            .t`Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing experiences, but in most cases, the`}{' '}
-          <strong>{jtString(c('B6.Preferences.Other.Label').jt`built-in ${SuperName} note type`)}</strong>{' '}
-          {c('B6.Preferences.Plugins.Info').t`can encapsulate any functionality found in plugins.`}
+            .jt`Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing experiences, but in most cases, the built-in ${SuperName} note type can encapsulate any functionality found in plugins.`}
         </Text>
 
         {!plugins && (

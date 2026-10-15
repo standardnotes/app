@@ -7,6 +7,7 @@ import {
   UNIVERSAL_TOGGLE_SEARCH,
 } from '@standardnotes/ui-services'
 import { Disposer } from '@/Types/Disposer'
+import { c } from 'ttag'
 import { UniversalSearchController } from './UniversalSearchController'
 
 export function registerUniversalSearchKeyboardHandlers<TPayload>(
@@ -17,7 +18,7 @@ export function registerUniversalSearchKeyboardHandlers<TPayload>(
     {
       command: UNIVERSAL_TOGGLE_SEARCH,
       category: 'Search',
-      description: 'Search in current note',
+      description: c('B3.Notes.EditorToolbar.Action').t`Search in current note`,
       onKeyDown: (event) => {
         event.preventDefault()
         event.stopPropagation()
@@ -32,7 +33,7 @@ export function registerUniversalSearchKeyboardHandlers<TPayload>(
     {
       command: UNIVERSAL_SEARCH_TOGGLE_REPLACE_MODE,
       category: 'Search',
-      description: 'Search and replace in current note',
+      description: c('B3.Notes.EditorToolbar.Action').t`Search and replace in current note`,
       onKeyDown: (event) => {
         if (!controller.canReplace) {
           return
@@ -65,7 +66,7 @@ export function registerUniversalSearchKeyboardHandlers<TPayload>(
     {
       command: UNIVERSAL_SEARCH_NEXT_RESULT,
       category: 'Search',
-      description: 'Go to next search result',
+      description: c('B3.Notes.EditorToolbar.Action').t`Go to next search result`,
       onKeyDown(event) {
         if (!controller.isOpen) {
           return
@@ -79,7 +80,7 @@ export function registerUniversalSearchKeyboardHandlers<TPayload>(
     {
       command: UNIVERSAL_SEARCH_PREVIOUS_RESULT,
       category: 'Search',
-      description: 'Go to previous search result',
+      description: c('B3.Notes.EditorToolbar.Action').t`Go to previous search result`,
       onKeyDown(event) {
         if (!controller.isOpen) {
           return

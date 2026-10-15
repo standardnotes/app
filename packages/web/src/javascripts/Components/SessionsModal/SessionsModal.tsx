@@ -14,6 +14,7 @@ import Icon from '../Icon/Icon'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
 import AlertDialog from '../AlertDialog/AlertDialog'
+import { formatSessionAccessDate } from '@/Utils/LocalizedDateFormat'
 import { c } from 'ttag'
 
 type Session = SessionListEntry & {
@@ -93,19 +94,6 @@ const SessionsModalContent: FunctionComponent<{
   const closeRevokeSessionAlert = () => setRevokingSessionUuid('')
   const cancelRevokeRef = useRef<HTMLButtonElement>(null)
 
-  const formatter = useMemo(
-    () =>
-      new Intl.DateTimeFormat(undefined, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        weekday: 'long',
-        hour: 'numeric',
-        minute: 'numeric',
-      }),
-    [],
-  )
-
   const closeRevokeConfirmationDialog = () => {
     setRevokingSessionUuid('')
   }
@@ -152,7 +140,7 @@ const SessionsModalContent: FunctionComponent<{
                 <ul>
                   {sessions.map((session) => {
                     const signedInDate = (
-                      <span className="font-bold">{formatter.format(new Date(session.created_at))}</span>
+                      <span className="font-bold">{formatSessionAccessDate(new Date(session.created_at))}</span>
                     )
 
                     return (

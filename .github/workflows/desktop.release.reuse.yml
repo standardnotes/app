@@ -6,6 +6,11 @@ on:
       channel:
         required: true
         type: string
+      skip_release:
+        description: Run build and publish prep only; skip GitHub release and Snap store upload
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   Mac:
@@ -404,6 +409,7 @@ jobs:
         id: release-notes
 
       - name: Release
+        if: ${{ !inputs.skip_release }}
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
@@ -415,6 +421,16 @@ jobs:
           files: packages/desktop/dist/*
 
       - name: Publish Snap
+        if: ${{ !inputs.skip_release }}
         run: |
           sudo snap install snapcraft --classic --channel=8.x/stable
           snapcraft upload dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap --release stable,candidate,beta,edge
+
+      - name: Upload publish output (dry run)
+        if: inputs.skip_release
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-publish-dry-run-${{ env.APP_VERSION }}
+          retention-days: 7
+          # Same flat layout as GitHub release (dist/*); no unpacked build subdirs or update-meta fragments
+          path: packages/desktop/dist/*

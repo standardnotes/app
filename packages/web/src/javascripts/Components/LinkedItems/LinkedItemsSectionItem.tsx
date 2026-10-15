@@ -1,7 +1,7 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@standardnotes/utils'
-import { formatDateForContextMenu } from '@/Utils/DateUtils'
+import { formatDateForContextMenu } from '@/Utils/LocalizedDateFormat'
 import { getIconForItem } from '@/Utils/Items/Icons/getIconForItem'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'

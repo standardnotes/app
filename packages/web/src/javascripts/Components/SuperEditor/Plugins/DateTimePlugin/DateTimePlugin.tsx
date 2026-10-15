@@ -12,7 +12,7 @@ import { useEffect } from 'react'
 import { INSERT_DATETIME_COMMAND } from '../Commands'
 import { mergeRegister } from '@lexical/utils'
 import { $createHeadingNode } from '@lexical/rich-text'
-import { formatDateAndTimeForNote, dateToHoursAndMinutesTimeString } from '@/Utils/DateUtils'
+import { formatDateAndTimeForNote, dateToHoursAndMinutesTimeString } from '@/Utils/LocalizedDateFormat'
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode'
 
 export default function DatetimePlugin(): JSX.Element | null {

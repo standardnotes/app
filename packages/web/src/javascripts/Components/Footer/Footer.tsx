@@ -236,9 +236,7 @@ class Footer extends AbstractComponent<Props, State> {
     if (syncStatus.hasError()) {
       statusManager.setMessage(c('B2.NavSharedUI.Error').t`Unable to Sync`)
     } else if (stats.downloadCount > 20) {
-      const text = c('B2.NavSharedUI.Status')
-        .jt`Downloading ${stats.downloadCount} items. Keep app open.` as unknown as string
-      statusManager.setMessage(text)
+      statusManager.setMessage(c('B2.NavSharedUI.Status').t`Downloading ${stats.downloadCount} items. Keep app open.`)
       this.showingDownloadStatus = true
     } else if (this.showingDownloadStatus) {
       this.showingDownloadStatus = false
@@ -255,8 +253,7 @@ class Footer extends AbstractComponent<Props, State> {
       })
 
       statusManager.setMessage(
-        c('B2.NavSharedUI.Status')
-          .jt`Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)` as unknown as string,
+        c('B2.NavSharedUI.Status').t`Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`,
       )
     } else {
       statusManager.setMessage('')
@@ -272,11 +269,10 @@ class Footer extends AbstractComponent<Props, State> {
       statusManager.setMessage('')
       return
     }
-    const notesString = c('B2.NavSharedUI.Status')
-      .jt`${stats.localDataCurrent}/${stats.localDataTotal} items...` as unknown as string
+    const notesString = c('B2.NavSharedUI.Status').t`${stats.localDataCurrent}/${stats.localDataTotal} items...`
     const loadingStatus = encryption
-      ? (c('B2.NavSharedUI.Status').jt`Decrypting ${notesString}` as unknown as string)
-      : (c('B2.NavSharedUI.Status').jt`Loading ${notesString}` as unknown as string)
+      ? c('B2.NavSharedUI.Status').t`Decrypting ${notesString}`
+      : c('B2.NavSharedUI.Status').t`Loading ${notesString}`
     statusManager.setMessage(loadingStatus)
   }
 

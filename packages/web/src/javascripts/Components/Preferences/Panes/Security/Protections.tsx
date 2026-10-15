@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
+import { formatDateTime } from '@/Utils/LocalizedDateFormat'
 import { FunctionComponent, useCallback, useState, useEffect } from 'react'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { isSameDay } from '@/Utils'
@@ -23,23 +24,20 @@ const Protections: FunctionComponent<Props> = ({ application }) => {
     const protectionExpiry = application.getProtectionSessionExpiryDate()
     const now = new Date()
     if (protectionExpiry > now) {
-      let f: Intl.DateTimeFormat
       if (isSameDay(protectionExpiry, now)) {
-        f = new Intl.DateTimeFormat(undefined, {
-          hour: 'numeric',
-          minute: 'numeric',
-        })
-      } else {
-        f = new Intl.DateTimeFormat(undefined, {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'short',
+        return formatDateTime(protectionExpiry, {
           hour: 'numeric',
           minute: 'numeric',
         })
       }
 
-      return f.format(protectionExpiry)
+      return formatDateTime(protectionExpiry, {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'short',
+        hour: 'numeric',
+        minute: 'numeric',
+      })
     }
     return null
   }, [application])

@@ -10,8 +10,8 @@ export interface ItemInterface<P extends PayloadInterface = PayloadInterface> {
   payload: P
   readonly conflictOf?: string
   readonly duplicateOf?: string
-  readonly createdAtString?: string
-  readonly updatedAtString?: string
+  readonly createdAtString: string | undefined
+  readonly updatedAtString: string
 
   uuid: string
   get key_system_identifier(): string | undefined

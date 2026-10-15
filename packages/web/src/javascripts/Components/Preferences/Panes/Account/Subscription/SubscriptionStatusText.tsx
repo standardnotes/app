@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { formatDefaultDateTime } from '@/Utils/LocalizedDateFormat'
 import { AppName } from '@standardnotes/features'
 import { c } from 'ttag'
 
@@ -15,7 +16,13 @@ const SubscriptionStatusText = () => {
   } = application.subscriptions
   const isSharedSubscription = application.subscriptionController.isSharedSubscription
 
-  const expirationDateString = userSubscriptionExpirationDate?.toLocaleString()
+  const expirationDateString = userSubscriptionExpirationDate
+    ? formatDefaultDateTime(userSubscriptionExpirationDate)
+    : undefined
+  const appNameBold = <span className="font-bold">{AppName}</span>
+  const subscriptionTierBold = userSubscriptionName ? <span className="font-bold"> {userSubscriptionName}</span> : null
+  const expirationDateBold = <span className="font-bold">{expirationDateString}</span>
+
   const sharedMessage = isSharedSubscription ? (
     <>
       <br />
@@ -28,23 +35,11 @@ const SubscriptionStatusText = () => {
   if (isUserSubscriptionCanceled) {
     return (
       <Text className="mt-1">
-        {c('B6.Preferences.Subscription.Info').t`Your`}{' '}
-        <span className="font-bold">
-          {AppName}
-          {userSubscriptionName ? ' ' : ''}
-          {userSubscriptionName}
-        </span>{' '}
-        {c('B6.Preferences.Subscription.Info').t`subscription has been canceled`}{' '}
-        {isUserSubscriptionExpired ? (
-          <span className="font-bold">
-            {c('B6.Preferences.Subscription.Info').t`and expired on`} {expirationDateString}
-          </span>
-        ) : (
-          <span className="font-bold">
-            {c('B6.Preferences.Subscription.Info').t`but will remain valid until`} {expirationDateString}
-          </span>
-        )}
-        {c('B6.Preferences.Subscription.Info').t`. You may resubscribe below if you wish.`}
+        {isUserSubscriptionExpired
+          ? c('B6.Preferences.Subscription.Info')
+              .jt`Your ${appNameBold}${subscriptionTierBold} subscription has been canceled and expired on ${expirationDateBold}. You may resubscribe below if you wish.`
+          : c('B6.Preferences.Subscription.Info')
+              .jt`Your ${appNameBold}${subscriptionTierBold} subscription has been canceled but will remain valid until ${expirationDateBold}. You may resubscribe below if you wish.`}
         {sharedMessage}
       </Text>
     )
@@ -53,17 +48,8 @@ const SubscriptionStatusText = () => {
   if (isUserSubscriptionExpired) {
     return (
       <Text className="mt-1">
-        {c('B6.Preferences.Subscription.Info').t`Your`}{' '}
-        <span className="font-bold">
-          {AppName}
-          {userSubscriptionName ? ' ' : ''}
-          {userSubscriptionName}
-        </span>{' '}
-        {c('B6.Preferences.Subscription.Info').t`subscription`}{' '}
-        <span className="font-bold">
-          {c('B6.Preferences.Subscription.Info').t`expired on`} {expirationDateString}
-        </span>
-        {c('B6.Preferences.Subscription.Info').t`. You may resubscribe below if you wish.`}
+        {c('B6.Preferences.Subscription.Info')
+          .jt`Your ${appNameBold}${subscriptionTierBold} subscription expired on ${expirationDateBold}. You may resubscribe below if you wish.`}
         {sharedMessage}
       </Text>
     )
@@ -71,17 +57,9 @@ const SubscriptionStatusText = () => {
 
   return (
     <Text className="mt-1">
-      {c('B6.Preferences.Subscription.Info').t`Your`}{' '}
-      <span className="font-bold">
-        {AppName}
-        {userSubscriptionName ? ' ' : ''}
-        {userSubscriptionName}
-      </span>{' '}
-      {c('B6.Preferences.Subscription.Info').t`subscription will be`}{' '}
-      <span className="font-bold">
-        {c('B6.Preferences.Subscription.Info').t`renewed on`} {expirationDateString}
-      </span>
-      .{sharedMessage}
+      {c('B6.Preferences.Subscription.Info')
+        .jt`Your ${appNameBold}${subscriptionTierBold} subscription will be renewed on ${expirationDateBold}.`}
+      {sharedMessage}
     </Text>
   )
 }

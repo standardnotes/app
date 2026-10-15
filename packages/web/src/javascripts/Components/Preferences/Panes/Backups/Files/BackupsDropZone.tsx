@@ -1,7 +1,14 @@
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { useCallback, useEffect, useMemo, useState, FunctionComponent } from 'react'
 import Button from '@/Components/Button/Button'
-import { FileBackupMetadataFile, FileBackupsConstantsV1, FileItem, FileHandleRead } from '@standardnotes/snjs'
+import { jtString } from '@standardnotes/features'
+import {
+  escapeHtmlString,
+  FileBackupMetadataFile,
+  FileBackupsConstantsV1,
+  FileItem,
+  FileHandleRead,
+} from '@standardnotes/snjs'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Icon from '@/Components/Icon/Icon'
 import { ClassicFileReader, StreamingFileApi } from '@standardnotes/filepicker'
@@ -52,9 +59,12 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
     if (result === 'success') {
       const decryptedFileName = decryptedFileItem.name
+      const decryptedFileNameBold = `<strong>${escapeHtmlString(decryptedFileName)}</strong>`
       void application.alerts.alert(
-        c('B6.Preferences.Backups.Info')
-          .t`<strong>${decryptedFileName}</strong> has been successfully decrypted and saved to your chosen directory.`,
+        jtString(
+          c('B6.Preferences.Backups.Info')
+            .jt`${decryptedFileNameBold} has been successfully decrypted and saved to your chosen directory.`,
+        ),
       )
       setBinaryFile(undefined)
       setDecryptedFileItem(undefined)
@@ -143,12 +153,14 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     }
   }, [handleDragIn, handleDrop, handleDragOver, handleDragOut])
 
+  const metadataFileName = <i>{FileBackupsConstantsV1.MetadataFileName}</i>
+
   if (!droppedFile) {
     return (
       <>
         <Text className="mb-2">
           {c('B6.Preferences.Backups.Info')
-            .t`To decrypt a backup file, drag and drop the file's respective <i>metadata.sn.json</i> file here or select it below.`}
+            .jt`To decrypt a backup file, drag and drop the file's respective ${metadataFileName} file here or select it below.`}
         </Text>
         <Button
           onClick={() => {

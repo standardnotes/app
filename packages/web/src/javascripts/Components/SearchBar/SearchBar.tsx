@@ -12,7 +12,6 @@ import { observer } from 'mobx-react-lite'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/snjs'
-
 type Props = {
   itemListController: ItemListController
   searchOptionsController: SearchOptionsController
@@ -35,7 +34,7 @@ const SearchFilterButton = ({ activeFilterCount, isOpen, onClick }: SearchFilter
     )}
     onMouseDown={(event) => event.preventDefault()}
     onClick={onClick}
-    aria-label="Search filters"
+    aria-label={c('B3.Notes.NoteList.AriaLabel').t`Search filters`}
     aria-expanded={isOpen}
   >
     <Icon type="tune" className="h-4.5 w-4.5" />

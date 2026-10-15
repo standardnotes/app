@@ -1,6 +1,6 @@
 import { useMemo, FunctionComponent } from 'react'
 import { SNNote, classNames } from '@standardnotes/snjs'
-import { formatDateForContextMenu } from '@/Utils/DateUtils'
+import { formatDateForContextMenu } from '@/Utils/LocalizedDateFormat'
 import { calculateReadTime } from './Utils/calculateReadTime'
 import { countNoteAttributes } from './Utils/countNoteAttributes'
 import { WebApplicationInterface } from '@standardnotes/ui-services'

@@ -1,4 +1,5 @@
 import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/Constants/Constants'
+import { formatDefaultDateTime, formatMonthAndYear } from '@/Utils/LocalizedDateFormat'
 import { HistoryEntry, NoteHistoryEntry, RevisionMetadata } from '@standardnotes/snjs'
 import { calculateDifferenceBetweenDatesInDays } from '../../Utils/CalculateDifferenceBetweenDatesInDays'
 import { c } from 'ttag'
@@ -21,10 +22,7 @@ export type RemoteRevisionListGroup = ListGroup<RevisionMetadata>
 export type SessionRevisionListGroup = ListGroup<NoteHistoryEntry>
 
 export const formatDateAsMonthYearString = (date: Date) => {
-  return date.toLocaleDateString(undefined, {
-    month: 'long',
-    year: 'numeric',
-  })
+  return formatMonthAndYear(date)
 }
 
 const getRevisionEntryDate = (entry: RevisionEntry): Date => {
@@ -119,5 +117,5 @@ export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(revi
 }
 
 export const previewHistoryEntryTitle = (revision: RevisionMetadata | LegacyHistoryEntry) => {
-  return new Date(revision.created_at).toLocaleString()
+  return formatDefaultDateTime(new Date(revision.created_at))
 }

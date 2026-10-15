@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { CompoundPredicateBuilderController } from './CompoundPredicateBuilderController'
-import { PredicateKeypath, PredicateKeypathLabels, PredicateKeypathTypes } from './PredicateKeypaths'
+import { PredicateKeypath, getPredicateKeypathLabels, PredicateKeypathTypes } from './PredicateKeypaths'
 import PredicateValue from './PredicateValue'
 import { c } from 'ttag'
 
@@ -60,7 +60,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
                 changePredicateKeypath(index, event.target.value as PredicateKeypath)
               }}
             >
-              {Object.entries(PredicateKeypathLabels).map(([key, label]) => (
+              {Object.entries(getPredicateKeypathLabels()).map(([key, label]) => (
                 <option key={key} value={key}>
                   {label}
                 </option>

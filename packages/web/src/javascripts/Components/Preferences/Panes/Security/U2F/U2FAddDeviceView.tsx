@@ -90,6 +90,10 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
+  const addDeviceActionLabel = isMobileScreen
+    ? c('B6.Preferences.Security.Action').t`Add`
+    : c('B6.Preferences.Security.Action').t`Add Device`
+
   return (
     <Modal
       title={c('B6.Preferences.Security.Title').t`Add Security Key`}
@@ -103,12 +107,7 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({ addAuthenticator, onDevice
           hidden: !isMobileScreen,
         },
         {
-          label: (
-            <>
-              {c('B6.Preferences.Security.Action').t`Add`}{' '}
-              <span className="hidden md:inline">{c('B6.Preferences.Security.Label').t`Device`}</span>
-            </>
-          ),
+          label: addDeviceActionLabel,
           type: 'primary',
           onClick: handleAddDeviceClick,
           mobileSlot: 'right',

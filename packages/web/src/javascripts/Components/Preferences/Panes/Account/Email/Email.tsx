@@ -118,8 +118,6 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
     }
   }
 
-  const subscriptionBold = <span className="font-bold">{c('B6.Preferences.Account.Label').t`subscription`}</span>
-
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -139,7 +137,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
                   text={
                     <span>
                       {c('B6.Preferences.Account.Info')
-                        .jt`Sign-in notification emails are available only on a ${subscriptionBold} plan. Please upgrade in order to enable sign-in notifications.`}
+                        .t`Sign-in notification emails are available only on a subscription plan. Please upgrade in order to enable sign-in notifications.`}
                     </span>
                   }
                 />

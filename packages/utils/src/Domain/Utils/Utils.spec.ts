@@ -1,6 +1,12 @@
 import * as DOMPurifyLib from 'dompurify'
 import { JSDOM } from 'jsdom'
-import { sortByKey, withoutLastElement, compareArrayReferences } from './Utils'
+import {
+  dateToLocalizedString,
+  setSharedItemDateFormattingLocale,
+  sortByKey,
+  withoutLastElement,
+  compareArrayReferences,
+} from './Utils'
 
 const window = new JSDOM('').window
 const DOMPurify = DOMPurifyLib(window as never)
@@ -92,5 +98,30 @@ describe('Utils', () => {
 
     expect(sortByKey(input, 'id')).not.toBe(input)
     expect(initial).toEqual(input)
+  })
+
+  describe('dateToLocalizedString', () => {
+    const sampleDate = new Date('2024-03-15T14:30:00')
+
+    afterEach(() => {
+      setSharedItemDateFormattingLocale(undefined)
+    })
+
+    it('uses the shared item formatting locale when set', () => {
+      setSharedItemDateFormattingLocale('fr-FR')
+
+      const formatted = dateToLocalizedString(sampleDate)
+
+      expect(formatted).toMatch(/vendredi|friday/i)
+      expect(formatted).toMatch(/mars|mar/i)
+    })
+
+    it('uses an explicit locale override when provided', () => {
+      setSharedItemDateFormattingLocale('en-US')
+
+      const formatted = dateToLocalizedString(sampleDate, 'de-DE')
+
+      expect(formatted).toMatch(/freitag|friday/i)
+    })
   })
 })

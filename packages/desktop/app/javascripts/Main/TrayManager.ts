@@ -12,11 +12,13 @@ export interface TrayManager {
   shouldMinimizeToTray(): boolean
   createTrayIcon(): void
   destroyTrayIcon(): void
+  reloadLabels(): void
 }
 
 export function createTrayManager(window: Electron.BrowserWindow, store: Store): TrayManager {
   let tray: Tray | undefined
   let updateContextMenu: (() => void) | undefined
+  let applyTrayLabels: (() => void) | undefined
 
   function showWindow() {
     window.show()
@@ -70,6 +72,15 @@ export function createTrayManager(window: Electron.BrowserWindow, store: Store):
         },
       ])
 
+      applyTrayLabels = function applyTrayLabels() {
+        trayContextMenu.getMenuItemById(SHOW_WINDOW_ID)!.label = str().show
+        trayContextMenu.getMenuItemById(HIDE_WINDOW_ID)!.label = str().hide
+        const quitItem = trayContextMenu.items.find((item) => item.role === 'quit')
+        if (quitItem) {
+          quitItem.label = str().quit
+        }
+      }
+
       updateContextMenu = function updateContextMenu() {
         if (window.isVisible()) {
           trayContextMenu.getMenuItemById(SHOW_WINDOW_ID)!.visible = false
@@ -105,6 +116,12 @@ export function createTrayManager(window: Electron.BrowserWindow, store: Store):
       tray!.destroy()
       tray = undefined
       updateContextMenu = undefined
+      applyTrayLabels = undefined
+    },
+
+    reloadLabels() {
+      applyTrayLabels?.()
+      updateContextMenu?.()
     },
   }
 }

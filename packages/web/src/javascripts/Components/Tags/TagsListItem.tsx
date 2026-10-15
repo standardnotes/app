@@ -1,5 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
-import { FOCUSABLE_BUT_NOT_TABBABLE, TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE, getTagFoldersFeatureName } from '@/Constants/Constants'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
@@ -279,7 +279,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             return
           }
           if (!hasFolders) {
-            premiumModal.activate(TAG_FOLDERS_FEATURE_NAME)
+            premiumModal.activate(getTagFoldersFeatureName())
             return
           }
 

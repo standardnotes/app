@@ -53,6 +53,8 @@ export const PrefDefaults = {
   [PrefKey.AddImportsToTag]: true,
   [PrefKey.AlwaysCreateNewTagForImports]: true,
   [PrefKey.ExistingTagForImports]: undefined,
+  [PrefKey.Locale]: undefined,
+  [PrefKey.HasSeenLocalizationLabsSpotlight]: false,
 } satisfies {
   [key in PrefKey]: PrefValue[key]
 }

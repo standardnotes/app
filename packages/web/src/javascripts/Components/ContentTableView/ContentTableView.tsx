@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { formatDateForContextMenu } from '@/Utils/DateUtils'
+import { formatDateForContextMenu } from '@/Utils/LocalizedDateFormat'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import {

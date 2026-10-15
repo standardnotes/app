@@ -5,6 +5,7 @@ import { iconClass } from './ClassNames'
 import MenuSection from '../Menu/MenuSection'
 import { UNIVERSAL_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useMemo, useCallback } from 'react'
+import { c } from 'ttag'
 import { useKeyboardService } from '../KeyboardServiceProvider'
 
 type Props = {
@@ -28,7 +29,7 @@ const PlainNoteOptions = ({ closeMenu }: Props) => {
     <MenuSection>
       <MenuItem onClick={findInNote}>
         <Icon type="search" className={iconClass} />
-        Find in note
+        {c('B4.Notes.EditorOptions.Action').t`Find in note`}
         {findShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={findShortcut} />}
       </MenuItem>
     </MenuSection>

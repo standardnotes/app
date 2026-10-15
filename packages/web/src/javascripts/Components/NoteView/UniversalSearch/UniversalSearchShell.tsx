@@ -2,6 +2,7 @@ import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon, CloseIcon } from '@standard
 import { classNames } from '@standardnotes/utils'
 import { observer } from 'mobx-react-lite'
 import { KeyboardEvent, useEffect, useRef } from 'react'
+import { c } from 'ttag'
 import Button from '../../Button/Button'
 import Icon from '../../Icon/Icon'
 import DecoratedInput from '../../Input/DecoratedInput'
@@ -22,11 +23,11 @@ interface UniversalSearchShellProps<TPayload = UniversalSearchResultPayload> {
 
 function statusLabel<TPayload = UniversalSearchResultPayload>(controller: UniversalSearchController<TPayload>): string {
   if (controller.status === 'loading') {
-    return 'Loading'
+    return c('B2.NavSharedUI.Info').t`Loading`
   }
 
   if (controller.status === 'error') {
-    return controller.error || 'Error'
+    return controller.error || c('B2.NavSharedUI.Label').t`Error`
   }
 
   if (!controller.query) {
@@ -129,8 +130,12 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
         <button
           className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
           onClick={controller.toggleReplaceMode}
-          title={replaceShortcut ? `Toggle Replace Mode (${replaceShortcut})` : 'Toggle Replace Mode'}
-          aria-label="Toggle replace mode"
+          title={
+            replaceShortcut
+              ? (c('B3.Notes.EditorToolbar.Label').jt`Toggle Replace Mode (${replaceShortcut})` as unknown as string)
+              : c('B3.Notes.EditorToolbar.Label').t`Toggle Replace Mode`
+          }
+          aria-label={c('B3.Notes.EditorToolbar.Label').t`Toggle Replace Mode`}
         >
           {controller.isReplaceMode ? (
             <ArrowDownIcon className="h-4 w-4 fill-text" />
@@ -149,7 +154,7 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
       >
         <div className="flex items-center gap-2">
           <DecoratedInput
-            placeholder="Search"
+            placeholder={c('B3.Notes.EditorToolbar.Label').t`Search`}
             className={{
               container: classNames('flex-grow !text-[length:inherit]', !controller.query.length && '!py-1'),
               right: '!py-1',
@@ -162,7 +167,7 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
               <div
                 className="min-w-[7ch] max-w-[7ch] flex-shrink-0 whitespace-nowrap text-right"
                 aria-live="polite"
-                aria-label="Search status"
+                aria-label={c('B3.Notes.EditorToolbar.Label').t`Search status`}
               >
                 {statusLabel(controller)}
               </div>,
@@ -173,23 +178,29 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
               'relative flex items-center rounded border px-1.5 py-1 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
               controller.isCaseSensitive ? 'border-info bg-info text-info-contrast' : 'border-border hover:bg-contrast',
             )}
-            title={caseSensitivityShortcut ? `Case sensitive (${caseSensitivityShortcut})` : 'Case sensitive'}
+            title={
+              caseSensitivityShortcut
+                ? (c('B3.Notes.EditorToolbar.Label')
+                    .jt`Case sensitive (${caseSensitivityShortcut})` as unknown as string)
+                : c('B3.Notes.EditorToolbar.Label').t`Case sensitive`
+            }
           >
             <input
               type="checkbox"
               className="absolute left-0 top-0 z-[1] m-0 h-full w-full cursor-pointer border border-transparent p-0 opacity-0 shadow-none outline-none"
               checked={controller.isCaseSensitive}
               onChange={controller.toggleCaseSensitivity}
-              aria-label="Case sensitive"
+              aria-label={c('B3.Notes.EditorToolbar.Label').t`Case sensitive`}
             />
             <span aria-hidden>Aa</span>
+            <span className="sr-only">{c('B3.Notes.EditorToolbar.Label').t`Case sensitive`}</span>
           </label>
           <button
             className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
             onClick={controller.goToPreviousResult}
             disabled={!hasResults}
-            title="Previous result (Shift + Enter)"
-            aria-label="Previous result"
+            title={c('B3.Notes.EditorToolbar.Label').t`Previous result (Shift + Enter)`}
+            aria-label={c('B3.Notes.EditorToolbar.Label').t`Previous result`}
           >
             <ArrowUpIcon className="h-4 w-4 fill-current text-text" />
           </button>
@@ -197,16 +208,20 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
             className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
             onClick={controller.goToNextResult}
             disabled={!hasResults}
-            title="Next result (Enter)"
-            aria-label="Next result"
+            title={c('B3.Notes.EditorToolbar.Label').t`Next result (Enter)`}
+            aria-label={c('B3.Notes.EditorToolbar.Label').t`Next result`}
           >
             <ArrowDownIcon className="h-4 w-4 fill-current text-text" />
           </button>
           <button
             className="flex items-center rounded border border-border p-1.5 hover:bg-contrast"
             onClick={controller.close}
-            title={closeShortcut ? `Close (${closeShortcut})` : 'Close'}
-            aria-label="Close search"
+            title={
+              closeShortcut
+                ? (c('B3.Notes.EditorToolbar.Label').jt`Close (${closeShortcut})` as unknown as string)
+                : c('B2.NavSharedUI.Action').t`Close`
+            }
+            aria-label={c('B3.Notes.EditorToolbar.Label').t`Close search`}
           >
             <CloseIcon className="h-4 w-4 fill-current text-text" />
           </button>
@@ -215,7 +230,7 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
           <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
             <input
               type="text"
-              placeholder="Replace"
+              placeholder={c('B3.Notes.EditorToolbar.Label').t`Replace`}
               value={controller.replaceQuery}
               onChange={(event) => {
                 controller.setReplaceQuery(event.target.value)
@@ -224,23 +239,23 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
               className="rounded border border-border bg-default p-1 px-2"
               ref={replaceInputRef}
               disabled={!canReplace}
-              aria-label="Replace"
+              aria-label={c('B3.Notes.EditorToolbar.Label').t`Replace`}
             />
             <Button
               small
               onClick={() => void controller.replaceCurrentResult()}
               disabled={!canReplace || !hasResults || !hasReplaceQuery}
-              title="Replace (Enter)"
+              title={c('B3.Notes.EditorToolbar.Label').t`Replace (Enter)`}
             >
-              Replace
+              {c('B3.Notes.EditorToolbar.Action').t`Replace`}
             </Button>
             <Button
               small
               onClick={() => void controller.replaceAllResults()}
               disabled={!canReplace || !hasResults || !hasReplaceQuery}
-              title="Replace all (Ctrl + Alt + Enter)"
+              title={c('B3.Notes.EditorToolbar.Label').t`Replace all (Ctrl + Alt + Enter)`}
             >
-              Replace all
+              {c('B3.Notes.EditorToolbar.Action').t`Replace all`}
             </Button>
           </div>
         )}
@@ -252,17 +267,20 @@ export const UniversalSearchShell = observer(function UniversalSearchShell<TPayl
               checked={controller.shouldHighlightAll}
               onChange={(event) => controller.setShouldHighlightAll(event.target.checked)}
               disabled={!canHighlightAll}
-              aria-label="Highlight all results"
+              aria-label={c('B3.Notes.EditorToolbar.Label').t`Highlight all results`}
             />
-            <div>Highlight all results</div>
+            <div>{c('B3.Notes.EditorToolbar.Label').t`Highlight all results`}</div>
           </label>
           {!canHighlightAll && (
             <StyledTooltip
-              label="This editor does not support search result highlighting yet."
+              label={c('B3.Notes.EditorToolbar.Info').t`This editor does not support search result highlighting yet.`}
               className="!z-modal"
               showOnMobile
             >
-              <button className="cursor-default" aria-label="Highlight all unavailable">
+              <button
+                className="cursor-default"
+                aria-label={c('B3.Notes.EditorToolbar.Label').t`Highlight all unavailable`}
+              >
                 <Icon type="info" size="medium" />
               </button>
             </StyledTooltip>

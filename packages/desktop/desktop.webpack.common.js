@@ -102,6 +102,10 @@ module.exports = function ({ onlyTranspileTypescript = false, experimentalFeatur
             from: 'app/icon',
             to: 'icon',
           },
+          {
+            from: 'locales',
+            to: 'locales',
+          },
         ],
       }),
     ],

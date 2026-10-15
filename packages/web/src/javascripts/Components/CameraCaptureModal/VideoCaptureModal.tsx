@@ -1,6 +1,6 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { VideoRecorder } from '@/Controllers/Moments/VideoRecorder'
-import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
+import { formatDateAndTimeForNote } from '@/Utils/LocalizedDateFormat'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'

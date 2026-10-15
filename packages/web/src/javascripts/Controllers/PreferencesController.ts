@@ -9,6 +9,7 @@ const DEFAULT_PANE: PreferencePaneId = 'account'
 export class PreferencesController extends AbstractViewController {
   private _open = false
   currentPane: PreferencePaneId = DEFAULT_PANE
+  scrollToPreferencesSectionId: string | null = null
 
   constructor(
     private routeService: RouteServiceInterface,
@@ -19,7 +20,10 @@ export class PreferencesController extends AbstractViewController {
     makeObservable<PreferencesController, '_open'>(this, {
       _open: observable,
       currentPane: observable,
+      scrollToPreferencesSectionId: observable,
       openPreferences: action,
+      openPreferencesAndScrollToSection: action,
+      clearPreferencesSectionScrollTarget: action,
       closePreferences: action,
       setCurrentPane: action,
       isOpen: computed,
@@ -37,9 +41,19 @@ export class PreferencesController extends AbstractViewController {
     this._open = true
   }
 
+  openPreferencesAndScrollToSection = (sectionId: string, prefId?: PreferencePaneId): void => {
+    this.scrollToPreferencesSectionId = sectionId
+    this.openPreferences(prefId)
+  }
+
+  clearPreferencesSectionScrollTarget = (): void => {
+    this.scrollToPreferencesSectionId = null
+  }
+
   closePreferences = (): void => {
     this._open = false
     this.currentPane = DEFAULT_PANE
+    this.scrollToPreferencesSectionId = null
     this.routeService.removeQueryParameterFromURL(RootQueryParam.Settings)
   }
 
