@@ -47,6 +47,18 @@ describe('scrollElementToBottom', () => {
     expect(onScrollEnd).toHaveBeenCalledTimes(1)
   })
 
+  it('snaps to the bottom when finishing before the animation completes', () => {
+    const element = createScrollableElement(0)
+    const onScrollEnd = jest.fn(() => {
+      expect(element.scrollTop).toBe(800)
+    })
+
+    scrollElementToBottom(element, onScrollEnd)
+    jest.runAllTimers()
+
+    expect(onScrollEnd).toHaveBeenCalledTimes(1)
+  })
+
   it('calls back immediately when already at the bottom', () => {
     const element = createScrollableElement(800)
     const onScrollEnd = jest.fn()

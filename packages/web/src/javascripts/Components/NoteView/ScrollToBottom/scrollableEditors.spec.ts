@@ -2,9 +2,8 @@
  * @jest-environment jsdom
  */
 
-import type { LexicalEditor } from 'lexical'
 import type { PlainEditorInterface } from '../PlainEditor/PlainEditor'
-import { createPlainScrollableEditor, createSuperScrollableEditor } from './scrollableEditors'
+import { createPlainScrollableEditor } from './scrollableEditors'
 
 function createElementScrolledToBottom<T extends HTMLElement>(element: T): T {
   Object.defineProperty(element, 'scrollHeight', { value: 1000, configurable: true })
@@ -14,33 +13,29 @@ function createElementScrolledToBottom<T extends HTMLElement>(element: T): T {
 }
 
 describe('createPlainScrollableEditor', () => {
-  it('scrolls the textarea to the bottom and places the caret at the end', () => {
+  function setup() {
     const textarea = createElementScrolledToBottom(document.createElement('textarea'))
     textarea.value = 'hello world'
 
     const setSelection = jest.fn()
     const plainEditor = { getTextarea: () => textarea, setSelection } as unknown as PlainEditorInterface
 
-    createPlainScrollableEditor(plainEditor).scrollToEnd()
+    return { scrollableEditor: createPlainScrollableEditor(plainEditor), setSelection }
+  }
+
+  it('scrolls the textarea to the bottom and places the caret at the end', () => {
+    const { scrollableEditor, setSelection } = setup()
+
+    scrollableEditor.scrollToEnd({ moveCaret: true })
 
     expect(setSelection).toHaveBeenCalledWith(11, 11, { selectInEditor: true, focus: true, scrollIntoView: false })
   })
-})
 
-describe('createSuperScrollableEditor', () => {
-  it('scrolls the root element to the bottom and focuses the editor', () => {
-    const rootElement = createElementScrolledToBottom(document.createElement('div'))
-    const editor = {
-      getRootElement: () => rootElement,
-      update: jest.fn(),
-      focus: jest.fn(),
-    } as unknown as LexicalEditor
+  it('only scrolls when the caret should not move', () => {
+    const { scrollableEditor, setSelection } = setup()
 
-    const scrollableEditor = createSuperScrollableEditor(editor)
-    scrollableEditor.scrollToEnd()
+    scrollableEditor.scrollToEnd({ moveCaret: false })
 
-    expect(scrollableEditor.getScrollElement()).toBe(rootElement)
-    expect(editor.update).toHaveBeenCalledTimes(1)
-    expect(editor.focus).toHaveBeenCalledTimes(1)
+    expect(setSelection).not.toHaveBeenCalled()
   })
 })

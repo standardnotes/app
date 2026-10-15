@@ -1018,7 +1018,13 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             )}
             <NoteScrollToBottomController
               editor={editorMode === 'component' ? this.componentScrollableEditor : this.state.scrollableEditor}
-              disabled={editorMode === 'component' || this.state.noteLocked || !!this.state.readonly}
+              disabled={editorMode === 'component'}
+              moveCaret={
+                !this.state.noteLocked &&
+                !this.state.readonly &&
+                !this.application.isNativeMobileWeb() &&
+                !isMobileScreen()
+              }
             />
           </div>
         </EditorContentWithSafeAreaPadding>

@@ -19,6 +19,8 @@ export function scrollElementToBottom(element: HTMLElement, onScrollEnd?: () => 
       return
     }
     didFinish = true
+    // The fallback can fire mid-animation, and later scrollTop writes would otherwise freeze the scroll there
+    element.scrollTop = element.scrollHeight - element.clientHeight
     onScrollEnd?.()
   }
 

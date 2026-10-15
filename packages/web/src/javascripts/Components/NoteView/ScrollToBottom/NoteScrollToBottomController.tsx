@@ -1,4 +1,3 @@
-import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import { useEffect, useState } from 'react'
 import { hasVerticalOverflow, isScrolledToBottom } from './isScrolledToBottom'
 import { ScrollToBottomButton } from './ScrollToBottomButton'
@@ -7,10 +6,10 @@ import type { ScrollableEditor } from './types'
 type Props = {
   editor: ScrollableEditor | undefined
   disabled: boolean
+  moveCaret: boolean
 }
 
-export function NoteScrollToBottomController({ editor, disabled }: Props) {
-  const { hasBottomInset } = useAvailableSafeAreaPadding()
+export function NoteScrollToBottomController({ editor, disabled, moveCaret }: Props) {
   const [showButton, setShowButton] = useState(false)
 
   useEffect(() => {
@@ -41,10 +40,5 @@ export function NoteScrollToBottomController({ editor, disabled }: Props) {
     return null
   }
 
-  return (
-    <ScrollToBottomButton
-      onClick={() => editor.scrollToEnd()}
-      className={hasBottomInset ? 'mb-safe-bottom' : undefined}
-    />
-  )
+  return <ScrollToBottomButton onClick={() => editor.scrollToEnd({ moveCaret })} />
 }

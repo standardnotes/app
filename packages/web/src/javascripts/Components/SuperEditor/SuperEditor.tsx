@@ -284,7 +284,7 @@ export const SuperEditor = forwardRef<ScrollableEditor, Props>(function SuperEdi
                 <FilePlugin currentNote={note.current} />
                 <ItemBubblePlugin />
                 <GetMarkdownPlugin ref={getMarkdownPlugin} />
-                {!isEditorReadonly && <ScrollToEndPlugin ref={ref} />}
+                <ScrollToEndPlugin ref={ref} />
                 <ChangeContentCallbackPlugin
                   providerCallback={(callback) => (changeEditorFunction.current = callback)}
                 />
