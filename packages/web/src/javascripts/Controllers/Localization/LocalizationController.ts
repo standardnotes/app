@@ -24,6 +24,8 @@ import {
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
+  LocalPrefDefaults,
+  LocalPrefKey,
   PrefDefaults,
   PrefKey,
   PreferenceServiceInterface,
@@ -32,7 +34,8 @@ import {
 export class LocalizationController extends AbstractViewController implements InternalEventHandlerInterface {
   labsSpotlightOpen = false
 
-  private labsSpotlightPrefLoaded = false
+  /** The synced "seen" pref is only reliable after a full sync, both at launch and after signing in. */
+  private syncedSinceSignIn = false
   private initializedWithLocalizationDisabled = false
   private isTogglingLocalization = false
 
@@ -56,19 +59,29 @@ export class LocalizationController extends AbstractViewController implements In
     eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
     eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
     eventBus.addEventHandler(this, ApplicationEvent.SignedOut)
+    eventBus.addEventHandler(this, ApplicationEvent.SignedIn)
+    eventBus.addEventHandler(this, ApplicationEvent.CompletedFullSync)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
       case ApplicationEvent.LocalDataLoaded:
-        this.labsSpotlightPrefLoaded = true
         await this.initializeLocalization()
-        this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
         break
       case ApplicationEvent.FeaturesAvailabilityChanged:
       case ApplicationEvent.PreferencesChanged:
         await this.initializeLocalization()
         this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
+        break
+      case ApplicationEvent.SignedIn:
+        this.syncedSinceSignIn = false
+        break
+      case ApplicationEvent.CompletedFullSync:
+        if (!this.syncedSinceSignIn) {
+          this.syncedSinceSignIn = true
+          this.copyDeviceDismissalToAccount()
+          this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
+        }
         break
       case ApplicationEvent.SignedOut:
         clearPersistedLocale()
@@ -78,6 +91,7 @@ export class LocalizationController extends AbstractViewController implements In
 
   dismissLabsSpotlight = (): void => {
     this.setLabsSpotlightOpen(false)
+    this.preferences.setLocalValue(LocalPrefKey.HasSeenLocalizationLabsSpotlight, true)
     void this.preferences.setValue(PrefKey.HasSeenLocalizationLabsSpotlight, true)
   }
 
@@ -86,15 +100,29 @@ export class LocalizationController extends AbstractViewController implements In
     this.preferencesController.openPreferencesAndScrollToSection(ElementIds.LanguagePreferencesSection, 'general')
   }
 
-  private hasSeenLocalizationLabsSpotlight(): boolean {
+  private hasSeenLabsSpotlightOnAccount(): boolean {
     return this.preferences.getValue(
       PrefKey.HasSeenLocalizationLabsSpotlight,
       PrefDefaults[PrefKey.HasSeenLocalizationLabsSpotlight],
     )
   }
 
+  /** Survives signing in, when the account's synced prefs replace the ones from the signed-out session. */
+  private hasSeenLabsSpotlightOnDevice(): boolean {
+    return this.preferences.getLocalValue(
+      LocalPrefKey.HasSeenLocalizationLabsSpotlight,
+      LocalPrefDefaults[LocalPrefKey.HasSeenLocalizationLabsSpotlight],
+    )
+  }
+
+  private copyDeviceDismissalToAccount(): void {
+    if (this.hasSeenLabsSpotlightOnDevice() && !this.hasSeenLabsSpotlightOnAccount()) {
+      void this.preferences.setValue(PrefKey.HasSeenLocalizationLabsSpotlight, true)
+    }
+  }
+
   private shouldShowLabsSpotlight(): boolean {
-    if (!this.labsSpotlightPrefLoaded) {
+    if (!this.syncedSinceSignIn) {
       return false
     }
 
@@ -103,7 +131,8 @@ export class LocalizationController extends AbstractViewController implements In
     return (
       this.featuresController.isLocalizationFeatureAvailable() &&
       !this.featuresController.isLocalizationEnabled() &&
-      !this.hasSeenLocalizationLabsSpotlight() &&
+      !this.hasSeenLabsSpotlightOnAccount() &&
+      !this.hasSeenLabsSpotlightOnDevice() &&
       routeType !== RouteType.Purchase &&
       routeType !== RouteType.Settings
     )
