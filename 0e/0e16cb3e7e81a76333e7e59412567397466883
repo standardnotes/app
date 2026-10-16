@@ -31,6 +31,20 @@ packages/web/src/javascripts/Controllers/Localization/LocalizationController.ts
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 79,
+    "ai_accepted": 79,
+    "git_diff_deleted_lines": 9,
+    "git_diff_added_lines": 79,
+    "tool_model_breakdown": {
+      "cursor::claude-opus-5-5": {
+        "ai_additions": 79,
+        "ai_accepted": 79
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -62,6 +76,12 @@ packages/web/src/javascripts/Controllers/Localization/LocalizationController.ts
         "cache_read_input_tokens": 1953924
       }
     }
+  },
+  "activity": {
+    "added_sloc": 64,
+    "deleted_sloc": 10,
+    "checkpoints": 11,
+    "span_seconds": 431
   },
   "proton_build": "1.7.6-proton.8"
 }
