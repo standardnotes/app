@@ -51,14 +51,14 @@ const Language: FunctionComponent<Props> = ({ application }) => {
   const showLanguageOptionsError = labsSwitchChecked && localizationStore.availableLocalesFailedToLoad
   const usesOsLanguage = isDesktopApplication() || application.isNativeMobileWeb()
 
-  const [isSwitchingLocale, setIsSwitchingLocale] = useState(false)
+  const [switchingToLocale, setSwitchingToLocale] = useState<string>()
 
   const onLocaleChange = useCallback(
     async (value: string) => {
-      setIsSwitchingLocale(true)
+      setSwitchingToLocale(value)
       const isReloading = await application.localizationController.changeLocaleAndReload(value)
       if (!isReloading) {
-        setIsSwitchingLocale(false)
+        setSwitchingToLocale(undefined)
       }
     },
     [application],
@@ -139,9 +139,9 @@ const Language: FunctionComponent<Props> = ({ application }) => {
               <Dropdown
                 label={c('B6.Preferences.General.Language.Action').t`Select the app language`}
                 items={localeItems}
-                value={localizationStore.currentLocale}
+                value={switchingToLocale ?? localizationStore.currentLocale}
                 onChange={onLocaleChange}
-                disabled={isSwitchingLocale}
+                disabled={switchingToLocale !== undefined}
               />
             </div>
           </div>
