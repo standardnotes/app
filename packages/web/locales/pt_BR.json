@@ -1029,6 +1029,9 @@
       "${ component.displayName } would like to interact with your ${ permissionsString }": [
         "${ component.displayName } gostaria de interagir com ${ permissionsString }"
       ],
+      "Add a passcode or create an account to require authentication to view this ${ itemTypeLabel }.": [
+        "Adicione um código de acesso ou crie uma conta para exigir autenticação ao visualizar ${ itemTypeLabel }."
+      ],
       "Authenticate to view this ${ itemTypeLabel }.": [
         "Autentique-se para ver este ${ itemTypeLabel }."
       ],
@@ -1535,6 +1538,9 @@
       ],
       "May lead to performance degradation, especially on large documents.": [
         "Pode causar degradação de desempenho, especialmente em documentos grandes."
+      ],
+      "This editor does not support search result highlighting yet.": [
+        "Este editor ainda não oferece suporte ao destaque de resultados de pesquisa."
       ]
     },
     "B3.Notes.EditorToolbar.Label": {
@@ -1606,6 +1612,9 @@
       ],
       "Highlight all results": [
         "Destacar todos os resultados"
+      ],
+      "Highlight all unavailable": [
+        "Destacar todos os indisponíveis"
       ],
       "Insert": [
         "Inserir"
@@ -1696,6 +1705,9 @@
       ],
       "Text style": [
         "Estilo de texto"
+      ],
+      "Toggle Replace Mode": [
+        "Alternar modo de substituição"
       ],
       "Toggle Replace Mode (${ replaceShortcut })": [
         "Alternar modo de substituição (${ replaceShortcut })"
@@ -2146,6 +2158,9 @@
       "${ selectedItemsCount } selected": [
         "${ selectedItemsCount } selecionados"
       ],
+      "${ titleFormatOptionsLink }. Use ${ bracketsLiteral } to escape formatting.": [
+        "${ titleFormatOptionsLink }. Use ${ bracketsLiteral } para escapar da formatação."
+      ],
       "and ${ additionalLinksCount } more...": [
         "e mais ${ additionalLinksCount }..."
       ],
@@ -2240,6 +2255,9 @@
       ],
       "Display the notes and files in the current tag in a table layout": [
         "Exibir as notas e os arquivos da tag atual em um layout de tabela"
+      ],
+      "e.g. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }": [
+        "ex.: ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
       ],
       "Empty": [
         "Vazio"
@@ -2354,6 +2372,9 @@
       ],
       "Sa": [
         "Sáb"
+      ],
+      "Search titles only": [
+        "Pesquisar apenas nos títulos"
       ],
       "Select the default note type": [
         "Selecione o tipo de nota padrão"
@@ -2680,6 +2701,9 @@
       ],
       "Saving...": [
         "Salvando..."
+      ],
+      "Uploading file \"${ uploadProgress.file.name }\" (${ progress }%)": [
+        "Enviando o arquivo \"${ uploadProgress.file.name }\" (${ progress }%)"
       ]
     },
     "B4.Notes.EditingUI.Title": {
@@ -3936,6 +3960,9 @@
       "Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
         "Inicie sessão para sincronizar suas notas e preferências em todos os seus dispositivos e ativar a criptografia de ponta a ponta."
       ],
+      "Sign-in notification emails are available only on a subscription plan. Please upgrade in order to enable sign-in notifications.": [
+        "E-mails de notificação de login estão disponíveis apenas em um plano de assinatura. Faça upgrade para ativar as notificações de login."
+      ],
       "Storage Quota": [
         "Cota de armazenamento"
       ],
@@ -4165,6 +4192,9 @@
       ]
     },
     "B6.Preferences.Backups.Info": {
+      "${ decryptedFileNameBold } has been successfully decrypted and saved to your chosen directory.": [
+        "${ decryptedFileNameBold } foi descriptografado com sucesso e salvo no diretório escolhido."
+      ],
       "Automatically save encrypted and decrypted backups of your note and tag data.": [
         "Salvar automaticamente backups criptografados e descriptografados dos dados das notas e tags."
       ],
@@ -4191,6 +4221,9 @@
       ],
       "The file and key data below is encrypted with your account password.": [
         "O arquivo e os dados de chave abaixo são criptografados com a senha da sua conta."
+      ],
+      "To decrypt a backup file, drag and drop the file's respective ${ metadataFileName } file here or select it below.": [
+        "Para descriptografar um arquivo de backup, arraste e solte aqui o arquivo ${ metadataFileName } correspondente ou selecione-o abaixo."
       ],
       "To enable file backups, use the ${ AppName } desktop application.": [
         "Para ativar backups de arquivos, use o aplicativo ${ AppName } para desktop."
@@ -4414,6 +4447,12 @@
       ],
       "Whether a confirmation dialog should be shown before closing the app.": [
         "Define se uma caixa de diálogo de confirmação deve ser mostrada antes de fechar o aplicativo."
+      ],
+      "Your offline subscription code has been successfully activated.": [
+        "Seu código de assinatura off-line foi ativado com sucesso."
+      ],
+      "Your offline subscription code has been successfully removed.": [
+        "Seu código de assinatura off-line foi removido com sucesso."
       ]
     },
     "B6.Preferences.General.Label": {
@@ -4463,7 +4502,72 @@
         "Título:"
       ]
     },
+    "B6.Preferences.General.Labs.Localization.Description": {
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "Use o aplicativo no idioma de sua preferência. O idioma do navegador é usado quando nenhuma preferência está definida."
+      ]
+    },
+    "B6.Preferences.General.Labs.Localization.Name": {
+      "Localization": [
+        "Localização"
+      ]
+    },
+    "B6.Preferences.General.Language.Action": {
+      "Select the app language": [
+        "Selecionar o idioma do aplicativo"
+      ]
+    },
+    "B6.Preferences.General.Language.Error": {
+      "Could not load the selected language.": [
+        "Não foi possível carregar o idioma selecionado."
+      ],
+      "Failed to load language options. Please reload the app and try again.": [
+        "Não foi possível carregar as opções de idioma. Recarregue o aplicativo e tente novamente."
+      ]
+    },
+    "B6.Preferences.General.Language.Info": {
+      "Language switched to ${ languageName }": [
+        "Idioma alterado para ${ languageName }"
+      ],
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "Use o aplicativo no idioma de sua preferência. O idioma do navegador é usado quando nenhuma preferência está definida."
+      ],
+      "Use the app in your preferred language. Your OS language is used when no preference is set.": [
+        "Use o aplicativo no idioma de sua preferência. O idioma do SO é usado quando nenhuma preferência está definida."
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionDismiss": {
+      "Not now": [
+        "Agora não"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionOpen": {
+      "Open language settings": [
+        "Abrir configurações de idioma"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.Info": {
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
+        "Agora você pode usar o aplicativo no idioma de sua preferência. Ative este recurso do Labs em Configurações → Geral → Idioma. O idioma do navegador é usado quando nenhuma preferência está definida."
+      ],
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
+        "Agora você pode usar o aplicativo no idioma de sua preferência. Ative este recurso do Labs em Configurações → Geral → Idioma. O idioma do SO é usado quando nenhuma preferência está definida."
+      ]
+    },
+    "B6.Preferences.General.Language.Subtitle": {
+      "App language": [
+        "Idioma do aplicativo"
+      ]
+    },
+    "B6.Preferences.General.Language.Title": {
+      "Language Settings": [
+        "Configurações de idioma"
+      ]
+    },
     "B6.Preferences.General.Placeholder": {
+      "e.g. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }": [
+        "ex.: ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
+      ],
       "Select tag to save Moments to...": [
         "Selecione uma tag para salvar Moments…"
       ]
@@ -4632,6 +4736,9 @@
       "MySQL": [
         "MySQL"
       ],
+      "Register on ${ tailscaleLink } for free.": [
+        "Registre-se no ${ tailscaleLink } gratuitamente."
+      ],
       "SQLite": [
         "SQLite"
       ],
@@ -4784,6 +4891,12 @@
     "B6.Preferences.Listed.Info": {
       "${ ListedName } is a free blogging platform that allows you to create a public journal published directly from your notes.": [
         "O ${ ListedName } é uma plataforma de blogs gratuita que permite criar um diário público publicado diretamente a partir das suas notas."
+      ],
+      "${ ListedName } will permanently shut down on December 31, 2026.": [
+        "${ ListedName } deixará de funcionar permanentemente em 31 de dezembro de 2026."
+      ],
+      "Note: The ${ ListedName } platform will permanently shut down December 31, 2026. Your data published on ${ ListedName } will still be available in your personal ${ AppName } account.": [
+        "Nota: a plataforma ${ ListedName } será encerrada permanentemente em 31 de dezembro de 2026. Seus dados publicados no ${ ListedName } ainda estarão disponíveis na sua conta pessoal do ${ AppName }."
       ],
       "To get started, sign in or register for a ${ AppName } account.": [
         "Para começar, inicie a sessão ou registre uma conta do ${ AppName }."
@@ -4978,6 +5091,9 @@
     "B6.Preferences.Plugins.Info": {
       "${ pluginName } has been successfully installed.": [
         "${ pluginName } foi instalado com sucesso."
+      ],
+      "Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing experiences, but in most cases, the built-in ${ SuperName } note type can encapsulate any functionality found in plugins.": [
+        "Os plug-ins são executados em um sandbox seguro e só podem acessar os dados que você permitir. Os tipos de nota permitem experiências de edição especializadas, mas, na maioria dos casos, o tipo de nota integrado ${ SuperName } pode englobar qualquer funcionalidade encontrada nos plug-ins."
       ]
     },
     "B6.Preferences.Plugins.Label": {
@@ -5133,6 +5249,9 @@
       "Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or get a new one.": [
         "Alguns aplicativos, como o Google Authenticator, não fazem backup nem restauram suas chaves secretas se você perder o dispositivo ou adquirir um novo."
       ],
+      "somewhere safe": [
+        "em um lugar seguro"
+      ],
       "The autolock timer begins when the window or tab loses focus.": [
         "O cronômetro de bloqueio automático é iniciado quando a janela ou a guia perde o foco."
       ],
@@ -5159,6 +5278,9 @@
       "Device Name": [
         "Nome do dispositivo"
       ],
+      "Enter your ${ secretKeyBold }:": [
+        "Insira sua ${ secretKeyBold }:"
+      ],
       "Open your": [
         "Abra o seu"
       ],
@@ -5176,6 +5298,9 @@
       ],
       "secret key": [
         "chave secreta"
+      ],
+      "Verify the ${ authenticationCodeBold } generated by your authenticator app:": [
+        "Verifique o ${ authenticationCodeBold } gerado pelo aplicativo de autenticação:"
       ]
     },
     "B6.Preferences.Security.Placeholder": {
@@ -5348,6 +5473,18 @@
       ],
       "You've used": [
         "Você usou"
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
+        "A assinatura do ${ appNameBold }${ subscriptionTierBold } expirou em ${ expirationDateBold }. Você pode assinar novamente abaixo, se desejar."
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled and expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
+        "A assinatura do ${ appNameBold }${ subscriptionTierBold } foi cancelada e expirou em ${ expirationDateBold }. Você pode assinar novamente abaixo, se desejar."
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled but will remain valid until ${ expirationDateBold }. You may resubscribe below if you wish.": [
+        "A assinatura do ${ appNameBold }${ subscriptionTierBold } foi cancelada, mas permanecerá válida até ${ expirationDateBold }. Você pode assinar novamente abaixo, se desejar."
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription will be renewed on ${ expirationDateBold }.": [
+        "A assinatura do ${ appNameBold }${ subscriptionTierBold } será renovada em ${ expirationDateBold }."
       ]
     },
     "B6.Preferences.Subscription.Label": {
@@ -6062,6 +6199,9 @@
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Info": {
+      "${ AppName } can be used totally offline without an account, and without an internet connection. You can find ${ offlineHelpLink }": [
+        "O ${ AppName } pode ser usado totalmente off-line, sem uma conta e sem conexão com a internet. Você pode encontrar ${ offlineHelpLink }"
+      ],
       "Because of our encrypted architecture, ${ AppName } does not currently provide a real-time collaboration solution. Multiple users can share the same account however, but editing at the same time may result in sync conflicts, which may result in the duplication of notes.": [
         "Devido à nossa arquitetura criptografada, o ${ AppName } atualmente não oferece uma solução de colaboração em tempo real. No entanto, vários usuários podem compartilhar a mesma conta, mas a edição ao mesmo tempo pode resultar em conflitos de sincronização, o que pode resultar na duplicação de notas."
       ],
@@ -6085,6 +6225,9 @@
       ],
       "Privacy Manifesto.": [
         "Manifesto de privacidade."
+      ],
+      "Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read ${ privacyPolicyLink }": [
+        "De forma bem simples: ninguém além de você. Nem nós, nem seu provedor de internet, nem um hacker, nem uma agência governamental. Enquanto você mantiver sua senha segura e ela for razoavelmente forte, você será a única pessoa no mundo com a capacidade de descriptografar suas notas. Para saber mais sobre como tratamos sua privacidade e segurança, confira nossa ${ privacyPolicyLink } de leitura fácil."
       ],
       "Send an email to ${ SupportEmail } and we’ll sort it out.": [
         "Envie um e-mail para ${ SupportEmail } e nós resolveremos isso."

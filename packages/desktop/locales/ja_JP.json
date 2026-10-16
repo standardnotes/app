@@ -75,6 +75,12 @@
       "(1) Update Available": [
         "(1) 更新が利用可能です"
       ],
+      "About ${ appName }": [
+        "${ appName }について"
+      ],
+      "Actual Size": [
+        "実際のサイズ"
+      ],
       "Automatic Updates Disabled": [
         "自動更新は無効化されています"
       ],
@@ -95,6 +101,15 @@
       ],
       "Close": [
         "閉じる"
+      ],
+      "Close Window": [
+        "ウインドウを閉じる"
+      ],
+      "Copy": [
+        "コピー"
+      ],
+      "Cut": [
+        "カット"
       ],
       "Disable Automatic Backups": [
         "自動バックアップを無効化"
@@ -120,8 +135,17 @@
       "GitHub": [
         "GitHub"
       ],
+      "Help": [
+        "ヘルプ"
+      ],
+      "Hide ${ appName }": [
+        "${ appName }を非表示にする"
+      ],
       "Hide Menu Bar": [
         "メニューバーを隠す"
+      ],
+      "Hide Others": [
+        "他を非表示"
       ],
       "Install Pending Update (${ versionNumber })": [
         "保留中の更新をインストール (${ versionNumber })"
@@ -141,8 +165,32 @@
       "Open Download Location": [
         "ダウンロード先を開く"
       ],
+      "Paste": [
+        "貼り付け"
+      ],
+      "Paste and Match Style": [
+        "書式を統一して貼り付け"
+      ],
+      "Quit ${ appName }": [
+        "${ appName } を終了する"
+      ],
+      "Redo": [
+        "やり直す"
+      ],
       "Release Notes": [
         "更新情報"
+      ],
+      "Reload": [
+        "再読み込み"
+      ],
+      "Select All": [
+        "すべて選択"
+      ],
+      "Services": [
+        "サービス"
+      ],
+      "Show All": [
+        "すべて表示"
       ],
       "Speech": [
         "読み上げ"
@@ -150,11 +198,26 @@
       "Spellchecker Languages": [
         "スペルチェッカーの言語"
       ],
+      "Start Speaking": [
+        "読み上げを開始"
+      ],
+      "Stop Speaking": [
+        "読み上げを停止"
+      ],
+      "Toggle Developer Tools": [
+        "開発者ツールを切り替える"
+      ],
       "Toggle Error Console": [
         "エラーコンソールを切り替え"
       ],
+      "Toggle Full Screen": [
+        "フルスクリーンに切り替え"
+      ],
       "Twitter": [
         "Twitter"
+      ],
+      "Undo": [
+        "元に戻す"
       ],
       "Updates": [
         "更新"
@@ -171,8 +234,17 @@
       "Website": [
         "ウェブサイト"
       ],
+      "Window": [
+        "ウィンドウ"
+      ],
       "Zoom": [
         "Zoom"
+      ],
+      "Zoom In": [
+        "拡大"
+      ],
+      "Zoom Out": [
+        "縮小"
       ]
     },
     "B8.MobileDesktopShared.Desktop.Menu.Title": {

@@ -793,6 +793,9 @@
       "Capture": [
         "撮影"
       ],
+      "Close": [
+        "閉じる"
+      ],
       "Confirm": [
         "確認"
       ],
@@ -870,6 +873,9 @@
       ],
       "Upload": [
         "アップロード"
+      ],
+      "View ${ itemTypeLabel }": [
+        "${ itemTypeLabel }を表示"
       ]
     },
     "B2.NavSharedUI.AriaLabel": {
@@ -1015,6 +1021,12 @@
       "${ component.displayName } would like to interact with your ${ permissionsString }": [
         "${ component.displayName }が次の項目へのアクセスを求めています：${ permissionsString }"
       ],
+      "Add a passcode or create an account to require authentication to view this ${ itemTypeLabel }.": [
+        "この${ itemTypeLabel }を表示する際に認証を求めるには、パスコードを追加するか、アカウントを作成してください。"
+      ],
+      "Authenticate to view this ${ itemTypeLabel }.": [
+        "この${ itemTypeLabel }を表示するには、認証が必要です。"
+      ],
       "Enable the Hosted option for this component by opening the Preferences > General > Advanced Settings menu and toggling 'Use hosted when local is unavailable' under this component's options. Then press Reload.": [
         "「設定」>「一般」>「詳細設定」メニューを開き、このコンポーネントのオプションにある「ローカルが利用できない場合はホスト型を使用」を切り替えることで、このコンポーネントのホスト型オプションを有効にします。その後、「再読み込み」を押してください。"
       ],
@@ -1106,6 +1118,9 @@
       ],
       "Encryption upgrade available.": [
         "暗号化バージョンをアップグレードできます。"
+      ],
+      "Error": [
+        "エラー"
       ],
       "File name:": [
         "ファイル名："
@@ -1209,6 +1224,9 @@
       ],
       "Search...": [
         "検索..."
+      ],
+      "Untitled": [
+        "名称未設定"
       ]
     },
     "B2.NavSharedUI.Status": {
@@ -1276,6 +1294,9 @@
       ],
       "Take a photo": [
         "写真を撮影"
+      ],
+      "This ${ itemTypeLabel } is protected": [
+        "この${ itemTypeLabel }は保護されています"
       ],
       "Vault options": [
         "保管庫のオプション"
@@ -1495,6 +1516,9 @@
     "B3.Notes.EditorToolbar.Error": {
       "Cannot upload file \"${ fileName }\"": [
         "ファイル「${ fileName }」をアップロードできません"
+      ],
+      "Search failed": [
+        "検索に失敗しました"
       ]
     },
     "B3.Notes.EditorToolbar.Info": {
@@ -1506,6 +1530,9 @@
       ],
       "May lead to performance degradation, especially on large documents.": [
         "特に大きなドキュメントでは、パフォーマンスが低下する可能性があります。"
+      ],
+      "This editor does not support search result highlighting yet.": [
+        "このエディターは、検索結果のハイライトにまだ対応していません。"
       ]
     },
     "B3.Notes.EditorToolbar.Label": {
@@ -1539,8 +1566,14 @@
       "Clear formatting": [
         "書式をクリア"
       ],
+      "Close (${ closeShortcut })": [
+        "閉じる（${ closeShortcut }）"
+      ],
       "Close (${ searchToggleShortcut })": [
         "閉じる（${ searchToggleShortcut }）"
+      ],
+      "Close search": [
+        "検索を閉じる"
       ],
       "Code Block": [
         "コードブロック"
@@ -1572,6 +1605,9 @@
       "Highlight all results": [
         "すべての結果をハイライト"
       ],
+      "Highlight all unavailable": [
+        "すべてをハイライト（利用不可）"
+      ],
       "Insert": [
         "挿入"
       ],
@@ -1589,6 +1625,9 @@
       ],
       "Insert Table": [
         "表を挿入"
+      ],
+      "Next result": [
+        "次の結果"
       ],
       "Next result (Enter)": [
         "次の結果 (Enter)"
@@ -1611,6 +1650,9 @@
       "Plain Text": [
         "プレーンテキスト"
       ],
+      "Previous result": [
+        "前の結果"
+      ],
       "Previous result (Shift + Enter)": [
         "前の検索結果 (Shift + Enter)"
       ],
@@ -1623,6 +1665,9 @@
       "Replace (Ctrl + Enter)": [
         "置換 (Ctrl + Enter)"
       ],
+      "Replace (Enter)": [
+        "置き換え（Enter）"
+      ],
       "Replace all (Ctrl + Alt + Enter)": [
         "すべて置換 (Ctrl + Alt + Enter)"
       ],
@@ -1631,6 +1676,9 @@
       ],
       "Search": [
         "検索"
+      ],
+      "Search status": [
+        "検索ステータス"
       ],
       "Table actions": [
         "表の操作"
@@ -1649,6 +1697,12 @@
       ],
       "Text style": [
         "テキストスタイル"
+      ],
+      "Toggle Replace Mode": [
+        "置換モードを切り替え"
+      ],
+      "Toggle Replace Mode (${ replaceShortcut })": [
+        "置換モードを切り替え（${ replaceShortcut }）"
       ],
       "Toggle Replace Mode (${ toggleReplaceShortcut })": [
         "置換モードを切り替え（${ toggleReplaceShortcut }）"
@@ -1984,6 +2038,12 @@
       "Archived": [
         "アーカイブ済み"
       ],
+      "Clear all filters": [
+        "すべてのフィルターをクリア"
+      ],
+      "Clear tag filters": [
+        "タグフィルターをクリア"
+      ],
       "Create a new note in the selected tag ${ shortcut }": [
         "選択したタグに新しいメモを作成 ${ shortcut }"
       ],
@@ -2070,6 +2130,9 @@
       "Search": [
         "検索"
       ],
+      "Search filters": [
+        "検索フィルター"
+      ],
       "Select all items": [
         "すべてのアイテムを選択"
       ],
@@ -2083,6 +2146,9 @@
       ],
       "${ selectedItemsCount } selected": [
         "${ selectedItemsCount }件選択済み"
+      ],
+      "${ titleFormatOptionsLink }. Use ${ bracketsLiteral } to escape formatting.": [
+        "${ titleFormatOptionsLink }。書式設定をエスケープするには、${ bracketsLiteral }を使用します。"
       ],
       "and ${ additionalLinksCount } more...": [
         "ほか${ additionalLinksCount }件のリンク..."
@@ -2110,6 +2176,9 @@
       ],
       "No items.": [
         "アイテムがありません"
+      ],
+      "Preview: ${ titleFormatPreview }": [
+        "プレビュー: ${ titleFormatPreview }"
       ],
       "Upgrade for per-tag preferences": [
         "タグごとの設定を利用するにはアップグレードが必要です"
@@ -2176,6 +2245,9 @@
       "Display the notes and files in the current tag in a table layout": [
         "現在のタグ内のメモとファイルをテーブルレイアウトで表示します。"
       ],
+      "e.g. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }": [
+        "例: ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
+      ],
       "Empty": [
         "空"
       ],
@@ -2206,11 +2278,17 @@
       "Files": [
         "ファイル"
       ],
+      "Filter by tag": [
+        "タグでフィルター"
+      ],
       "Fr": [
         "金"
       ],
       "Global": [
         "グローバル"
+      ],
+      "Include": [
+        "含める"
       ],
       "January": [
         "1月"
@@ -2275,11 +2353,17 @@
       "Protected": [
         "保護済み"
       ],
+      "Protected Contents": [
+        "保護されたコンテンツ"
+      ],
       "Record video": [
         "ビデオを録画"
       ],
       "Sa": [
         "土"
+      ],
+      "Search titles only": [
+        "タイトルのみを検索"
       ],
       "Select the default note type": [
         "デフォルトのメモの種類を選択"
@@ -2346,6 +2430,9 @@
     "B3.Notes.NoteList.Title": {
       "Display options": [
         "表示オプション"
+      ],
+      "Search filters": [
+        "検索フィルター"
       ]
     },
     "B4.Notes.EditingUI.Action": {
@@ -2575,6 +2662,9 @@
       "Type ${ slashKey } for commands...": [
         "コマンドを表示するには「${ slashKey }」を入力してください..."
       ],
+      "Unable to find file ${ fileUuid }": [
+        "ファイル「${ fileUuid }」が見つかりません"
+      ],
       "URL:": [
         "URL："
       ],
@@ -2600,6 +2690,9 @@
       ],
       "Saving...": [
         "保存中..."
+      ],
+      "Uploading file \"${ uploadProgress.file.name }\" (${ progress }%)": [
+        "ファイル「${ uploadProgress.file.name }」をアップロード中（${ progress }%）"
       ]
     },
     "B4.Notes.EditingUI.Title": {
@@ -3329,6 +3422,11 @@
         "ユーザーによる変更日時"
       ]
     },
+    "B4.Notes.TagsLinkedItems.Placeholder": {
+      "Add tag...": [
+        "タグを追加..."
+      ]
+    },
     "B4.Notes.TagsLinkedItems.Title": {
       "Linked items": [
         "リンクされたアイテム"
@@ -3851,6 +3949,9 @@
       "Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
         "サインインすると、すべてのデバイスでメモと設定を同期し、エンドツーエンド暗号化を有効にできます。"
       ],
+      "Sign-in notification emails are available only on a subscription plan. Please upgrade in order to enable sign-in notifications.": [
+        "サインイン通知メールは、サブスクリプションプランでのみ利用できます。サインイン通知を有効にするには、アップグレードしてください。"
+      ],
       "Storage Quota": [
         "ストレージ容量"
       ],
@@ -4080,6 +4181,9 @@
       ]
     },
     "B6.Preferences.Backups.Info": {
+      "${ decryptedFileNameBold } has been successfully decrypted and saved to your chosen directory.": [
+        "${ decryptedFileNameBold }を復号化し、選択したディレクトリに保存しました。"
+      ],
       "Automatically save encrypted and decrypted backups of your note and tag data.": [
         "メモとタグのデータについて、暗号化済みと復号化済みの両方のバックアップを自動的に保存します。"
       ],
@@ -4106,6 +4210,9 @@
       ],
       "The file and key data below is encrypted with your account password.": [
         "以下のファイルとキーのデータは、アカウントパスワードで暗号化されています。"
+      ],
+      "To decrypt a backup file, drag and drop the file's respective ${ metadataFileName } file here or select it below.": [
+        "バックアップファイルを復号化するには、対応する${ metadataFileName }ファイルをここにドラッグ＆ドロップするか、以下から選択してください。"
       ],
       "To enable file backups, use the ${ AppName } desktop application.": [
         "ファイルバックアップを有効にするには、${ AppName }のデスクトップアプリをご利用ください。"
@@ -4312,6 +4419,9 @@
       "No experimental features available.": [
         "利用可能な実験的機能はありません。"
       ],
+      "Only applies to web and desktop apps. On mobile, notes don't open automatically at launch.": [
+        "ウェブアプリとデスクトップアプリのみに適用されます。モバイルでは、メモは起動時に自動的に開きません。"
+      ],
       "The default spellcheck value for new notes. Spellcheck can be configured per note from the note context menu. Spellcheck may degrade overall typing performance with long notes.": [
         "新規メモのスペルチェックのデフォルト値です。スペルチェックは、メモのコンテキストメニューからメモごとに設定できます。長いメモでは、スペルチェックにより全体の入力パフォーマンスが低下する場合があります。"
       ],
@@ -4326,6 +4436,12 @@
       ],
       "Whether a confirmation dialog should be shown before closing the app.": [
         "アプリを閉じる前に確認ダイアログを表示するかどうか。"
+      ],
+      "Your offline subscription code has been successfully activated.": [
+        "ホームサーバー用サブスクリプションのコードを有効化しました。"
+      ],
+      "Your offline subscription code has been successfully removed.": [
+        "ホームサーバー用サブスクリプションのコードを削除しました。"
       ]
     },
     "B6.Preferences.General.Label": {
@@ -4375,7 +4491,72 @@
         "タイトル:"
       ]
     },
+    "B6.Preferences.General.Labs.Localization.Description": {
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "お好みの言語でアプリを使用できます。設定がない場合は、ブラウザの言語が使用されます。"
+      ]
+    },
+    "B6.Preferences.General.Labs.Localization.Name": {
+      "Localization": [
+        "ローカライゼーション"
+      ]
+    },
+    "B6.Preferences.General.Language.Action": {
+      "Select the app language": [
+        "アプリの言語を選択"
+      ]
+    },
+    "B6.Preferences.General.Language.Error": {
+      "Could not load the selected language.": [
+        "選択した言語を読み込めませんでした。"
+      ],
+      "Failed to load language options. Please reload the app and try again.": [
+        "言語オプションを読み込めませんでした。アプリを再読み込みして、もう一度お試しください。"
+      ]
+    },
+    "B6.Preferences.General.Language.Info": {
+      "Language switched to ${ languageName }": [
+        "言語が${ languageName }に切り替わりました"
+      ],
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "お好みの言語でアプリを使用できます。設定がない場合は、ブラウザの言語が使用されます。"
+      ],
+      "Use the app in your preferred language. Your OS language is used when no preference is set.": [
+        "お好みの言語でアプリを使用できます。設定がない場合は、OSの言語が使用されます。"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionDismiss": {
+      "Not now": [
+        "今はしない"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionOpen": {
+      "Open language settings": [
+        "言語設定を開く"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.Info": {
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
+        "お好みの言語でアプリを使用できるようになりました。設定 → 一般 → 言語でこのラボ機能をオンにしてください。設定がない場合は、ブラウザの言語が使用されます。"
+      ],
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
+        "お好みの言語でアプリを使用できるようになりました。設定 → 一般 → 言語でこのラボ機能をオンにしてください。設定がない場合は、OSの言語が使用されます。"
+      ]
+    },
+    "B6.Preferences.General.Language.Subtitle": {
+      "App language": [
+        "アプリ言語"
+      ]
+    },
+    "B6.Preferences.General.Language.Title": {
+      "Language Settings": [
+        "言語設定"
+      ]
+    },
     "B6.Preferences.General.Placeholder": {
+      "e.g. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }": [
+        "例: ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
+      ],
       "Select tag to save Moments to...": [
         "Momentsの保存先タグを選択..."
       ]
@@ -4544,6 +4725,9 @@
       "MySQL": [
         "MySQL"
       ],
+      "Register on ${ tailscaleLink } for free.": [
+        "${ tailscaleLink }に無料でご登録いただけます。"
+      ],
       "SQLite": [
         "SQLite"
       ],
@@ -4696,6 +4880,12 @@
     "B6.Preferences.Listed.Info": {
       "${ ListedName } is a free blogging platform that allows you to create a public journal published directly from your notes.": [
         "${ ListedName } は、メモから直接公開される公開ジャーナルを作成できる無料のブログプラットフォームです。"
+      ],
+      "${ ListedName } will permanently shut down on December 31, 2026.": [
+        "${ ListedName }は2026年12月31日に完全に終了します。"
+      ],
+      "Note: The ${ ListedName } platform will permanently shut down December 31, 2026. Your data published on ${ ListedName } will still be available in your personal ${ AppName } account.": [
+        "注意: ${ ListedName }プラットフォームは2026年12月31日に完全に終了します。${ ListedName }に公開したデータは、個人の${ AppName }アカウントで引き続き利用できます。"
       ],
       "To get started, sign in or register for a ${ AppName } account.": [
         "始めるには、${ AppName } アカウントにサインインまたは登録してください。"
@@ -4890,6 +5080,9 @@
     "B6.Preferences.Plugins.Info": {
       "${ pluginName } has been successfully installed.": [
         "${ pluginName } は正常にインストールされました。"
+      ],
+      "Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing experiences, but in most cases, the built-in ${ SuperName } note type can encapsulate any functionality found in plugins.": [
+        "プラグインは安全なサンドボックス内で実行され、許可したデータにのみアクセスできます。メモの種類を使用すると専用の編集環境が利用できますが、ほとんどの場合、組み込みの${ SuperName }メモの種類で、プラグインにあるあらゆる機能を包含できます。"
       ]
     },
     "B6.Preferences.Plugins.Label": {
@@ -5033,6 +5226,9 @@
       "Please visit the web app in order to add a hardware security key.": [
         "物理セキュリティキーを追加するには、ウェブアプリにアクセスしてください。"
       ],
+      "Save your secret key ${ safeStorageLink }:": [
+        "シークレットキーを${ safeStorageLink }に保存してください:"
+      ],
       "Sign in or register for an account to configure 2FA.": [
         "2要素認証を設定するには、サインインするかアカウントを登録してください。"
       ],
@@ -5041,6 +5237,9 @@
       ],
       "Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or get a new one.": [
         "Google Authenticator などの一部のアプリは、デバイスを紛失したり新しいデバイスに切り替えたりした場合に、シークレットキーのバックアップと復元に対応していません。"
+      ],
+      "somewhere safe": [
+        "安全な場所"
       ],
       "The autolock timer begins when the window or tab loses focus.": [
         "オートロックのタイマーは、ウィンドウまたはタブがフォーカスを失うと開始されます。"
@@ -5068,6 +5267,9 @@
       "Device Name": [
         "デバイス名"
       ],
+      "Enter your ${ secretKeyBold }:": [
+        "${ secretKeyBold }を入力してください:"
+      ],
       "Open your": [
         "次のアプリを開いてください:"
       ],
@@ -5085,6 +5287,9 @@
       ],
       "secret key": [
         "シークレットキー"
+      ],
+      "Verify the ${ authenticationCodeBold } generated by your authenticator app:": [
+        "認証アプリで生成された${ authenticationCodeBold }を確認してください:"
       ]
     },
     "B6.Preferences.Security.Placeholder": {
@@ -5257,6 +5462,18 @@
       ],
       "You've used": [
         "使用済み"
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
+        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションは${ expirationDateBold }に期限が切れました。再登録をご希望の場合は、以下からお手続きください。"
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled and expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
+        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションはキャンセルされ、${ expirationDateBold }に有効期限が切れました。再登録をご希望の場合は、以下からお手続きください。"
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled but will remain valid until ${ expirationDateBold }. You may resubscribe below if you wish.": [
+        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションはキャンセルされましたが、${ expirationDateBold }まで有効です。再登録をご希望の場合は、以下からお手続きください。"
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription will be renewed on ${ expirationDateBold }.": [
+        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションは${ expirationDateBold }に更新されます。"
       ]
     },
     "B6.Preferences.Subscription.Label": {
@@ -5871,6 +6088,9 @@
       "File": [
         "ファイル"
       ],
+      "file": [
+        "ファイル"
+      ],
       "File context menu": [
         "ファイルのコンテキストメニュー"
       ],
@@ -5968,6 +6188,9 @@
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Info": {
+      "${ AppName } can be used totally offline without an account, and without an internet connection. You can find ${ offlineHelpLink }": [
+        "${ AppName }は、アカウントなしで、インターネット接続なしでも完全にオフラインで使用できます。${ offlineHelpLink }をご覧ください。"
+      ],
       "Because of our encrypted architecture, ${ AppName } does not currently provide a real-time collaboration solution. Multiple users can share the same account however, but editing at the same time may result in sync conflicts, which may result in the duplication of notes.": [
         "暗号化アーキテクチャの性質上、${ AppName }は現在、リアルタイムコラボレーション機能を提供していません。ただし、複数のユーザーで同じアカウントを共有することは可能です。その場合、同時に編集すると同期の競合が発生し、メモが重複することがあります。"
       ],
@@ -5991,6 +6214,9 @@
       ],
       "Privacy Manifesto.": [
         "プライバシーに関する宣言。"
+      ],
+      "Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read ${ privacyPolicyLink }": [
+        "ずばり、あなた以外には誰もできません。当社も、あなたのISPも、ハッカーも、政府機関も同様です。パスワードを安全に保管し、そのパスワードが十分に強ければ、あなたのメモを復号化できるのは世界であなただけです。当社がプライバシーとセキュリティをどのように扱っているかについて詳しくは、読みやすい${ privacyPolicyLink }をご覧ください。"
       ],
       "Send an email to ${ SupportEmail } and we’ll sort it out.": [
         "${ SupportEmail } までメールでご連絡ください。対応いたします。"
