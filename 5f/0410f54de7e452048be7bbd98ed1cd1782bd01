@@ -1,0 +1,54 @@
+packages/i18n/src/LocaleService.spec.ts
+  s_f2d632c94aae32::t_8993236b4f2c77 96-97
+packages/i18n/src/LocaleService.ts
+  s_f2d632c94aae32::t_d4f2d852f07cc1 13,22,27,43,55
+packages/web/src/javascripts/Controllers/Localization/WebLocaleService.ts
+  s_f2d632c94aae32::t_48e7199180a761 58,70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "5f0410f54de7e452048be7bbd98ed1cd1782bd01",
+  "prompts": {},
+  "sessions": {
+    "s_f2d632c94aae32": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2ed1dde9-3a8a-4cc7-955b-6c0758ef86ff",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 34,
+        "output_tokens": 5088,
+        "cache_creation_input_tokens": 163356,
+        "cache_read_input_tokens": 2040503
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 34,
+          "output_tokens": 5088,
+          "cache_creation_input_tokens": 163356,
+          "cache_read_input_tokens": 2040503
+        }
+      },
+      "tool_uses": {
+        "grep": 2,
+        "shell": 8
+      }
+    },
+    "by_prompt": {
+      "s_f2d632c94aae32": {
+        "input_tokens": 34,
+        "output_tokens": 5088,
+        "cache_creation_input_tokens": 163356,
+        "cache_read_input_tokens": 2040503
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
