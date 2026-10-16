@@ -1,0 +1,8 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "a367bb267395c0c7d0102b67edf8f3a126ba60de",
+  "prompts": {},
+  "proton_build": "1.7.6-proton.8"
+}
