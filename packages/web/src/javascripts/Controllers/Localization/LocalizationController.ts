@@ -38,6 +38,7 @@ export class LocalizationController extends AbstractViewController implements In
   private syncedSinceSignIn = false
   private initializedWithLocalizationDisabled = false
   private isTogglingLocalization = false
+  private availableLocalesRequested = false
 
   constructor(
     private readonly featuresController: FeaturesController,
@@ -269,10 +270,29 @@ export class LocalizationController extends AbstractViewController implements In
     return true
   }
 
+  /** Loaded while localization is still off so the language dropdown can show as soon as it's turned on. */
+  private async preloadAvailableLocales(): Promise<void> {
+    if (this.availableLocalesRequested || !this.featuresController.isLocalizationFeatureAvailable()) {
+      return
+    }
+    this.availableLocalesRequested = true
+
+    try {
+      const catalog = await getWebLocaleService().getAvailableLocales()
+      localizationStore.setAvailableLocales(catalog)
+    } catch (error) {
+      this.availableLocalesRequested = false
+      console.error('Failed to load locale catalog', error)
+      localizationStore.setAvailableLocalesFailedToLoad()
+    }
+  }
+
   private async initializeLocalization(): Promise<void> {
     if (this.isTogglingLocalization) {
       return
     }
+
+    void this.preloadAvailableLocales()
 
     const localizationEnabled = this.featuresController.isLocalizationEnabled()
     if (!localizationEnabled && this.initializedWithLocalizationDisabled) {
@@ -284,8 +304,8 @@ export class LocalizationController extends AbstractViewController implements In
     const activeLocale = localeService.getCurrentLocale()
 
     try {
-      const catalog = localizationEnabled ? await localeService.getAvailableLocales() : {}
-      const locale = localizationEnabled
+      const catalog = localizationEnabled ? await localeService.getAvailableLocales() : undefined
+      const locale = catalog
         ? resolveLocale({ savedLocale: this.getSavedLocale(), availableLocales: Object.keys(catalog) })
         : DEFAULT_LOCALE
 
@@ -295,7 +315,9 @@ export class LocalizationController extends AbstractViewController implements In
         return
       }
 
-      localizationStore.setAvailableLocales(catalog)
+      if (catalog) {
+        localizationStore.setAvailableLocales(catalog)
+      }
     } catch (error) {
       console.error('Failed to load locale catalog', error)
       localizationStore.setAvailableLocalesFailedToLoad()

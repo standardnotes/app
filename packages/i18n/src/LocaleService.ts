@@ -16,7 +16,7 @@ export type LocaleServiceOptions = {
 
 export class LocaleService {
   private currentLocale = DEFAULT_LOCALE
-  private catalog?: LocaleCatalog
+  private catalog?: Promise<LocaleCatalog>
   private readonly loadedLocales = new Set<string>()
   private readonly onLocaleChanged?: (locale: string) => void
   private readonly fetchJsonImpl: <T>(url: string) => Promise<T>
@@ -38,12 +38,14 @@ export class LocaleService {
     return this.currentLocale
   }
 
-  async getAvailableLocales(): Promise<LocaleCatalog> {
-    if (this.catalog) {
-      return this.catalog
+  getAvailableLocales(): Promise<LocaleCatalog> {
+    if (!this.catalog) {
+      this.catalog = this.fetchJsonImpl<LocaleCatalog>(this.localeResourcePath('config/locales.json'))
+      this.catalog.catch(() => {
+        this.catalog = undefined
+      })
     }
 
-    this.catalog = await this.fetchJsonImpl<LocaleCatalog>(this.localeResourcePath('config/locales.json'))
     return this.catalog
   }
 

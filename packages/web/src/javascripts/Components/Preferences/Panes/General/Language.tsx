@@ -32,12 +32,14 @@ const Language: FunctionComponent<Props> = ({ application }) => {
     }))
 
   const isTogglingRef = useRef(false)
+  const [isToggling, setIsToggling] = useState(false)
 
   const toggle = useCallback(() => {
     if (isTogglingRef.current) {
       return
     }
     isTogglingRef.current = true
+    setIsToggling(true)
 
     setLabsSwitchChecked((checked) => !checked)
 
@@ -141,7 +143,7 @@ const Language: FunctionComponent<Props> = ({ application }) => {
                 items={localeItems}
                 value={switchingToLocale ?? localizationStore.currentLocale}
                 onChange={onLocaleChange}
-                disabled={switchingToLocale !== undefined}
+                disabled={isToggling || switchingToLocale !== undefined}
               />
             </div>
           </div>

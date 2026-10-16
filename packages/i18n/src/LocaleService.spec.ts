@@ -79,6 +79,27 @@ describe('LocaleService', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
+  it('shares an in-flight locale catalog request', async () => {
+    const fetchMock = createFetchMock({
+      '/locales/config/locales.json': catalog,
+    })
+    global.fetch = fetchMock
+
+    const service = new LocaleService()
+
+    await Promise.all([service.getAvailableLocales(), service.getAvailableLocales()])
+
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('retries the locale catalog after a failed request', async () => {
+    const fetchJson = jest.fn().mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce(catalog)
+    const service = new LocaleService({ fetchJson })
+
+    await expect(service.getAvailableLocales()).rejects.toThrow('offline')
+    await expect(service.getAvailableLocales()).resolves.toEqual(catalog)
+  })
+
   it('loads translations and activates a locale', async () => {
     const onLocaleChanged = jest.fn()
     global.fetch = createFetchMock({

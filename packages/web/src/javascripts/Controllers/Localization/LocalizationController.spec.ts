@@ -163,6 +163,29 @@ describe('LocalizationController', () => {
     expect(getPersistedLocale()).toBeUndefined()
   })
 
+  it('loads the language list while localization is still off', async () => {
+    localizationEnabled = false
+
+    await bootWithLocale('en_US')
+
+    expect(localizationStore.availableLocales).toEqual(catalog)
+  })
+
+  it('loads the language list once the feature becomes available', async () => {
+    localizationEnabled = false
+    localizationAvailable = false
+    mockLocaleService.getAvailableLocales.mockClear()
+
+    const controller = await bootWithLocale('en_US')
+    expect(mockLocaleService.getAvailableLocales).not.toHaveBeenCalled()
+
+    localizationAvailable = true
+    await sendEvent(controller, ApplicationEvent.FeaturesAvailabilityChanged)
+    await flushPromises()
+
+    expect(localizationStore.availableLocales).toEqual(catalog)
+  })
+
   it('keeps the saved language and reports an error when the catalog fails to load', async () => {
     persistLocale('fr_FR')
     mockLocaleService.getAvailableLocales.mockRejectedValue(new Error('offline'))
