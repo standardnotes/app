@@ -93,8 +93,8 @@ describe('LocaleService', () => {
   })
 
   it('retries the locale catalog after a failed request', async () => {
-    const fetchJson = jest.fn().mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce(catalog)
-    const service = new LocaleService({ fetchJson })
+    const loadJson = jest.fn().mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce(catalog)
+    const service = new LocaleService({ loadJson })
 
     await expect(service.getAvailableLocales()).rejects.toThrow('offline')
     await expect(service.getAvailableLocales()).resolves.toEqual(catalog)

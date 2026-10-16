@@ -80,7 +80,7 @@ export class LocalizationController extends AbstractViewController implements In
       case ApplicationEvent.CompletedFullSync:
         if (!this.syncedSinceSignIn) {
           this.syncedSinceSignIn = true
-          this.copyDeviceDismissalToAccount()
+          this.syncLabsSpotlightPref()
           this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
         }
         break
@@ -116,7 +116,7 @@ export class LocalizationController extends AbstractViewController implements In
     )
   }
 
-  private copyDeviceDismissalToAccount(): void {
+  private syncLabsSpotlightPref(): void {
     if (this.hasSeenLabsSpotlightOnDevice() && !this.hasSeenLabsSpotlightOnAccount()) {
       void this.preferences.setValue(PrefKey.HasSeenLocalizationLabsSpotlight, true)
     }

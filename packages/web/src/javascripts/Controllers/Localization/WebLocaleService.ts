@@ -55,7 +55,7 @@ function fetchJsonFromDocument<T>(resourcePath: string): Promise<T> {
   })
 }
 
-function getFileProtocolFetchJson(): (<T>(url: string) => Promise<T>) | undefined {
+function getFileProtocolLoadJson(): (<T>(url: string) => Promise<T>) | undefined {
   if (!isFileProtocol()) {
     return undefined
   }
@@ -67,7 +67,7 @@ export function getWebLocaleService(): LocaleService {
   if (!localeService) {
     localeService = new LocaleService({
       localesBasePath: webLocalesBasePath(),
-      fetchJson: getFileProtocolFetchJson(),
+      loadJson: getFileProtocolLoadJson(),
     })
   }
 
