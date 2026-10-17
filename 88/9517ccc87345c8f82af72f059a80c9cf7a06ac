@@ -1,0 +1,120 @@
+packages/models/src/Domain/index.ts
+  s_83ddbe9b6957c3::t_fead0b081bf91e 8
+packages/services/src/Domain/Component/ComponentViewerInterface.ts
+  s_83ddbe9b6957c3::t_44b5cbb1282686 1-7
+  s_83ddbe9b6957c3::t_b8562fae5d2632 31-32
+packages/features/src/Domain/Component/ComponentAction.ts
+  s_83ddbe9b6957c3::t_17ce84c6c08bb9 19-20
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
+  s_83ddbe9b6957c3::t_ef975ef65809bb 629-641
+  s_83ddbe9b6957c3::t_e19876d7efbcb6 89-90
+  s_83ddbe9b6957c3::t_516f678610d906 46
+  s_83ddbe9b6957c3::t_ba8bcf6046142b 185
+  s_83ddbe9b6957c3::t_1f70744cec831f 618
+  s_83ddbe9b6957c3::t_d44ae0062377cb 218-238
+packages/web/src/javascripts/Components/NoteView/NoteView.tsx
+  s_83ddbe9b6957c3::t_9dcef7e9dd81f0 280-293
+  s_83ddbe9b6957c3::t_9bf557fa02191f 1034
+  s_83ddbe9b6957c3::t_cb9ec03c8b733a 108
+packages/web/src/javascripts/Components/SuperEditor/Plugins/ScrollToEndPlugin/ScrollToEndPlugin.tsx
+  s_83ddbe9b6957c3::t_8c73fd9ce45b20 37
+  s_83ddbe9b6957c3::t_a92717c5eb291d 5,10-20
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/scrollableEditors.spec.ts
+  s_83ddbe9b6957c3::t_8b38b31637dfd4 43-63
+  s_83ddbe9b6957c3::t_4a1d14e34b0e27 5,7
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/isScrolledToBottom.ts
+  s_83ddbe9b6957c3::t_85a63b554f3e9c 1-3,15-35
+  s_ff78a9f5817263::t_6bf50f87df1b2c 36
+packages/web/src/javascripts/Components/SuperEditor/Plugins/ScrollToEndPlugin/ScrollToEndPlugin.spec.ts
+  s_83ddbe9b6957c3::t_538aaad8b8ef12 30
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/types.ts
+  s_83ddbe9b6957c3::t_39097b40754377 9-13,15,17-18
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/isScrolledToBottom.spec.ts
+  s_83ddbe9b6957c3::t_fa1c19543c15e2 82
+  s_83ddbe9b6957c3::t_46771ad711dc94 5-10
+  s_83ddbe9b6957c3::t_cd1874b9414046 59-81,83-119
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.spec.ts
+  s_83ddbe9b6957c3::t_2a04866a614c93 1-79,81-97
+  s_83ddbe9b6957c3::t_bac7a0683bb5d9 80
+packages/models/src/Domain/Abstract/Component/MessageData.ts
+  s_83ddbe9b6957c3::t_b8d4719fb4f892 36-38
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/scrollableEditors.ts
+  s_83ddbe9b6957c3::t_734bb8937d3374 1,4,9-15,30,34-35,37-38
+packages/models/src/Domain/Abstract/Component/ComponentScrollState.ts
+  s_83ddbe9b6957c3::t_a0b491ccb53e37 1-4
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/NoteScrollToBottomController.tsx
+  s_83ddbe9b6957c3::t_f5042fcf5059a9 13,18-19,23-26,29-30,38,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "889517ccc87345c8f82af72f059a80c9cf7a06ac",
+  "prompts": {},
+  "sessions": {
+    "s_83ddbe9b6957c3": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "57f0768f-53dc-4827-b135-bb68ab63e830",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    },
+    "s_ff78a9f5817263": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a52618ef-8165-4f5a-be15-2a3bbe106a57",
+        "model": "composer-2.5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 203172,
+        "output_tokens": 15787,
+        "cache_creation_input_tokens": 334656,
+        "cache_read_input_tokens": 2948900
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 34,
+          "output_tokens": 6554,
+          "cache_creation_input_tokens": 334656,
+          "cache_read_input_tokens": 2252452
+        },
+        "cursor::composer-2.5": {
+          "input_tokens": 203138,
+          "output_tokens": 9233,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 696448
+        }
+      },
+      "tool_uses": {
+        "grep": 9,
+        "mcp:discover": 2,
+        "mcp:getaccessibleatlassianresources": 1,
+        "mcp:search": 1,
+        "mcp:searchjiraissuesusingjql": 5,
+        "read": 23,
+        "shell": 32,
+        "write": 34
+      }
+    },
+    "by_prompt": {
+      "s_83ddbe9b6957c3": {
+        "input_tokens": 34,
+        "output_tokens": 6554,
+        "cache_creation_input_tokens": 334656,
+        "cache_read_input_tokens": 2252452
+      },
+      "s_ff78a9f5817263": {
+        "input_tokens": 203138,
+        "output_tokens": 9233,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 696448
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
