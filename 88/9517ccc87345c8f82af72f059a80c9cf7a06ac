@@ -68,6 +68,24 @@ packages/web/src/javascripts/Components/NoteView/ScrollToBottom/NoteScrollToBott
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 333,
+    "ai_accepted": 333,
+    "git_diff_deleted_lines": 65,
+    "git_diff_added_lines": 333,
+    "tool_model_breakdown": {
+      "cursor::claude-opus-5-5": {
+        "ai_additions": 332,
+        "ai_accepted": 332
+      },
+      "cursor::composer-2.5": {
+        "ai_additions": 1,
+        "ai_accepted": 1
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -115,6 +133,12 @@ packages/web/src/javascripts/Components/NoteView/ScrollToBottom/NoteScrollToBott
         "cache_read_input_tokens": 696448
       }
     }
+  },
+  "activity": {
+    "added_sloc": 77,
+    "deleted_sloc": 10,
+    "checkpoints": 4,
+    "span_seconds": 122
   },
   "proton_build": "1.7.6-proton.8"
 }
