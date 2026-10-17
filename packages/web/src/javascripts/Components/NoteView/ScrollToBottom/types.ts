@@ -6,8 +6,14 @@ export type ScrollToEndOptions = {
   moveCaret: boolean
 }
 
+export type ScrollState = {
+  canScroll: boolean
+  isAtBottom: boolean
+}
+
 export type ScrollableEditor = {
-  getScrollElement: () => HTMLElement | null
+  observeScrollState: (callback: (state: ScrollState) => void) => Disposer
   scrollToEnd: (options: ScrollToEndOptions) => void
-  onTextChange: (callback: () => void) => Disposer
+  /** Element that receives the scroll-to-bottom keyboard shortcut, if the host handles it */
+  getKeyboardTarget?: () => HTMLElement | null
 }

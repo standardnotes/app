@@ -2,11 +2,22 @@ import { forwardRef, useImperativeHandle } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $getRoot, LexicalEditor } from 'lexical'
 import { scrollElementToBottom } from '@/Utils/scrollElementToBottom'
+import { observeElementScrollState } from '@/Components/NoteView/ScrollToBottom/isScrolledToBottom'
 import type { ScrollableEditor } from '@/Components/NoteView/ScrollToBottom/types'
 
 export function createSuperScrollableEditor(editor: LexicalEditor): ScrollableEditor {
   return {
-    getScrollElement: () => editor.getRootElement(),
+    observeScrollState: (callback) => {
+      const rootElement = editor.getRootElement()
+      if (!rootElement) {
+        return () => undefined
+      }
+      return observeElementScrollState(
+        rootElement,
+        (onChange) => editor.registerUpdateListener(() => onChange()),
+        callback,
+      )
+    },
     scrollToEnd: ({ moveCaret }) => {
       const rootElement = editor.getRootElement()
       if (!rootElement) {
@@ -23,7 +34,7 @@ export function createSuperScrollableEditor(editor: LexicalEditor): ScrollableEd
         editor.focus()
       })
     },
-    onTextChange: (callback) => editor.registerUpdateListener(() => callback()),
+    getKeyboardTarget: () => editor.getRootElement(),
   }
 }
 

@@ -105,7 +105,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
   private plainEditorRef?: PlainEditorInterface
-  private componentScrollableEditor = createComponentScrollableEditor(() => this.editorContentRef?.current ?? null)
+  private componentScrollableEditor?: { viewer: ComponentViewerInterface; editor: ScrollableEditor }
 
   constructor(props: NoteViewProps) {
     super(props, props.application)
@@ -275,6 +275,20 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   setScrollableEditor = (editor: ScrollableEditor | null) => {
     this.setState({ scrollableEditor: editor ?? undefined })
+  }
+
+  /** Cached per viewer so the scroll-to-bottom controller doesn't resubscribe on every render */
+  getComponentScrollableEditor(): ScrollableEditor | undefined {
+    const viewer = this.state.editorComponentViewer
+    if (!viewer) {
+      return undefined
+    }
+
+    if (this.componentScrollableEditor?.viewer !== viewer) {
+      this.componentScrollableEditor = { viewer, editor: createComponentScrollableEditor(viewer) }
+    }
+
+    return this.componentScrollableEditor.editor
   }
 
   override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {
@@ -1017,8 +1031,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               </div>
             )}
             <NoteScrollToBottomController
-              editor={editorMode === 'component' ? this.componentScrollableEditor : this.state.scrollableEditor}
-              disabled={editorMode === 'component'}
+              editor={editorMode === 'component' ? this.getComponentScrollableEditor() : this.state.scrollableEditor}
               moveCaret={
                 !this.state.noteLocked &&
                 !this.state.readonly &&

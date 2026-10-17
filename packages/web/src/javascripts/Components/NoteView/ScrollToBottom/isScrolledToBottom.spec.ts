@@ -2,7 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { DEFAULT_SCROLL_BOTTOM_THRESHOLD, isScrolledToBottom, hasVerticalOverflow } from './isScrolledToBottom'
+import {
+  DEFAULT_SCROLL_BOTTOM_THRESHOLD,
+  isScrolledToBottom,
+  hasVerticalOverflow,
+  observeElementScrollState,
+} from './isScrolledToBottom'
 
 describe('isScrolledToBottom', () => {
   it('returns true when scrollTop reaches the bottom within the threshold', () => {
@@ -49,5 +54,66 @@ describe('hasVerticalOverflow', () => {
     Object.defineProperty(element, 'clientHeight', { value: 200, configurable: true })
 
     expect(hasVerticalOverflow(element)).toBe(false)
+  })
+})
+
+describe('observeElementScrollState', () => {
+  const originalResizeObserver = window.ResizeObserver
+  const disconnect = jest.fn()
+
+  beforeEach(() => {
+    window.ResizeObserver = jest.fn().mockImplementation(() => ({ observe: jest.fn(), disconnect }))
+  })
+
+  afterEach(() => {
+    window.ResizeObserver = originalResizeObserver
+    disconnect.mockClear()
+  })
+
+  function createElement() {
+    const element = document.createElement('div')
+    Object.defineProperty(element, 'scrollHeight', { value: 1000, configurable: true })
+    Object.defineProperty(element, 'clientHeight', { value: 200, configurable: true })
+    return element
+  }
+
+  it('reports the state immediately, on scroll, and on content change', () => {
+    const element = createElement()
+    let notifyContentChange: () => void = () => undefined
+    const callback = jest.fn()
+
+    observeElementScrollState(
+      element,
+      (onChange) => {
+        notifyContentChange = onChange
+        return () => undefined
+      },
+      callback,
+    )
+    expect(callback).toHaveBeenLastCalledWith({ canScroll: true, isAtBottom: false })
+
+    element.scrollTop = 800
+    element.dispatchEvent(new Event('scroll'))
+    expect(callback).toHaveBeenLastCalledWith({ canScroll: true, isAtBottom: true })
+
+    Object.defineProperty(element, 'scrollHeight', { value: 2000, configurable: true })
+    notifyContentChange()
+    expect(callback).toHaveBeenLastCalledWith({ canScroll: true, isAtBottom: false })
+  })
+
+  it('stops reporting after disposal', () => {
+    const element = createElement()
+    const disposeContentChange = jest.fn()
+    const callback = jest.fn()
+
+    const dispose = observeElementScrollState(element, () => disposeContentChange, callback)
+    dispose()
+    callback.mockClear()
+
+    element.dispatchEvent(new Event('scroll'))
+
+    expect(callback).not.toHaveBeenCalled()
+    expect(disconnect).toHaveBeenCalled()
+    expect(disposeContentChange).toHaveBeenCalled()
   })
 })

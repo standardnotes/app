@@ -1,4 +1,10 @@
-import { ActionObserver, ComponentEventObserver, ComponentMessage, UIFeature } from '@standardnotes/models'
+import {
+  ActionObserver,
+  ComponentEventObserver,
+  ComponentMessage,
+  ComponentScrollState,
+  UIFeature,
+} from '@standardnotes/models'
 import { FeatureStatus } from '../Feature/FeatureStatus'
 import { ComponentViewerError } from './ComponentViewerError'
 import { IframeComponentFeatureDescription, NativeFeatureIdentifier } from '@standardnotes/features'
@@ -22,6 +28,8 @@ export interface ComponentViewerInterface {
   setWindow(window: Window): void
   addEventObserver(observer: ComponentEventObserver): () => void
   addActionObserver(observer: ActionObserver): () => void
+  addScrollStateObserver(observer: (state: ComponentScrollState) => void): () => void
+  requestScrollToEnd(options: { moveCaret: boolean }): void
   postActiveThemes(): void
   handleMessage(message: ComponentMessage): void
 }

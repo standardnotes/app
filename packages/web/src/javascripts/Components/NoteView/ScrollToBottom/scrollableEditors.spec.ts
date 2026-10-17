@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 
+import type { ComponentViewerInterface } from '@standardnotes/snjs'
 import type { PlainEditorInterface } from '../PlainEditor/PlainEditor'
-import { createPlainScrollableEditor } from './scrollableEditors'
+import { createComponentScrollableEditor, createPlainScrollableEditor } from './scrollableEditors'
 
 function createElementScrolledToBottom<T extends HTMLElement>(element: T): T {
   Object.defineProperty(element, 'scrollHeight', { value: 1000, configurable: true })
@@ -37,5 +38,26 @@ describe('createPlainScrollableEditor', () => {
     scrollableEditor.scrollToEnd({ moveCaret: false })
 
     expect(setSelection).not.toHaveBeenCalled()
+  })
+})
+
+describe('createComponentScrollableEditor', () => {
+  it('delegates scroll state and scrolling to the component viewer', () => {
+    const dispose = jest.fn()
+    const componentViewer = {
+      addScrollStateObserver: jest.fn().mockReturnValue(dispose),
+      requestScrollToEnd: jest.fn(),
+    } as unknown as ComponentViewerInterface
+    const callback = jest.fn()
+
+    const scrollableEditor = createComponentScrollableEditor(componentViewer)
+
+    expect(scrollableEditor.observeScrollState(callback)).toBe(dispose)
+    expect(componentViewer.addScrollStateObserver).toHaveBeenCalledWith(callback)
+
+    scrollableEditor.scrollToEnd({ moveCaret: true })
+    expect(componentViewer.requestScrollToEnd).toHaveBeenCalledWith({ moveCaret: true })
+
+    expect(scrollableEditor.getKeyboardTarget).toBeUndefined()
   })
 })

@@ -33,4 +33,7 @@ export type MessageData = Partial<{
   metaKey?: boolean
   shiftKey?: boolean
   altKey?: boolean
+  moveCaret?: boolean
+  canScroll?: boolean
+  isAtBottom?: boolean
 }>

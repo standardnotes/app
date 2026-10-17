@@ -1,10 +1,18 @@
+import type { ComponentViewerInterface } from '@standardnotes/snjs'
 import { scrollElementToBottom } from '@/Utils/scrollElementToBottom'
 import type { PlainEditorInterface } from '../PlainEditor/PlainEditor'
+import { observeElementScrollState } from './isScrolledToBottom'
 import type { ScrollableEditor } from './types'
 
 export function createPlainScrollableEditor(plainEditor: PlainEditorInterface): ScrollableEditor {
   return {
-    getScrollElement: () => plainEditor.getTextarea(),
+    observeScrollState: (callback) => {
+      const textarea = plainEditor.getTextarea()
+      if (!textarea) {
+        return () => undefined
+      }
+      return observeElementScrollState(textarea, (onChange) => plainEditor.onTextChange(onChange), callback)
+    },
     scrollToEnd: ({ moveCaret }) => {
       const textarea = plainEditor.getTextarea()
       if (!textarea) {
@@ -19,36 +27,14 @@ export function createPlainScrollableEditor(plainEditor: PlainEditorInterface): 
         plainEditor.setSelection(textLength, textLength, { selectInEditor: true, focus: true, scrollIntoView: false })
       })
     },
-    onTextChange: (callback) => plainEditor.onTextChange(callback),
+    getKeyboardTarget: () => plainEditor.getTextarea(),
   }
 }
 
-export function createComponentScrollableEditor(getEditorContentElement: () => HTMLElement | null): ScrollableEditor {
+/** The component scrolls itself; only components that report their scroll state get the button. */
+export function createComponentScrollableEditor(componentViewer: ComponentViewerInterface): ScrollableEditor {
   return {
-    getScrollElement: getEditorContentElement,
-    scrollToEnd: () => {
-      const editorContentElement = getEditorContentElement()
-      if (!editorContentElement) {
-        return
-      }
-
-      scrollElementToBottom(editorContentElement)
-
-      const iframe = editorContentElement.querySelector('iframe')
-      iframe?.contentWindow?.focus()
-
-      try {
-        iframe?.contentDocument?.dispatchEvent(
-          new KeyboardEvent('keydown', {
-            key: 'End',
-            ctrlKey: true,
-            bubbles: true,
-          }),
-        )
-      } catch {
-        // Cross-origin iframe: host scroll only.
-      }
-    },
-    onTextChange: () => () => undefined,
+    observeScrollState: (callback) => componentViewer.addScrollStateObserver(callback),
+    scrollToEnd: (options) => componentViewer.requestScrollToEnd(options),
   }
 }
