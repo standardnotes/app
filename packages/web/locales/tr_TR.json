@@ -4502,6 +4502,68 @@
         "Başlık:"
       ]
     },
+    "B6.Preferences.General.Labs.Localization.Description": {
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "Uygulamayı tercih ettiğiniz dilde kullanın. bir seçim yapılmazsa tarayıcınızın dili kullanılır."
+      ]
+    },
+    "B6.Preferences.General.Labs.Localization.Name": {
+      "Localization": [
+        "Yerelleştirme"
+      ]
+    },
+    "B6.Preferences.General.Language.Action": {
+      "Select the app language": [
+        "Uygulamanın dilini seçin"
+      ]
+    },
+    "B6.Preferences.General.Language.Error": {
+      "Could not load the selected language.": [
+        "Seçilmiş dil yüklenemedi."
+      ],
+      "Failed to load language options. Please reload the app and try again.": [
+        "Dil seçenekleri yüklenemedi. Lütfen uygulamayı yeniden yükleyip yeniden deneyin."
+      ]
+    },
+    "B6.Preferences.General.Language.Info": {
+      "Language switched to ${ languageName }": [
+        "Dil ${ languageName } olarak değiştirildi"
+      ],
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "Uygulamayı tercih ettiğiniz dilde kullanın. Bir seçim yapılmazsa tarayıcınızın dili kullanılır."
+      ],
+      "Use the app in your preferred language. Your OS language is used when no preference is set.": [
+        "Uygulamayı tercih ettiğiniz dilde kullanın. Bir sçeim yapılmazsa işletim sisteminizin dili kullanılır."
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionDismiss": {
+      "Not now": [
+        "Şimdi değil"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionOpen": {
+      "Open language settings": [
+        "Dil ayarlarını aç"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.Info": {
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
+        "Artık uygulamayı tercih ettiğiniz dilde kullanabilirsiniz. Bu Labs özelliğini Ayarlar → Genel → Dil bölümünden açablirsiniz. Bir seçim yapılmadığında tarayıcınızın dili kullanılır."
+      ],
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
+        "Artık uygulamayı tercih ettiğiniz dilde kullanabilirsiniz. Bu Labs özelliğini Ayarlar → Genel → Dil bölümünden açabilirsiniz. Bir seçim yapılmazsa işletim sisteminizin dili kullanılır."
+      ]
+    },
+    "B6.Preferences.General.Language.Subtitle": {
+      "App language": [
+        "Uygulama dili"
+      ]
+    },
+    "B6.Preferences.General.Language.Title": {
+      "Language Settings": [
+        "Dil ayarları"
+      ]
+    },
     "B6.Preferences.General.Placeholder": {
       "e.g. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }": [
         "Örnek: ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"

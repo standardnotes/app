@@ -4502,6 +4502,68 @@
         "Titel:"
       ]
     },
+    "B6.Preferences.General.Labs.Localization.Description": {
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "Nutze die App in deiner bevorzugten Sprache. Wenn keine Festlegung getroffen wurde, wird die Sprache deines Browsers verwendet."
+      ]
+    },
+    "B6.Preferences.General.Labs.Localization.Name": {
+      "Localization": [
+        "Lokalisierung"
+      ]
+    },
+    "B6.Preferences.General.Language.Action": {
+      "Select the app language": [
+        "Sprache der App auswählen"
+      ]
+    },
+    "B6.Preferences.General.Language.Error": {
+      "Could not load the selected language.": [
+        "Die ausgewählte Sprache konnte nicht geladen werden."
+      ],
+      "Failed to load language options. Please reload the app and try again.": [
+        "Die Sprachoptionen konnten nicht geladen werden. Bitte starte die App neu und versuche es erneut."
+      ]
+    },
+    "B6.Preferences.General.Language.Info": {
+      "Language switched to ${ languageName }": [
+        "Sprache gewechselt zu ${ languageName }"
+      ],
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "Nutze die App in deiner bevorzugten Sprache. Wenn keine Festlegung getroffen wurde, wird die Sprache deines Browsers verwendet."
+      ],
+      "Use the app in your preferred language. Your OS language is used when no preference is set.": [
+        "Nutze die App in deiner bevorzugten Sprache. Wenn keine Festlegung getroffen wurde, wird die Sprache deines Betriebssystems verwendet."
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionDismiss": {
+      "Not now": [
+        "Nicht jetzt"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionOpen": {
+      "Open language settings": [
+        "Spracheinstellungen öffnen"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.Info": {
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
+        "Du kannst die App nun in deiner bevorzugten Sprache nutzen. Aktiviere diese Labs-Funktion unter „Einstellungen“ → „Allgemein“ → „Sprache“. Wenn keine Festlegung getroffen wurde, wird die Sprache deines Browsers verwendet."
+      ],
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
+        "Du kannst die App nun in deiner bevorzugten Sprache nutzen. Aktiviere diese Labs-Funktion unter „Einstellungen“ → „Allgemein“ → „Sprache“. Wenn keine Festlegung getroffen wurde, wird die Sprache deines Betriebssystem verwendet."
+      ]
+    },
+    "B6.Preferences.General.Language.Subtitle": {
+      "App language": [
+        "Sprache der App"
+      ]
+    },
+    "B6.Preferences.General.Language.Title": {
+      "Language Settings": [
+        "Spracheinstellungen"
+      ]
+    },
     "B6.Preferences.General.Placeholder": {
       "e.g. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }": [
         "z. B. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"

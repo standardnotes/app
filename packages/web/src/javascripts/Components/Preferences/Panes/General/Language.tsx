@@ -11,8 +11,10 @@ import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Switch from '@/Components/Switch/Switch'
 import { c } from 'ttag'
 import { ElementIds } from '@/Constants/ElementIDs'
+import { classNames } from '@standardnotes/utils'
 
 const LABS_SWITCH_ANIMATION_MS = 200
+const SPOTLIGHT_DURATION_MS = 2000
 
 type Props = {
   application: WebApplication
@@ -30,12 +32,14 @@ const Language: FunctionComponent<Props> = ({ application }) => {
     }))
 
   const isTogglingRef = useRef(false)
+  const [isToggling, setIsToggling] = useState(false)
 
   const toggle = useCallback(() => {
     if (isTogglingRef.current) {
       return
     }
     isTogglingRef.current = true
+    setIsToggling(true)
 
     setLabsSwitchChecked((checked) => !checked)
 
@@ -49,20 +53,34 @@ const Language: FunctionComponent<Props> = ({ application }) => {
   const showLanguageOptionsError = labsSwitchChecked && localizationStore.availableLocalesFailedToLoad
   const usesOsLanguage = isDesktopApplication() || application.isNativeMobileWeb()
 
-  const [isSwitchingLocale, setIsSwitchingLocale] = useState(false)
+  const [switchingToLocale, setSwitchingToLocale] = useState<string>()
 
   const onLocaleChange = useCallback(
     async (value: string) => {
-      setIsSwitchingLocale(true)
+      setSwitchingToLocale(value)
       const isReloading = await application.localizationController.changeLocaleAndReload(value)
       if (!isReloading) {
-        setIsSwitchingLocale(false)
+        setSwitchingToLocale(undefined)
       }
     },
     [application],
   )
 
   const { preferencesController } = application
+
+  const [isSpotlighted, setIsSpotlighted] = useState(false)
+
+  useEffect(() => {
+    if (!isSpotlighted) {
+      return
+    }
+
+    const timeout = window.setTimeout(() => setIsSpotlighted(false), SPOTLIGHT_DURATION_MS)
+
+    return () => {
+      window.clearTimeout(timeout)
+    }
+  }, [isSpotlighted])
 
   useEffect(() => {
     if (!preferencesController.isOpen || preferencesController.currentPane !== 'general') {
@@ -77,6 +95,7 @@ const Language: FunctionComponent<Props> = ({ application }) => {
       document
         .getElementById(ElementIds.LanguagePreferencesSection)
         ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setIsSpotlighted(true)
       preferencesController.clearPreferencesSectionScrollTarget()
     })
 
@@ -91,7 +110,13 @@ const Language: FunctionComponent<Props> = ({ application }) => {
   ])
 
   return (
-    <PreferencesGroup id={ElementIds.LanguagePreferencesSection}>
+    <PreferencesGroup
+      id={ElementIds.LanguagePreferencesSection}
+      className={classNames(
+        'ring-2 ring-inset transition-shadow duration-700 motion-reduce:transition-none',
+        isSpotlighted ? 'ring-info' : 'ring-transparent',
+      )}
+    >
       <PreferencesSegment>
         <div className="flex items-center justify-between">
           <div className="flex items-start">
@@ -116,9 +141,9 @@ const Language: FunctionComponent<Props> = ({ application }) => {
               <Dropdown
                 label={c('B6.Preferences.General.Language.Action').t`Select the app language`}
                 items={localeItems}
-                value={localizationStore.currentLocale}
+                value={switchingToLocale ?? localizationStore.currentLocale}
                 onChange={onLocaleChange}
-                disabled={isSwitchingLocale}
+                disabled={isToggling || switchingToLocale !== undefined}
               />
             </div>
           </div>

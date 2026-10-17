@@ -793,6 +793,9 @@
       "Capture": [
         "拍摄"
       ],
+      "Close": [
+        "关闭"
+      ],
       "Confirm": [
         "确认"
       ],
@@ -870,6 +873,9 @@
       ],
       "Upload": [
         "上传"
+      ],
+      "View ${ itemTypeLabel }": [
+        "查看 ${ itemTypeLabel }"
       ]
     },
     "B2.NavSharedUI.AriaLabel": {
@@ -1015,6 +1021,12 @@
       "${ component.displayName } would like to interact with your ${ permissionsString }": [
         "${ component.displayName } 想要与您的 ${ permissionsString } 进行交互"
       ],
+      "Add a passcode or create an account to require authentication to view this ${ itemTypeLabel }.": [
+        "添加密码或创建账户，以便在查看此${ itemTypeLabel }时要求进行身份验证。"
+      ],
+      "Authenticate to view this ${ itemTypeLabel }.": [
+        "请进行身份验证以查看此 ${ itemTypeLabel }。"
+      ],
       "Enable the Hosted option for this component by opening the Preferences > General > Advanced Settings menu and toggling 'Use hosted when local is unavailable' under this component's options. Then press Reload.": [
         "打开“首选项 > 通用 > 高级设置”菜单，在该组件的选项下开启“本地不可用时使用托管版本”，即可为该组件启用“托管”选项。然后按“重新加载”。"
       ],
@@ -1106,6 +1118,9 @@
       ],
       "Encryption upgrade available.": [
         "加密升级可用。"
+      ],
+      "Error": [
+        "错误"
       ],
       "File name:": [
         "文件名："
@@ -1209,6 +1224,9 @@
       ],
       "Search...": [
         "搜索..."
+      ],
+      "Untitled": [
+        "未命名"
       ]
     },
     "B2.NavSharedUI.Status": {
@@ -1276,6 +1294,9 @@
       ],
       "Take a photo": [
         "拍摄照片"
+      ],
+      "This ${ itemTypeLabel } is protected": [
+        "此 ${ itemTypeLabel } 受到保护"
       ],
       "Vault options": [
         "保险库选项"
@@ -1495,6 +1516,9 @@
     "B3.Notes.EditorToolbar.Error": {
       "Cannot upload file \"${ fileName }\"": [
         "无法上传文件“${ fileName }”"
+      ],
+      "Search failed": [
+        "搜索失败"
       ]
     },
     "B3.Notes.EditorToolbar.Info": {
@@ -1506,6 +1530,9 @@
       ],
       "May lead to performance degradation, especially on large documents.": [
         "可能会导致性能下降，尤其是在处理大型文档时。"
+      ],
+      "This editor does not support search result highlighting yet.": [
+        "此编辑器尚不支持突出显示搜索结果。"
       ]
     },
     "B3.Notes.EditorToolbar.Label": {
@@ -1539,8 +1566,14 @@
       "Clear formatting": [
         "清除格式"
       ],
+      "Close (${ closeShortcut })": [
+        "关闭 (${ closeShortcut })"
+      ],
       "Close (${ searchToggleShortcut })": [
         "关闭 (${ searchToggleShortcut })"
+      ],
+      "Close search": [
+        "关闭搜索"
       ],
       "Code Block": [
         "代码块"
@@ -1572,6 +1605,9 @@
       "Highlight all results": [
         "突出显示所有结果"
       ],
+      "Highlight all unavailable": [
+        "全部突出显示不可用"
+      ],
       "Insert": [
         "插入"
       ],
@@ -1589,6 +1625,9 @@
       ],
       "Insert Table": [
         "插入表格"
+      ],
+      "Next result": [
+        "下一个结果"
       ],
       "Next result (Enter)": [
         "下一个结果 (Enter)"
@@ -1611,6 +1650,9 @@
       "Plain Text": [
         "纯文本"
       ],
+      "Previous result": [
+        "上一个结果"
+      ],
       "Previous result (Shift + Enter)": [
         "上一个结果 (Shift + Enter)"
       ],
@@ -1623,6 +1665,9 @@
       "Replace (Ctrl + Enter)": [
         "替换 (Ctrl + Enter)"
       ],
+      "Replace (Enter)": [
+        "替换 (Enter)"
+      ],
       "Replace all (Ctrl + Alt + Enter)": [
         "全部替换 (Ctrl + Alt + Enter)"
       ],
@@ -1631,6 +1676,9 @@
       ],
       "Search": [
         "搜索"
+      ],
+      "Search status": [
+        "搜索状态"
       ],
       "Table actions": [
         "表格操作"
@@ -1649,6 +1697,12 @@
       ],
       "Text style": [
         "文本样式"
+      ],
+      "Toggle Replace Mode": [
+        "切换替换模式"
+      ],
+      "Toggle Replace Mode (${ replaceShortcut })": [
+        "切换替换模式 (${ replaceShortcut })"
       ],
       "Toggle Replace Mode (${ toggleReplaceShortcut })": [
         "切换替换模式 (${ toggleReplaceShortcut })"
@@ -1984,6 +2038,12 @@
       "Archived": [
         "已存档"
       ],
+      "Clear all filters": [
+        "清除所有筛选条件"
+      ],
+      "Clear tag filters": [
+        "清除标签筛选条件"
+      ],
       "Create a new note in the selected tag ${ shortcut }": [
         "在所选标签中创建新笔记 ${ shortcut }"
       ],
@@ -2070,6 +2130,9 @@
       "Search": [
         "搜索"
       ],
+      "Search filters": [
+        "搜索筛选条件"
+      ],
       "Select all items": [
         "选择所有项目"
       ],
@@ -2083,6 +2146,9 @@
       ],
       "${ selectedItemsCount } selected": [
         "已选择 ${ selectedItemsCount } 项"
+      ],
+      "${ titleFormatOptionsLink }. Use ${ bracketsLiteral } to escape formatting.": [
+        "${ titleFormatOptionsLink }。使用 ${ bracketsLiteral } 可转义格式设置。"
       ],
       "and ${ additionalLinksCount } more...": [
         "以及其他 ${ additionalLinksCount } 个链接..."
@@ -2110,6 +2176,9 @@
       ],
       "No items.": [
         "没有项目。"
+      ],
+      "Preview: ${ titleFormatPreview }": [
+        "预览：${ titleFormatPreview }"
       ],
       "Upgrade for per-tag preferences": [
         "升级以解锁按标签自定义首选项"
@@ -2176,6 +2245,9 @@
       "Display the notes and files in the current tag in a table layout": [
         "以表格布局显示当前标签中的笔记和文件"
       ],
+      "e.g. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }": [
+        "例如 ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
+      ],
       "Empty": [
         "空的"
       ],
@@ -2206,11 +2278,17 @@
       "Files": [
         "文件"
       ],
+      "Filter by tag": [
+        "按标签筛选"
+      ],
       "Fr": [
         "周五"
       ],
       "Global": [
         "全局"
+      ],
+      "Include": [
+        "包含"
       ],
       "January": [
         "一月"
@@ -2275,11 +2353,17 @@
       "Protected": [
         "受到保护"
       ],
+      "Protected Contents": [
+        "受保护内容"
+      ],
       "Record video": [
         "录制视频"
       ],
       "Sa": [
         "周六"
+      ],
+      "Search titles only": [
+        "仅搜索标题"
       ],
       "Select the default note type": [
         "选择默认笔记类型"
@@ -2346,6 +2430,9 @@
     "B3.Notes.NoteList.Title": {
       "Display options": [
         "显示选项"
+      ],
+      "Search filters": [
+        "搜索筛选条件"
       ]
     },
     "B4.Notes.EditingUI.Action": {
@@ -2575,6 +2662,9 @@
       "Type ${ slashKey } for commands...": [
         "键入 ${ slashKey } 以使用命令..."
       ],
+      "Unable to find file ${ fileUuid }": [
+        "无法找到文件 ${ fileUuid }"
+      ],
       "URL:": [
         "URL："
       ],
@@ -2600,6 +2690,9 @@
       ],
       "Saving...": [
         "正在保存..."
+      ],
+      "Uploading file \"${ uploadProgress.file.name }\" (${ progress }%)": [
+        "正在上传文件 \"${ uploadProgress.file.name }\" (${ progress }%)"
       ]
     },
     "B4.Notes.EditingUI.Title": {
@@ -3329,6 +3422,11 @@
         "用户修改日期"
       ]
     },
+    "B4.Notes.TagsLinkedItems.Placeholder": {
+      "Add tag...": [
+        "添加标签..."
+      ]
+    },
     "B4.Notes.TagsLinkedItems.Title": {
       "Linked items": [
         "关联项"
@@ -3851,6 +3949,9 @@
       "Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
         "登录以在所有设备间同步笔记和首选项，并启用端到端加密。"
       ],
+      "Sign-in notification emails are available only on a subscription plan. Please upgrade in order to enable sign-in notifications.": [
+        "登录通知邮件仅适用于订阅套餐。请升级以启用登录通知。"
+      ],
       "Storage Quota": [
         "存储空间配额"
       ],
@@ -4080,6 +4181,9 @@
       ]
     },
     "B6.Preferences.Backups.Info": {
+      "${ decryptedFileNameBold } has been successfully decrypted and saved to your chosen directory.": [
+        "${ decryptedFileNameBold } 已成功解密，并已保存到您选择的目录中。"
+      ],
       "Automatically save encrypted and decrypted backups of your note and tag data.": [
         "自动保存笔记和标签数据的加密及解密备份。"
       ],
@@ -4106,6 +4210,9 @@
       ],
       "The file and key data below is encrypted with your account password.": [
         "以下文件和密钥数据已使用您的账号密码加密。"
+      ],
+      "To decrypt a backup file, drag and drop the file's respective ${ metadataFileName } file here or select it below.": [
+        "要解密备份文件，请将文件对应的 ${ metadataFileName } 文件拖放到此处，或在下方选择它。"
       ],
       "To enable file backups, use the ${ AppName } desktop application.": [
         "要启用文件备份，请使用 ${ AppName } 桌面应用。"
@@ -4312,6 +4419,9 @@
       "No experimental features available.": [
         "没有可用的实验性功能。"
       ],
+      "Only applies to web and desktop apps. On mobile, notes don't open automatically at launch.": [
+        "仅适用于网络和桌面应用。在移动端，笔记不会在启动时自动打开。"
+      ],
       "The default spellcheck value for new notes. Spellcheck can be configured per note from the note context menu. Spellcheck may degrade overall typing performance with long notes.": [
         "新笔记的默认拼写检查设置。可在笔记上下文菜单中为每个笔记配置拼写检查。拼写检查可能会降低长笔记的整体输入性能。"
       ],
@@ -4326,6 +4436,12 @@
       ],
       "Whether a confirmation dialog should be shown before closing the app.": [
         "关闭应用前是否显示确认对话框。"
+      ],
+      "Your offline subscription code has been successfully activated.": [
+        "您的离线订阅代码已成功激活。"
+      ],
+      "Your offline subscription code has been successfully removed.": [
+        "您的离线订阅代码已成功移除。"
       ]
     },
     "B6.Preferences.General.Label": {
@@ -4375,7 +4491,72 @@
         "标题："
       ]
     },
+    "B6.Preferences.General.Labs.Localization.Description": {
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "以您偏好的语言使用应用。未设置首选项时，将使用浏览器语言。"
+      ]
+    },
+    "B6.Preferences.General.Labs.Localization.Name": {
+      "Localization": [
+        "本地化"
+      ]
+    },
+    "B6.Preferences.General.Language.Action": {
+      "Select the app language": [
+        "选择应用语言"
+      ]
+    },
+    "B6.Preferences.General.Language.Error": {
+      "Could not load the selected language.": [
+        "无法加载所选语言。"
+      ],
+      "Failed to load language options. Please reload the app and try again.": [
+        "无法加载语言选项。请重新加载应用并重试。"
+      ]
+    },
+    "B6.Preferences.General.Language.Info": {
+      "Language switched to ${ languageName }": [
+        "语言已切换为 ${ languageName }"
+      ],
+      "Use the app in your preferred language. Your browser language is used when no preference is set.": [
+        "以您偏好的语言使用应用。未设置首选项时，将使用浏览器语言。"
+      ],
+      "Use the app in your preferred language. Your OS language is used when no preference is set.": [
+        "以您偏好的语言使用应用。未设置首选项时，将使用 OS 语言。"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionDismiss": {
+      "Not now": [
+        "以后再说"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.ActionOpen": {
+      "Open language settings": [
+        "打开语言设置"
+      ]
+    },
+    "B6.Preferences.General.Language.Spotlight.Info": {
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
+        "现在，您可以以偏好的语言使用应用。请在设置 → 通用 → 语言中开启此实验室功能。未设置首选项时，将使用浏览器语言。"
+      ],
+      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
+        "现在，您可以以偏好的语言使用应用。请在设置 → 通用 → 语言中开启此实验室功能。未设置首选项时，将使用 OS 语言。"
+      ]
+    },
+    "B6.Preferences.General.Language.Subtitle": {
+      "App language": [
+        "应用语言"
+      ]
+    },
+    "B6.Preferences.General.Language.Title": {
+      "Language Settings": [
+        "语言设置"
+      ]
+    },
     "B6.Preferences.General.Placeholder": {
+      "e.g. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }": [
+        "例如 ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
+      ],
       "Select tag to save Moments to...": [
         "选择要保存 Moments 的目标标签..."
       ]
@@ -4544,6 +4725,9 @@
       "MySQL": [
         "MySQL"
       ],
+      "Register on ${ tailscaleLink } for free.": [
+        "免费注册 ${ tailscaleLink }。"
+      ],
       "SQLite": [
         "SQLite"
       ],
@@ -4696,6 +4880,12 @@
     "B6.Preferences.Listed.Info": {
       "${ ListedName } is a free blogging platform that allows you to create a public journal published directly from your notes.": [
         "${ ListedName } 是一个免费的博客平台，可让您直接从笔记发布公开日志。"
+      ],
+      "${ ListedName } will permanently shut down on December 31, 2026.": [
+        "${ ListedName } 将于 2026 年 12 月 31 日永久关闭。"
+      ],
+      "Note: The ${ ListedName } platform will permanently shut down December 31, 2026. Your data published on ${ ListedName } will still be available in your personal ${ AppName } account.": [
+        "注意：${ ListedName } 平台将于 2026 年 12 月 31 日永久关闭。您在 ${ ListedName } 上发布的数据仍可在您的个人 ${ AppName } 帐户中使用。"
       ],
       "To get started, sign in or register for a ${ AppName } account.": [
         "如需开始使用，请登录或注册 ${ AppName } 账户。"
@@ -4890,6 +5080,9 @@
     "B6.Preferences.Plugins.Info": {
       "${ pluginName } has been successfully installed.": [
         "${ pluginName } 已成功安装。"
+      ],
+      "Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing experiences, but in most cases, the built-in ${ SuperName } note type can encapsulate any functionality found in plugins.": [
+        "插件在安全沙盒中运行，只能访问您允许其访问的数据。笔记类型可提供专门的编辑体验，但在大多数情况下，内置的 ${ SuperName } 笔记类型可以涵盖插件中的所有功能。"
       ]
     },
     "B6.Preferences.Plugins.Label": {
@@ -5033,6 +5226,9 @@
       "Please visit the web app in order to add a hardware security key.": [
         "请访问 Web 应用以添加硬件安全密钥。"
       ],
+      "Save your secret key ${ safeStorageLink }:": [
+        "将您的密钥保存到 ${ safeStorageLink }："
+      ],
       "Sign in or register for an account to configure 2FA.": [
         "登录或注册账户以配置双重验证 (2FA)。"
       ],
@@ -5041,6 +5237,9 @@
       ],
       "Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or get a new one.": [
         "部分应用（例如 Google Authenticator）无法在您丢失或更换设备时备份和恢复密钥。"
+      ],
+      "somewhere safe": [
+        "安全的地方"
       ],
       "The autolock timer begins when the window or tab loses focus.": [
         "自动锁定计时器会在窗口或标签页失去焦点时启动。"
@@ -5068,6 +5267,9 @@
       "Device Name": [
         "设备名称"
       ],
+      "Enter your ${ secretKeyBold }:": [
+        "输入您的 ${ secretKeyBold }："
+      ],
       "Open your": [
         "打开您的"
       ],
@@ -5085,6 +5287,9 @@
       ],
       "secret key": [
         "密钥"
+      ],
+      "Verify the ${ authenticationCodeBold } generated by your authenticator app:": [
+        "验证您的身份验证器应用生成的 ${ authenticationCodeBold }："
       ]
     },
     "B6.Preferences.Security.Placeholder": {
@@ -5257,6 +5462,18 @@
       ],
       "You've used": [
         "您已使用"
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
+        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅已于 ${ expirationDateBold } 过期。如有需要，您可以在下方重新订阅。"
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled and expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
+        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅已取消，并已于 ${ expirationDateBold } 过期。如有需要，您可以在下方重新订阅。"
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled but will remain valid until ${ expirationDateBold }. You may resubscribe below if you wish.": [
+        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅已取消，但在 ${ expirationDateBold } 之前仍然有效。如有需要，您可以在下方重新订阅。"
+      ],
+      "Your ${ appNameBold }${ subscriptionTierBold } subscription will be renewed on ${ expirationDateBold }.": [
+        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅将于 ${ expirationDateBold } 续订。"
       ]
     },
     "B6.Preferences.Subscription.Label": {
@@ -5871,6 +6088,9 @@
       "File": [
         "文件"
       ],
+      "file": [
+        "文件"
+      ],
       "File context menu": [
         "文件上下文菜单"
       ],
@@ -5968,6 +6188,9 @@
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Info": {
+      "${ AppName } can be used totally offline without an account, and without an internet connection. You can find ${ offlineHelpLink }": [
+        "${ AppName } 可以完全离线使用，无需帐户，也无需互联网连接。您可以查看 ${ offlineHelpLink }"
+      ],
       "Because of our encrypted architecture, ${ AppName } does not currently provide a real-time collaboration solution. Multiple users can share the same account however, but editing at the same time may result in sync conflicts, which may result in the duplication of notes.": [
         "由于采用加密架构，${ AppName } 目前暂不提供实时协作解决方案。不过，多个用户可以共用同一账户，但同时编辑可能导致同步冲突，进而造成笔记重复。"
       ],
@@ -5991,6 +6214,9 @@
       ],
       "Privacy Manifesto.": [
         "隐私宣言。"
+      ],
+      "Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read ${ privacyPolicyLink }": [
+        "很简单：除了您，没有别人。不是我们，不是您的 ISP，不是黑客，也不是政府机构。只要您妥善保管密码，且密码强度足够，那么您就是世界上唯一能够解密您笔记的人。如需进一步了解我们如何处理您的隐私与安全，请查看我们通俗易懂的 ${ privacyPolicyLink }"
       ],
       "Send an email to ${ SupportEmail } and we’ll sort it out.": [
         "发送电子邮件至 ${ SupportEmail }，我们会为您解决。"

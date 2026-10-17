@@ -10,21 +10,21 @@ export type LocaleCatalog = Record<string, string>
 
 export type LocaleServiceOptions = {
   onLocaleChanged?: (locale: string) => void
-  fetchJson?: <T>(url: string) => Promise<T>
+  loadJson?: <T>(url: string) => Promise<T>
   localesBasePath?: string
 }
 
 export class LocaleService {
   private currentLocale = DEFAULT_LOCALE
-  private catalog?: LocaleCatalog
+  private catalog?: Promise<LocaleCatalog>
   private readonly loadedLocales = new Set<string>()
   private readonly onLocaleChanged?: (locale: string) => void
-  private readonly fetchJsonImpl: <T>(url: string) => Promise<T>
+  private readonly loadJson: <T>(url: string) => Promise<T>
   private readonly localesBasePath: string
 
   constructor(options: LocaleServiceOptions = {}) {
     this.onLocaleChanged = options.onLocaleChanged
-    this.fetchJsonImpl = options.fetchJson ?? this.fetchJsonWithHttp.bind(this)
+    this.loadJson = options.loadJson ?? this.fetchJsonWithHttp.bind(this)
     this.localesBasePath = options.localesBasePath ?? LOCALES_BASE_PATH
     setDefaultLang(DEFAULT_LOCALE)
   }
@@ -38,19 +38,21 @@ export class LocaleService {
     return this.currentLocale
   }
 
-  async getAvailableLocales(): Promise<LocaleCatalog> {
-    if (this.catalog) {
-      return this.catalog
+  getAvailableLocales(): Promise<LocaleCatalog> {
+    if (!this.catalog) {
+      this.catalog = this.loadJson<LocaleCatalog>(this.localeResourcePath('config/locales.json'))
+      this.catalog.catch(() => {
+        this.catalog = undefined
+      })
     }
 
-    this.catalog = await this.fetchJsonImpl<LocaleCatalog>(this.localeResourcePath('config/locales.json'))
     return this.catalog
   }
 
   /** Loads locale JSON if needed and activates it. Throws when the pack cannot be loaded. */
   async loadAndActivateLocale(locale: string): Promise<void> {
     if (locale !== DEFAULT_LOCALE && !this.loadedLocales.has(locale)) {
-      const data = await this.fetchJsonImpl<LocaleData>(this.localeResourcePath(`${locale}.json`))
+      const data = await this.loadJson<LocaleData>(this.localeResourcePath(`${locale}.json`))
       addLocale(locale, data)
       this.loadedLocales.add(locale)
     }
