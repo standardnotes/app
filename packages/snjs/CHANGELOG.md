@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.212.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.5...@standardnotes/snjs@2.212.6) (2026-10-17)
+
+### Bug Fixes
+
+* Theme selection not updating colors correctly on some editors ([#3064](https://github.com/standardnotes/app/issues/3064)) ([ba00979](https://github.com/standardnotes/app/commit/ba00979d977dbe925909ae0f1e5b33ad3a67ca33))
+
 ## [2.212.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.4...@standardnotes/snjs@2.212.5) (2026-10-08)
 
 **Note:** Version bump only for package @standardnotes/snjs
