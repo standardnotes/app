@@ -494,7 +494,7 @@ export class SessionManager
     const keyParams = KeyParamsFromApiResponse(response.data, dto.email)
     if (!keyParams || !keyParams.version) {
       return {
-        response: this.apiService.createErrorResponse(API_MESSAGE_FALLBACK_LOGIN_FAIL),
+        response: this.apiService.createErrorResponse(API_MESSAGE_FALLBACK_LOGIN_FAIL()),
       }
     }
     return { keyParams, response, mfaCode: dto.mfaCode }
@@ -548,11 +548,11 @@ export class SessionManager
     if (!this.encryptionService.supportedVersions().includes(keyParams.version)) {
       if (this.encryptionService.isVersionNewerThanLibraryVersion(keyParams.version)) {
         return {
-          response: this.apiService.createErrorResponse(UNSUPPORTED_PROTOCOL_VERSION),
+          response: this.apiService.createErrorResponse(UNSUPPORTED_PROTOCOL_VERSION()),
         }
       } else {
         return {
-          response: this.apiService.createErrorResponse(EXPIRED_PROTOCOL_VERSION),
+          response: this.apiService.createErrorResponse(EXPIRED_PROTOCOL_VERSION()),
         }
       }
     }
@@ -562,7 +562,7 @@ export class SessionManager
       const minimum = this.encryptionService.costMinimumForVersion(keyParams.version)
       if (keyParams.content002.pw_cost < minimum) {
         return {
-          response: this.apiService.createErrorResponse(INVALID_PASSWORD_COST),
+          response: this.apiService.createErrorResponse(INVALID_PASSWORD_COST()),
         }
       }
 
@@ -575,14 +575,14 @@ export class SessionManager
 
       if (!confirmed) {
         return {
-          response: this.apiService.createErrorResponse(API_MESSAGE_FALLBACK_LOGIN_FAIL),
+          response: this.apiService.createErrorResponse(API_MESSAGE_FALLBACK_LOGIN_FAIL()),
         }
       }
     }
 
     if (!this.encryptionService.platformSupportsKeyDerivation(keyParams)) {
       return {
-        response: this.apiService.createErrorResponse(UNSUPPORTED_KEY_DERIVATION),
+        response: this.apiService.createErrorResponse(UNSUPPORTED_KEY_DERIVATION()),
       }
     }
 

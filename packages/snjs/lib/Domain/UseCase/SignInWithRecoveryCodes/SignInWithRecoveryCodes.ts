@@ -51,14 +51,14 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
 
     if (!this.encryptionService.supportedVersions().includes(rootKeyParams.version)) {
       if (this.encryptionService.isVersionNewerThanLibraryVersion(rootKeyParams.version)) {
-        return Result.fail(UNSUPPORTED_PROTOCOL_VERSION)
+        return Result.fail(UNSUPPORTED_PROTOCOL_VERSION())
       }
 
-      return Result.fail(EXPIRED_PROTOCOL_VERSION)
+      return Result.fail(EXPIRED_PROTOCOL_VERSION())
     }
 
     if (!this.encryptionService.platformSupportsKeyDerivation(rootKeyParams)) {
-      return Result.fail(UNSUPPORTED_KEY_DERIVATION)
+      return Result.fail(UNSUPPORTED_KEY_DERIVATION())
     }
 
     const rootKey = await this.encryptionService.computeRootKey(dto.password, rootKeyParams)
