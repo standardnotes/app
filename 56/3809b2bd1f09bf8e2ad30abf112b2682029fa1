@@ -42,6 +42,20 @@ packages/ui-services/src/Plugins/PluginsService.ts
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 114,
+    "ai_accepted": 114,
+    "git_diff_deleted_lines": 107,
+    "git_diff_added_lines": 114,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 114,
+        "ai_accepted": 114
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -73,6 +87,12 @@ packages/ui-services/src/Plugins/PluginsService.ts
         "cache_read_input_tokens": 3415529
       }
     }
+  },
+  "activity": {
+    "added_sloc": 137,
+    "deleted_sloc": 130,
+    "checkpoints": 6,
+    "span_seconds": 32
   },
   "proton_build": "1.7.6-proton.8"
 }
