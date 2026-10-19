@@ -19,6 +19,20 @@ packages/web/src/javascripts/Components/ChallengeModal/ChallengePrompt.tsx
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 22,
+    "ai_accepted": 22,
+    "git_diff_deleted_lines": 20,
+    "git_diff_added_lines": 22,
+    "tool_model_breakdown": {
+      "cursor::composer-2.5": {
+        "ai_additions": 22,
+        "ai_accepted": 22
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -49,6 +63,12 @@ packages/web/src/javascripts/Components/ChallengeModal/ChallengePrompt.tsx
         "cache_read_input_tokens": 454016
       }
     }
+  },
+  "activity": {
+    "added_sloc": 23,
+    "deleted_sloc": 21,
+    "checkpoints": 5,
+    "span_seconds": 2
   },
   "proton_build": "1.7.6-proton.8"
 }
