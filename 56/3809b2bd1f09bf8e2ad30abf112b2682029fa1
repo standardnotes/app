@@ -1,0 +1,78 @@
+packages/services/src/Domain/Contacts/UnknownContactName.ts
+  s_e3270d10c9be4b::t_b36e54deb6f8a4 3
+packages/services/src/Domain/User/UserService.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 246,421,601
+packages/snjs/lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes.spec.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 164
+packages/services/src/Domain/Strings/Messages.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 33,47-48,72,95,97,108
+  s_e3270d10c9be4b::t_070628684c6676 5-11,21-22,26-31,35-36,38-39,41-42,44-45,49-50,52-53,55-56,58-59,61-70,74-78,80-84,86,88-94,98-99
+packages/snjs/lib/Services/Api/ApiService.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 283,297,313,337,359,479,484,556,578,593,603,622,637,656,666,697,710,721,742,947,963,967
+packages/snjs/lib/Services/Api/DeprecatedHttpService.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 193,199,201
+packages/snjs/lib/Services/Features/FeaturesService.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 252,286
+packages/snjs/lib/Services/Session/SessionManager.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 497,551,555,565,578,585
+packages/snjs/lib/Services/Settings/SettingsGateway.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 28
+packages/services/src/Domain/Contacts/UseCase/CreateOrEditContact.ts
+  s_e3270d10c9be4b::t_1440aef6532de6 39
+packages/web/src/javascripts/Components/FilePreview/ImageAlignmentOptions.tsx
+  s_e3270d10c9be4b::t_29b0fe9111cd42 20
+  s_e3270d10c9be4b::t_a6d2fc6677273f 42
+packages/snjs/lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 54,57,61
+packages/ui-services/src/Plugins/PluginsService.ts
+  s_e3270d10c9be4b::t_4a8c8c8031135d 145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "563809b2bd1f09bf8e2ad30abf112b2682029fa1",
+  "prompts": {},
+  "sessions": {
+    "s_e3270d10c9be4b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2f1cd2bc-5cd7-40dc-bc46-16cafcc5bc52",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 39074,
+        "output_tokens": 18347,
+        "cache_creation_input_tokens": 164526,
+        "cache_read_input_tokens": 3415529
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 39074,
+          "output_tokens": 18347,
+          "cache_creation_input_tokens": 164526,
+          "cache_read_input_tokens": 3415529
+        }
+      },
+      "tool_uses": {
+        "grep": 35,
+        "read": 32,
+        "shell": 10,
+        "write": 4
+      }
+    },
+    "by_prompt": {
+      "s_e3270d10c9be4b": {
+        "input_tokens": 39074,
+        "output_tokens": 18347,
+        "cache_creation_input_tokens": 164526,
+        "cache_read_input_tokens": 3415529
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
