@@ -1,0 +1,39 @@
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/IndentOutdent.tsx
+  s_43e2848413c311::t_c840713ff868f1 7-9
+  s_43e2848413c311::t_d1e360f7f6704a 16-18
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/Alignment.tsx
+  s_43e2848413c311::t_b4e52ee3f9abc6 7-9,16-18,25-27,34-36
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/Code.tsx
+  s_43e2848413c311::t_f735bfa43eeba1 9-11
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/Collapsible.tsx
+  s_43e2848413c311::t_a80453cef8bb45 8-10
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/Divider.tsx
+  s_43e2848413c311::t_21924bfb843e06 8-10
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/Headings.tsx
+  s_43e2848413c311::t_b1d461abb3d7db 9-11,32-34,55-57
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/List.tsx
+  s_43e2848413c311::t_8783b96f255e9c 8-10,17-19,26-28
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/Paragraph.tsx
+  s_43e2848413c311::t_17bb89fdababeb 8-10
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/Password.tsx
+  s_43e2848413c311::t_b28f0fe81df721 11-13
+packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/Quote.tsx
+  s_43e2848413c311::t_a42679f4b2f553 9-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "7e639d2c51743e0f797732bcd5151c213a4cf0b0",
+  "prompts": {},
+  "sessions": {
+    "s_43e2848413c311": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "aa9d609d-5dc1-4b06-927c-7b062464a7d0",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
