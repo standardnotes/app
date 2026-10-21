@@ -31,6 +31,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
   const addNoteToParentFolders = usePreference(PrefKey.NoteAddToParentFolders)
 
   const alwaysShowSuperToolbar = usePreference(PrefKey.AlwaysShowSuperToolbar)
+  const showScrollToBottomButton = usePreference(PrefKey.ShowScrollToBottomButton)
   const defaultSuperImageAlignment = usePreference(PrefKey.SuperNoteImageAlignment)
   const imageAlignmentOptions = useMemo(
     (): DropdownItem[] => [
@@ -105,6 +106,24 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
               application.setPreference(PrefKey.NoteAddToParentFolders, !addNoteToParentFolders).catch(console.error)
             }}
             checked={addNoteToParentFolders}
+          />
+        </div>
+        <HorizontalSeparator classes="my-4" />
+        <div className="flex justify-between gap-2 md:items-center">
+          <div className="flex flex-col">
+            <Subtitle>{c('B6.Preferences.General.Subtitle').t`Show scroll to bottom`}</Subtitle>
+            <Text>
+              {c('B6.Preferences.General.Info')
+                .t`When enabled, a button appears in long notes to quickly scroll to the end.`}
+            </Text>
+          </div>
+          <Switch
+            onChange={() => {
+              application
+                .setPreference(PrefKey.ShowScrollToBottomButton, !showScrollToBottomButton)
+                .catch(console.error)
+            }}
+            checked={showScrollToBottomButton}
           />
         </div>
         <HorizontalSeparator classes="my-4" />

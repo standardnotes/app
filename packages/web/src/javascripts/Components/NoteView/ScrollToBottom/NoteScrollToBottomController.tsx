@@ -1,4 +1,6 @@
 import { useKeyboardService } from '@/Components/KeyboardServiceProvider'
+import usePreference from '@/Hooks/usePreference'
+import { PrefKey } from '@standardnotes/snjs'
 import { SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
 import { useEffect, useState } from 'react'
 import { c } from 'ttag'
@@ -12,6 +14,7 @@ type Props = {
 
 export function NoteScrollToBottomController({ editor, moveCaret }: Props) {
   const keyboardService = useKeyboardService()
+  const isButtonEnabled = usePreference(PrefKey.ShowScrollToBottomButton)
   const [showButton, setShowButton] = useState(false)
 
   useEffect(() => {
@@ -45,7 +48,7 @@ export function NoteScrollToBottomController({ editor, moveCaret }: Props) {
     })
   }, [editor, moveCaret, keyboardService])
 
-  if (!editor || !showButton) {
+  if (!editor || !isButtonEnabled || !showButton) {
     return null
   }
 
