@@ -1,0 +1,31 @@
+packages/web/src/javascripts/Components/NoteView/PlainEditor/PlainEditor.tsx
+  s_38963be954ca35::t_a9e29a0c464418 286-289
+  s_38963be954ca35::t_068a9748ff9209 255
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "91a18b59725ec9907a80605c196afce0dfdcfafc",
+  "prompts": {},
+  "sessions": {
+    "s_38963be954ca35": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "433552d4-52a3-4385-982a-2cff3b6dbe5d",
+        "model": "composer-2.5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "tool_uses": {
+        "grep": 36,
+        "read": 23,
+        "shell": 20,
+        "write": 3
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
