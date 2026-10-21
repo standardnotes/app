@@ -35,5 +35,19 @@ packages/web/src/javascripts/Components/SuperEditor/Plugins/Blocks/Quote.tsx
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 54,
+    "ai_accepted": 54,
+    "git_diff_deleted_lines": 18,
+    "git_diff_added_lines": 54,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 54,
+        "ai_accepted": 54
+      }
+    }
+  },
   "proton_build": "1.7.6-proton.8"
 }
