@@ -26,8 +26,7 @@ export function NoteScrollToBottomController({ editor, moveCaret }: Props) {
   }, [editor])
 
   useEffect(() => {
-    const keyboardTarget = editor?.getKeyboardTarget?.()
-    if (!editor || !keyboardTarget) {
+    if (!editor) {
       return
     }
 
@@ -35,8 +34,11 @@ export function NoteScrollToBottomController({ editor, moveCaret }: Props) {
       command: SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND,
       category: 'Current note',
       description: c('B4.Notes.EditingUI.Action').t`Scroll to bottom of note`,
-      element: keyboardTarget,
       onKeyDown: (event) => {
+        // Shortcuts forwarded from component iframes have no target, and the iframe is focused while typing in it
+        if (document.activeElement !== editor.getKeyboardTarget()) {
+          return
+        }
         event.preventDefault()
         editor.scrollToEnd({ moveCaret })
       },

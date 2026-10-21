@@ -45,9 +45,13 @@ describe('createComponentScrollableEditor', () => {
   it('delegates scroll state and scrolling to the component viewer', () => {
     const dispose = jest.fn()
     const componentViewer = {
+      identifier: 'viewer-id',
       addScrollStateObserver: jest.fn().mockReturnValue(dispose),
       requestScrollToEnd: jest.fn(),
     } as unknown as ComponentViewerInterface
+    const iframe = document.createElement('iframe')
+    iframe.dataset.componentViewerId = 'viewer-id'
+    document.body.appendChild(iframe)
     const callback = jest.fn()
 
     const scrollableEditor = createComponentScrollableEditor(componentViewer)
@@ -58,6 +62,7 @@ describe('createComponentScrollableEditor', () => {
     scrollableEditor.scrollToEnd({ moveCaret: true })
     expect(componentViewer.requestScrollToEnd).toHaveBeenCalledWith({ moveCaret: true })
 
-    expect(scrollableEditor.getKeyboardTarget).toBeUndefined()
+    expect(scrollableEditor.getKeyboardTarget()).toBe(iframe)
+    iframe.remove()
   })
 })

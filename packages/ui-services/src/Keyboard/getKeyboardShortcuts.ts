@@ -156,7 +156,7 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
     },
     {
       command: SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND,
-      key: KeyboardKey.End,
+      key: isMacPlatform(platform) ? KeyboardKey.Down : KeyboardKey.End,
       modifiers: [primaryModifier],
     },
     {

@@ -14,6 +14,6 @@ export type ScrollState = {
 export type ScrollableEditor = {
   observeScrollState: (callback: (state: ScrollState) => void) => Disposer
   scrollToEnd: (options: ScrollToEndOptions) => void
-  /** Element that receives the scroll-to-bottom keyboard shortcut, if the host handles it */
-  getKeyboardTarget?: () => HTMLElement | null
+  /** Element that has focus while the editor receives keyboard input */
+  getKeyboardTarget: () => HTMLElement | null
 }

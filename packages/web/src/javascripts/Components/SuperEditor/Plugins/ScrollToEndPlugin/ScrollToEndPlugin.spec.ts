@@ -27,7 +27,7 @@ describe('createSuperScrollableEditor', () => {
 
     scrollableEditor.scrollToEnd({ moveCaret: true })
 
-    expect(scrollableEditor.getKeyboardTarget?.()).toBe(rootElement)
+    expect(scrollableEditor.getKeyboardTarget()).toBe(rootElement)
     expect(editor.update).toHaveBeenCalledTimes(1)
     expect(editor.focus).toHaveBeenCalledTimes(1)
   })

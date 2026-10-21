@@ -36,5 +36,7 @@ export function createComponentScrollableEditor(componentViewer: ComponentViewer
   return {
     observeScrollState: (callback) => componentViewer.addScrollStateObserver(callback),
     scrollToEnd: (options) => componentViewer.requestScrollToEnd(options),
+    getKeyboardTarget: () =>
+      document.querySelector<HTMLElement>(`[data-component-viewer-id="${componentViewer.identifier}"]`),
   }
 }
