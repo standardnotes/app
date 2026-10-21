@@ -17,6 +17,20 @@ packages/web/src/javascripts/Components/NoteView/PlainEditor/PlainEditor.tsx
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 5,
+    "ai_accepted": 5,
+    "git_diff_deleted_lines": 1,
+    "git_diff_added_lines": 5,
+    "tool_model_breakdown": {
+      "cursor::composer-2.5": {
+        "ai_additions": 5,
+        "ai_accepted": 5
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "tool_uses": {
