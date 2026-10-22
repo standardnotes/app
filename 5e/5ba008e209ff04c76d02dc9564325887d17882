@@ -1,0 +1,56 @@
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/scrollableEditors.ts
+  s_83ddbe9b6957c3::t_b4c4aadcb53db8 4
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/scrollToBottomUtils.ts
+  s_83ddbe9b6957c3::t_b4c4aadcb53db8 1-41
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.spec.ts
+  s_83ddbe9b6957c3::t_22e991831be838 100-102
+packages/web/src/javascripts/Components/SuperEditor/Plugins/ScrollToEndPlugin/ScrollToEndPlugin.tsx
+  s_83ddbe9b6957c3::t_b4c4aadcb53db8 5
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/NoteScrollToBottomController.tsx
+  s_83ddbe9b6957c3::t_b4c4aadcb53db8 8
+  s_83ddbe9b6957c3::t_f94a3f25183b69 42-43
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/scrollToBottomUtils.spec.ts
+  s_83ddbe9b6957c3::t_b4c4aadcb53db8 1-155
+packages/services/src/Domain/Component/ComponentViewerInterface.ts
+  s_83ddbe9b6957c3::t_22e991831be838 33
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/types.ts
+  s_83ddbe9b6957c3::t_f94a3f25183b69 17
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
+  s_83ddbe9b6957c3::t_22e991831be838 91,236-237,572
+packages/web/src/javascripts/Controllers/FeaturesController.ts
+  s_83ddbe9b6957c3::t_907cbef9b91847 26,37,53,60,92,167
+packages/web/src/javascripts/Components/NoteView/NoteView.test.ts
+  s_83ddbe9b6957c3::t_b716bef8774072 51
+packages/web/src/javascripts/Components/Preferences/Panes/General/Defaults.tsx
+  s_83ddbe9b6957c3::t_71a12f68fbe521 5,113,186
+packages/web/src/javascripts/Components/NoteView/NoteView.tsx
+  s_83ddbe9b6957c3::t_22e991831be838 95,144,247,505,995-1024,1026-1027,1030,1034-1047
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/ScrollToBottomButton.tsx
+  s_83ddbe9b6957c3::t_e6179e4f7752ba 2-3,11,17-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "5e5ba008e209ff04c76d02dc9564325887d17882",
+  "prompts": {},
+  "sessions": {
+    "s_83ddbe9b6957c3": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "57f0768f-53dc-4827-b135-bb68ab63e830",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "tool_uses": {
+        "read": 6,
+        "shell": 44,
+        "write": 1
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
