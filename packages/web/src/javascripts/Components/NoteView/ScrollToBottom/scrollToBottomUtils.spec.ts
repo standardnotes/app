@@ -7,7 +7,8 @@ import {
   isScrolledToBottom,
   hasVerticalOverflow,
   observeElementScrollState,
-} from './isScrolledToBottom'
+  isFocusInEditor,
+} from './scrollToBottomUtils'
 
 describe('isScrolledToBottom', () => {
   it('returns true when scrollTop reaches the bottom within the threshold', () => {
@@ -115,5 +116,40 @@ describe('observeElementScrollState', () => {
     expect(callback).not.toHaveBeenCalled()
     expect(disconnect).toHaveBeenCalled()
     expect(disposeContentChange).toHaveBeenCalled()
+  })
+})
+
+describe('isFocusInEditor', () => {
+  afterEach(() => {
+    document.body.innerHTML = ''
+  })
+
+  function setup() {
+    const target = document.createElement('div')
+    target.tabIndex = 0
+    const other = document.createElement('input')
+    document.body.append(target, other)
+
+    return { target, other, editor: { getKeyboardTarget: () => target } }
+  }
+
+  it('is true when the editor is focused', () => {
+    const { target, editor } = setup()
+    target.focus()
+
+    expect(isFocusInEditor(editor)).toBe(true)
+  })
+
+  it('is true when nothing is focused, as in read-only editors', () => {
+    const { editor } = setup()
+
+    expect(isFocusInEditor(editor)).toBe(true)
+  })
+
+  it('is false when something else is focused', () => {
+    const { other, editor } = setup()
+    other.focus()
+
+    expect(isFocusInEditor(editor)).toBe(false)
   })
 })

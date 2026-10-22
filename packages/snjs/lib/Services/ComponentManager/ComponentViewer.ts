@@ -88,7 +88,7 @@ export class ComponentViewer implements ComponentViewerInterface {
   private actionObservers: ActionObserver[] = []
   private scrollStateObservers: ((state: ComponentScrollState) => void)[] = []
   private scrollState?: ComponentScrollState
-  private handlesScrollToEndShortcut = false
+  private handlesScrollToEndShortcut: () => boolean = () => false
 
   private removeFeaturesObserver: () => void
   private eventObservers: ComponentEventObserver[] = []
@@ -233,8 +233,8 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
   }
 
-  /** Sent when the component registers, so it must be set before the viewer's window is */
-  public setHandlesScrollToEndShortcut(handles: boolean): void {
+  /** Evaluated when the component registers, so availability changes before then are picked up */
+  public setHandlesScrollToEndShortcut(handles: () => boolean): void {
     this.handlesScrollToEndShortcut = handles
   }
 
@@ -569,7 +569,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         environment: environmentToString(this.config.environment),
         platform: platformToString(this.config.platform),
         activeThemeUrls: this.config.componentManagerFunctions.urlsForActiveThemes(),
-        handlesScrollToEndShortcut: this.handlesScrollToEndShortcut,
+        handlesScrollToEndShortcut: this.handlesScrollToEndShortcut(),
       },
     })
 

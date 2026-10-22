@@ -14,6 +14,6 @@ export type ScrollState = {
 export type ScrollableEditor = {
   observeScrollState: (callback: (state: ScrollState) => void) => Disposer
   scrollToEnd: (options: ScrollToEndOptions) => void
-  /** Element that has focus while the editor receives keyboard input */
+  /** Element that has focus while the user types in the editor */
   getKeyboardTarget: () => HTMLElement | null
 }

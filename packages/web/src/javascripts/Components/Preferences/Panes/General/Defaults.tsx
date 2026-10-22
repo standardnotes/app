@@ -2,6 +2,7 @@ import { PrefKey, Platform, PrefValue } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useMemo, useState } from 'react'
+import { observer } from 'mobx-react-lite'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -109,7 +110,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
           />
         </div>
         <HorizontalSeparator classes="my-4" />
-        {application.featuresController.isScrollToBottomAvailable() && (
+        {application.featuresController.hasScrollToBottom && (
           <>
             <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
@@ -182,4 +183,4 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
   )
 }
 
-export default Defaults
+export default observer(Defaults)

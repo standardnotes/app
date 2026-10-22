@@ -1,5 +1,5 @@
 import type { Disposer } from '@/Types/Disposer'
-import type { ScrollState } from './types'
+import type { ScrollableEditor, ScrollState } from './types'
 
 export const DEFAULT_SCROLL_BOTTOM_THRESHOLD = 8
 
@@ -33,4 +33,9 @@ export function observeElementScrollState(
     resizeObserver.disconnect()
     disposeContentChangeObserver()
   }
+}
+
+/** Read-only editors can't take focus, which leaves it on the body */
+export function isFocusInEditor(editor: Pick<ScrollableEditor, 'getKeyboardTarget'>): boolean {
+  return document.activeElement === editor.getKeyboardTarget() || document.activeElement === document.body
 }

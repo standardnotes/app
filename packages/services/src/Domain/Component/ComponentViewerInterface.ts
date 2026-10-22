@@ -30,7 +30,7 @@ export interface ComponentViewerInterface {
   addActionObserver(observer: ActionObserver): () => void
   addScrollStateObserver(observer: (state: ComponentScrollState) => void): () => void
   /** Tells the component that the host scrolls it to the end on the shortcut, so it can cancel its own handling */
-  setHandlesScrollToEndShortcut(handles: boolean): void
+  setHandlesScrollToEndShortcut(handles: () => boolean): void
   requestScrollToEnd(options: { moveCaret: boolean }): void
   postActiveThemes(): void
   handleMessage(message: ComponentMessage): void

@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $getRoot, LexicalEditor } from 'lexical'
 import { scrollElementToBottom } from '@/Utils/scrollElementToBottom'
-import { observeElementScrollState } from '@/Components/NoteView/ScrollToBottom/isScrolledToBottom'
+import { observeElementScrollState } from '@/Components/NoteView/ScrollToBottom/scrollToBottomUtils'
 import type { ScrollableEditor } from '@/Components/NoteView/ScrollToBottom/types'
 
 export function createSuperScrollableEditor(editor: LexicalEditor): ScrollableEditor {

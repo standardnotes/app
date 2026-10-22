@@ -97,7 +97,9 @@ describe('ComponentViewer scroll to end', () => {
     }
     const postMessage = jest.fn()
 
-    viewer.setHandlesScrollToEndShortcut(true)
+    let hostHandlesShortcut = false
+    viewer.setHandlesScrollToEndShortcut(() => hostHandlesShortcut)
+    hostHandlesShortcut = true
     viewer.setWindow({ postMessage } as unknown as Window)
 
     expect(postMessage).toHaveBeenCalledWith(

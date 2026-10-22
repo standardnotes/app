@@ -23,6 +23,7 @@ export class FeaturesController extends AbstractViewController implements Intern
   hasFolders: boolean
   hasSmartViews: boolean
   entitledToFiles: boolean
+  hasScrollToBottom: boolean
   premiumAlertFeatureName: string | undefined
   premiumAlertType: PremiumFeatureModalType | undefined = undefined
 
@@ -33,6 +34,7 @@ export class FeaturesController extends AbstractViewController implements Intern
     ;(this.hasFolders as unknown) = undefined
     ;(this.hasSmartViews as unknown) = undefined
     ;(this.entitledToFiles as unknown) = undefined
+    ;(this.hasScrollToBottom as unknown) = undefined
     ;(this.premiumAlertFeatureName as unknown) = undefined
     ;(this.premiumAlertType as unknown) = undefined
 
@@ -48,12 +50,14 @@ export class FeaturesController extends AbstractViewController implements Intern
     this.hasFolders = this.isEntitledToFolders()
     this.hasSmartViews = this.isEntitledToSmartViews()
     this.entitledToFiles = this.isEntitledToFiles()
+    this.hasScrollToBottom = this.isEntitledToScrollToBottom()
     this.premiumAlertFeatureName = undefined
 
     makeObservable(this, {
       hasFolders: observable,
       hasSmartViews: observable,
       entitledToFiles: observable,
+      hasScrollToBottom: observable,
       premiumAlertType: observable,
       premiumAlertFeatureName: observable,
       showPremiumAlert: action,
@@ -85,6 +89,7 @@ export class FeaturesController extends AbstractViewController implements Intern
           this.hasFolders = this.isEntitledToFolders()
           this.hasSmartViews = this.isEntitledToSmartViews()
           this.entitledToFiles = this.isEntitledToFiles()
+          this.hasScrollToBottom = this.isEntitledToScrollToBottom()
         })
         break
       case CrossControllerEvent.DisplayPremiumModal:
@@ -159,7 +164,7 @@ export class FeaturesController extends AbstractViewController implements Intern
     )
   }
 
-  isScrollToBottomAvailable(): boolean {
+  private isEntitledToScrollToBottom(): boolean {
     return (
       featureTrunkScrollToBottomEnabled() ||
       this.features.hasRole(RoleName.create(RoleName.NAMES.InternalTeamUser).getValue())

@@ -92,6 +92,7 @@ type State = {
   conflictedNotes: SNNote[]
   showConflictResolutionModal: boolean
   scrollableEditor?: ScrollableEditor
+  scrollToBottomAvailable: boolean
 }
 
 class NoteView extends AbstractComponent<NoteViewProps, State> {
@@ -140,6 +141,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       noteType: this.controller.item.noteType,
       conflictedNotes: [],
       showConflictResolutionModal: false,
+      scrollToBottomAvailable: this.application.featuresController.hasScrollToBottom,
     }
 
     this.noteViewElementRef = createRef<HTMLDivElement>()
@@ -242,6 +244,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         saveError: syncStatus?.type === 'error',
         syncTakingTooLong: false,
         focusModeEnabled: isFocusModeEnabled,
+        scrollToBottomAvailable: this.application.featuresController.hasScrollToBottom,
       })
 
       if (!isFocusModeEnabled && didFocusModeChange) {
@@ -499,7 +502,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       throw Error('Cannot create component viewer for undefined component')
     }
     const viewer = this.application.componentManager.createComponentViewer(component, { uuid: this.note.uuid })
-    viewer.setHandlesScrollToEndShortcut(this.application.featuresController.isScrollToBottomAvailable())
+    viewer.setHandlesScrollToEndShortcut(() => this.application.featuresController.hasScrollToBottom)
     return viewer
   }
 
@@ -989,60 +992,59 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         )}
 
         <EditorContentWithSafeAreaPadding editorLineWidth={this.state.editorLineWidth} ref={this.editorContentRef}>
-          <div className="relative flex min-h-0 flex-1 flex-col">
-            {editorMode === 'component' && this.state.editorComponentViewer && (
-              <div className="component-view relative flex-grow">
-                {this.state.paneGestureEnabled && <div className="absolute left-0 top-0 h-full w-[20px] md:hidden" />}
-                <IframeFeatureView
-                  key={this.state.editorComponentViewer.identifier}
-                  componentViewer={this.state.editorComponentViewer}
-                  onLoad={this.onEditorComponentLoad}
-                  requestReload={this.editorComponentViewerRequestsReload}
-                  readonly={this.state.readonly}
-                />
-              </div>
-            )}
+          {editorMode === 'component' && this.state.editorComponentViewer && (
+            <div className="component-view relative flex-grow">
+              {this.state.paneGestureEnabled && <div className="absolute left-0 top-0 h-full w-[20px] md:hidden" />}
+              <IframeFeatureView
+                key={this.state.editorComponentViewer.identifier}
+                componentViewer={this.state.editorComponentViewer}
+                onLoad={this.onEditorComponentLoad}
+                requestReload={this.editorComponentViewerRequestsReload}
+                readonly={this.state.readonly}
+              />
+            </div>
+          )}
 
-            {editorMode === 'plain' && (
-              <PlainEditorSearchContainer
+          {editorMode === 'plain' && (
+            <PlainEditorSearchContainer
+              application={this.application}
+              spellcheck={this.state.spellcheck}
+              ref={this.setPlainEditorRef}
+              controller={this.controller}
+              locked={this.state.noteLocked || !!this.state.readonly}
+              onFocus={this.onEditorFocus}
+              onBlur={this.onEditorBlur}
+            />
+          )}
+
+          {editorMode === 'super' && (
+            <div className={classNames('blocks-editor w-full flex-grow overflow-hidden')}>
+              <SuperEditor
+                key={this.note.uuid}
+                ref={this.setScrollableEditor}
                 application={this.application}
+                linkingController={this.application.linkingController}
+                filesController={this.application.filesController}
                 spellcheck={this.state.spellcheck}
-                ref={this.setPlainEditorRef}
                 controller={this.controller}
-                locked={this.state.noteLocked || !!this.state.readonly}
+                readonly={this.state.readonly}
                 onFocus={this.onEditorFocus}
                 onBlur={this.onEditorBlur}
               />
-            )}
+            </div>
+          )}
 
-            {editorMode === 'super' && (
-              <div className={classNames('blocks-editor w-full flex-grow overflow-hidden')}>
-                <SuperEditor
-                  key={this.note.uuid}
-                  ref={this.setScrollableEditor}
-                  application={this.application}
-                  linkingController={this.application.linkingController}
-                  filesController={this.application.filesController}
-                  spellcheck={this.state.spellcheck}
-                  controller={this.controller}
-                  readonly={this.state.readonly}
-                  onFocus={this.onEditorFocus}
-                  onBlur={this.onEditorBlur}
-                />
-              </div>
-            )}
-            {this.application.featuresController.isScrollToBottomAvailable() && (
-              <NoteScrollToBottomController
-                editor={editorMode === 'component' ? this.getComponentScrollableEditor() : this.state.scrollableEditor}
-                moveCaret={
-                  !this.state.noteLocked &&
-                  !this.state.readonly &&
-                  !this.application.isNativeMobileWeb() &&
-                  !isMobileScreen()
-                }
-              />
-            )}
-          </div>
+          {this.state.scrollToBottomAvailable && (
+            <NoteScrollToBottomController
+              editor={editorMode === 'component' ? this.getComponentScrollableEditor() : this.state.scrollableEditor}
+              moveCaret={
+                !this.state.noteLocked &&
+                !this.state.readonly &&
+                !this.application.isNativeMobileWeb() &&
+                !isMobileScreen()
+              }
+            />
+          )}
         </EditorContentWithSafeAreaPadding>
 
         <div id="editor-pane-component-stack">

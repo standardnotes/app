@@ -1,7 +1,7 @@
 import type { ComponentViewerInterface } from '@standardnotes/snjs'
 import { scrollElementToBottom } from '@/Utils/scrollElementToBottom'
 import type { PlainEditorInterface } from '../PlainEditor/PlainEditor'
-import { observeElementScrollState } from './isScrolledToBottom'
+import { observeElementScrollState } from './scrollToBottomUtils'
 import type { ScrollableEditor } from './types'
 
 export function createPlainScrollableEditor(plainEditor: PlainEditorInterface): ScrollableEditor {
