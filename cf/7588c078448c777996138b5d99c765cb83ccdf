@@ -1,0 +1,92 @@
+packages/web/src/javascripts/Controllers/FeaturesController.ts
+  s_83ddbe9b6957c3::t_1a9dd1ee9f01e5 162-168
+  s_83ddbe9b6957c3::t_21c08b79eb1ed4 16-20
+packages/services/src/Domain/Component/ComponentViewerInterface.ts
+  s_83ddbe9b6957c3::t_88c69cae8ee379 32-33
+packages/web/src/javascripts/Components/Preferences/Panes/General/Defaults.tsx
+  s_83ddbe9b6957c3::t_0ce6e69d6bb29e 112-133
+packages/web/src/javascripts/Application/DevMode.ts
+  s_83ddbe9b6957c3::t_2041bd985c83cd 8
+packages/web/src/javascripts/FeatureTrunk.ts
+  s_83ddbe9b6957c3::t_6cee76964c8e83 18-21
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
+  s_83ddbe9b6957c3::t_0d8f99fcd03c8c 91
+  s_83ddbe9b6957c3::t_a178851ea3c5f5 236-240
+  s_83ddbe9b6957c3::t_18ac475e0e32cf 572
+packages/services/src/Domain/InternalFeatures/InternalFeature.ts
+  s_83ddbe9b6957c3::t_7bcc0fdd168081 4
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.spec.ts
+  s_83ddbe9b6957c3::t_646aa3ac228743 17
+  s_83ddbe9b6957c3::t_642f0cba1f8989 92
+  s_83ddbe9b6957c3::t_4f0cf5840d52c3 3
+  s_83ddbe9b6957c3::t_94645bc5278932 91,93-111
+packages/models/src/Domain/Abstract/Component/MessageData.ts
+  s_83ddbe9b6957c3::t_28ab99d759b0b3 39
+packages/web/src/javascripts/Components/NoteView/NoteView.tsx
+  s_83ddbe9b6957c3::t_ac8efc6bdab960 502
+  s_83ddbe9b6957c3::t_c9263965da4e49 1034-1044
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "cf7588c078448c777996138b5d99c765cb83ccdf",
+  "prompts": {},
+  "sessions": {
+    "s_83ddbe9b6957c3": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "57f0768f-53dc-4827-b135-bb68ab63e830",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 70,
+        "output_tokens": 22593,
+        "cache_creation_input_tokens": 46650,
+        "cache_read_input_tokens": 7845850
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 70,
+          "output_tokens": 22593,
+          "cache_creation_input_tokens": 46650,
+          "cache_read_input_tokens": 7845850
+        }
+      },
+      "tool_uses": {
+        "read": 5,
+        "shell": 23,
+        "write": 27
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 14156,
+        "output_tokens": 4329,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 1988896
+      },
+      "by_tool_model": {
+        "cursor::composer-2.5-fast": {
+          "input_tokens": 14156,
+          "output_tokens": 4329,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 1988896
+        }
+      }
+    },
+    "by_prompt": {
+      "s_83ddbe9b6957c3": {
+        "input_tokens": 70,
+        "output_tokens": 22593,
+        "cache_creation_input_tokens": 46650,
+        "cache_read_input_tokens": 7845850
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
