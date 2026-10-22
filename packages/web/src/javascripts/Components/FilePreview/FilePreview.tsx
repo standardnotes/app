@@ -40,6 +40,7 @@ const FilePreview = ({
   const [isDownloading, setIsDownloading] = useState(true)
   const [downloadProgress, setDownloadProgress] = useState<FileDownloadProgress | undefined>()
   const [downloadedBytes, setDownloadedBytes] = useState<Uint8Array>()
+  const [downloadErrorMessage, setDownloadErrorMessage] = useState<string | undefined>()
 
   useEffect(() => {
     setIsAuthorized(application.isAuthorizedToRenderItem(file))
@@ -75,6 +76,7 @@ const FilePreview = ({
       try {
         const chunks: Uint8Array[] = []
         setDownloadProgress(undefined)
+        setDownloadErrorMessage(undefined)
         const error = await application.files.downloadFile(file, async (decryptedChunk, progress) => {
           chunks.push(decryptedChunk)
           if (progress) {
@@ -82,7 +84,9 @@ const FilePreview = ({
           }
         })
 
-        if (!error) {
+        if (error) {
+          setDownloadErrorMessage(error.text)
+        } else {
           const finalDecryptedBytes = concatenateUint8Arrays(chunks)
           setDownloadedBytes(finalDecryptedBytes)
         }
@@ -159,8 +163,10 @@ const FilePreview = ({
       filesController={application.filesController}
       tryAgainCallback={() => {
         setDownloadedBytes(undefined)
+        setDownloadErrorMessage(undefined)
       }}
       isFilePreviewable={isFilePreviewable}
+      errorDetail={downloadErrorMessage}
     />
   )
 }

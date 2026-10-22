@@ -1,4 +1,5 @@
 import { ProtocolVersion } from '@standardnotes/models'
+import { CreateValetTokenResponseData, ValetTokenOperation } from '@standardnotes/responses'
 import { c } from 'ttag'
 import { jtString, AppName, ListedName, HelpSecurityUrl, SupportEmail } from '@standardnotes/features'
 
@@ -51,6 +52,40 @@ export const API_MESSAGE_FAILED_LISTED_REGISTRATION = jtString(
 
 export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = c('B7.FilesSubscriptionHelp.Files.Error')
   .t`Failed to create file token.`
+
+type CreateValetTokenFailureReason = Extract<CreateValetTokenResponseData, { success: false }>['reason']
+
+export function messageForCreateValetTokenFailure(
+  reason: CreateValetTokenFailureReason | string,
+  operation?: ValetTokenOperation,
+): string {
+  switch (reason) {
+    case 'expired-subscription':
+      if (operation === ValetTokenOperation.Write) {
+        return c('B7.FilesSubscriptionHelp.Files.Error')
+          .t`Files cannot be uploaded because your subscription has expired. Renew your subscription to use encrypted file storage again.`
+      }
+      if (operation === ValetTokenOperation.Read) {
+        return c('B7.FilesSubscriptionHelp.Files.Error')
+          .t`This file cannot be downloaded because your subscription has expired. Renew your subscription to access your files again.`
+      }
+      return c('B7.FilesSubscriptionHelp.Files.Error')
+        .t`Encrypted files are unavailable because your subscription has expired. Renew your subscription to download and upload files again.`
+    case 'no-subscription':
+      if (operation === ValetTokenOperation.Write) {
+        return c('B7.FilesSubscriptionHelp.Files.Error')
+          .t`Files cannot be uploaded without an active subscription. Upgrade your plan to use encrypted file storage.`
+      }
+      if (operation === ValetTokenOperation.Read) {
+        return c('B7.FilesSubscriptionHelp.Files.Error')
+          .t`This file cannot be downloaded without an active subscription. Upgrade your plan to access encrypted files.`
+      }
+      return c('B7.FilesSubscriptionHelp.Files.Error')
+        .t`Encrypted file storage requires an active subscription. Upgrade your plan to download and upload files.`
+    default:
+      return API_MESSAGE_FAILED_CREATE_FILE_TOKEN
+  }
+}
 
 export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = c('B7.FilesSubscriptionHelp.Subscription.Error')
   .t`Failed to get subscription's information.`

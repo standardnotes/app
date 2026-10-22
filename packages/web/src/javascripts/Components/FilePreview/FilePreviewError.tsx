@@ -10,9 +10,10 @@ type Props = {
   filesController: FilesController
   isFilePreviewable: boolean
   tryAgainCallback: () => void
+  errorDetail?: string
 }
 
-const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCallback }: Props) => {
+const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCallback, errorDetail }: Props) => {
   return (
     <div className="flex flex-grow flex-col items-center justify-center">
       <NoPreviewIllustration className="mb-4 h-30 w-30" />
@@ -21,8 +22,9 @@ const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCa
       {isFilePreviewable ? (
         <>
           <div className="mb-4 max-w-[35ch] text-center text-sm text-passive-0">
-            {c('B7.FilesSubscriptionHelp.Files.Error')
-              .t`There was an error loading the file. Try again, or download the file and open it using another application.`}
+            {errorDetail ??
+              c('B7.FilesSubscriptionHelp.Files.Error')
+                .t`There was an error loading the file. Try again, or download the file and open it using another application.`}
           </div>
           <div className="flex items-center">
             <Button
