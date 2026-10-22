@@ -19,8 +19,6 @@ import {
   ApplicationOptionsDefaults,
   InternalFeatureService,
   InternalFeatureServiceInterface,
-  NoteContent,
-  SNNote,
   DesktopManagerInterface,
   FileItem,
   ApiVersion,
@@ -52,6 +50,8 @@ import { PreferencePaneId } from '@standardnotes/services'
 import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
 import { FeatureName } from '@/Controllers/FeatureName'
+import { NoteType, noteTypeForEditorIdentifier } from '@standardnotes/features'
+import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 import { VisibilityObserver } from './VisibilityObserver'
 import { DevMode } from './DevMode'
 import { ToastType, addToast, dismissToast } from '@standardnotes/toast'
@@ -400,16 +400,29 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     filesController.uploadNewFile(mappedFile).catch(console.error)
   }
 
+  private noteTextForSharedContent(editorIdentifier: string, text: string): string {
+    const noteType = noteTypeForEditorIdentifier(editorIdentifier)
+    if (noteType !== NoteType.Super || text.length === 0) {
+      return text
+    }
+
+    const converter = new HeadlessSuperConverter()
+    if (converter.isValidSuperString(text)) {
+      return text
+    }
+
+    return converter.convertOtherFormatToSuperString(text, 'md')
+  }
+
   async handleReceivedTextEvent({ text, title }: { text: string; title?: string | undefined }) {
     const titleForNote = title || this.itemListController.titleForNewNote()
 
-    const note = this.items.createTemplateItem<NoteContent, SNNote>(ContentType.TYPES.Note, {
-      title: titleForNote,
-      text: text,
-      references: [],
-    })
+    const selectedTag = this.navigationController.selected
+    const tagForDefaults = selectedTag instanceof SNTag ? selectedTag : undefined
+    const editorIdentifier = this.componentManager.getDefaultEditorIdentifier(tagForDefaults)
+    const noteText = this.noteTextForSharedContent(editorIdentifier, text)
 
-    const insertedNote = await this.mutator.insertItem(note)
+    const insertedNote = await this.notesController.createNoteWithContent(editorIdentifier, titleForNote, noteText)
 
     this.itemListController.selectItem(insertedNote.uuid, true).catch(console.error)
 
