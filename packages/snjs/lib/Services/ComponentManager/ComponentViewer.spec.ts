@@ -1,5 +1,6 @@
 import { ComponentAction, IframeComponentFeatureDescription } from '@standardnotes/features'
 import { ComponentMessage, Environment, Platform, SNNote, UIFeature } from '@standardnotes/models'
+import { UuidGenerator } from '@standardnotes/utils'
 import { ComponentViewer } from './ComponentViewer'
 import { ComponentViewerRequiresComponentManagerProperties } from './ComponentViewerRequiresComponentManagerFunctions'
 
@@ -13,7 +14,7 @@ describe('ComponentViewer scroll to end', () => {
     }
 
     const viewer = new ComponentViewer(
-      { displayName: 'Editor' } as unknown as UIFeature<IframeComponentFeatureDescription>,
+      { displayName: 'Editor', uniqueIdentifier: { value: 'editor' } } as unknown as UIFeature<IframeComponentFeatureDescription>,
       services as unknown as ConstructorParameters<typeof ComponentViewer>[1],
       { item: { uuid: 'note-uuid' } as unknown as SNNote, url: 'https://editor' },
       {
@@ -83,6 +84,27 @@ describe('ComponentViewer scroll to end', () => {
 
     expect(postMessage).toHaveBeenCalledWith(
       expect.objectContaining({ action: ComponentAction.ScrollToEnd, data: { moveCaret: true } }),
+      '*',
+    )
+  })
+
+  it('tells the component on registration whether the host handles the scroll to end shortcut', () => {
+    UuidGenerator.SetGenerator(() => 'session-key')
+    const { viewer } = createViewer()
+    ;(viewer as unknown as { config: { componentManagerFunctions: object } }).config.componentManagerFunctions = {
+      getComponentPreferences: () => undefined,
+      urlsForActiveThemes: () => [],
+    }
+    const postMessage = jest.fn()
+
+    viewer.setHandlesScrollToEndShortcut(true)
+    viewer.setWindow({ postMessage } as unknown as Window)
+
+    expect(postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: ComponentAction.ComponentRegistered,
+        data: expect.objectContaining({ handlesScrollToEndShortcut: true }),
+      }),
       '*',
     )
   })

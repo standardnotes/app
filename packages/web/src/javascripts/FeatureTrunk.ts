@@ -15,3 +15,7 @@ export function featureTrunkVaultsEnabled(): boolean {
 export function featureTrunkLocalizationEnabled(): boolean {
   return InternalFeatureService.get().isFeatureEnabled(InternalFeature.Localization)
 }
+
+export function featureTrunkScrollToBottomEnabled(): boolean {
+  return InternalFeatureService.get().isFeatureEnabled(InternalFeature.ScrollToBottom)
+}

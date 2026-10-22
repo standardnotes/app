@@ -499,6 +499,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       throw Error('Cannot create component viewer for undefined component')
     }
     const viewer = this.application.componentManager.createComponentViewer(component, { uuid: this.note.uuid })
+    viewer.setHandlesScrollToEndShortcut(this.application.featuresController.isScrollToBottomAvailable())
     return viewer
   }
 
@@ -1030,15 +1031,17 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 />
               </div>
             )}
-            <NoteScrollToBottomController
-              editor={editorMode === 'component' ? this.getComponentScrollableEditor() : this.state.scrollableEditor}
-              moveCaret={
-                !this.state.noteLocked &&
-                !this.state.readonly &&
-                !this.application.isNativeMobileWeb() &&
-                !isMobileScreen()
-              }
-            />
+            {this.application.featuresController.isScrollToBottomAvailable() && (
+              <NoteScrollToBottomController
+                editor={editorMode === 'component' ? this.getComponentScrollableEditor() : this.state.scrollableEditor}
+                moveCaret={
+                  !this.state.noteLocked &&
+                  !this.state.readonly &&
+                  !this.application.isNativeMobileWeb() &&
+                  !isMobileScreen()
+                }
+              />
+            )}
           </div>
         </EditorContentWithSafeAreaPadding>
 

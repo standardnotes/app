@@ -109,24 +109,28 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
           />
         </div>
         <HorizontalSeparator classes="my-4" />
-        <div className="flex justify-between gap-2 md:items-center">
-          <div className="flex flex-col">
-            <Subtitle>{c('B6.Preferences.General.Subtitle').t`Show scroll to bottom`}</Subtitle>
-            <Text>
-              {c('B6.Preferences.General.Info')
-                .t`When enabled, a button appears in long notes to quickly scroll to the end.`}
-            </Text>
-          </div>
-          <Switch
-            onChange={() => {
-              application
-                .setPreference(PrefKey.ShowScrollToBottomButton, !showScrollToBottomButton)
-                .catch(console.error)
-            }}
-            checked={showScrollToBottomButton}
-          />
-        </div>
-        <HorizontalSeparator classes="my-4" />
+        {application.featuresController.isScrollToBottomAvailable() && (
+          <>
+            <div className="flex justify-between gap-2 md:items-center">
+              <div className="flex flex-col">
+                <Subtitle>{c('B6.Preferences.General.Subtitle').t`Show scroll to bottom`}</Subtitle>
+                <Text>
+                  {c('B6.Preferences.General.Info')
+                    .t`When enabled, a button appears in long notes to quickly scroll to the end.`}
+                </Text>
+              </div>
+              <Switch
+                onChange={() => {
+                  application
+                    .setPreference(PrefKey.ShowScrollToBottomButton, !showScrollToBottomButton)
+                    .catch(console.error)
+                }}
+                checked={showScrollToBottomButton}
+              />
+            </div>
+            <HorizontalSeparator classes="my-4" />
+          </>
+        )}
         {!isMobile && (
           <>
             <div className="flex justify-between gap-2 md:items-center">
