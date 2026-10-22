@@ -1,0 +1,98 @@
+packages/services/src/Domain/Strings/Messages.spec.ts
+  s_d09a395475724a::t_ad5ffc2b52d757 15-16
+  s_d09a395475724a::t_59e6a4113da2e6 21-22
+  s_d09a395475724a::t_9c27eeeff10df4 7-8
+  s_d09a395475724a::t_375da6b914a33e 1,5-6,13-14,17-18,20
+  s_d09a395475724a::t_58903f636bad41 2-4,9,11-12,19,23-30
+  s_d09a395475724a::t_555047dd582188 10
+packages/snjs/lib/Services/Api/ApiService.ts
+  s_d09a395475724a::t_313671f17c61a7 753
+  s_d09a395475724a::t_1dabf3a0e36b9c 752
+packages/services/src/Domain/Strings/Messages.ts
+  s_d09a395475724a::t_4e9be3580d2f4c 2
+  s_d09a395475724a::t_1b7aa38a1ab180 58-61,64-65,67-69,71,75-76,78-80,82
+  s_d09a395475724a::t_508b871a323a7b 56-57,62-63,72,74,83,85-89
+  s_d09a395475724a::t_04778583fc75b5 66,70,73,77,81,84
+packages/web/src/javascripts/Components/FilePreview/FilePreview.tsx
+  s_d09a395475724a::t_5af77fe94c998b 43,79,87-89,166,169
+packages/web/src/javascripts/Components/FilePreview/FilePreviewError.tsx
+  s_d09a395475724a::t_d3e7878aa53257 13,16,25-27
+packages/web/src/javascripts/Controllers/FilesController.ts
+  s_d09a395475724a::t_4cfb8c82bb2495 397-401
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "8b33b924df21a630bb8fc3e7448ba206b592d823",
+  "prompts": {},
+  "sessions": {
+    "s_d09a395475724a": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "688e9c33-98d3-46b8-a471-dfe8930ddd38",
+        "model": "composer-2.5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 660138,
+        "output_tokens": 58163,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 14248512
+      },
+      "by_tool_model": {
+        "cursor::composer-2.5": {
+          "input_tokens": 660138,
+          "output_tokens": 58163,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 14248512
+        }
+      },
+      "tool_uses": {
+        "delete": 2,
+        "grep": 77,
+        "mcp:getaccessibleatlassianresources": 1,
+        "mcp:getjiraissue": 1,
+        "mcp:searchjiraissuesusingjql": 2,
+        "read": 95,
+        "readlints": 1,
+        "shell": 23,
+        "write": 82
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 196,
+        "output_tokens": 95510,
+        "cache_creation_input_tokens": 1215163,
+        "cache_read_input_tokens": 11679781
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 92,
+          "output_tokens": 50657,
+          "cache_creation_input_tokens": 543747,
+          "cache_read_input_tokens": 7509169
+        },
+        "cursor::claude-sonnet-5-5-high": {
+          "input_tokens": 104,
+          "output_tokens": 44853,
+          "cache_creation_input_tokens": 671416,
+          "cache_read_input_tokens": 4170612
+        }
+      }
+    },
+    "by_prompt": {
+      "s_d09a395475724a": {
+        "input_tokens": 660138,
+        "output_tokens": 58163,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 14248512
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
