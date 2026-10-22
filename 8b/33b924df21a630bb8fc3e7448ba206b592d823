@@ -35,6 +35,20 @@ packages/web/src/javascripts/Controllers/FilesController.ts
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 1,
+    "ai_additions": 84,
+    "ai_accepted": 84,
+    "git_diff_deleted_lines": 6,
+    "git_diff_added_lines": 85,
+    "tool_model_breakdown": {
+      "cursor::composer-2.5": {
+        "ai_additions": 84,
+        "ai_accepted": 84
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -93,6 +107,12 @@ packages/web/src/javascripts/Controllers/FilesController.ts
         "cache_read_input_tokens": 14248512
       }
     }
+  },
+  "activity": {
+    "added_sloc": 102,
+    "deleted_sloc": 41,
+    "checkpoints": 22,
+    "span_seconds": 4750
   },
   "proton_build": "1.7.6-proton.8"
 }
