@@ -1,4 +1,5 @@
 import type { ComponentViewerInterface } from '@standardnotes/snjs'
+import { $getRoot, LexicalEditor } from 'lexical'
 import { scrollElementToBottom } from '@/Utils/scrollElementToBottom'
 import type { PlainEditorInterface } from '../PlainEditor/PlainEditor'
 import { observeElementScrollState } from './scrollToBottomUtils'
@@ -28,6 +29,39 @@ export function createPlainScrollableEditor(plainEditor: PlainEditorInterface): 
       })
     },
     getKeyboardTarget: () => plainEditor.getTextarea(),
+  }
+}
+
+export function createSuperScrollableEditor(editor: LexicalEditor): ScrollableEditor {
+  return {
+    observeScrollState: (callback) => {
+      const rootElement = editor.getRootElement()
+      if (!rootElement) {
+        return () => undefined
+      }
+      return observeElementScrollState(
+        rootElement,
+        (onChange) => editor.registerUpdateListener(() => onChange()),
+        callback,
+      )
+    },
+    scrollToEnd: ({ moveCaret }) => {
+      const rootElement = editor.getRootElement()
+      if (!rootElement) {
+        return
+      }
+
+      scrollElementToBottom(rootElement, () => {
+        if (!moveCaret) {
+          return
+        }
+        editor.update(() => {
+          $getRoot().selectEnd()
+        })
+        editor.focus()
+      })
+    },
+    getKeyboardTarget: () => editor.getRootElement(),
   }
 }
 

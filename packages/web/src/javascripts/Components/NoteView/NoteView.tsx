@@ -56,9 +56,13 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
 import Icon from '../Icon/Icon'
 import { EditorContentWithSafeAreaPadding } from './EditorContentWithSafeAreaPadding'
-import { NoteScrollToBottomController } from './ScrollToBottom/NoteScrollToBottomController'
-import { createComponentScrollableEditor, createPlainScrollableEditor } from './ScrollToBottom/scrollableEditors'
-import type { NoteEditorMode, ScrollableEditor } from './ScrollToBottom/types'
+import {
+  ComponentScrollToBottomController,
+  NoteScrollToBottomController,
+} from './ScrollToBottom/NoteScrollToBottomController'
+import { createPlainScrollableEditor, createSuperScrollableEditor } from './ScrollToBottom/scrollableEditors'
+import type { ScrollableEditor } from './ScrollToBottom/types'
+import type { LexicalEditor } from 'lexical'
 
 function sortAlphabetically(array: ComponentInterface[]): ComponentInterface[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
@@ -106,7 +110,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
   private plainEditorRef?: PlainEditorInterface
-  private componentScrollableEditor?: { viewer: ComponentViewerInterface; editor: ScrollableEditor }
 
   constructor(props: NoteViewProps) {
     super(props, props.application)
@@ -276,22 +279,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.setScrollableEditor(ref ? createPlainScrollableEditor(ref) : null)
   }
 
-  setScrollableEditor = (editor: ScrollableEditor | null) => {
-    this.setState({ scrollableEditor: editor ?? undefined })
+  setSuperEditorRef = (editor: LexicalEditor | null) => {
+    this.setScrollableEditor(editor ? createSuperScrollableEditor(editor) : null)
   }
 
-  /** Cached per viewer so the scroll-to-bottom controller doesn't resubscribe on every render */
-  getComponentScrollableEditor(): ScrollableEditor | undefined {
-    const viewer = this.state.editorComponentViewer
-    if (!viewer) {
-      return undefined
-    }
-
-    if (this.componentScrollableEditor?.viewer !== viewer) {
-      this.componentScrollableEditor = { viewer, editor: createComponentScrollableEditor(viewer) }
-    }
-
-    return this.componentScrollableEditor.editor
+  private setScrollableEditor(editor: ScrollableEditor | null) {
+    this.setState({ scrollableEditor: editor ?? undefined })
   }
 
   override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {
@@ -853,7 +846,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     const renderHeaderOptions = isMobileScreen() ? !this.state.editorFocused : true
 
-    const editorMode: NoteEditorMode =
+    const editorMode =
       this.note.noteType === NoteType.Super
         ? 'super'
         : this.state.editorStateDidLoad && !this.state.editorComponentViewer
@@ -861,6 +854,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         : this.state.editorComponentViewer
         ? 'component'
         : 'plain'
+
+    const canMoveCaret =
+      !this.state.noteLocked && !this.state.readonly && !this.application.isNativeMobileWeb() && !isMobileScreen()
 
     const shouldShowConflictsButton = this.state.conflictedNotes.length > 0 && !this.state.readonly
 
@@ -1021,7 +1017,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             <div className={classNames('blocks-editor w-full flex-grow overflow-hidden')}>
               <SuperEditor
                 key={this.note.uuid}
-                ref={this.setScrollableEditor}
+                ref={this.setSuperEditorRef}
                 application={this.application}
                 linkingController={this.application.linkingController}
                 filesController={this.application.filesController}
@@ -1034,17 +1030,15 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             </div>
           )}
 
-          {this.state.scrollToBottomAvailable && (
-            <NoteScrollToBottomController
-              editor={editorMode === 'component' ? this.getComponentScrollableEditor() : this.state.scrollableEditor}
-              moveCaret={
-                !this.state.noteLocked &&
-                !this.state.readonly &&
-                !this.application.isNativeMobileWeb() &&
-                !isMobileScreen()
-              }
-            />
-          )}
+          {this.state.scrollToBottomAvailable &&
+            (editorMode === 'component' && this.state.editorComponentViewer ? (
+              <ComponentScrollToBottomController
+                componentViewer={this.state.editorComponentViewer}
+                moveCaret={canMoveCaret}
+              />
+            ) : (
+              <NoteScrollToBottomController editor={this.state.scrollableEditor} moveCaret={canMoveCaret} />
+            ))}
         </EditorContentWithSafeAreaPadding>
 
         <div id="editor-pane-component-stack">

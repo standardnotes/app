@@ -4,7 +4,12 @@
 
 import type { ComponentViewerInterface } from '@standardnotes/snjs'
 import type { PlainEditorInterface } from '../PlainEditor/PlainEditor'
-import { createComponentScrollableEditor, createPlainScrollableEditor } from './scrollableEditors'
+import type { LexicalEditor } from 'lexical'
+import {
+  createComponentScrollableEditor,
+  createPlainScrollableEditor,
+  createSuperScrollableEditor,
+} from './scrollableEditors'
 
 function createElementScrolledToBottom<T extends HTMLElement>(element: T): T {
   Object.defineProperty(element, 'scrollHeight', { value: 1000, configurable: true })
@@ -64,5 +69,41 @@ describe('createComponentScrollableEditor', () => {
 
     expect(scrollableEditor.getKeyboardTarget()).toBe(iframe)
     iframe.remove()
+  })
+})
+
+function setupSuper() {
+  const rootElement = document.createElement('div')
+  Object.defineProperty(rootElement, 'scrollHeight', { value: 1000, configurable: true })
+  Object.defineProperty(rootElement, 'clientHeight', { value: 200, configurable: true })
+  rootElement.scrollTop = 800
+
+  const editor = {
+    getRootElement: () => rootElement,
+    update: jest.fn(),
+    focus: jest.fn(),
+  } as unknown as LexicalEditor
+
+  return { editor, rootElement, scrollableEditor: createSuperScrollableEditor(editor) }
+}
+
+describe('createSuperScrollableEditor', () => {
+  it('scrolls the root element to the bottom and focuses the editor', () => {
+    const { editor, rootElement, scrollableEditor } = setupSuper()
+
+    scrollableEditor.scrollToEnd({ moveCaret: true })
+
+    expect(scrollableEditor.getKeyboardTarget()).toBe(rootElement)
+    expect(editor.update).toHaveBeenCalledTimes(1)
+    expect(editor.focus).toHaveBeenCalledTimes(1)
+  })
+
+  it('only scrolls when the caret should not move', () => {
+    const { editor, scrollableEditor } = setupSuper()
+
+    scrollableEditor.scrollToEnd({ moveCaret: false })
+
+    expect(editor.update).not.toHaveBeenCalled()
+    expect(editor.focus).not.toHaveBeenCalled()
   })
 })

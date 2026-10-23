@@ -14,7 +14,10 @@ describe('ComponentViewer scroll to end', () => {
     }
 
     const viewer = new ComponentViewer(
-      { displayName: 'Editor', uniqueIdentifier: { value: 'editor' } } as unknown as UIFeature<IframeComponentFeatureDescription>,
+      {
+        displayName: 'Editor',
+        uniqueIdentifier: { value: 'editor' },
+      } as unknown as UIFeature<IframeComponentFeatureDescription>,
       services as unknown as ConstructorParameters<typeof ComponentViewer>[1],
       { item: { uuid: 'note-uuid' } as unknown as SNNote, url: 'https://editor' },
       {

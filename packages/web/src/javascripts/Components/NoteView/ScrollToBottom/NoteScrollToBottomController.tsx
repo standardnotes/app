@@ -1,10 +1,11 @@
 import { useKeyboardService } from '@/Components/KeyboardServiceProvider'
 import usePreference from '@/Hooks/usePreference'
-import { PrefKey } from '@standardnotes/snjs'
+import { ComponentViewerInterface, PrefKey } from '@standardnotes/snjs'
 import { SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { c } from 'ttag'
 import { ScrollToBottomButton } from './ScrollToBottomButton'
+import { createComponentScrollableEditor } from './scrollableEditors'
 import { isFocusInEditor } from './scrollToBottomUtils'
 import type { ScrollableEditor } from './types'
 
@@ -54,4 +55,17 @@ export function NoteScrollToBottomController({ editor, moveCaret }: Props) {
   }
 
   return <ScrollToBottomButton onClick={() => editor.scrollToEnd({ moveCaret })} />
+}
+
+/** Memoized per viewer, so the controller doesn't resubscribe on every render */
+export function ComponentScrollToBottomController({
+  componentViewer,
+  moveCaret,
+}: {
+  componentViewer: ComponentViewerInterface
+  moveCaret: boolean
+}) {
+  const editor = useMemo(() => createComponentScrollableEditor(componentViewer), [componentViewer])
+
+  return <NoteScrollToBottomController editor={editor} moveCaret={moveCaret} />
 }

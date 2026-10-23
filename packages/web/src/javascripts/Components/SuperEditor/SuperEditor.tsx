@@ -32,8 +32,8 @@ import {
 import { SUPER_SHOW_MARKDOWN_PREVIEW, getPrimaryModifier } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
-import ScrollToEndPlugin from './Plugins/ScrollToEndPlugin/ScrollToEndPlugin'
-import type { ScrollableEditor } from '@/Components/NoteView/ScrollToBottom/types'
+import type { LexicalEditor } from 'lexical'
+import EditorRefPlugin from './Plugins/EditorRefPlugin/EditorRefPlugin'
 import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
 import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
@@ -58,7 +58,7 @@ type Props = {
   onBlur?: (event: FocusEvent) => void
 }
 
-export const SuperEditor = forwardRef<ScrollableEditor, Props>(function SuperEditor(
+export const SuperEditor = forwardRef<LexicalEditor, Props>(function SuperEditor(
   { application, linkingController, filesController, spellcheck, controller, readonly, onFocus, onBlur },
   ref,
 ) {
@@ -284,7 +284,7 @@ export const SuperEditor = forwardRef<ScrollableEditor, Props>(function SuperEdi
                 <FilePlugin currentNote={note.current} />
                 <ItemBubblePlugin />
                 <GetMarkdownPlugin ref={getMarkdownPlugin} />
-                <ScrollToEndPlugin ref={ref} />
+                <EditorRefPlugin ref={ref} />
                 <ChangeContentCallbackPlugin
                   providerCallback={(callback) => (changeEditorFunction.current = callback)}
                 />

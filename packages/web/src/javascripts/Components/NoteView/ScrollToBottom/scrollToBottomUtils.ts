@@ -1,22 +1,23 @@
 import type { Disposer } from '@/Types/Disposer'
-import type { ScrollableEditor, ScrollState } from './types'
+import type { ComponentScrollState } from '@standardnotes/snjs'
+import type { ScrollableEditor } from './types'
 
-export const DEFAULT_SCROLL_BOTTOM_THRESHOLD = 8
+const ScrollBottomThreshold = 8
 
-export function isScrolledToBottom(element: HTMLElement, threshold = DEFAULT_SCROLL_BOTTOM_THRESHOLD): boolean {
+export function isScrolledToBottom(element: HTMLElement): boolean {
   const { scrollTop, scrollHeight, clientHeight } = element
-  return scrollTop + clientHeight >= scrollHeight - threshold
+  return scrollTop + clientHeight >= scrollHeight - ScrollBottomThreshold
 }
 
 /** True when content is taller than the visible area (vertical scrolling is possible). */
-export function hasVerticalOverflow(element: HTMLElement): boolean {
+function hasVerticalOverflow(element: HTMLElement): boolean {
   return element.scrollHeight > element.clientHeight
 }
 
 export function observeElementScrollState(
   element: HTMLElement,
   observeContentChange: (callback: () => void) => Disposer,
-  callback: (state: ScrollState) => void,
+  callback: (state: ComponentScrollState) => void,
 ): Disposer {
   const refresh = () => {
     callback({ canScroll: hasVerticalOverflow(element), isAtBottom: isScrolledToBottom(element) })
