@@ -1,0 +1,89 @@
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/scrollToBottomUtils.spec.ts
+  s_83ddbe9b6957c3::t_ec21707cfc989b 5,12,71-78
+  s_83ddbe9b6957c3::t_ff73849b22617c 79-80
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/scrollableEditors.ts
+  s_83ddbe9b6957c3::t_799670980ed4ba 2,35-64
+  s_83ddbe9b6957c3::t_39ffce17515bbc 65-67
+packages/web/src/javascripts/Components/SuperEditor/SuperEditor.tsx
+  s_83ddbe9b6957c3::t_799670980ed4ba 36,61,287
+  s_83ddbe9b6957c3::t_e2d92593185b68 35
+packages/web/src/javascripts/Components/NoteView/NoteView.tsx
+  s_83ddbe9b6957c3::t_98653e167e05f0 859
+  s_83ddbe9b6957c3::t_ed77afcfcb3dec 59-65,282-283,286-287,849,858,860,1020,1033-1041
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/types.ts
+  s_83ddbe9b6957c3::t_e2d92593185b68 1,9
+packages/web/src/javascripts/Components/SuperEditor/Plugins/EditorRefPlugin/EditorRefPlugin.tsx
+  s_83ddbe9b6957c3::t_799670980ed4ba 1-13
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.spec.ts
+  s_83ddbe9b6957c3::t_d2ff8ef0e3be0a 17-20
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/NoteScrollToBottomController.tsx
+  s_83ddbe9b6957c3::t_e2d92593185b68 3,5,8,59-70
+  s_83ddbe9b6957c3::t_a1868922e79ba8 71
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/scrollableEditors.spec.ts
+  s_83ddbe9b6957c3::t_799670980ed4ba 7-12,74-108
+  s_83ddbe9b6957c3::t_46201d64510601 109
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/scrollToBottomUtils.ts
+  s_83ddbe9b6957c3::t_e2d92593185b68 2-3,5,7,9,13,20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "e306a4edf571f030e7239441f93de0452dc71f41",
+  "prompts": {},
+  "sessions": {
+    "s_83ddbe9b6957c3": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "57f0768f-53dc-4827-b135-bb68ab63e830",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 46,
+        "output_tokens": 22110,
+        "cache_creation_input_tokens": 36486,
+        "cache_read_input_tokens": 4507521
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 46,
+          "output_tokens": 22110,
+          "cache_creation_input_tokens": 36486,
+          "cache_read_input_tokens": 4507521
+        }
+      },
+      "tool_uses": {
+        "shell": 18
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 14,
+        "output_tokens": 5948,
+        "cache_creation_input_tokens": 249474,
+        "cache_read_input_tokens": 779545
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5-high": {
+          "input_tokens": 14,
+          "output_tokens": 5948,
+          "cache_creation_input_tokens": 249474,
+          "cache_read_input_tokens": 779545
+        }
+      }
+    },
+    "by_prompt": {
+      "s_83ddbe9b6957c3": {
+        "input_tokens": 46,
+        "output_tokens": 22110,
+        "cache_creation_input_tokens": 36486,
+        "cache_read_input_tokens": 4507521
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
