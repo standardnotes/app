@@ -1,0 +1,74 @@
+packages/web/src/javascripts/Components/SuperEditor/Plugins/ScrollToEndPlugin/ScrollToEndPlugin.spec.ts
+  s_83ddbe9b6957c3::t_dc05b2921cda49 8,25,35
+packages/ui-services/src/Keyboard/getKeyboardShortcuts.spec.ts
+  s_83ddbe9b6957c3::t_06b8e9f4ad27dd 1-4
+  s_83ddbe9b6957c3::t_29cde9a3be0558 5-27
+packages/ui-services/src/Keyboard/getKeyboardShortcuts.ts
+  s_83ddbe9b6957c3::t_29cde9a3be0558 158
+packages/web/src/javascripts/Components/SuperEditor/Plugins/ScrollToEndPlugin/ScrollToEndPlugin.tsx
+  s_83ddbe9b6957c3::t_dc05b2921cda49 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "3f47d6327177373b93545701964d1890f55d065f",
+  "prompts": {},
+  "sessions": {
+    "s_83ddbe9b6957c3": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "57f0768f-53dc-4827-b135-bb68ab63e830",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 108,
+        "output_tokens": 41364,
+        "cache_creation_input_tokens": 258540,
+        "cache_read_input_tokens": 8176912
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 108,
+          "output_tokens": 41364,
+          "cache_creation_input_tokens": 258540,
+          "cache_read_input_tokens": 8176912
+        }
+      },
+      "tool_uses": {
+        "grep": 1,
+        "read": 4,
+        "shell": 45
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 1552,
+        "output_tokens": 949,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 595168
+      },
+      "by_tool_model": {
+        "cursor::composer-2.5-fast": {
+          "input_tokens": 1552,
+          "output_tokens": 949,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 595168
+        }
+      }
+    },
+    "by_prompt": {
+      "s_83ddbe9b6957c3": {
+        "input_tokens": 108,
+        "output_tokens": 41364,
+        "cache_creation_input_tokens": 258540,
+        "cache_read_input_tokens": 8176912
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
