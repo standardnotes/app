@@ -23,6 +23,20 @@ packages/web/src/javascripts/Components/SuperEditor/Plugins/ScrollToEndPlugin/Sc
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 32,
+    "ai_accepted": 32,
+    "git_diff_deleted_lines": 14,
+    "git_diff_added_lines": 32,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 32,
+        "ai_accepted": 32
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -69,6 +83,12 @@ packages/web/src/javascripts/Components/SuperEditor/Plugins/ScrollToEndPlugin/Sc
         "cache_read_input_tokens": 8176912
       }
     }
+  },
+  "activity": {
+    "added_sloc": 28,
+    "deleted_sloc": 11,
+    "checkpoints": 3,
+    "span_seconds": 36
   },
   "proton_build": "1.7.6-proton.8"
 }
