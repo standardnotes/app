@@ -49,5 +49,11 @@ packages/services/src/Domain/Strings/Messages.ts
       }
     }
   },
+  "activity": {
+    "added_sloc": 129,
+    "deleted_sloc": 122,
+    "checkpoints": 8,
+    "span_seconds": 205
+  },
   "proton_build": "1.7.6-proton.8"
 }
