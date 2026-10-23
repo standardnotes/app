@@ -2,12 +2,13 @@ import { ProtocolVersion } from '@standardnotes/models'
 import { c } from 'ttag'
 import { jtString, AppName, ListedName, HelpSecurityUrl, SupportEmail } from '@standardnotes/features'
 
-export const API_MESSAGE_GENERIC_INVALID_LOGIN = c('B1.Account.SignIn.Error')
-  .t`A server error occurred while trying to sign in. Please try again.`
-export const API_MESSAGE_GENERIC_REGISTRATION_FAIL = c('B1.Account.SignIn.Error')
-  .t`A server error occurred while trying to register. Please try again.`
-export const API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL = c('B1.Account.SignIn.Error')
-  .t`Something went wrong while changing your credentials. Your credentials were not changed. Please try again.`
+export const API_MESSAGE_GENERIC_INVALID_LOGIN = () =>
+  c('B1.Account.SignIn.Error').t`A server error occurred while trying to sign in. Please try again.`
+export const API_MESSAGE_GENERIC_REGISTRATION_FAIL = () =>
+  c('B1.Account.SignIn.Error').t`A server error occurred while trying to register. Please try again.`
+export const API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL = () =>
+  c('B1.Account.SignIn.Error')
+    .t`Something went wrong while changing your credentials. Your credentials were not changed. Please try again.`
 export const API_MESSAGE_GENERIC_SYNC_FAIL = () => c('B2.NavSharedUI.Error').t`Could not connect to server.`
 
 export const ServerErrorStrings = {
@@ -17,79 +18,85 @@ export const ServerErrorStrings = {
   },
 }
 
-export const API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL = c('B2.NavSharedUI.Error')
-  .t`Could not check your data integrity with the server.`
+export const API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL = () =>
+  c('B2.NavSharedUI.Error').t`Could not check your data integrity with the server.`
 
 export const API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL = () => c('B2.NavSharedUI.Error').t`Could not retrieve item.`
 
-export const API_MESSAGE_REGISTRATION_IN_PROGRESS = c('B1.Account.SignIn.Status')
-  .t`An existing registration request is already in progress.`
-export const API_MESSAGE_LOGIN_IN_PROGRESS = c('B1.Account.SignIn.Status')
-  .t`An existing sign in request is already in progress.`
-export const API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS = c('B1.Account.SignIn.Status')
-  .t`An existing change credentials request is already in progress.`
+export const API_MESSAGE_REGISTRATION_IN_PROGRESS = () =>
+  c('B1.Account.SignIn.Status').t`An existing registration request is already in progress.`
+export const API_MESSAGE_LOGIN_IN_PROGRESS = () =>
+  c('B1.Account.SignIn.Status').t`An existing sign in request is already in progress.`
+export const API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS = () =>
+  c('B1.Account.SignIn.Status').t`An existing change credentials request is already in progress.`
 
-export const API_MESSAGE_FALLBACK_LOGIN_FAIL = c('B1.Account.SignIn.Error').t`Invalid email or password.`
+export const API_MESSAGE_FALLBACK_LOGIN_FAIL = () => c('B1.Account.SignIn.Error').t`Invalid email or password.`
 
-export const API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL = c('B1.Account.Session.Error')
-  .t`A server error occurred while trying to refresh your session. Please try again.`
+export const API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL = () =>
+  c('B1.Account.Session.Error').t`A server error occurred while trying to refresh your session. Please try again.`
 
-export const API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS = c('B1.Account.Session.Info')
-  .t`Your account session is being renewed with the server. Please try your request again.`
+export const API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS = () =>
+  c('B1.Account.Session.Info').t`Your account session is being renewed with the server. Please try your request again.`
 
-export const API_MESSAGE_RATE_LIMITED = c('B2.NavSharedUI.Error')
-  .t`Too many successive server requests. Please wait a few minutes and try again.`
+export const API_MESSAGE_RATE_LIMITED = () =>
+  c('B2.NavSharedUI.Error').t`Too many successive server requests. Please wait a few minutes and try again.`
 
-export const API_MESSAGE_INVALID_SESSION = c('B1.Account.Session.Error')
-  .t`Please sign in to an account in order to continue with your request.`
+export const API_MESSAGE_INVALID_SESSION = () =>
+  c('B1.Account.Session.Error').t`Please sign in to an account in order to continue with your request.`
 
-export const API_MESSAGE_FAILED_GET_SETTINGS = c('B6.Preferences.Error').t`Failed to get settings.`
-export const API_MESSAGE_FAILED_UPDATE_SETTINGS = c('B6.Preferences.Error').t`Failed to update settings.`
-export const API_MESSAGE_FAILED_LISTED_REGISTRATION = jtString(
-  c('B6.Preferences.Error').jt`Unable to register for ${ListedName}. Please try again later.`,
-)
+export const API_MESSAGE_FAILED_GET_SETTINGS = () => c('B6.Preferences.Error').t`Failed to get settings.`
+export const API_MESSAGE_FAILED_UPDATE_SETTINGS = () => c('B6.Preferences.Error').t`Failed to update settings.`
+export const API_MESSAGE_FAILED_LISTED_REGISTRATION = () =>
+  jtString(c('B6.Preferences.Error').jt`Unable to register for ${ListedName}. Please try again later.`)
 
-export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = c('B7.FilesSubscriptionHelp.Files.Error')
-  .t`Failed to create file token.`
+export const API_MESSAGE_FAILED_CREATE_FILE_TOKEN = () =>
+  c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to create file token.`
 
-export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = c('B7.FilesSubscriptionHelp.Subscription.Error')
-  .t`Failed to get subscription's information.`
+export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = () =>
+  c('B7.FilesSubscriptionHelp.Subscription.Error').t`Failed to get subscription's information.`
 
-export const API_MESSAGE_FAILED_ACCESS_PURCHASE = c('B7.FilesSubscriptionHelp.Subscription.Error')
-  .t`Failed to access purchase flow.`
+export const API_MESSAGE_FAILED_ACCESS_PURCHASE = () =>
+  c('B7.FilesSubscriptionHelp.Subscription.Error').t`Failed to access purchase flow.`
 
-export const API_MESSAGE_FAILED_OFFLINE_FEATURES = c('B7.FilesSubscriptionHelp.Subscription.Error')
-  .t`Failed to get offline features.`
-export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = c('B2.NavSharedUI.Warning')
-  .t`The extension you are attempting to install comes from an untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?`
-export const API_MESSAGE_FAILED_DOWNLOADING_EXTENSION = c('B2.NavSharedUI.Error')
-  .t`Error downloading package details. Please check the extension link and try again.`
-export const API_MESSAGE_FAILED_OFFLINE_ACTIVATION = c('B7.FilesSubscriptionHelp.Subscription.Error')
-  .t`An unknown issue occurred during offline activation. Please download your activation code again and try once more.`
+export const API_MESSAGE_FAILED_OFFLINE_FEATURES = () =>
+  c('B7.FilesSubscriptionHelp.Subscription.Error').t`Failed to get offline features.`
+export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = () =>
+  c('B2.NavSharedUI.Warning')
+    .t`The extension you are attempting to install comes from an untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?`
+export const API_MESSAGE_FAILED_DOWNLOADING_EXTENSION = () =>
+  c('B2.NavSharedUI.Error').t`Error downloading package details. Please check the extension link and try again.`
+export const API_MESSAGE_FAILED_OFFLINE_ACTIVATION = () =>
+  c('B7.FilesSubscriptionHelp.Subscription.Error')
+    .t`An unknown issue occurred during offline activation. Please download your activation code again and try once more.`
 
-export const INVALID_EXTENSION_URL = c('B2.NavSharedUI.Error').t`Invalid extension URL.`
+export const INVALID_EXTENSION_URL = () => c('B2.NavSharedUI.Error').t`Invalid extension URL.`
 
-export const UNSUPPORTED_PROTOCOL_VERSION = jtString(
+export const UNSUPPORTED_PROTOCOL_VERSION = () =>
+  jtString(
+    c('B1.Account.SignIn.Error')
+      .jt`This version of the application does not support your newer account type. Please upgrade to the latest version of ${AppName} to sign in.`,
+  )
+
+export const EXPIRED_PROTOCOL_VERSION = () =>
+  jtString(
+    c('B1.Account.SignIn.Error')
+      .jt`The protocol version associated with your account is outdated and no longer supported by this application. Please visit ${HelpSecurityUrl} for more information.`,
+  )
+
+export const UNSUPPORTED_KEY_DERIVATION = () =>
   c('B1.Account.SignIn.Error')
-    .jt`This version of the application does not support your newer account type. Please upgrade to the latest version of ${AppName} to sign in.`,
-)
+    .t`Your account was created on a platform with higher security capabilities than this browser supports. If we attempted to generate your login keys here, it would take hours. Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in.`
 
-export const EXPIRED_PROTOCOL_VERSION = jtString(
-  c('B1.Account.SignIn.Error')
-    .jt`The protocol version associated with your account is outdated and no longer supported by this application. Please visit ${HelpSecurityUrl} for more information.`,
-)
+export const INVALID_PASSWORD_COST = () =>
+  jtString(
+    c('B1.Account.SignIn.Error')
+      .jt`Unable to sign in due to insecure password parameters. Please visit ${HelpSecurityUrl} for more information.`,
+  )
+export const INVALID_PASSWORD = () => c('B1.Account.SignIn.Error').t`Invalid password.`
 
-export const UNSUPPORTED_KEY_DERIVATION = c('B1.Account.SignIn.Error')
-  .t`Your account was created on a platform with higher security capabilities than this browser supports. If we attempted to generate your login keys here, it would take hours. Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in.`
-
-export const INVALID_PASSWORD_COST = jtString(
-  c('B1.Account.SignIn.Error')
-    .jt`Unable to sign in due to insecure password parameters. Please visit ${HelpSecurityUrl} for more information.`,
-)
-export const INVALID_PASSWORD = c('B1.Account.SignIn.Error').t`Invalid password.`
-
-export const OUTDATED_PROTOCOL_ALERT_IGNORE = c('B1.Account.SignIn.Action').t`Sign In`
-export const UPGRADING_ENCRYPTION = c('B1.Account.Password.Status').t`Upgrading your account's encryption version…`
+export const OUTDATED_PROTOCOL_ALERT_IGNORE = () => c('B1.Account.SignIn.Action').t`Sign In`
+export const UPGRADING_ENCRYPTION = () =>
+  c('B1.Account.Password.Status').t`Upgrading your account's encryption version…`
 
 export const SETTING_PASSCODE = () => c('B5.SecuritySync.Passcode.Status').t`Setting passcode…`
 export const CHANGING_PASSCODE = () => c('B5.SecuritySync.Passcode.Status').t`Changing passcode…`
@@ -98,7 +105,7 @@ export const REMOVING_PASSCODE = () => c('B5.SecuritySync.Passcode.Status').t`Re
 export const DO_NOT_CLOSE_APPLICATION = () =>
   c('B5.SecuritySync.Passcode.Warning').t`Do not close the application until this process completes.`
 
-export const UNKNOWN_ERROR = c('B2.NavSharedUI.Error').t`Unknown error.`
+export const UNKNOWN_ERROR = () => c('B2.NavSharedUI.Error').t`Unknown error.`
 
 export function InsufficientPasswordMessage(minimum: number): string {
   return c('B1.Account.SignIn.Error')

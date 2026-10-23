@@ -36,7 +36,7 @@ export class CreateOrEditContact {
     }
 
     const content: TrustedContactContentSpecialized = {
-      name: params.name ?? UnknownContactName,
+      name: params.name ?? UnknownContactName(),
       publicKeySet: ContactPublicKeySet.FromJson({
         encryption: params.publicKey,
         signing: params.signingPublicKey,

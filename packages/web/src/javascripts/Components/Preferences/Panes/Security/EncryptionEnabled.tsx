@@ -3,8 +3,8 @@ import Icon from '@/Components/Icon/Icon'
 import { ContentType, StaticItemCounter } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
+import { c, msgid } from 'ttag'
 import EncryptionStatusItem from './EncryptionStatusItem'
-import { formatCount } from './formatCount'
 
 const EncryptionEnabled: FunctionComponent = () => {
   const application = useApplication()
@@ -13,11 +13,33 @@ const EncryptionEnabled: FunctionComponent = () => {
     application.items.getItems([ContentType.TYPES.Note, ContentType.TYPES.Tag]),
   )
   const files = application.items.getItems([ContentType.TYPES.File])
-  const notes = formatCount(count.notes, 'notes')
-  const tags = formatCount(count.tags, 'tags')
-  const archived = formatCount(count.archived, 'archived notes')
-  const deleted = formatCount(count.deleted, 'trashed notes')
-  const filesCount = formatCount(files.length, 'files')
+  const notesCount = count.notes
+  const tagsCount = count.tags
+  const archivedCount = count.archived
+  const deletedCount = count.deleted
+  const filesTotal = files.length
+
+  const notes = c('B6.Preferences.Security.Label').ngettext(
+    msgid`${notesCount} note`,
+    `${notesCount} notes`,
+    notesCount,
+  )
+  const tags = c('B6.Preferences.Security.Label').ngettext(msgid`${tagsCount} tag`, `${tagsCount} tags`, tagsCount)
+  const archived = c('B6.Preferences.Security.Label').ngettext(
+    msgid`${archivedCount} archived note`,
+    `${archivedCount} archived notes`,
+    archivedCount,
+  )
+  const deleted = c('B6.Preferences.Security.Label').ngettext(
+    msgid`${deletedCount} trashed note`,
+    `${deletedCount} trashed notes`,
+    deletedCount,
+  )
+  const filesCount = c('B6.Preferences.Security.Label').ngettext(
+    msgid`${filesTotal} file`,
+    `${filesTotal} files`,
+    filesTotal,
+  )
 
   const noteIcon = <Icon type="rich-text" className="min-h-5 min-w-5" />
   const tagIcon = <Icon type="hashtag" className="min-h-5 min-w-5" />

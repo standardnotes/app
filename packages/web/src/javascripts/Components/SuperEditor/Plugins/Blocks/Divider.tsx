@@ -5,7 +5,9 @@ import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
 import { c } from 'ttag'
 
 export const DividerBlock = {
-  name: c('B3.Notes.EditorToolbar.Action').t`Divider`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Action').t`Divider`
+  },
   iconName: 'horizontal-rule',
   keywords: ['horizontal rule', 'divider', 'hr'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
