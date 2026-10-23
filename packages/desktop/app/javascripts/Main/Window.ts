@@ -22,7 +22,7 @@ import { Paths } from './Types/Paths'
 import { isMac, isWindows } from './Types/Platforms'
 import { checkForUpdate, setupUpdates } from './UpdateManager'
 import { handleTestMessage, send } from './Utils/Testing'
-import { isTesting, lowercaseDriveLetter } from './Utils/Utils'
+import { fileUrlsAreEqual, isTesting } from './Utils/Utils'
 import { initializeZoomManager } from './ZoomManager'
 import { HomeServerManager } from './HomeServer/HomeServerManager'
 import { FilesManager } from './File/FilesManager'
@@ -135,14 +135,19 @@ export async function createWindowState({
    * target is not set to _blank, such as with window.location.assign)
    */
   window.webContents.on('will-navigate', (event, url) => {
-    /** Check for windowUrl equality in the case of window.reload() calls. */
+    /**
+     * Allow only the app's own document (e.g. window.location.reload() calls).
+     * Everything else is denied up front, before any other logic that could throw.
+     */
     if (fileUrlsAreEqual(url, appState.startUrl)) {
       return
     }
+
+    event.preventDefault()
+
     if (shouldOpenUrl(url)) {
       void shell.openExternal(url)
     }
-    event.preventDefault()
   })
 
   window.webContents.on('context-menu', (_event, params) => {
@@ -245,31 +250,6 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
     mediaManager,
     homeServerManager,
     directoryManager,
-  }
-}
-
-/**
- * Check file urls for equality by decoding components
- * In packaged app, spaces in navigation events urls can contain %20
- * but not in windowUrl.
- */
-function fileUrlsAreEqual(a: string, b: string): boolean {
-  /** Catch exceptions in case of malformed urls. */
-  try {
-    /**
-     * Craft URL objects to eliminate production URL values that can
-     * contain "#!/" suffixes (on Windows)
-     */
-    let aPath = new URL(decodeURIComponent(a)).pathname
-    let bPath = new URL(decodeURIComponent(b)).pathname
-    if (isWindows()) {
-      /** On Windows, drive letter casing is inconsistent */
-      aPath = lowercaseDriveLetter(aPath)
-      bPath = lowercaseDriveLetter(bPath)
-    }
-    return aPath === bPath
-  } catch {
-    return false
   }
 }
 
