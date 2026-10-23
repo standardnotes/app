@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.72.11](https://github.com/standardnotes/app/compare/@standardnotes/services@1.72.10...@standardnotes/services@1.72.11) (2026-10-23)
+
+### Bug Fixes
+
+* Improves errors on file attachments for expired subs ([#3069](https://github.com/standardnotes/app/issues/3069)) ([7f9b07f](https://github.com/standardnotes/app/commit/7f9b07f9f88ae8885874fdb77425c883e4a41132))
+
 ## [1.72.10](https://github.com/standardnotes/app/compare/@standardnotes/services@1.72.9...@standardnotes/services@1.72.10) (2026-10-17)
 
 **Note:** Version bump only for package @standardnotes/services

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.202.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.10...@standardnotes/web@3.202.11) (2026-10-23)
+
+### Bug Fixes
+
+* Improves errors on file attachments for expired subs ([#3069](https://github.com/standardnotes/app/issues/3069)) ([7f9b07f](https://github.com/standardnotes/app/commit/7f9b07f9f88ae8885874fdb77425c883e4a41132))
+* Potentially fixes keyboard hiding when editing misspelt words ([#3070](https://github.com/standardnotes/app/issues/3070)) ([08ed33b](https://github.com/standardnotes/app/commit/08ed33bacd2877e504470b2b797724367336b387))
+* Uses default note type setting when creating note by sharing content on Android ([#3071](https://github.com/standardnotes/app/issues/3071)) ([72b05ff](https://github.com/standardnotes/app/commit/72b05ffdc0d14dec7be1804324b12b406b881b3b))
+
 ## [3.202.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.9...@standardnotes/web@3.202.10) (2026-10-17)
 
 ### Bug Fixes
