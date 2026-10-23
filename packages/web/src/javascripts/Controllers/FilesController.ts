@@ -394,7 +394,11 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       })
 
       if (result instanceof ClientDisplayableError) {
-        throw new Error(result.text)
+        addToast({
+          type: ToastType.Error,
+          message: result.text,
+        })
+        return
       }
 
       if (isUsingStreamingSaver(saver)) {

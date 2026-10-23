@@ -12,7 +12,7 @@ import {
   API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL,
   API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS,
   API_MESSAGE_FAILED_ACCESS_PURCHASE,
-  API_MESSAGE_FAILED_CREATE_FILE_TOKEN,
+  FileStrings,
   API_MESSAGE_FAILED_GET_SETTINGS,
   API_MESSAGE_FAILED_LISTED_REGISTRATION,
   API_MESSAGE_FAILED_OFFLINE_ACTIVATION,
@@ -739,7 +739,7 @@ export class LegacyApiService
       verb: HttpVerb.Post,
       url: url,
       authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_CREATE_FILE_TOKEN(),
+      fallbackErrorMessage: FileStrings.FailedCreateFileToken,
       params,
     })
 
@@ -748,7 +748,8 @@ export class LegacyApiService
     }
 
     if (!response.data?.success) {
-      return new ClientDisplayableError(response.data?.reason as string, undefined, response.data?.reason as string)
+      const reason = response.data.reason
+      return new ClientDisplayableError(FileStrings.ValetTokenFailureMessage(reason, operation), undefined, reason)
     }
 
     return response.data?.valetToken
