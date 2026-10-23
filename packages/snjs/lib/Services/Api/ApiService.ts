@@ -12,8 +12,7 @@ import {
   API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL,
   API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS,
   API_MESSAGE_FAILED_ACCESS_PURCHASE,
-  API_MESSAGE_FAILED_CREATE_FILE_TOKEN,
-  messageForCreateValetTokenFailure,
+  FileStrings,
   API_MESSAGE_FAILED_GET_SETTINGS,
   API_MESSAGE_FAILED_LISTED_REGISTRATION,
   API_MESSAGE_FAILED_OFFLINE_ACTIVATION,
@@ -281,7 +280,7 @@ export class LegacyApiService
     return this.request({
       verb: HttpVerb.Post,
       url: joinPaths(this.host, Paths.v2.keyParams),
-      fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN(),
       params,
       /** A session is optional here, if valid, endpoint bypasses 2FA and returns additional params */
       authentication: this.getSessionAccessToken(),
@@ -295,7 +294,7 @@ export class LegacyApiService
     hvmToken?: string
   }): Promise<HttpResponse<SignInResponse>> {
     if (this.authenticating) {
-      return this.createErrorResponse(API_MESSAGE_LOGIN_IN_PROGRESS, HttpStatusCode.BadRequest)
+      return this.createErrorResponse(API_MESSAGE_LOGIN_IN_PROGRESS(), HttpStatusCode.BadRequest)
     }
     this.authenticating = true
     const url = joinPaths(this.host, Paths.v2.signIn)
@@ -311,7 +310,7 @@ export class LegacyApiService
       verb: HttpVerb.Post,
       url,
       params,
-      fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN(),
     })
 
     this.authenticating = false
@@ -335,7 +334,7 @@ export class LegacyApiService
     newEmail?: string
   }): Promise<HttpResponse<ChangeCredentialsResponse>> {
     if (this.changing) {
-      return this.createErrorResponse(API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS, HttpStatusCode.BadRequest)
+      return this.createErrorResponse(API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS(), HttpStatusCode.BadRequest)
     }
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
@@ -357,7 +356,7 @@ export class LegacyApiService
     this.changing = false
 
     if (isErrorResponse(response)) {
-      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL)
+      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL())
     }
 
     this.processSuccessResponseForMetaBody(response)
@@ -477,12 +476,12 @@ export class LegacyApiService
     this.refreshingSession = false
 
     if (response === null) {
-      return this.createErrorResponse(API_MESSAGE_INVALID_SESSION, HttpStatusCode.BadRequest)
+      return this.createErrorResponse(API_MESSAGE_INVALID_SESSION(), HttpStatusCode.BadRequest)
     }
 
     if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
-      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL)
+      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL())
     }
 
     return response
@@ -554,7 +553,7 @@ export class LegacyApiService
     return await this.tokenRefreshableRequest<ListSettingsResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.settings(userUuid)),
-      fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS(),
       authentication: this.getSessionAccessToken(),
     })
   }
@@ -576,7 +575,7 @@ export class LegacyApiService
       verb: HttpVerb.Put,
       url: joinPaths(this.host, Paths.v1.settings(userUuid)),
       authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS(),
       params,
     })
   }
@@ -591,7 +590,7 @@ export class LegacyApiService
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName.toLowerCase())),
       authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS(),
       customHeaders,
     })
   }
@@ -601,7 +600,7 @@ export class LegacyApiService
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.subscriptionSetting(userUuid, settingName.toLowerCase())),
       authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS(),
     })
   }
 
@@ -620,7 +619,7 @@ export class LegacyApiService
       verb: HttpVerb.Put,
       url: joinPaths(this.host, Paths.v1.subscriptionSettings(userUuid)),
       authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS(),
       params,
     })
   }
@@ -635,7 +634,7 @@ export class LegacyApiService
       verb: HttpVerb.Delete,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName)),
       authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS(),
       customHeaders,
     })
   }
@@ -654,7 +653,7 @@ export class LegacyApiService
       verb: HttpVerb.Get,
       url,
       external: true,
-      fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN(),
     })
   }
 
@@ -664,7 +663,7 @@ export class LegacyApiService
       verb: HttpVerb.Post,
       url,
       authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_ACCESS_PURCHASE,
+      fallbackErrorMessage: API_MESSAGE_FAILED_ACCESS_PURCHASE(),
     })
 
     if (isErrorResponse(response)) {
@@ -695,7 +694,7 @@ export class LegacyApiService
       const response = await this.request<GetOfflineFeaturesResponse>({
         verb: HttpVerb.Get,
         url: featuresUrl,
-        fallbackErrorMessage: API_MESSAGE_FAILED_OFFLINE_FEATURES,
+        fallbackErrorMessage: API_MESSAGE_FAILED_OFFLINE_FEATURES(),
         customHeaders: [{ key: 'x-offline-token', value: extensionKey }],
       })
 
@@ -708,7 +707,7 @@ export class LegacyApiService
         roles: data?.roles || [],
       }
     } catch {
-      return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
+      return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION())
     }
   }
 
@@ -719,7 +718,7 @@ export class LegacyApiService
     return this.tokenRefreshableRequest<ListedRegistrationResponse>({
       verb: HttpVerb.Post,
       url: joinPaths(this.host, Paths.v1.listedRegistration(this.user.uuid)),
-      fallbackErrorMessage: API_MESSAGE_FAILED_LISTED_REGISTRATION,
+      fallbackErrorMessage: API_MESSAGE_FAILED_LISTED_REGISTRATION(),
       authentication: this.getSessionAccessToken(),
     })
   }
@@ -740,7 +739,7 @@ export class LegacyApiService
       verb: HttpVerb.Post,
       url: url,
       authentication: this.getSessionAccessToken(),
-      fallbackErrorMessage: API_MESSAGE_FAILED_CREATE_FILE_TOKEN,
+      fallbackErrorMessage: FileStrings.FailedCreateFileToken,
       params,
     })
 
@@ -750,7 +749,7 @@ export class LegacyApiService
 
     if (!response.data?.success) {
       const reason = response.data.reason
-      return new ClientDisplayableError(messageForCreateValetTokenFailure(reason, operation), undefined, reason)
+      return new ClientDisplayableError(FileStrings.ValetTokenFailureMessage(reason, operation), undefined, reason)
     }
 
     return response.data?.valetToken
@@ -946,7 +945,7 @@ export class LegacyApiService
       params: {
         integrityPayloads,
       },
-      fallbackErrorMessage: API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL(),
       authentication: this.getSessionAccessToken(),
     })
   }
@@ -962,11 +961,11 @@ export class LegacyApiService
 
   private preprocessingError() {
     if (this.refreshingSession) {
-      return this.createErrorResponse(API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS, HttpStatusCode.BadRequest)
+      return this.createErrorResponse(API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS(), HttpStatusCode.BadRequest)
     }
 
     if (!this.session) {
-      return this.createErrorResponse(API_MESSAGE_INVALID_SESSION, HttpStatusCode.BadRequest)
+      return this.createErrorResponse(API_MESSAGE_INVALID_SESSION(), HttpStatusCode.BadRequest)
     }
 
     return undefined

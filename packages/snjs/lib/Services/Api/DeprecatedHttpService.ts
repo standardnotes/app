@@ -190,15 +190,15 @@ export class DeprecatedHttpService extends AbstractService {
     } else {
       if (httpStatus === DeprecatedStatusCode.HttpStatusForbidden) {
         response.error = {
-          message: API_MESSAGE_RATE_LIMITED,
+          message: API_MESSAGE_RATE_LIMITED(),
           status: httpStatus,
         }
       } else if (response.error == undefined) {
         if (response.data == undefined || response.data.error == undefined) {
           try {
-            response.error = { message: request.responseText || UNKNOWN_ERROR, status: httpStatus }
+            response.error = { message: request.responseText || UNKNOWN_ERROR(), status: httpStatus }
           } catch {
-            response.error = { message: UNKNOWN_ERROR, status: httpStatus }
+            response.error = { message: UNKNOWN_ERROR(), status: httpStatus }
           }
         } else {
           response.error = response.data.error
