@@ -1,0 +1,33 @@
+packages/mobile/ios/Podfile.lock
+  h_ddce7f0538b395 2086,2090
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "8ede69dc0e87e81a12e5b04dfdf57eff3e8b52cd",
+  "prompts": {},
+  "humans": {
+    "h_ddce7f0538b395": {
+      "author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "carried": {
+      "total": {
+        "input_tokens": 122,
+        "output_tokens": 60406,
+        "cache_creation_input_tokens": 449433,
+        "cache_read_input_tokens": 6261598
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 122,
+          "output_tokens": 60406,
+          "cache_creation_input_tokens": 449433,
+          "cache_read_input_tokens": 6261598
+        }
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
