@@ -155,6 +155,7 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       preventDefault: true,
     },
     {
+      // Keep in sync with `isScrollToEndShortcut` in component-relay, which cancels the native key for component editors
       command: SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND,
       key: isMacPlatform(platform) ? KeyboardKey.Down : KeyboardKey.End,
       modifiers: [primaryModifier],

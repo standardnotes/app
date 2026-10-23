@@ -5,7 +5,7 @@
 import type { LexicalEditor } from 'lexical'
 import { createSuperScrollableEditor } from './ScrollToEndPlugin'
 
-function setup({ editable }: { editable: boolean }) {
+function setup() {
   const rootElement = document.createElement('div')
   Object.defineProperty(rootElement, 'scrollHeight', { value: 1000, configurable: true })
   Object.defineProperty(rootElement, 'clientHeight', { value: 200, configurable: true })
@@ -13,7 +13,6 @@ function setup({ editable }: { editable: boolean }) {
 
   const editor = {
     getRootElement: () => rootElement,
-    isEditable: () => editable,
     update: jest.fn(),
     focus: jest.fn(),
   } as unknown as LexicalEditor
@@ -23,7 +22,7 @@ function setup({ editable }: { editable: boolean }) {
 
 describe('createSuperScrollableEditor', () => {
   it('scrolls the root element to the bottom and focuses the editor', () => {
-    const { editor, rootElement, scrollableEditor } = setup({ editable: true })
+    const { editor, rootElement, scrollableEditor } = setup()
 
     scrollableEditor.scrollToEnd({ moveCaret: true })
 
@@ -33,18 +32,9 @@ describe('createSuperScrollableEditor', () => {
   })
 
   it('only scrolls when the caret should not move', () => {
-    const { editor, scrollableEditor } = setup({ editable: true })
+    const { editor, scrollableEditor } = setup()
 
     scrollableEditor.scrollToEnd({ moveCaret: false })
-
-    expect(editor.update).not.toHaveBeenCalled()
-    expect(editor.focus).not.toHaveBeenCalled()
-  })
-
-  it('only scrolls when the editor is not editable', () => {
-    const { editor, scrollableEditor } = setup({ editable: false })
-
-    scrollableEditor.scrollToEnd({ moveCaret: true })
 
     expect(editor.update).not.toHaveBeenCalled()
     expect(editor.focus).not.toHaveBeenCalled()

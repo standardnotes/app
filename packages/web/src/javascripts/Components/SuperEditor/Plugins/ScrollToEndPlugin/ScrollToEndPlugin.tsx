@@ -25,7 +25,7 @@ export function createSuperScrollableEditor(editor: LexicalEditor): ScrollableEd
       }
 
       scrollElementToBottom(rootElement, () => {
-        if (!moveCaret || !editor.isEditable()) {
+        if (!moveCaret) {
           return
         }
         editor.update(() => {
