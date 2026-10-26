@@ -27,6 +27,20 @@ packages/desktop/app/javascripts/Main/FileBackups/FileBackupsManager.ts
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 222,
+    "ai_accepted": 222,
+    "git_diff_deleted_lines": 6,
+    "git_diff_added_lines": 222,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 222,
+        "ai_accepted": 222
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -81,6 +95,12 @@ packages/desktop/app/javascripts/Main/FileBackups/FileBackupsManager.ts
         "cache_read_input_tokens": 1809176
       }
     }
+  },
+  "activity": {
+    "added_sloc": 190,
+    "deleted_sloc": 12,
+    "checkpoints": 10,
+    "span_seconds": 202
   },
   "proton_build": "1.7.6-proton.8"
 }
