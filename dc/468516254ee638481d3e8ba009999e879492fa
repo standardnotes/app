@@ -1,0 +1,33 @@
+.gitlab-ci.yml
+  h_ddce7f0538b395 16-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "dc468516254ee638481d3e8ba009999e879492fa",
+  "prompts": {},
+  "humans": {
+    "h_ddce7f0538b395": {
+      "author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "carried": {
+      "total": {
+        "input_tokens": 38,
+        "output_tokens": 16615,
+        "cache_creation_input_tokens": 105374,
+        "cache_read_input_tokens": 1334272
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5-high": {
+          "input_tokens": 38,
+          "output_tokens": 16615,
+          "cache_creation_input_tokens": 105374,
+          "cache_read_input_tokens": 1334272
+        }
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
