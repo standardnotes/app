@@ -1,0 +1,76 @@
+.gitlab-ci.yml
+  s_6a16bc784b7114::t_5595ab662a82ca 47
+  s_6a16bc784b7114::t_aade1a5e5299ff 42-43
+  s_6a16bc784b7114::t_b9d84f0f86e5b2 10-18,23-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "7597b3846bbc2535800a1eb538d68e4e5a5cb0a2",
+  "prompts": {},
+  "sessions": {
+    "s_6a16bc784b7114": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "eca9d64f-7a77-423e-a558-eb4739c16a1a",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 48,
+        "output_tokens": 12845,
+        "cache_creation_input_tokens": 26972,
+        "cache_read_input_tokens": 1242278
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 48,
+          "output_tokens": 12845,
+          "cache_creation_input_tokens": 26972,
+          "cache_read_input_tokens": 1242278
+        }
+      },
+      "tool_uses": {
+        "grep": 3,
+        "read": 6,
+        "shell": 28,
+        "write": 5
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 126357,
+        "output_tokens": 18274,
+        "cache_creation_input_tokens": 339844,
+        "cache_read_input_tokens": 3649364
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5-high": {
+          "input_tokens": 48,
+          "output_tokens": 16942,
+          "cache_creation_input_tokens": 339844,
+          "cache_read_input_tokens": 3386036
+        },
+        "cursor::composer-2.5-fast": {
+          "input_tokens": 126309,
+          "output_tokens": 1332,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 263328
+        }
+      }
+    },
+    "by_prompt": {
+      "s_6a16bc784b7114": {
+        "input_tokens": 48,
+        "output_tokens": 12845,
+        "cache_creation_input_tokens": 26972,
+        "cache_read_input_tokens": 1242278
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
