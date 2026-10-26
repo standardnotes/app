@@ -1,0 +1,86 @@
+packages/desktop/test/fileBackupsManager.spec.ts
+  s_ff78a9f5817263::t_8d6a392ac1e795 1-135,139
+  s_ff78a9f5817263::t_de24d7748d3b49 136-138,140-141
+packages/desktop/test/packageManager.spec.ts
+  s_ff78a9f5817263::t_9ee8d462443ab3 118
+  s_ff78a9f5817263::t_43b9b419057636 211-235
+packages/desktop/app/javascripts/Main/Packages/PackageManager.ts
+  s_ff78a9f5817263::t_fa5b0e55104013 409-416,423-430
+packages/desktop/app/javascripts/Main/FileBackups/FileBackupsManager.ts
+  s_ff78a9f5817263::t_a8e9c30929a337 325,327-335
+  s_ff78a9f5817263::t_c8773af22ed5f4 25-37
+  s_ff78a9f5817263::t_cfc8a03e51f808 171-181
+  s_ff78a9f5817263::t_7d55a8b9ca7120 362-364,369,372
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "27a73cde6a25c20d8d5e5b05c7817d5ae27be74e",
+  "prompts": {},
+  "sessions": {
+    "s_ff78a9f5817263": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a52618ef-8165-4f5a-be15-2a3bbe106a57",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 36,
+        "output_tokens": 13666,
+        "cache_creation_input_tokens": 574901,
+        "cache_read_input_tokens": 1809176
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 36,
+          "output_tokens": 13666,
+          "cache_creation_input_tokens": 574901,
+          "cache_read_input_tokens": 1809176
+        }
+      },
+      "tool_uses": {
+        "grep": 21,
+        "mcp:searchjiraissuesusingjql": 3,
+        "read": 25,
+        "shell": 47,
+        "write": 11
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 28,
+        "output_tokens": 8155,
+        "cache_creation_input_tokens": 340940,
+        "cache_read_input_tokens": 1777970
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 18,
+          "output_tokens": 4588,
+          "cache_creation_input_tokens": 230599,
+          "cache_read_input_tokens": 1415406
+        },
+        "cursor::claude-sonnet-5-5-high": {
+          "input_tokens": 10,
+          "output_tokens": 3567,
+          "cache_creation_input_tokens": 110341,
+          "cache_read_input_tokens": 362564
+        }
+      }
+    },
+    "by_prompt": {
+      "s_ff78a9f5817263": {
+        "input_tokens": 36,
+        "output_tokens": 13666,
+        "cache_creation_input_tokens": 574901,
+        "cache_read_input_tokens": 1809176
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
