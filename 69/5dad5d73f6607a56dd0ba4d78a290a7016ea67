@@ -21,6 +21,20 @@ packages/web/src/javascripts/Components/Preferences/Panes/Account/SubscriptionSh
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 19,
+    "ai_accepted": 19,
+    "git_diff_deleted_lines": 15,
+    "git_diff_added_lines": 19,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 19,
+        "ai_accepted": 19
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -52,6 +66,12 @@ packages/web/src/javascripts/Components/Preferences/Panes/Account/SubscriptionSh
         "cache_read_input_tokens": 322688
       }
     }
+  },
+  "activity": {
+    "added_sloc": 18,
+    "deleted_sloc": 14,
+    "checkpoints": 6,
+    "span_seconds": 270
   },
   "proton_build": "1.7.6-proton.8"
 }
