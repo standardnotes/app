@@ -1,0 +1,62 @@
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
+  s_83ddbe9b6957c3::t_28e786921b09f0 637,642
+packages/models/src/Domain/Abstract/Component/MessageData.ts
+  s_83ddbe9b6957c3::t_28e786921b09f0 39
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.spec.ts
+  s_83ddbe9b6957c3::t_07a880618e7618 43-44,48-58
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/ScrollToBottomButton.tsx
+  s_83ddbe9b6957c3::t_af7f56e96227c4 7-8,12,24
+packages/models/src/Domain/Abstract/Component/ComponentScrollState.ts
+  s_83ddbe9b6957c3::t_28e786921b09f0 4-5
+packages/web/src/javascripts/Components/NoteView/ScrollToBottom/NoteScrollToBottomController.tsx
+  s_83ddbe9b6957c3::t_af7f56e96227c4 21,25,30,32,60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "54c754b671b61554abebe11e6f52511b6a4e627d",
+  "prompts": {},
+  "sessions": {
+    "s_83ddbe9b6957c3": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "57f0768f-53dc-4827-b135-bb68ab63e830",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 100,
+        "output_tokens": 42429,
+        "cache_creation_input_tokens": 75431,
+        "cache_read_input_tokens": 8647726
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 100,
+          "output_tokens": 42429,
+          "cache_creation_input_tokens": 75431,
+          "cache_read_input_tokens": 8647726
+        }
+      },
+      "tool_uses": {
+        "grep": 3,
+        "read": 16,
+        "shell": 47,
+        "write": 4
+      }
+    },
+    "by_prompt": {
+      "s_83ddbe9b6957c3": {
+        "input_tokens": 100,
+        "output_tokens": 42429,
+        "cache_creation_input_tokens": 75431,
+        "cache_read_input_tokens": 8647726
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
