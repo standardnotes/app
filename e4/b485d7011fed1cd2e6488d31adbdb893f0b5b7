@@ -1,0 +1,70 @@
+packages/web/src/javascripts/Components/Preferences/Panes/Account/SubscriptionSharing/SharingStatusText.tsx
+  s_276d017bd6cb08::t_515519451d6a6f 11-12,15-16
+packages/web/src/javascripts/Components/Preferences/Panes/Account/Files.tsx
+  s_276d017bd6cb08::t_bfd7a4edcacfc2 64
+  s_276d017bd6cb08::t_ed182ac32fd3af 45-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "e4b485d7011fed1cd2e6488d31adbdb893f0b5b7",
+  "prompts": {},
+  "sessions": {
+    "s_276d017bd6cb08": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ed2e136e-51f0-40b8-8023-03158feb11a3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 14,
+        "output_tokens": 2699,
+        "cache_creation_input_tokens": 17521,
+        "cache_read_input_tokens": 123723
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 14,
+          "output_tokens": 2699,
+          "cache_creation_input_tokens": 17521,
+          "cache_read_input_tokens": 123723
+        }
+      },
+      "tool_uses": {
+        "grep": 4,
+        "read": 3,
+        "write": 3
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 10,
+        "output_tokens": 1896,
+        "cache_creation_input_tokens": 42137,
+        "cache_read_input_tokens": 158870
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5-high": {
+          "input_tokens": 10,
+          "output_tokens": 1896,
+          "cache_creation_input_tokens": 42137,
+          "cache_read_input_tokens": 158870
+        }
+      }
+    },
+    "by_prompt": {
+      "s_276d017bd6cb08": {
+        "input_tokens": 14,
+        "output_tokens": 2699,
+        "cache_creation_input_tokens": 17521,
+        "cache_read_input_tokens": 123723
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
