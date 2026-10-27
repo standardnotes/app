@@ -8,11 +8,12 @@ type Props = { subscriptionState: SubscriptionController }
 const SharingStatusText = ({ subscriptionState }: Props) => {
   const { usedInvitationsCount, allowedInvitationsCount } = subscriptionState
 
+  const usedInvitationsCountBold = <span className="font-bold">{usedInvitationsCount}</span>
+
   return (
     <Text className="mt-1">
-      {c('B6.Preferences.Subscription.Info').t`You've used`} <span className="font-bold">{usedInvitationsCount}</span>{' '}
-      {c('B6.Preferences.Subscription.Info').t`out of`} {allowedInvitationsCount}{' '}
-      {c('B6.Preferences.Subscription.Info').t`subscription invites.`}
+      {c('B6.Preferences.Subscription.Info')
+        .jt`You've used ${usedInvitationsCountBold} out of ${allowedInvitationsCount} subscription invites.`}
     </Text>
   )
 }

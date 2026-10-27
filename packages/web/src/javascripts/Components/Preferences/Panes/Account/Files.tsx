@@ -42,6 +42,13 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
     getFilesQuota().catch(console.error)
   }, [application])
 
+  const filesQuotaUsedBold = <span className="font-semibold">{formatSizeToReadableString(filesQuotaUsed)}</span>
+  const filesQuotaTotalLabel = (
+    <span>
+      {application.sessions.isSignedIntoFirstPartyServer() ? formatSizeToReadableString(filesQuotaTotal) : '∞'}
+    </span>
+  )
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -54,14 +61,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
         ) : (
           <>
             <div className="mb-1 mt-1">
-              <span className="font-semibold">{formatSizeToReadableString(filesQuotaUsed)}</span>{' '}
-              {c('B6.Preferences.Account.Info').t`of`}{' '}
-              <span>
-                {application.sessions.isSignedIntoFirstPartyServer()
-                  ? formatSizeToReadableString(filesQuotaTotal)
-                  : '∞'}
-              </span>{' '}
-              {c('B6.Preferences.Account.Info').t`used`}
+              {c('B6.Preferences.Account.Info').jt`${filesQuotaUsedBold} of ${filesQuotaTotalLabel} used`}
             </div>
             <progress
               className="progress-bar w-full"
