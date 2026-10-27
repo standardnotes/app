@@ -3,7 +3,7 @@ import Spinner from '@/Components/Spinner/Spinner'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { SettingName } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
-import { c } from 'ttag'
+import { c, msgid } from 'ttag'
 import { Subtitle, Title } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -42,11 +42,16 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
     getFilesQuota().catch(console.error)
   }, [application])
 
-  const filesQuotaUsedBold = <span className="font-semibold">{formatSizeToReadableString(filesQuotaUsed)}</span>
-  const filesQuotaTotalLabel = (
-    <span>
-      {application.sessions.isSignedIntoFirstPartyServer() ? formatSizeToReadableString(filesQuotaTotal) : '∞'}
-    </span>
+  const filesQuotaUsedLabel = formatSizeToReadableString(filesQuotaUsed)
+  const filesQuotaTotalLabel = application.sessions.isSignedIntoFirstPartyServer()
+    ? formatSizeToReadableString(filesQuotaTotal)
+    : '∞'
+  /** The plural form must follow the number shown to the user (e.g. "1 MB"), not the raw byte count */
+  const filesQuotaUsedDisplayedAmount = parseFloat(filesQuotaUsedLabel)
+  const filesQuotaText = c('B6.Preferences.Account.Info').ngettext(
+    msgid`${filesQuotaUsedLabel} of ${filesQuotaTotalLabel} used`,
+    `${filesQuotaUsedLabel} of ${filesQuotaTotalLabel} used`,
+    filesQuotaUsedDisplayedAmount,
   )
 
   return (
@@ -61,7 +66,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
         ) : (
           <>
             <div className="mb-1 mt-1">
-              {c('B6.Preferences.Account.Info').jt`${filesQuotaUsedBold} of ${filesQuotaTotalLabel} used`}
+              {filesQuotaText}
             </div>
             <progress
               className="progress-bar w-full"
