@@ -1,0 +1,57 @@
+packages/web/src/javascripts/Components/Preferences/Panes/Account/Files.tsx
+  s_276d017bd6cb08::t_7f74b9b8a1a742 69
+  s_276d017bd6cb08::t_7f44a0db5dca66 45-54
+  s_276d017bd6cb08::t_7d14e44b861f6b 6
+packages/web/src/javascripts/Components/Preferences/Panes/Account/SubscriptionSharing/SharingStatusText.tsx
+  s_276d017bd6cb08::t_5b5bcde84246dc 4
+  s_276d017bd6cb08::t_afc871ac0f897c 11-14,16-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "695dad5d73f6607a56dd0ba4d78a290a7016ea67",
+  "prompts": {},
+  "sessions": {
+    "s_276d017bd6cb08": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ed2e136e-51f0-40b8-8023-03158feb11a3",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 24,
+        "output_tokens": 4878,
+        "cache_creation_input_tokens": 31492,
+        "cache_read_input_tokens": 322688
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 24,
+          "output_tokens": 4878,
+          "cache_creation_input_tokens": 31492,
+          "cache_read_input_tokens": 322688
+        }
+      },
+      "tool_uses": {
+        "grep": 2,
+        "read": 3,
+        "shell": 3,
+        "write": 5
+      }
+    },
+    "by_prompt": {
+      "s_276d017bd6cb08": {
+        "input_tokens": 24,
+        "output_tokens": 4878,
+        "cache_creation_input_tokens": 31492,
+        "cache_read_input_tokens": 322688
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
