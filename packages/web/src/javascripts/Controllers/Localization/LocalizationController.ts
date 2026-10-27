@@ -130,7 +130,6 @@ export class LocalizationController extends AbstractViewController implements In
     const routeType = this.routeService.getRoute().type
 
     return (
-      this.featuresController.isLocalizationFeatureAvailable() &&
       !this.featuresController.isLocalizationEnabled() &&
       !this.hasSeenLabsSpotlightOnAccount() &&
       !this.hasSeenLabsSpotlightOnDevice() &&
@@ -272,7 +271,7 @@ export class LocalizationController extends AbstractViewController implements In
 
   /** Loaded while localization is still off so the language dropdown can show as soon as it's turned on. */
   private async preloadAvailableLocales(): Promise<void> {
-    if (this.availableLocalesRequested || !this.featuresController.isLocalizationFeatureAvailable()) {
+    if (this.availableLocalesRequested) {
       return
     }
     this.availableLocalesRequested = true

@@ -22,7 +22,7 @@ const General: FunctionComponent = () => {
       <NewNoteDefaults />
       <Tools application={application} />
       <SmartViews application={application} featuresController={application.featuresController} />
-      {application.featuresController.isLocalizationFeatureAvailable() && <Language application={application} />}
+      <Language application={application} />
       <Moments application={application} />
       <LabsPane application={application} />
       <OfflineActivation />

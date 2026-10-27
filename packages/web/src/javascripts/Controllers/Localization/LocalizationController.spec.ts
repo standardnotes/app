@@ -29,7 +29,6 @@ describe('LocalizationController', () => {
   let reload: jest.Mock
   let localizationEnabled: boolean
   let syncedLocale: string | undefined
-  let localizationAvailable: boolean
   let seenOnAccount: boolean
   let seenOnDevice: boolean
 
@@ -46,7 +45,6 @@ describe('LocalizationController', () => {
 
   const featuresController = {
     isLocalizationEnabled: () => localizationEnabled,
-    isLocalizationFeatureAvailable: () => localizationAvailable,
     toggleLocalization: () => {
       localizationEnabled = !localizationEnabled
     },
@@ -86,7 +84,6 @@ describe('LocalizationController', () => {
 
     localizationEnabled = true
     syncedLocale = undefined
-    localizationAvailable = true
     seenOnAccount = true
     seenOnDevice = false
     preferences.setValue.mockClear()
@@ -171,21 +168,6 @@ describe('LocalizationController', () => {
     expect(localizationStore.availableLocales).toEqual(catalog)
   })
 
-  it('loads the language list once the feature becomes available', async () => {
-    localizationEnabled = false
-    localizationAvailable = false
-    mockLocaleService.getAvailableLocales.mockClear()
-
-    const controller = await bootWithLocale('en_US')
-    expect(mockLocaleService.getAvailableLocales).not.toHaveBeenCalled()
-
-    localizationAvailable = true
-    await sendEvent(controller, ApplicationEvent.FeaturesAvailabilityChanged)
-    await flushPromises()
-
-    expect(localizationStore.availableLocales).toEqual(catalog)
-  })
-
   it('keeps the saved language and reports an error when the catalog fails to load', async () => {
     persistLocale('fr_FR')
     mockLocaleService.getAvailableLocales.mockRejectedValue(new Error('offline'))
@@ -234,9 +216,8 @@ describe('LocalizationController', () => {
       return controller
     }
 
-    const signInAndGainAccess = async (controller: LocalizationController) => {
+    const signIn = async (controller: LocalizationController) => {
       await sendEvent(controller, ApplicationEvent.SignedIn)
-      localizationAvailable = true
       await sendEvent(controller, ApplicationEvent.FeaturesAvailabilityChanged)
     }
 
@@ -262,10 +243,9 @@ describe('LocalizationController', () => {
     })
 
     it('does not open on sign in when the synced pref says it was already seen', async () => {
-      localizationAvailable = false
       const controller = await launch()
 
-      await signInAndGainAccess(controller)
+      await signIn(controller)
       expect(controller.labsSpotlightOpen).toBe(false)
 
       seenOnAccount = true
@@ -276,10 +256,9 @@ describe('LocalizationController', () => {
     })
 
     it('opens after the first sync following sign in when it has not been seen', async () => {
-      localizationAvailable = false
       const controller = await launch()
 
-      await signInAndGainAccess(controller)
+      await signIn(controller)
       expect(controller.labsSpotlightOpen).toBe(false)
 
       await sendEvent(controller, ApplicationEvent.CompletedFullSync)
