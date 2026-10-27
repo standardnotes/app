@@ -1,0 +1,25 @@
+packages/web/src/javascripts/Application/DevMode.ts
+  h_ddce7f0538b395 6
+packages/web/src/javascripts/Components/Preferences/Panes/General/General.tsx
+  h_ddce7f0538b395 25
+packages/web/src/javascripts/Controllers/FeaturesController.ts
+  h_ddce7f0538b395 16
+packages/web/src/javascripts/Controllers/Localization/LocalizationController.spec.ts
+  h_ddce7f0538b395 219,248,261
+packages/web/src/javascripts/Controllers/Localization/LocalizationController.ts
+  h_ddce7f0538b395 274
+packages/web/src/javascripts/FeatureTrunk.ts
+  h_ddce7f0538b395 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "3d6efe80f7202f35e05817824e9de7af2f187279",
+  "prompts": {},
+  "humans": {
+    "h_ddce7f0538b395": {
+      "author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
