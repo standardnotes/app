@@ -1,0 +1,64 @@
+packages/web/src/javascripts/Application/DevMode.ts
+  s_b54685416f9c4f::t_067c0abb8216db 6
+packages/web/src/javascripts/Controllers/FeaturesController.ts
+  s_b54685416f9c4f::t_02852e42624d91 16
+packages/web/src/javascripts/FeatureTrunk.ts
+  s_b54685416f9c4f::t_e87f64185535d1 13
+packages/web/src/javascripts/Components/Preferences/Panes/General/General.tsx
+  s_b54685416f9c4f::t_81a32dae1d4bf0 25
+packages/web/src/javascripts/Controllers/Localization/LocalizationController.ts
+  s_b54685416f9c4f::t_a83745a6a6ece2 274
+packages/web/src/javascripts/Controllers/Localization/LocalizationController.spec.ts
+  s_b54685416f9c4f::t_3b261f68dfe83d 261
+  s_b54685416f9c4f::t_014b0179d7caa6 219
+  s_b54685416f9c4f::t_8e531f4dc79a37 248
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "be488bffdf1fdd1337ce7db752b0ae9d759b40fd",
+  "prompts": {},
+  "sessions": {
+    "s_b54685416f9c4f": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "4bff6e41-5176-4fa5-bdf0-7f19f52c5700",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 48,
+        "output_tokens": 9509,
+        "cache_creation_input_tokens": 47396,
+        "cache_read_input_tokens": 834512
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 48,
+          "output_tokens": 9509,
+          "cache_creation_input_tokens": 47396,
+          "cache_read_input_tokens": 834512
+        }
+      },
+      "tool_uses": {
+        "grep": 9,
+        "read": 15,
+        "shell": 5,
+        "write": 16
+      }
+    },
+    "by_prompt": {
+      "s_b54685416f9c4f": {
+        "input_tokens": 48,
+        "output_tokens": 9509,
+        "cache_creation_input_tokens": 47396,
+        "cache_read_input_tokens": 834512
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
