@@ -18,15 +18,18 @@ export function NoteScrollToBottomController({ editor, moveCaret }: Props) {
   const keyboardService = useKeyboardService()
   const isButtonEnabled = usePreference(PrefKey.ShowScrollToBottomButton)
   const [showButton, setShowButton] = useState(false)
+  const [bottomInset, setBottomInset] = useState(0)
 
   useEffect(() => {
     setShowButton(false)
+    setBottomInset(0)
     if (!editor) {
       return
     }
 
-    return editor.observeScrollState(({ canScroll, isAtBottom }) => {
+    return editor.observeScrollState(({ canScroll, isAtBottom, bottomInset = 0 }) => {
       setShowButton(canScroll && !isAtBottom)
+      setBottomInset(bottomInset)
     })
   }, [editor])
 
@@ -54,7 +57,7 @@ export function NoteScrollToBottomController({ editor, moveCaret }: Props) {
     return null
   }
 
-  return <ScrollToBottomButton onClick={() => editor.scrollToEnd({ moveCaret })} />
+  return <ScrollToBottomButton bottomInset={bottomInset} onClick={() => editor.scrollToEnd({ moveCaret })} />
 }
 
 /** Memoized per viewer, so the controller doesn't resubscribe on every render */

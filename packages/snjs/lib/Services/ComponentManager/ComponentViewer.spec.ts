@@ -40,12 +40,22 @@ describe('ComponentViewer scroll to end', () => {
     const observer = jest.fn()
     viewer.addScrollStateObserver(observer)
 
-    viewer.handleMessage(scrollStateMessage({ canScroll: true, isAtBottom: false }))
-    expect(observer).toHaveBeenCalledWith({ canScroll: true, isAtBottom: false })
+    viewer.handleMessage(scrollStateMessage({ canScroll: true, isAtBottom: false, bottomInset: 40 }))
+    expect(observer).toHaveBeenCalledWith({ canScroll: true, isAtBottom: false, bottomInset: 40 })
 
     const lateObserver = jest.fn()
     viewer.addScrollStateObserver(lateObserver)
-    expect(lateObserver).toHaveBeenCalledWith({ canScroll: true, isAtBottom: false })
+    expect(lateObserver).toHaveBeenCalledWith({ canScroll: true, isAtBottom: false, bottomInset: 40 })
+  })
+
+  it('defaults the bottom inset to none for components that do not report it', () => {
+    const { viewer } = createViewer()
+    const observer = jest.fn()
+    viewer.addScrollStateObserver(observer)
+
+    viewer.handleMessage(scrollStateMessage({ canScroll: true, isAtBottom: false }))
+
+    expect(observer).toHaveBeenCalledWith({ canScroll: true, isAtBottom: false, bottomInset: 0 })
   })
 
   it('does not call observers before the component reports a scroll state', () => {

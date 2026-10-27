@@ -634,12 +634,12 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   private handleScrollStateMessage(message: ComponentMessage): void {
-    const { canScroll, isAtBottom } = message.data
+    const { canScroll, isAtBottom, bottomInset } = message.data
     if (typeof canScroll !== 'boolean' || typeof isAtBottom !== 'boolean') {
       return
     }
 
-    this.scrollState = { canScroll, isAtBottom }
+    this.scrollState = { canScroll, isAtBottom, bottomInset: typeof bottomInset === 'number' ? bottomInset : 0 }
 
     for (const observer of this.scrollStateObservers) {
       observer(this.scrollState)
