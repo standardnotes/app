@@ -1,0 +1,63 @@
+packages/web/src/javascripts/Controllers/Localization/LocalizationController.spec.ts
+  s_4147821fd1ca31::t_1636c47c36a311 246-257
+packages/web/src/javascripts/Utils/DateLocale.ts
+  s_4147821fd1ca31::t_b5aa3328395a99 55-58
+packages/i18n/src/DateLocaleResolver.spec.ts
+  s_4147821fd1ca31::t_0e7e8ba506dbd3 29-56,58-83
+  s_4147821fd1ca31::t_49f15834cd2a81 1
+packages/i18n/src/DateLocaleResolver.ts
+  s_4147821fd1ca31::t_26da71db4b05e3 18-19,26-48
+  s_4147821fd1ca31::t_4759b09b727667 63
+  s_4147821fd1ca31::t_c77c28fca33ea3 49
+packages/web/src/javascripts/Utils/LocalizedDateFormat.spec.ts
+  s_4147821fd1ca31::t_8a1b39fc5d2a5d 93-104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "2680d21204c4cad6f40cb7759c7578d6afd4d4c5",
+  "prompts": {},
+  "sessions": {
+    "s_4147821fd1ca31": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "9462a16f-d95c-412a-b623-a40a660c9e53",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 126,
+        "output_tokens": 48219,
+        "cache_creation_input_tokens": 300962,
+        "cache_read_input_tokens": 3924534
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 126,
+          "output_tokens": 48219,
+          "cache_creation_input_tokens": 300962,
+          "cache_read_input_tokens": 3924534
+        }
+      },
+      "tool_uses": {
+        "grep": 8,
+        "read": 14,
+        "shell": 17,
+        "write": 32
+      }
+    },
+    "by_prompt": {
+      "s_4147821fd1ca31": {
+        "input_tokens": 126,
+        "output_tokens": 48219,
+        "cache_creation_input_tokens": 300962,
+        "cache_read_input_tokens": 3924534
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
