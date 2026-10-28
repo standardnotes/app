@@ -243,6 +243,18 @@ describe('LocalizationController', () => {
     expect(getPersistedLocale()).toBeUndefined()
   })
 
+  it('can toggle localization on and off again without reloading', async () => {
+    localizationEnabled = false
+    const controller = await bootWithLocale('en_US')
+
+    expect(await controller.toggleLocalization(Promise.resolve())).toBe(false)
+    expect(await controller.toggleLocalization(Promise.resolve())).toBe(false)
+
+    expect(reload).not.toHaveBeenCalled()
+    expect(localizationEnabled).toBe(false)
+    expect(getPersistedLocale()).toBeUndefined()
+  })
+
   describe('labs spotlight', () => {
     beforeEach(() => {
       localizationEnabled = false

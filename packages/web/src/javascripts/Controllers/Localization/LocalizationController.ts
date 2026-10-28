@@ -200,9 +200,7 @@ export class LocalizationController extends AbstractViewController implements In
 
     if (locale === activeLocale) {
       this.isTogglingLocalization = false
-      this.initializedWithLocalizationDisabled = false
       await this.initializeLocalization()
-      this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
       return false
     }
 
