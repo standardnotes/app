@@ -222,6 +222,27 @@ describe('LocalizationController', () => {
     expect(sessionStorage.getItem('sn-pending-locale-switch')).toBe('fr_FR')
   })
 
+  it('does not reload when turning localization on while already in the resolved language', async () => {
+    localizationEnabled = false
+    const controller = await bootWithLocale('en_US')
+
+    expect(await controller.toggleLocalization(Promise.resolve())).toBe(false)
+
+    expect(reload).not.toHaveBeenCalled()
+    expect(getPersistedLocale()).toBe('en_US')
+    expect(localizationStore.availableLocales).toEqual(catalog)
+  })
+
+  it('does not reload when turning localization off while already in English', async () => {
+    localizationEnabled = true
+    const controller = await bootWithLocale('en_US')
+
+    expect(await controller.toggleLocalization(Promise.resolve())).toBe(false)
+
+    expect(reload).not.toHaveBeenCalled()
+    expect(getPersistedLocale()).toBeUndefined()
+  })
+
   describe('labs spotlight', () => {
     beforeEach(() => {
       localizationEnabled = false

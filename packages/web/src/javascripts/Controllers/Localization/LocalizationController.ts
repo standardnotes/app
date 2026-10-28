@@ -178,8 +178,13 @@ export class LocalizationController extends AbstractViewController implements In
     return true
   }
 
-  async toggleLocalization(waitBeforeReload: Promise<void>): Promise<void> {
+  /**
+   * Resolves to `true` if the page is reloading, or `false` if the toggle was applied in place because the app is
+   * already displayed in the target language.
+   */
+  async toggleLocalization(waitBeforeReload: Promise<void>): Promise<boolean> {
     this.isTogglingLocalization = true
+    const activeLocale = localizationStore.currentLocale
     this.featuresController.toggleLocalization()
 
     const locale = this.featuresController.isLocalizationEnabled()
@@ -188,11 +193,21 @@ export class LocalizationController extends AbstractViewController implements In
 
     await waitBeforeReload
 
-    if (locale) {
-      this.reloadAndShowToast(locale)
-    } else {
+    if (!locale) {
       window.location.reload()
+      return true
     }
+
+    if (locale === activeLocale) {
+      this.isTogglingLocalization = false
+      this.initializedWithLocalizationDisabled = false
+      await this.initializeLocalization()
+      this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
+      return false
+    }
+
+    this.reloadAndShowToast(locale)
+    return true
   }
 
   private async enableLocalization(): Promise<string | undefined> {

@@ -46,7 +46,12 @@ const Language: FunctionComponent<Props> = ({ application }) => {
     const switchAnimation = new Promise<void>((resolve) => {
       window.setTimeout(resolve, LABS_SWITCH_ANIMATION_MS)
     })
-    void application.localizationController.toggleLocalization(switchAnimation)
+    void application.localizationController.toggleLocalization(switchAnimation).then((isReloading) => {
+      if (!isReloading) {
+        isTogglingRef.current = false
+        setIsToggling(false)
+      }
+    })
   }, [application])
 
   const showLanguageDropdown = labsSwitchChecked && localeItems.length > 0
