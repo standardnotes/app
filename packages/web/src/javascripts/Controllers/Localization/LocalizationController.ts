@@ -42,7 +42,6 @@ export class LocalizationController extends AbstractViewController implements In
 
   constructor(
     private readonly featuresController: FeaturesController,
-    private readonly getSavedLocale: () => string | undefined,
     private readonly preferences: PreferenceServiceInterface,
     private readonly preferencesController: PreferencesController,
     private readonly routeService: RouteServiceInterface,
@@ -167,13 +166,6 @@ export class LocalizationController extends AbstractViewController implements In
     }
 
     persistLocale(resolvedLocale)
-
-    try {
-      await this.preferences.setValue(PrefKey.Locale, resolvedLocale)
-    } catch (error) {
-      console.error('Failed to sync locale preference', error)
-    }
-
     this.reloadAndShowToast(resolvedLocale)
     return true
   }
@@ -187,48 +179,18 @@ export class LocalizationController extends AbstractViewController implements In
     const activeLocale = localizationStore.currentLocale
     this.featuresController.toggleLocalization()
 
-    const locale = this.featuresController.isLocalizationEnabled()
-      ? await this.enableLocalization()
-      : await this.disableLocalization()
+    if (this.featuresController.isLocalizationEnabled()) {
+      try {
+        await this.loadLocale(getPersistedLocale())
+      } catch (error) {
+        console.error('Failed to load locale before reload', error)
+      }
+    }
 
     await waitBeforeReload
 
-    if (!locale) {
-      window.location.reload()
-      return true
-    }
-
-    if (locale === activeLocale) {
-      this.isTogglingLocalization = false
-      await this.initializeLocalization()
-      return false
-    }
-
-    this.reloadAndShowToast(locale)
-    return true
-  }
-
-  private async enableLocalization(): Promise<string | undefined> {
-    try {
-      const locale = await this.loadLocale(this.getSavedLocale())
-      persistLocale(locale)
-      return locale
-    } catch (error) {
-      console.error('Failed to load locale before reload', error)
-      return undefined
-    }
-  }
-
-  private async disableLocalization(): Promise<string> {
-    clearPersistedLocale()
-
-    try {
-      await this.preferences.setValue(PrefKey.Locale, PrefDefaults[PrefKey.Locale])
-    } catch (error) {
-      console.error('Failed to clear locale preference', error)
-    }
-
-    return DEFAULT_LOCALE
+    this.isTogglingLocalization = false
+    return this.initializeLocalization(activeLocale)
   }
 
   private reloadAndShowToast(locale: string): void {
@@ -300,32 +262,35 @@ export class LocalizationController extends AbstractViewController implements In
     }
   }
 
-  private async initializeLocalization(): Promise<void> {
+  /**
+   * Resolves to `true` if the page is reloading. Pass `activeLocale` when a locale was activated in memory ahead of a
+   * reload, so it isn't mistaken for the one displayed.
+   */
+  private async initializeLocalization(activeLocale = getWebLocaleService().getCurrentLocale()): Promise<boolean> {
     if (this.isTogglingLocalization) {
-      return
+      return false
     }
 
     void this.preloadAvailableLocales()
 
     const localizationEnabled = this.featuresController.isLocalizationEnabled()
     if (!localizationEnabled && this.initializedWithLocalizationDisabled) {
-      return
+      return false
     }
     this.initializedWithLocalizationDisabled = !localizationEnabled
 
     const localeService = getWebLocaleService()
-    const activeLocale = localeService.getCurrentLocale()
 
     try {
       const catalog = localizationEnabled ? await localeService.getAvailableLocales() : undefined
       const locale = catalog
-        ? resolveLocale({ savedLocale: this.getSavedLocale(), availableLocales: Object.keys(catalog) })
+        ? resolveLocale({ savedLocale: getPersistedLocale(), availableLocales: Object.keys(catalog) })
         : DEFAULT_LOCALE
 
       const persistedLocaleChanged = this.updatePersistedLocale(localizationEnabled, locale)
       if (locale !== activeLocale && (persistedLocaleChanged || !localizationEnabled)) {
         this.reloadAndShowToast(locale)
-        return
+        return true
       }
 
       if (catalog) {
@@ -343,6 +308,7 @@ export class LocalizationController extends AbstractViewController implements In
     await this.syncDateFormatting(activeLocale)
     localizationStore.setCurrentLocale(activeLocale)
     this.syncNativeShellLocalization(localizationEnabled, activeLocale)
+    return false
   }
 
   private syncNativeShellLocalization(localizationEnabled: boolean, locale: string): void {

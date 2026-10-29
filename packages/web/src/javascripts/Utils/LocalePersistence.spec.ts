@@ -1,23 +1,24 @@
-import { clearPersistedLocale, getLocaleCookie, LOCALE_COOKIE_NAME, setLocaleCookie } from './LocalePersistence'
+import { clearPersistedLocale, getPersistedLocale, persistLocale } from './LocalePersistence'
 
 describe('LocalePersistence', () => {
-  afterEach(() => {
-    document.cookie = `${LOCALE_COOKIE_NAME}=; path=/; max-age=0`
+  beforeEach(() => {
+    localStorage.clear()
   })
 
-  it('reads and writes the locale cookie', () => {
-    setLocaleCookie('es_LA')
+  it('reads and writes the persisted locale', () => {
+    persistLocale('es_LA')
 
-    expect(getLocaleCookie()).toBe('es_LA')
+    expect(getPersistedLocale()).toBe('es_LA')
   })
 
-  it('returns undefined when the cookie is missing', () => {
-    expect(getLocaleCookie()).toBeUndefined()
+  it('returns undefined when no locale is persisted', () => {
+    expect(getPersistedLocale()).toBeUndefined()
   })
 
-  it('clears the locale cookie', () => {
-    setLocaleCookie('fr_FR')
+  it('clears the persisted locale', () => {
+    persistLocale('fr_FR')
     clearPersistedLocale()
-    expect(getLocaleCookie()).toBeUndefined()
+
+    expect(getPersistedLocale()).toBeUndefined()
   })
 })

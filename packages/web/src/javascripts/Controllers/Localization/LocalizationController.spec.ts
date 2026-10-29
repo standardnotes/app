@@ -28,7 +28,6 @@ describe('LocalizationController', () => {
   const originalLocation = window.location
   let reload: jest.Mock
   let localizationEnabled: boolean
-  let syncedLocale: string | undefined
   let localizationAvailable: boolean
   let seenOnAccount: boolean
   let seenOnDevice: boolean
@@ -55,7 +54,6 @@ describe('LocalizationController', () => {
   const createController = () =>
     new LocalizationController(
       featuresController as never,
-      () => getPersistedLocale() ?? syncedLocale,
       preferences as never,
       {} as never,
       { getRoute: () => ({ type: 'none' }) } as never,
@@ -66,6 +64,10 @@ describe('LocalizationController', () => {
     controller.handleEvent({ type } as InternalEventInterface)
 
   const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0))
+
+  const setBrowserLanguages = (languages: string[]) => {
+    jest.spyOn(window.navigator, 'languages', 'get').mockReturnValue(languages)
+  }
 
   const bootWithLocale = async (locale: string) => {
     mockCurrentLocale = locale
@@ -85,8 +87,8 @@ describe('LocalizationController', () => {
     })
 
     localizationEnabled = true
-    syncedLocale = undefined
     localizationAvailable = true
+    setBrowserLanguages(['en-US'])
     seenOnAccount = true
     seenOnDevice = false
     preferences.setValue.mockClear()
@@ -200,7 +202,7 @@ describe('LocalizationController', () => {
 
   it('reloads once, after the switch animation, when turning localization on', async () => {
     localizationEnabled = false
-    syncedLocale = 'fr_FR'
+    setBrowserLanguages(['fr-FR'])
     const controller = await bootWithLocale('en_US')
 
     let finishAnimation: () => void = () => undefined
