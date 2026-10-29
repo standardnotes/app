@@ -1,0 +1,81 @@
+packages/web/src/javascripts/Utils/LocalePersistence.spec.ts
+  s_c47a7e37a1ca26::t_eb83458b132b00 1,4-5,8-9,11,14-15,18-19,21-22
+packages/web/src/javascripts/Utils/LocalePersistence.ts
+  s_c47a7e37a1ca26::t_641de5cf53e948 4-5,13,15-18,23-26
+packages/web/src/javascripts/Controllers/Localization/LocalizationController.ts
+  s_c47a7e37a1ca26::t_e02dc20194c401 182-187,190,192-193
+  s_c47a7e37a1ca26::t_e7fde3585af2d3 265-268,271,278
+  s_c47a7e37a1ca26::t_2d79c6563e0984 269
+  s_c47a7e37a1ca26::t_00fe2f3916d2f2 293
+  s_c47a7e37a1ca26::t_88c6dcb8726467 287
+  s_c47a7e37a1ca26::t_2f454035e666a6 311
+packages/web/src/javascripts/Controllers/Localization/LocalizationController.spec.ts
+  s_c47a7e37a1ca26::t_4b85e3a0c7c55e 68-71
+  s_c47a7e37a1ca26::t_4503d4635bb7b5 205
+  s_c47a7e37a1ca26::t_519d81f1bc0178 91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "10fb61c0cf4358dbe1cd1a573e077ef11e3ad8e9",
+  "prompts": {},
+  "sessions": {
+    "s_c47a7e37a1ca26": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "43582a09-c166-48f0-a46b-89f05e8fe2f1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 51469,
+        "output_tokens": 84332,
+        "cache_creation_input_tokens": 412595,
+        "cache_read_input_tokens": 10045314
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 51469,
+          "output_tokens": 84332,
+          "cache_creation_input_tokens": 412595,
+          "cache_read_input_tokens": 10045314
+        }
+      },
+      "tool_uses": {
+        "grep": 38,
+        "read": 25,
+        "shell": 25,
+        "write": 25
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 92,
+        "output_tokens": 50242,
+        "cache_creation_input_tokens": 568682,
+        "cache_read_input_tokens": 6417692
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5-medium": {
+          "input_tokens": 92,
+          "output_tokens": 50242,
+          "cache_creation_input_tokens": 568682,
+          "cache_read_input_tokens": 6417692
+        }
+      }
+    },
+    "by_prompt": {
+      "s_c47a7e37a1ca26": {
+        "input_tokens": 51469,
+        "output_tokens": 84332,
+        "cache_creation_input_tokens": 412595,
+        "cache_read_input_tokens": 10045314
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
