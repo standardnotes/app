@@ -11,5 +11,14 @@ packages/web/src/javascripts/Components/Preferences/Panes/Account/Files.tsx
       "author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 1,
+    "unknown_additions": 0,
+    "ai_additions": 0,
+    "ai_accepted": 0,
+    "git_diff_deleted_lines": 3,
+    "git_diff_added_lines": 1,
+    "tool_model_breakdown": {}
+  },
   "proton_build": "1.7.6-proton.8"
 }
