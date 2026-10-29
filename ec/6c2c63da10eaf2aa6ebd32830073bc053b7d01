@@ -1,0 +1,15 @@
+packages/web/src/javascripts/Components/Preferences/Panes/Account/Files.tsx
+  h_ddce7f0538b395 68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "ec6c2c63da10eaf2aa6ebd32830073bc053b7d01",
+  "prompts": {},
+  "humans": {
+    "h_ddce7f0538b395": {
+      "author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
