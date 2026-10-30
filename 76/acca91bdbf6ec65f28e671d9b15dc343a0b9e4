@@ -1,0 +1,66 @@
+packages/web/src/javascripts/Utils/LocalePersistence.ts
+  s_c47a7e37a1ca26::t_3071552bf06d92 3-9,11,18,20,26,28
+packages/web/src/javascripts/Utils/LocalePersistence.spec.ts
+  s_c47a7e37a1ca26::t_d29ef13c4f95ea 4-5,11,13,17,21-22,24
+packages/web/src/javascripts/Application/WebApplicationGroup.ts
+  s_c47a7e37a1ca26::t_62cc4bd0423b2f 42
+  s_c47a7e37a1ca26::t_dc343f62a1fd78 5
+packages/web/src/javascripts/Controllers/Localization/WebLocaleService.ts
+  s_c47a7e37a1ca26::t_0be538ba6d91a1 77-78
+packages/web/src/javascripts/Controllers/Localization/LocalizationController.spec.ts
+  s_c47a7e37a1ca26::t_d29ef13c4f95ea 9-10,59,104,119,130,139,146,149,163,168,195,201,226,237,248,260
+packages/web/src/javascripts/Application/Dependencies/WebDependencies.ts
+  s_c47a7e37a1ca26::t_7eb80da1b289d1 321
+packages/web/src/javascripts/Controllers/Localization/LocalizationController.ts
+  s_c47a7e37a1ca26::t_e43aeb2e9348da 288-291
+  s_c47a7e37a1ca26::t_b711e8151d0c6e 45,88,149,169,185,232,238,245
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "76acca91bdbf6ec65f28e671d9b15dc343a0b9e4",
+  "prompts": {},
+  "sessions": {
+    "s_c47a7e37a1ca26": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "43582a09-c166-48f0-a46b-89f05e8fe2f1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 104,
+        "output_tokens": 32737,
+        "cache_creation_input_tokens": 721578,
+        "cache_read_input_tokens": 8543965
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 104,
+          "output_tokens": 32737,
+          "cache_creation_input_tokens": 721578,
+          "cache_read_input_tokens": 8543965
+        }
+      },
+      "tool_uses": {
+        "grep": 16,
+        "read": 11,
+        "shell": 9,
+        "write": 7
+      }
+    },
+    "by_prompt": {
+      "s_c47a7e37a1ca26": {
+        "input_tokens": 104,
+        "output_tokens": 32737,
+        "cache_creation_input_tokens": 721578,
+        "cache_read_input_tokens": 8543965
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
