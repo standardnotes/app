@@ -1,0 +1,54 @@
+.github/workflows/mobile.release.closed-beta.yml
+  s_5c7f339d16dbeb::t_6dfd4602a50d22 16
+.github/workflows/mobile.release.prod.yml
+  s_5c7f339d16dbeb::t_3668e5b495ad31 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "11432ca3b443f1b520430ac28c70678e0bcfd425",
+  "prompts": {},
+  "sessions": {
+    "s_5c7f339d16dbeb": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "f053f73c-b91a-4c89-b416-25961e14b36b",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 14098,
+        "output_tokens": 2418,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 119936
+      },
+      "by_tool_model": {
+        "cursor::default": {
+          "input_tokens": 14098,
+          "output_tokens": 2418,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 119936
+        }
+      },
+      "tool_uses": {
+        "grep": 5,
+        "read": 3,
+        "shell": 3,
+        "write": 2
+      }
+    },
+    "by_prompt": {
+      "s_5c7f339d16dbeb": {
+        "input_tokens": 14098,
+        "output_tokens": 2418,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 119936
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
