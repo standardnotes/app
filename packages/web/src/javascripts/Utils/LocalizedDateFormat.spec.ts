@@ -90,6 +90,18 @@ describe('LocalizedDateFormat', () => {
     })
   })
 
+  it("formats dates in the user's regional variant of the app language", async () => {
+    const languages = jest.spyOn(navigator, 'languages', 'get').mockReturnValue(['fr-CA', 'fr-FR'])
+
+    try {
+      await configureDateLocale({ appLocale: 'fr_FR', localizationEnabled: true })
+
+      expect(formatDefaultDateTime(sampleDate)).toBe(sampleDate.toLocaleString('fr-CA'))
+    } finally {
+      languages.mockRestore()
+    }
+  })
+
   it('capitalizes the first letter for sentence-start titles', async () => {
     await configureDateLocale({ appLocale: 'fr_FR', localizationEnabled: true })
 

@@ -10,6 +10,8 @@ import { syncMobileNativeLocalization } from '@/Application/Device/SyncMobileNat
 import {
   clearPersistedLocale,
   getPersistedLocale,
+  hasSeenLabsSpotlight,
+  markLabsSpotlightSeen,
   persistLocale,
   setPendingLocaleSwitch,
   takePendingLocaleSwitch,
@@ -24,26 +26,18 @@ import {
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
-  LocalPrefDefaults,
-  LocalPrefKey,
-  PrefDefaults,
-  PrefKey,
-  PreferenceServiceInterface,
 } from '@standardnotes/snjs'
 
 export class LocalizationController extends AbstractViewController implements InternalEventHandlerInterface {
   labsSpotlightOpen = false
 
-  /** The synced "seen" pref is only reliable after a full sync, both at launch and after signing in. */
-  private syncedSinceSignIn = false
   private initializedWithLocalizationDisabled = false
   private isTogglingLocalization = false
   private availableLocalesRequested = false
 
   constructor(
     private readonly featuresController: FeaturesController,
-    private readonly getSavedLocale: () => string | undefined,
-    private readonly preferences: PreferenceServiceInterface,
+    private readonly workspaceIdentifier: string,
     private readonly preferencesController: PreferencesController,
     private readonly routeService: RouteServiceInterface,
     eventBus: InternalEventBusInterface,
@@ -58,42 +52,25 @@ export class LocalizationController extends AbstractViewController implements In
 
     eventBus.addEventHandler(this, ApplicationEvent.FeaturesAvailabilityChanged)
     eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
-    eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
     eventBus.addEventHandler(this, ApplicationEvent.SignedOut)
-    eventBus.addEventHandler(this, ApplicationEvent.SignedIn)
-    eventBus.addEventHandler(this, ApplicationEvent.CompletedFullSync)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
       case ApplicationEvent.LocalDataLoaded:
-        await this.initializeLocalization()
-        break
       case ApplicationEvent.FeaturesAvailabilityChanged:
-      case ApplicationEvent.PreferencesChanged:
         await this.initializeLocalization()
         this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
         break
-      case ApplicationEvent.SignedIn:
-        this.syncedSinceSignIn = false
-        break
-      case ApplicationEvent.CompletedFullSync:
-        if (!this.syncedSinceSignIn) {
-          this.syncedSinceSignIn = true
-          this.syncLabsSpotlightPref()
-          this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
-        }
-        break
       case ApplicationEvent.SignedOut:
-        clearPersistedLocale()
+        clearPersistedLocale(this.workspaceIdentifier)
         break
     }
   }
 
   dismissLabsSpotlight = (): void => {
     this.setLabsSpotlightOpen(false)
-    this.preferences.setLocalValue(LocalPrefKey.HasSeenLocalizationLabsSpotlight, true)
-    void this.preferences.setValue(PrefKey.HasSeenLocalizationLabsSpotlight, true)
+    markLabsSpotlightSeen()
   }
 
   openLanguageSettingsFromLabsSpotlight = (): void => {
@@ -101,39 +78,13 @@ export class LocalizationController extends AbstractViewController implements In
     this.preferencesController.openPreferencesAndScrollToSection(ElementIds.LanguagePreferencesSection, 'general')
   }
 
-  private hasSeenLabsSpotlightOnAccount(): boolean {
-    return this.preferences.getValue(
-      PrefKey.HasSeenLocalizationLabsSpotlight,
-      PrefDefaults[PrefKey.HasSeenLocalizationLabsSpotlight],
-    )
-  }
-
-  /** Survives signing in, when the account's synced prefs replace the ones from the signed-out session. */
-  private hasSeenLabsSpotlightOnDevice(): boolean {
-    return this.preferences.getLocalValue(
-      LocalPrefKey.HasSeenLocalizationLabsSpotlight,
-      LocalPrefDefaults[LocalPrefKey.HasSeenLocalizationLabsSpotlight],
-    )
-  }
-
-  private syncLabsSpotlightPref(): void {
-    if (this.hasSeenLabsSpotlightOnDevice() && !this.hasSeenLabsSpotlightOnAccount()) {
-      void this.preferences.setValue(PrefKey.HasSeenLocalizationLabsSpotlight, true)
-    }
-  }
-
   private shouldShowLabsSpotlight(): boolean {
-    if (!this.syncedSinceSignIn) {
-      return false
-    }
-
     const routeType = this.routeService.getRoute().type
 
     return (
       this.featuresController.isLocalizationFeatureAvailable() &&
       !this.featuresController.isLocalizationEnabled() &&
-      !this.hasSeenLabsSpotlightOnAccount() &&
-      !this.hasSeenLabsSpotlightOnDevice() &&
+      !hasSeenLabsSpotlight() &&
       routeType !== RouteType.Purchase &&
       routeType !== RouteType.Settings
     )
@@ -146,7 +97,7 @@ export class LocalizationController extends AbstractViewController implements In
   }
 
   async changeLocaleAndReload(locale: string): Promise<boolean> {
-    if (locale === localizationStore.currentLocale && locale === getPersistedLocale()) {
+    if (locale === localizationStore.currentLocale && locale === getPersistedLocale(this.workspaceIdentifier)) {
       return false
     }
 
@@ -166,56 +117,32 @@ export class LocalizationController extends AbstractViewController implements In
       return false
     }
 
-    persistLocale(resolvedLocale)
-
-    try {
-      await this.preferences.setValue(PrefKey.Locale, resolvedLocale)
-    } catch (error) {
-      console.error('Failed to sync locale preference', error)
-    }
-
+    persistLocale(this.workspaceIdentifier, resolvedLocale)
     this.reloadAndShowToast(resolvedLocale)
     return true
   }
 
-  async toggleLocalization(waitBeforeReload: Promise<void>): Promise<void> {
+  /**
+   * Resolves to `true` if the page is reloading, or `false` if the toggle was applied in place because the app is
+   * already displayed in the target language.
+   */
+  async toggleLocalization(waitBeforeReload: Promise<void>): Promise<boolean> {
     this.isTogglingLocalization = true
+    const activeLocale = localizationStore.currentLocale
     this.featuresController.toggleLocalization()
 
-    const locale = this.featuresController.isLocalizationEnabled()
-      ? await this.enableLocalization()
-      : await this.disableLocalization()
+    if (this.featuresController.isLocalizationEnabled()) {
+      try {
+        await this.loadLocale(getPersistedLocale(this.workspaceIdentifier))
+      } catch (error) {
+        console.error('Failed to load locale before reload', error)
+      }
+    }
 
     await waitBeforeReload
 
-    if (locale) {
-      this.reloadAndShowToast(locale)
-    } else {
-      window.location.reload()
-    }
-  }
-
-  private async enableLocalization(): Promise<string | undefined> {
-    try {
-      const locale = await this.loadLocale(this.getSavedLocale())
-      persistLocale(locale)
-      return locale
-    } catch (error) {
-      console.error('Failed to load locale before reload', error)
-      return undefined
-    }
-  }
-
-  private async disableLocalization(): Promise<string> {
-    clearPersistedLocale()
-
-    try {
-      await this.preferences.setValue(PrefKey.Locale, PrefDefaults[PrefKey.Locale])
-    } catch (error) {
-      console.error('Failed to clear locale preference', error)
-    }
-
-    return DEFAULT_LOCALE
+    this.isTogglingLocalization = false
+    return this.initializeLocalization(activeLocale)
   }
 
   private reloadAndShowToast(locale: string): void {
@@ -253,20 +180,20 @@ export class LocalizationController extends AbstractViewController implements In
   }
 
   private updatePersistedLocale(localizationEnabled: boolean, locale: string): boolean {
-    const persistedLocale = getPersistedLocale()
+    const persistedLocale = getPersistedLocale(this.workspaceIdentifier)
 
     if (!localizationEnabled) {
       if (!persistedLocale) {
         return false
       }
-      clearPersistedLocale()
+      clearPersistedLocale(this.workspaceIdentifier)
       return true
     }
 
     if (persistedLocale === locale) {
       return false
     }
-    persistLocale(locale)
+    persistLocale(this.workspaceIdentifier, locale)
     return true
   }
 
@@ -287,32 +214,38 @@ export class LocalizationController extends AbstractViewController implements In
     }
   }
 
-  private async initializeLocalization(): Promise<void> {
+  /**
+   * Resolves to `true` if the page is reloading. Pass `activeLocale` when a locale was activated in memory ahead of a
+   * reload, so it isn't mistaken for the one displayed.
+   */
+  private async initializeLocalization(activeLocale = getWebLocaleService().getCurrentLocale()): Promise<boolean> {
     if (this.isTogglingLocalization) {
-      return
+      return false
     }
 
     void this.preloadAvailableLocales()
 
     const localizationEnabled = this.featuresController.isLocalizationEnabled()
     if (!localizationEnabled && this.initializedWithLocalizationDisabled) {
-      return
+      return false
     }
     this.initializedWithLocalizationDisabled = !localizationEnabled
 
     const localeService = getWebLocaleService()
-    const activeLocale = localeService.getCurrentLocale()
 
     try {
       const catalog = localizationEnabled ? await localeService.getAvailableLocales() : undefined
       const locale = catalog
-        ? resolveLocale({ savedLocale: this.getSavedLocale(), availableLocales: Object.keys(catalog) })
+        ? resolveLocale({
+            savedLocale: getPersistedLocale(this.workspaceIdentifier),
+            availableLocales: Object.keys(catalog),
+          })
         : DEFAULT_LOCALE
 
       const persistedLocaleChanged = this.updatePersistedLocale(localizationEnabled, locale)
       if (locale !== activeLocale && (persistedLocaleChanged || !localizationEnabled)) {
         this.reloadAndShowToast(locale)
-        return
+        return true
       }
 
       if (catalog) {
@@ -330,6 +263,7 @@ export class LocalizationController extends AbstractViewController implements In
     await this.syncDateFormatting(activeLocale)
     localizationStore.setCurrentLocale(activeLocale)
     this.syncNativeShellLocalization(localizationEnabled, activeLocale)
+    return false
   }
 
   private syncNativeShellLocalization(localizationEnabled: boolean, locale: string): void {

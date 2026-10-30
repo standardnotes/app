@@ -65,9 +65,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
           </div>
         ) : (
           <>
-            <div className="mb-1 mt-1">
-              {filesQuotaText}
-            </div>
+            <div className="mb-1 mt-1">{filesQuotaText}</div>
             <progress
               className="progress-bar w-full"
               aria-label={c('B6.Preferences.Account.Label').t`Files storage used`}
