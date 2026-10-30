@@ -1,4 +1,5 @@
 const PENDING_LOCALE_SWITCH_KEY = 'sn-pending-locale-switch'
+const SEEN_LABS_SPOTLIGHT_KEY = 'sn-has-seen-localization-spotlight'
 
 /** Keyed per workspace, as each workspace has its own Labs setting. */
 function localeStorageKey(workspaceIdentifier: string): string {
@@ -28,6 +29,23 @@ export function getPersistedLocale(workspaceIdentifier: string): string | undefi
     return localStorage.getItem(localeStorageKey(workspaceIdentifier)) || undefined
   } catch {
     return undefined
+  }
+}
+
+/** Shared by all workspaces, so dismissing the spotlight once hides it on this device. */
+export function hasSeenLabsSpotlight(): boolean {
+  try {
+    return localStorage.getItem(SEEN_LABS_SPOTLIGHT_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+export function markLabsSpotlightSeen(): void {
+  try {
+    localStorage.setItem(SEEN_LABS_SPOTLIGHT_KEY, 'true')
+  } catch {
+    // Ignore quota / privacy errors
   }
 }
 

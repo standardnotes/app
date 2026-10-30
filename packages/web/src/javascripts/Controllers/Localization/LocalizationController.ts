@@ -10,6 +10,8 @@ import { syncMobileNativeLocalization } from '@/Application/Device/SyncMobileNat
 import {
   clearPersistedLocale,
   getPersistedLocale,
+  hasSeenLabsSpotlight,
+  markLabsSpotlightSeen,
   persistLocale,
   setPendingLocaleSwitch,
   takePendingLocaleSwitch,
@@ -24,18 +26,11 @@ import {
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
-  LocalPrefDefaults,
-  LocalPrefKey,
-  PrefDefaults,
-  PrefKey,
-  PreferenceServiceInterface,
 } from '@standardnotes/snjs'
 
 export class LocalizationController extends AbstractViewController implements InternalEventHandlerInterface {
   labsSpotlightOpen = false
 
-  /** The synced "seen" pref is only reliable after a full sync, both at launch and after signing in. */
-  private syncedSinceSignIn = false
   private initializedWithLocalizationDisabled = false
   private isTogglingLocalization = false
   private availableLocalesRequested = false
@@ -43,7 +38,6 @@ export class LocalizationController extends AbstractViewController implements In
   constructor(
     private readonly featuresController: FeaturesController,
     private readonly workspaceIdentifier: string,
-    private readonly preferences: PreferenceServiceInterface,
     private readonly preferencesController: PreferencesController,
     private readonly routeService: RouteServiceInterface,
     eventBus: InternalEventBusInterface,
@@ -58,31 +52,15 @@ export class LocalizationController extends AbstractViewController implements In
 
     eventBus.addEventHandler(this, ApplicationEvent.FeaturesAvailabilityChanged)
     eventBus.addEventHandler(this, ApplicationEvent.LocalDataLoaded)
-    eventBus.addEventHandler(this, ApplicationEvent.PreferencesChanged)
     eventBus.addEventHandler(this, ApplicationEvent.SignedOut)
-    eventBus.addEventHandler(this, ApplicationEvent.SignedIn)
-    eventBus.addEventHandler(this, ApplicationEvent.CompletedFullSync)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
       case ApplicationEvent.LocalDataLoaded:
-        await this.initializeLocalization()
-        break
       case ApplicationEvent.FeaturesAvailabilityChanged:
-      case ApplicationEvent.PreferencesChanged:
         await this.initializeLocalization()
         this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
-        break
-      case ApplicationEvent.SignedIn:
-        this.syncedSinceSignIn = false
-        break
-      case ApplicationEvent.CompletedFullSync:
-        if (!this.syncedSinceSignIn) {
-          this.syncedSinceSignIn = true
-          this.syncLabsSpotlightPref()
-          this.setLabsSpotlightOpen(this.shouldShowLabsSpotlight())
-        }
         break
       case ApplicationEvent.SignedOut:
         clearPersistedLocale(this.workspaceIdentifier)
@@ -92,8 +70,7 @@ export class LocalizationController extends AbstractViewController implements In
 
   dismissLabsSpotlight = (): void => {
     this.setLabsSpotlightOpen(false)
-    this.preferences.setLocalValue(LocalPrefKey.HasSeenLocalizationLabsSpotlight, true)
-    void this.preferences.setValue(PrefKey.HasSeenLocalizationLabsSpotlight, true)
+    markLabsSpotlightSeen()
   }
 
   openLanguageSettingsFromLabsSpotlight = (): void => {
@@ -101,39 +78,13 @@ export class LocalizationController extends AbstractViewController implements In
     this.preferencesController.openPreferencesAndScrollToSection(ElementIds.LanguagePreferencesSection, 'general')
   }
 
-  private hasSeenLabsSpotlightOnAccount(): boolean {
-    return this.preferences.getValue(
-      PrefKey.HasSeenLocalizationLabsSpotlight,
-      PrefDefaults[PrefKey.HasSeenLocalizationLabsSpotlight],
-    )
-  }
-
-  /** Survives signing in, when the account's synced prefs replace the ones from the signed-out session. */
-  private hasSeenLabsSpotlightOnDevice(): boolean {
-    return this.preferences.getLocalValue(
-      LocalPrefKey.HasSeenLocalizationLabsSpotlight,
-      LocalPrefDefaults[LocalPrefKey.HasSeenLocalizationLabsSpotlight],
-    )
-  }
-
-  private syncLabsSpotlightPref(): void {
-    if (this.hasSeenLabsSpotlightOnDevice() && !this.hasSeenLabsSpotlightOnAccount()) {
-      void this.preferences.setValue(PrefKey.HasSeenLocalizationLabsSpotlight, true)
-    }
-  }
-
   private shouldShowLabsSpotlight(): boolean {
-    if (!this.syncedSinceSignIn) {
-      return false
-    }
-
     const routeType = this.routeService.getRoute().type
 
     return (
       this.featuresController.isLocalizationFeatureAvailable() &&
       !this.featuresController.isLocalizationEnabled() &&
-      !this.hasSeenLabsSpotlightOnAccount() &&
-      !this.hasSeenLabsSpotlightOnDevice() &&
+      !hasSeenLabsSpotlight() &&
       routeType !== RouteType.Purchase &&
       routeType !== RouteType.Settings
     )

@@ -319,7 +319,6 @@ export class WebDependencies extends DependencyContainer {
       return new LocalizationController(
         this.get<FeaturesController>(Web_TYPES.FeaturesController),
         application.identifier,
-        application.preferences,
         this.get<PreferencesController>(Web_TYPES.PreferencesController),
         application.routeService,
         application.events,

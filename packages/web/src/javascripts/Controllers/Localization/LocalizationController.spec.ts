@@ -31,19 +31,6 @@ describe('LocalizationController', () => {
   let reload: jest.Mock
   let localizationEnabled: boolean
   let localizationAvailable: boolean
-  let seenOnAccount: boolean
-  let seenOnDevice: boolean
-
-  const preferences = {
-    getValue: () => seenOnAccount,
-    setValue: jest.fn(async (_key: string, value: boolean) => {
-      seenOnAccount = value
-    }),
-    getLocalValue: () => seenOnDevice,
-    setLocalValue: (_key: string, value: boolean) => {
-      seenOnDevice = value
-    },
-  }
 
   const featuresController = {
     isLocalizationEnabled: () => localizationEnabled,
@@ -57,7 +44,6 @@ describe('LocalizationController', () => {
     new LocalizationController(
       featuresController as never,
       workspaceIdentifier,
-      preferences as never,
       {} as never,
       { getRoute: () => ({ type: 'none' }) } as never,
       { addEventHandler: jest.fn() } as never,
@@ -92,9 +78,7 @@ describe('LocalizationController', () => {
     localizationEnabled = true
     localizationAvailable = true
     setBrowserLanguages(['en-US'])
-    seenOnAccount = true
-    seenOnDevice = false
-    preferences.setValue.mockClear()
+    localStorage.setItem('sn-has-seen-localization-spotlight', 'true')
     mockCurrentLocale = 'en_US'
     mockLocaleService.getAvailableLocales.mockResolvedValue(catalog)
     mockLocaleService.loadAndActivateLocale.mockImplementation(async (locale: string) => {
@@ -263,91 +247,33 @@ describe('LocalizationController', () => {
   describe('labs spotlight', () => {
     beforeEach(() => {
       localizationEnabled = false
-      seenOnAccount = false
+      localStorage.removeItem('sn-has-seen-localization-spotlight')
     })
 
-    const launch = async () => {
+    it('opens on launch when it has not been seen', async () => {
       const controller = await bootWithLocale('en_US')
-      await sendEvent(controller, ApplicationEvent.CompletedFullSync)
-      return controller
-    }
 
-    const signInAndGainAccess = async (controller: LocalizationController) => {
-      await sendEvent(controller, ApplicationEvent.SignedIn)
+      expect(controller.labsSpotlightOpen).toBe(true)
+    })
+
+    it('opens once the feature becomes available, e.g. after signing in', async () => {
+      localizationAvailable = false
+      const controller = await bootWithLocale('en_US')
+      expect(controller.labsSpotlightOpen).toBe(false)
+
       localizationAvailable = true
       await sendEvent(controller, ApplicationEvent.FeaturesAvailabilityChanged)
-    }
-
-    it('opens after the launch sync when it has not been seen', async () => {
-      const controller = await bootWithLocale('en_US')
-      expect(controller.labsSpotlightOpen).toBe(false)
-
-      await sendEvent(controller, ApplicationEvent.CompletedFullSync)
 
       expect(controller.labsSpotlightOpen).toBe(true)
     })
 
-    it('does not open on launch when the launch sync brings a pref seen on another device', async () => {
+    it('stays dismissed when the feature availability is checked again', async () => {
       const controller = await bootWithLocale('en_US')
-      await sendEvent(controller, ApplicationEvent.FeaturesAvailabilityChanged)
-      expect(controller.labsSpotlightOpen).toBe(false)
-
-      seenOnAccount = true
-      await sendEvent(controller, ApplicationEvent.PreferencesChanged)
-      await sendEvent(controller, ApplicationEvent.CompletedFullSync)
-
-      expect(controller.labsSpotlightOpen).toBe(false)
-    })
-
-    it('does not open on sign in when the synced pref says it was already seen', async () => {
-      localizationAvailable = false
-      const controller = await launch()
-
-      await signInAndGainAccess(controller)
-      expect(controller.labsSpotlightOpen).toBe(false)
-
-      seenOnAccount = true
-      await sendEvent(controller, ApplicationEvent.PreferencesChanged)
-      await sendEvent(controller, ApplicationEvent.CompletedFullSync)
-
-      expect(controller.labsSpotlightOpen).toBe(false)
-    })
-
-    it('opens after the first sync following sign in when it has not been seen', async () => {
-      localizationAvailable = false
-      const controller = await launch()
-
-      await signInAndGainAccess(controller)
-      expect(controller.labsSpotlightOpen).toBe(false)
-
-      await sendEvent(controller, ApplicationEvent.CompletedFullSync)
-
-      expect(controller.labsSpotlightOpen).toBe(true)
-    })
-
-    it('keeps a signed-out dismissal when the account prefs replace the local ones on sign in', async () => {
-      const controller = await launch()
       controller.dismissLabsSpotlight()
 
-      await sendEvent(controller, ApplicationEvent.SignedIn)
-      seenOnAccount = false
-      await sendEvent(controller, ApplicationEvent.PreferencesChanged)
-      expect(controller.labsSpotlightOpen).toBe(false)
-
-      preferences.setValue.mockClear()
-      await sendEvent(controller, ApplicationEvent.CompletedFullSync)
+      await sendEvent(controller, ApplicationEvent.FeaturesAvailabilityChanged)
 
       expect(controller.labsSpotlightOpen).toBe(false)
-      expect(preferences.setValue).toHaveBeenCalledWith('hasSeenLocalizationLabsSpotlight', true)
-    })
-
-    it('does not rewrite the account pref when it already says seen', async () => {
-      seenOnDevice = true
-      seenOnAccount = true
-
-      await launch()
-
-      expect(preferences.setValue).not.toHaveBeenCalled()
     })
   })
 })
