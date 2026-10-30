@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.202.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.11...@standardnotes/web@3.202.12) (2026-10-30)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.202.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.10...@standardnotes/web@3.202.11) (2026-10-23)
 
 ### Bug Fixes

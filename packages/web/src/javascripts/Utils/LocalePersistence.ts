@@ -1,98 +1,52 @@
-import { PrefDefaults, PrefKey } from '@standardnotes/snjs'
-
-import { WebApplication } from '@/Application/WebApplication'
-
-export const LOCALE_COOKIE_NAME = 'sn_locale'
-const LOCALE_LOCAL_STORAGE_KEY = 'sn-locale'
 const PENDING_LOCALE_SWITCH_KEY = 'sn-pending-locale-switch'
+const SEEN_LABS_SPOTLIGHT_KEY = 'sn-has-seen-localization-spotlight'
 
-const LOCALE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
-
-function isFileProtocol(): boolean {
-  return typeof window !== 'undefined' && window.location.protocol === 'file:'
+/** Keyed per workspace, as each workspace has its own Labs setting. */
+function localeStorageKey(workspaceIdentifier: string): string {
+  return `sn-locale:${workspaceIdentifier}`
 }
 
-function readLocaleFromLocalStorage(): string | undefined {
+/** Persists the workspace's locale on this device for the next page load. */
+export function persistLocale(workspaceIdentifier: string, locale: string): void {
   try {
-    const value = localStorage.getItem(LOCALE_LOCAL_STORAGE_KEY)
-    return value || undefined
-  } catch {
-    return undefined
-  }
-}
-
-function writeLocaleToLocalStorage(locale: string): void {
-  try {
-    localStorage.setItem(LOCALE_LOCAL_STORAGE_KEY, locale)
+    localStorage.setItem(localeStorageKey(workspaceIdentifier), locale)
   } catch {
     // Ignore quota / privacy errors
   }
 }
 
-export function getLocaleCookie(): string | undefined {
-  if (typeof document === 'undefined') {
+/** Clears the persisted locale so Labs off does not leave a saved language choice. */
+export function clearPersistedLocale(workspaceIdentifier: string): void {
+  try {
+    localStorage.removeItem(localeStorageKey(workspaceIdentifier))
+  } catch {
+    // Ignore privacy errors
+  }
+}
+
+export function getPersistedLocale(workspaceIdentifier: string): string | undefined {
+  try {
+    return localStorage.getItem(localeStorageKey(workspaceIdentifier)) || undefined
+  } catch {
     return undefined
   }
-
-  const prefix = `${LOCALE_COOKIE_NAME}=`
-  const entry = document.cookie
-    .split(';')
-    .map((part) => part.trim())
-    .find((part) => part.startsWith(prefix))
-
-  if (!entry) {
-    return undefined
-  }
-
-  const value = decodeURIComponent(entry.slice(prefix.length))
-  return value || undefined
 }
 
-export function setLocaleCookie(locale: string): void {
-  if (typeof document === 'undefined') {
-    return
+/** Shared by all workspaces, so dismissing the spotlight once hides it on this device. */
+export function hasSeenLabsSpotlight(): boolean {
+  try {
+    return localStorage.getItem(SEEN_LABS_SPOTLIGHT_KEY) === 'true'
+  } catch {
+    return false
   }
-
-  document.cookie = `${LOCALE_COOKIE_NAME}=${encodeURIComponent(
-    locale,
-  )}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE_SECONDS}; samesite=lax`
 }
 
-/** Persists locale for the next page load. Electron `file://` cannot rely on cookies. */
-export function persistLocale(locale: string): void {
-  if (isFileProtocol()) {
-    writeLocaleToLocalStorage(locale)
+export function markLabsSpotlightSeen(): void {
+  try {
+    localStorage.setItem(SEEN_LABS_SPOTLIGHT_KEY, 'true')
+  } catch {
+    // Ignore quota / privacy errors
   }
-
-  setLocaleCookie(locale)
-}
-
-/** Clears bootstrapped locale storage so Labs off does not leave a saved language choice. */
-export function clearPersistedLocale(): void {
-  if (isFileProtocol()) {
-    try {
-      localStorage.removeItem(LOCALE_LOCAL_STORAGE_KEY)
-    } catch {
-      // Ignore quota / privacy errors
-    }
-  }
-
-  if (typeof document === 'undefined') {
-    return
-  }
-
-  document.cookie = `${LOCALE_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`
-}
-
-export function getPersistedLocale(): string | undefined {
-  if (isFileProtocol()) {
-    const storedLocale = readLocaleFromLocalStorage()
-    if (storedLocale) {
-      return storedLocale
-    }
-  }
-
-  return getLocaleCookie()
 }
 
 export function setPendingLocaleSwitch(locale: string): void {
@@ -111,8 +65,4 @@ export function takePendingLocaleSwitch(): string | undefined {
   } catch {
     return undefined
   }
-}
-
-export function getSavedLocaleForApplication(application: WebApplication): string | undefined {
-  return getPersistedLocale() ?? application.getPreference(PrefKey.Locale, PrefDefaults[PrefKey.Locale])
 }

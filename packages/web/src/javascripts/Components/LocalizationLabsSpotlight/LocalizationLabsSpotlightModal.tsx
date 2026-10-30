@@ -32,7 +32,7 @@ const LocalizationLabsSpotlightModal = ({ application }: Props) => {
     <AlertDialog closeDialog={dismiss}>
       <div className="flex items-center justify-between">
         <div className="flex items-start">
-          <Title className="mb-0">{c('B6.Preferences.General.Language.Title').t`Language Settings`}</Title>
+          <Title className="mb-0">{c('B6.Preferences.General.Language.Title').t`Language Preferences`}</Title>
           <Pill style={'success'}>{c('B6.Preferences.General.Label').t`Labs`}</Pill>
         </div>
         <button
@@ -47,14 +47,14 @@ const LocalizationLabsSpotlightModal = ({ application }: Props) => {
       <Text className="mt-3">
         {usesOsLanguage
           ? c('B6.Preferences.General.Language.Spotlight.Info')
-              .t`You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.`
+              .t`You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your OS language is used when no preference is set.`
           : c('B6.Preferences.General.Language.Spotlight.Info')
-              .t`You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.`}
+              .t`You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your browser language is used when no preference is set.`}
       </Text>
       <div className="mt-4 flex flex-col-reverse justify-end gap-2 sm:flex-row">
         <Button onClick={dismiss}>{c('B6.Preferences.General.Language.Spotlight.ActionDismiss').t`Not now`}</Button>
         <Button primary onClick={openLanguageSettings}>
-          {c('B6.Preferences.General.Language.Spotlight.ActionOpen').t`Open language settings`}
+          {c('B6.Preferences.General.Language.Spotlight.ActionOpen').t`Open language preferences`}
         </Button>
       </div>
     </AlertDialog>
