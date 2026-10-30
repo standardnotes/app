@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.212.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.7...@standardnotes/snjs@2.212.8) (2026-10-30)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.212.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.6...@standardnotes/snjs@2.212.7) (2026-10-23)
 
 ### Bug Fixes
