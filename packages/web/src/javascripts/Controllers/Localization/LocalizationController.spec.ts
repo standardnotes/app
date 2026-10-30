@@ -30,11 +30,9 @@ describe('LocalizationController', () => {
   const originalLocation = window.location
   let reload: jest.Mock
   let localizationEnabled: boolean
-  let localizationAvailable: boolean
 
   const featuresController = {
     isLocalizationEnabled: () => localizationEnabled,
-    isLocalizationFeatureAvailable: () => localizationAvailable,
     toggleLocalization: () => {
       localizationEnabled = !localizationEnabled
     },
@@ -76,7 +74,6 @@ describe('LocalizationController', () => {
     })
 
     localizationEnabled = true
-    localizationAvailable = true
     setBrowserLanguages(['en-US'])
     localStorage.setItem('sn-has-seen-localization-spotlight', 'true')
     mockCurrentLocale = 'en_US'
@@ -160,21 +157,6 @@ describe('LocalizationController', () => {
     expect(localizationStore.availableLocales).toEqual(catalog)
   })
 
-  it('loads the language list once the feature becomes available', async () => {
-    localizationEnabled = false
-    localizationAvailable = false
-    mockLocaleService.getAvailableLocales.mockClear()
-
-    const controller = await bootWithLocale('en_US')
-    expect(mockLocaleService.getAvailableLocales).not.toHaveBeenCalled()
-
-    localizationAvailable = true
-    await sendEvent(controller, ApplicationEvent.FeaturesAvailabilityChanged)
-    await flushPromises()
-
-    expect(localizationStore.availableLocales).toEqual(catalog)
-  })
-
   it('keeps the saved language and reports an error when the catalog fails to load', async () => {
     persistLocale(workspaceIdentifier, 'fr_FR')
     mockLocaleService.getAvailableLocales.mockRejectedValue(new Error('offline'))
@@ -252,17 +234,6 @@ describe('LocalizationController', () => {
 
     it('opens on launch when it has not been seen', async () => {
       const controller = await bootWithLocale('en_US')
-
-      expect(controller.labsSpotlightOpen).toBe(true)
-    })
-
-    it('opens once the feature becomes available, e.g. after signing in', async () => {
-      localizationAvailable = false
-      const controller = await bootWithLocale('en_US')
-      expect(controller.labsSpotlightOpen).toBe(false)
-
-      localizationAvailable = true
-      await sendEvent(controller, ApplicationEvent.FeaturesAvailabilityChanged)
 
       expect(controller.labsSpotlightOpen).toBe(true)
     })
