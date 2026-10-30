@@ -6,6 +6,8 @@ import { localizationStore } from './LocalizationStore'
 
 const catalog = { en_US: 'English', fr_FR: 'Français' }
 
+const workspaceIdentifier = 'workspace-1'
+
 let mockCurrentLocale = 'en_US'
 const mockLocaleService = {
   getCurrentLocale: (): string => mockCurrentLocale,
@@ -54,6 +56,7 @@ describe('LocalizationController', () => {
   const createController = () =>
     new LocalizationController(
       featuresController as never,
+      workspaceIdentifier,
       preferences as never,
       {} as never,
       { getRoute: () => ({ type: 'none' }) } as never,
@@ -98,7 +101,7 @@ describe('LocalizationController', () => {
       mockCurrentLocale = locale
     })
 
-    clearPersistedLocale()
+    clearPersistedLocale(workspaceIdentifier)
     sessionStorage.clear()
     localizationStore.setAvailableLocales({})
     localizationStore.setCurrentLocale('en_US')
@@ -113,7 +116,7 @@ describe('LocalizationController', () => {
 
     expect(await controller.changeLocaleAndReload('fr_FR')).toBe(true)
     expect(reload).toHaveBeenCalledTimes(1)
-    expect(getPersistedLocale()).toBe('fr_FR')
+    expect(getPersistedLocale(workspaceIdentifier)).toBe('fr_FR')
     expect(addToast).not.toHaveBeenCalled()
 
     await bootWithLocale('fr_FR')
@@ -124,7 +127,7 @@ describe('LocalizationController', () => {
   })
 
   it('does not show a toast on a regular reload', async () => {
-    persistLocale('fr_FR')
+    persistLocale(workspaceIdentifier, 'fr_FR')
 
     await bootWithLocale('fr_FR')
 
@@ -133,17 +136,17 @@ describe('LocalizationController', () => {
   })
 
   it('keeps the boot language when the saved language failed to load at startup', async () => {
-    persistLocale('fr_FR')
+    persistLocale(workspaceIdentifier, 'fr_FR')
 
     const controller = await bootWithLocale('en_US')
 
     expect(reload).not.toHaveBeenCalled()
     expect(localizationStore.currentLocale).toBe('en_US')
     expect(localizationStore.availableLocales).toEqual(catalog)
-    expect(getPersistedLocale()).toBe('fr_FR')
+    expect(getPersistedLocale(workspaceIdentifier)).toBe('fr_FR')
 
     expect(await controller.changeLocaleAndReload('en_US')).toBe(true)
-    expect(getPersistedLocale()).toBe('en_US')
+    expect(getPersistedLocale(workspaceIdentifier)).toBe('en_US')
     expect(reload).toHaveBeenCalledTimes(1)
   })
 
@@ -157,12 +160,12 @@ describe('LocalizationController', () => {
   })
 
   it('clears the saved language on sign out', async () => {
-    persistLocale('fr_FR')
+    persistLocale(workspaceIdentifier, 'fr_FR')
     const controller = await bootWithLocale('fr_FR')
 
     await sendEvent(controller, ApplicationEvent.SignedOut)
 
-    expect(getPersistedLocale()).toBeUndefined()
+    expect(getPersistedLocale(workspaceIdentifier)).toBeUndefined()
   })
 
   it('loads the language list while localization is still off', async () => {
@@ -189,13 +192,13 @@ describe('LocalizationController', () => {
   })
 
   it('keeps the saved language and reports an error when the catalog fails to load', async () => {
-    persistLocale('fr_FR')
+    persistLocale(workspaceIdentifier, 'fr_FR')
     mockLocaleService.getAvailableLocales.mockRejectedValue(new Error('offline'))
     jest.spyOn(console, 'error').mockImplementation(() => undefined)
 
     await bootWithLocale('fr_FR')
 
-    expect(getPersistedLocale()).toBe('fr_FR')
+    expect(getPersistedLocale(workspaceIdentifier)).toBe('fr_FR')
     expect(localizationStore.availableLocalesFailedToLoad).toBe(true)
     expect(reload).not.toHaveBeenCalled()
   })
@@ -220,7 +223,7 @@ describe('LocalizationController', () => {
 
     await toggling
     expect(reload).toHaveBeenCalledTimes(1)
-    expect(getPersistedLocale()).toBe('fr_FR')
+    expect(getPersistedLocale(workspaceIdentifier)).toBe('fr_FR')
     expect(sessionStorage.getItem('sn-pending-locale-switch')).toBe('fr_FR')
   })
 
@@ -231,7 +234,7 @@ describe('LocalizationController', () => {
     expect(await controller.toggleLocalization(Promise.resolve())).toBe(false)
 
     expect(reload).not.toHaveBeenCalled()
-    expect(getPersistedLocale()).toBe('en_US')
+    expect(getPersistedLocale(workspaceIdentifier)).toBe('en_US')
     expect(localizationStore.availableLocales).toEqual(catalog)
   })
 
@@ -242,7 +245,7 @@ describe('LocalizationController', () => {
     expect(await controller.toggleLocalization(Promise.resolve())).toBe(false)
 
     expect(reload).not.toHaveBeenCalled()
-    expect(getPersistedLocale()).toBeUndefined()
+    expect(getPersistedLocale(workspaceIdentifier)).toBeUndefined()
   })
 
   it('can toggle localization on and off again without reloading', async () => {
@@ -254,7 +257,7 @@ describe('LocalizationController', () => {
 
     expect(reload).not.toHaveBeenCalled()
     expect(localizationEnabled).toBe(false)
-    expect(getPersistedLocale()).toBeUndefined()
+    expect(getPersistedLocale(workspaceIdentifier)).toBeUndefined()
   })
 
   describe('labs spotlight', () => {

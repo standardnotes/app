@@ -1,27 +1,31 @@
-const LOCALE_LOCAL_STORAGE_KEY = 'sn-locale'
 const PENDING_LOCALE_SWITCH_KEY = 'sn-pending-locale-switch'
 
-/** Persists the locale on this device for the next page load. */
-export function persistLocale(locale: string): void {
+/** Keyed per workspace, as each workspace has its own Labs setting. */
+function localeStorageKey(workspaceIdentifier: string): string {
+  return `sn-locale:${workspaceIdentifier}`
+}
+
+/** Persists the workspace's locale on this device for the next page load. */
+export function persistLocale(workspaceIdentifier: string, locale: string): void {
   try {
-    localStorage.setItem(LOCALE_LOCAL_STORAGE_KEY, locale)
+    localStorage.setItem(localeStorageKey(workspaceIdentifier), locale)
   } catch {
     // Ignore quota / privacy errors
   }
 }
 
 /** Clears the persisted locale so Labs off does not leave a saved language choice. */
-export function clearPersistedLocale(): void {
+export function clearPersistedLocale(workspaceIdentifier: string): void {
   try {
-    localStorage.removeItem(LOCALE_LOCAL_STORAGE_KEY)
+    localStorage.removeItem(localeStorageKey(workspaceIdentifier))
   } catch {
     // Ignore privacy errors
   }
 }
 
-export function getPersistedLocale(): string | undefined {
+export function getPersistedLocale(workspaceIdentifier: string): string | undefined {
   try {
-    return localStorage.getItem(LOCALE_LOCAL_STORAGE_KEY) || undefined
+    return localStorage.getItem(localeStorageKey(workspaceIdentifier)) || undefined
   } catch {
     return undefined
   }

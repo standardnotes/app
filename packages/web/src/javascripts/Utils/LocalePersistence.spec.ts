@@ -1,24 +1,26 @@
 import { clearPersistedLocale, getPersistedLocale, persistLocale } from './LocalePersistence'
 
 describe('LocalePersistence', () => {
+  const workspaceIdentifier = 'workspace-1'
+
   beforeEach(() => {
     localStorage.clear()
   })
 
   it('reads and writes the persisted locale', () => {
-    persistLocale('es_LA')
+    persistLocale(workspaceIdentifier, 'es_LA')
 
-    expect(getPersistedLocale()).toBe('es_LA')
+    expect(getPersistedLocale(workspaceIdentifier)).toBe('es_LA')
   })
 
   it('returns undefined when no locale is persisted', () => {
-    expect(getPersistedLocale()).toBeUndefined()
+    expect(getPersistedLocale(workspaceIdentifier)).toBeUndefined()
   })
 
   it('clears the persisted locale', () => {
-    persistLocale('fr_FR')
-    clearPersistedLocale()
+    persistLocale(workspaceIdentifier, 'fr_FR')
+    clearPersistedLocale(workspaceIdentifier)
 
-    expect(getPersistedLocale()).toBeUndefined()
+    expect(getPersistedLocale(workspaceIdentifier)).toBeUndefined()
   })
 })

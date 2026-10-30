@@ -42,6 +42,7 @@ export class LocalizationController extends AbstractViewController implements In
 
   constructor(
     private readonly featuresController: FeaturesController,
+    private readonly workspaceIdentifier: string,
     private readonly preferences: PreferenceServiceInterface,
     private readonly preferencesController: PreferencesController,
     private readonly routeService: RouteServiceInterface,
@@ -84,7 +85,7 @@ export class LocalizationController extends AbstractViewController implements In
         }
         break
       case ApplicationEvent.SignedOut:
-        clearPersistedLocale()
+        clearPersistedLocale(this.workspaceIdentifier)
         break
     }
   }
@@ -145,7 +146,7 @@ export class LocalizationController extends AbstractViewController implements In
   }
 
   async changeLocaleAndReload(locale: string): Promise<boolean> {
-    if (locale === localizationStore.currentLocale && locale === getPersistedLocale()) {
+    if (locale === localizationStore.currentLocale && locale === getPersistedLocale(this.workspaceIdentifier)) {
       return false
     }
 
@@ -165,7 +166,7 @@ export class LocalizationController extends AbstractViewController implements In
       return false
     }
 
-    persistLocale(resolvedLocale)
+    persistLocale(this.workspaceIdentifier, resolvedLocale)
     this.reloadAndShowToast(resolvedLocale)
     return true
   }
@@ -181,7 +182,7 @@ export class LocalizationController extends AbstractViewController implements In
 
     if (this.featuresController.isLocalizationEnabled()) {
       try {
-        await this.loadLocale(getPersistedLocale())
+        await this.loadLocale(getPersistedLocale(this.workspaceIdentifier))
       } catch (error) {
         console.error('Failed to load locale before reload', error)
       }
@@ -228,20 +229,20 @@ export class LocalizationController extends AbstractViewController implements In
   }
 
   private updatePersistedLocale(localizationEnabled: boolean, locale: string): boolean {
-    const persistedLocale = getPersistedLocale()
+    const persistedLocale = getPersistedLocale(this.workspaceIdentifier)
 
     if (!localizationEnabled) {
       if (!persistedLocale) {
         return false
       }
-      clearPersistedLocale()
+      clearPersistedLocale(this.workspaceIdentifier)
       return true
     }
 
     if (persistedLocale === locale) {
       return false
     }
-    persistLocale(locale)
+    persistLocale(this.workspaceIdentifier, locale)
     return true
   }
 
@@ -284,7 +285,10 @@ export class LocalizationController extends AbstractViewController implements In
     try {
       const catalog = localizationEnabled ? await localeService.getAvailableLocales() : undefined
       const locale = catalog
-        ? resolveLocale({ savedLocale: getPersistedLocale(), availableLocales: Object.keys(catalog) })
+        ? resolveLocale({
+            savedLocale: getPersistedLocale(this.workspaceIdentifier),
+            availableLocales: Object.keys(catalog),
+          })
         : DEFAULT_LOCALE
 
       const persistedLocaleChanged = this.updatePersistedLocale(localizationEnabled, locale)
