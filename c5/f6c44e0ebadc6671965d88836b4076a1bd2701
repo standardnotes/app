@@ -1,0 +1,35 @@
+packages/web/src/javascripts/Application/DevMode.ts
+  h_ddce7f0538b395 6-7
+packages/web/src/javascripts/FeatureTrunk.ts
+  h_ddce7f0538b395 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "c5f6c44e0ebadc6671965d88836b4076a1bd2701",
+  "prompts": {},
+  "humans": {
+    "h_ddce7f0538b395": {
+      "author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "carried": {
+      "total": {
+        "input_tokens": 50,
+        "output_tokens": 17364,
+        "cache_creation_input_tokens": 99631,
+        "cache_read_input_tokens": 1209614
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5-medium": {
+          "input_tokens": 50,
+          "output_tokens": 17364,
+          "cache_creation_input_tokens": 99631,
+          "cache_read_input_tokens": 1209614
+        }
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
