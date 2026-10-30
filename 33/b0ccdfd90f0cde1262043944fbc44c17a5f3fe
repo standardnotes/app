@@ -72,5 +72,17 @@ packages/web/src/javascripts/Controllers/Localization/LocalizationController.spe
       }
     }
   },
+  "churn": {
+    "total": 18,
+    "by_tool_model": {
+      "cursor::default": 18
+    }
+  },
+  "activity": {
+    "added_sloc": 703,
+    "deleted_sloc": 714,
+    "checkpoints": 19,
+    "span_seconds": 665
+  },
   "proton_build": "1.7.6-proton.8"
 }
