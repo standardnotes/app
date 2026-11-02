@@ -1,0 +1,252 @@
+.tab-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--sn-stylekit-bg-contrast-low, #f4f4f5);
+  border-bottom: 1px solid var(--sn-stylekit-border-color, #e4e4e7);
+  padding: 0 8px;
+  height: 38px;
+  user-select: none;
+  z-index: 20;
+
+  // Adapt to dark themes dynamically
+  .theme-dark & {
+    background-color: var(--sn-stylekit-bg-contrast-low, #18181b);
+    border-bottom: 1px solid var(--sn-stylekit-border-color, #27272a);
+  }
+}
+
+.tab-bar-tabs {
+  display: flex;
+  overflow-x: auto;
+  height: 100%;
+  align-items: flex-end;
+  gap: 4px;
+  scrollbar-width: none; // Hide scrollbar for standard Firefox
+
+  &::-webkit-scrollbar {
+    display: none; // Hide scrollbar for Chrome/Safari
+  }
+}
+
+.tab-item {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px 6px 0 0;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 13px;
+  max-width: 160px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  color: var(--sn-stylekit-input-placeholder-color, #71717a);
+  position: relative;
+
+  &:hover {
+    background-color: var(--sn-stylekit-bg-contrast-medium, rgba(0, 0, 0, 0.05));
+    color: var(--sn-stylekit-text-color, #18181b);
+
+    .theme-dark & {
+      background-color: var(--sn-stylekit-bg-contrast-medium, rgba(255, 255, 255, 0.05));
+      color: var(--sn-stylekit-text-color, #f4f4f5);
+    }
+  }
+}
+
+.tab-item-active {
+  background-color: var(--editor-background-color, #ffffff) !important;
+  color: var(--editor-foreground-color, #18181b) !important;
+  border-color: var(--sn-stylekit-border-color, #e4e4e7) !important;
+  border-bottom: 1px solid var(--editor-background-color, #ffffff) !important;
+  margin-bottom: -1px;
+  font-weight: 500;
+  z-index: 21;
+
+  .theme-dark & {
+    background-color: var(--editor-background-color, #09090b) !important;
+    color: var(--editor-foreground-color, #f4f4f5) !important;
+    border-color: var(--sn-stylekit-border-color, #27272a) !important;
+    border-bottom: 1px solid var(--editor-background-color, #09090b) !important;
+  }
+}
+
+.tab-item-focused {
+  border-top: 2px solid var(--sn-stylekit-primary-color, #3b82f6) !important;
+}
+
+.tab-add-btn {
+  background: none;
+  border: none;
+  color: var(--sn-stylekit-input-placeholder-color, #71717a);
+  cursor: pointer;
+  height: 28px;
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 2px;
+  align-self: center;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: var(--sn-stylekit-bg-contrast-medium, rgba(0, 0, 0, 0.05));
+    color: var(--sn-stylekit-text-color, #18181b);
+
+    .theme-dark & {
+      background-color: var(--sn-stylekit-bg-contrast-medium, rgba(255, 255, 255, 0.05));
+      color: var(--sn-stylekit-text-color, #f4f4f5);
+    }
+  }
+}
+
+.tab-title-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 8px;
+}
+
+.tab-close-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 9px;
+  opacity: 0.4;
+  transition: opacity 0.2s, background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.08);
+
+    .theme-dark & {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+}
+
+.tab-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 8px;
+  border-left: 1px solid var(--sn-stylekit-border-color, #e4e4e7);
+
+  .theme-dark & {
+    border-left-color: var(--sn-stylekit-border-color, #27272a);
+  }
+}
+
+.tab-action-btn {
+  background: none;
+  border: none;
+  color: var(--sn-stylekit-input-placeholder-color, #71717a);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: var(--sn-stylekit-bg-contrast-medium, rgba(0, 0, 0, 0.05));
+    color: var(--sn-stylekit-text-color, #18181b);
+
+    .theme-dark & {
+      background-color: var(--sn-stylekit-bg-contrast-medium, rgba(255, 255, 255, 0.05));
+      color: var(--sn-stylekit-text-color, #f4f4f5);
+    }
+  }
+}
+
+.tab-action-btn-active {
+  color: var(--sn-stylekit-primary-color, #3b82f6) !important;
+}
+
+.tab-context-menu {
+  position: fixed;
+  z-index: 10000;
+  background-color: var(--sn-stylekit-editor-background-color, #ffffff);
+  border: 1px solid var(--sn-stylekit-border-color, #e4e4e7);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  padding: 4px 0;
+  min-width: 140px;
+
+  .theme-dark & {
+    background-color: var(--sn-stylekit-editor-background-color, #18181b);
+    border-color: var(--sn-stylekit-border-color, #27272a);
+  }
+}
+
+.context-menu-item {
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--sn-stylekit-text-color, #18181b);
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--sn-stylekit-bg-contrast-medium, rgba(0, 0, 0, 0.05));
+
+    .theme-dark & {
+      background-color: var(--sn-stylekit-bg-contrast-medium, rgba(255, 255, 255, 0.05));
+    }
+  }
+
+  .theme-dark & {
+    color: var(--sn-stylekit-text-color, #f4f4f5);
+  }
+}
+
+// Split pane layout styles
+.editors-split-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: row;
+
+  .split-pane-wrapper {
+    flex: 1;
+    height: 100%;
+    min-width: 0; // prevent flex children from overflowing
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    &:not(:last-child) {
+      border-right: 1px solid var(--sn-stylekit-border-color, #e4e4e7);
+
+      .theme-dark & {
+        border-right-color: var(--sn-stylekit-border-color, #27272a);
+      }
+    }
+  }
+
+  .split-pane-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+    z-index: 10;
+  }
+
+  .split-pane-focused .split-pane-overlay {
+    border-color: rgba(59, 130, 246, 0.2); // subtle light highlight
+  }
+}
