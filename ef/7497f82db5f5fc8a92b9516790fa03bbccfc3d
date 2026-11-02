@@ -11,5 +11,14 @@ packages/web/src/javascripts/Components/LocalizationLabsSpotlight/LocalizationLa
       "author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 9,
+    "unknown_additions": 0,
+    "ai_additions": 0,
+    "ai_accepted": 0,
+    "git_diff_deleted_lines": 1,
+    "git_diff_added_lines": 9,
+    "tool_model_breakdown": {}
+  },
   "proton_build": "1.7.6-proton.8"
 }
