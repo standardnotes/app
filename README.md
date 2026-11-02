@@ -5,6 +5,8 @@ Standard Notes is an end-to-end encrypted note-taking app for digitalists and pr
 [![latest release version](https://img.shields.io/github/v/release/standardnotes/app)](https://github.com/standardnotes/app/releases)
 [![Discord](https://img.shields.io/badge/discord-standardnotes-CC2B5E.svg?style=flat&logo=discord)](https://standardnotes.com/discord)
 [![Twitter Follow](https://img.shields.io/badge/follow-%40standardnotes-blue.svg?style=flat&logo=twitter)](https://twitter.com/standardnotes)
+<a href="https://repocloud.io/details/Standard%20Notes/"><img src="https://dnk92k33or340.cloudfront.net/deploy-20px.png" alt="Deploy on RepoCloud" height="20"></a>
+<a href="https://railway.com/deploy/standard-notes"><img src="https://railway.com/button.svg" alt="Deploy on Railway" height="20"></a>
 
 ### Why Standard Notes?
 
