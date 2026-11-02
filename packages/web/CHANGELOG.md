@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.203.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.12...@standardnotes/web@3.203.0) (2026-11-02)
+
+### Features
+
+* Introduces localization with support for multiple languages ([#3073](https://github.com/standardnotes/app/issues/3073)) ([b2f812b](https://github.com/standardnotes/app/commit/b2f812bcac226d12c0217d6b92938e60ecc3f392))
+
 ## [3.202.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.11...@standardnotes/web@3.202.12) (2026-10-30)
 
 **Note:** Version bump only for package @standardnotes/web
