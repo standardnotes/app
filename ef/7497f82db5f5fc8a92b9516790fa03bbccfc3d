@@ -1,0 +1,15 @@
+packages/web/src/javascripts/Components/LocalizationLabsSpotlight/LocalizationLabsSpotlightModal.tsx
+  h_ddce7f0538b395 52-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "ef7497f82db5f5fc8a92b9516790fa03bbccfc3d",
+  "prompts": {},
+  "humans": {
+    "h_ddce7f0538b395": {
+      "author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
