@@ -34,7 +34,7 @@
     },
     "B1.Account.ImportExport.Error": {
       "Could not import ${ count } item (click for details)": [
-        "${ count }個のアイテムをインポートできませんでした (クリックで詳細を表示)"
+        "${ count }個のアイテムをインポートできませんでした（クリックして詳細を表示）。"
       ],
       "Could not import file": [
         "ファイルをインポートできませんでした。"
@@ -83,7 +83,7 @@
         "${ files }個のファイル"
       ],
       "${ notes } note": [
-        "${ notes }個のメモ"
+        "${ notes }メモ"
       ],
       "${ tags } tag": [
         "${ tags }個のタグ"
@@ -92,10 +92,10 @@
         "ファイルをドラッグ＆ドロップすると、自動検出してインポートできます"
       ],
       "Import complete. ${ errorCount } item was not imported because there was an error decrypting it. Make sure the password is correct and try again.": [
-        "インポートが完了しました。復号化中にエラーが発生したため、${ errorCount }個のアイテムはインポートされませんでした。パスワードが正しいことを確認して、もう一度お試しください。"
+        "インポートが完了しました。${ errorCount }個のアイテムは復号化時にエラーが発生したためインポートされませんでした。パスワードが正しいことを確認して、もう一度お試しください。"
       ],
       "Imported ${ list }": [
-        "${ list }をインポートしました"
+        "インポート済み：${ list }"
       ],
       "Or click to open file picker": [
         "または、クリックしてファイルを選択"
@@ -341,7 +341,7 @@
     },
     "B1.Account.Session.Confirmation": {
       "There is ${ dirtyItemCount } item with unsynced changes. If you sign out, these changes will be lost forever. Are you sure you want to sign out?": [
-        "同期されていない変更があるアイテムが${ dirtyItemCount }件あります。サインアウトすると、これらの変更は完全に失われます。本当にサインアウトしますか？"
+        "未同期の変更があるアイテムが${ dirtyItemCount }個あります。サインアウトすると、これらの変更は永久に失われます。本当にサインアウトしますか？"
       ]
     },
     "B1.Account.Session.Error": {
@@ -731,7 +731,7 @@
         "ホームサーバー"
       ],
       "Merge local data (${ notesAndTagsCount } item)": [
-        "ローカルデータをマージ (${ notesAndTagsCount }個のアイテム)"
+        "ローカルデータを統合（${ notesAndTagsCount }個のアイテム）"
       ],
       "Private username mode": [
         "プライベートユーザー名モード"
@@ -1532,7 +1532,7 @@
         "特に大きなドキュメントでは、パフォーマンスが低下する可能性があります。"
       ],
       "This editor does not support search result highlighting yet.": [
-        "このエディターは、検索結果のハイライトにまだ対応していません。"
+        "このエディターはまだ検索結果のハイライト表示に対応していません。"
       ]
     },
     "B3.Notes.EditorToolbar.Label": {
@@ -1606,7 +1606,7 @@
         "すべての結果をハイライト"
       ],
       "Highlight all unavailable": [
-        "すべてをハイライト（利用不可）"
+        "利用できないものをすべてハイライト"
       ],
       "Insert": [
         "挿入"
@@ -1829,7 +1829,7 @@
         "本当にこれらのメモをごみ箱に移動ますか？"
       ],
       "Are you sure you want to permanently delete ${ count } note?": [
-        "本当に${ count }個のメモを完全に削除しますか？"
+        "本当に${ count }件のメモを完全に削除しますか？"
       ],
       "Are you sure you want to permanently delete ${ noteTitle }?": [
         "本当に${ noteTitle }を完全に削除しますか？"
@@ -2142,13 +2142,13 @@
     },
     "B3.Notes.NoteList.Info": {
       "${ resultCount } search result": [
-        "${ resultCount } 件の検索結果"
+        "${ resultCount }件の検索結果"
       ],
       "${ selectedItemsCount } selected": [
         "${ selectedItemsCount }件選択済み"
       ],
       "${ titleFormatOptionsLink }. Use ${ bracketsLiteral } to escape formatting.": [
-        "${ titleFormatOptionsLink }。書式設定をエスケープするには、${ bracketsLiteral }を使用します。"
+        "${ titleFormatOptionsLink }。書式をエスケープするには${ bracketsLiteral }を使用します。"
       ],
       "and ${ additionalLinksCount } more...": [
         "ほか${ additionalLinksCount }件のリンク..."
@@ -2246,7 +2246,7 @@
         "現在のタグ内のメモとファイルをテーブルレイアウトで表示します。"
       ],
       "e.g. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }": [
-        "例: ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
+        "例：${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
       ],
       "Empty": [
         "空"
@@ -2692,7 +2692,7 @@
         "保存中..."
       ],
       "Uploading file \"${ uploadProgress.file.name }\" (${ progress }%)": [
-        "ファイル「${ uploadProgress.file.name }」をアップロード中（${ progress }%）"
+        "ファイル「${ uploadProgress.file.name }」をアップロード中 (${ progress }%)"
       ]
     },
     "B4.Notes.EditingUI.Title": {
@@ -3434,7 +3434,7 @@
     },
     "B5.SecuritySync.Autolock.Info": {
       "Authentication is required to change autolock timer duration": [
-        "オートロックタイマーの時間を変更するには認証が必要です"
+        "自動ロックのタイマー期間を変更するには認証が必要です"
       ]
     },
     "B5.SecuritySync.Autolock.Label": {
@@ -3462,7 +3462,7 @@
     },
     "B5.SecuritySync.Biometrics.Info": {
       "Authentication is required to disable biometrics": [
-        "生体認証を無効化するには認証が必要です"
+        "生体認証を無効化するには認証が必要です。"
       ]
     },
     "B5.SecuritySync.Challenge.Action": {
@@ -3481,22 +3481,22 @@
     },
     "B5.SecuritySync.Challenge.Error": {
       "Failed to obtain device response": [
-        "デバイスレスポンスの取得に失敗しました"
+        "デバイス応答の取得に失敗しました"
       ],
       "Incorrect credentials entered. Please try again.": [
         "入力された認証情報が正しくありません。もう一度お試しください。"
       ],
       "Invalid authentication, please try again.": [
-        "認証が無効です。もう一度やり直してください。"
+        "認証が無効です。もう一度お試しください。"
       ],
       "This item cannot be recovered.": [
-        "このアイテムは回復できません。"
+        "このアイテムは復元できません。"
       ],
       "Unable to find key ${ keyId } for this item. You may try signing out and back in; if that doesn't help, check your backup files for a key with this ID and import it.": [
-        "このアイテムのキー ${ keyId } が見つかりません。サインアウトしてから再度サインインをお試しください。それでも解決しない場合は、バックアップファイルにこのIDのキーがないか確認し、インポートしてください。"
+        "このアイテムのキー${ keyId }が見つかりません。サインアウトしてから再度サインインしてみてください。それでも解決しない場合は、このIDのキーがないかバックアップファイルを確認し、インポートしてください。"
       ],
       "Unable to recover your key with the attempted password. Please try again.": [
-        "入力されたパスワードではキーを回復できませんでした。もう一度お試しください。"
+        "入力したパスワードでキーを回復できませんでした。再度お試しください。"
       ]
     },
     "B5.SecuritySync.Challenge.Info": {
@@ -3504,49 +3504,49 @@
         "このファイルにアクセスするには認証が必要です"
       ],
       "Authentication is required to add a passcode": [
-        "パスコードを追加するには認証が必要です"
+        "パスコードを追加するには認証が必要です。"
       ],
       "Authentication is required to approve this note for ${ ListedName }": [
-        "このメモを ${ ListedName } 用に承認するには、認証が必要です"
+        "このメモを ${ ListedName } に対して承認するには認証が必要です"
       ],
       "Authentication is required to change your passcode": [
-        "パスコードを変更するには認証が必要です"
+        "パスコードを変更するには認証が必要です。"
       ],
       "Authentication is required to delete your account": [
         "アカウントを削除するには認証が必要です"
       ],
       "Authentication is required to disable two-factor authentication": [
-        "2要素認証を無効にするには認証が必要です"
+        "2要素認証を無効化するには認証が必要です"
       ],
       "Authentication is required to export a backup": [
         "バックアップをエクスポートするには認証が必要です"
       ],
       "Authentication is required to import a backup file": [
-        "バックアップファイルをインポートするには認証が必要です"
+        "バックアップファイルをインポートするには認証が必要です。"
       ],
       "Authentication is required to remove your passcode": [
         "パスコードを削除するには認証が必要です"
       ],
       "Authentication is required to revoke a session": [
-        "セッションを失効させるには認証が必要です"
+        "セッションを失効するには認証が必要です"
       ],
       "Authentication is required to search protected contents": [
-        "保護されたコンテンツを検索するには認証が必要です"
+        "保護されたコンテンツを検索するには認証が必要です。"
       ],
       "Authentication is required to select a protected note": [
         "保護されたメモを選択するには認証が必要です"
       ],
       "Authentication is required to unlock the application": [
-        "アプリのロックを解除するには認証が必要です"
+        "アプリのロックを解除するには認証が必要です。"
       ],
       "Authentication is required to unprotect a file": [
-        "ファイルの保護を解除するには、認証が必要です"
+        "ファイルの保護を解除するには認証が必要です。"
       ],
       "Authentication is required to unprotect a note": [
         "メモの保護を解除するには認証が必要です"
       ],
       "Authentication is required to view this note": [
-        "このメモを表示するには認証が必要です"
+        "このメモを表示するには認証が必要です。"
       ],
       "Biometrics successful": [
         "生体認証に成功しました"
@@ -3555,25 +3555,25 @@
         "${ vaultName }を削除"
       ],
       "Enter your account password after it was changed on ${ dateString }.": [
-        "${ dateString } に変更されたアカウントパスワードを入力してください。"
+        "${ dateString }に変更された後のアカウントパスワードを入力してください。"
       ],
       "Enter your account password as it was when you changed your email on ${ dateString }.": [
-        "${ dateString } にメールアドレスを変更した際のアカウントパスワードを入力してください。"
+        "${ dateString } にメールを変更した時点のアカウントパスワードを入力してください。"
       ],
       "Enter your account password as it was when you registered ${ dateString }.": [
-        "${ dateString }に登録したときのアカウントパスワードを入力してください。"
+        "${ dateString } に登録した時点のアカウントパスワードを入力してください。"
       ],
       "Enter your account password as it was when you upgraded your encryption version on ${ dateString }.": [
-        "${ dateString } に暗号化バージョンをアップグレードしたときのアカウントパスワードを入力してください。"
+        "${ dateString }に暗号化バージョンをアップグレードしたときのアカウントパスワードを入力してください。"
       ],
       "Enter your application passcode after it was changed on ${ dateString }.": [
-        "${ dateString } に変更されたアプリのパスコードを入力してください。"
+        "アプリのパスコードが ${ dateString } に変更された後、新しいパスコードを入力してください。"
       ],
       "Enter your application passcode as it was when you created it on ${ dateString }.": [
-        "${ dateString } に作成したときと同じアプリのパスコードを入力してください。"
+        "アプリのパスコードを、${ dateString }に作成したときと同じ内容で入力してください。"
       ],
       "Obtained Device Response": [
-        "デバイスの応答を取得しました"
+        "デバイスの応答を取得済み"
       ],
       "Unlock ${ vaultName }": [
         "${ vaultName } のロックを解除"
@@ -3588,16 +3588,16 @@
         "セッションを再検証するには、アカウントパスワードが必要です。"
       ],
       "Your application passcode is required to perform an upgrade of your local data storage structure.": [
-        "ローカルデータストレージ構造のアップグレードを行うには、アプリのパスコードが必要です。"
+        "ローカルデータのストレージ構造をアップグレードするには、アプリのパスコードが必要です。"
       ],
       "Your credentials have successfully been updated.": [
-        "認証情報は正常に更新されました。"
+        "認証情報が正常に更新されました。"
       ],
       "Your key has successfully been recovered.": [
         "鍵の回復に成功しました。"
       ],
       "Your passcode is required in order to register for an account.": [
-        "アカウントの登録にはパスコードが必要です。"
+        "アカウントの登録には、パスコードが必要です。"
       ],
       "Your passcode is required in order to sign in to your account.": [
         "アカウントにサインインするには、パスコードが必要です。"
@@ -3611,7 +3611,7 @@
         "アカウントパスワード"
       ],
       "Allow protected access for": [
-        "保護されたアクセスを許可する期間"
+        "保護されたアクセスを許可する対象"
       ],
       "Application Passcode": [
         "アプリのパスコード"
@@ -3620,10 +3620,10 @@
         "生体認証"
       ],
       "Cancel": [
-        "キャンセル"
+        "取消"
       ],
       "Enter the account password associated with the import file": [
-        "インポートファイルに関連付けられたアカウントパスワードを入力してください"
+        "インポートファイルに関連付けられたアカウントパスワードを入力してください。"
       ],
       "Enter the password for this vault": [
         "この保管庫のパスワードを入力してください"
@@ -3635,13 +3635,13 @@
         "アプリのパスコードを入力"
       ],
       "Enter your application passcode to continue": [
-        "続行するにはアプリのパスコードを入力してください"
+        "続行するにはアプリのパスコードを入力してください。"
       ],
       "Enter your credentials to download a decrypted backup": [
-        "復号化されたバックアップをダウンロードするには、認証情報を入力してください"
+        "復号化されたバックアップをダウンロードするには、認証情報を入力してください。"
       ],
       "Enter your credentials to perform encryption upgrade": [
-        "暗号化バージョンのアップグレードを実行するには、認証情報を入力してください"
+        "暗号化バージョンのアップグレードを実行するには、認証情報を入力してください。"
       ],
       "Passcode Required": [
         "パスコードは必須です"
@@ -3650,7 +3650,7 @@
         "以前のパスワード"
       ],
       "Remember For": [
-        "保持期間"
+        "記憶期間"
       ],
       "Security Key": [
         "セキュリティキー"
@@ -3667,12 +3667,12 @@
         "アプリのパスコード"
       ],
       "Two-factor authentication code": [
-        "2要素認証コード"
+        "2 要素認証コード"
       ]
     },
     "B5.SecuritySync.Challenge.Status": {
       "Generating Keys...": [
-        "キー生成中..."
+        "キーを生成中..."
       ]
     },
     "B5.SecuritySync.Challenge.Title": {
@@ -3691,12 +3691,12 @@
     },
     "B5.SecuritySync.Info": {
       "Access to this note will not be restricted until you set up a passcode or account.": [
-        "パスコードまたはアカウントをセットアップするまで、このメモへのアクセスは制限されません。"
+        "このメモへのアクセスは、パスコードまたはアカウントをセットアップするまで制限されません。"
       ]
     },
     "B5.SecuritySync.KeyStorage.Confirmation": {
       "This will delete the previously saved offline key.": [
-        "保存済みのオフラインキーは削除されます。"
+        "以前に保存されたオフラインキーが削除されます。"
       ]
     },
     "B5.SecuritySync.KeyStorage.Error": {
@@ -3706,10 +3706,10 @@
     },
     "B5.SecuritySync.KeyStorage.Info": {
       "The email or password you entered is incorrect.\n\nPlease note that this sign-in request is made against the default server. If you are using a custom server, you must uninstall the app then reinstall, and sign back into your account.": [
-        "入力されたメールアドレスまたはパスワードが正しくありません。\n\nこのサインイン要求はデフォルトのサーバーに対して行われます。カスタムサーバーを使用している場合は、アプリをアンインストールしてから再インストールし、アカウントに再度サインインする必要があります。"
+        "入力したメールアドレスまたはパスワードが正しくありません。\n\nこのサインインリクエストはデフォルトサーバーに対して行われていることにご注意ください。カスタムサーバーを使用している場合は、アプリをアンインストールしてから再インストールし、アカウントに再度サインインする必要があります。"
       ],
       "We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password for \"${ email }\" to restore your account keys.": [
-        "キーチェーンが消去されたことが検出されました。これはデバイスをバックアップから復元した際に発生することがあります。「${ email }」のアカウントパスワードを入力して、アカウントキーを復元してください。"
+        "キーチェーンが消去されたことを検出しました。これはデバイスをバックアップから復元したときに発生することがあります。アカウントのキーを復元するには、「${ email }」のアカウントパスワードを入力してください。"
       ]
     },
     "B5.SecuritySync.KeyStorage.Title": {
@@ -3724,7 +3724,7 @@
     },
     "B5.SecuritySync.Mfa.Info": {
       "Your sign in request has been canceled.": [
-        "サインインのリクエストはキャンセルされました。"
+        "サインインリクエストはキャンセルされました。"
       ]
     },
     "B5.SecuritySync.Passcode.Action": {
@@ -3734,10 +3734,10 @@
     },
     "B5.SecuritySync.Passcode.Confirmation": {
       "A passcode change is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
-        "パスコードの変更が進行中です。アプリを終了するとデータが失われる可能性があります。本当に終了しますか？"
+        "パスコードの変更中です。アプリを終了するとデータが失われる可能性があります。本当に終了しますか？"
       ],
       "A passcode removal is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
-        "パスコードの削除を実行中です。アプリを終了するとデータが失われる可能性があります。本当に終了しますか？"
+        "パスコードの削除が進行中です。アプリを終了するとデータが失われる可能性があります。本当に終了しますか？"
       ]
     },
     "B5.SecuritySync.Passcode.Error": {
@@ -3745,15 +3745,15 @@
         "パスコードを入力してください。"
       ],
       "The two passcodes you entered do not match. Please try again.": [
-        "入力されたパスコードが一致しません。再度お試しください。"
+        "入力された2つのパスコードが一致しません。再度お試しください。"
       ]
     },
     "B5.SecuritySync.Passcode.Info": {
       "If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.": [
-        "ローカルパスコードを忘れた場合は、このデバイスからローカルデータをクリアしてアカウントに再サインインする以外に方法はありません。"
+        "ローカルパスコードを忘れた場合、このデバイスからローカルデータをクリアしてアカウントに再サインインする以外に方法はありません。"
       ],
       "Your keys are currently stored in your operating system's ${ keychainName }. Adding a passcode prevents even your operating system from reading them.": [
-        "現在、キーはオペレーティングシステムの ${ keychainName } に保管されています。パスコードを追加すると、オペレーティングシステム自体もキーを読み取れなくなります。"
+        "キーは現在、オペレーティングシステムの${ keychainName }に保管されています。パスコードを追加すると、オペレーティングシステムでさえもキーを読み取ることができなくなります。"
       ]
     },
     "B5.SecuritySync.Passcode.Label": {
@@ -3780,7 +3780,7 @@
     },
     "B5.SecuritySync.Passcode.Title": {
       "Forgot passcode?": [
-        "パスコードを忘れましたか？"
+        "パスコードをお忘れですか？"
       ]
     },
     "B5.SecuritySync.Passcode.Warning": {
@@ -3793,7 +3793,7 @@
         "セキュアメモリにより、このアプリのインスタンスは破棄されました。続行するには、このブラウザタブを閉じて新しいタブを開いてください。"
       ],
       "Secure memory has destroyed this application instance. Restart the app to continue.": [
-        "セキュアメモリによってこのアプリケーションインスタンスは破棄されました。続行するにはアプリを再起動してください。"
+        "セキュアメモリにより、このアプリのインスタンスは破棄されました。続行するにはアプリを再起動してください。"
       ]
     },
     "B5.SecuritySync.Protections.Label": {
@@ -3817,18 +3817,18 @@
     },
     "B5.SecuritySync.Sync.Error": {
       "There was an error while trying to save your items. Please contact support and share this message: ${ message }.": [
-        "アイテムの保存中にエラーが発生しました。サポートにお問い合わせのうえ、次のメッセージを共有してください: ${ message }。"
+        "アイテムの保存中にエラーが発生しました。サポートに連絡し、次のメッセージを共有してください：${ message }。"
       ]
     },
     "B5.SecuritySync.Sync.Info": {
       "Quit the application and re-open it. Sometimes, this may resolve the issue.": [
-        "アプリを終了してから再度開いてください。これで問題が解決する場合があります。"
+        "アプリを終了して再起動してください。これで問題が解決する場合があります。"
       ],
       "Sign out of your account, then sign back in. This will ensure your data is consistent with the server. Be sure to download a backup of your data before doing so.": [
-        "アカウントからサインアウトしてから、再度サインインしてください。これにより、データがサーバーと確実に一致するようになります。その前に、必ずデータのバックアップをダウンロードしてください。"
+        "アカウントからサインアウトしてから、再度サインインしてください。これにより、データがサーバーと一致した状態になります。この操作を行う前に、必ずデータのバックアップをダウンロードしてください。"
       ],
       "We've detected that the data in the current application session may not match the data on the server. An attempt was made to auto-resolve the issue, but it was unable to reconcile the differences.": [
-        "現在のアプリセッションのデータがサーバー上のデータと一致していない可能性があります。問題の自動解決を試みましたが、差分を解消できませんでした。"
+        "現在のアプリセッションのデータがサーバー上のデータと一致しない可能性があることを検出しました。問題を自動で解決しようとしましたが、差異を調整できませんでした。"
       ]
     },
     "B5.SecuritySync.Sync.Status": {
@@ -3838,15 +3838,15 @@
     },
     "B5.SecuritySync.Sync.Subtitle": {
       "Option 1 — Restart Application:": [
-        "オプション1(アプリの再起動):"
+        "オプション1: アプリを再起動:"
       ],
       "Option 2 — Sign Out and Back In:": [
-        "オプション 2 - サインアウトして再度サインイン:"
+        "オプション2：サインアウトして再度サインイン："
       ]
     },
     "B5.SecuritySync.Sync.Title": {
       "Out of Sync": [
-        "未同期"
+        "同期していません"
       ]
     },
     "B5.SecuritySync.U2F.Label": {
@@ -3856,7 +3856,7 @@
     },
     "B6.Preferences.Account.Action": {
       "Cancel": [
-        "キャンセル"
+        "取消"
       ],
       "Change email": [
         "メールアドレスを変更"
@@ -3880,7 +3880,7 @@
         "完了"
       ],
       "Generating Keys...": [
-        "キー生成中..."
+        "キーを生成中..."
       ],
       "Manage sessions": [
         "セッションを管理"
@@ -3889,7 +3889,7 @@
         "サインイン"
       ],
       "Sign out other sessions": [
-        "他のセッションをサインアウト"
+        "他のセッションからサインアウト"
       ],
       "Sign out workspace": [
         "ワークスペースからサインアウト"
@@ -3900,7 +3900,7 @@
     },
     "B6.Preferences.Account.Error": {
       "Cannot close window until pending tasks are complete.": [
-        "保留中のタスクが完了するまでウィンドウを閉じることはできません。"
+        "保留中のタスクが完了するまで、ウィンドウを閉じることはできません。"
       ],
       "Please enter your current password.": [
         "現在のパスワードを入力してください。"
@@ -3913,62 +3913,59 @@
       ]
     },
     "B6.Preferences.Account.Info": {
+      "${ filesQuotaUsedLabel } of ${ filesQuotaTotalLabel } used": [
+        "${ filesQuotaUsedLabel } / ${ filesQuotaTotalLabel } 使用中"
+      ],
       "Already have an account? ${ loginLink }": [
         "すでにアカウントをお持ちですか？${ loginLink }"
       ],
       "Current password was set on ${ passwordDateSpan }": [
-        "現在のパスワードは ${ passwordDateSpan } に設定されました"
+        "現在のパスワードは${ passwordDateSpan }に設定されました。"
       ],
       "Disables email notifications when a new sign-in occurs on your account. (Email notifications are available only to paid subscribers).": [
-        "アカウントで新しいサインインが発生した際のメール通知を無効化します。メール通知は有料プランの購読者のみ利用できます。"
+        "アカウントで新しいサインインが行われると、メール通知を無効化します。（メール通知は有料サブスクリプションでのみ利用可能です）"
       ],
       "Disables email notifications with special deals and promotions.": [
-        "特別オファーやプロモーションに関するメール通知を無効化します。"
+        "特別なセールやプロモーションに関するメール通知を無効にします。"
       ],
       "Files": [
         "ファイル"
       ],
       "Last synced ${ lastSyncSpan }": [
-        "最終同期: ${ lastSyncSpan }"
-      ],
-      "of": [
-        "/"
+        "最終同期：${ lastSyncSpan }"
       ],
       "on ${ lastSyncDate }": [
-        "${ lastSyncDate }"
+        "${ lastSyncDate } に"
       ],
       "Please ensure you are running the latest version of ${ AppName } on all platforms to ensure maximum compatibility.": [
-        "最大限の互換性を確保するため、すべてのプラットフォームで${ AppName }の最新バージョンを実行していることをご確認ください。"
+        "最大限の互換性を確保するには、すべてのプラットフォームで${ AppName }の最新バージョンをご利用ください。"
       ],
       "Redirecting you to the subscription page...": [
-        "サブスクリプションページにリダイレクトしています..."
+        "サブスクリプションページにリダイレクトしています…"
       ],
       "Remove all data related to the current workspace from the application.": [
-        "アプリから現在のワークスペースに関連するすべてのデータを削除します。"
+        "現在のワークスペースに関連するすべてのデータをアプリから削除します。"
       ],
       "Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
-        "サインインすると、すべてのデバイスでメモと設定を同期し、エンドツーエンド暗号化を有効にできます。"
+        "サインインしてすべてのデバイスでノートと設定を同期し、エンドツーエンドの暗号化を有効にしてください。"
       ],
       "Sign-in notification emails are available only on a subscription plan. Please upgrade in order to enable sign-in notifications.": [
-        "サインイン通知メールは、サブスクリプションプランでのみ利用できます。サインイン通知を有効にするには、アップグレードしてください。"
+        "サインイン通知メールはサブスクリプションプランでのみ利用できます。サインイン通知を有効にするにはアップグレードしてください。"
       ],
       "Storage Quota": [
-        "ストレージ容量"
+        "ストレージクォータ"
       ],
       "This action is irreversible. After deletion completes, you will be signed out on all devices.": [
-        "この操作は元に戻せません。削除が完了すると、すべてのデバイスからサインアウトされます。"
-      ],
-      "used": [
-        "使用済み"
+        "この操作は元に戻せません。削除が完了すると、すべてのデバイスでサインアウトされます。"
       ],
       "Want to sign out on all devices except this one?": [
-        "このデバイス以外のすべてのデバイスでサインアウトしますか？"
+        "このデバイスを除くすべてのデバイスからサインアウトしますか？"
       ],
       "You're signed in as ${ emailSpan }": [
-        "${ emailSpan } としてサインインしています"
+        "${ emailSpan } としてサインインしています。"
       ],
       "Your email has been successfully changed.": [
-        "メールアドレスは正常に変更されました。"
+        "メールアドレスを変更しました。"
       ]
     },
     "B6.Preferences.Account.Label": {
@@ -3976,10 +3973,10 @@
         "現在のパスワード"
       ],
       "Files storage used": [
-        "ファイルのストレージ使用量"
+        "ファイルストレージ使用量"
       ],
       "Learn More": [
-        "より詳しく"
+        "もっと詳しく"
       ],
       "New Email": [
         "新しいメール"
@@ -3990,16 +3987,16 @@
     },
     "B6.Preferences.Account.Subtitle": {
       "Email": [
-        "メール"
+        "メールアドレス"
       ],
       "Mute marketing notification emails": [
-        "マーケティング通知メールをミュート"
+        "マーケティング通知メールをミュートする"
       ],
       "Mute sign-in notification emails": [
         "サインイン通知メールをミュート"
       ],
       "Other devices": [
-        "その他のデバイス"
+        "他のデバイス"
       ],
       "Password": [
         "パスワード"
@@ -4022,7 +4019,7 @@
         "アカウントを削除"
       ],
       "Email": [
-        "メール"
+        "メールアドレス"
       ],
       "Sign out": [
         "サインアウト"
@@ -4031,21 +4028,21 @@
         "同期"
       ],
       "You're not signed in": [
-        "サインインしていません"
+        "あなたはサインインしていません"
       ]
     },
     "B6.Preferences.Appearance.Action": {
       "Select the font size for plaintext notes": [
-        "プレーンテキストメモのフォントサイズを選択してください"
+        "プレーンテキストのメモのフォントサイズを選択"
       ],
       "Select the line height for plaintext notes": [
-        "プレーンテキストメモの行の高さを選択"
+        "プレーンテキストのメモの行の高さを選択"
       ],
       "Sets the font size in plaintext and ${ SuperName } notes": [
-        "プレーンテキストおよび${ SuperName }メモのフォントサイズを設定します"
+        "プレーンテキストと ${ SuperName } のメモのフォントサイズを設定します"
       ],
       "Sets the line height (leading) in plaintext and ${ SuperName } notes": [
-        "プレーンテキストと ${ SuperName } メモの行の高さ（行送り）を設定します"
+        "プレーンテキストおよび${ SuperName }のメモの行の高さ（行間）を設定します"
       ],
       "Sets the max editor width for all notes": [
         "すべてのメモのエディターの最大幅を設定します"
@@ -4053,19 +4050,19 @@
     },
     "B6.Preferences.Appearance.Info": {
       "Automatically change active theme based on your system settings.": [
-        "システム設定に基づいて、アクティブなテーマを自動的に変更します。"
+        "システム設定に基づいてアクティブなテーマを自動的に変更します。"
       ],
       "Theme to be used for system dark mode:": [
-        "システムのダークモードで使用するテーマ:"
+        "システムのダークモードで使用するテーマ："
       ],
       "Theme to be used for system light mode:": [
         "システムのライトモードで使用するテーマ:"
       ],
       "Toggles the font style in plaintext and ${ SuperName } notes": [
-        "プレーンテキストと ${ SuperName } メモのフォントスタイルを切り替えます"
+        "プレーンテキストのメモと${ SuperName }のメモでフォントスタイルを切り替えます"
       ],
       "Use opaque style for UI elements instead of translucency": [
-        "UI 要素には、半透明ではなく不透明なスタイルを使用します"
+        "UI要素に半透明ではなく不透明スタイルを使用する"
       ]
     },
     "B6.Preferences.Appearance.Label": {
@@ -4079,7 +4076,7 @@
         "大"
       ],
       "Loose": [
-        "広い"
+        "広め"
       ],
       "Medium": [
         "中"
@@ -4103,7 +4100,7 @@
         "小"
       ],
       "Snug": [
-        "やや狭い"
+        "タイト"
       ],
       "Tight": [
         "狭い"
@@ -4117,7 +4114,7 @@
         "自動ライトテーマ"
       ],
       "Disable translucent UI": [
-        "半透明 UI を無効化"
+        "半透明のUIを無効化"
       ],
       "Editor width": [
         "エディターの幅"
@@ -4126,7 +4123,7 @@
         "フォントサイズ"
       ],
       "Line height": [
-        "行間"
+        "行の高さ"
       ],
       "Monospace Font": [
         "等幅フォント"
@@ -4137,7 +4134,7 @@
     },
     "B6.Preferences.Appearance.Title": {
       "Editor": [
-        "エディター"
+        "編集者"
       ],
       "Themes": [
         "テーマ"
@@ -4148,7 +4145,7 @@
         "メタデータファイルを復号化しています..."
       ],
       "Change Location": [
-        "保存先を変更"
+        "位置を変更"
       ],
       "Choose": [
         "選択"
@@ -4160,7 +4157,7 @@
         "バックアップをインポート"
       ],
       "Open Location": [
-        "保存先を開く"
+        "保存場所を開く"
       ],
       "Save": [
         "保存"
@@ -4174,7 +4171,7 @@
     },
     "B6.Preferences.Backups.Error": {
       "Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.": [
-        "ファイルをローカルディレクトリに保存できません。復号化またはローカルへのファイル保存が失敗した可能性があります。"
+        "ファイルをローカルディレクトリに保存できません。復号化に失敗したか、ファイルをローカルに保存できなかった可能性があります。"
       ],
       "Unable to save local backup.": [
         "ローカルバックアップを保存できません。"
@@ -4182,13 +4179,13 @@
     },
     "B6.Preferences.Backups.Info": {
       "${ decryptedFileNameBold } has been successfully decrypted and saved to your chosen directory.": [
-        "${ decryptedFileNameBold }を復号化し、選択したディレクトリに保存しました。"
+        "${ decryptedFileNameBold } は正常に復号化され、選択したディレクトリに保存されました。"
       ],
       "Automatically save encrypted and decrypted backups of your note and tag data.": [
-        "メモとタグのデータについて、暗号化済みと復号化済みの両方のバックアップを自動的に保存します。"
+        "メモとタグのデータの暗号化済みバックアップと復号化されたバックアップを自動的に保存します。"
       ],
       "Backups are saved automatically throughout the day. You can perform a one-time backup now below.": [
-        "バックアップは日中を通して自動的に保存されます。以下から、今すぐ 1 回限りのバックアップを実行できます。"
+        "バックアップは1日の間に自動的に保存されます。下から今すぐ1回限りのバックアップを実行できます。"
       ],
       "Daily": [
         "毎日"
@@ -4197,10 +4194,10 @@
         "このファイルは編集しないでください。"
       ],
       "Drag and drop this metadata file into the File Backups preferences pane in the ${ AppName } desktop or web application interface.": [
-        "このメタデータファイルを、${ AppName }のデスクトップアプリまたはウェブアプリのインターフェースにある「ファイルバックアップ」設定ペインにドラッグ＆ドロップしてください。"
+        "このメタデータファイルを、${ AppName }のデスクトップまたはウェブアプリの設定ペイン内の「ファイルバックアップ」にドラッグ＆ドロップしてください。"
       ],
       "Files backups are enabled. When you upload a new file on any device and open this application, files will be backed up in encrypted form to:": [
-        "ファイルのバックアップが有効になっています。任意のデバイスで新しいファイルをアップロードしてこのアプリを開くと、ファイルは暗号化されて次の場所にバックアップされます:"
+        "ファイルのバックアップが有効になっています。任意のデバイスで新しいファイルをアップロードし、このアプリを開くと、ファイルは暗号化された形式で次の場所にバックアップされます："
       ],
       "How often to receive backups.": [
         "バックアップを受け取る頻度。"
@@ -4209,25 +4206,25 @@
         "メールバックアップなし"
       ],
       "Please drag the metadata file instead of the encrypted data file.": [
-        "暗号化済みデータファイルではなく、メタデータファイルをドラッグしてください。"
+        "暗号化されたデータファイルではなく、メタデータファイルをドラッグしてください。"
       ],
       "Receive daily encrypted email backups of all your notes directly in your email inbox.": [
-        "すべてのメモの暗号化済みメールバックアップを毎日、メールの受信トレイで直接受信できます。"
+        "すべてのメモの暗号化済みメールバックアップを毎日メールの受信トレイに直接受け取ります。"
       ],
       "The file and key data below is encrypted with your account password.": [
-        "以下のファイルとキーのデータは、アカウントパスワードで暗号化されています。"
+        "以下のファイルとキーデータは、アカウントパスワードで暗号化されています。"
       ],
       "To decrypt a backup file, drag and drop the file's respective ${ metadataFileName } file here or select it below.": [
-        "バックアップファイルを復号化するには、対応する${ metadataFileName }ファイルをここにドラッグ＆ドロップするか、以下から選択してください。"
+        "バックアップファイルを復号化するには、対応する ${ metadataFileName } ファイルをここにドラッグ＆ドロップするか、下から選択してください。"
       ],
       "To enable file backups, use the ${ AppName } desktop application.": [
-        "ファイルバックアップを有効にするには、${ AppName }のデスクトップアプリをご利用ください。"
+        "ファイルのバックアップを有効にするには、${ AppName } デスクトップアプリを使用してください。"
       ],
       "To enable plaintext backups, use the ${ AppName } desktop application.": [
-        "プレーンテキストバックアップを有効にするには、${ AppName }のデスクトップアプリをご利用ください。"
+        "プレーンテキストバックアップを有効にするには、${ AppName }デスクトップアプリを使用してください。"
       ],
       "To enable text backups, use the ${ AppName } desktop application.": [
-        "テキストバックアップを有効にするには、${ AppName }のデスクトップアプリをご利用ください。"
+        "テキストバックアップを有効にするには、${ AppName }デスクトップアプリを使用してください。"
       ],
       "Weekly": [
         "毎週"
@@ -4238,16 +4235,16 @@
         "${ AppName } バックアップ - ${ formattedDate }"
       ],
       "${ AppName } Backup - ${ formattedDate }.zip": [
-        "${ AppName } バックアップ - ${ formattedDate }.zip"
+        "${ AppName }バックアップ - ${ formattedDate }.zip"
       ],
       "${ AppName } Backup and Import File": [
-        "${ AppName } バックアップ・インポートファイル"
+        "${ AppName }バックアップとインポートファイル"
       ],
       "${ AppName } Encrypted Backup and Import File - ${ formattedDate }": [
-        "${ AppName } 暗号化バックアップ・インポートファイル - ${ formattedDate }"
+        "${ AppName }の暗号化バックアップおよびインポートファイル - ${ formattedDate }"
       ],
       "${ AppName } Encrypted Backup and Import File - ${ formattedDate }.txt": [
-        "${ AppName } 暗号化バックアップ・インポートファイル - ${ formattedDate }.txt"
+        "${ AppName }の暗号化バックアップおよびインポートファイル - ${ formattedDate }.txt"
       ],
       "Automatic text backups": [
         "テキストの自動バックアップ"
@@ -4259,7 +4256,7 @@
         "暗号化済み"
       ],
       "File Backups": [
-        "ファイルバックアップ"
+        "ファイルのバックアップ"
       ],
       "Perform Backup": [
         "バックアップを実行"
@@ -4273,10 +4270,10 @@
     },
     "B6.Preferences.Backups.Status": {
       "File backups are not enabled. Enable to choose where your files are backed up.": [
-        "ファイルのバックアップは有効になっていません。有効にすると、ファイルのバックアップ先を選択できます。"
+        "ファイルのバックアップが有効になっていません。有効にすると、ファイルのバックアップ先を選択できます。"
       ],
       "Plaintext backups are enabled and saved to:": [
-        "プレーンテキストバックアップが有効になっており、以下に保存されています:"
+        "プレーンテキストバックアップは有効で、保存先は次のとおりです:"
       ],
       "Plaintext backups are not enabled. Enable to choose where your data is backed up.": [
         "プレーンテキストバックアップは有効になっていません。有効にすると、データのバックアップ先を選択できます。"
@@ -4285,13 +4282,13 @@
         "ローカルバックアップを保存中…"
       ],
       "Successfully saved backup.": [
-        "バックアップの保存に成功しました。"
+        "バックアップを保存しました。"
       ],
       "Text backups are enabled and saved to:": [
-        "テキストバックアップが有効になっており、次の場所に保存されます:"
+        "テキストバックアップは有効で、次の場所に保存されます："
       ],
       "Text backups are not enabled. Enable to choose where your data is backed up.": [
-        "テキストバックアップは有効になっていません。有効にすると、データのバックアップ先を選択できます。"
+        "テキストのバックアップは有効になっていません。有効にすると、データのバックアップ先を選択できます。"
       ]
     },
     "B6.Preferences.Backups.Subtitle": {
@@ -4302,33 +4299,33 @@
         "2. ファイルを復号化してコンピューターに保存"
       ],
       "Automatically save backups of all your notes into plaintext, non-encrypted folders.": [
-        "すべてのメモのバックアップを、暗号化されていないプレーンテキストのフォルダーに自動的に保存します。"
+        "すべてのメモのバックアップを、暗号化されていないプレーンテキストのフォルダーに自動保存します。"
       ],
       "Automatically save backups of all your notes to this computer into plaintext, non-encrypted folders.": [
-        "すべてのメモのバックアップを、このコンピューター上の暗号化されていないプレーンテキストフォルダーに自動的に保存します。"
+        "すべてのメモのバックアップを、暗号化されていないプレーンテキストのフォルダーとしてこのコンピューターに自動保存します。"
       ],
       "Automatically save encrypted backups of your files.": [
         "ファイルの暗号化バックアップを自動的に保存します。"
       ],
       "Automatically save encrypted backups of your uploaded files to this computer.": [
-        "アップロードしたファイルの暗号化バックアップをこのコンピューターに自動的に保存します。"
+        "アップロードしたファイルの暗号化バックアップをこのコンピューターに自動保存します。"
       ],
       "Automatically save encrypted text backups of all your note and tag data to this computer.": [
-        "すべてのメモとタグのデータの暗号化済みテキストバックアップを、このコンピューターに自動的に保存します。"
+        "すべてのメモとタグのデータの暗号化テキストバックアップをこのコンピューターに自動保存します。"
       ],
       "Download a backup of all your text-based data": [
-        "すべてのテキストベースのデータのバックアップをダウンロード"
+        "すべてのテキストベースデータのバックアップをダウンロード"
       ],
       "Frequency": [
         "間隔"
       ],
       "Import a previously saved backup file": [
-        "以前保存したバックアップファイルをインポート"
+        "以前に保存したバックアップファイルをインポートする"
       ]
     },
     "B6.Preferences.Backups.Title": {
       "Automatic Encrypted Text Backups": [
-        "自動暗号化テキストバックアップ"
+        "暗号化テキストの自動バックアップ"
       ],
       "Automatic file backups": [
         "自動ファイルバックアップ"
@@ -4340,10 +4337,10 @@
         "バックアップの復号"
       ],
       "Data backups": [
-        "データバックアップ"
+        "データのバックアップ"
       ],
       "Email backups": [
-        "メールバックアップ"
+        "メールのバックアップ"
       ]
     },
     "B6.Preferences.Error": {
@@ -4351,24 +4348,24 @@
         "設定の取得に失敗しました。"
       ],
       "Failed to update settings.": [
-        "設定の更新に失敗しました。"
+        "設定の更新に失敗しました."
       ],
       "Unable to register for ${ ListedName }. Please try again later.": [
-        "${ ListedName } に登録できませんでした。しばらくしてから再度お試しください。"
+        "${ ListedName }に登録できませんでした。後でもう一度お試しください。"
       ]
     },
     "B6.Preferences.General.Action": {
       "Cancel": [
-        "キャンセル"
+        "取消"
       ],
       "Change icon": [
-        "アイコンを変更する"
+        "アイコンを変更"
       ],
       "Create Smart View": [
         "スマートビューを作成"
       ],
       "Create smart views to organize your notes according to conditions you define.": [
-        "自分で定義した条件に基づいてメモを整理するためのスマートビューを作成します。"
+        "定義した条件に基づいてメモを整理するスマートビューを作成します。"
       ],
       "Delete": [
         "削除"
@@ -4377,7 +4374,7 @@
         "編集"
       ],
       "Learn more": [
-        "より詳しく"
+        "詳細"
       ],
       "Options": [
         "オプション"
@@ -4400,7 +4397,7 @@
     },
     "B6.Preferences.General.Confirmation": {
       "Cancel": [
-        "キャンセル"
+        "取消"
       ],
       "Remove offline key?": [
         "オフラインキーを削除しますか？"
@@ -4408,46 +4405,46 @@
     },
     "B6.Preferences.General.Info": {
       ". Use [] to escape formatting.": [
-        "。[] で書式設定をエスケープできます。"
+        "。書式をエスケープするには[]を使用します。"
       ],
       "Allows using gestures to navigate": [
-        "ジェスチャーで移動できるようになります"
+        "ジェスチャーでのナビゲーションを可能にします"
       ],
       "Control whether the animated saving status is shown while editing. Error statuses are always shown regardless of preference.": [
-        "編集中にアニメーション付きの保存ステータスを表示するかどうかを設定します。エラーのステータスは設定に関係なく常に表示されます。"
+        "編集時に保存中のアニメーションを表示するかどうかを制御します。エラーステータスは設定に関係なく常に表示されます。"
       ],
       "Default image alignment in ${ SuperName } notes": [
-        "${ SuperName } メモでの画像のデフォルトの配置"
+        "${ SuperName }のメモでのデフォルトの画像配置"
       ],
       "Invalid JSON. Double check your entry and try again.": [
-        "JSONが無効です。入力内容を確認してもう一度お試しください。"
+        "JSONが無効です。入力内容を確認して、もう一度お試しください。"
       ],
       "Moments lets you capture photos of yourself throughout the day, creating a visual record of your life, one photo at a time. Using your webcam or mobile selfie-cam, Moments takes a photo of you every half hour. All photos are end-to-end encrypted and stored in your files. Enable Moments on a per-device basis to get started.": [
-        "Momentsでは、1日を通して自分の写真を撮影し、人生のビジュアル記録を1枚ずつ作成できます。ウェブカメラやモバイルのインカメラを使って、Momentsは30分ごとに写真を撮影します。すべての写真はエンドツーエンド暗号化され、ファイルに保管されます。開始するには、デバイスごとにMomentsを有効にしてください。"
+        "Momentsでは、1日を通して自分の写真を撮影し、1枚ずつ人生の視覚的な記録を作成できます。ウェブカメラまたはスマートフォンの自撮りカメラを使用して、30分ごとに写真を撮影します。すべての写真はエンドツーエンドで暗号化され、ファイルに保存されます。開始するには、デバイスごとにMomentsを有効にしてください。"
       ],
       "No experimental features available.": [
-        "利用可能な実験的機能はありません。"
+        "利用できる実験的機能はありません。"
       ],
       "Only applies to web and desktop apps. On mobile, notes don't open automatically at launch.": [
-        "ウェブアプリとデスクトップアプリのみに適用されます。モバイルでは、メモは起動時に自動的に開きません。"
+        "ウェブアプリとデスクトップアプリにのみ適用されます。モバイルでは、起動時にメモが自動的に開きません。"
       ],
       "The default spellcheck value for new notes. Spellcheck can be configured per note from the note context menu. Spellcheck may degrade overall typing performance with long notes.": [
-        "新規メモのスペルチェックのデフォルト値です。スペルチェックは、メモのコンテキストメニューからメモごとに設定できます。長いメモでは、スペルチェックにより全体の入力パフォーマンスが低下する場合があります。"
+        "新しいメモのデフォルトのスペルチェック設定です。スペルチェックは、メモのコンテキストメニューからメモごとに設定できます。長いメモでは、スペルチェックにより入力全体のパフォーマンスが低下する場合があります。"
       ],
       "The first note in the list": [
-        "リスト内の最初のメモ"
+        "リストの最初のメモ"
       ],
       "When enabled, adding a nested tag to a note will automatically add all associated parent tags.": [
-        "有効にすると、メモにネストされたタグを追加した際に、関連するすべての親タグが自動的に追加されます。"
+        "有効にすると、メモにネストされたタグを追加したときに、関連する親タグがすべて自動的に追加されます。"
       ],
       "When enabled, the ${ SuperName } toolbar will always be shown at the top of the note. It can be temporarily toggled using Cmd/Ctrl+Shift+K. When disabled, the ${ SuperName } toolbar will only be shown as a floating toolbar when text is selected.": [
-        "有効にすると、${ SuperName }ツールバーがメモの上部に常に表示されます。Cmd/Ctrl+Shift+Kで一時的に切り替えることもできます。無効化した場合、${ SuperName }ツールバーはテキストを選択したときにのみフローティングツールバーとして表示されます。"
+        "有効にすると、${ SuperName } ツールバーが常にメモの上部に表示されます。Cmd/Ctrl+Shift+K で一時的に切り替えられます。無効にすると、${ SuperName } ツールバーはテキストを選択したときにフローティングツールバーとしてのみ表示されます。"
       ],
       "Whether a confirmation dialog should be shown before closing the app.": [
         "アプリを閉じる前に確認ダイアログを表示するかどうか。"
       ],
       "Your offline subscription code has been successfully activated.": [
-        "ホームサーバー用サブスクリプションのコードを有効化しました。"
+        "ホームサーバー用サブスクリプションコードが正常に有効化されました。"
       ],
       "Your offline subscription code has been successfully removed.": [
         "ホームサーバー用サブスクリプションのコードを削除しました。"
@@ -4455,13 +4452,13 @@
     },
     "B6.Preferences.General.Label": {
       "Capture Present Moment": [
-        "今この瞬間を記録"
+        "現在のMomentをキャプチャ"
       ],
       "Center align": [
         "中央揃え"
       ],
       "Icon:": [
-        "アイコン:"
+        "アイコン："
       ],
       "Labs": [
         "ラボ"
@@ -4470,7 +4467,7 @@
         "左揃え"
       ],
       "Offline activation": [
-        "オフラインアクティベーション"
+        "オフラインでのアクティベーション"
       ],
       "Offline Subscription": [
         "ホームサーバー用サブスクリプション"
@@ -4482,10 +4479,10 @@
         "ペイン切り替えジェスチャー"
       ],
       "Predicate:": [
-        "述語:"
+        "述語："
       ],
       "Preview:": [
-        "プレビュー:"
+        "プレビュー："
       ],
       "Right align": [
         "右揃え"
@@ -4497,7 +4494,7 @@
         "最後に表示したメモ"
       ],
       "Title:": [
-        "タイトル:"
+        "タイトル："
       ]
     },
     "B6.Preferences.General.Labs.Localization.Description": {
@@ -4507,12 +4504,12 @@
     },
     "B6.Preferences.General.Labs.Localization.Name": {
       "Localization": [
-        "ローカライゼーション"
+        "ローカライズ"
       ]
     },
     "B6.Preferences.General.Language.Action": {
       "Select the app language": [
-        "アプリの言語を選択"
+        "アプリの言語を選択してください"
       ]
     },
     "B6.Preferences.General.Language.Error": {
@@ -4520,18 +4517,18 @@
         "選択した言語を読み込めませんでした。"
       ],
       "Failed to load language options. Please reload the app and try again.": [
-        "言語オプションを読み込めませんでした。アプリを再読み込みして、もう一度お試しください。"
+        "言語オプションを読み込めませんでした。アプリを再読み込みしてもう一度お試しください。"
       ]
     },
     "B6.Preferences.General.Language.Info": {
       "Language switched to ${ languageName }": [
-        "言語が${ languageName }に切り替わりました"
+        "言語を${ languageName }に切り替えました"
       ],
       "Use the app in your preferred language. Your browser language is used when no preference is set.": [
-        "お好みの言語でアプリを使用できます。設定がない場合は、ブラウザの言語が使用されます。"
+        "アプリを希望の言語で使用できます。優先言語が設定されていない場合は、ブラウザの言語が使用されます。"
       ],
       "Use the app in your preferred language. Your OS language is used when no preference is set.": [
-        "お好みの言語でアプリを使用できます。設定がない場合は、OSの言語が使用されます。"
+        "アプリはお好みの言語で使用できます。設定がない場合はOSの言語が使用されます。"
       ]
     },
     "B6.Preferences.General.Language.Spotlight.ActionDismiss": {
@@ -4540,16 +4537,16 @@
       ]
     },
     "B6.Preferences.General.Language.Spotlight.ActionOpen": {
-      "Open language settings": [
+      "Open language preferences": [
         "言語設定を開く"
       ]
     },
     "B6.Preferences.General.Language.Spotlight.Info": {
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
-        "お好みの言語でアプリを使用できるようになりました。設定 → 一般 → 言語でこのラボ機能をオンにしてください。設定がない場合は、ブラウザの言語が使用されます。"
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your browser language is used when no preference is set.": [
+        "お好みの言語でアプリを使用できるようになりました。設定 → 一般 → 言語でこのラボ機能をオンにしてください。設定がない場合はブラウザの言語が使用されます。"
       ],
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
-        "お好みの言語でアプリを使用できるようになりました。設定 → 一般 → 言語でこのラボ機能をオンにしてください。設定がない場合は、OSの言語が使用されます。"
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your OS language is used when no preference is set.": [
+        "お好みの言語でアプリを使用できるようになりました。設定 → 一般 → 言語でこのラボ機能をオンにしてください。設定がない場合はOSの言語が使用されます。"
       ]
     },
     "B6.Preferences.General.Language.Subtitle": {
@@ -4558,7 +4555,7 @@
       ]
     },
     "B6.Preferences.General.Language.Title": {
-      "Language Settings": [
+      "Language Preferences": [
         "言語設定"
       ]
     },
@@ -4572,16 +4569,16 @@
     },
     "B6.Preferences.General.Subtitle": {
       "Activate": [
-        "有効化:"
+        "有効化"
       ],
       "Add all parent tags when adding a nested tag to a note": [
-        "メモにネストされたタグを追加する際に、すべての親タグを追加する"
+        "メモにネストされたタグを追加するときにすべての親タグを追加する"
       ],
       "Always ask before closing app (Android)": [
-        "アプリを閉じる前に常に確認 (Android)"
+        "アプリを閉じる前に常に確認する（Android）"
       ],
       "Default image alignment in ${ SuperName } notes": [
-        "${ SuperName } メモでの画像のデフォルトの配置"
+        "${ SuperName }のメモでの画像のデフォルト配置"
       ],
       "Note Type": [
         "メモの種類"
@@ -4596,10 +4593,10 @@
         "タイトルの形式"
       ],
       "Use always-visible toolbar in ${ SuperName } notes": [
-        "${ SuperName } メモでツールバーを常に表示"
+        "${ SuperName }のメモで常に表示されるツールバーを使用する"
       ],
       "Your personal photo journal": [
-        "あなただけのフォトジャーナル"
+        "あなただけの写真日記"
       ]
     },
     "B6.Preferences.General.Title": {
@@ -4610,16 +4607,16 @@
         "デフォルト"
       ],
       "Edit Smart View \"${ viewTitle }\"": [
-        "スマートビュー \"${ viewTitle }\" を編集"
+        "スマートビュー「${ viewTitle }」を編集"
       ],
       "Labs": [
         "ラボ"
       ],
       "Moments": [
-        "モーメンツ"
+        "モーメント"
       ],
       "New Note Defaults": [
-        "新規メモのデフォルト設定"
+        "新しいメモのデフォルト設定"
       ],
       "Smart Views": [
         "スマートビュー"
@@ -4628,10 +4625,10 @@
         "ツール"
       ],
       "Upgrade for smart views": [
-        "アップグレードでスマートビューを利用"
+        "スマートビューを利用するにはアップグレード"
       ],
       "When opening the app, show...": [
-        "アプリを開いたときに表示する項目..."
+        "アプリを開いたときに表示する内容..."
       ]
     },
     "B6.Preferences.HomeServer.Action": {
@@ -4642,13 +4639,13 @@
         "適用して再起動"
       ],
       "Change Location": [
-        "場所を変更"
+        "位置を変更"
       ],
       "Close": [
         "閉じる"
       ],
       "MySQL website.": [
-        "MySQLウェブサイト。"
+        "MySQLのウェブサイト"
       ],
       "Open Location": [
         "場所を開く"
@@ -4664,34 +4661,34 @@
     },
     "B6.Preferences.HomeServer.Info": {
       "Accessible on local network at": [
-        "ローカルネットワークから次のアドレスでアクセスできます"
+        "ローカルネットワークでのアクセス先:"
       ],
       "Activate the Tailscale VPN on your mobile device.": [
         "モバイルデバイスでTailscale VPNを有効にしてください。"
       ],
       "Change your server's data location by selecting \"Change Location\" in the Home Server section above.": [
-        "サーバーのデータの位置を変更するには、上のホームサーバーセクションで「位置を変更」を選択してください。"
+        "上のホームサーバーセクションで\"場所を変更\"を選択して、サーバーのデータの保存場所を変更します。"
       ],
       "Changing the port will require you to sign out of all existing sessions.": [
-        "ポートを変更すると、既存のすべてのセッションからサインアウトする必要があります。"
+        "ポートを変更すると、すべての既存のセッションからサインアウトする必要があります。"
       ],
       "Download Tailscale on your mobile device and sign into your Tailscale account.": [
-        "モバイルデバイスにTailscaleをダウンロードし、Tailscaleアカウントにサインインしてください。"
+        "モバイルデバイスにTailscaleをダウンロードして、Tailscaleアカウントにサインインしてください。"
       ],
       "Enter your purchased offline subscription code to activate all the features offered by your home server, likes files support and ${ SuperName } notes.": [
-        "ご購入いただいたホームサーバー用サブスクリプションのコードを入力すると、ホームサーバーが提供するファイルのサポートや ${ SuperName } メモなど、すべての機能が有効になります。"
+        "購入したホームサーバー用サブスクリプションコードを入力して、ファイルサポートや${ SuperName }メモなど、ホームサーバーが提供するすべての機能を有効化してください。"
       ],
       "For automatic backups, you can place your server's data inside of a synced cloud folder, like Dropbox, Tresorit, or iCloud Drive.": [
-        "自動バックアップの場合は、サーバーのデータをDropbox、Tresorit、iCloud Driveなどの同期されたクラウドフォルダーに配置できます。"
+        "自動バックアップを行うには、Dropbox、Tresorit、iCloud Driveなどの同期されたクラウドフォルダーにサーバーのデータを置くことができます。"
       ],
       "Home server is enabled. All data is stored at:": [
-        "ホームサーバーが有効です。すべてのデータは次の場所に保存されています:"
+        "ホームサーバーは有効です。すべてのデータは次の場所に保管されています:"
       ],
       "In order to connect to a MySQL database, ensure that your system has MySQL installed. For detailed instructions, visit the": [
-        "MySQL データベースに接続するには、システムに MySQL がインストールされていることをご確認ください。詳細な手順については、次をご覧ください:"
+        "MySQLデータベースに接続するには、システムにMySQLがインストールされていることを確認してください。詳細な手順については、次をご覧ください"
       ],
       "Open ${ AppName } on your mobile device and sign into your home server by specifying the sync server URL during sign in. The URL will be the Tailscale-based IP address of this computer, followed by the port number of your home server. For example, if your computer Tailscale IP address is 100.112.45.106 and your home server is running on port 3127, your sync server URL will be http://100.112.45.106:3127.": [
-        "モバイルデバイスで${ AppName }を開き、サインイン時に同期サーバーのURLを指定してホームサーバーにサインインします。URLは、このコンピューターのTailscaleベースのIPアドレスの後に、ホームサーバーのポート番号を続けたものになります。たとえば、コンピューターのTailscale IPアドレスが100.112.45.106で、ホームサーバーがポート3127で実行されている場合、同期サーバーのURLはhttp://100.112.45.106:3127になります。"
+        "モバイルデバイスで${ AppName }を開き、サインイン時に同期サーバーのURLを指定してホームサーバーにサインインします。URLは、このコンピューターのTailscaleベースのIPアドレスに、ホームサーバーのポート番号を続けたものになります。たとえば、コンピューターのTailscale IPアドレスが100.112.45.106で、ホームサーバーがポート3127で実行されている場合、同期サーバーのURLはhttp://100.112.45.106:3127になります。"
       ],
       "Restart your home server.": [
         "ホームサーバーを再起動してください。"
@@ -4700,13 +4697,13 @@
         "サーバーのデータを保存するクラウドドライブを選択してください。"
       ],
       "You are not currently signed into your home server. To use your home server, sign in or register using ${ url }": [
-        "現在、ホームサーバーにサインインしていません。ホームサーバーを使用するには、${ url } からサインインまたは登録してください"
+        "現在、ホームサーバーにサインインしていません。ホームサーバーを使用するには、${ url } を使用してサインインまたは登録してください。"
       ],
       "You are not currently signed into your home server. To use your home server, sign out of ${ email }, then sign in or register using ${ url }.": [
-        "現在、ホームサーバーにサインインしていません。ホームサーバーを使用するには、${ email } からサインアウトし、${ url } を使用してサインインまたは登録してください。"
+        "現在、ホームサーバーにサインインしていません。ホームサーバーを使用するには、${ email }からサインアウトし、${ url }を使用してサインインまたは登録してください。"
       ],
       "Your ${ AppName } data is always end-to-end encrypted on disk, so your cloud provider will not be able to read your notes or files.": [
-        "${ AppName }のデータはディスク上で常にエンドツーエンド暗号化されているため、クラウドプロバイダーがメモやファイルを読むことはできません。"
+        "${ AppName } のデータは常にディスク上でエンドツーエンド暗号化されているため、クラウドプロバイダーはメモやファイルを読み取ることができません。"
       ],
       "Your home server is offline.": [
         "ホームサーバーがオフラインです。"
@@ -4735,7 +4732,7 @@
         "MySQL"
       ],
       "Register on ${ tailscaleLink } for free.": [
-        "${ tailscaleLink }に無料でご登録いただけます。"
+        "${ tailscaleLink }で無料登録してください。"
       ],
       "SQLite": [
         "SQLite"
@@ -4770,7 +4767,7 @@
         "ポート"
       ],
       "Pseudo Params Key": [
-        "疑似パラメーターキー"
+        "疑似パラメータキー"
       ],
       "username": [
         "ユーザー名"
@@ -4781,10 +4778,10 @@
     },
     "B6.Preferences.HomeServer.Status": {
       "Applying changes and restarting...": [
-        "変更を適用して再起動中..."
+        "変更を適用して再起動しています..."
       ],
       "Download Tailscale on this computer and complete the Tailscale setup wizard until you are presented with the IP address of your computer. It should start with something like 100.xxx...": [
-        "このコンピューターに Tailscale をダウンロードし、Tailscale のセットアップウィザードを完了すると、コンピューターの IP アドレスが表示されます。100.xxx... のような形式で始まります。"
+        "このコンピューターにTailscaleをダウンロードし、コンピューターのIPアドレスが表示されるまでTailscaleのセットアップウィザードを完了してください。IPアドレスは100.xxx...のように始まります。"
       ],
       "Not Set": [
         "未設定"
@@ -4796,18 +4793,18 @@
         "オンライン"
       ],
       "Shutting down...": [
-        "シャットダウン中..."
+        "シャットダウンしています..."
       ],
       "Starting...": [
-        "起動中..."
+        "開始中..."
       ],
       "You are currently signed into your home server under ${ email }": [
-        "現在、${ email }としてホームサーバーにサインインしています"
+        "現在、${ email }でホームサーバーにサインインしています。"
       ]
     },
     "B6.Preferences.HomeServer.Subtitle": {
       "Accessing your home server while on the go is easy and secure with Tailscale.": [
-        "Tailscale を使えば、外出先からでもホームサーバーに簡単かつ安全にアクセスできます。"
+        "外出先からホームサーバーにアクセスするのも、Tailscaleを使えば簡単かつ安全です。"
       ],
       "Auth JWT Secret": [
         "認証JWTシークレット"
@@ -4825,7 +4822,7 @@
         "データベースポート"
       ],
       "Database Username": [
-        "データベースのユーザー名"
+        "データベースユーザー名"
       ],
       "Encryption Server Key": [
         "暗号化サーバーキー"
@@ -4840,10 +4837,10 @@
         "ポート"
       ],
       "Pseudo Params Key": [
-        "疑似パラメーターキー"
+        "疑似パラメータキー"
       ],
       "Sync your data on a private cloud running on your home computer.": [
-        "ホームコンピューター上で動作するプライベートクラウドにデータを同期します。"
+        "自宅のコンピューターで稼働するプライベートクラウドでデータを同期します。"
       ],
       "Valet Token Secret": [
         "Valet Tokenシークレット"
@@ -4857,7 +4854,7 @@
         "高度な設定"
       ],
       "Backing up your data": [
-        "データのバックアップ"
+        "データをバックアップ中"
       ],
       "Database": [
         "データベース"
@@ -4874,13 +4871,13 @@
     },
     "B6.Preferences.Listed.Action": {
       "Create new author": [
-        "新しい著者を作成"
+        "新しい作成者を作成する"
       ],
       "Later": [
         "後で"
       ],
       "Learn more": [
-        "より詳しく"
+        "詳細"
       ],
       "Open Settings": [
         "設定を開く"
@@ -4888,32 +4885,32 @@
     },
     "B6.Preferences.Listed.Info": {
       "${ ListedName } is a free blogging platform that allows you to create a public journal published directly from your notes.": [
-        "${ ListedName } は、メモから直接公開される公開ジャーナルを作成できる無料のブログプラットフォームです。"
+        "${ ListedName }は、メモから直接公開ジャーナルを作成できる無料のブログプラットフォームです。"
       ],
       "${ ListedName } will permanently shut down on December 31, 2026.": [
-        "${ ListedName }は2026年12月31日に完全に終了します。"
+        "${ ListedName }は2026年12月31日をもって完全にサービスを終了します。"
       ],
       "Note: The ${ ListedName } platform will permanently shut down December 31, 2026. Your data published on ${ ListedName } will still be available in your personal ${ AppName } account.": [
-        "注意: ${ ListedName }プラットフォームは2026年12月31日に完全に終了します。${ ListedName }に公開したデータは、個人の${ AppName }アカウントで引き続き利用できます。"
+        "注意: ${ ListedName } プラットフォームは2026年12月31日に完全に終了します。${ ListedName } で公開したデータは、個人の ${ AppName } アカウントで引き続き利用できます。"
       ],
       "To get started, sign in or register for a ${ AppName } account.": [
-        "始めるには、${ AppName } アカウントにサインインまたは登録してください。"
+        "開始するには、${ AppName }のアカウントにサインインするか、登録してください。"
       ],
       "Your new ${ ListedName } blog has been successfully created! You can publish a new post to your blog from ${ AppName } via the <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.": [
-        "新しい ${ ListedName } ブログが正常に作成されました。${ AppName } から、エディターペインの <i>アクション</i> メニューを使ってブログに新しい投稿を公開できます。ブログの設定を開いて、セットアップを始めましょう。"
+        "新しい${ ListedName }ブログが作成されました！${ AppName }のエディターペインにある<i>アクション</i>メニューから、ブログに新しい投稿を公開できます。ブログ設定を開いてセットアップを始めてください。"
       ]
     },
     "B6.Preferences.Listed.Status": {
       "Creating account...": [
-        "アカウントを作成しています..."
+        "アカウントを作成中..."
       ]
     },
     "B6.Preferences.Listed.Title": {
       "Your blog on ${ ListedName }": [
-        "${ ListedName } のブログ"
+        "${ ListedName }のブログ"
       ],
       "Your blogs on ${ ListedName }": [
-        "${ ListedName } 上のブログ"
+        "${ ListedName } でのあなたのブログ"
       ]
     },
     "B6.Preferences.Other.Action": {
@@ -4924,7 +4921,7 @@
         "バックアップ"
       ],
       "Cancel": [
-        "キャンセル"
+        "取消"
       ],
       "Close preferences": [
         "設定を閉じる"
@@ -4933,7 +4930,7 @@
         "確認"
       ],
       "Create a free ${ ListedName } author account to get started.": [
-        "始めるには、無料の ${ ListedName } 著者アカウントを作成してください。"
+        "始めるには、無料の ${ ListedName } 作成者アカウントを作成してください。"
       ],
       "Download URL": [
         "ダウンロードURL"
@@ -4945,7 +4942,7 @@
         "ブログを開く"
       ],
       "Open Downloads": [
-        "ダウンロードページを開く"
+        "ダウンロードを開く"
       ],
       "Open preferences": [
         "設定を開く"
@@ -4959,10 +4956,10 @@
     },
     "B6.Preferences.Other.Error": {
       "Failed to install plugin": [
-        "プラグインをインストールできませんでした"
+        "プラグインのインストールに失敗しました。"
       ],
       "Plugins may not be actively maintained. ${ AppName } cannot attest to the quality or user experience of these plugins, and is not responsible for any data loss that may arise from their use.": [
-        "プラグインは積極的にメンテナンスされていない場合があります。${ AppName }はこれらのプラグインの品質やユーザーエクスペリエンスを保証するものではなく、使用によって生じたデータ損失について一切の責任を負いません。"
+        "プラグインは現在も活発にメンテナンスされているとは限りません。${ AppName }は、これらのプラグインの品質やユーザー体験を保証できず、使用によって生じる可能性のあるデータ損失について責任を負いません。"
       ]
     },
     "B6.Preferences.Other.Info": {
@@ -4970,7 +4967,7 @@
         "読み込み中…"
       ],
       "No plugins installed.": [
-        "インストール済みのプラグインはありません。"
+        "プラグインがインストールされていません。"
       ],
       "Your preferences for ${ AppName }": [
         "${ AppName }の設定"
@@ -4993,13 +4990,13 @@
         "プラグインのURLを入力"
       ],
       "Extension Type": [
-        "プラグインの種類"
+        "拡張機能の種類"
       ],
       "General": [
         "一般"
       ],
       "Get a free month": [
-        "1か月無料で利用"
+        "1か月無料"
       ],
       "Help & feedback": [
         "ヘルプとフィードバック"
@@ -5055,18 +5052,18 @@
         "始めましょう"
       ],
       "What is ${ ListedName }?": [
-        "${ ListedName } とは？"
+        "${ ListedName }とは何ですか？"
       ]
     },
     "B6.Preferences.Other.Title": {
       "About ${ ListedName }": [
-        "${ ListedName } について"
+        "${ ListedName }について"
       ],
       "Browse Plugins": [
-        "プラグインを探す"
+        "プラグインを閲覧"
       ],
       "Confirm Extension": [
-        "プラグインの確認"
+        "拡張機能を確認"
       ],
       "Install Custom Plugin": [
         "カスタムプラグインをインストール"
@@ -5080,7 +5077,7 @@
     },
     "B6.Preferences.Plugins.Confirmation": {
       "Are you sure you want to uninstall this plugin?": [
-        "このプラグインをアンインストールしますか？"
+        "このプラグインをアンインストールしてもよろしいですか？"
       ],
       "Uninstall Plugin?": [
         "プラグインをアンインストールしますか？"
@@ -5091,12 +5088,12 @@
         "${ pluginName } は正常にインストールされました。"
       ],
       "Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing experiences, but in most cases, the built-in ${ SuperName } note type can encapsulate any functionality found in plugins.": [
-        "プラグインは安全なサンドボックス内で実行され、許可したデータにのみアクセスできます。メモの種類を使用すると専用の編集環境が利用できますが、ほとんどの場合、組み込みの${ SuperName }メモの種類で、プラグインにあるあらゆる機能を包含できます。"
+        "プラグインは安全なサンドボックス内で実行され、アクセスを許可したデータにのみアクセスできます。メモの種類を使用すると専門的な編集体験が可能になりますが、ほとんどの場合、組み込みの ${ SuperName } メモの種類でプラグインにあるあらゆる機能を包含できます。"
       ]
     },
     "B6.Preferences.Plugins.Label": {
       "by": [
-        "作成者"
+        "作"
       ],
       "Uninstall": [
         "アンインストール"
@@ -5122,7 +5119,7 @@
         "戻る"
       ],
       "Cancel": [
-        "キャンセル"
+        "取消"
       ],
       "Change Passcode": [
         "パスコードを変更"
@@ -5149,10 +5146,10 @@
         "マルチタスク時のプライバシーを有効にする"
       ],
       "Enable Multitasking/Screenshot Privacy": [
-        "マルチタスク/スクリーンショットプライバシーを有効にする"
+        "マルチタスク/スクリーンショットのプライバシーを有効にする"
       ],
       "End Unprotected Access": [
-        "保護されていないアクセスを終了"
+        "非保護アクセスを終了"
       ],
       "Export": [
         "エクスポート"
@@ -5164,7 +5161,7 @@
         "完了"
       ],
       "Learn more": [
-        "より詳しく"
+        "詳細"
       ],
       "Next": [
         "次へ"
@@ -5186,7 +5183,7 @@
     },
     "B6.Preferences.Security.Error": {
       "${ erroredItems.length } items are errored and could not be decrypted.": [
-        "${ erroredItems.length } 個のアイテムでエラーが発生し、復号化できませんでした。"
+        "${ erroredItems.length } 件のアイテムがエラー状態で、復号化できませんでした。"
       ],
       "Could not prepare security key registration": [
         "セキュリティキーの登録を準備できませんでした"
@@ -5200,43 +5197,43 @@
     },
     "B6.Preferences.Security.Info": {
       "${ contentTypeDisplay } created on ${ createdAtString }": [
-        "${ createdAtString }に作成された${ contentTypeDisplay }"
+        "${ contentTypeDisplay } は ${ createdAtString } に作成されました"
       ],
       "Actions like viewing or searching protected notes, exporting decrypted backups, or revoking an active session require additional authentication such as entering your account password or application passcode.": [
-        "保護されたメモの表示や検索、復号化したバックアップのエクスポート、アクティブなセッションの失効などの操作には、アカウントパスワードやアプリのパスコードの入力など、追加の認証が必要です。"
+        "保護されたメモの表示や検索、復号化されたバックアップのエクスポート、アクティブなセッションの失効などの操作には、アカウントパスワードやアプリのパスコードの入力といった追加の認証が必要です。"
       ],
       "Add a passcode to lock the application and encrypt on-device key storage.": [
         "パスコードを追加してアプリをロックし、デバイス上のキーストレージを暗号化します。"
       ],
       "An extra layer of security when logging in to your account.": [
-        "アカウントへのログイン時に、追加のセキュリティレイヤーとして機能します。"
+        "アカウントにログインする際の追加のセキュリティ層です。"
       ],
       "Authenticate with a hardware security key such as YubiKey.": [
-        "YubiKey などの物理セキュリティキーを使用して認証します。"
+        "YubiKeyなどの物理セキュリティキーで認証してください。"
       ],
       "Incorrect authentication code, please try again.": [
         "認証コードが正しくありません。もう一度お試しください。"
       ],
       "Incorrect secret key, please try again.": [
-        "シークレットキーが正しくありません。もう一度お試しください。"
+        "シークレットキーが正しくありません。再度お試しください。"
       ],
       "Item ID: ${ itemUuid }": [
         "アイテムID: ${ itemUuid }"
       ],
       "Item of type ${ item.content_type }": [
-        "タイプ ${ item.content_type } のアイテム"
+        "種類が ${ item.content_type } のアイテム"
       ],
       "Last Modified: ${ updatedAtString }": [
-        "最終更新：${ updatedAtString }"
+        "最終変更：${ updatedAtString }"
       ],
       "Passcode lock is enabled.": [
-        "パスコードロックが有効になっています。"
+        "パスコードロックは有効です。"
       ],
       "Please visit the web app in order to add a hardware security key.": [
         "物理セキュリティキーを追加するには、ウェブアプリにアクセスしてください。"
       ],
       "Save your secret key ${ safeStorageLink }:": [
-        "シークレットキーを${ safeStorageLink }に保存してください:"
+        "シークレットキーを保存${ safeStorageLink }:"
       ],
       "Sign in or register for an account to configure 2FA.": [
         "2要素認証を設定するには、サインインするかアカウントを登録してください。"
@@ -5245,28 +5242,43 @@
         "物理セキュリティキーを設定するには、サインインするかアカウントを登録してください。"
       ],
       "Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or get a new one.": [
-        "Google Authenticator などの一部のアプリは、デバイスを紛失したり新しいデバイスに切り替えたりした場合に、シークレットキーのバックアップと復元に対応していません。"
+        "Google Authenticatorなどの認証アプリの中には、デバイスを紛失したり新しいデバイスに買い替えたりしても、シークレットキーをバックアップ・復元しないものがあります。"
       ],
       "somewhere safe": [
         "安全な場所"
       ],
       "The autolock timer begins when the window or tab loses focus.": [
-        "オートロックのタイマーは、ウィンドウまたはタブがフォーカスを失うと開始されます。"
+        "自動ロックタイマーは、ウィンドウまたはタブがフォーカスを失うと開始されます。"
       ],
       "Two-factor authentication has been successfully enabled for your account.": [
-        "アカウントで2要素認証が正常に有効になりました。"
+        "アカウントの2要素認証が有効になりました。"
       ],
       "User agent logging allows you to identify the devices or browsers signed into your account. For increased privacy, you can disable this feature, which will remove all saved user agent values from our server, and disable future logging of this value.": [
-        "ユーザーエージェントのログを記録すると、アカウントにサインインしているデバイスやブラウザを特定できます。プライバシーを強化するため、この機能を無効化することもできます。無効化すると、サーバーに保存されているすべてのユーザーエージェントの値が削除され、今後この値のログ記録も無効化されます。"
+        "ユーザーエージェントのログ記録により、アカウントにサインインしているデバイスやブラウザを特定できます。プライバシーを強化するには、この機能を無効化できます。無効化すると、保存されているすべてのユーザーエージェント値がサーバーから削除され、今後この値のログ記録も無効になります。"
       ],
       "You can use this key to generate codes if you lose access to your authenticator app.": [
-        "認証アプリにアクセスできなくなった場合、このキーを使用してコードを生成できます。"
+        "認証アプリにアクセスできなくなった場合、この鍵を使ってコードを生成できます。"
       ],
       "You must enable two-factor authentication before adding a hardware security key.": [
         "物理セキュリティキーを追加する前に、2要素認証を有効にする必要があります。"
       ]
     },
     "B6.Preferences.Security.Label": {
+      "${ archivedCount } archived note": [
+        "${ archivedCount }件のアーカイブ済みメモ"
+      ],
+      "${ deletedCount } trashed note": [
+        "${ deletedCount }件のごみ箱内のメモ"
+      ],
+      "${ filesTotal } file": [
+        "${ filesTotal }個のファイル"
+      ],
+      "${ notesCount } note": [
+        "${ notesCount }メモ"
+      ],
+      "${ tagsCount } tag": [
+        "${ tagsCount }個のタグ"
+      ],
       "authentication code": [
         "認証コード"
       ],
@@ -5277,10 +5289,10 @@
         "デバイス名"
       ],
       "Enter your ${ secretKeyBold }:": [
-        "${ secretKeyBold }を入力してください:"
+        "${ secretKeyBold } を入力してください："
       ],
       "Open your": [
-        "次のアプリを開いてください:"
+        "お使いの"
       ],
       "or": [
         "または"
@@ -5289,21 +5301,21 @@
         "生体認証を必須にする"
       ],
       "Require Passcode": [
-        "パスコードが必要です"
+        "パスコードを要求"
       ],
       "Scan this QR code": [
-        "この QR コードをスキャンしてください"
+        "このQRコードをスキャン"
       ],
       "secret key": [
         "シークレットキー"
       ],
       "Verify the ${ authenticationCodeBold } generated by your authenticator app:": [
-        "認証アプリで生成された${ authenticationCodeBold }を確認してください:"
+        "認証アプリで生成された ${ authenticationCodeBold } を確認してください："
       ]
     },
     "B6.Preferences.Security.Placeholder": {
       "Confirm Passcode": [
-        "パスコードの確認"
+        "パスコードを確認"
       ],
       "Passcode": [
         "パスコード"
@@ -5311,10 +5323,10 @@
     },
     "B6.Preferences.Security.Status": {
       "Protections are enabled.": [
-        "保護機能が有効になっています。"
+        "保護機能は有効です。"
       ],
       "Unprotected access expires at ${ protectionsDisabledUntil }.": [
-        "保護されていないアクセスは${ protectionsDisabledUntil }に終了します。"
+        "保護されていないアクセスの有効期限は${ protectionsDisabledUntil }です。"
       ]
     },
     "B6.Preferences.Security.Subtitle": {
@@ -5360,7 +5372,7 @@
         "マルチタスク/スクリーンショットのプライバシー"
       ],
       "Passcode Autolock": [
-        "パスコード自動ロック"
+        "パスコードの自動ロック"
       ],
       "Passcode lock": [
         "パスコードロック"
@@ -5372,32 +5384,32 @@
         "保護機能"
       ],
       "Step 1 of 3 - Scan QR code": [
-        "ステップ 1/3 - QRコードをスキャン"
+        "ステップ 1/3：QRコードをスキャン"
       ],
       "Step 2 of 3 - Save secret key": [
-        "ステップ 2/3 - シークレットキーの保存"
+        "ステップ2/3 - シークレットキーを保存"
       ],
       "Step 3 of 3 - Verification": [
-        "ステップ 3/3 - 確認"
+        "ステップ3/3 - 確認"
       ],
       "Successfully Enabled": [
-        "有効化に成功しました"
+        "正常に有効化されました"
       ],
       "Two-factor authentication": [
         "2要素認証"
       ],
       "Two-factor authentication not available": [
-        "2要素認証を利用できません"
+        "2要素認証は利用できません"
       ]
     },
     "B6.Preferences.Security.Warning": {
       "Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the \"Stay signed in\" option checked.": [
-        "一時的なセッションではパスコードの追加はサポートされていません。サインアウトした後、\"サインインしたままにする\"にチェックを入れて再度サインインしてください。"
+        "一時セッションではパスコードを追加できません。サインアウトしてから、\"サインインしたままにする\"オプションをオンにして再度サインインしてください。"
       ]
     },
     "B6.Preferences.Subscription.Confirmation": {
       "All uploaded files of this user will be removed. This action cannot be undone.": [
-        "このユーザーがアップロードしたすべてのファイルは削除されます。この操作は元に戻せません。"
+        "このユーザーがアップロードしたすべてのファイルが削除されます。この操作は元に戻せません。"
       ],
       "Are you sure you want to cancel this invitation?": [
         "この招待をキャンセルしてもよろしいですか？"
@@ -5411,16 +5423,16 @@
         "招待の送信中にエラーが発生しました。もう一度お試しいただくか、問題が解決しない場合はサポートにお問い合わせください。"
       ],
       "Cancelation already in progress.": [
-        "キャンセル処理はすでに進行中です。"
+        "キャンセル手続きはすでに進行中です。"
       ],
       "Cannot close window until pending tasks are complete.": [
         "保留中のタスクが完了するまで、ウィンドウを閉じることはできません。"
       ],
       "Could not cancel invitation. Please try again or contact support if the issue persists.": [
-        "招待をキャンセルできませんでした。もう一度お試しください。問題が解決しない場合はサポートにお問い合わせください。"
+        "招待をキャンセルできませんでした。再度お試しいただくか、問題が続く場合はサポートにお問い合わせください。"
       ],
       "The email you entered has an invalid format. Please review your input and try again.": [
-        "入力されたメールアドレスの形式が正しくありません。入力内容を確認して、もう一度お試しください。"
+        "入力したメールの形式が正しくありません。入力を確認して、もう一度お試しください。"
       ],
       "There was an error when attempting to redirect you to the subscription page.": [
         "サブスクリプションページへのリダイレクト中にエラーが発生しました。"
@@ -5431,69 +5443,63 @@
         "有効な招待"
       ],
       "If an account is found with that email, they will receive an email with your invitation.": [
-        "そのメールアドレスでアカウントが見つかった場合、そのアカウントに招待メールが送信されます。"
+        "そのメールアドレスでアカウントが見つかった場合、招待メールが届きます。"
       ],
       "Invitee Email": [
-        "招待されたユーザーのメールアドレス"
+        "招待されたユーザーのメール"
       ],
       "Make your first subscription invite below.": [
-        "以下から最初のサブスクリプション招待を作成してください。"
+        "以下から最初のサブスクリプション招待を送信してください。"
       ],
       "Note:": [
-        "注意:"
-      ],
-      "out of": [
-        "/"
+        "注意："
       ],
       "Redirecting you to the subscription page...": [
-        "サブスクリプションページに移動しています..."
+        "サブスクリプションページにリダイレクトしています..."
       ],
       "Subscription": [
         "サブスクリプション"
-      ],
-      "subscription invites.": [
-        "サブスクリプションの招待。"
       ],
       "Subscription sharing": [
         "サブスクリプションの共有"
       ],
       "Subscription sharing is available only on the ${ ProfessionalPlanName } plan. Please upgrade in order to share your subscription.": [
-        "サブスクリプションの共有は ${ ProfessionalPlanName } プランでのみ利用できます。サブスクリプションを共有するには、アップグレードをお願いします。"
+        "サブスクリプションの共有は ${ ProfessionalPlanName } プランでのみ利用できます。サブスクリプションを共有するにはアップグレードしてください。"
       ],
       "The invitee must have an existing account with ${ AppName }. If they do not have an account yet, instruct them to make an account first.": [
-        "招待されたユーザーは、${ AppName }のアカウントをすでに持っている必要があります。まだアカウントをお持ちでない場合は、先にアカウントを作成するようご案内ください。"
+        "招待されたユーザーは、${ AppName }のアカウントをすでに持っている必要があります。まだアカウントを持っていない場合は、先にアカウントを作成するよう伝えてください。"
       ],
       "This subscription has been shared with you and can only be managed by the owner.": [
-        "このサブスクリプションは共有されており、所有者のみが管理できます。"
+        "このサブスクリプションはあなたと共有されており、所有者のみが管理できます。"
       ],
       "You don't have a ${ AppName } subscription yet.": [
-        "まだ${ AppName }のサブスクリプションにご加入ではありません。"
+        "まだ${ AppName }のサブスクリプションがありません。"
       ],
-      "You've used": [
-        "使用済み"
+      "You've used ${ usedInvitationsCount } out of ${ allowedInvitationsCount } subscription invite.": [
+        "サブスクリプションの招待を ${ allowedInvitationsCount } 件中 ${ usedInvitationsCount } 件使用しました。"
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
-        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションは${ expirationDateBold }に期限が切れました。再登録をご希望の場合は、以下からお手続きください。"
+        "お使いの${ appNameBold }${ subscriptionTierBold }サブスクリプションは${ expirationDateBold }に有効期限が切れました。ご希望であれば、下から再登録できます。"
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled and expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
-        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションはキャンセルされ、${ expirationDateBold }に有効期限が切れました。再登録をご希望の場合は、以下からお手続きください。"
+        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションはキャンセルされ、${ expirationDateBold }に有効期限が切れました。ご希望の場合は、以下から再登録できます。"
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled but will remain valid until ${ expirationDateBold }. You may resubscribe below if you wish.": [
-        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションはキャンセルされましたが、${ expirationDateBold }まで有効です。再登録をご希望の場合は、以下からお手続きください。"
+        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションはキャンセルされましたが、${ expirationDateBold }まで有効です。ご希望の場合は、以下から再契約できます。"
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription will be renewed on ${ expirationDateBold }.": [
-        "${ appNameBold }${ subscriptionTierBold }のサブスクリプションは${ expirationDateBold }に更新されます。"
+        "${ appNameBold }${ subscriptionTierBold } サブスクリプションは ${ expirationDateBold } に更新されます。"
       ]
     },
     "B6.Preferences.Subscription.Label": {
       "Cancel": [
-        "キャンセル"
+        "取消"
       ],
       "Invite": [
         "招待"
       ],
       "Learn More": [
-        "より詳しく"
+        "もっと詳しく"
       ],
       "Manage subscription": [
         "サブスクリプションの管理"
@@ -5504,7 +5510,7 @@
     },
     "B6.Preferences.Subscription.Status": {
       "Invite processed successfully.": [
-        "招待の処理に成功しました。"
+        "招待が正常に処理されました。"
       ]
     },
     "B6.Preferences.Subscription.Title": {
@@ -5517,7 +5523,7 @@
         "招待を承認"
       ],
       "Add Contact": [
-        "共有相手を追加"
+        "連絡先を追加"
       ],
       "Add New Contact": [
         "新しい共有相手を追加"
@@ -5526,7 +5532,7 @@
         "信頼済みの共有相手を追加"
       ],
       "Cancel": [
-        "キャンセル"
+        "取消"
       ],
       "Cancel Invite": [
         "招待をキャンセルする"
@@ -5538,7 +5544,7 @@
         "IDをコピー"
       ],
       "Create Shared Vault": [
-        "共有保管庫を作成する"
+        "共有保管庫を作成"
       ],
       "Create Vault": [
         "保管庫を作成"
@@ -5547,19 +5553,19 @@
         "削除"
       ],
       "Delete contact": [
-        "共有相手を削除"
+        "連絡先を削除"
       ],
       "Designate survivor": [
-        "指定承継者を指定"
+        "指定承継者を設定"
       ],
       "Edit": [
         "編集"
       ],
       "Edit contact": [
-        "共有相手を編集"
+        "連絡先の編集"
       ],
       "Enable Collaboration": [
-        "コラボレーションを有効化"
+        "コラボレーションを有効にする"
       ],
       "Enable Vault Sharing": [
         "保管庫の共有を有効にする"
@@ -5577,87 +5583,87 @@
         "保管庫を保存"
       ],
       "Update Account": [
-        "アカウントを更新"
+        "アカウントをアップデート"
       ]
     },
     "B6.Preferences.Vaults.Confirmation": {
       "All items and files in this vault will be removed from your account.": [
-        "この保管庫のすべてのアイテムとファイルがアカウントから削除されます。"
+        "この保管庫内のすべてのアイテムとファイルがアカウントから削除されます。"
       ],
       "Are you sure you want to delete this contact?": [
-        "本当にこの共有相手を削除しますか？"
+        "本当にこの連絡先を削除しますか？"
       ],
       "Are you sure you want to delete this vault?": [
-        "この保管庫を本当に削除してもよろしいですか?"
+        "この保管庫を削除してもよろしいですか？"
       ],
       "Are you sure you want to leave this vault?": [
         "この保管庫から退出してもよろしいですか？"
       ],
       "Deleting a vault will permanently delete all its items and files.": [
-        "保管庫を削除すると、その中のすべてのアイテムとファイルが完全に削除されます。"
+        "保管庫を削除すると、そのアイテムとファイルがすべて完全に削除されます。"
       ]
     },
     "B6.Preferences.Vaults.Error": {
       "Failed to copy to clipboard": [
-        "クリップボードへのコピーに失敗しました"
+        "クリップボードにコピーできませんでした"
       ],
       "One or more subtags are in other vaults. Please remove those subtags from the vaults or move them to this vault first.": [
-        "1 つ以上のサブタグが他の保管庫にあります。先にそれらのサブタグを保管庫から削除するか、この保管庫に移動してください。"
+        "1つ以上のサブタグが他の保管庫にあります。先にそれらのサブタグを保管庫から削除するか、この保管庫に移動してください。"
       ],
       "This item is linked to other items that are not in the same vault. Please move those items to this vault first.": [
         "このアイテムは、同じ保管庫にない他のアイテムにリンクされています。先にそれらのアイテムをこの保管庫に移動してください。"
       ],
       "Unable to create contact. Please try again.": [
-        "共有相手を作成できませんでした。もう一度お試しください。"
+        "共有相手を作成できません。もう一度お試しください。"
       ],
       "Unable to delete vault. Please try again.": [
-        "保管庫を削除できませんでした。もう一度お試しください。"
+        "保管庫を削除できません。もう一度お試しください。"
       ],
       "Unable to leave vault. Please try again.": [
-        "保管庫から退出できませんでした。もう一度お試しください。"
+        "保管庫から退出できません。もう一度お試しください。"
       ]
     },
     "B6.Preferences.Vaults.Info": {
       "Ask your contact for their ${ AppName } CollaborationID via secure email or chat. Then, enter it here to add them as a contact.": [
-        "安全なメールやチャットで、共有相手に${ AppName }のCollaborationIDを確認してください。次に、ここに入力して共有相手として追加します。"
+        "共有相手に、安全なメールまたはチャットで${ AppName }のCollaborationIDを確認してください。確認したら、共有相手として追加するためにここに入力してください。"
       ],
       "Choose your own key for your vault. This is an advanced option and is not recommended for most users.": [
-        "保管庫に独自のキーを選択します。これは上級者向けのオプションで、ほとんどのユーザーには推奨されません。"
+        "保管庫に独自の鍵を選択します。これは上級者向けのオプションであり、ほとんどのユーザーには推奨されません。"
       ],
       "No contacts available to invite.": [
         "招待できる共有相手がいません。"
       ],
       "Please upgrade in order to increase your vault limit.": [
-        "保管庫の上限を引き上げるには、アップグレードしてください。"
+        "保管庫の上限を増やすにはアップグレードしてください。"
       ],
       "The sender of this invite is not trusted. To accept this invite, first add the sender as a trusted contact.": [
-        "この招待の差出人は信頼されていません。招待を承認するには、まず差出人を信頼済みの共有相手として追加してください。"
+        "この招待の差出人は信頼されていません。この招待を承諾するには、まず差出人を信頼済みの共有相手として追加してください。"
       ],
       "The vault name and description are end-to-end encrypted.": [
-        "保管庫の名前と説明はエンドツーエンドで暗号化されます。"
+        "保管庫の名前と説明はエンドツーエンドで暗号化されています。"
       ],
       "Vault is locked.": [
         "保管庫はロックされています。"
       ],
       "Vaults that have no designated survivor will be deleted when the owner account is deleted. In order to ensure that no data is lost, please designate a survivor who will be transferred ownership of the vault.": [
-        "指定承継者が設定されていない保管庫は、オーナーのアカウントが削除されるとともに削除されます。データを失わないように、保管庫の所有権を引き継ぐ指定承継者を設定してください。"
+        "指定承継者が設定されていない保管庫は、所有者のアカウントが削除されると削除されます。データが失われないようにするため、保管庫の所有権を引き継ぐ指定承継者を設定してください。"
       ],
       "Your vault key will be encrypted and saved locally on this device. You will need to manually enter your vault key on your other devices.": [
-        "保管庫キーは暗号化され、このデバイスにローカルで保存されます。他のデバイスでは、保管庫キーを手動で入力する必要があります。"
+        "保管庫キーは暗号化され、このデバイスにローカル保存されます。他のデバイスでは、保管庫キーを手動で入力する必要があります。"
       ],
       "Your vault key will be encrypted and synced to your account and automatically available on your other devices.": [
-        "保管庫キーは暗号化されてアカウントに同期され、他のデバイスでも自動的に利用できるようになります。"
+        "保管庫キーは暗号化されてアカウントに同期され、他のデバイスで自動的に利用可能になります。"
       ],
       "Your vault key will be randomly generated and synced to your account.": [
         "保管庫キーはランダムに生成され、アカウントに同期されます。"
       ],
       "Your vault key will only be stored in memory and will be forgotten when you close the app. You will need to manually enter your vault key on your other devices.": [
-        "保管庫キーはメモリ内にのみ保存され、アプリを閉じると破棄されます。他のデバイスでは、保管庫キーを手動で入力する必要があります。"
+        "保管庫キーはメモリにのみ保管され、アプリを閉じると失われます。他のデバイスでは、保管庫キーを手動で入力する必要があります。"
       ]
     },
     "B6.Preferences.Vaults.Label": {
       "Advanced options": [
-        "高度な設定"
+        "詳細設定"
       ],
       "CollaborationID": [
         "CollaborationID"
@@ -5666,7 +5672,7 @@
         "共有相手の名前"
       ],
       "Custom (Advanced)": [
-        "カスタム（詳細）"
+        "カスタム（上級者向け）"
       ],
       "Designated survivor": [
         "指定承継者"
@@ -5675,7 +5681,7 @@
         "一時的"
       ],
       "File storage used:": [
-        "ファイルのストレージ使用量:"
+        "ファイルストレージ使用量:"
       ],
       "Invite Contacts": [
         "共有相手を招待"
@@ -5693,16 +5699,16 @@
         "保留中の招待"
       ],
       "Permission:": [
-        "権限:"
+        "許可:"
       ],
       "Randomized (Recommended)": [
-        "ランダム生成 (推奨)"
+        "ランダム (推奨)"
       ],
       "Sender CollaborationID:": [
-        "差出人のCollaborationID:"
+        "差出人 CollaborationID:"
       ],
       "Synced (Recommended)": [
-        "同期済み(推奨)"
+        "同期済み（推奨）"
       ],
       "Trusted": [
         "信頼済み"
@@ -5714,10 +5720,10 @@
         "名前のない共有相手"
       ],
       "Untrusted": [
-        "信頼されていない"
+        "信頼できない"
       ],
       "Vault Description:": [
-        "保管庫の説明:"
+        "保管庫の説明："
       ],
       "Vault ID:": [
         "保管庫 ID:"
@@ -5753,10 +5759,10 @@
     },
     "B6.Preferences.Vaults.Subtitle": {
       "In order to use Vaults, you must update your account to use the latest data encryption version.": [
-        "保管庫を使用するには、アカウントを最新のデータ暗号化バージョンに更新する必要があります。"
+        "保管庫を使用するには、アカウントを最新の暗号化バージョンに更新する必要があります。"
       ],
       "Share your CollaborationID with collaborators to join their vaults.": [
-        "共有相手と CollaborationID を共有すると、その相手の保管庫に参加できます。"
+        "保管庫に参加するには、CollaborationIDを共同作業者と共有してください。"
       ]
     },
     "B6.Preferences.Vaults.Title": {
@@ -5776,16 +5782,16 @@
         "CollaborationID"
       ],
       "Contacts": [
-        "共有相手"
+        "連絡先"
       ],
       "Create New Vault": [
         "新しい保管庫を作成"
       ],
       "Designate survivor": [
-        "指定承継者を指定"
+        "指定承継者を指名"
       ],
       "Edit Contact": [
-        "共有相手を編集"
+        "連絡先を編集"
       ],
       "Edit Vault": [
         "保管庫を編集"
@@ -5808,7 +5814,7 @@
         "複数選択をキャンセル"
       ],
       "Configure file backups": [
-        "ファイルのバックアップを設定"
+        "ファイルバックアップを設定"
       ],
       "Delete permanently": [
         "完全に削除"
@@ -5820,10 +5826,10 @@
         "アーカイブとしてダウンロード"
       ],
       "Hide file info": [
-        "ファイル情報を隠す"
+        "ファイル情報を非表示"
       ],
       "Hide links section": [
-        "リンクセクションを隠す"
+        "リンクセクションを非表示"
       ],
       "Open account menu": [
         "アカウントメニューを開く"
@@ -5846,7 +5852,7 @@
         "それでも削除"
       ],
       "This file could not be deleted from the server, possibly because you are attempting to delete a file item that was imported from another account. Would you like to remove this file item from your account anyway? If you're sure the file is yours and still exists on the server, do not choose this option, and instead try to delete it again.": [
-        "このファイルはサーバーから削除できませんでした。別のアカウントからインポートしたファイルアイテムを削除しようとしている可能性があります。それでもこのファイルアイテムをアカウントから削除しますか?ファイルが自分のものであり、サーバーにまだ存在していることが確かな場合は、このオプションを選ばずに、もう一度削除を試みてください。"
+        "このファイルはサーバーから削除できませんでした。別のアカウントからインポートされたファイルアイテムを削除しようとしている可能性があります。それでもこのファイルアイテムをアカウントから削除しますか？ファイルが自分のものであり、サーバーにまだ存在していることが確かな場合は、このオプションを選択せず、代わりにもう一度削除を試みてください。"
       ],
       "Unable to Delete": [
         "削除できません"
@@ -5854,7 +5860,7 @@
     },
     "B7.FilesSubscriptionHelp.Files.Error": {
       "Could not attach file because selected note was deleted": [
-        "選択されたメモが削除されているため、ファイルを添付できませんでした"
+        "選択したメモが削除されたため、ファイルを添付できませんでした。"
       ],
       "Could not close upload session": [
         "アップロードセッションを閉じられませんでした"
@@ -5868,8 +5874,14 @@
       "Could not start upload session": [
         "アップロードセッションを開始できませんでした"
       ],
+      "Encrypted file storage requires an active subscription. Upgrade your plan to download and upload files.": [
+        "暗号化済みファイルストレージには有効なサブスクリプションが必要です。ファイルをダウンロードおよびアップロードするには、プランをアップグレードしてください。"
+      ],
+      "Encrypted files are unavailable because your subscription has expired. Renew your subscription to download and upload files again.": [
+        "サブスクリプションの有効期限が切れているため、暗号化済みファイルを利用できません。ファイルを再度ダウンロードおよびアップロードするには、サブスクリプションを更新してください。"
+      ],
       "Failed to close an upload session.": [
-        "アップロードセッションを閉じることができませんでした。"
+        "アップロードセッションを閉じられませんでした。"
       ],
       "Failed to create file token.": [
         "ファイルトークンの作成に失敗しました。"
@@ -5881,10 +5893,10 @@
         "ファイルチャンクのダウンロードに失敗しました。"
       ],
       "Failed to download files as archive": [
-        "アーカイブとしてのファイルのダウンロードに失敗しました"
+        "ファイルをアーカイブとしてダウンロードできませんでした"
       ],
       "Failed to push file bytes to server": [
-        "ファイルのバイトをサーバーにプッシュできませんでした"
+        "ファイルのバイトデータをサーバーに送信できませんでした"
       ],
       "Failed to start an upload session.": [
         "アップロードセッションを開始できませんでした。"
@@ -5895,31 +5907,43 @@
       "File is not in a shared vault": [
         "ファイルが共有保管庫にありません"
       ],
+      "Files cannot be uploaded because your subscription has expired. Renew your subscription to use encrypted file storage again.": [
+        "サブスクリプションの有効期限が切れているため、ファイルをアップロードできません。暗号化済みファイルストレージを再度利用するには、サブスクリプションを更新してください。"
+      ],
+      "Files cannot be uploaded without an active subscription. Upgrade your plan to use encrypted file storage.": [
+        "有効なサブスクリプションがないため、ファイルをアップロードできません。暗号化済みファイルストレージを利用するには、プランをアップグレードしてください。"
+      ],
       "Please use ${ FileSafeName } or the ${ BoldName } Editor to attach images and files. Learn more at ${ FileSafeHelpUrl }.": [
-        "画像やファイルを添付するには、${ FileSafeName }または${ BoldName }エディターをご利用ください。詳しくは ${ FileSafeHelpUrl } をご覧ください。"
+        "画像やファイルを添付するには、${ FileSafeName }または${ BoldName }エディターを使用してください。詳しくは${ FileSafeHelpUrl }をご覧ください。"
       ],
       "There was an error loading the file. Try again, or download the file and open it using another application.": [
-        "ファイルの読み込み中にエラーが発生しました。再試行するか、ファイルをダウンロードして別のアプリで開いてください。"
+        "ファイルの読み込み中にエラーが発生しました。もう一度お試しいただくか、ファイルをダウンロードして別のアプリで開いてください。"
       ],
       "There was an error while downloading the file": [
-        "ファイルのダウンロード中にエラーが発生しました"
+        "ファイルのダウンロード中にエラーが発生しました。"
       ],
       "There was an error while uploading the file": [
-        "ファイルのアップロード中にエラーが発生しました"
+        "ファイルのアップロード中にエラーが発生しました。"
+      ],
+      "This file cannot be downloaded because your subscription has expired. Renew your subscription to access your files again.": [
+        "サブスクリプションの有効期限が切れているため、このファイルをダウンロードできません。ファイルに再度アクセスするには、サブスクリプションを更新してください。"
+      ],
+      "This file cannot be downloaded without an active subscription. Upgrade your plan to access encrypted files.": [
+        "有効なサブスクリプションがないため、このファイルをダウンロードできません。暗号化済みファイルにアクセスするには、プランをアップグレードしてください。"
       ],
       "This file exceeds the limits supported in this browser. To upload files greater than ${ maxFileSizeInMegabytes }MB, please use the desktop application or the Chrome browser.": [
-        "このファイルは、このブラウザでサポートされている上限サイズを超えています。${ maxFileSizeInMegabytes }MBを超えるファイルをアップロードするには、デスクトップアプリまたはChromeブラウザをご使用ください。"
+        "このファイルはこのブラウザでサポートされている上限を超えています。${ maxFileSizeInMegabytes }MB を超えるファイルをアップロードするには、デスクトップアプリまたは Chrome ブラウザを使用してください。"
       ]
     },
     "B7.FilesSubscriptionHelp.Files.Info": {
       "${ count } selected files": [
-        "選択中のファイル: ${ count } 件"
+        "${ count }件のファイルを選択中"
       ],
       "Actions will be performed on all selected files.": [
         "選択したすべてのファイルに対して操作が実行されます。"
       ],
       "Add a passcode or create an account to require authentication to view this file.": [
-        "このファイルの表示に認証を要求するには、パスコードを追加するかアカウントを作成してください。"
+        "このファイルを表示する際に認証を求めるには、パスコードを追加するか、アカウントを作成してください。"
       ],
       "Attach to note": [
         "メモに添付"
@@ -5934,49 +5958,49 @@
         "${ backedUpOn } にバックアップ済み"
       ],
       "Created:": [
-        "作成:"
+        "作成日時："
       ],
       "Decrease size": [
         "サイズを縮小"
       ],
       "Decrypted Size:": [
-        "復号化後のサイズ:"
+        "復号化されたサイズ:"
       ],
       "Deleted file \"${ fileName }\"": [
-        "ファイル「${ fileName }」を削除しました"
+        "ファイル\"${ fileName }\"を削除しました"
       ],
       "Deleting file \"${ fileName }\"...": [
-        "ファイル \"${ fileName }\" を削除中..."
+        "ファイル「${ fileName }」を削除しています..."
       ],
       "Detach from note": [
         "メモから切り離す"
       ],
       "Downloading \"${ truncatedFileName }\"": [
-        "「${ truncatedFileName }」をダウンロード中"
+        "ダウンロード中 \"${ truncatedFileName }\""
       ],
       "Downloading ${ fileCount } files as archive": [
         "${ fileCount } 個のファイルをアーカイブとしてダウンロード中"
       ],
       "Downloading file \"${ fileName }\"": [
-        "ファイル「${ fileName }」をダウンロード中"
+        "ファイル\"${ fileName }\"をダウンロード中"
       ],
       "Downloading file \"${ fileName }\" (0%)": [
-        "ファイル「${ fileName }」をダウンロード中 (0%)"
+        "ファイル\"${ fileName }\"をダウンロード中 (0%)"
       ],
       "Drop your files to upload and link them to the current file": [
-        "ファイルをドロップしてアップロードし、現在のファイルにリンクします"
+        "ファイルをドロップしてアップロードし、現在のファイルにリンクしてください"
       ],
       "Drop your files to upload them": [
         "ファイルをドロップしてアップロード"
       ],
       "Encrypted Size:": [
-        "暗号化済みサイズ:"
+        "暗号化サイズ："
       ],
       "File context menu": [
         "ファイルのコンテキストメニュー"
       ],
       "File ID:": [
-        "ファイル ID:"
+        "ファイルID："
       ],
       "File information": [
         "ファイル情報"
@@ -5985,16 +6009,16 @@
         "ファイルはローカルにバックアップされていません"
       ],
       "File options panel": [
-        "ファイルオプションパネル"
+        "ファイルオプションのパネル"
       ],
       "Files attached to your notes appear here. You can also upload files directly from this page.": [
-        "メモに添付されたファイルがここに表示されます。このページから直接ファイルをアップロードすることもできます。"
+        "メモに添付されたファイルはここに表示されます。このページから直接ファイルをアップロードすることもできます。"
       ],
       "Increase size": [
         "サイズを拡大"
       ],
       "Last Modified:": [
-        "最終更新:"
+        "最終更新日時："
       ],
       "Loading...": [
         "読み込み中…"
@@ -6015,22 +6039,22 @@
         "サイズ"
       ],
       "Size:": [
-        "サイズ:"
+        "サイズ："
       ],
       "Successfully downloaded ${ fileCount } files as archive": [
-        "${ fileCount } 個のファイルをアーカイブとして正常にダウンロードしました"
+        "ファイル${ fileCount }件をアーカイブとしてダウンロードしました。"
       ],
       "Successfully downloaded file": [
-        "ファイルを正常にダウンロードしました"
+        "ファイルのダウンロードに成功しました。"
       ],
       "Successfully downloaded file \"${ fileName }\"": [
-        "ファイル \"${ fileName }\" をダウンロードしました"
+        "ファイル \"${ fileName }\" のダウンロードに成功しました。"
       ],
       "Successfully downloaded file from local backup": [
-        "ローカルバックアップからファイルをダウンロードしました"
+        "ローカルバックアップからファイルを正常にダウンロードしました"
       ],
       "This file can only be previewed in an external app": [
-        "このファイルは外部アプリでのみプレビューできます"
+        "このファイルは外部アプリでのみプレビューできます。"
       ],
       "This file can't be previewed.": [
         "このファイルはプレビューできません。"
@@ -6051,16 +6075,16 @@
         "合計サイズ:"
       ],
       "Try again": [
-        "再試行"
+        "やり直す"
       ],
       "Type:": [
         "種類:"
       ],
       "Uploaded file \"${ uploadedFileName }\"": [
-        "アップロード済みファイル \"${ uploadedFileName }\""
+        "ファイル\"${ uploadedFileName }\"をアップロードしました"
       ],
       "Uploading file \"${ fileName }\"": [
-        "\"${ fileName }\" をアップロードしています"
+        "ファイル「${ fileName }」をアップロード中"
       ],
       "Uploading file \"${ fileName }\" (${ percentComplete }%)": [
         "ファイル「${ fileName }」をアップロード中 (${ percentComplete }%)"
@@ -6072,10 +6096,10 @@
         "ファイルがまだありません。"
       ],
       "ZIP file": [
-        "ZIP ファイル"
+        "ZIPファイル"
       ],
       "Zoom": [
-        "ズーム"
+        "Zoom"
       ],
       "Zoom In": [
         "拡大"
@@ -6179,64 +6203,64 @@
         "アカウントに関する問題ですか？"
       ],
       "Can I collaborate with others on a note?": [
-        "メモで他のユーザーと共同作業できますか？"
+        "メモを他のユーザーと共同編集できますか？"
       ],
       "Can I use ${ AppName } totally offline?": [
-        "${ AppName }は完全にオフラインで使用できますか？"
+        "${ AppName } は完全にオフラインで使用できますか?"
       ],
       "Can’t find your question here?": [
-        "お探しの質問への回答が見つかりませんか？"
+        "ご質問が見つかりませんか?"
       ],
       "Who can read my private notes?": [
-        "プライベートなメモは誰が閲覧できますか?"
+        "自分のプライベートメモを読めるのは誰ですか？"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Error": {
       "No content to clip": [
-        "クリップするコンテンツがありません"
+        "クリップできるコンテンツがありません。"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Info": {
       "${ AppName } can be used totally offline without an account, and without an internet connection. You can find ${ offlineHelpLink }": [
-        "${ AppName }は、アカウントなしで、インターネット接続なしでも完全にオフラインで使用できます。${ offlineHelpLink }をご覧ください。"
+        "${ AppName } は、アカウントやインターネット接続なしで、完全にオフラインで使用できます。詳細については、${ offlineHelpLink }をご覧ください。"
       ],
       "Because of our encrypted architecture, ${ AppName } does not currently provide a real-time collaboration solution. Multiple users can share the same account however, but editing at the same time may result in sync conflicts, which may result in the duplication of notes.": [
-        "暗号化アーキテクチャの性質上、${ AppName }は現在、リアルタイムコラボレーション機能を提供していません。ただし、複数のユーザーで同じアカウントを共有することは可能です。その場合、同時に編集すると同期の競合が発生し、メモが重複することがあります。"
+        "暗号化されたアーキテクチャのため、${ AppName } は現在リアルタイムの共同編集機能を提供していません。ただし、複数のユーザーが同じアカウントを共有することはできますが、同時に編集すると同期の競合が発生し、メモが重複する可能性があります。"
       ],
       "Community forum": [
         "コミュニティフォーラム"
       ],
       "Discord server": [
-        "Discord サーバー"
+        "Discordサーバー"
       ],
       "Frequently asked questions": [
         "よくある質問"
       ],
       "If you have an issue, found a bug or want to suggest a feature, you can browse or post to the forum. It’s recommended for non-account related issues.": [
-        "問題が発生した場合、バグを見つけた場合、または機能の提案がある場合は、フォーラムで閲覧や投稿ができます。アカウントに関連しない問題には、フォーラムがおすすめです。"
+        "問題が発生した場合や、バグを見つけた場合、機能を提案したい場合は、フォーラムを閲覧するか投稿することができます。アカウントに関係のない問題に適しています。"
       ],
       "more details here.": [
-        "さらに詳細はこちら。"
+        "詳細はこちら。"
       ],
       "Note clipped successfully": [
         "メモのクリップに成功"
       ],
       "Privacy Manifesto.": [
-        "プライバシーに関する宣言。"
+        "プライバシーマニフェスト"
       ],
       "Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read ${ privacyPolicyLink }": [
-        "ずばり、あなた以外には誰もできません。当社も、あなたのISPも、ハッカーも、政府機関も同様です。パスワードを安全に保管し、そのパスワードが十分に強ければ、あなたのメモを復号化できるのは世界であなただけです。当社がプライバシーとセキュリティをどのように扱っているかについて詳しくは、読みやすい${ privacyPolicyLink }をご覧ください。"
+        "ごく簡単に言えば、あなた以外には誰も読めません。当社も、あなたのISPも、ハッカーも、政府機関もです。パスワードを安全に保管し、そのパスワードが十分に強力であれば、あなたのメモを復号化できるのは世界であなただけです。プライバシーとセキュリティへの対応について詳しくは、わかりやすい${ privacyPolicyLink }をご覧ください。"
       ],
       "Send an email to ${ SupportEmail } and we’ll sort it out.": [
-        "${ SupportEmail } までメールでご連絡ください。対応いたします。"
+        "${ SupportEmail } までメールをお送りください。こちらで解決いたします。"
       ],
       "Want to meet other passionate note-takers and privacy enthusiasts? Want to share your feedback with us? Join the ${ AppName } Discord for discussions on security, themes, editors and more.": [
-        "ほかのメモの愛好者やプライバシーに関心のあるユーザーと交流しませんか？フィードバックを共有したい方は、${ AppName }のDiscordに参加して、セキュリティ、テーマ、エディターなどについて語り合いましょう。"
+        "熱心なメモ愛好家やプライバシーに関心のある方々と交流したいですか？ フィードバックを共有したいですか？ ${ AppName } Discordに参加して、セキュリティ、テーマ、エディターなどについて議論しましょう。"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Label": {
       "Email us": [
-        "メールでお問い合わせ"
+        "メールで問い合わせ"
       ],
       "Extension menu": [
         "拡張機能メニュー"
@@ -6245,13 +6269,13 @@
         "フォーラムへ移動"
       ],
       "Join our Discord": [
-        "Discord に参加する"
+        "Discordに参加"
       ],
       "Open FAQ": [
         "FAQを開く"
       ],
       "Privacy Policy": [
-        "プライバシーポリシー"
+        "プライバシー ポリシー"
       ],
       "Remove default tag": [
         "デフォルトタグを削除"
@@ -6262,7 +6286,7 @@
     },
     "B7.FilesSubscriptionHelp.Help.Placeholder": {
       "Select tag to save clipped notes to...": [
-        "クリップしたメモを保存するタグを選択..."
+        "クリップしたメモの保存先タグを選択..."
       ]
     },
     "B7.FilesSubscriptionHelp.Subscription.Action": {
@@ -6287,13 +6311,13 @@
     },
     "B7.FilesSubscriptionHelp.Subscription.Error": {
       "An unknown issue occurred during offline activation. Please download your activation code again and try once more.": [
-        "オフラインアクティベーション中に不明な問題が発生しました。アクティベーションコードを再度ダウンロードして、もう一度お試しください。"
+        "オフラインでのアクティベーション中に不明な問題が発生しました。アクティベーションコードを再度ダウンロードして、もう一度お試しください。"
       ],
       "Could not accept invitation.": [
         "招待を承諾できませんでした。"
       ],
       "Could not confirm IAP.": [
-        "IAP を確認できませんでした。"
+        "IAPを確認できませんでした。"
       ],
       "Could not get purchase flow URL.": [
         "購入フローのURLを取得できませんでした。"
@@ -6302,7 +6326,7 @@
         "サブスクリプショントークンを取得できませんでした。"
       ],
       "Could not load purchase flow URL.": [
-        "購入フローの URL を読み込めませんでした。"
+        "購入フローのURLを読み込めませんでした。"
       ],
       "Failed to access purchase flow.": [
         "購入フローにアクセスできませんでした。"
@@ -6311,111 +6335,111 @@
         "オフライン機能を取得できませんでした。"
       ],
       "Failed to get subscription's information.": [
-        "サブスクリプションの情報の取得に失敗しました。"
+        "サブスクリプション情報の取得に失敗しました。"
       ],
       "There was an error confirming your purchase. Please contact support at ${ SupportEmail }.": [
-        "購入の確認中にエラーが発生しました。${ SupportEmail } のサポートまでお問い合わせください。"
+        "購入の確認中にエラーが発生しました。${ SupportEmail }のサポート窓口までお問い合わせください。"
       ],
       "Your purchase was canceled or failed. Please try again.": [
-        "購入がキャンセルされたか、失敗しました。再度お試しください。"
+        "購入がキャンセルされたか失敗しました。再度お試しください。"
       ]
     },
     "B7.FilesSubscriptionHelp.Subscription.Info": {
       "${ BoldName } Editor": [
-        "${ BoldName } エディター"
+        "${ BoldName }エディター"
       ],
       "${ feature.name } is in a read-only state.": [
-        "${ feature.name }は読み取り専用の状態です。"
+        "${ feature.name } は読み取り専用の状態です。"
       ],
       "${ featureNameLabel } is valid and you should not be seeing this message": [
-        "${ featureNameLabel } は有効であるため、このメッセージは表示されないはずです"
+        "${ featureNameLabel }は有効です。本来このメッセージは表示されません"
       ],
       "${ ListedName } Custom Domain": [
-        "${ ListedName } カスタムドメイン"
+        "${ ListedName } 個のカスタムドメイン"
       ],
       "${ MarkdownEditorName } Alternative": [
-        "代替 ${ MarkdownEditorName }"
+        "${ MarkdownEditorName }の代替"
       ],
       "${ MarkdownEditorName } with Math": [
-        "数式対応 ${ MarkdownEditorName }"
+        "${ MarkdownEditorName }（数式対応）"
       ],
       "100GB encrypted file storage": [
-        "100GBの暗号化ファイルストレージ"
+        "100 GBの暗号化ファイルストレージ"
       ],
       "365 days note history": [
-        "365日間のメモのバージョン履歴"
+        "365日分のメモのバージョン履歴"
       ],
       "A ${ PlusPlanName } or ${ ProPlanName } plan is required to enable Tag folders.": [
-        "タグフォルダーを有効にするには、${ PlusPlanName } または ${ ProPlanName } プランが必要です。"
+        "タグフォルダーを有効にするには${ PlusPlanName }または${ ProPlanName }のプランが必要です。"
       ],
       "A beautiful split-pane Markdown editor with synced-scroll, LaTeX support, and colorful syntax.": [
-        "同期スクロール、LaTeXサポート、カラフルな構文ハイライトを備えた、美しい分割ペインのMarkdownエディターです。"
+        "同期スクロール、LaTeXサポート、カラフルな構文を備えた、美しい分割ペインのMarkdownエディターです。"
       ],
       "A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.": [
-        "フル機能を備えた Markdown エディターで、ライブプレビュー、スタイル設定ツールバー、分割ペインに対応しています。"
+        "ライブプレビュー、スタイル設定ツールバー、分割ペインに対応した、機能満載のMarkdownエディター。"
       ],
       "A Markdown editor with dynamic split-pane preview.": [
-        "動的な分割ペインプレビューを備えた Markdown エディターです。"
+        "動的な分割ペインでプレビューできるMarkdownエディター。"
       ],
       "A minimal Markdown editor with live rendering and in-text search via Ctrl/Cmd + F": [
-        "ライブレンダリングと Ctrl/Cmd + F によるテキスト内検索を備えたミニマルな Markdown エディター"
+        "リアルタイムレンダリングとCtrl/Cmd + Fによるテキスト内検索を備えた、ミニマルなMarkdownエディター"
       ],
       "A powerful spreadsheet editor with formatting and formula support. Not recommended for large data sets, as encryption of such data may decrease editor performance.": [
-        "書式設定と数式をサポートする強力なスプレッドシートエディターです。データの暗号化によりエディターのパフォーマンスが低下する可能性があるため、大規模なデータセットには推奨されません。"
+        "書式設定と数式のサポートを備えた強力なスプレッドシートエディターです。大規模なデータセットの暗号化はエディターのパフォーマンスを低下させる可能性があるため、推奨されません。"
       ],
       "A simple and peaceful rich editor that helps you write and think clearly.": [
-        "書きながら思考を明確にできる、シンプルで穏やかなリッチエディターです。"
+        "シンプルで穏やかなリッチエディターは、明確に書いて考えるのに役立ちます。"
       ],
       "A WYSIWYG-style Markdown editor that renders Markdown in preview-mode while you type without displaying any syntax.": [
-        "入力中にプレビューモードでMarkdownをレンダリングし、構文を表示しないWYSIWYGスタイルのエディター。"
+        "入力中に構文を一切表示せず、プレビューモードでMarkdownをレンダリングするWYSIWYG形式のMarkdownエディターです。"
       ],
       "Access to all note types, including ${ SuperName }, ${ MarkdownEditorName }, ${ RichTextEditorName }, ${ AuthenticatorName }, ${ ChecklistEditorName }, and ${ SpreadsheetName }": [
-        "${ SuperName }、${ MarkdownEditorName }、${ RichTextEditorName }、${ AuthenticatorName }、${ ChecklistEditorName }、${ SpreadsheetName }を含む、すべてのメモの種類へのアクセス"
+        "${ SuperName }、${ MarkdownEditorName }、${ RichTextEditorName }、${ AuthenticatorName }、${ ChecklistEditorName }、${ SpreadsheetName } を含む、すべてのメモの種類にアクセスできます。"
       ],
       "Access to Daily Notebooks and Moments journals": [
         "デイリーノートとMomentsジャーナルへのアクセス"
       ],
       "Basic ${ MarkdownEditorName }": [
-        "ベーシック ${ MarkdownEditorName }"
+        "基本の${ MarkdownEditorName }"
       ],
       "Create smart filters for viewing notes matching specific criteria.": [
-        "特定の条件に一致するメモを表示するスマートフィルターを作成します。"
+        "特定の条件に一致するメモを表示するためのSmartフィルターを作成します。"
       ],
       "Email backups": [
         "メールバックアップ"
       ],
       "Encrypt and protect your 2FA secrets for all your internet accounts. Authenticator handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.": [
-        "すべてのインターネットアカウントの2要素認証シークレットを暗号化して保護します。認証アプリが2要素認証シークレットを管理するため、シークレットを紛失したり、新しいデバイスに乗り換えたときに最初からやり直したりすることがありません。"
+        "すべてのインターネットアカウントの2要素認証シークレットを暗号化して保護します。認証アプリが2要素認証シークレットを管理するので、シークレットを再び失うことも、新しいデバイスを手に入れたときに最初から設定し直す必要もありません。"
       ],
       "Encrypted attachments for your notes using your Dropbox, Google Drive, or WebDAV server. Limited to 50MB per file.": [
-        "Dropbox、Google Drive、またはWebDAVサーバーを使って、メモに暗号化済みの添付ファイルを保存できます。1ファイルあたり50MBまで。"
+        "メモの暗号化された添付ファイルを、Dropbox、Google Drive、WebDAVサーバーで利用できます。ファイルごとに50MBまでです。"
       ],
       "Encrypted files": [
         "暗号化されたファイル"
       ],
       "Enjoy your new powered up experience.": [
-        "強化された新体験をお楽しみください。"
+        "パワーアップした新しい体験をお楽しみください。"
       ],
       "Files low storage tier": [
-        "ファイル用低容量ストレージティア"
+        "ファイルの低容量ストレージ"
       ],
       "Files maximum storage tier": [
-        "ファイルの最大ストレージティア"
+        "ファイルの最大ストレージ階層"
       ],
       "Files medium storage tier": [
-        "ファイル用中容量ストレージティア"
+        "ファイル中容量ストレージ階層"
       ],
       "From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.": [
-        "ハイライトからカスタムフォントサイズや色、表やリストまで、このエディターはあらゆるドキュメントの作成に最適です。"
+        "ハイライトからカスタムのフォントサイズや色、表やリストまで、このエディターはあらゆるドキュメントの作成に最適です。"
       ],
       "Minimal ${ MarkdownEditorName }": [
         "ミニマル ${ MarkdownEditorName }"
       ],
       "Nested folders for your tags": [
-        "タグのネストされたフォルダー"
+        "タグ用のネストされたフォルダー"
       ],
       "Note history going back indefinitely": [
-        "無期限にさかのぼれるメモのバージョン履歴"
+        "メモのバージョン履歴を無期限に遡る"
       ],
       "Organize your tags into folders.": [
         "タグをフォルダーに整理しましょう。"
@@ -6424,7 +6448,7 @@
         "プレーンテキスト"
       ],
       "Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.": [
-        "サブスクリプションの特典が有効になるまで数分かかる場合があります。サブスクリプションの準備ができると、アプリに確認アラートが表示されます。"
+        "サブスクリプションの特典が有効になるまで、数分お待ちください。サブスクリプションの準備ができると、アプリ内に確認アラートが表示されます。"
       ],
       "Please upgrade your plan to access ${ featureNameLabel }": [
         "${ featureNameLabel } にアクセスするには、プランをアップグレードしてください。"
@@ -6445,19 +6469,19 @@
         "共有保管庫"
       ],
       "Sign up to sync": [
-        "サインアップして同期"
+        "同期するにはサインアップ"
       ],
       "Sign-in email alerts": [
-        "サインイン時のメール通知"
+        "サインインのメールアラート"
       ],
       "Smart Filters": [
         "スマートフィルター"
       ],
       "Smart Tags": [
-        "スマートタグ"
+        "Smart タグ"
       ],
       "Syntax highlighting and convenient keyboard shortcuts for over 120 programming languages. Ideal for code snippets and procedures.": [
-        "120 以上のプログラミング言語に対応したシンタックスハイライトと便利なキーボードショートカット。コードスニペットや手順の記述に最適です。"
+        "120以上のプログラミング言語に対応したシンタックスハイライトと便利なキーボードショートカット。コードスニペットや手順の記述に最適です。"
       ],
       "Tag folders": [
         "タグフォルダー"
@@ -6466,16 +6490,16 @@
         "タグのネスト"
       ],
       "The ${ ProfessionalPlanName } Plan costs $119.99/year and includes benefits like": [
-        "${ ProfessionalPlanName }プランの料金は$ 119.99/年で、次のような特典が含まれます:"
+        "${ ProfessionalPlanName } プランは年間 $ 119.99 で、次のような特典が含まれます"
       ],
       "The best way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note. Cmd/Ctrl + F to bring up search and replace.": [
-        "メモを編集するための最良の方法です。/ を入力するとブロック選択メニューが表示され、@ を入力すると画像の埋め込みや他のタグやメモへのリンクができます。- とスペースを入力するとリストが始まり、[] とスペースを入力するとチェックリストが始まります。画像やファイルをドラッグ＆ドロップするとメモに埋め込まれます。Cmd/Ctrl + F で検索と置換を表示します。"
+        "メモを編集する最良の方法です。ブロック選択メニューを表示するには / を入力し、画像を埋め込んだり他のタグやメモをリンクしたりするには @ を入力します。リストを開始するには - を入力してからスペースを押し、チェックリストを開始するには [] を入力してからスペースを押します。画像やファイルをドラッグ＆ドロップすると、メモに埋め込まれます。検索と置換を表示するには Cmd/Ctrl + F を押します。"
       ],
       "To take advantage of ${ featureNameBold } and other advanced features, upgrade your current plan.": [
-        "${ featureNameBold }やその他の高度な機能を利用するには、現在のプランをアップグレードしてください。"
+        "${ featureNameBold }などの高度な機能を利用するには、現在のプランをアップグレードしてください。"
       ],
       "To take advantage of all the advanced features ${ AppName } has to offer, upgrade your current plan.": [
-        "${ AppName }が提供するすべての高度な機能を活用するには、現在のプランをアップグレードしてください。"
+        "${ AppName }が提供するすべての高度な機能を利用するには、現在のプランをアップグレードしてください。"
       ],
       "Two factor authentication": [
         "2要素認証"
@@ -6493,10 +6517,10 @@
         "有効なサブスクリプションがありません"
       ],
       "Your purchase was successful!": [
-        "購入が正常に完了しました!"
+        "購入が成功しました!"
       ],
       "Your subscription expired on ${ expiredDateString }": [
-        "サブスクリプションは ${ expiredDateString } に有効期限が切れました"
+        "サブスクリプションは ${ expiredDateString } に期限切れになりました。"
       ],
       "Your subscription expired.": [
         "サブスクリプションの有効期限が切れました。"
@@ -6504,7 +6528,7 @@
     },
     "B7.FilesSubscriptionHelp.Subscription.Label": {
       "${ SuperName } notes": [
-        "${ SuperName } メモ"
+        "${ SuperName }メモ"
       ],
       "Encrypted File Storage": [
         "暗号化ファイルストレージ"
@@ -6515,7 +6539,7 @@
     },
     "B7.FilesSubscriptionHelp.Subscription.Status": {
       "A great way to manage short-term and long-term to-do\"s. You can mark tasks as completed, change their order, and edit the text naturally in place.": [
-        "短期的なタスクから長期的なタスクまでを管理するのに最適です。タスクを完了としてマークしたり、順序を変更したり、テキストをその場で自然に編集したりできます。"
+        "短期および長期のToDoを管理するのに最適な方法です。タスクを完了済みにしたり、順序を変更したり、テキストをその場で自然に編集できます。"
       ]
     },
     "B7.FilesSubscriptionHelp.Subscription.Title": {
@@ -6523,7 +6547,7 @@
         "高度な機能を有効にする"
       ],
       "Try out ${ SuperName }": [
-        "${ SuperName } を試す"
+        "${ SuperName }を試す"
       ],
       "Upgrade": [
         "アップグレード"
@@ -6531,12 +6555,12 @@
     },
     "B8.MobileDesktopShared.Desktop.Info": {
       "A new update is ready to install. Please use the top-level 'Updates' menu to manage installation.": [
-        "新しい更新のインストール準備ができました。インストールを管理するには、トップレベルの \"更新\" メニューをご利用ください。"
+        "新しい更新プログラムのインストール準備ができました。インストールを管理するには、最上位の「アップデート」メニューを使用してください。"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Error": {
       "Could not download ${ filename }": [
-        "${ filename } をダウンロードできませんでした"
+        "${ filename }をダウンロードできませんでした。"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Info": {
@@ -6547,10 +6571,10 @@
         "ダウンロード中 ${ filename }.."
       ],
       "Fetching image from link...": [
-        "リンクから画像を取得中..."
+        "リンクから画像をフェッチ中..."
       ],
       "Successfully created note from shared text": [
-        "共有テキストからメモを正常に作成しました"
+        "共有テキストからメモを作成しました"
       ]
     }
   }

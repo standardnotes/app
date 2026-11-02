@@ -37,7 +37,7 @@
     },
     "B8.MobileDesktopShared.Mobile.Device.Info": {
       "Biometrics are required to access your notes.": [
-        "需要验证生物识别信息才能访问您的笔记。"
+        "访问您的笔记需要进行生物识别。"
       ],
       "This is required to access your notes.": [
         "这是访问您的笔记所必需的。"
