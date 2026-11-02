@@ -49,7 +49,15 @@ const LocalizationLabsSpotlightModal = ({ application }: Props) => {
           ? c('B6.Preferences.General.Language.Spotlight.Info')
               .t`You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your OS language is used when no preference is set.`
           : c('B6.Preferences.General.Language.Spotlight.Info')
-              .t`You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your browser language is used when no preference is set.`}
+              .t`You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your browser language is used when no preference is set.`}{' '}
+        <a
+          href="https://standardnotes.com/blog/language-preferences"
+          target="_blank"
+          rel="noreferrer"
+          className="text-info"
+        >
+          {c('B6.Preferences.General.Action').t`Learn more`}
+        </a>
       </Text>
       <div className="mt-4 flex flex-col-reverse justify-end gap-2 sm:flex-row">
         <Button onClick={dismiss}>{c('B6.Preferences.General.Language.Spotlight.ActionDismiss').t`Not now`}</Button>
