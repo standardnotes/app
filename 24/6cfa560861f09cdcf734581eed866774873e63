@@ -1,0 +1,90 @@
+packages/services/src/Domain/Strings/Messages.ts
+  s_27201c6945af88::t_2ea56e6619c659 356-368
+packages/web/src/javascripts/Components/FilePreview/FilePreview.tsx
+  s_27201c6945af88::t_54e760cee5fe91 89
+  s_27201c6945af88::t_5479d49efaac6e 7
+packages/snjs/lib/Services/Api/ApiService.ts
+  s_27201c6945af88::t_4e27ef3a539e37 746-748,760
+  s_27201c6945af88::t_538e7b6dd618d9 749-753,761,764
+  s_27201c6945af88::t_b3a40deb837dd8 754-755,757
+packages/web/src/javascripts/Controllers/FilesController.ts
+  s_27201c6945af88::t_728d47b1d62af0 875
+  s_27201c6945af88::t_4c99f19592b5d6 862
+  s_27201c6945af88::t_193d8861f23157 899
+  s_27201c6945af88::t_5314396678f45b 898
+  s_27201c6945af88::t_57302789e57467 894-895
+  s_27201c6945af88::t_c32cc4bf89a135 448-454
+  s_27201c6945af88::t_d26e3bb058cd67 833-835
+  s_27201c6945af88::t_bd4bef06ee4047 443-446
+  s_27201c6945af88::t_34076474bc6784 437-439
+  s_27201c6945af88::t_28872a2411858a 397
+  s_27201c6945af88::t_43bacc0ce0faa2 871-874,877,880-881,891-893,896-897
+  s_27201c6945af88::t_285a4cc95e8b37 876,878-879
+packages/services/src/Domain/Strings/Messages.spec.ts
+  s_27201c6945af88::t_074f20d7abf1d4 31-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "246cfa560861f09cdcf734581eed866774873e63",
+  "prompts": {},
+  "sessions": {
+    "s_27201c6945af88": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2ed13e37-1c23-4a06-9878-c557412c1615",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 194274,
+        "output_tokens": 46512,
+        "cache_creation_input_tokens": 945753,
+        "cache_read_input_tokens": 8816185
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 194274,
+          "output_tokens": 46512,
+          "cache_creation_input_tokens": 945753,
+          "cache_read_input_tokens": 8816185
+        }
+      },
+      "tool_uses": {
+        "grep": 50,
+        "read": 60,
+        "shell": 23,
+        "write": 27
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 139543,
+        "output_tokens": 77702,
+        "cache_creation_input_tokens": 1151437,
+        "cache_read_input_tokens": 14360999
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5-medium": {
+          "input_tokens": 139543,
+          "output_tokens": 77702,
+          "cache_creation_input_tokens": 1151437,
+          "cache_read_input_tokens": 14360999
+        }
+      }
+    },
+    "by_prompt": {
+      "s_27201c6945af88": {
+        "input_tokens": 194274,
+        "output_tokens": 46512,
+        "cache_creation_input_tokens": 945753,
+        "cache_read_input_tokens": 8816185
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
