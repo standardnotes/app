@@ -353,6 +353,19 @@ export const FileStrings = {
         return FileStrings.FailedCreateFileToken
     }
   },
+
+  ValetTokenPreviewFailureMessage(reason: CreateValetTokenFailureReason | string | undefined): string | undefined {
+    switch (reason) {
+      case 'expired-subscription':
+        return c('B7.FilesSubscriptionHelp.Files.Error')
+          .t`This file cannot be previewed because your subscription has expired. Renew your subscription to access your files again.`
+      case 'no-subscription':
+        return c('B7.FilesSubscriptionHelp.Files.Error')
+          .t`This file cannot be previewed without an active subscription. Upgrade your plan to access encrypted files.`
+      default:
+        return undefined
+    }
+  },
 }
 
 export const ErrorAlertStrings = {
