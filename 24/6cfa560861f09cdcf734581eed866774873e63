@@ -38,6 +38,20 @@ packages/services/src/Domain/Strings/Messages.spec.ts
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 87,
+    "ai_accepted": 87,
+    "git_diff_deleted_lines": 22,
+    "git_diff_added_lines": 87,
+    "tool_model_breakdown": {
+      "cursor::claude-opus-5-5": {
+        "ai_additions": 87,
+        "ai_accepted": 87
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -85,6 +99,12 @@ packages/services/src/Domain/Strings/Messages.spec.ts
         "cache_read_input_tokens": 8816185
       }
     }
+  },
+  "activity": {
+    "added_sloc": 317,
+    "deleted_sloc": 260,
+    "checkpoints": 25,
+    "span_seconds": 119745
   },
   "proton_build": "1.7.6-proton.8"
 }
