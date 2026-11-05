@@ -1,0 +1,76 @@
+packages/web/src/javascripts/Controllers/PurchaseFlow/PurchaseFlowController.ts
+  s_afdb11c0a2eaed::t_fdc217dda536b7 21
+  s_afdb11c0a2eaed::t_aca66018ec69f2 50-53,60
+packages/web/src/javascripts/Components/Footer/UpgradeNow.tsx
+  s_afdb11c0a2eaed::t_5e976b54c3d372 25
+packages/web/src/javascripts/Application/WebApplication.ts
+  s_afdb11c0a2eaed::t_ba215880610ddd 534-535
+packages/web/src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx
+  s_afdb11c0a2eaed::t_ec050ebf59a9d0 100-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "5eeed37f41dfb0613f9a256d418f2dccc1739fc0",
+  "prompts": {},
+  "sessions": {
+    "s_afdb11c0a2eaed": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "53aa5512-d371-4e88-a4ea-db2202ac26ae",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": null
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 290,
+        "output_tokens": 73194,
+        "cache_creation_input_tokens": 891646,
+        "cache_read_input_tokens": 11674460
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5": {
+          "input_tokens": 290,
+          "output_tokens": 73194,
+          "cache_creation_input_tokens": 891646,
+          "cache_read_input_tokens": 11674460
+        }
+      },
+      "tool_uses": {
+        "grep": 47,
+        "read": 43,
+        "readlints": 13,
+        "shell": 15,
+        "write": 48
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 30,
+        "output_tokens": 5830,
+        "cache_creation_input_tokens": 53929,
+        "cache_read_input_tokens": 369713
+      },
+      "by_tool_model": {
+        "cursor::claude-opus-5-5-medium": {
+          "input_tokens": 30,
+          "output_tokens": 5830,
+          "cache_creation_input_tokens": 53929,
+          "cache_read_input_tokens": 369713
+        }
+      }
+    },
+    "by_prompt": {
+      "s_afdb11c0a2eaed": {
+        "input_tokens": 290,
+        "output_tokens": 73194,
+        "cache_creation_input_tokens": 891646,
+        "cache_read_input_tokens": 11674460
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
