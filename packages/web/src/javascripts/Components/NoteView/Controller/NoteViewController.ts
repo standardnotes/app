@@ -7,6 +7,8 @@ import {
   PayloadEmitSource,
   PrefKey,
   PayloadVaultOverrides,
+  NoteMutator,
+  MutationType,
 } from '@standardnotes/models'
 import {
   AlertService,
@@ -26,6 +28,7 @@ import { log, LoggingDomain } from '@/Logging'
 import { NoteSaveFunctionParams, NoteSyncController } from '../../../Controllers/NoteSyncController'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 import { NoteStatus } from '../NoteStatusIndicator'
+import { featureTrunkRestoreEditorPositionEnabled } from '@/FeatureTrunk'
 
 export type EditorValues = {
   title: string
@@ -38,6 +41,8 @@ export class NoteViewController implements ItemViewControllerInterface {
   public isTemplateNote = false
   public runtimeId = `${Math.random()}`
   public needsInit = true
+  /** Set by the active editor: the caret as a plain-text character offset. */
+  public getCaretOffset?: () => number | undefined
 
   private innerValueChangeObservers: ((note: SNNote, source: PayloadEmitSource) => void)[] = []
   private disposers: (() => void)[] = []
@@ -82,24 +87,60 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   deinit(): void {
-    if (!this.syncController.savingLocallyPromise) {
+    const caretOffset = this.readCaretOffset()
+    const pendingSave = this.syncController.savingLocallyPromise
+
+    if (!pendingSave && caretOffset === undefined) {
       this.performDeinitSafely()
       return
     }
 
-    void this.syncController.savingLocallyPromise.promise.then(() => {
+    void this.saveCaretThenDeinit(pendingSave?.promise, caretOffset)
+  }
+
+  private async saveCaretThenDeinit(pendingSave: Promise<void> | undefined, caretOffset: number | undefined) {
+    try {
+      await pendingSave
+
+      if (caretOffset !== undefined) {
+        await this.saveCaretOnly(caretOffset)
+      }
+    } finally {
       this.performDeinitSafely()
-    })
+    }
   }
 
   private performDeinitSafely(): void {
     this.dealloced = true
+    this.getCaretOffset = undefined
 
     for (const disposer of this.disposers) {
       disposer()
     }
     this.disposers.length = 0
     this.innerValueChangeObservers.length = 0
+  }
+
+  private readCaretOffset(): number | undefined {
+    const enabled =
+      featureTrunkRestoreEditorPositionEnabled() && this.preferences.getValue(PrefKey.RestoreEditorPosition, false)
+
+    return enabled && !this.isTemplateNote ? this.getCaretOffset?.() : undefined
+  }
+
+  private setCaret(mutator: NoteMutator, offset: number): void {
+    mutator.lastCaretOffset = offset
+    mutator.lastCaretAt = Date.now()
+  }
+
+  private async saveCaretOnly(offset: number): Promise<void> {
+    await this.mutator.changeItem<NoteMutator>(
+      this.item,
+      (mutator) => this.setCaret(mutator, offset),
+      MutationType.NoUpdateUserTimestamps,
+    )
+
+    void this.sync.sync()
   }
 
   async initialize(): Promise<void> {
@@ -218,7 +259,17 @@ export class NoteViewController implements ItemViewControllerInterface {
       await this.insertTemplatedNote()
     }
 
-    await this.syncController.saveAndAwaitLocalPropagation(params)
+    await this.syncController.saveAndAwaitLocalPropagation({
+      ...params,
+      customMutate: (mutator) => {
+        params.customMutate?.(mutator)
+
+        const caretOffset = this.readCaretOffset()
+        if (caretOffset !== undefined) {
+          this.setCaret(mutator, caretOffset)
+        }
+      },
+    })
   }
 
   public get syncStatus(): NoteStatus | undefined {
