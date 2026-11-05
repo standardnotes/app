@@ -28,6 +28,8 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
 
   const spellcheck = usePreference(PrefKey.EditorSpellcheck)
 
+  const restoreEditorPosition = usePreference(PrefKey.RestoreEditorPosition)
+
   const addNoteToParentFolders = usePreference(PrefKey.NoteAddToParentFolders)
 
   const alwaysShowSuperToolbar = usePreference(PrefKey.AlwaysShowSuperToolbar)
@@ -55,6 +57,18 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
 
   const toggleSpellcheck = () => {
     application.toggleGlobalSpellcheck().catch(console.error)
+  }
+
+  const toggleRestoreEditorPosition = () => {
+    const next = !restoreEditorPosition
+    void application
+      .setPreference(PrefKey.RestoreEditorPosition, next)
+      .then(() => {
+        if (next) {
+          return application.setPreference(PrefKey.RestoreEditorPositionEnabledAt, Date.now())
+        }
+      })
+      .catch(console.error)
   }
 
   const toggleAndroidConfirmBeforeExit = () => {
@@ -89,6 +103,17 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
             </Text>
           </div>
           <Switch onChange={toggleSpellcheck} checked={spellcheck} />
+        </div>
+        <HorizontalSeparator classes="my-4" />
+        <div className="flex justify-between gap-2 md:items-center">
+          <div className="flex flex-col">
+            <Subtitle>{c('B6.Preferences.General.Subtitle').t`Restore cursor position`}</Subtitle>
+            <Text>
+              {c('B6.Preferences.General.Info')
+                .t`When enabled, reopening a note restores the caret to where you left off. Synced across your devices.`}
+            </Text>
+          </div>
+          <Switch onChange={toggleRestoreEditorPosition} checked={restoreEditorPosition} />
         </div>
         <HorizontalSeparator classes="my-4" />
         <div className="flex justify-between gap-2 md:items-center">
