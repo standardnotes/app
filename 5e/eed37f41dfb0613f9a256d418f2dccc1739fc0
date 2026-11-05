@@ -23,6 +23,20 @@ packages/web/src/javascripts/Components/PurchaseFlow/Panes/SignIn.tsx
       "human_author": null
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 12,
+    "ai_accepted": 12,
+    "git_diff_deleted_lines": 5,
+    "git_diff_added_lines": 12,
+    "tool_model_breakdown": {
+      "cursor::claude-opus-5-5": {
+        "ai_additions": 12,
+        "ai_accepted": 12
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
