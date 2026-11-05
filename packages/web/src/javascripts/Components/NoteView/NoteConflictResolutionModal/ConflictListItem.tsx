@@ -15,15 +15,17 @@ export const ConflictListItem = ({
   title,
   note,
   disabled,
+  isCurrentVersion,
 }: {
   isSelected: boolean
   disabled: boolean
   onClick: MouseEventHandler<HTMLButtonElement>
   title: string
   note: SNNote
+  isCurrentVersion: boolean
 }) => {
   const application = useApplication()
-  const { words, characters, paragraphs, serverUpdatedAt, dateCreated, format } = useNoteAttributes(application, note)
+  const { words, characters, paragraphs, serverUpdatedAt, format } = useNoteAttributes(application, note)
 
   return (
     <button
@@ -39,9 +41,14 @@ export const ConflictListItem = ({
       data-selected={isSelected}
       disabled={disabled}
     >
-      <div className="mb-1.5 flex items-center gap-2">
+      <div className="mb-1.5 flex flex-wrap items-center gap-2">
         <CheckIndicator checked={isSelected} />
         <div className="font-semibold">{title}</div>
+        {isCurrentVersion && (
+          <div className="rounded bg-info px-1 py-0.5 text-xs text-info-contrast">
+            {c('B3.Notes.NoteActions.Label').t`Current version`}
+          </div>
+        )}
       </div>
       <div className="w-full text-sm text-neutral lg:text-xs">
         <div className="mb-1.5 flex items-center gap-2">
@@ -51,14 +58,6 @@ export const ConflictListItem = ({
             </div>
           </StyledTooltip>
           <VisuallyHidden>{c('B3.Notes.NoteActions.Label').t`Last modified`}</VisuallyHidden> {serverUpdatedAt}
-        </div>
-        <div className="mb-1.5 flex items-center gap-2">
-          <StyledTooltip gutter={8} label={c('B3.Notes.NoteActions.Label').t`Created`} className="!z-modal">
-            <div className="flex-shrink-0">
-              <Icon type="pencil-filled" size="medium" />
-            </div>
-          </StyledTooltip>
-          <VisuallyHidden>{c('B3.Notes.NoteActions.Label').t`Created`}</VisuallyHidden> {dateCreated}
         </div>
         <div className="mb-1.5 flex items-center gap-2 overflow-hidden">
           <StyledTooltip gutter={8} label={c('B3.Notes.NoteActions.Label').t`Note ID`} className="!z-modal">
