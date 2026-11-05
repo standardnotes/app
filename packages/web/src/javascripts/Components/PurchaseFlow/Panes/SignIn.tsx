@@ -97,7 +97,9 @@ const SignIn: FunctionComponent<Props> = ({ application }) => {
         throw new Error(response.data.error?.message)
       } else {
         application.purchaseFlowController.closePurchaseFlow()
-        void application.purchaseFlowController.openPurchaseFlow()
+        if (application.purchaseFlowController.continueToCheckoutAfterSignIn) {
+          void application.purchaseFlowController.openPurchaseFlow()
+        }
       }
     } catch (err) {
       console.error(err)
