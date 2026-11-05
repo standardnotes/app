@@ -28,7 +28,7 @@ import { log, LoggingDomain } from '@/Logging'
 import { NoteSaveFunctionParams, NoteSyncController } from '../../../Controllers/NoteSyncController'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 import { NoteStatus } from '../NoteStatusIndicator'
-import { featureTrunkRestoreEditorPositionEnabled } from '@/FeatureTrunk'
+import { isRestoreEditorPositionEnabled } from '../EditorPosition/shouldRestoreCaret'
 
 export type EditorValues = {
   title: string
@@ -122,10 +122,9 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   private readCaretOffset(): number | undefined {
-    const enabled =
-      featureTrunkRestoreEditorPositionEnabled() && this.preferences.getValue(PrefKey.RestoreEditorPosition, false)
-
-    return enabled && !this.isTemplateNote ? this.getCaretOffset?.() : undefined
+    return isRestoreEditorPositionEnabled(this.preferences) && !this.isTemplateNote
+      ? this.getCaretOffset?.()
+      : undefined
   }
 
   private setCaret(mutator: NoteMutator, offset: number): void {
