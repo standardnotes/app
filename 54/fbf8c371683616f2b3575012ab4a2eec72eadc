@@ -1,0 +1,78 @@
+packages/web/src/javascripts/Components/NoteView/Controller/NoteViewController.caret.spec.ts
+  s_e372ddb368bb0b::t_d8f03ad5e60c33 31-32
+  s_e372ddb368bb0b::t_8b2244e17efbdc 1-19,21-24,26-27,29-30,33-34,36,39-44,46-47,50,53-54,57,59,62,71-72
+  s_e372ddb368bb0b::t_d7d40a245cce60 35
+  s_e372ddb368bb0b::t_6533e9f159a7a4 20,25,37-38,45,48-49,51-52,55-56,58,60-61,63-70
+  s_e372ddb368bb0b::t_96777ca4f4f835 28
+packages/web/src/javascripts/Components/NoteView/Controller/NoteViewController.ts
+  s_e372ddb368bb0b::t_673041ddfc9c37 101
+  s_e372ddb368bb0b::t_1b9b24533d99d4 91-92,99-100,102,104,107,110
+  s_e372ddb368bb0b::t_5721b4dafa93c8 98
+  s_e372ddb368bb0b::t_b758453842f39b 127,129-130,134-135,137,140-145
+  s_e372ddb368bb0b::t_accb1ac5cd1b3c 10-11
+  s_91817ac7e6767e::t_ba1796c22516cc 31,44-45,90,93,103,105-106,108,115,124-126,128,131-133,136,138-139,262-272
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "54fbf8c371683616f2b3575012ab4a2eec72eadc",
+  "prompts": {},
+  "sessions": {
+    "s_91817ac7e6767e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "86a8a4c2-84f1-49f7-b193-eaaf79162f6e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    },
+    "s_e372ddb368bb0b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "27d2be57-91de-4005-9386-22f786a7254f",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 134093,
+        "output_tokens": 100122,
+        "cache_creation_input_tokens": 957327,
+        "cache_read_input_tokens": 14863942
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 134093,
+          "output_tokens": 100122,
+          "cache_creation_input_tokens": 957327,
+          "cache_read_input_tokens": 14863942
+        }
+      },
+      "tool_uses": {
+        "delete": 1,
+        "grep": 32,
+        "read": 52,
+        "shell": 74,
+        "write": 51
+      }
+    },
+    "by_prompt": {
+      "s_91817ac7e6767e": {
+        "input_tokens": 114,
+        "output_tokens": 34826,
+        "cache_creation_input_tokens": 309399,
+        "cache_read_input_tokens": 5118417
+      },
+      "s_e372ddb368bb0b": {
+        "input_tokens": 133979,
+        "output_tokens": 65296,
+        "cache_creation_input_tokens": 647928,
+        "cache_read_input_tokens": 9745525
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
