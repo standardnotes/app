@@ -35,6 +35,20 @@ packages/web/src/javascripts/Components/NoteView/Controller/NoteViewController.t
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 127,
+    "ai_accepted": 127,
+    "git_diff_deleted_lines": 4,
+    "git_diff_added_lines": 127,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 127,
+        "ai_accepted": 127
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -73,6 +87,18 @@ packages/web/src/javascripts/Components/NoteView/Controller/NoteViewController.t
         "cache_read_input_tokens": 9745525
       }
     }
+  },
+  "churn": {
+    "total": 24,
+    "by_tool_model": {
+      "cursor::claude-sonnet-5-5": 24
+    }
+  },
+  "activity": {
+    "added_sloc": 366,
+    "deleted_sloc": 287,
+    "checkpoints": 22,
+    "span_seconds": 2053
   },
   "proton_build": "1.7.6-proton.8"
 }
