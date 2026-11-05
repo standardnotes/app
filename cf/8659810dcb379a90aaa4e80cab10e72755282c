@@ -1,0 +1,74 @@
+packages/models/src/Domain/Syncable/UserPrefs/PrefKey.ts
+  s_e372ddb368bb0b::t_beaca6c7af42fc 108-109
+  s_e372ddb368bb0b::t_af22403cb419a3 48-49
+packages/web/src/javascripts/Components/Preferences/Panes/General/Defaults.tsx
+  s_e372ddb368bb0b::t_0bc1cac979ccf4 31-32
+  s_e372ddb368bb0b::t_b3ef5c19f484a1 62-73
+packages/models/src/Domain/Syncable/UserPrefs/PrefDefaults.ts
+  s_e372ddb368bb0b::t_7deb68a56ed1ce 56-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "cf8659810dcb379a90aaa4e80cab10e72755282c",
+  "prompts": {},
+  "sessions": {
+    "s_e372ddb368bb0b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "27d2be57-91de-4005-9386-22f786a7254f",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 412344,
+        "output_tokens": 25267,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 5346976
+      },
+      "by_tool_model": {
+        "cursor::default": {
+          "input_tokens": 412344,
+          "output_tokens": 25267,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 5346976
+        }
+      },
+      "tool_uses": {
+        "grep": 17,
+        "read": 20,
+        "shell": 3,
+        "write": 38
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 10,
+        "output_tokens": 2116,
+        "cache_creation_input_tokens": 3586,
+        "cache_read_input_tokens": 252436
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 10,
+          "output_tokens": 2116,
+          "cache_creation_input_tokens": 3586,
+          "cache_read_input_tokens": 252436
+        }
+      }
+    },
+    "by_prompt": {
+      "s_e372ddb368bb0b": {
+        "input_tokens": 412344,
+        "output_tokens": 25267,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 5346976
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
