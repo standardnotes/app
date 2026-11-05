@@ -22,6 +22,20 @@ packages/models/src/Domain/Syncable/UserPrefs/PrefDefaults.ts
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 11,
+    "ai_additions": 20,
+    "ai_accepted": 20,
+    "git_diff_deleted_lines": 0,
+    "git_diff_added_lines": 31,
+    "tool_model_breakdown": {
+      "cursor::default": {
+        "ai_additions": 20,
+        "ai_accepted": 20
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -69,6 +83,12 @@ packages/models/src/Domain/Syncable/UserPrefs/PrefDefaults.ts
         "cache_read_input_tokens": 5346976
       }
     }
+  },
+  "activity": {
+    "added_sloc": 46,
+    "deleted_sloc": 11,
+    "checkpoints": 9,
+    "span_seconds": 789
   },
   "proton_build": "1.7.6-proton.8"
 }
