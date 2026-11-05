@@ -1,0 +1,59 @@
+packages/models/src/Domain/Syncable/Note/NoteContent.ts
+  s_e372ddb368bb0b::t_9755605541f359 16-17
+packages/models/src/Domain/Syncable/Note/Note.ts
+  s_e372ddb368bb0b::t_55440b687523eb 25-26
+  s_e372ddb368bb0b::t_e77634e82f65c8 41-42
+packages/models/src/Domain/Syncable/Note/NoteMutator.spec.ts
+  s_e372ddb368bb0b::t_cd20a62d8ea644 24-39
+packages/models/src/Domain/Syncable/Note/NoteMutator.ts
+  s_e372ddb368bb0b::t_5c451ef35e66d0 51-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "b291acd23cbfad0869d2ad287f9a95b0a24729ea",
+  "prompts": {},
+  "sessions": {
+    "s_e372ddb368bb0b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "27d2be57-91de-4005-9386-22f786a7254f",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 4378,
+        "output_tokens": 2451,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 1226848
+      },
+      "by_tool_model": {
+        "cursor::default": {
+          "input_tokens": 4378,
+          "output_tokens": 2451,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 1226848
+        }
+      },
+      "tool_uses": {
+        "grep": 4,
+        "read": 6,
+        "shell": 1,
+        "write": 5
+      }
+    },
+    "by_prompt": {
+      "s_e372ddb368bb0b": {
+        "input_tokens": 4378,
+        "output_tokens": 2451,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 1226848
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
