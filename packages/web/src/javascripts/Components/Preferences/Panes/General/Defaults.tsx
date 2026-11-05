@@ -12,6 +12,7 @@ import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { SuperName, jtString } from '@standardnotes/features'
 import { c } from 'ttag'
+import { featureTrunkRestoreEditorPositionEnabled } from '@/FeatureTrunk'
 
 type Props = {
   application: WebApplication
@@ -28,6 +29,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
 
   const spellcheck = usePreference(PrefKey.EditorSpellcheck)
 
+  const restoreEditorPositionEnabled = featureTrunkRestoreEditorPositionEnabled()
   const restoreEditorPosition = usePreference(PrefKey.RestoreEditorPosition)
 
   const addNoteToParentFolders = usePreference(PrefKey.NoteAddToParentFolders)
@@ -105,17 +107,21 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
           <Switch onChange={toggleSpellcheck} checked={spellcheck} />
         </div>
         <HorizontalSeparator classes="my-4" />
-        <div className="flex justify-between gap-2 md:items-center">
-          <div className="flex flex-col">
-            <Subtitle>{c('B6.Preferences.General.Subtitle').t`Restore cursor position`}</Subtitle>
-            <Text>
-              {c('B6.Preferences.General.Info')
-                .t`When enabled, reopening a note restores the caret to where you left off. Synced across your devices.`}
-            </Text>
-          </div>
-          <Switch onChange={toggleRestoreEditorPosition} checked={restoreEditorPosition} />
-        </div>
-        <HorizontalSeparator classes="my-4" />
+        {restoreEditorPositionEnabled && (
+          <>
+            <div className="flex justify-between gap-2 md:items-center">
+              <div className="flex flex-col">
+                <Subtitle>{c('B6.Preferences.General.Subtitle').t`Restore cursor position`}</Subtitle>
+                <Text>
+                  {c('B6.Preferences.General.Info')
+                    .t`When enabled, reopening a note restores the caret to where you left off. Synced across your devices.`}
+                </Text>
+              </div>
+              <Switch onChange={toggleRestoreEditorPosition} checked={restoreEditorPosition} />
+            </div>
+            <HorizontalSeparator classes="my-4" />
+          </>
+        )}
         <div className="flex justify-between gap-2 md:items-center">
           <div className="flex flex-col">
             <Subtitle>{c('B6.Preferences.General.Subtitle')
