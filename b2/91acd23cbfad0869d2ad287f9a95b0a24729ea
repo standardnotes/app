@@ -23,6 +23,20 @@ packages/models/src/Domain/Syncable/Note/NoteMutator.ts
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 35,
+    "ai_accepted": 35,
+    "git_diff_deleted_lines": 0,
+    "git_diff_added_lines": 35,
+    "tool_model_breakdown": {
+      "cursor::default": {
+        "ai_additions": 35,
+        "ai_accepted": 35
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -54,6 +68,11 @@ packages/models/src/Domain/Syncable/Note/NoteMutator.ts
         "cache_read_input_tokens": 1226848
       }
     }
+  },
+  "activity": {
+    "added_sloc": 29,
+    "checkpoints": 5,
+    "span_seconds": 5
   },
   "proton_build": "1.7.6-proton.8"
 }
