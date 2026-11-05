@@ -21,6 +21,20 @@ packages/web/src/javascripts/Components/NoteView/NoteConflictResolutionModal/Not
       "human_author": null
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 17,
+    "ai_accepted": 17,
+    "git_diff_deleted_lines": 17,
+    "git_diff_added_lines": 17,
+    "tool_model_breakdown": {
+      "cursor::claude-opus-5-5": {
+        "ai_additions": 17,
+        "ai_accepted": 17
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "tool_uses": {
