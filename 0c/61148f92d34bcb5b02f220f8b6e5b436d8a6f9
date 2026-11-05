@@ -1,0 +1,28 @@
+packages/services/src/Domain/InternalFeatures/InternalFeature.ts
+  s_e372ddb368bb0b::t_8e74bbede73f43 3
+packages/web/src/javascripts/FeatureTrunk.ts
+  s_e372ddb368bb0b::t_fa615e806e4b11 14-17
+packages/web/src/javascripts/Components/Preferences/Panes/General/Defaults.tsx
+  s_e372ddb368bb0b::t_0e464e3ead0e7e 110-124
+  s_e372ddb368bb0b::t_85c042d61c4abd 15
+  s_e372ddb368bb0b::t_f0d91476125fba 32
+packages/web/src/javascripts/Application/DevMode.ts
+  s_e372ddb368bb0b::t_4c20d7d892118f 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "0c61148f92d34bcb5b02f220f8b6e5b436d8a6f9",
+  "prompts": {},
+  "sessions": {
+    "s_e372ddb368bb0b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "27d2be57-91de-4005-9386-22f786a7254f",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
