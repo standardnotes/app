@@ -21,4 +21,20 @@ describe('note mutator', () => {
 
     expect(result.content.editorIdentifier).toEqual(NativeFeatureIdentifier.TYPES.DeprecatedMarkdownProEditor)
   })
+
+  it('sets and clears last caret fields', () => {
+    const note = createNote({})
+    const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
+    mutator.lastCaretOffset = 42
+    mutator.lastCaretAt = 1_700_000_000_000
+
+    let result = mutator.getResult()
+    expect(result.content.lastCaretOffset).toBe(42)
+    expect(result.content.lastCaretAt).toBe(1_700_000_000_000)
+
+    mutator.clearLastCaret()
+    result = mutator.getResult()
+    expect(result.content.lastCaretOffset).toBeUndefined()
+    expect(result.content.lastCaretAt).toBeUndefined()
+  })
 })

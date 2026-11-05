@@ -13,6 +13,8 @@ export interface NoteContentSpecialized {
   noteType?: NoteType
   editorIdentifier?: string
   authorizedForListed?: boolean
+  lastCaretOffset?: number
+  lastCaretAt?: number
 }
 
 export type NoteContent = NoteContentSpecialized & ItemContent

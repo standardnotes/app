@@ -48,6 +48,19 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     this.mutableContent.authorizedForListed = authorizedForListed
   }
 
+  set lastCaretOffset(lastCaretOffset: number | undefined) {
+    this.mutableContent.lastCaretOffset = lastCaretOffset
+  }
+
+  set lastCaretAt(lastCaretAt: number | undefined) {
+    this.mutableContent.lastCaretAt = lastCaretAt
+  }
+
+  clearLastCaret(): void {
+    this.mutableContent.lastCaretOffset = undefined
+    this.mutableContent.lastCaretAt = undefined
+  }
+
   toggleSpellcheck(): void {
     if (this.mutableContent.spellcheck == undefined) {
       this.mutableContent.spellcheck = false

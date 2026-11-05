@@ -22,6 +22,8 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
 
   /** The package_info.identifier of the editor (not its uuid), such as org.standardnotes.advanced-markdown */
   public readonly editorIdentifier?: string
+  public readonly lastCaretOffset?: number
+  public readonly lastCaretAt?: number
 
   constructor(payload: DecryptedPayloadInterface<NoteContent>) {
     super(payload)
@@ -36,6 +38,8 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
     this.noteType = this.payload.content.noteType
     this.editorIdentifier = this.payload.content.editorIdentifier
     this.authorizedForListed = this.payload.content.authorizedForListed || false
+    this.lastCaretOffset = this.payload.content.lastCaretOffset
+    this.lastCaretAt = this.payload.content.lastCaretAt
 
     if (!this.noteType) {
       const prefersPlain = this.getAppDomainValueWithDefault(AppDataField.LegacyPrefersPlainEditor, false)
