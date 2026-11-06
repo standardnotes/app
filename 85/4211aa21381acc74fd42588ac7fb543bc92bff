@@ -1,0 +1,90 @@
+packages/web/src/javascripts/Components/NoteView/NoteView.tsx
+  s_e372ddb368bb0b::t_4a5990b4d33110 148-150,282-284
+  s_e372ddb368bb0b::t_aa226dbe4aee98 289
+  s_e372ddb368bb0b::t_8a941ef08502d6 32,105,151,234-241,285-288
+packages/models/src/Domain/Syncable/Note/NoteMutator.ts
+  s_e372ddb368bb0b::t_a99a6ed00dc530 12-13
+  s_e372ddb368bb0b::t_24b015b6ded7df 54-56,62-71
+  s_e372ddb368bb0b::t_62bfedf00cfbe7 9
+  s_e372ddb368bb0b::t_b8cee7663d122b 72-74
+packages/models/src/Domain/Syncable/Note/NoteMutator.spec.ts
+  s_e372ddb368bb0b::t_86b82a432c4e29 28,32,39-46,48-59
+  s_e372ddb368bb0b::t_35653c122d89da 47
+  s_e372ddb368bb0b::t_d6fcc8b6cf71e5 3
+packages/web/src/javascripts/Components/NoteView/UniversalSearch/providers/PlainEditorUniversalSearchProvider.spec.ts
+  s_e372ddb368bb0b::t_f97760b602164e 18
+packages/web/src/javascripts/Components/NoteView/PlainEditor/PlainEditor.tsx
+  s_e372ddb368bb0b::t_3005e91d18a158 136-137,143
+  s_e372ddb368bb0b::t_f415d8274896a1 61
+  s_e372ddb368bb0b::t_3a4b53f100bc7b 138-142
+packages/web/src/javascripts/Components/NoteView/PlainEditor/search/PlainEditorSearchContainer.tsx
+  s_e372ddb368bb0b::t_472444a201a29e 50
+packages/web/src/javascripts/Components/NoteView/Controller/NoteViewController.ts
+  s_e372ddb368bb0b::t_11305c02c76ee2 95,98,100-102,110,120-122,141,143-144,147-153,155-156,158-163,165-166
+  s_e372ddb368bb0b::t_f3dd26110aca52 50,154,164
+  s_e372ddb368bb0b::t_14b1765204b2d9 134
+  s_e372ddb368bb0b::t_7bb5b03790acf8 291
+  s_e372ddb368bb0b::t_1c5e8be50a79b2 49,142
+  s_e372ddb368bb0b::t_6de2de0954d898 124
+  s_e372ddb368bb0b::t_67a8b00a18d05f 145-146
+  s_e372ddb368bb0b::t_6693ddd9cd109e 167
+  s_e372ddb368bb0b::t_d9cbec02e1aba2 128-131
+  s_e372ddb368bb0b::t_f408c86aa29d21 157
+  s_e372ddb368bb0b::t_a4c7b49a3a1d6e 90
+packages/web/src/javascripts/Components/NoteView/Controller/NoteViewController.spec.ts
+  s_e372ddb368bb0b::t_a6f2be3f66d0cf 208
+  s_e372ddb368bb0b::t_bc585f51fba874 184-192,196-207,209-302
+  s_e372ddb368bb0b::t_7d6a94b1784d4d 193-195
+  s_e372ddb368bb0b::t_0cee0fcfc559de 13-18,23-30,35-37
+  s_e372ddb368bb0b::t_86796fc271bf65 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "854211aa21381acc74fd42588ac7fb543bc92bff",
+  "prompts": {},
+  "sessions": {
+    "s_e372ddb368bb0b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "27d2be57-91de-4005-9386-22f786a7254f",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 32,
+        "output_tokens": 13508,
+        "cache_creation_input_tokens": 25473,
+        "cache_read_input_tokens": 3027404
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 32,
+          "output_tokens": 13508,
+          "cache_creation_input_tokens": 25473,
+          "cache_read_input_tokens": 3027404
+        }
+      },
+      "tool_uses": {
+        "delete": 3,
+        "grep": 2,
+        "read": 5,
+        "shell": 4,
+        "write": 5
+      }
+    },
+    "by_prompt": {
+      "s_e372ddb368bb0b": {
+        "input_tokens": 32,
+        "output_tokens": 13508,
+        "cache_creation_input_tokens": 25473,
+        "cache_read_input_tokens": 3027404
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
