@@ -1,6 +1,6 @@
 import { NoteMutator } from './NoteMutator'
 import { createNote } from './../../Utilities/Test/SpecUtils'
-import { MutationType } from '../../Abstract/Item'
+import { AppDataField, DefaultAppDomain, MutationType } from '../../Abstract/Item'
 import { NativeFeatureIdentifier, NoteType } from '@standardnotes/features'
 
 describe('note mutator', () => {
@@ -25,16 +25,36 @@ describe('note mutator', () => {
   it('sets and clears last caret fields', () => {
     const note = createNote({})
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.lastCaretOffset = 42
-    mutator.lastCaretAt = 1_700_000_000_000
+    mutator.setLastCaret(42)
 
     let result = mutator.getResult()
     expect(result.content.lastCaretOffset).toBe(42)
-    expect(result.content.lastCaretAt).toBe(1_700_000_000_000)
+    expect(result.content.lastCaretAt).toEqual(expect.any(Number))
 
     mutator.clearLastCaret()
     result = mutator.getResult()
     expect(result.content.lastCaretOffset).toBeUndefined()
     expect(result.content.lastCaretAt).toBeUndefined()
+  })
+
+  it('stamps the last caret time after the user modified date', () => {
+    const note = createNote({})
+    const mutator = new NoteMutator(note, MutationType.UpdateUserTimestamps)
+    mutator.setLastCaret(42)
+
+    const result = mutator.getResult()
+    const userModifiedDate = new Date(
+      (result.content.appData?.[DefaultAppDomain] as Record<string, string>)[AppDataField.UserModifiedDate],
+    ).getTime()
+
+    expect(result.content.lastCaretAt).toBeGreaterThanOrEqual(userModifiedDate)
+  })
+
+  it('does not stamp a last caret time when the caret was not set', () => {
+    const note = createNote({})
+    const mutator = new NoteMutator(note, MutationType.UpdateUserTimestamps)
+    mutator.title = 'title'
+
+    expect(mutator.getResult().content.lastCaretAt).toBeUndefined()
   })
 })

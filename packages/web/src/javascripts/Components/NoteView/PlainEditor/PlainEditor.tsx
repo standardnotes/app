@@ -34,7 +34,6 @@ import { buildPlainSearchHighlightHtml } from './search/buildPlainSearchHighligh
 import { replaceAllTextRangesWithUndoSupport, replaceTextRangeWithUndoSupport } from './replacePlainTextWithUndoSupport'
 import { scrollPlainTextareaToOffset } from './search/scrollPlainTextareaToOffset'
 import { TextRange } from '../UniversalSearch/types'
-
 export type PlainEditorSearchHighlightState = {
   isOpen: boolean
   query: string
@@ -59,6 +58,7 @@ export type PlainEditorInterface = {
   focus: () => void
   getText: () => string
   getTextarea: () => HTMLTextAreaElement | null
+  getCaretOffset: () => number | undefined
   setSelection: (
     start: number,
     end: number,
@@ -132,6 +132,14 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         },
         getTextarea() {
           return textareaRef.current
+        },
+        getCaretOffset() {
+          const textarea = textareaRef.current
+          if (!textarea) {
+            return undefined
+          }
+
+          return textarea.selectionDirection === 'backward' ? textarea.selectionStart : textarea.selectionEnd
         },
         setSelection(start, end, options) {
           const textarea = textareaRef.current

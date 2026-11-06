@@ -29,6 +29,7 @@ import {
   SNNote,
   VaultUserServiceEvent,
   LocalPrefKey,
+  WebAppEvent,
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, FocusEvent, KeyboardEventHandler, RefObject } from 'react'
@@ -101,6 +102,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
   private plainEditorRef?: PlainEditorInterface
+  private caretReaderDisposer?: () => void
 
   constructor(props: NoteViewProps) {
     super(props, props.application)
@@ -143,6 +145,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   override deinit() {
     super.deinit()
+    if (this.caretReaderDisposer) {
+      this.caretReaderDisposer()
+    }
+    this.caretReaderDisposer = undefined
     ;(this.controller as unknown) = undefined
 
     for (let i = 0; i < this.#observers.length; i++) {
@@ -225,6 +231,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       }),
     )
 
+    this.#observers.push(
+      this.application.addWebEventObserver((event) => {
+        if (event === WebAppEvent.WindowDidBlur) {
+          void this.controller.persistCaret().catch(console.error)
+        }
+      }),
+    )
+
     this.autorun(() => {
       const syncStatus = this.controller.syncStatus
 
@@ -265,6 +279,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   setPlainEditorRef = (ref: PlainEditorInterface | null) => {
     this.plainEditorRef = ref || undefined
+    if (this.caretReaderDisposer) {
+      this.caretReaderDisposer()
+    }
+    this.caretReaderDisposer = undefined
+
+    if (ref) {
+      this.caretReaderDisposer = this.controller.registerCaretReader(() => ref.getCaretOffset())
+    }
   }
 
   override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {

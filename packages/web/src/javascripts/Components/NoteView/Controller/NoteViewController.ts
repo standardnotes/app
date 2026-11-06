@@ -41,13 +41,13 @@ export class NoteViewController implements ItemViewControllerInterface {
   public isTemplateNote = false
   public runtimeId = `${Math.random()}`
   public needsInit = true
-  /** Set by the active editor: the caret as a plain-text character offset. */
-  public getCaretOffset?: () => number | undefined
 
   private innerValueChangeObservers: ((note: SNNote, source: PayloadEmitSource) => void)[] = []
   private disposers: (() => void)[] = []
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
+  private caretReader?: () => number | undefined
+  private caretPersistenceQueue: Promise<void> = Promise.resolve()
 
   private syncController!: NoteSyncController
 
@@ -87,24 +87,19 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   deinit(): void {
-    const caretOffset = this.readCaretOffset()
-    const pendingSave = this.syncController.savingLocallyPromise
-
-    if (!pendingSave && caretOffset === undefined) {
+    if (!this.syncController.savingLocallyPromise && this.readCaretOffset() === undefined) {
       this.performDeinitSafely()
       return
     }
 
-    void this.saveCaretThenDeinit(pendingSave?.promise, caretOffset)
+    void this.persistCaretThenDeinit()
   }
 
-  private async saveCaretThenDeinit(pendingSave: Promise<void> | undefined, caretOffset: number | undefined) {
+  private async persistCaretThenDeinit(): Promise<void> {
     try {
-      await pendingSave
-
-      if (caretOffset !== undefined) {
-        await this.saveCaretOnly(caretOffset)
-      }
+      await this.persistCaret()
+    } catch (error) {
+      console.error(error)
     } finally {
       this.performDeinitSafely()
     }
@@ -112,7 +107,7 @@ export class NoteViewController implements ItemViewControllerInterface {
 
   private performDeinitSafely(): void {
     this.dealloced = true
-    this.getCaretOffset = undefined
+    this.caretReader = undefined
 
     for (const disposer of this.disposers) {
       disposer()
@@ -122,24 +117,52 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   private readCaretOffset(): number | undefined {
-    return isRestoreEditorPositionEnabled(this.preferences) && !this.isTemplateNote
-      ? this.getCaretOffset?.()
-      : undefined
-  }
+    if (!isRestoreEditorPositionEnabled(this.preferences) || this.isTemplateNote) {
+      return undefined
+    }
 
-  private setCaret(mutator: NoteMutator, offset: number): void {
-    mutator.lastCaretOffset = offset
-    mutator.lastCaretAt = Date.now()
+    return this.caretReader?.()
   }
 
   private async saveCaretOnly(offset: number): Promise<void> {
+    if (this.item.lastCaretOffset === offset) {
+      return
+    }
+
     await this.mutator.changeItem<NoteMutator>(
       this.item,
-      (mutator) => this.setCaret(mutator, offset),
+      (mutator) => mutator.setLastCaret(offset),
       MutationType.NoUpdateUserTimestamps,
     )
 
     void this.sync.sync()
+  }
+
+  public registerCaretReader(reader: () => number | undefined): () => void {
+    this.caretReader = reader
+
+    return () => {
+      if (this.caretReader === reader) {
+        this.caretReader = undefined
+      }
+    }
+  }
+
+  public persistCaret(): Promise<void> {
+    const offset = this.readCaretOffset()
+
+    const operation = this.caretPersistenceQueue
+      .catch(() => undefined)
+      .then(async () => {
+        await this.syncController.savingLocallyPromise?.promise
+
+        if (offset !== undefined) {
+          await this.saveCaretOnly(offset)
+        }
+      })
+
+    this.caretPersistenceQueue = operation
+    return operation
   }
 
   async initialize(): Promise<void> {
@@ -265,7 +288,7 @@ export class NoteViewController implements ItemViewControllerInterface {
 
         const caretOffset = this.readCaretOffset()
         if (caretOffset !== undefined) {
-          this.setCaret(mutator, caretOffset)
+          mutator.setLastCaret(caretOffset)
         }
       },
     })
