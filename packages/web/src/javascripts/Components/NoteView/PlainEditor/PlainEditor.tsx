@@ -28,6 +28,7 @@ import {
   FocusEvent,
 } from 'react'
 import { NoteViewController } from '../Controller/NoteViewController'
+import { restorePlainEditorCaret } from '../EditorPosition/restorePlainEditorCaret'
 import { findStringMatches } from '../UniversalSearch/findStringMatches'
 import { PlainEditorSearchBackdrop } from './search/PlainEditorSearchBackdrop'
 import { buildPlainSearchHighlightHtml } from './search/buildPlainSearchHighlightHtml'
@@ -310,6 +311,23 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         focusEditor()
       }
     }, [controller, focusEditor])
+
+    const didRestoreCaret = useRef(false)
+
+    useEffect(() => {
+      const textarea = textareaRef.current
+
+      if (didRestoreCaret.current || editorText === undefined || !textarea) {
+        return
+      }
+
+      didRestoreCaret.current = true
+
+      /** Template notes have their own autofocus behavior. */
+      if (!controller.isTemplateNote) {
+        restorePlainEditorCaret(textarea, controller.item, application.preferences)
+      }
+    }, [application.preferences, controller, editorText])
 
     const reloadPreferences = useCallback(() => {
       const lineHeight = application.preferences.getLocalValue(

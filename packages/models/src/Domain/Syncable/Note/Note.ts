@@ -1,6 +1,7 @@
 import { AppDataField } from './../../Abstract/Item/Types/AppDataField'
 import { NoteType } from '@standardnotes/features'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
+import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 import { NoteContent, NoteContentSpecialized } from './NoteContent'
@@ -47,5 +48,12 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
         this.noteType = NoteType.Plain
       }
     }
+  }
+
+  /** The caret is best-effort view state, so a difference in it alone must never create a conflict copy. */
+  public override contentKeysToIgnoreWhenCheckingEquality(): (keyof ItemContent)[] {
+    const noteKeys: (keyof NoteContent)[] = ['lastCaretOffset', 'lastCaretAt']
+
+    return [...noteKeys, ...super.contentKeysToIgnoreWhenCheckingEquality()] as (keyof ItemContent)[]
   }
 }

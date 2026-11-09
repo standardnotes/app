@@ -55,6 +55,10 @@ describe('shouldRestoreCaret', () => {
     expect(check({ enabled: null })).toBe(false)
   })
 
+  it('does not restore for a conflict copy', () => {
+    expect(check({ note: { conflictOf: 'original-uuid' } })).toBe(false)
+  })
+
   it('does not restore when the note was edited after the caret was captured', () => {
     expect(check({ note: { userModifiedDate: new Date(capturedAt + 1) } })).toBe(false)
   })

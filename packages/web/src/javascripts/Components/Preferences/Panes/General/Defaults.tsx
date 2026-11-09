@@ -114,7 +114,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
                 <Subtitle>{c('B6.Preferences.General.Subtitle').t`Restore cursor position`}</Subtitle>
                 <Text>
                   {c('B6.Preferences.General.Info')
-                    .t`When enabled, reopening a note restores the caret to where you left off. Synced across your devices.`}
+                    .t`When enabled, reopening a note restores the caret to where you left off, synced across your devices. The editor will also be focused automatically whenever you navigate to a note.`}
                 </Text>
               </div>
               <Switch onChange={toggleRestoreEditorPosition} checked={restoreEditorPosition} />
