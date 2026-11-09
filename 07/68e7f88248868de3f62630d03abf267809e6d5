@@ -37,6 +37,20 @@ packages/web/src/javascripts/Components/NoteView/EditorPosition/shouldRestoreCar
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 151,
+    "ai_accepted": 151,
+    "git_diff_deleted_lines": 3,
+    "git_diff_added_lines": 151,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 151,
+        "ai_accepted": 151
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -68,6 +82,12 @@ packages/web/src/javascripts/Components/NoteView/EditorPosition/shouldRestoreCar
         "cache_read_input_tokens": 10532335
       }
     }
+  },
+  "activity": {
+    "added_sloc": 173,
+    "deleted_sloc": 59,
+    "checkpoints": 26,
+    "span_seconds": 226626
   },
   "proton_build": "1.7.6-proton.8"
 }
