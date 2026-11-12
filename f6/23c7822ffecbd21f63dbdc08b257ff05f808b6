@@ -1,0 +1,20 @@
+packages/web/src/javascripts/Components/FilePreview/FilePreviewError.tsx
+  s_27201c6945af88::t_0469ab4dbd18e1 6,17-22,24,26,29-36,41-43,50-64,66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "f623c7822ffecbd21f63dbdc08b257ff05f808b6",
+  "prompts": {},
+  "sessions": {
+    "s_27201c6945af88": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2ed13e37-1c23-4a06-9878-c557412c1615",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
