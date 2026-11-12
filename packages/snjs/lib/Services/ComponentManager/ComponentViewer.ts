@@ -768,7 +768,16 @@ export class ComponentViewer implements ComponentViewerInterface {
               uuid: mutator.getUuid(),
             })
 
-            mutator.setCustomContent(contextualPayload.content)
+            const item = mutator.getItem()
+            const content = Copy<ItemContent>(contextualPayload.content)
+
+            if (this.componentOrFeature.isComponent && isNote(item)) {
+              const noteContent = content as NoteContent
+              noteContent.noteType = item.payload.content.noteType
+              noteContent.editorIdentifier = item.payload.content.editorIdentifier
+            }
+
+            mutator.setCustomContent(content)
 
             const responseItem = sureSearchArray(responsePayloads, {
               uuid: mutator.getUuid(),
