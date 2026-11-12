@@ -743,16 +743,25 @@ export class LegacyApiService
       params,
     })
 
+    const data = response.data as CreateValetTokenResponse | undefined
+
+    if (data?.success === false) {
+      return new ClientDisplayableError(
+        FileStrings.ValetTokenFailureMessage(data.reason, operation),
+        undefined,
+        data.reason,
+      )
+    }
+
     if (isErrorResponse(response)) {
-      return new ClientDisplayableError(response.data?.error?.message as string)
+      return ClientDisplayableError.FromNetworkError(response)
     }
 
-    if (!response.data?.success) {
-      const reason = response.data.reason
-      return new ClientDisplayableError(FileStrings.ValetTokenFailureMessage(reason, operation), undefined, reason)
+    if (data?.success === true) {
+      return data.valetToken
     }
 
-    return response.data?.valetToken
+    return new ClientDisplayableError(FileStrings.FailedCreateFileToken)
   }
 
   public async startUploadSession(
