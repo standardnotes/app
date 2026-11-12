@@ -52,6 +52,20 @@ yarn.lock
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 32,
+    "ai_accepted": 32,
+    "git_diff_deleted_lines": 32,
+    "git_diff_added_lines": 32,
+    "tool_model_breakdown": {
+      "cursor::default": {
+        "ai_additions": 32,
+        "ai_accepted": 32
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
