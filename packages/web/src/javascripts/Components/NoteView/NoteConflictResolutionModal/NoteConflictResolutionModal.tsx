@@ -42,6 +42,10 @@ const NoteConflictResolutionModal = ({
   close: () => void
 }) => {
   const allVersions = useMemo(() => [currentNote].concat(conflictedNotes), [conflictedNotes, currentNote])
+  const versionsByLastModified = useMemo(
+    () => [...allVersions].sort((a, b) => b.serverUpdatedAt.getTime() - a.serverUpdatedAt.getTime()),
+    [allVersions],
+  )
 
   const application = useApplication()
   const [selectedVersions, setSelectedVersions] = useState([currentNote.uuid])
@@ -292,8 +296,8 @@ const NoteConflictResolutionModal = ({
         )}
         ref={setListElement}
       >
-        {allVersions.map((note, index) => {
-          const versionNumber = index + 1
+        {versionsByLastModified.map((note, index) => {
+          const versionNumber = versionsByLastModified.length - index
           return (
             <ConflictListItem
               disabled={isPerformingAction}
@@ -309,11 +313,8 @@ const NoteConflictResolutionModal = ({
                 setSelectedMobileTab('preview')
               }}
               key={note.uuid}
-              title={
-                index === 0
-                  ? c('B3.Notes.NoteActions.Label').t`Current version`
-                  : (c('B3.Notes.NoteActions.Label').jt`Version ${versionNumber}` as unknown as string)
-              }
+              title={c('B3.Notes.NoteActions.Label').jt`Version ${versionNumber}` as unknown as string}
+              isCurrentVersion={note.uuid === currentNote.uuid}
               note={note}
             />
           )
