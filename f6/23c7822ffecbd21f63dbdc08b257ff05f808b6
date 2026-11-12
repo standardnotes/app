@@ -16,5 +16,11 @@ packages/web/src/javascripts/Components/FilePreview/FilePreviewError.tsx
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "activity": {
+    "added_sloc": 2816,
+    "deleted_sloc": 2535,
+    "checkpoints": 2,
+    "span_seconds": 27
+  },
   "proton_build": "1.7.6-proton.8"
 }
