@@ -1,0 +1,63 @@
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
+  s_1bb69fbbbfcb03::t_945123aaef19a1 771,773,775-780
+  s_1bb69fbbbfcb03::t_c29e74e07d052c 774
+  s_1bb69fbbbfcb03::t_b3e33cad0eee4a 772
+packages/web/src/javascripts/Components/SuperEditor/Plugins/InlineFilePlugin/InlineFileComponent.tsx
+  s_1bb69fbbbfcb03::t_b8a35d0256b288 15,64-66,68,84,114,118,127-155
+  s_1bb69fbbbfcb03::t_9019ad1624f3ee 125
+  s_1bb69fbbbfcb03::t_9eeeee36b167a1 124
+packages/web/src/javascripts/Components/FilePreview/FilePreviewError.tsx
+  s_1bb69fbbbfcb03::t_1e6629b6b64a13 66
+  s_1bb69fbbbfcb03::t_a21a993fe4f815 6,17-22,24,26,29-36,41-43,50-64
+packages/web/src/javascripts/Components/FilePreview/FilePreviewUnavailable.tsx
+  s_1bb69fbbbfcb03::t_7d53689d919dda 1-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "f9c9d13db66344ed17f2839921fafbe7a7c28b5a",
+  "prompts": {},
+  "sessions": {
+    "s_1bb69fbbbfcb03": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6ca54f79-8390-41ee-84ef-1f29a0e3977c",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 45,
+        "output_tokens": 3985,
+        "cache_creation_input_tokens": 443871,
+        "cache_read_input_tokens": 2855079
+      },
+      "by_tool_model": {
+        "cursor::gpt-5.6-sol": {
+          "input_tokens": 45,
+          "output_tokens": 3985,
+          "cache_creation_input_tokens": 443871,
+          "cache_read_input_tokens": 2855079
+        }
+      },
+      "tool_uses": {
+        "grep": 7,
+        "read": 3,
+        "shell": 6,
+        "write": 2
+      }
+    },
+    "by_prompt": {
+      "s_1bb69fbbbfcb03": {
+        "input_tokens": 45,
+        "output_tokens": 3985,
+        "cache_creation_input_tokens": 443871,
+        "cache_read_input_tokens": 2855079
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
