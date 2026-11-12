@@ -20,6 +20,20 @@ packages/web/src/javascripts/Components/ComponentView/IframeFeatureView.tsx
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 66,
+    "ai_accepted": 66,
+    "git_diff_deleted_lines": 27,
+    "git_diff_added_lines": 66,
+    "tool_model_breakdown": {
+      "cursor::default": {
+        "ai_additions": 66,
+        "ai_accepted": 66
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
