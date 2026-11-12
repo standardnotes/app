@@ -531,8 +531,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.subscriptionController.hasFirstPartyOnlineOrOfflineSubscription()
   }
 
-  async openPurchaseFlow() {
-    await this.purchaseFlowController.openPurchaseFlow()
+  async openPurchaseFlow(options?: { continueToCheckoutAfterSignIn?: boolean }) {
+    await this.purchaseFlowController.openPurchaseFlow(options)
   }
 
   addNativeMobileEventListener = (listener: NativeMobileEventListener) => {

@@ -22,7 +22,7 @@ const UpgradeNow = ({ application, featuresController, subscriptionContoller }: 
     } else if (!application.canShowPurchaseFlow() && !hasAccount) {
       application.showAccountMenu()
     } else {
-      void application.openPurchaseFlow()
+      void application.openPurchaseFlow({ continueToCheckoutAfterSignIn: hasAccount })
     }
   }, [application, hasAccount])
 
