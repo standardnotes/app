@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.203.2",
+      "title": "[3.203.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.203.1...@standardnotes/web@3.203.2) (2026-11-12)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Improves errors on file attachments for expired subscriptions ([#3076](https://github.com/standardnotes/app/issues/3076)) ([cdb1b42](https://github.com/standardnotes/app/commit/cdb1b42cd9ce29abab07a735bf4137e5206f41ff))",
+      "parsed": {
+        "_": [
+          "Improves errors on file attachments for expired subscriptions (#3076) (cdb1b42)"
+        ],
+        "Bug Fixes": [
+          "Improves errors on file attachments for expired subscriptions (#3076) (cdb1b42)"
+        ]
+      }
+    },
+    {
       "version": "3.203.1",
       "title": "[3.203.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.203.0...@standardnotes/web@3.203.1) (2026-11-12)",
       "date": null,

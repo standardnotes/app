@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.212.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.10...@standardnotes/snjs@2.212.11) (2026-11-12)
+
+### Bug Fixes
+
+* Improves errors on file attachments for expired subscriptions ([#3076](https://github.com/standardnotes/app/issues/3076)) ([cdb1b42](https://github.com/standardnotes/app/commit/cdb1b42cd9ce29abab07a735bf4137e5206f41ff))
+
 ## [2.212.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.9...@standardnotes/snjs@2.212.10) (2026-11-12)
 
 ### Bug Fixes
