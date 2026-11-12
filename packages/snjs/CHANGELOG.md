@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.212.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.9...@standardnotes/snjs@2.212.10) (2026-11-12)
+
+### Bug Fixes
+
+* Prevents custom plugin sandbox escape via Super notes ([#3075](https://github.com/standardnotes/app/issues/3075)) ([84adfbb](https://github.com/standardnotes/app/commit/84adfbb5df81474aba5573c53d35ee55698c0167))
+
 ## [2.212.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.8...@standardnotes/snjs@2.212.9) (2026-11-02)
 
 **Note:** Version bump only for package @standardnotes/snjs

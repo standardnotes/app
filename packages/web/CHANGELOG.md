@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.203.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.203.0...@standardnotes/web@3.203.1) (2026-11-12)
+
+### Bug Fixes
+
+* Improves conflict resolver UI ([#3077](https://github.com/standardnotes/app/issues/3077)) ([b068189](https://github.com/standardnotes/app/commit/b0681895dd6f24c62c6e3cba83f44aafd18d0035))
+* Prevents custom plugin sandbox escape via Super notes ([#3075](https://github.com/standardnotes/app/issues/3075)) ([84adfbb](https://github.com/standardnotes/app/commit/84adfbb5df81474aba5573c53d35ee55698c0167))
+* Prevents redirect to checkout when clicking Sign up to sync ([#3078](https://github.com/standardnotes/app/issues/3078)) ([8194df3](https://github.com/standardnotes/app/commit/8194df3820271abe6b17e352a39ad519eca309f3))
+
 # [3.203.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.12...@standardnotes/web@3.203.0) (2026-11-02)
 
 ### Features
