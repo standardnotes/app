@@ -252,7 +252,7 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     }
 
     const onContentFocus = useCallback(() => {
-      if (!isAdjustingMobileCursor.current) {
+      if (isIOS() && !isAdjustingMobileCursor.current) {
         needsAdjustMobileCursor.current = true
       }
 
@@ -283,6 +283,10 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     }, [needsAdjustMobileCursor])
 
     useEffect(() => {
+      if (!isIOS()) {
+        return
+      }
+
       const disposer = application.addWebEventObserver((event) => {
         if (event === WebAppEvent.MobileKeyboardWillChangeFrame) {
           scrollMobileCursorIntoViewAfterWebviewResize()

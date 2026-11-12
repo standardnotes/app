@@ -2,6 +2,7 @@ import { WebApplication } from './WebApplication'
 import { ApplicationDescriptor, SNApplicationGroup } from '@standardnotes/snjs'
 import { getPlatform, isDesktopApplication } from '@/Utils'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
+import { activatePersistedLocale } from '@/Controllers/Localization/WebLocaleService'
 
 const createApplication = (
   descriptor: ApplicationDescriptor,
@@ -38,6 +39,7 @@ export class WebApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> 
 
     await super.initialize({
       applicationCreator: async (descriptor, device) => {
+        await activatePersistedLocale(descriptor.identifier)
         return createApplication(descriptor, device, defaultSyncServerHost, device, webSocketUrl)
       },
     })

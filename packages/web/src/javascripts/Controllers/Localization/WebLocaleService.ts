@@ -74,8 +74,8 @@ export function getWebLocaleService(): LocaleService {
   return localeService
 }
 
-export async function activatePersistedLocale(): Promise<void> {
-  const persistedLocale = getPersistedLocale()
+export async function activatePersistedLocale(workspaceIdentifier: string): Promise<void> {
+  const persistedLocale = getPersistedLocale(workspaceIdentifier)
   if (!persistedLocale) {
     return
   }

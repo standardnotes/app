@@ -34,8 +34,8 @@
     },
     "B1.Account.ImportExport.Error": {
       "Could not import ${ count } item (click for details)": [
-        "Impossible d'importer ${ count } élément (cliquez pour afficher les informations)",
-        "Impossible d'importer ${ count } éléments (cliquez pour afficher les informations)"
+        "Impossible d'importer ${ count } élément (cliquez pour plus d'informations)",
+        "Impossible d'importer ${ count } éléments (cliquez pour plus d'informations)"
       ],
       "Could not import file": [
         "Le fichier n’a pas pu être importé."
@@ -96,12 +96,12 @@
         "Glissez-déposez des fichiers pour les détecter et les importer automatiquement"
       ],
       "Import complete. ${ errorCount } item was not imported because there was an error decrypting it. Make sure the password is correct and try again.": [
-        "L'importation est terminée. ${ errorCount } élément n'a pas été importé en raison d'une erreur de déchiffrement. Vérifiez que le mot de passe est correct et réessayez.",
-        "L'importation est terminée. ${ errorCount } éléments n'ont pas été importés en raison d'une erreur de déchiffrement. Vérifiez que le mot de passe est correct et réessayez."
+        "Importation terminée. ${ errorCount } élément n'a pas pu être importé, car une erreur s'est produite lors de son déchiffrement. Vérifiez que le mot de passe est correct et réessayez.",
+        "Importation terminée. ${ errorCount } éléments n'ont pas pu être importés, car une erreur s'est produite lors de leur déchiffrement. Vérifiez que le mot de passe est correct et réessayez."
       ],
       "Imported ${ list }": [
-        "Importation : ${ list }",
-        "Importation : ${ list }"
+        "Importé : ${ list }",
+        "Importés : ${ list }"
       ],
       "Or click to open file picker": [
         "Ou cliquez pour choisir un fichier"
@@ -347,8 +347,8 @@
     },
     "B1.Account.Session.Confirmation": {
       "There is ${ dirtyItemCount } item with unsynced changes. If you sign out, these changes will be lost forever. Are you sure you want to sign out?": [
-        "Il y a ${ dirtyItemCount } élément avec des modifications non synchronisées. Si vous vous déconnectez, ces modifications seront définitivement perdues. Voulez-vous vraiment vous déconnecter ?",
-        "Il y a ${ dirtyItemCount } éléments avec des modifications non synchronisées. Si vous vous déconnectez, ces modifications seront définitivement perdues. Voulez-vous vraiment vous déconnecter ?"
+        "Il y a ${ dirtyItemCount } élément avec des modifications non synchronisées. Si vous vous déconnectez, ces modifications seront perdues définitivement. Voulez-vous vraiment vous déconnecter ?",
+        "Il y a ${ dirtyItemCount } éléments avec des modifications non synchronisées. Si vous vous déconnectez, ces modifications seront perdues définitivement. Voulez-vous vraiment vous déconnecter ?"
       ]
     },
     "B1.Account.Session.Error": {
@@ -1263,7 +1263,7 @@
         "Hors ligne"
       ],
       "Potentially Out of Sync": [
-        "Potentiellement désynchronisé"
+        "Désynchronisation possible"
       ],
       "Processing your request...": [
         "Traitement de votre requête en cours…"
@@ -2112,7 +2112,7 @@
         "Activer/désactiver la recherche globale"
       ],
       "Trashed": [
-        "Dans la corbeille"
+        "Supprimé"
       ],
       "Upload file": [
         "Importer un fichier"
@@ -3445,7 +3445,7 @@
     },
     "B5.SecuritySync.Autolock.Info": {
       "Authentication is required to change autolock timer duration": [
-        "L'authentification est requise pour modifier la durée du verrouillage automatique"
+        "L'authentification est requise pour modifier la durée du verrouillage automatique."
       ]
     },
     "B5.SecuritySync.Autolock.Label": {
@@ -3473,7 +3473,7 @@
     },
     "B5.SecuritySync.Biometrics.Info": {
       "Authentication is required to disable biometrics": [
-        "L'authentification est requise pour désactiver la biométrie"
+        "L'authentification est requise pour désactiver la biométrie."
       ]
     },
     "B5.SecuritySync.Challenge.Action": {
@@ -3484,7 +3484,7 @@
         "Envoyer"
       ],
       "Switch workspace": [
-        "Changer d'espace de travail"
+        "Changer d’espace de travail"
       ],
       "Tap to use biometrics": [
         "Appuyez pour utiliser la biométrie"
@@ -3504,7 +3504,7 @@
         "Cet élément ne peut pas être récupéré."
       ],
       "Unable to find key ${ keyId } for this item. You may try signing out and back in; if that doesn't help, check your backup files for a key with this ID and import it.": [
-        "Impossible de trouver la clé ${ keyId } pour cet élément. Vous pouvez essayer de vous déconnecter puis de vous reconnecter ; si cela ne résout pas le problème, cherchez dans vos fichiers de sauvegarde une clé portant cet identifiant et importez-la."
+        "Impossible de trouver la clé ${ keyId } pour cet élément. Essayez de vous déconnecter puis de vous reconnecter ; si cela ne résout pas le problème, recherchez dans vos fichiers de sauvegarde une clé portant cet ID et importez-la."
       ],
       "Unable to recover your key with the attempted password. Please try again.": [
         "Impossible de récupérer votre clé avec le mot de passe saisi. Nous vous invitons à réessayer."
@@ -3512,94 +3512,94 @@
     },
     "B5.SecuritySync.Challenge.Info": {
       "Authentication is required to access this file": [
-        "L'authentification est requise pour accéder à ce fichier"
+        "L'authentification est requise pour accéder à ce fichier."
       ],
       "Authentication is required to add a passcode": [
         "L'authentification est requise pour ajouter un code d'accès"
       ],
       "Authentication is required to approve this note for ${ ListedName }": [
-        "Une authentification est requise pour approuver cette note pour ${ ListedName }"
+        "L'authentification est requise pour approuver cette note pour ${ ListedName }"
       ],
       "Authentication is required to change your passcode": [
-        "L'authentification est requise pour modifier votre code d'accès."
+        "L'authentification est requise pour modifier votre code d'accès"
       ],
       "Authentication is required to delete your account": [
-        "L'authentification est requise pour supprimer votre compte"
+        "L'authentification est requise pour supprimer votre compte."
       ],
       "Authentication is required to disable two-factor authentication": [
-        "L'authentification est requise pour désactiver l'authentification à deux facteurs"
+        "L'authentification est nécessaire pour désactiver l'authentification à deux facteurs."
       ],
       "Authentication is required to export a backup": [
-        "L'authentification est requise pour exporter une sauvegarde"
+        "L'authentification est requise pour exporter une sauvegarde."
       ],
       "Authentication is required to import a backup file": [
-        "Une authentification est requise pour importer un fichier de sauvegarde"
+        "Une authentification est requise pour importer un fichier de sauvegarde."
       ],
       "Authentication is required to remove your passcode": [
-        "L'authentification est requise pour retirer votre code d'accès"
+        "L'authentification est requise pour retirer votre code d'accès."
       ],
       "Authentication is required to revoke a session": [
-        "L'authentification est requise pour révoquer une session"
+        "L'authentification est requise pour révoquer une session."
       ],
       "Authentication is required to search protected contents": [
-        "L'authentification est requise pour rechercher des contenus protégés"
+        "L'authentification est requise pour rechercher dans le contenu protégé."
       ],
       "Authentication is required to select a protected note": [
-        "L'authentification est requise pour sélectionner une note protégée"
+        "L'authentification est requise pour sélectionner une note protégée."
       ],
       "Authentication is required to unlock the application": [
-        "L'authentification est requise pour déverrouiller l'application"
+        "L'authentification est requise pour déverrouiller l'application."
       ],
       "Authentication is required to unprotect a file": [
         "L'authentification est requise pour retirer la protection d'un fichier."
       ],
       "Authentication is required to unprotect a note": [
-        "Une authentification est requise pour retirer la protection d'une note"
+        "L'authentification est requise pour retirer la protection d'une note."
       ],
       "Authentication is required to view this note": [
-        "L'authentification est requise pour afficher cette note."
+        "L'authentification est requise pour consulter cette note"
       ],
       "Biometrics successful": [
-        "Authentification biométrique réussie"
+        "Biométrie réussie"
       ],
       "Delete ${ vaultName }": [
         "Supprimer ${ vaultName }"
       ],
       "Enter your account password after it was changed on ${ dateString }.": [
-        "Saisissez le mot de passe de votre compte, qui a été modifié le ${ dateString }."
+        "Saisissez le mot de passe de votre compte après sa modification le ${ dateString }."
       ],
       "Enter your account password as it was when you changed your email on ${ dateString }.": [
-        "Saisissez le mot de passe du compte tel qu'il était lors du changement d'adresse e-mail le ${ dateString }."
+        "Saisissez le mot de passe de votre compte tel qu'il était lorsque vous avez modifié votre adresse e-mail le ${ dateString }."
       ],
       "Enter your account password as it was when you registered ${ dateString }.": [
-        "Saisissez le mot de passe du compte tel qu'il était lors de votre inscription le ${ dateString }."
+        "Saisissez le mot de passe de votre compte tel qu'il était lors de votre inscription le ${ dateString }."
       ],
       "Enter your account password as it was when you upgraded your encryption version on ${ dateString }.": [
-        "Saisissez le mot de passe du compte tel qu'il était lors de la mise à niveau de votre version de chiffrement le ${ dateString }."
+        "Saisissez le mot de passe de votre compte tel qu'il était lorsque vous avez mis à niveau votre version de chiffrement le ${ dateString }."
       ],
       "Enter your application passcode after it was changed on ${ dateString }.": [
-        "Saisissez votre code d'accès de l'application, qui a été modifié le ${ dateString }."
+        "Saisissez le code d'accès de l'application, qui a été modifié le ${ dateString }."
       ],
       "Enter your application passcode as it was when you created it on ${ dateString }.": [
-        "Saisissez le code d'accès de l'application tel que vous l'avez défini lors de sa création le ${ dateString }."
+        "Saisissez le code d'accès de votre application tel qu'il était lorsque vous l'avez créé le ${ dateString }."
       ],
       "Obtained Device Response": [
         "Réponse de l'appareil obtenue"
       ],
       "Unlock ${ vaultName }": [
-        "Déverrouiller ${ vaultName }"
+        "Débloquer ${ vaultName }"
       ],
       "You must enter your passcode in order to save your new credentials.": [
-        "Vous devez saisir votre code d'accès afin d'enregistrer vos nouveaux identifiants."
+        "Vous devez saisir votre code d'accès pour enregistrer vos nouveaux identifiants."
       ],
       "Your account password is required to recover an encryption key.": [
-        "Le mot de passe du compte est requis pour récupérer une clé de chiffrement."
+        "Le mot de passe de votre compte est nécessaire pour récupérer une clé de chiffrement."
       ],
       "Your account password is required to revalidate your session.": [
-        "Le mot de passe du compte est requis pour revalider votre session."
+        "Le mot de passe de votre compte est requis pour revalider votre session."
       ],
       "Your application passcode is required to perform an upgrade of your local data storage structure.": [
-        "Le code d’accès de l’application est requis pour mettre à niveau la structure de votre espace de stockage local."
+        "Le code d'accès de l'application est requis pour mettre à niveau la structure de stockage de vos données locales."
       ],
       "Your credentials have successfully been updated.": [
         "Vos identifiants ont été mis à jour."
@@ -3608,10 +3608,10 @@
         "Votre clé a été récupérée."
       ],
       "Your passcode is required in order to register for an account.": [
-        "Votre code d'accès est requis pour créer un compte."
+        "La création de compte nécessite votre code d’accès."
       ],
       "Your passcode is required in order to sign in to your account.": [
-        "Votre code d'accès est requis pour vous connecter à votre compte."
+        "La connexion à votre compte nécessite votre code d'accès."
       ],
       "Your passcode is required to process your credentials change.": [
         "Votre code d'accès est requis pour traiter la modification de vos identifiants."
@@ -3622,7 +3622,7 @@
         "Mot de passe du compte"
       ],
       "Allow protected access for": [
-        "Autoriser l'accès aux éléments protégés pour"
+        "Autoriser l'accès protégé pour"
       ],
       "Application Passcode": [
         "Code d'accès de l'application"
@@ -3631,7 +3631,7 @@
         "Biométrie"
       ],
       "Cancel": [
-        "Annuler"
+        "Annulation"
       ],
       "Enter the account password associated with the import file": [
         "Saisissez le mot de passe du compte associé au fichier d'importation"
@@ -3643,7 +3643,7 @@
         "Saisissez le mot de passe de votre compte"
       ],
       "Enter your application passcode": [
-        "Saisissez le code d'accès de l'application"
+        "Saisissez votre code d'accès de l'application"
       ],
       "Enter your application passcode to continue": [
         "Saisissez le code d'accès de l'application pour continuer"
@@ -3655,7 +3655,7 @@
         "Saisissez vos identifiants pour effectuer la mise à niveau du chiffrement"
       ],
       "Passcode Required": [
-        "Code d’accès requis"
+        "Code d'accès requis"
       ],
       "Previous Password": [
         "Mot de passe précédent"
@@ -3675,7 +3675,7 @@
         "Mot de passe du compte"
       ],
       "Application Passcode": [
-        "Code d’accès de l’application"
+        "Code d'accès de l'application"
       ],
       "Two-factor authentication code": [
         "Code d’authentification à deux facteurs"
@@ -3683,15 +3683,15 @@
     },
     "B5.SecuritySync.Challenge.Status": {
       "Generating Keys...": [
-        "Génération des clés..."
+        "Génération des clés…"
       ]
     },
     "B5.SecuritySync.Challenge.Title": {
       "Authenticate": [
-        "S'authentifier"
+        "S’authentifier"
       ],
       "Authentication Required": [
-        "L'authentification est requise"
+        "Authentification requise"
       ],
       "Storage Update": [
         "Mise à jour de l'espace de stockage"
@@ -3702,7 +3702,7 @@
     },
     "B5.SecuritySync.Info": {
       "Access to this note will not be restricted until you set up a passcode or account.": [
-        "L'accès à cette note ne sera pas restreint tant que vous n'aurez pas configuré un code d'accès ou un compte."
+        "L'accès à cette note ne sera pas restreint tant que vous n'aurez pas configuré de code d'accès ou de compte."
       ]
     },
     "B5.SecuritySync.KeyStorage.Confirmation": {
@@ -3712,15 +3712,15 @@
     },
     "B5.SecuritySync.KeyStorage.Error": {
       "Invalid Credentials": [
-        "Identifiants non valides"
+        "Les identifiants ne sont pas valides."
       ]
     },
     "B5.SecuritySync.KeyStorage.Info": {
       "The email or password you entered is incorrect.\n\nPlease note that this sign-in request is made against the default server. If you are using a custom server, you must uninstall the app then reinstall, and sign back into your account.": [
-        "L'adresse e-mail ou le mot de passe que vous avez saisi est incorrect.\n\nNotez que cette demande de connexion est envoyée au serveur par défaut. Si vous utilisez un serveur personnalisé, vous devez désinstaller l'application, la réinstaller, puis vous reconnecter à votre compte."
+        "L'adresse e-mail ou le mot de passe est incorrect.\n\nNotez que cette demande de connexion est effectuée sur le serveur par défaut. Si vous utilisez un serveur personnalisé, vous devez désinstaller l'application, puis la réinstaller et vous reconnecter à votre compte."
       ],
       "We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password for \"${ email }\" to restore your account keys.": [
-        "Nous avons détecté que votre trousseau a été effacé. Cela peut se produire lors de la restauration de votre appareil à partir d'une sauvegarde. Saisissez le mot de passe du compte \"${ email }\" pour restaurer les clés de votre compte."
+        "Nous avons détecté que votre trousseau a été effacé. Cela peut se produire lors de la restauration de votre appareil à partir d'une sauvegarde. Veuillez saisir le mot de passe du compte pour \"${ email }\" afin de restaurer les clés de votre compte."
       ]
     },
     "B5.SecuritySync.KeyStorage.Title": {
@@ -3745,7 +3745,7 @@
     },
     "B5.SecuritySync.Passcode.Confirmation": {
       "A passcode change is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
-        "Une modification du code d'accès est en cours. Vous risquez de perdre des données si vous quittez l'application. Voulez-vous vraiment quitter ?"
+        "Un changement de code d'accès est en cours. Si vous quittez l'application maintenant, vous risquez de perdre des données. Voulez-vous vraiment quitter ?"
       ],
       "A passcode removal is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
         "La suppression du code d'accès est en cours. Vous risquez de perdre des données si vous quittez l'application. Voulez-vous vraiment quitter ?"
@@ -3756,12 +3756,12 @@
         "Veuillez saisir un code d'accès."
       ],
       "The two passcodes you entered do not match. Please try again.": [
-        "Les deux codes d’accès saisis ne correspondent pas. Nous vous invitons à réessayer."
+        "Les deux codes d'accès saisis ne correspondent pas. Nous vous invitons à réessayer."
       ]
     },
     "B5.SecuritySync.Passcode.Info": {
       "If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.": [
-        "Si vous avez oublié votre code d'accès local, votre seule option consiste à effacer vos données locales de cet appareil, puis à vous reconnecter à votre compte."
+        "Si vous avez oublié votre code d'accès local, votre seule option est d'effacer vos données locales de cet appareil et de vous reconnecter à votre compte."
       ],
       "Your keys are currently stored in your operating system's ${ keychainName }. Adding a passcode prevents even your operating system from reading them.": [
         "Vos clés sont actuellement stockées dans le ${ keychainName } de votre système d'exploitation. L'ajout d'un code d'accès empêche même votre système d'exploitation de les lire."
@@ -3783,10 +3783,10 @@
         "Modification du code d'accès…"
       ],
       "Removing passcode…": [
-        "Retrait du code d'accès…"
+        "Suppression du code d'accès…"
       ],
       "Setting passcode…": [
-        "Configuration du code d'accès…"
+        "Définition du code d'accès…"
       ]
     },
     "B5.SecuritySync.Passcode.Title": {
@@ -3796,7 +3796,7 @@
     },
     "B5.SecuritySync.Passcode.Warning": {
       "Do not close the application until this process completes.": [
-        "Ne fermez pas l'application tant que ce processus n'est pas terminé."
+        "Ne fermez pas l'application avant la fin de ce processus."
       ]
     },
     "B5.SecuritySync.Protections.Error": {
@@ -3809,16 +3809,16 @@
     },
     "B5.SecuritySync.Protections.Label": {
       "1 Hour": [
-        "1 heure"
+        "1 Heure"
       ],
       "1 Minute": [
-        "1 minute"
+        "1 Minute"
       ],
       "1 Week": [
-        "1 semaine"
+        "1 Semaine"
       ],
       "5 Minutes": [
-        "5 minutes"
+        "5 Minutes"
       ]
     },
     "B5.SecuritySync.Sync.Action": {
@@ -3828,18 +3828,18 @@
     },
     "B5.SecuritySync.Sync.Error": {
       "There was an error while trying to save your items. Please contact support and share this message: ${ message }.": [
-        "Une erreur s’est produite lors de la tentative d’enregistrement de vos éléments. Contactez le support et partagez ce message : ${ message }."
+        "Une erreur est survenue lors de l'enregistrement de vos éléments. Nous vous invitons à contacter le support et à transmettre ce message : ${ message }."
       ]
     },
     "B5.SecuritySync.Sync.Info": {
       "Quit the application and re-open it. Sometimes, this may resolve the issue.": [
-        "Quittez l'application, puis rouvrez-la. Cela peut parfois résoudre le problème."
+        "Quittez l'application et rouvrez-la. Cela peut parfois résoudre le problème."
       ],
       "Sign out of your account, then sign back in. This will ensure your data is consistent with the server. Be sure to download a backup of your data before doing so.": [
         "Déconnectez-vous de votre compte, puis reconnectez-vous. Cela garantira la cohérence de vos données avec le serveur. Veillez à télécharger une sauvegarde de vos données avant de le faire."
       ],
       "We've detected that the data in the current application session may not match the data on the server. An attempt was made to auto-resolve the issue, but it was unable to reconcile the differences.": [
-        "Les données de la session actuelle de l'application peuvent ne pas correspondre aux données du serveur. Une tentative de résolution automatique du problème a été effectuée, mais elle n'a pas permis de réconcilier les différences."
+        "Nous avons détecté que les données de la session actuelle de l'application peuvent ne pas correspondre aux données du serveur. Une résolution automatique du problème a été tentée, mais les différences n'ont pas pu être réconciliées."
       ]
     },
     "B5.SecuritySync.Sync.Status": {
@@ -3849,10 +3849,10 @@
     },
     "B5.SecuritySync.Sync.Subtitle": {
       "Option 1 — Restart Application:": [
-        "Option 1 — Redémarrer l'application :"
+        "Option 1 - Redémarrer l'application :"
       ],
       "Option 2 — Sign Out and Back In:": [
-        "Option 2 — Se déconnecter puis se reconnecter :"
+        "Option 2 — Se déconnecter puis se reconnecter :"
       ]
     },
     "B5.SecuritySync.Sync.Title": {
@@ -3867,7 +3867,7 @@
     },
     "B6.Preferences.Account.Action": {
       "Cancel": [
-        "Annuler"
+        "Annulation"
       ],
       "Change email": [
         "Modifier l'e-mail"
@@ -3891,7 +3891,7 @@
         "Terminer"
       ],
       "Generating Keys...": [
-        "Génération des clés..."
+        "Génération des clés…"
       ],
       "Manage sessions": [
         "Gérer les sessions"
@@ -3903,7 +3903,7 @@
         "Déconnecter les autres sessions"
       ],
       "Sign out workspace": [
-        "Se déconnecter de l'espace de travail"
+        "Se déconnecter de l’espace de travail"
       ],
       "Sync now": [
         "Synchroniser maintenant"
@@ -3911,19 +3911,23 @@
     },
     "B6.Preferences.Account.Error": {
       "Cannot close window until pending tasks are complete.": [
-        "Impossible de fermer la fenêtre tant que des tâches en attente ne sont pas terminées."
+        "Impossible de fermer la fenêtre tant que certaines tâches sont en cours."
       ],
       "Please enter your current password.": [
         "Veuillez saisir votre mot de passe actuel."
       ],
       "The current password you entered is not correct. Please try again.": [
-        "Le mot de passe actuel que vous avez saisi n'est pas correct. Nous vous invitons à réessayer."
+        "Le mot de passe actuel que vous avez saisi est incorrect. Veuillez réessayer."
       ],
       "There was an error when attempting to redirect you to the subscription page.": [
         "Une erreur s'est produite lors de la tentative de redirection vers la page d'abonnement."
       ]
     },
     "B6.Preferences.Account.Info": {
+      "${ filesQuotaUsedLabel } of ${ filesQuotaTotalLabel } used": [
+        "${ filesQuotaUsedLabel } sur ${ filesQuotaTotalLabel } utilisé",
+        "${ filesQuotaUsedLabel } sur ${ filesQuotaTotalLabel } utilisés"
+      ],
       "Already have an account? ${ loginLink }": [
         "Vous avez déjà un compte ? ${ loginLink }"
       ],
@@ -3931,19 +3935,16 @@
         "Le mot de passe actuel a été défini le ${ passwordDateSpan }"
       ],
       "Disables email notifications when a new sign-in occurs on your account. (Email notifications are available only to paid subscribers).": [
-        "Désactive les notifications par e-mail lorsqu'une nouvelle connexion a lieu sur votre compte. Les notifications par e-mail ne sont disponibles que pour les abonnés payants."
+        "Désactive les notifications par e-mail lorsqu'une nouvelle connexion a lieu sur votre compte. Les notifications par e-mail sont réservées aux abonnés payants."
       ],
       "Disables email notifications with special deals and promotions.": [
-        "Désactive les notifications par e-mail contenant des offres spéciales et des promotions."
+        "Désactive les notifications par e-mail relatives aux offres spéciales et promotions."
       ],
       "Files": [
         "Fichiers"
       ],
       "Last synced ${ lastSyncSpan }": [
         "Dernière synchronisation ${ lastSyncSpan }"
-      ],
-      "of": [
-        "sur"
       ],
       "on ${ lastSyncDate }": [
         "le ${ lastSyncDate }"
@@ -3952,10 +3953,10 @@
         "Assurez-vous d'utiliser la dernière version de ${ AppName } sur toutes les plateformes pour une compatibilité maximale."
       ],
       "Redirecting you to the subscription page...": [
-        "Vous êtes redirigé vers la page d'abonnement…"
+        "Redirection vers la page d'abonnement…"
       ],
       "Remove all data related to the current workspace from the application.": [
-        "Retirer de l'application toutes les données relatives à l'espace de travail actuel."
+        "Retirez toutes les données associées à l'espace de travail actuel de l'application."
       ],
       "Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
         "Connectez-vous pour synchroniser vos notes et préférences sur tous vos appareils et activer le chiffrement de bout en bout."
@@ -3964,19 +3965,16 @@
         "Les notifications de connexion par e-mail sont disponibles uniquement avec un abonnement. Veuillez changer d'abonnement pour bénéficier des notifications de connexion."
       ],
       "Storage Quota": [
-        "Quota d’espace de stockage"
+        "Quota d'espace de stockage"
       ],
       "This action is irreversible. After deletion completes, you will be signed out on all devices.": [
-        "Cette action est irréversible. Une fois la suppression terminée, votre session sera fermée sur tous vos appareils."
-      ],
-      "used": [
-        "utilisé"
+        "Cette action est irréversible. Une fois la suppression terminée, vous serez déconnecté de tous vos appareils."
       ],
       "Want to sign out on all devices except this one?": [
-        "Voulez-vous vous déconnecter de tous les appareils, sauf celui-ci ?"
+        "Voulez-vous vous déconnecter de tous les appareils sauf celui-ci ?"
       ],
       "You're signed in as ${ emailSpan }": [
-        "Vous êtes connecté en tant que ${ emailSpan }"
+        "Vous êtes connecté en tant que ${ emailSpan }."
       ],
       "Your email has been successfully changed.": [
         "Votre adresse e-mail a été modifiée."
@@ -3987,7 +3985,7 @@
         "Mot de passe actuel"
       ],
       "Files storage used": [
-        "Espace de stockage de fichiers utilisé"
+        "Espace de stockage des fichiers utilisé"
       ],
       "Learn More": [
         "En savoir plus"
@@ -3996,7 +3994,7 @@
         "Nouvelle adresse e-mail"
       ],
       "Upgrade": [
-        "Changer d'abonnement"
+        "Mettre à niveau"
       ]
     },
     "B6.Preferences.Account.Subtitle": {
@@ -4004,10 +4002,10 @@
         "E-mail"
       ],
       "Mute marketing notification emails": [
-        "Désactiver les e-mails de notification marketing"
+        "Désactiver les notifications marketing par e-mail"
       ],
       "Mute sign-in notification emails": [
-        "Désactiver les messages de notification de connexion"
+        "Désactiver les notifications de connexion par e-mail"
       ],
       "Other devices": [
         "Autres appareils"
@@ -4047,36 +4045,36 @@
     },
     "B6.Preferences.Appearance.Action": {
       "Select the font size for plaintext notes": [
-        "Sélectionnez la taille de police des notes en texte brut"
+        "Sélectionnez la taille de police des notes en texte en clair"
       ],
       "Select the line height for plaintext notes": [
         "Sélectionnez la hauteur de ligne pour les notes en texte brut"
       ],
       "Sets the font size in plaintext and ${ SuperName } notes": [
-        "Définit la taille de la police dans les notes en texte brut et ${ SuperName }"
+        "Définit la taille de police des notes en texte en clair et ${ SuperName }"
       ],
       "Sets the line height (leading) in plaintext and ${ SuperName } notes": [
-        "Définit la hauteur de ligne (interlignage) dans les notes en texte brut et ${ SuperName }"
+        "Définit la hauteur de ligne (interligne) dans les notes en texte brut et ${ SuperName }"
       ],
       "Sets the max editor width for all notes": [
-        "Définit la largeur maximale de la zone d’édition pour toutes les notes"
+        "Définit la largeur maximale de la zone d'édition pour toutes les notes"
       ]
     },
     "B6.Preferences.Appearance.Info": {
       "Automatically change active theme based on your system settings.": [
-        "Changer automatiquement le thème actif en fonction des paramètres de votre système."
+        "Modifier automatiquement le thème actif en fonction des paramètres de votre système."
       ],
       "Theme to be used for system dark mode:": [
-        "Thème à utiliser lorsque le système est en thème sombre :"
+        "Thème à utiliser pour le mode sombre du système :"
       ],
       "Theme to be used for system light mode:": [
-        "Thème à utiliser pour le mode clair du système :"
+        "Thème à utiliser pour le mode clair du système :"
       ],
       "Toggles the font style in plaintext and ${ SuperName } notes": [
-        "Change le style de police dans les notes en texte brut et ${ SuperName }"
+        "Active ou désactive le style de police dans les notes en texte clair et les notes ${ SuperName }"
       ],
       "Use opaque style for UI elements instead of translucency": [
-        "Utiliser un style opaque pour les éléments de l'interface au lieu de la transparence"
+        "Utiliser un style opaque pour les éléments de l'interface plutôt que la translucidité"
       ]
     },
     "B6.Preferences.Appearance.Label": {
@@ -4093,7 +4091,7 @@
         "Desserré"
       ],
       "Medium": [
-        "Moyen"
+        "Moyenne"
       ],
       "None": [
         "Aucun"
@@ -4131,7 +4129,7 @@
         "Désactiver l'interface translucide"
       ],
       "Editor width": [
-        "Largeur de la zone d'édition"
+        "Largeur de la zone d’édition"
       ],
       "Font size": [
         "Taille de police"
@@ -4140,10 +4138,10 @@
         "Hauteur de ligne"
       ],
       "Monospace Font": [
-        "Police à chasse fixe"
+        "Police monospace"
       ],
       "Use system color scheme": [
-        "Utiliser le jeu de couleurs du système"
+        "Utiliser le thème de couleurs du système"
       ]
     },
     "B6.Preferences.Appearance.Title": {
@@ -4156,10 +4154,10 @@
     },
     "B6.Preferences.Backups.Action": {
       "Attempting to decrypt metadata file...": [
-        "Déchiffrement du fichier de métadonnées..."
+        "Tentative de déchiffrement du fichier de métadonnées..."
       ],
       "Change Location": [
-        "Modifier l'emplacement"
+        "Changer d'emplacement"
       ],
       "Choose": [
         "Choisir"
@@ -4177,7 +4175,7 @@
         "Enregistrer"
       ],
       "Select email frequency": [
-        "Sélectionner la fréquence des messages"
+        "Sélectionner la fréquence des e-mails"
       ],
       "Select file": [
         "Sélectionner un fichier"
@@ -4185,7 +4183,7 @@
     },
     "B6.Preferences.Backups.Error": {
       "Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.": [
-        "Impossible d'enregistrer le fichier dans le répertoire local. Cela peut être dû à un échec du déchiffrement ou à un échec de l'enregistrement du fichier en local."
+        "Impossible d'enregistrer le fichier dans le répertoire local. Cela peut être dû à un échec du déchiffrement ou à l'impossibilité d'enregistrer le fichier localement."
       ],
       "Unable to save local backup.": [
         "Impossible d'enregistrer la sauvegarde locale."
@@ -4196,10 +4194,10 @@
         "${ decryptedFileNameBold } a été déchiffré et sauvegardé dans le dossier de votre choix."
       ],
       "Automatically save encrypted and decrypted backups of your note and tag data.": [
-        "Enregistrez automatiquement des sauvegardes chiffrées et déchiffrées de vos données de notes et de tags."
+        "Enregistrer automatiquement des sauvegardes chiffrées et déchiffrées de vos données de notes et de tags."
       ],
       "Backups are saved automatically throughout the day. You can perform a one-time backup now below.": [
-        "Les sauvegardes sont enregistrées automatiquement au fil de la journée. Vous pouvez effectuer ci-dessous une sauvegarde ponctuelle."
+        "Les sauvegardes sont enregistrées automatiquement tout au long de la journée. Vous pouvez effectuer une sauvegarde ponctuelle ci-dessous."
       ],
       "Daily": [
         "Chaque jour"
@@ -4208,10 +4206,10 @@
         "Ne modifiez pas ce fichier."
       ],
       "Drag and drop this metadata file into the File Backups preferences pane in the ${ AppName } desktop or web application interface.": [
-        "Glissez-déposez ce fichier de métadonnées dans le volet « Sauvegarde des fichiers » des préférences, dans l'interface de l'application de bureau ou web ${ AppName }."
+        "Glissez-déposez ce fichier de métadonnées dans le volet des préférences Sauvegardes de fichiers de l'interface de l'application de bureau ou web de ${ AppName }."
       ],
       "Files backups are enabled. When you upload a new file on any device and open this application, files will be backed up in encrypted form to:": [
-        "Les sauvegardes de fichiers sont activées. Lorsque vous importez un nouveau fichier sur un appareil et ouvrez cette application, les fichiers sont sauvegardés sous forme chiffrée vers :"
+        "Les sauvegardes de fichiers sont activées. Lorsque vous importez un nouveau fichier sur un appareil et ouvrez cette application, les fichiers sont sauvegardés sous forme chiffrée à l'emplacement suivant :"
       ],
       "How often to receive backups.": [
         "Fréquence de réception des sauvegardes"
@@ -4220,13 +4218,13 @@
         "Pas de sauvegardes des e-mails"
       ],
       "Please drag the metadata file instead of the encrypted data file.": [
-        "Glissez le fichier de métadonnées plutôt que le fichier de données chiffrées."
+        "Faites glisser le fichier de métadonnées plutôt que le fichier de données chiffrées."
       ],
       "Receive daily encrypted email backups of all your notes directly in your email inbox.": [
-        "Recevez chaque jour, directement dans votre boite de réception, des sauvegardes chiffrées par message de toutes vos notes."
+        "Recevez chaque jour des sauvegardes chiffrées par e-mail de toutes vos notes, directement dans votre boîte de réception."
       ],
       "The file and key data below is encrypted with your account password.": [
-        "Les données de fichier et de clé ci-dessous sont chiffrées avec le mot de passe de votre compte."
+        "Le fichier et les données de clé ci-dessous sont chiffrés avec le mot de passe de votre compte."
       ],
       "To decrypt a backup file, drag and drop the file's respective ${ metadataFileName } file here or select it below.": [
         "Pour déchiffrer un fichier de sauvegarde, glissez-déposez ici le fichier ${ metadataFileName } du fichier correspondant ou sélectionnez-le ci-dessous."
@@ -4235,7 +4233,7 @@
         "Pour activer les sauvegardes de fichiers, utilisez l'application de bureau ${ AppName }."
       ],
       "To enable plaintext backups, use the ${ AppName } desktop application.": [
-        "Pour activer les sauvegardes en clair, utilisez l'application de bureau ${ AppName }."
+        "Pour activer les sauvegardes en texte en clair, utilisez l'application de bureau ${ AppName }."
       ],
       "To enable text backups, use the ${ AppName } desktop application.": [
         "Pour activer les sauvegardes de texte, utilisez l'application de bureau ${ AppName }."
@@ -4246,19 +4244,19 @@
     },
     "B6.Preferences.Backups.Label": {
       "${ AppName } Backup - ${ formattedDate }": [
-        "Sauvegarde ${ AppName } - ${ formattedDate }"
+        "${ AppName } Sauvegarde - ${ formattedDate }"
       ],
       "${ AppName } Backup - ${ formattedDate }.zip": [
         "Sauvegarde ${ AppName } - ${ formattedDate }.zip"
       ],
       "${ AppName } Backup and Import File": [
-        "Fichier de sauvegarde et d'importation de ${ AppName }"
+        "Fichier de sauvegarde et d'importation ${ AppName }"
       ],
       "${ AppName } Encrypted Backup and Import File - ${ formattedDate }": [
-        "Fichier de sauvegarde chiffrée et d'importation de ${ AppName } - ${ formattedDate }"
+        "Fichier de sauvegarde chiffrée et d'import ${ AppName } - ${ formattedDate }"
       ],
       "${ AppName } Encrypted Backup and Import File - ${ formattedDate }.txt": [
-        "Fichier de sauvegarde chiffrée et d'importation de ${ AppName } - ${ formattedDate }.txt"
+        "Fichier de sauvegarde chiffrée et d'import ${ AppName } - ${ formattedDate }.txt"
       ],
       "Automatic text backups": [
         "Sauvegardes automatiques de texte"
@@ -4279,12 +4277,12 @@
         "Sauvegardes en clair"
       ],
       "Text Backups": [
-        "Sauvegardes texte"
+        "Sauvegardes de texte"
       ]
     },
     "B6.Preferences.Backups.Status": {
       "File backups are not enabled. Enable to choose where your files are backed up.": [
-        "Les sauvegardes de fichiers ne sont pas activées. Activez-les pour choisir où vos fichiers sont sauvegardés."
+        "Les sauvegardes de fichiers ne sont pas activées. Activez-les pour choisir l'emplacement de sauvegarde de vos fichiers."
       ],
       "Plaintext backups are enabled and saved to:": [
         "Les sauvegardes en clair sont activées et enregistrées dans :"
@@ -4293,7 +4291,7 @@
         "Les sauvegardes en clair ne sont pas activées. Activez-les pour choisir où vos données sont sauvegardées."
       ],
       "Saving local backup…": [
-        "Enregistrement de la sauvegarde locale en cours…"
+        "Enregistrement de la sauvegarde locale…"
       ],
       "Successfully saved backup.": [
         "La sauvegarde a été enregistrée."
@@ -4302,30 +4300,30 @@
         "Les sauvegardes de texte sont activées et enregistrées dans :"
       ],
       "Text backups are not enabled. Enable to choose where your data is backed up.": [
-        "Les sauvegardes de texte ne sont pas activées. Activez-les pour choisir où vos données sont sauvegardées."
+        "Les sauvegardes de texte ne sont pas activées. Activez-les pour choisir où sauvegarder vos données."
       ]
     },
     "B6.Preferences.Backups.Subtitle": {
       "1. Choose related data file": [
-        "1. Choisir le fichier de données associé"
+        "1. Choisissez le fichier de données associé"
       ],
       "2. Decrypt and save file to your computer": [
-        "2. Déchiffrer et enregistrer le fichier sur votre ordinateur"
+        "2. Déchiffrer le fichier et l'enregistrer sur votre ordinateur"
       ],
       "Automatically save backups of all your notes into plaintext, non-encrypted folders.": [
-        "Enregistrez automatiquement des sauvegardes de toutes vos notes dans des dossiers en clair, non chiffrés."
+        "Enregistrer automatiquement des sauvegardes de toutes vos notes dans des dossiers en texte brut, non chiffrés."
       ],
       "Automatically save backups of all your notes to this computer into plaintext, non-encrypted folders.": [
-        "Enregistrez automatiquement des sauvegardes de toutes vos notes sur cet ordinateur dans des dossiers en clair, non chiffrés."
+        "Enregistrer automatiquement des sauvegardes de toutes vos notes sur cet ordinateur dans des dossiers en texte en clair, non chiffrés."
       ],
       "Automatically save encrypted backups of your files.": [
         "Enregistrez automatiquement des sauvegardes chiffrées de vos fichiers."
       ],
       "Automatically save encrypted backups of your uploaded files to this computer.": [
-        "Enregistrez automatiquement des sauvegardes chiffrées de vos fichiers importés sur cet ordinateur."
+        "Les sauvegardes chiffrées de vos fichiers importés sont enregistrées automatiquement sur cet ordinateur."
       ],
       "Automatically save encrypted text backups of all your note and tag data to this computer.": [
-        "Enregistrer automatiquement des sauvegardes de texte chiffrées de toutes vos données de notes et de tags sur cet ordinateur."
+        "Enregistrer automatiquement sur cet ordinateur des sauvegardes textuelles chiffrées de toutes les données de vos notes et tags."
       ],
       "Download a backup of all your text-based data": [
         "Télécharger une sauvegarde de toutes vos données textuelles"
@@ -4354,26 +4352,26 @@
         "Sauvegardes de données"
       ],
       "Email backups": [
-        "Sauvegardes par e-mail"
+        "Sauvegardes d'e-mails"
       ]
     },
     "B6.Preferences.Error": {
       "Failed to get settings.": [
-        "Les paramètres n’ont pas pu être récupérés."
+        "Les paramètres n'ont pas pu être récupérés."
       ],
       "Failed to update settings.": [
         "Les paramètres n'ont pas pu être mis à jour."
       ],
       "Unable to register for ${ ListedName }. Please try again later.": [
-        "L'inscription à ${ ListedName } n'a pas abouti. Nous vous invitons à réessayer plus tard."
+        "Impossible de s'inscrire à ${ ListedName }. Nous vous invitons à réessayer plus tard."
       ]
     },
     "B6.Preferences.General.Action": {
       "Cancel": [
-        "Annuler"
+        "Annulation"
       ],
       "Change icon": [
-        "Changer l'icône"
+        "Changer l’icône"
       ],
       "Create Smart View": [
         "Créer un affichage intelligent"
@@ -4403,7 +4401,7 @@
         "Enregistrer"
       ],
       "Select the format for the note title": [
-        "Sélectionnez le format du titre de la note"
+        "Sélectionnez le format du titre de la note."
       ],
       "Submit": [
         "Envoyer"
@@ -4411,51 +4409,51 @@
     },
     "B6.Preferences.General.Confirmation": {
       "Cancel": [
-        "Annuler"
+        "Annulation"
       ],
       "Remove offline key?": [
-        "Retirer la clé hors ligne ?"
+        "Retirer la clé hors ligne ?"
       ]
     },
     "B6.Preferences.General.Info": {
       ". Use [] to escape formatting.": [
-        ". Utilisez [] pour échapper au formatage."
+        ". Utilisez [] pour ignorer la mise en forme."
       ],
       "Allows using gestures to navigate": [
-        "Permet d'utiliser des gestes pour naviguer"
+        "Permet de naviguer par gestes"
       ],
       "Control whether the animated saving status is shown while editing. Error statuses are always shown regardless of preference.": [
-        "Contrôle l'affichage de l'état d'enregistrement animé pendant la modification. Les états d'erreur s'affichent toujours, quelles que soient les préférences."
+        "Détermine si l'indicateur d'enregistrement animé s'affiche pendant la modification. Les erreurs sont toujours affichées, quelles que soient les préférences."
       ],
       "Default image alignment in ${ SuperName } notes": [
-        "Alignement par défaut des images dans les notes ${ SuperName }"
+        "Alignement des images par défaut dans les notes ${ SuperName }"
       ],
       "Invalid JSON. Double check your entry and try again.": [
         "JSON non valide. Vérifiez votre saisie et réessayez."
       ],
       "Moments lets you capture photos of yourself throughout the day, creating a visual record of your life, one photo at a time. Using your webcam or mobile selfie-cam, Moments takes a photo of you every half hour. All photos are end-to-end encrypted and stored in your files. Enable Moments on a per-device basis to get started.": [
-        "Moments vous permet de photographier des instants de votre journée et de créer ainsi un journal visuel de votre vie, une photo à la fois. Grâce à votre webcam ou à la caméra frontale de votre téléphone, Moments prend une photo de vous toutes les demi-heures. Toutes les photos sont chiffrées de bout en bout et stockées dans vos fichiers. Pour commencer, activez Moments sur chaque appareil."
+        "Moments vous permet de capturer des photos de vous tout au long de la journée, créant ainsi un journal visuel de votre vie, une photo à la fois. Grâce à votre webcam ou à la caméra frontale de votre téléphone, Moments prend une photo de vous toutes les demi-heures. Toutes les photos sont chiffrées de bout en bout et stockées dans vos fichiers. Activez Moments appareil par appareil pour commencer."
       ],
       "No experimental features available.": [
-        "Aucune fonctionnalité expérimentale disponible."
+        "Aucune fonctionnalité expérimentale n'est disponible."
       ],
       "Only applies to web and desktop apps. On mobile, notes don't open automatically at launch.": [
         "Cela ne s'applique qu'aux applications Web et de bureau. Sur mobile, les notes ne s'ouvrent pas automatiquement au démarrage."
       ],
       "The default spellcheck value for new notes. Spellcheck can be configured per note from the note context menu. Spellcheck may degrade overall typing performance with long notes.": [
-        "Valeur par défaut de la vérification orthographique pour les nouvelles notes. La vérification orthographique peut être configurée pour chaque note depuis le menu contextuel de la note. Elle peut réduire les performances de frappe globales avec les longues notes."
+        "Valeur par défaut de la vérification orthographique pour les nouvelles notes. La vérification orthographique peut être configurée pour chaque note depuis le menu contextuel de la note. Elle peut réduire les performances de saisie avec les notes longues."
       ],
       "The first note in the list": [
         "La première note de la liste"
       ],
       "When enabled, adding a nested tag to a note will automatically add all associated parent tags.": [
-        "Lorsque cette option est activée, l’ajout d’un tag imbriqué à une note ajoute automatiquement tous les tags parents associés."
+        "Lorsque cette option est activée, l'ajout d'un tag imbriqué à une note ajoute automatiquement tous les tags parents associés."
       ],
       "When enabled, the ${ SuperName } toolbar will always be shown at the top of the note. It can be temporarily toggled using Cmd/Ctrl+Shift+K. When disabled, the ${ SuperName } toolbar will only be shown as a floating toolbar when text is selected.": [
-        "Lorsqu'elle est activée, la barre d'outils ${ SuperName } s'affiche toujours en haut de la note. Elle peut être temporairement affichée ou masquée avec Cmd/Ctrl+Shift+K. Lorsqu'elle est désactivée, la barre d'outils ${ SuperName } ne s'affiche que sous forme de barre flottante lorsque du texte est sélectionné."
+        "Lorsque cette option est activée, la barre d'outils ${ SuperName } est toujours affichée en haut de la note. Vous pouvez l'afficher ou la masquer temporairement avec Cmd/Ctrl+Shift+K. Lorsque cette option est désactivée, la barre d'outils ${ SuperName } s'affiche uniquement sous forme de barre d'outils flottante lorsque du texte est sélectionné."
       ],
       "Whether a confirmation dialog should be shown before closing the app.": [
-        "Indique si une boîte de dialogue de confirmation doit être affichée avant la fermeture de l'application."
+        "Indique si une boîte de dialogue de confirmation doit s'afficher avant la fermeture de l'application."
       ],
       "Your offline subscription code has been successfully activated.": [
         "Votre code d'abonnement autonome a été activé avec succès."
@@ -4472,10 +4470,10 @@
         "Centrer"
       ],
       "Icon:": [
-        "Icône :"
+        "Icône :"
       ],
       "Labs": [
-        "Espace de test"
+        "Fonctionnalités expérimentales"
       ],
       "Left align": [
         "Aligner à gauche"
@@ -4493,10 +4491,10 @@
         "Gestes de changement de volet"
       ],
       "Predicate:": [
-        "Prédicat :"
+        "Prédicat :"
       ],
       "Preview:": [
-        "Aperçu :"
+        "Aperçu :"
       ],
       "Right align": [
         "Aligner à droite"
@@ -4505,10 +4503,10 @@
         "Sélectionnez le type de note par défaut"
       ],
       "The last viewed note": [
-        "La dernière note consultée"
+        "Dernière note consultée"
       ],
       "Title:": [
-        "Titre :"
+        "Titre :"
       ]
     },
     "B6.Preferences.General.Labs.Localization.Description": {
@@ -4551,16 +4549,16 @@
       ]
     },
     "B6.Preferences.General.Language.Spotlight.ActionOpen": {
-      "Open language settings": [
-        "Ouvrir les paramètres de langue"
+      "Open language preferences": [
+        "Ouvrir les préférences de langue"
       ]
     },
     "B6.Preferences.General.Language.Spotlight.Info": {
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
-        "Vous pouvez désormais utiliser l'application dans votre langue préférée. Activez cette fonctionnalité de test dans Paramètres → Général → Langue. La langue de votre navigateur est utilisée lorsque aucune préférence n'est définie."
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your browser language is used when no preference is set.": [
+        "Vous pouvez désormais utiliser l'application dans votre langue préférée. Activez cette fonctionnalité de l'espace de test dans Préférences → Général → Langue. La langue de votre navigateur est utilisée lorsque aucune préférence n'est définie."
       ],
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
-        "Vous pouvez désormais utiliser l'application dans votre langue préférée. Activez cette fonctionnalité de test dans Paramètres → Général → Langue. La langue de votre OS est utilisée lorsque aucune préférence n'est définie."
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your OS language is used when no preference is set.": [
+        "Vous pouvez désormais utiliser l'application dans votre langue préférée. Activez cette fonctionnalité de l'espace de test dans Préférences → Général → Langue. La langue de votre OS est utilisée lorsque aucune préférence n'est définie."
       ]
     },
     "B6.Preferences.General.Language.Subtitle": {
@@ -4569,8 +4567,8 @@
       ]
     },
     "B6.Preferences.General.Language.Title": {
-      "Language Settings": [
-        "Paramètres de langue"
+      "Language Preferences": [
+        "Préférences de langue"
       ]
     },
     "B6.Preferences.General.Placeholder": {
@@ -4578,7 +4576,7 @@
         "Exemple. ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
       ],
       "Select tag to save Moments to...": [
-        "Sélectionnez le tag dans lequel enregistrer les Moments…"
+        "Sélectionnez le tag auquel enregistrer les Moments…"
       ]
     },
     "B6.Preferences.General.Subtitle": {
@@ -4592,22 +4590,22 @@
         "Toujours demander avant de fermer l'application (Android)"
       ],
       "Default image alignment in ${ SuperName } notes": [
-        "Alignement par défaut des images dans les notes ${ SuperName }"
+        "Alignement d'image par défaut dans les notes ${ SuperName }"
       ],
       "Note Type": [
         "Type de note"
       ],
       "Show note saving status while editing": [
-        "Afficher l'état d'enregistrement des notes pendant la modification"
+        "Afficher l'état d'enregistrement de la note pendant la modification"
       ],
       "Spellcheck": [
-        "Vérification orthographique"
+        "Correcteur orthographique"
       ],
       "Title Format": [
         "Format du titre"
       ],
       "Use always-visible toolbar in ${ SuperName } notes": [
-        "Utiliser une barre d'outils toujours visible dans les notes ${ SuperName }"
+        "Utiliser la barre d'outils toujours visible dans les notes ${ SuperName }"
       ],
       "Your personal photo journal": [
         "Votre journal photo personnel"
@@ -4615,7 +4613,7 @@
     },
     "B6.Preferences.General.Title": {
       "Choose icon": [
-        "Choisir l'icône"
+        "Choisir une icône"
       ],
       "Defaults": [
         "Par défaut"
@@ -4624,7 +4622,7 @@
         "Modifier l'affichage intelligent \"${ viewTitle }\""
       ],
       "Labs": [
-        "Espace de test"
+        "Fonctionnalités expérimentales"
       ],
       "Moments": [
         "Moments"
@@ -4639,7 +4637,7 @@
         "Outils"
       ],
       "Upgrade for smart views": [
-        "Changer d'abonnement pour les affichages intelligents"
+        "Changez d'abonnement pour les affichages intelligents"
       ],
       "When opening the app, show...": [
         "À l'ouverture de l'application, afficher..."
@@ -4659,7 +4657,7 @@
         "Fermer"
       ],
       "MySQL website.": [
-        "site internet MySQL."
+        "Site internet MySQL."
       ],
       "Open Location": [
         "Ouvrir l'emplacement"
@@ -4667,7 +4665,7 @@
     },
     "B6.Preferences.HomeServer.Error": {
       "${ locationError }. Restoring to initial location in a moment...": [
-        "${ locationError }. Restauration de l'emplacement initial dans un instant..."
+        "${ locationError }. Restauration de l'emplacement initial dans un instant…"
       ],
       "Please start your home server before activating offline features.": [
         "Démarrez votre serveur domestique avant d'activer les fonctionnalités hors ligne."
@@ -4684,40 +4682,40 @@
         "Modifiez l'emplacement des données de votre serveur en sélectionnant « Modifier l'emplacement » dans la section Serveur domestique ci-dessus."
       ],
       "Changing the port will require you to sign out of all existing sessions.": [
-        "Si vous modifiez le port, vous devrez vous déconnecter de toutes les sessions existantes."
+        "Modifier le port vous obligera à vous déconnecter de toutes les sessions existantes."
       ],
       "Download Tailscale on your mobile device and sign into your Tailscale account.": [
         "Téléchargez Tailscale sur votre appareil mobile et connectez-vous à votre compte Tailscale."
       ],
       "Enter your purchased offline subscription code to activate all the features offered by your home server, likes files support and ${ SuperName } notes.": [
-        "Saisissez le code de votre abonnement autonome acheté pour activer toutes les fonctionnalités offertes par votre serveur domestique, comme le support des fichiers et les notes ${ SuperName }."
+        "Saisissez le code de votre abonnement autonome pour activer toutes les fonctionnalités proposées par votre serveur domestique, comme la prise en charge des fichiers et les notes ${ SuperName }."
       ],
       "For automatic backups, you can place your server's data inside of a synced cloud folder, like Dropbox, Tresorit, or iCloud Drive.": [
-        "Pour les sauvegardes automatiques, vous pouvez placer les données de votre serveur dans un dossier cloud synchronisé, comme Dropbox, Tresorit ou iCloud Drive."
+        "Pour des sauvegardes automatiques, vous pouvez placer les données de votre serveur dans un dossier cloud synchronisé, comme Dropbox, Tresorit ou iCloud Drive."
       ],
       "Home server is enabled. All data is stored at:": [
-        "Le serveur domestique est activé. Toutes les données sont stockées à l'adresse suivante :"
+        "Le serveur domestique est activé. Toutes les données sont stockées à l'emplacement suivant :"
       ],
       "In order to connect to a MySQL database, ensure that your system has MySQL installed. For detailed instructions, visit the": [
-        "Pour vous connecter à une base de données MySQL, assurez-vous que MySQL est installé sur votre système. Pour des instructions détaillées, consultez le"
+        "Pour vous connecter à une base de données MySQL, vérifiez que MySQL est installé sur votre système. Pour obtenir des instructions détaillées, consultez la"
       ],
       "Open ${ AppName } on your mobile device and sign into your home server by specifying the sync server URL during sign in. The URL will be the Tailscale-based IP address of this computer, followed by the port number of your home server. For example, if your computer Tailscale IP address is 100.112.45.106 and your home server is running on port 3127, your sync server URL will be http://100.112.45.106:3127.": [
-        "Ouvrez ${ AppName } sur votre appareil mobile et connectez-vous à votre serveur domestique en spécifiant l'URL du serveur de synchronisation lors de la connexion. L'URL correspond à l'adresse IP Tailscale de cet ordinateur, suivie du numéro de port de votre serveur domestique. Par exemple, si l'adresse IP Tailscale de votre ordinateur est 100.112.45.106 et que votre serveur domestique fonctionne sur le port 3127, l'URL de votre serveur de synchronisation sera http://100.112.45.106:3127."
+        "Ouvrez ${ AppName } sur votre appareil mobile et connectez-vous à votre serveur domestique en indiquant l'URL du serveur de synchronisation lors de la connexion. Cette URL correspond à l'adresse IP Tailscale de cet ordinateur, suivie du numéro de port de votre serveur domestique. Par exemple, si l'adresse IP Tailscale de votre ordinateur est 100.112.45.106 et que votre serveur domestique utilise le port 3127, l'URL de votre serveur de synchronisation sera http://100.112.45.106:3127."
       ],
       "Restart your home server.": [
         "Redémarrez votre serveur domestique."
       ],
       "Select a cloud drive to store your server's data in.": [
-        "Sélectionnez un cloud drive dans lequel stocker les données de votre serveur."
+        "Sélectionner un drive cloud pour y stocker les données de votre serveur"
       ],
       "You are not currently signed into your home server. To use your home server, sign in or register using ${ url }": [
-        "Vous n'êtes actuellement pas connecté(e) à votre serveur domestique. Pour utiliser votre serveur domestique, connectez-vous ou inscrivez-vous via ${ url }"
+        "Aucune connexion à votre serveur domestique n'est actuellement établie. Pour utiliser votre serveur domestique, connectez-vous ou inscrivez-vous via ${ url }"
       ],
       "You are not currently signed into your home server. To use your home server, sign out of ${ email }, then sign in or register using ${ url }.": [
-        "Aucune session n’est actuellement active sur votre serveur domestique. Pour utiliser votre serveur domestique, déconnectez-vous de ${ email }, puis connectez-vous ou inscrivez-vous via ${ url }."
+        "La connexion à votre serveur domestique n'est pas active pour le moment. Pour utiliser votre serveur domestique, déconnectez-vous de ${ email }, puis connectez-vous ou créez un compte avec ${ url }."
       ],
       "Your ${ AppName } data is always end-to-end encrypted on disk, so your cloud provider will not be able to read your notes or files.": [
-        "Vos données ${ AppName } sont toujours chiffrées de bout en bout sur le disque, de sorte que votre fournisseur de cloud ne pourra pas lire vos notes ni vos fichiers."
+        "Vos données ${ AppName } sont toujours chiffrées de bout en bout sur le disque, de sorte que votre fournisseur cloud ne pourra pas lire vos notes ni vos fichiers."
       ],
       "Your home server is offline.": [
         "Votre serveur domestique est hors ligne."
@@ -4737,7 +4735,7 @@
         "Info"
       ],
       "Labs": [
-        "Espace de test"
+        "Fonctionnalités expérimentales"
       ],
       "Log level": [
         "Niveau de journal"
@@ -4760,7 +4758,7 @@
         "Secret JWT d'authentification"
       ],
       "Encryption Server Key": [
-        "Clé de chiffrement du serveur"
+        "Clé du serveur de chiffrement"
       ],
       "host": [
         "hôte"
@@ -4781,10 +4779,10 @@
         "Port"
       ],
       "Pseudo Params Key": [
-        "Clé de pseudo-paramètres"
+        "Clé des pseudo-paramètres"
       ],
       "username": [
-        "nom d'utilisateur"
+        "nom d’utilisateur"
       ],
       "Valet Token Secret": [
         "Secret du Valet Token"
@@ -4792,10 +4790,10 @@
     },
     "B6.Preferences.HomeServer.Status": {
       "Applying changes and restarting...": [
-        "Application des modifications et redémarrage..."
+        "Application des modifications et redémarrage…"
       ],
       "Download Tailscale on this computer and complete the Tailscale setup wizard until you are presented with the IP address of your computer. It should start with something like 100.xxx...": [
-        "Téléchargez Tailscale sur cet ordinateur et terminez l'assistant de configuration de Tailscale jusqu'à l'affichage de l'adresse IP de votre ordinateur. Elle doit commencer par quelque chose comme 100.xxx..."
+        "Téléchargez Tailscale sur cet ordinateur et suivez l'assistant de configuration Tailscale jusqu'à ce que l'adresse IP de votre ordinateur s'affiche. Elle devrait commencer par quelque chose comme 100.xxx…"
       ],
       "Not Set": [
         "Non défini"
@@ -4810,10 +4808,10 @@
         "Arrêt en cours..."
       ],
       "Starting...": [
-        "Démarrage en cours..."
+        "Démarrage…"
       ],
       "You are currently signed into your home server under ${ email }": [
-        "Vous êtes actuellement connecté(e) à votre serveur domestique sous l'adresse ${ email }"
+        "Vous êtes actuellement connecté à votre serveur domestique avec ${ email }"
       ]
     },
     "B6.Preferences.HomeServer.Subtitle": {
@@ -4839,25 +4837,25 @@
         "Nom d'utilisateur de la base de données"
       ],
       "Encryption Server Key": [
-        "Clé de chiffrement du serveur"
+        "Clé du serveur de chiffrement"
       ],
       "JWT Secret": [
         "Secret JWT"
       ],
       "Log Level": [
-        "Niveau de journal"
+        "Niveau de journalisation"
       ],
       "Port": [
         "Port"
       ],
       "Pseudo Params Key": [
-        "Clé de pseudo-paramètres"
+        "Clé des pseudo-paramètres"
       ],
       "Sync your data on a private cloud running on your home computer.": [
-        "Synchronisez vos données sur un cloud privé exécuté sur votre ordinateur domestique."
+        "Synchronisez vos données sur un cloud privé hébergé sur votre ordinateur personnel."
       ],
       "Valet Token Secret": [
-        "Secret du Valet Token"
+        "Secret du jeton d'accès"
       ]
     },
     "B6.Preferences.HomeServer.Title": {
@@ -4865,7 +4863,7 @@
         "Activer les fonctionnalités premium"
       ],
       "Advanced settings": [
-        "Paramètres avancés"
+        "Paramètres Avancé"
       ],
       "Backing up your data": [
         "Sauvegarde de vos données"
@@ -4894,12 +4892,12 @@
         "En savoir plus"
       ],
       "Open Settings": [
-        "Ouvrir les paramètres"
+        "Rendez-vous dans les Réglages"
       ]
     },
     "B6.Preferences.Listed.Info": {
       "${ ListedName } is a free blogging platform that allows you to create a public journal published directly from your notes.": [
-        "${ ListedName } est une plateforme de blogging gratuite qui permet de créer un journal public publié directement à partir de vos notes."
+        "${ ListedName } est une plateforme de blog gratuite qui vous permet de créer un journal public publié directement à partir de vos notes."
       ],
       "${ ListedName } will permanently shut down on December 31, 2026.": [
         "${ ListedName } s'arrêtera définitivement le 31 décembre 2026."
@@ -4911,7 +4909,7 @@
         "Pour commencer, connectez-vous ou créez un compte ${ AppName }."
       ],
       "Your new ${ ListedName } blog has been successfully created! You can publish a new post to your blog from ${ AppName } via the <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.": [
-        "Votre nouveau blog ${ ListedName } a été créé. Vous pouvez publier une nouvelle publication sur votre blog depuis ${ AppName } via le menu <i>Actions</i> dans le volet de l'éditeur. Ouvrez les paramètres de votre blog pour commencer à le configurer."
+        "Votre nouveau blog ${ ListedName } a été créé. Vous pouvez publier une nouvelle publication sur votre blog depuis ${ AppName } via le menu <i>Actions</i> du panneau de l'éditeur. Ouvrez les paramètres de votre blog pour commencer à le configurer."
       ]
     },
     "B6.Preferences.Listed.Status": {
@@ -4935,7 +4933,7 @@
         "Sauvegardes"
       ],
       "Cancel": [
-        "Annuler"
+        "Annulation"
       ],
       "Close preferences": [
         "Fermer les préférences"
@@ -4944,7 +4942,7 @@
         "Confirmer"
       ],
       "Create a free ${ ListedName } author account to get started.": [
-        "Créez un compte d'auteur ${ ListedName } gratuit pour commencer."
+        "Créez un compte auteur ${ ListedName } gratuit pour commencer."
       ],
       "Download URL": [
         "URL de téléchargement"
@@ -4970,18 +4968,18 @@
     },
     "B6.Preferences.Other.Error": {
       "Failed to install plugin": [
-        "Impossible d'installer l'extension"
+        "Impossible d'installer l'extension."
       ],
       "Plugins may not be actively maintained. ${ AppName } cannot attest to the quality or user experience of these plugins, and is not responsible for any data loss that may arise from their use.": [
-        "Ces extensions peuvent ne plus être activement maintenues. ${ AppName } ne peut attester ni de la qualité ni de l'expérience utilisateur de ces extensions et décline toute responsabilité en cas de perte de données résultant de leur utilisation."
+        "Les extensions ne sont peut-être pas activement maintenues. ${ AppName } ne peut pas garantir la qualité ni l'expérience utilisateur de ces extensions et décline toute responsabilité en cas de perte de données résultant de leur utilisation."
       ]
     },
     "B6.Preferences.Other.Info": {
       "Loading...": [
-        "Chargement..."
+        "Chargement en cours…"
       ],
       "No plugins installed.": [
-        "Aucune extension installée."
+        "Aucune extension n'est installée."
       ],
       "Your preferences for ${ AppName }": [
         "Vos préférences pour ${ AppName }"
@@ -5010,7 +5008,7 @@
         "Général"
       ],
       "Get a free month": [
-        "Obtenir un mois gratuit"
+        "Obtenez un mois gratuit"
       ],
       "Help & feedback": [
         "Aide et commentaires"
@@ -5046,7 +5044,7 @@
         "Coffres-forts"
       ],
       "Version": [
-        "Version"
+        "Version "
       ],
       "What's New": [
         "Nouveautés"
@@ -5083,7 +5081,7 @@
         "Installer une extension personnalisée"
       ],
       "Manage Plugins": [
-        "Gérer les extensions"
+        "Gérer les plugins"
       ],
       "Preferences": [
         "Préférences"
@@ -5091,7 +5089,7 @@
     },
     "B6.Preferences.Plugins.Confirmation": {
       "Are you sure you want to uninstall this plugin?": [
-        "Voulez-vous vraiment désinstaller cette extension ?"
+        "Voulez-vous vraiment désinstaller cette extension ?"
       ],
       "Uninstall Plugin?": [
         "Désinstaller l'extension ?"
@@ -5099,7 +5097,7 @@
     },
     "B6.Preferences.Plugins.Info": {
       "${ pluginName } has been successfully installed.": [
-        "${ pluginName } a été installé avec succès."
+        "${ pluginName } a été installé."
       ],
       "Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing experiences, but in most cases, the built-in ${ SuperName } note type can encapsulate any functionality found in plugins.": [
         "Les plugins fonctionnent dans un bac à sable sécurisé et ne peuvent accéder qu'aux données que vous autorisez. Les types de notes permettent des expériences d'édition spécialisées, mais dans la plupart des cas, le type de note intégré ${ SuperName } peut encapsuler toute fonctionnalité disponible dans les plugins."
@@ -5124,7 +5122,7 @@
         "Ajouter un code d'accès"
       ],
       "add this secret key": [
-        "ajoutez cette clé secrète"
+        "ajouter cette clé secrète"
       ],
       "Attempt decryption": [
         "Tenter le déchiffrement"
@@ -5133,7 +5131,7 @@
         "Retour"
       ],
       "Cancel": [
-        "Annuler"
+        "Annulation"
       ],
       "Change Passcode": [
         "Modifier le code d'accès"
@@ -5151,7 +5149,7 @@
         "Désactiver la confidentialité liée au multitâche"
       ],
       "Disable Multitasking/Screenshot Privacy": [
-        "Désactiver la confidentialité multitâche/capture d’écran"
+        "Désactiver la confidentialité du multitâche et des captures d'écran"
       ],
       "Enable Biometrics Lock": [
         "Activer le verrouillage biométrique"
@@ -5160,7 +5158,7 @@
         "Activer la confidentialité liée au multitâche"
       ],
       "Enable Multitasking/Screenshot Privacy": [
-        "Activer la confidentialité multitâche/capture d'écran"
+        "Activer le respect de la vie privée pour le multitâche et les captures d'écran"
       ],
       "End Unprotected Access": [
         "Mettre fin à l'accès non protégé"
@@ -5197,7 +5195,7 @@
     },
     "B6.Preferences.Security.Error": {
       "${ erroredItems.length } items are errored and could not be decrypted.": [
-        "${ erroredItems.length } éléments comportent des erreurs et n'ont pas pu être déchiffrés."
+        "${ erroredItems.length } éléments sont en erreur et n'ont pas pu être déchiffrés."
       ],
       "Could not prepare security key registration": [
         "Impossible de préparer l'enregistrement de la clé de sécurité"
@@ -5214,19 +5212,19 @@
         "${ contentTypeDisplay } créé le ${ createdAtString }"
       ],
       "Actions like viewing or searching protected notes, exporting decrypted backups, or revoking an active session require additional authentication such as entering your account password or application passcode.": [
-        "Des actions comme l'affichage ou la recherche de notes protégées, l'exportation de sauvegardes déchiffrées ou la révocation d'une session active nécessitent une authentification supplémentaire, telle que la saisie du mot de passe du compte ou du code d'accès de l'application."
+        "Des actions telles que l'affichage ou la recherche de notes protégées, l'exportation de sauvegardes déchiffrées ou la révocation d'une session active nécessitent une authentification supplémentaire, comme la saisie du mot de passe de votre compte ou du code d'accès de l'application."
       ],
       "Add a passcode to lock the application and encrypt on-device key storage.": [
-        "Ajoutez un code d'accès pour verrouiller l'application et chiffrer le stockage des clés sur l'appareil."
+        "Ajoutez un code d'accès pour verrouiller l'application et chiffrer l'espace de stockage des clés sur l'appareil."
       ],
       "An extra layer of security when logging in to your account.": [
         "Une couche de sécurité supplémentaire lors de la connexion à votre compte."
       ],
       "Authenticate with a hardware security key such as YubiKey.": [
-        "Authentifiez-vous à l'aide d'une clé de sécurité matérielle telle que YubiKey."
+        "Authentifiez-vous avec une clé de sécurité matérielle telle que YubiKey."
       ],
       "Incorrect authentication code, please try again.": [
-        "Le code d'authentification est incorrect. Nous vous invitons à réessayer."
+        "Code d'authentification incorrect. Nous vous invitons à réessayer."
       ],
       "Incorrect secret key, please try again.": [
         "La clé secrète n'est pas correcte. Nous vous invitons à réessayer."
@@ -5238,13 +5236,13 @@
         "Élément de type ${ item.content_type }"
       ],
       "Last Modified: ${ updatedAtString }": [
-        "Dernière mise à jour : ${ updatedAtString }"
+        "Dernière modification : ${ updatedAtString }"
       ],
       "Passcode lock is enabled.": [
         "Le verrouillage par code d'accès est activé."
       ],
       "Please visit the web app in order to add a hardware security key.": [
-        "Pour ajouter une clé de sécurité matérielle, rendez-vous dans l'application web."
+        "Rendez-vous sur l'application web pour ajouter une clé de sécurité matérielle."
       ],
       "Save your secret key ${ safeStorageLink }:": [
         "Sauvegarder votre clé secrète ${ safeStorageLink } :"
@@ -5256,7 +5254,7 @@
         "Connectez-vous ou créez un compte pour configurer des clés de sécurité matérielles."
       ],
       "Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or get a new one.": [
-        "Certaines applications, comme Google Authenticator, ne sauvegardent pas vos clés secrètes et ne permettent pas de les restaurer si vous perdez votre appareil ou en obtenez un nouveau."
+        "Certaines applications, comme Google Authenticator, ne sauvegardent ni ne restaurent vos clés secrètes si vous perdez votre appareil ou en obtenez un nouveau."
       ],
       "somewhere safe": [
         "à un endroit sûr"
@@ -5268,7 +5266,7 @@
         "L'authentification à deux facteurs a été activée pour votre compte."
       ],
       "User agent logging allows you to identify the devices or browsers signed into your account. For increased privacy, you can disable this feature, which will remove all saved user agent values from our server, and disable future logging of this value.": [
-        "La journalisation de l'agent utilisateur permet d'identifier les appareils ou les navigateurs connectés à votre compte. Pour un meilleur respect de la vie privée, vous pouvez désactiver cette fonctionnalité, ce qui retirera toutes les valeurs d'agent utilisateur enregistrées sur notre serveur et désactivera la journalisation future de cette valeur."
+        "La journalisation de l'agent utilisateur vous permet d'identifier les appareils ou les navigateurs connectés à votre compte. Pour renforcer le respect de la vie privée, vous pouvez désactiver cette fonctionnalité, ce qui supprimera de notre serveur toutes les valeurs d'agent utilisateur enregistrées et désactivera la journalisation future de cette valeur."
       ],
       "You can use this key to generate codes if you lose access to your authenticator app.": [
         "Vous pouvez utiliser cette clé pour générer des codes si vous perdez l'accès à votre application d'authentification."
@@ -5278,6 +5276,26 @@
       ]
     },
     "B6.Preferences.Security.Label": {
+      "${ archivedCount } archived note": [
+        "${ archivedCount } note archivée",
+        "${ archivedCount } notes archivées"
+      ],
+      "${ deletedCount } trashed note": [
+        "${ deletedCount } note mise à la corbeille",
+        "${ deletedCount } notes mises à la corbeille"
+      ],
+      "${ filesTotal } file": [
+        "${ filesTotal } fichier",
+        "${ filesTotal } fichiers"
+      ],
+      "${ notesCount } note": [
+        "${ notesCount } note",
+        "${ notesCount } note"
+      ],
+      "${ tagsCount } tag": [
+        "${ tagsCount } tag",
+        "${ tagsCount } tags"
+      ],
       "authentication code": [
         "code d'authentification"
       ],
@@ -5300,10 +5318,10 @@
         "Exiger la biométrie"
       ],
       "Require Passcode": [
-        "Demander le code d'accès"
+        "Exiger un code d'accès"
       ],
       "Scan this QR code": [
-        "Scannez ce QR code"
+        "Scanner ce QR code"
       ],
       "secret key": [
         "clé secrète"
@@ -5314,10 +5332,10 @@
     },
     "B6.Preferences.Security.Placeholder": {
       "Confirm Passcode": [
-        "Confirmer le code d'accès"
+        "Confirmez le code d'accès"
       ],
       "Passcode": [
-        "Code d'accès"
+        "Code d’accès "
       ]
     },
     "B6.Preferences.Security.Status": {
@@ -5325,7 +5343,7 @@
         "Les protections sont activées."
       ],
       "Unprotected access expires at ${ protectionsDisabledUntil }.": [
-        "L'accès non protégé expire à ${ protectionsDisabledUntil }."
+        "L'accès non protégé expire le ${ protectionsDisabledUntil }."
       ]
     },
     "B6.Preferences.Security.Subtitle": {
@@ -5333,7 +5351,7 @@
         "Appareils"
       ],
       "Session user agent logging": [
-        "Journalisation de l'agent utilisateur des sessions"
+        "Journalisation de l'agent utilisateur de session"
       ]
     },
     "B6.Preferences.Security.Title": {
@@ -5356,19 +5374,19 @@
         "Chiffrement"
       ],
       "Error decrypting items": [
-        "Erreur lors du déchiffrement des éléments"
+        "Une erreur s'est produite pendant le déchiffrement des éléments."
       ],
       "Hardware security key authentication": [
         "Authentification par clé de sécurité matérielle"
       ],
       "Hardware security key authentication not available": [
-        "L'authentification par clé de sécurité matérielle n'est pas disponible"
+        "Authentification par clé de sécurité matérielle indisponible"
       ],
       "Multitasking Privacy": [
         "Confidentialité liée au multitâche"
       ],
       "Multitasking/Screenshot Privacy": [
-        "Confidentialité multitâche/capture d'écran"
+        "Confidentialité du multitâche et des captures d'écran"
       ],
       "Passcode Autolock": [
         "Verrouillage automatique par code d'accès"
@@ -5383,10 +5401,10 @@
         "Protections"
       ],
       "Step 1 of 3 - Scan QR code": [
-        "Étape 1 sur 3 - Scanner le QR code"
+        "Étape 1 sur 3 : scanner le QR code"
       ],
       "Step 2 of 3 - Save secret key": [
-        "Étape 2 sur 3 - Enregistrer la clé secrète"
+        "Étape 2 sur 3 : enregistrer la clé secrète"
       ],
       "Step 3 of 3 - Verification": [
         "Étape 3 sur 3 - Vérification"
@@ -5398,12 +5416,12 @@
         "Authentification à deux facteurs"
       ],
       "Two-factor authentication not available": [
-        "L'authentification à deux facteurs n'est pas disponible"
+        "L'authentification à deux facteurs n'est pas disponible."
       ]
     },
     "B6.Preferences.Security.Warning": {
       "Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the \"Stay signed in\" option checked.": [
-        "L'ajout d'un code d'accès n'est pas pris en charge dans les sessions temporaires. Déconnectez-vous, puis reconnectez-vous en cochant l'option « Rester connecté »."
+        "L'ajout d'un code d'accès n'est pas pris en charge dans les sessions temporaires. Déconnectez-vous, puis reconnectez-vous en cochant l'option « Rester connecté »."
       ]
     },
     "B6.Preferences.Subscription.Confirmation": {
@@ -5419,19 +5437,19 @@
     },
     "B6.Preferences.Subscription.Error": {
       "An error occurred while sending the invite. Please try again or contact support if the issue persists.": [
-        "Une erreur est survenue lors de l'envoi de l'invitation. Veuillez réessayer ou contacter le support si le problème persiste."
+        "Une erreur est survenue lors de l'envoi de l'invitation. Réessayez ou contactez le support si le problème persiste."
       ],
       "Cancelation already in progress.": [
-        "Une annulation est déjà en cours."
+        "L'annulation est déjà en cours."
       ],
       "Cannot close window until pending tasks are complete.": [
-        "Impossible de fermer la fenêtre tant que des tâches sont en attente."
+        "Impossible de fermer la fenêtre tant que certaines tâches sont en cours."
       ],
       "Could not cancel invitation. Please try again or contact support if the issue persists.": [
-        "L'invitation n'a pas pu être annulée. Nous vous invitons à réessayer ou à contacter le support si le problème persiste."
+        "L'invitation n'a pas pu être annulée. Réessayez ou contactez le support si le problème persiste."
       ],
       "The email you entered has an invalid format. Please review your input and try again.": [
-        "Le format de l'adresse e-mail que vous avez saisie n'est pas valide. Vérifiez votre saisie et réessayez."
+        "L'adresse e-mail saisie n'est pas au bon format. Nous vous invitons à vérifier votre saisie et à réessayer."
       ],
       "There was an error when attempting to redirect you to the subscription page.": [
         "Une erreur s'est produite lors de la tentative de redirection vers la page d'abonnement."
@@ -5442,46 +5460,41 @@
         "Invitations actives"
       ],
       "If an account is found with that email, they will receive an email with your invitation.": [
-        "Si un compte est associé à cette adresse e-mail, la personne concernée recevra un message contenant votre invitation."
+        "Si un compte est associé à cette adresse e-mail, un e-mail contenant votre invitation sera envoyé."
       ],
       "Invitee Email": [
-        "Adresse e-mail de l'invité"
+        "E-mail de l'invité"
       ],
       "Make your first subscription invite below.": [
         "Créez votre première invitation d'abonnement ci-dessous."
       ],
       "Note:": [
-        "Note :"
-      ],
-      "out of": [
-        "sur"
+        "Remarque :"
       ],
       "Redirecting you to the subscription page...": [
-        "Redirection vers la page d'abonnement..."
+        "Redirection vers la page d'abonnement…"
       ],
       "Subscription": [
         "Abonnement"
-      ],
-      "subscription invites.": [
-        "invitations d'abonnement."
       ],
       "Subscription sharing": [
         "Partage d'abonnement"
       ],
       "Subscription sharing is available only on the ${ ProfessionalPlanName } plan. Please upgrade in order to share your subscription.": [
-        "Le partage d'abonnement est disponible uniquement avec l'abonnement ${ ProfessionalPlanName }. Changez d'abonnement pour pouvoir partager le vôtre."
+        "Le partage d'abonnement n'est disponible qu'avec l'abonnement ${ ProfessionalPlanName }. Changez d'abonnement pour pouvoir partager votre abonnement."
       ],
       "The invitee must have an existing account with ${ AppName }. If they do not have an account yet, instruct them to make an account first.": [
-        "La personne invitée doit déjà avoir un compte ${ AppName }. Si elle n'en a pas encore, invitez-la à en créer un d'abord."
+        "La personne invitée doit disposer d'un compte ${ AppName } existant. Si elle n'a pas encore de compte, invitez-la à en créer un au préalable."
       ],
       "This subscription has been shared with you and can only be managed by the owner.": [
-        "Cet abonnement a été partagé avec vous et seul son propriétaire peut le gérer."
+        "Cet abonnement a été partagé avec vous et ne peut être géré que par le propriétaire."
       ],
       "You don't have a ${ AppName } subscription yet.": [
         "Vous n'avez pas encore d'abonnement ${ AppName }."
       ],
-      "You've used": [
-        "Vous avez utilisé"
+      "You've used ${ usedInvitationsCount } out of ${ allowedInvitationsCount } subscription invite.": [
+        "Vous avez utilisé ${ usedInvitationsCount } invitation d'abonnement sur ${ allowedInvitationsCount }.",
+        "Vous avez utilisé ${ usedInvitationsCount } invitations d'abonnement sur ${ allowedInvitationsCount }."
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
         "Votre abonnement ${ appNameBold }${ subscriptionTierBold } a expiré le ${ expirationDateBold }. Vous pouvez vous réabonner ci-dessous si vous le souhaitez."
@@ -5498,7 +5511,7 @@
     },
     "B6.Preferences.Subscription.Label": {
       "Cancel": [
-        "Annuler"
+        "Annulation"
       ],
       "Invite": [
         "Inviter"
@@ -5515,7 +5528,7 @@
     },
     "B6.Preferences.Subscription.Status": {
       "Invite processed successfully.": [
-        "L'invitation a été traitée avec succès."
+        "L'invitation a été traitée."
       ]
     },
     "B6.Preferences.Subscription.Title": {
@@ -5537,16 +5550,16 @@
         "Ajouter un contact de confiance"
       ],
       "Cancel": [
-        "Annuler"
+        "Annulation"
       ],
       "Cancel Invite": [
         "Annuler l'invitation"
       ],
       "Choose icon": [
-        "Choisir l'icône"
+        "Choisir une icône"
       ],
       "Copy ID": [
-        "Copier l’ID"
+        "Copier l'ID"
       ],
       "Create Shared Vault": [
         "Créer un coffre-fort partagé"
@@ -5599,7 +5612,7 @@
         "Voulez-vous vraiment supprimer ce contact ?"
       ],
       "Are you sure you want to delete this vault?": [
-        "Voulez-vous vraiment supprimer ce coffre-fort ?"
+        "Voulez-vous vraiment supprimer ce coffre-fort ?"
       ],
       "Are you sure you want to leave this vault?": [
         "Voulez-vous vraiment quitter ce coffre-fort ?"
@@ -5613,7 +5626,7 @@
         "Impossible de copier dans le presse-papiers"
       ],
       "One or more subtags are in other vaults. Please remove those subtags from the vaults or move them to this vault first.": [
-        "Un ou plusieurs sous-tags se trouvent dans d'autres coffres-forts. Retirez ces sous-tags des autres coffres-forts ou déplacez-les vers ce coffre-fort au préalable."
+        "Un ou plusieurs sous-tags se trouvent dans d'autres coffres-forts. Veuillez retirer ces sous-tags des coffres-forts ou les déplacer d'abord vers ce coffre-fort."
       ],
       "This item is linked to other items that are not in the same vault. Please move those items to this vault first.": [
         "Cet élément est lié à d'autres éléments qui ne se trouvent pas dans le même coffre-fort. Déplacez d'abord ces éléments vers ce coffre-fort."
@@ -5622,7 +5635,7 @@
         "Le contact n'a pas pu être créé. Nous vous invitons à réessayer."
       ],
       "Unable to delete vault. Please try again.": [
-        "Le coffre-fort n'a pas pu être supprimé. Nous vous invitons à réessayer."
+        "Impossible de supprimer le coffre-fort. Nous vous invitons à réessayer."
       ],
       "Unable to leave vault. Please try again.": [
         "Impossible de quitter le coffre-fort. Nous vous invitons à réessayer."
@@ -5630,19 +5643,19 @@
     },
     "B6.Preferences.Vaults.Info": {
       "Ask your contact for their ${ AppName } CollaborationID via secure email or chat. Then, enter it here to add them as a contact.": [
-        "Demandez à votre contact son CollaborationID ${ AppName } par e-mail sécurisé ou par messagerie instantanée. Saisissez-le ensuite ici pour l'ajouter en tant que contact."
+        "Demandez à votre contact son CollaborationID ${ AppName } par le biais d'une boîte mail sécurisée ou d'une messagerie instantanée. Saisissez-le ensuite ici pour l'ajouter à vos contacts."
       ],
       "Choose your own key for your vault. This is an advanced option and is not recommended for most users.": [
         "Choisissez votre propre clé pour votre coffre-fort. Il s'agit d'une option avancée, déconseillée à la plupart des utilisateurs."
       ],
       "No contacts available to invite.": [
-        "Aucun contact disponible à inviter."
+        "Aucun contact à inviter."
       ],
       "Please upgrade in order to increase your vault limit.": [
-        "Changez d'abonnement pour augmenter votre limite de coffres-forts."
+        "Changez d'abonnement pour augmenter la limite de vos coffres-forts."
       ],
       "The sender of this invite is not trusted. To accept this invite, first add the sender as a trusted contact.": [
-        "L'expéditeur de cette invitation n'est pas approuvé. Pour accepter cette invitation, ajoutez d'abord l'expéditeur en tant que contact de confiance."
+        "L'expéditeur de cette invitation n'est pas approuvé. Pour accepter cette invitation, ajoutez d'abord l'expéditeur comme contact de confiance."
       ],
       "The vault name and description are end-to-end encrypted.": [
         "Le nom et la description du coffre-fort sont chiffrés de bout en bout."
@@ -5651,19 +5664,19 @@
         "Le coffre-fort est verrouillé."
       ],
       "Vaults that have no designated survivor will be deleted when the owner account is deleted. In order to ensure that no data is lost, please designate a survivor who will be transferred ownership of the vault.": [
-        "Les coffres-forts sans contact d'urgence désigné seront supprimés lorsque le compte du propriétaire sera supprimé. Pour éviter toute perte de données, veuillez désigner un contact d'urgence à qui la propriété du coffre-fort sera transférée."
+        "Les coffres-forts sans contact d'urgence désigné seront supprimés lors de la suppression du compte propriétaire. Afin d'éviter toute perte de données, désignez un contact d'urgence à qui la propriété du coffre-fort sera transférée."
       ],
       "Your vault key will be encrypted and saved locally on this device. You will need to manually enter your vault key on your other devices.": [
         "Votre clé de coffre sera chiffrée et enregistrée localement sur cet appareil. Vous devrez saisir manuellement votre clé de coffre sur vos autres appareils."
       ],
       "Your vault key will be encrypted and synced to your account and automatically available on your other devices.": [
-        "Votre clé de coffre sera chiffrée et synchronisée avec votre compte, et automatiquement disponible sur vos autres appareils."
+        "Votre clé de coffre sera chiffrée et synchronisée avec votre compte, et sera automatiquement disponible sur vos autres appareils."
       ],
       "Your vault key will be randomly generated and synced to your account.": [
-        "Votre clé de coffre sera générée de manière aléatoire et synchronisée avec votre compte."
+        "Votre clé de coffre sera générée aléatoirement et synchronisée avec votre compte."
       ],
       "Your vault key will only be stored in memory and will be forgotten when you close the app. You will need to manually enter your vault key on your other devices.": [
-        "Votre clé de coffre sera stockée uniquement en mémoire et sera oubliée lorsque vous fermerez l'application. Vous devrez saisir manuellement votre clé de coffre sur vos autres appareils."
+        "Votre clé de coffre sera uniquement stockée en mémoire et sera oubliée lorsque vous fermerez l'application. Vous devrez saisir manuellement votre clé de coffre sur vos autres appareils."
       ]
     },
     "B6.Preferences.Vaults.Label": {
@@ -5686,7 +5699,7 @@
         "Éphémère"
       ],
       "File storage used:": [
-        "Espace de stockage de fichiers utilisé :"
+        "Espace de stockage des fichiers utilisé :"
       ],
       "Invite Contacts": [
         "Inviter des contacts"
@@ -5704,7 +5717,7 @@
         "Invitations en attente"
       ],
       "Permission:": [
-        "Autorisation :"
+        "Autorisation:"
       ],
       "Randomized (Recommended)": [
         "Aléatoire (recommandé)"
@@ -5716,7 +5729,7 @@
         "Synchronisé (recommandé)"
       ],
       "Trusted": [
-        "Approuvé(e)"
+        "Approuvée"
       ],
       "Trusted Sender:": [
         "Expéditeur approuvé :"
@@ -5725,16 +5738,16 @@
         "Contact sans nom"
       ],
       "Untrusted": [
-        "Non approuvé(e)"
+        "Non approuvé"
       ],
       "Vault Description:": [
-        "Description du coffre-fort :"
+        "Description du coffre-fort :"
       ],
       "Vault ID:": [
-        "ID du coffre-fort :"
+        "ID du coffre-fort:"
       ],
       "Vault Info": [
-        "Informations sur le coffre-fort"
+        "Informations du coffre-fort"
       ],
       "Vault Members": [
         "Membres du coffre-fort"
@@ -5764,15 +5777,15 @@
     },
     "B6.Preferences.Vaults.Subtitle": {
       "In order to use Vaults, you must update your account to use the latest data encryption version.": [
-        "Pour utiliser les coffres-forts, vous devez mettre à jour votre compte afin d'utiliser la dernière version de chiffrement des données."
+        "Pour utiliser les coffres-forts, vous devez mettre à jour votre compte vers la dernière version de chiffrement des données."
       ],
       "Share your CollaborationID with collaborators to join their vaults.": [
-        "Partagez votre CollaborationID avec vos collaborateurs afin de rejoindre leurs coffres-forts."
+        "Partagez votre CollaborationID avec vos collaborateurs pour rejoindre leurs coffres-forts."
       ]
     },
     "B6.Preferences.Vaults.Title": {
       "Account update required": [
-        "Mise à jour du compte requise"
+        "Mise à jour du compte nécessaire"
       ],
       "Add New Contact": [
         "Ajouter un nouveau contact"
@@ -5781,7 +5794,7 @@
         "Impossible de déplacer l'élément vers le coffre-fort"
       ],
       "Choose icon": [
-        "Choisir l'icône"
+        "Choisir une icône"
       ],
       "CollaborationID": [
         "CollaborationID"
@@ -5805,7 +5818,7 @@
         "Invitations reçues"
       ],
       "Vault Key Storage Mode": [
-        "Mode de stockage des clés de coffre"
+        "Mode de stockage de la clé de coffre"
       ],
       "Vault Key Type": [
         "Type de clé de coffre"
@@ -5828,7 +5841,7 @@
         "Télécharger"
       ],
       "Download as archive": [
-        "Télécharger sous forme d’archive"
+        "Télécharger sous forme d'archive"
       ],
       "Hide file info": [
         "Masquer les informations du fichier"
@@ -5837,7 +5850,7 @@
         "Masquer la section des liens"
       ],
       "Open account menu": [
-        "Ouvrir le menu du compte"
+        "Ouvrir le menu Compte"
       ],
       "Open file preview": [
         "Ouvrir l'aperçu du fichier"
@@ -5857,7 +5870,7 @@
         "Supprimer quand même"
       ],
       "This file could not be deleted from the server, possibly because you are attempting to delete a file item that was imported from another account. Would you like to remove this file item from your account anyway? If you're sure the file is yours and still exists on the server, do not choose this option, and instead try to delete it again.": [
-        "Ce fichier n'a pas pu être supprimé du serveur, peut-être parce que vous tentez de supprimer un élément de type fichier importé depuis un autre compte. Voulez-vous néanmoins retirer cet élément de votre compte ? Si vous avez la certitude que ce fichier est le vôtre et qu'il existe toujours sur le serveur, ne choisissez pas cette option et essayez plutôt de le supprimer à nouveau."
+        "Ce fichier n'a pas pu être supprimé du serveur, peut-être parce que vous tentez de supprimer un élément de fichier importé depuis un autre compte. Souhaitez-vous retirer cet élément de fichier de votre compte malgré tout ? Si vous avez la certitude que ce fichier vous appartient et qu'il existe toujours sur le serveur, ne choisissez pas cette option et essayez plutôt de le supprimer à nouveau."
       ],
       "Unable to Delete": [
         "Suppression impossible"
@@ -5865,22 +5878,28 @@
     },
     "B7.FilesSubscriptionHelp.Files.Error": {
       "Could not attach file because selected note was deleted": [
-        "Impossible de joindre le fichier, car la note sélectionnée a été supprimée."
+        "Impossible de joindre le fichier car la note sélectionnée a été supprimée."
       ],
       "Could not close upload session": [
         "La session d'importation n'a pas pu être fermée."
       ],
       "Could not create valet token": [
-        "Impossible de créer le jeton valet"
+        "Impossible de créer le Valet Token"
       ],
       "Could not move file": [
         "Le fichier n'a pas pu être déplacé."
       ],
       "Could not start upload session": [
-        "Impossible de démarrer la session d'importation."
+        "La session d'importation n'a pas pu être démarrée."
+      ],
+      "Encrypted file storage requires an active subscription. Upgrade your plan to download and upload files.": [
+        "L'espace de stockage de fichiers chiffrés nécessite un abonnement actif. Changez d'abonnement pour télécharger et importer des fichiers."
+      ],
+      "Encrypted files are unavailable because your subscription has expired. Renew your subscription to download and upload files again.": [
+        "Les fichiers chiffrés sont indisponibles car votre abonnement a expiré. Renouvelez votre abonnement pour pouvoir de nouveau télécharger et importer des fichiers."
       ],
       "Failed to close an upload session.": [
-        "La fermeture d'une session d'importation n'a pas abouti."
+        "Impossible de fermer une session d'importation."
       ],
       "Failed to create file token.": [
         "Le jeton du fichier n'a pas pu être créé."
@@ -5892,10 +5911,10 @@
         "Le segment du fichier n'a pas pu être téléchargé."
       ],
       "Failed to download files as archive": [
-        "Les fichiers n'ont pas pu être téléchargés sous forme d'archive"
+        "Les fichiers n'ont pas pu être téléchargés sous forme d'archive."
       ],
       "Failed to push file bytes to server": [
-        "Les octets du fichier n’ont pas pu être envoyés au serveur"
+        "Impossible d'envoyer les octets du fichier au serveur"
       ],
       "Failed to start an upload session.": [
         "Impossible de démarrer une session d'importation."
@@ -5904,22 +5923,34 @@
         "Le segment du fichier n'a pas pu être importé."
       ],
       "File is not in a shared vault": [
-        "Le fichier n'est pas dans un coffre-fort partagé"
+        "Le fichier ne se trouve pas dans un coffre-fort partagé."
+      ],
+      "Files cannot be uploaded because your subscription has expired. Renew your subscription to use encrypted file storage again.": [
+        "Les fichiers ne peuvent pas être importés car votre abonnement a expiré. Renouvelez votre abonnement pour utiliser de nouveau l'espace de stockage de fichiers chiffrés."
+      ],
+      "Files cannot be uploaded without an active subscription. Upgrade your plan to use encrypted file storage.": [
+        "Les fichiers ne peuvent pas être importés sans abonnement actif. Changez d'abonnement pour utiliser l'espace de stockage de fichiers chiffrés."
       ],
       "Please use ${ FileSafeName } or the ${ BoldName } Editor to attach images and files. Learn more at ${ FileSafeHelpUrl }.": [
-        "Utilisez ${ FileSafeName } ou l'éditeur ${ BoldName } pour joindre des images et des fichiers. Pour en savoir plus, consultez ${ FileSafeHelpUrl }."
+        "Veuillez utiliser ${ FileSafeName } ou l'éditeur ${ BoldName } pour joindre des images et des fichiers. Pour en savoir plus, consultez ${ FileSafeHelpUrl }."
       ],
       "There was an error loading the file. Try again, or download the file and open it using another application.": [
-        "Une erreur s'est produite lors du chargement du fichier. Réessayez, ou téléchargez le fichier et ouvrez-le avec une autre application."
+        "Une erreur est survenue lors du chargement du fichier. Réessayez ou téléchargez le fichier et ouvrez-le avec une autre application."
       ],
       "There was an error while downloading the file": [
-        "Une erreur s'est produite pendant le téléchargement du fichier"
+        "Une erreur s'est produite lors du téléchargement du fichier"
       ],
       "There was an error while uploading the file": [
-        "Une erreur s'est produite lors de l'importation du fichier"
+        "Une erreur s'est produite lors de l'importation du fichier."
+      ],
+      "This file cannot be downloaded because your subscription has expired. Renew your subscription to access your files again.": [
+        "Ce fichier ne peut pas être téléchargé car votre abonnement a expiré. Renouvelez votre abonnement pour accéder de nouveau à vos fichiers."
+      ],
+      "This file cannot be downloaded without an active subscription. Upgrade your plan to access encrypted files.": [
+        "Ce fichier ne peut pas être téléchargé sans abonnement actif. Changez d'abonnement pour accéder aux fichiers chiffrés."
       ],
       "This file exceeds the limits supported in this browser. To upload files greater than ${ maxFileSizeInMegabytes }MB, please use the desktop application or the Chrome browser.": [
-        "Ce fichier dépasse les limites prises en charge par ce navigateur. Pour importer des fichiers de plus de ${ maxFileSizeInMegabytes } Mo, utilisez l'application de bureau ou le navigateur Chrome."
+        "Ce fichier dépasse les limites prises en charge par ce navigateur. Pour importer des fichiers supérieurs à ${ maxFileSizeInMegabytes } Mo, utilisez l'application de bureau ou le navigateur Chrome."
       ]
     },
     "B7.FilesSubscriptionHelp.Files.Info": {
@@ -5930,13 +5961,13 @@
         "Les actions seront appliquées à tous les fichiers sélectionnés."
       ],
       "Add a passcode or create an account to require authentication to view this file.": [
-        "Ajoutez un code d’accès ou créez un compte pour exiger une authentification avant d’afficher ce fichier."
+        "Ajoutez un code d'accès ou créez un compte afin d'exiger une authentification pour afficher ce fichier."
       ],
       "Attach to note": [
         "Joindre à la note"
       ],
       "Authenticate": [
-        "S'authentifier"
+        "S’authentifier"
       ],
       "Authenticate to view this file.": [
         "Authentifiez-vous pour afficher ce fichier."
@@ -5945,40 +5976,40 @@
         "Sauvegardé le ${ backedUpOn }"
       ],
       "Created:": [
-        "Création :"
+        "Création :"
       ],
       "Decrease size": [
-        "Diminuer la taille"
+        "Réduire la taille"
       ],
       "Decrypted Size:": [
         "Taille déchiffrée :"
       ],
       "Deleted file \"${ fileName }\"": [
-        "Le fichier « ${ fileName } » a été supprimé"
+        "Fichier « ${ fileName } » supprimé"
       ],
       "Deleting file \"${ fileName }\"...": [
-        "Suppression du fichier \"${ fileName }\" en cours..."
+        "Suppression du fichier \"${ fileName }\"..."
       ],
       "Detach from note": [
-        "Retirer de la note"
+        "Détacher de la note"
       ],
       "Downloading \"${ truncatedFileName }\"": [
-        "Téléchargement de \"${ truncatedFileName }\" en cours"
+        "Téléchargement en cours de « ${ truncatedFileName } »"
       ],
       "Downloading ${ fileCount } files as archive": [
-        "${ fileCount } fichiers en cours de téléchargement sous forme d'archive"
+        "Téléchargement de ${ fileCount } fichiers sous forme d'archive"
       ],
       "Downloading file \"${ fileName }\"": [
-        "Téléchargement du fichier « ${ fileName } » en cours"
+        "Téléchargement du fichier « ${ fileName } »"
       ],
       "Downloading file \"${ fileName }\" (0%)": [
-        "Téléchargement du fichier « ${ fileName } » en cours (0 %)"
+        "Téléchargement du fichier « ${ fileName } » (0 %)"
       ],
       "Drop your files to upload and link them to the current file": [
         "Glissez-déposez vos fichiers pour les importer et les associer au fichier actuel"
       ],
       "Drop your files to upload them": [
-        "Déposez vos fichiers pour les importer"
+        "Glissez-déposez vos fichiers pour les importer"
       ],
       "Encrypted Size:": [
         "Taille chiffrée :"
@@ -5993,13 +6024,13 @@
         "Informations sur le fichier"
       ],
       "File not backed up locally": [
-        "Fichier non sauvegardé localement"
+        "Le fichier n'est pas sauvegardé localement"
       ],
       "File options panel": [
-        "Panneau des options de fichier"
+        "Panneau des options du fichier"
       ],
       "Files attached to your notes appear here. You can also upload files directly from this page.": [
-        "Les fichiers joints à vos notes s'affichent ici. Vous pouvez également importer des fichiers directement depuis cette page."
+        "Les fichiers joints à vos notes apparaissent ici. Vous pouvez également importer des fichiers directement depuis cette page."
       ],
       "Increase size": [
         "Augmenter la taille"
@@ -6008,16 +6039,16 @@
         "Dernière modification :"
       ],
       "Loading...": [
-        "Chargement..."
+        "Chargement en cours…"
       ],
       "No files selected": [
         "Aucun fichier n'est sélectionné."
       ],
       "Password protect": [
-        "Protéger par mot de passe"
+        "Protéger par un mot de passe"
       ],
       "Preparing archive...": [
-        "Préparation en cours de l'archive..."
+        "Préparation de l'archive…"
       ],
       "Rename": [
         "Modifier le nom"
@@ -6026,22 +6057,22 @@
         "Taille"
       ],
       "Size:": [
-        "Taille :"
+        "Taille :"
       ],
       "Successfully downloaded ${ fileCount } files as archive": [
-        "${ fileCount } fichiers ont été téléchargés sous forme d'archive"
+        "${ fileCount } fichiers téléchargés sous forme d'archive"
       ],
       "Successfully downloaded file": [
         "Le fichier a été téléchargé."
       ],
       "Successfully downloaded file \"${ fileName }\"": [
-        "Le fichier \"${ fileName }\" a été téléchargé"
+        "Fichier « ${ fileName } » téléchargé"
       ],
       "Successfully downloaded file from local backup": [
         "Le fichier a été téléchargé depuis la sauvegarde locale."
       ],
       "This file can only be previewed in an external app": [
-        "Ce fichier ne peut être prévisualisé que dans une application externe."
+        "L'aperçu de ce fichier n'est disponible que dans une application externe"
       ],
       "This file can't be previewed.": [
         "Ce fichier ne peut pas être prévisualisé."
@@ -6050,13 +6081,13 @@
         "Ce fichier est protégé."
       ],
       "This file is readonly": [
-        "Ce fichier est en lecture seule."
+        "Ce fichier est en lecture seule"
       ],
       "This video can't be previewed.": [
-        "Impossible d'afficher un aperçu de cette vidéo."
+        "Cette vidéo ne peut pas être prévisualisée."
       ],
       "To view this file, download it and open it using another application.": [
-        "Pour afficher ce fichier, téléchargez-le et ouvrez-le avec une autre application."
+        "Pour afficher ce fichier, téléchargez-le puis ouvrez-le avec une autre application."
       ],
       "Total Size:": [
         "Taille totale :"
@@ -6065,25 +6096,25 @@
         "Réessayer"
       ],
       "Type:": [
-        "Type :"
+        "Type:"
       ],
       "Uploaded file \"${ uploadedFileName }\"": [
-        "Fichier importé \"${ uploadedFileName }\""
+        "Fichier importé « ${ uploadedFileName } »"
       ],
       "Uploading file \"${ fileName }\"": [
-        "Le fichier \"${ fileName }\" est en cours d'importation"
+        "Importation du fichier \"${ fileName }\" en cours"
       ],
       "Uploading file \"${ fileName }\" (${ percentComplete }%)": [
-        "Import du fichier « ${ fileName } » en cours (${ percentComplete } %)"
+        "Importation du fichier en cours « ${ fileName } » (${ percentComplete } %)"
       ],
       "View file": [
-        "Voir le fichier"
+        "Afficher le fichier"
       ],
       "You don't have any files yet": [
-        "Vous n'avez pas encore de fichiers"
+        "Vous n'avez encore aucun fichier."
       ],
       "ZIP file": [
-        "Fichier zip"
+        "Fichier ZIP"
       ],
       "Zoom": [
         "Zoom"
@@ -6112,10 +6143,10 @@
         "fichier"
       ],
       "File context menu": [
-        "Menu contextuel du fichier"
+        "Menu contextuel des fichiers"
       ],
       "File information panel": [
-        "Panneau d'informations du fichier"
+        "Panneau d'informations sur le fichier"
       ],
       "File options": [
         "Options de fichier"
@@ -6124,7 +6155,7 @@
         "Menu des options du fichier"
       ],
       "File preview modal": [
-        "Fenêtre d'aperçu du fichier"
+        "Fenêtre modale d'aperçu du fichier"
       ],
       "Left align": [
         "Aligner à gauche"
@@ -6133,7 +6164,7 @@
         "Ouvrir"
       ],
       "Rename file": [
-        "Modifier le nom du fichier"
+        "Renommer un fichier"
       ],
       "Right align": [
         "Aligner à droite"
@@ -6170,13 +6201,13 @@
         "Capturer l'article"
       ],
       "Clip as screenshot": [
-        "Capturer sous forme de capture d'écran"
+        "Capturer en tant que capture d'écran"
       ],
       "Clip full page": [
         "Capturer la page entière"
       ],
       "Clip text selection": [
-        "Capturer la sélection de texte"
+        "Capturer le texte sélectionné"
       ],
       "Select elements to capture": [
         "Sélectionner les éléments à capturer"
@@ -6187,24 +6218,24 @@
     },
     "B7.FilesSubscriptionHelp.Help.Confirmation": {
       "Account related issue?": [
-        "Un problème lié au compte ?"
+        "Un problème lié à votre compte ?"
       ],
       "Can I collaborate with others on a note?": [
         "Puis-je collaborer avec d'autres personnes sur une note ?"
       ],
       "Can I use ${ AppName } totally offline?": [
-        "Puis-je utiliser ${ AppName } entièrement hors ligne ?"
+        "Puis-je utiliser ${ AppName } entièrement hors ligne ?"
       ],
       "Can’t find your question here?": [
-        "Vous ne trouvez pas la réponse à votre question ici ?"
+        "Vous ne trouvez pas votre question ici ?"
       ],
       "Who can read my private notes?": [
-        "Qui peut lire mes notes privées ?"
+        "Qui peut lire mes notes privées ?"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Error": {
       "No content to clip": [
-        "Il n'y a aucun contenu à capturer"
+        "Aucun contenu à capturer"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Info": {
@@ -6212,7 +6243,7 @@
         "${ AppName } peut être utilisé totalement hors ligne sans compte, et sans connexion Internet. Vous trouverez plus d'informations sur ${ offlineHelpLink }"
       ],
       "Because of our encrypted architecture, ${ AppName } does not currently provide a real-time collaboration solution. Multiple users can share the same account however, but editing at the same time may result in sync conflicts, which may result in the duplication of notes.": [
-        "En raison de notre architecture chiffrée, ${ AppName } ne propose pas actuellement de solution de collaboration en temps réel. Plusieurs utilisateurs peuvent toutefois partager le même compte, mais des modifications simultanées peuvent entraîner des conflits de synchronisation, pouvant aboutir à la duplication de notes."
+        "En raison de notre architecture chiffrée, ${ AppName } ne propose actuellement pas de solution de collaboration en temps réel. Plusieurs utilisateurs peuvent toutefois partager le même compte, mais une modification simultanée peut entraîner des conflits de synchronisation, qui peuvent à leur tour entraîner une duplication des notes."
       ],
       "Community forum": [
         "Forum communautaire"
@@ -6224,7 +6255,7 @@
         "Questions fréquentes"
       ],
       "If you have an issue, found a bug or want to suggest a feature, you can browse or post to the forum. It’s recommended for non-account related issues.": [
-        "Si vous rencontrez un problème, découvrez un bug ou souhaitez suggérer une fonctionnalité, vous pouvez consulter le forum ou y publier un message. Il convient aux problèmes sans rapport avec le compte."
+        "Si vous rencontrez un problème, avez trouvé un bug ou souhaitez suggérer une fonctionnalité, vous pouvez parcourir le forum ou y publier un message. Il est recommandé pour les problèmes sans rapport avec le compte."
       ],
       "more details here.": [
         "plus d'informations ici."
@@ -6233,21 +6264,21 @@
         "La note a été capturée."
       ],
       "Privacy Manifesto.": [
-        "Manifeste sur la protection de la vie privée."
+        "Manifeste pour le respect de la vie privée."
       ],
       "Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read ${ privacyPolicyLink }": [
         "Tout simplement : personne sauf vous. Pas nous, pas votre FAI, pas un hackeur, et pas une administration publique. Tant que vous gardez votre mot de passe en sûreté, et que votre mot de passe et relativement fort, alors vous êtes la seule personne au monde avec la capacité à déchiffrer vos notes. Pour plus d'informations sur la manière dont nous gérons votre vie privée et votre sécurité, consultez notre ${ privacyPolicyLink } facile à lire."
       ],
       "Send an email to ${ SupportEmail } and we’ll sort it out.": [
-        "Envoyez un message à ${ SupportEmail } et nous réglerons le problème."
+        "Envoyez un message à ${ SupportEmail } et nous trouverons une solution."
       ],
       "Want to meet other passionate note-takers and privacy enthusiasts? Want to share your feedback with us? Join the ${ AppName } Discord for discussions on security, themes, editors and more.": [
-        "Vous souhaitez rencontrer d'autres passionnés de prise de notes et défenseurs du respect de la vie privée ? Vous voulez nous faire part de vos commentaires ? Rejoignez le Discord de ${ AppName } pour discuter de sécurité, de thèmes, d'éditeurs…"
+        "Vous souhaitez rencontrer d'autres passionnés de prise de notes et de protection de la vie privée ? Vous souhaitez nous faire part de vos commentaires ? Rejoignez le Discord de ${ AppName } pour échanger sur la sécurité, les thèmes, les éditeurs…"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Label": {
       "Email us": [
-        "Écrivez-nous par e-mail"
+        "Nous écrire"
       ],
       "Extension menu": [
         "Menu de l'extension"
@@ -6256,7 +6287,7 @@
         "Accéder au forum"
       ],
       "Join our Discord": [
-        "Rejoignez notre Discord"
+        "Rejoindre notre Discord"
       ],
       "Open FAQ": [
         "Ouvrir la FAQ"
@@ -6273,7 +6304,7 @@
     },
     "B7.FilesSubscriptionHelp.Help.Placeholder": {
       "Select tag to save clipped notes to...": [
-        "Sélectionner le tag où enregistrer les notes capturées..."
+        "Sélectionnez le tag auquel enregistrer les notes capturées…"
       ]
     },
     "B7.FilesSubscriptionHelp.Subscription.Action": {
@@ -6290,27 +6321,27 @@
         "Vie privée"
       ],
       "Upgrade": [
-        "Changer d'abonnement"
+        "Mettre à niveau"
       ],
       "Upgrade Features": [
-        "Changer d'abonnement pour plus de fonctionnalités"
+        "Débloquer des fonctionnalités"
       ]
     },
     "B7.FilesSubscriptionHelp.Subscription.Error": {
       "An unknown issue occurred during offline activation. Please download your activation code again and try once more.": [
-        "Un problème inconnu s'est produit lors de l'activation hors ligne. Nous vous invitons à télécharger à nouveau votre code d'activation et à réessayer."
+        "Un problème inconnu est survenu lors de l'activation hors ligne. Téléchargez à nouveau votre code d'activation et réessayez."
       ],
       "Could not accept invitation.": [
         "L'invitation n'a pas pu être acceptée."
       ],
       "Could not confirm IAP.": [
-        "Impossible de confirmer l'IAP."
+        "L'IAP n'a pas pu être confirmé."
       ],
       "Could not get purchase flow URL.": [
-        "L'URL du processus d'achat n'a pas pu être récupérée."
+        "L'URL du parcours d'achat n'a pas pu être récupérée."
       ],
       "Could not get subscription token.": [
-        "Impossible de récupérer le jeton d'abonnement."
+        "Le jeton d'abonnement n'a pas pu être récupéré."
       ],
       "Could not load purchase flow URL.": [
         "Impossible de charger l'URL du processus d'achat."
@@ -6319,7 +6350,7 @@
         "Impossible d'accéder au processus d'achat."
       ],
       "Failed to get offline features.": [
-        "Les fonctionnalités hors ligne n'ont pas pu être obtenues."
+        "Impossible d'obtenir les fonctionnalités hors ligne."
       ],
       "Failed to get subscription's information.": [
         "Impossible de récupérer les informations de l'abonnement."
@@ -6339,7 +6370,7 @@
         "${ feature.name } est en lecture seule."
       ],
       "${ featureNameLabel } is valid and you should not be seeing this message": [
-        "${ featureNameLabel } est valide et vous ne devriez pas voir ce message."
+        "${ featureNameLabel } est valide et ce message ne devrait pas s'afficher."
       ],
       "${ ListedName } Custom Domain": [
         "${ ListedName } Domaine personnalisé"
@@ -6348,85 +6379,85 @@
         "Alternative à ${ MarkdownEditorName }"
       ],
       "${ MarkdownEditorName } with Math": [
-        "${ MarkdownEditorName } avec Math"
+        "${ MarkdownEditorName } avec les mathématiques"
       ],
       "100GB encrypted file storage": [
-        "100 Go d'espace de stockage de fichiers chiffrés"
+        "100 Go de stockage de fichiers chiffrés"
       ],
       "365 days note history": [
-        "Historique des notes de 365 jours"
+        "Historique des notes sur 365 jours"
       ],
       "A ${ PlusPlanName } or ${ ProPlanName } plan is required to enable Tag folders.": [
         "Un abonnement ${ PlusPlanName } ou ${ ProPlanName } est requis pour activer les dossiers tags."
       ],
       "A beautiful split-pane Markdown editor with synced-scroll, LaTeX support, and colorful syntax.": [
-        "Un superbe éditeur Markdown à volets avec défilement synchronisé, support de LaTeX et coloration syntaxique."
+        "Un magnifique éditeur Markdown à double volet avec défilement synchronisé, prise en charge de LaTeX et coloration syntaxique."
       ],
       "A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.": [
-        "Un éditeur Markdown complet qui prend en charge l'aperçu en temps réel, une barre d'outils de mise en forme et l'affichage en volets."
+        "Un éditeur Markdown complet qui prend en charge l'aperçu en direct, une barre d'outils de mise en forme et le fractionnement du volet."
       ],
       "A Markdown editor with dynamic split-pane preview.": [
-        "Un éditeur Markdown avec aperçu dynamique à double volet."
+        "Un éditeur Markdown avec un aperçu dynamique en volet fractionné."
       ],
       "A minimal Markdown editor with live rendering and in-text search via Ctrl/Cmd + F": [
-        "Éditeur Markdown minimaliste avec rendu en direct et recherche dans le texte via Ctrl/Cmd + F"
+        "Un éditeur Markdown minimaliste avec rendu en direct et recherche dans le texte via Ctrl/Cmd + F"
       ],
       "A powerful spreadsheet editor with formatting and formula support. Not recommended for large data sets, as encryption of such data may decrease editor performance.": [
-        "Un éditeur de feuilles de calcul performant qui prend en charge le formatage et les formules. Déconseillé pour les grands ensembles de données, car le chiffrement de ces données peut réduire les performances de l'éditeur."
+        "Un éditeur de tableur puissant avec prise en charge de la mise en forme et des formules. Non recommandé pour les grands ensembles de données, car le chiffrement de telles données peut réduire les performances de l'éditeur."
       ],
       "A simple and peaceful rich editor that helps you write and think clearly.": [
-        "Un éditeur enrichi simple et apaisé qui vous aide à écrire et à penser clairement."
+        "Un éditeur enrichi simple et paisible qui vous aide à écrire et à penser clairement."
       ],
       "A WYSIWYG-style Markdown editor that renders Markdown in preview-mode while you type without displaying any syntax.": [
-        "Un éditeur Markdown de type WYSIWYG qui affiche le rendu du Markdown en mode aperçu pendant la frappe, sans montrer aucune syntaxe."
+        "Un éditeur Markdown de type WYSIWYG qui affiche le Markdown en mode aperçu pendant la saisie, sans afficher la syntaxe."
       ],
       "Access to all note types, including ${ SuperName }, ${ MarkdownEditorName }, ${ RichTextEditorName }, ${ AuthenticatorName }, ${ ChecklistEditorName }, and ${ SpreadsheetName }": [
-        "Accès à tous les types de notes, notamment ${ SuperName }, ${ MarkdownEditorName }, ${ RichTextEditorName }, ${ AuthenticatorName }, ${ ChecklistEditorName } et ${ SpreadsheetName }"
+        "Accès à tous les types de notes, y compris ${ SuperName }, ${ MarkdownEditorName }, ${ RichTextEditorName }, ${ AuthenticatorName }, ${ ChecklistEditorName } et ${ SpreadsheetName }"
       ],
       "Access to Daily Notebooks and Moments journals": [
-        "Accès aux Journaux quotidiens et aux journaux Moments"
+        "Accès aux journaux quotidiens et aux journaux Moments"
       ],
       "Basic ${ MarkdownEditorName }": [
-        "${ MarkdownEditorName } de base"
+        "${ MarkdownEditorName } basique"
       ],
       "Create smart filters for viewing notes matching specific criteria.": [
         "Créez des filtres intelligents pour afficher les notes correspondant à des critères spécifiques."
       ],
       "Email backups": [
-        "Sauvegardes par e-mail"
+        "Sauvegardes des e-mails"
       ],
       "Encrypt and protect your 2FA secrets for all your internet accounts. Authenticator handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.": [
-        "Chiffrez et protégez vos secrets A2F pour tous vos comptes internet. L'application d'authentification gère vos secrets A2F afin que vous ne les perdiez plus jamais et n'ayez pas à tout recommencer lorsque vous obtenez un nouvel appareil."
+        "Chiffrez et protégez vos secrets A2F pour tous vos comptes internet. L'application d'authentification gère vos secrets A2F pour que vous ne les perdiez plus jamais et que vous n'ayez pas à recommencer lorsque vous changez d'appareil."
       ],
       "Encrypted attachments for your notes using your Dropbox, Google Drive, or WebDAV server. Limited to 50MB per file.": [
-        "Pièces jointes chiffrées pour vos notes, à l'aide de votre Dropbox, de Google Drive ou de votre serveur WebDAV. Limité à 50 Mo par fichier."
+        "Pièces jointes chiffrées pour vos notes via votre serveur Dropbox, Google Drive ou WebDAV. Taille limitée à 50 Mo par fichier."
       ],
       "Encrypted files": [
         "Fichiers chiffrés"
       ],
       "Enjoy your new powered up experience.": [
-        "Profitez de votre nouvelle expérience améliorée."
+        "Profitez de votre nouvelle expérience enrichie."
       ],
       "Files low storage tier": [
-        "Palier de stockage de fichiers faible"
+        "Niveau de stockage faible pour les fichiers"
       ],
       "Files maximum storage tier": [
-        "Palier d'espace de stockage maximal pour les fichiers"
+        "Niveau maximal de stockage des fichiers"
       ],
       "Files medium storage tier": [
-        "Palier de stockage de fichiers intermédiaire"
+        "Niveau de stockage intermédiaire pour les fichiers"
       ],
       "From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.": [
-        "De la mise en surbrillance aux tailles et couleurs de police personnalisées, en passant par les tableaux et les listes, cet éditeur est parfait pour créer n'importe quel document."
+        "De la mise en surbrillance aux tailles et couleurs de police personnalisées, en passant par les tableaux et les listes, cet éditeur est parfait pour créer tout type de document."
       ],
       "Minimal ${ MarkdownEditorName }": [
         "${ MarkdownEditorName } minimal"
       ],
       "Nested folders for your tags": [
-        "Des dossiers imbriqués pour vos tags"
+        "Dossiers imbriqués pour vos tags"
       ],
       "Note history going back indefinitely": [
-        "Historique des notes illimité"
+        "Historique des notes remontant indéfiniment"
       ],
       "Organize your tags into folders.": [
         "Organisez vos tags dans des dossiers."
@@ -6435,10 +6466,10 @@
         "Texte brut"
       ],
       "Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.": [
-        "Veuillez patienter quelques minutes afin que les avantages de votre abonnement soient activés. Une alerte de confirmation s'affichera dans l'application lorsque votre abonnement sera prêt."
+        "Patientez quelques minutes le temps que les avantages de votre abonnement s'activent. Une alerte de confirmation apparaîtra dans l'application lorsque votre abonnement sera prêt."
       ],
       "Please upgrade your plan to access ${ featureNameLabel }": [
-        "Changez d'abonnement pour accéder à ${ featureNameLabel }"
+        "Nous vous invitons à passer à un abonnement supérieur pour accéder à ${ featureNameLabel }"
       ],
       "Plugin Gallery": [
         "Galerie d'extensions"
@@ -6450,7 +6481,7 @@
         "Coffres-forts privés"
       ],
       "Private vaults allow you to store notes, files and tags into separate, encrypted vaults.": [
-        "Les coffres-forts privés vous permettent de stocker des notes, des fichiers et des tags dans des coffres-forts distincts et chiffrés."
+        "Les coffres-forts privés permettent de stocker des notes, des fichiers et des tags dans des coffres-forts distincts et chiffrés."
       ],
       "Shared Vaults": [
         "Coffres-forts partagés"
@@ -6465,28 +6496,28 @@
         "Filtres intelligents"
       ],
       "Smart Tags": [
-        "Tags intelligents"
+        "Smart Tags"
       ],
       "Syntax highlighting and convenient keyboard shortcuts for over 120 programming languages. Ideal for code snippets and procedures.": [
         "Coloration syntaxique et raccourcis clavier pratiques pour plus de 120 langages de programmation. Idéal pour les extraits de code et les procédures."
       ],
       "Tag folders": [
-        "Dossiers tags"
+        "Dossiers de tags"
       ],
       "Tag Nesting": [
         "Imbrication des tags"
       ],
       "The ${ ProfessionalPlanName } Plan costs $119.99/year and includes benefits like": [
-        "L'abonnement ${ ProfessionalPlanName } coûte 119,99 $ par an et inclut des avantages tels que"
+        "L'abonnement ${ ProfessionalPlanName } coûte 119,99 $/an et inclut des avantages tels que"
       ],
       "The best way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note. Cmd/Ctrl + F to bring up search and replace.": [
-        "La meilleure façon de modifier des notes. Tapez / pour ouvrir le menu de sélection des blocs, ou @ pour intégrer des images ou lier d'autres tags et notes. Tapez - puis un espace pour commencer une liste, ou [] puis un espace pour commencer une liste de contrôle. Faites glisser-déposer une image ou un fichier pour l'intégrer à votre note. Cmd/Ctrl + F pour ouvrir la recherche et le remplacement."
+        "La meilleure façon de modifier vos notes. Saisissez / pour ouvrir le menu de sélection de blocs, ou @ pour intégrer des images ou lier d'autres tags et notes. Saisissez - puis un espace pour commencer une liste, ou [] puis un espace pour commencer une liste de contrôle. Glissez-déposez une image ou un fichier pour l'intégrer dans votre note. Cmd/Ctrl + F pour ouvrir la recherche et le remplacement."
       ],
       "To take advantage of ${ featureNameBold } and other advanced features, upgrade your current plan.": [
         "Pour profiter de ${ featureNameBold } et d'autres fonctionnalités avancées, changez d'abonnement."
       ],
       "To take advantage of all the advanced features ${ AppName } has to offer, upgrade your current plan.": [
-        "Pour profiter de toutes les fonctionnalités avancées qu'offre ${ AppName }, changez d'abonnement."
+        "Pour profiter de toutes les fonctionnalités avancées proposées par ${ AppName }, changez d'abonnement."
       ],
       "Two factor authentication": [
         "Authentification à deux facteurs"
@@ -6498,13 +6529,13 @@
         "Historique des notes illimité"
       ],
       "Unlock features": [
-        "Débloquer les fonctionnalités"
+        "Débloquer des fonctionnalités"
       ],
       "You do not have an active subscription": [
-        "Vous n'avez pas d'abonnement actif."
+        "Vous n’avez pas d'abonnement actif."
       ],
       "Your purchase was successful!": [
-        "Votre achat a été effectué."
+        "Votre achat a bien été effectué."
       ],
       "Your subscription expired on ${ expiredDateString }": [
         "Votre abonnement a expiré le ${ expiredDateString }"
@@ -6526,7 +6557,7 @@
     },
     "B7.FilesSubscriptionHelp.Subscription.Status": {
       "A great way to manage short-term and long-term to-do\"s. You can mark tasks as completed, change their order, and edit the text naturally in place.": [
-        "Un excellent moyen de gérer les tâches à court et à long terme. Vous pouvez marquer les tâches comme terminées, changer leur ordre et modifier le texte directement."
+        "Un excellent moyen de gérer les tâches à court terme et à long terme. Vous pouvez marquer les tâches comme terminées, changer leur ordre et modifier le texte directement sur place."
       ]
     },
     "B7.FilesSubscriptionHelp.Subscription.Title": {
@@ -6537,12 +6568,12 @@
         "Essayez ${ SuperName }"
       ],
       "Upgrade": [
-        "Changer d'abonnement"
+        "Mettre à niveau"
       ]
     },
     "B8.MobileDesktopShared.Desktop.Info": {
       "A new update is ready to install. Please use the top-level 'Updates' menu to manage installation.": [
-        "Une nouvelle mise à jour est prête à être installée. Utilisez l'entrée « Mises à jour » du menu principal pour gérer l'installation."
+        "Une nouvelle mise à jour est prête à être installée. Utilisez le menu « Mises à jour » de niveau supérieur pour gérer l'installation."
       ]
     },
     "B8.MobileDesktopShared.Mobile.Error": {
@@ -6552,16 +6583,16 @@
     },
     "B8.MobileDesktopShared.Mobile.Info": {
       "Downloaded ${ filename }": [
-        "${ filename } a été téléchargé"
+        "Téléchargé : ${ filename }"
       ],
       "Downloading ${ filename }..": [
-        "Téléchargement de ${ filename }.."
+        "Téléchargement en cours ${ filename } .."
       ],
       "Fetching image from link...": [
         "Récupération de l'image depuis le lien..."
       ],
       "Successfully created note from shared text": [
-        "La note a été créée à partir du texte partagé"
+        "La note a été créée à partir du texte partagé."
       ]
     }
   }

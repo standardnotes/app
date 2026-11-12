@@ -100,7 +100,7 @@
         "Importación completada. No se importaron ${ errorCount } elementos debido a un error al descifrarlos. Asegúrese de que la contraseña sea correcta e intente de nuevo."
       ],
       "Imported ${ list }": [
-        "Se importó ${ list }",
+        "Se importaron ${ list }",
         "Se importaron ${ list }"
       ],
       "Or click to open file picker": [
@@ -288,7 +288,7 @@
         "Eliminar espacio de trabajo"
       ],
       "Email us": [
-        "Envíenos un correo electrónico"
+        "Contáctenos"
       ],
       "End Sessions": [
         "Finalizar las sesiones"
@@ -400,7 +400,7 @@
         "La encriptación está activada. Sus datos se cifran mediante su código de acceso antes de guardarse en el almacenamiento de su dispositivo."
       ],
       "Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.": [
-        "La encriptación no está activada. Inicie sesión, regístrese o añada un bloqueo con código de acceso para activar la encriptación."
+        "El cifrado no está activada. Inicie sesión, regístrese o añada un bloqueo con código de acceso para activar el cifrado."
       ],
       "End-to-end encryption is enabled. Your data is encrypted on your device first, then synced to your private cloud.": [
         "Cifrado de extremo a extremo activado. Sus datos están cifrados primero en su dispositivo, luego sincronizados a su nube privada."
@@ -463,7 +463,7 @@
         "Su sesión se restauró con éxito."
       ],
       "You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
-        "Está sin conexión. Inicie sesión para sincronizar sus notas y preferencias en todos sus dispositivos y activar el cifrado de extremo a extremo."
+        "Está sin conexión. Inicie sesión para sincronizar sus notas y preferecias en todos sus dispositivos y active el cifrado de extremo a extremo."
       ]
     },
     "B1.Account.Session.Label": {
@@ -1260,7 +1260,7 @@
         "Cargando ${ notesString }"
       ],
       "Offline": [
-        "Sin conexión"
+        "Desconectado"
       ],
       "Potentially Out of Sync": [
         "Potencialmente fuera de sincronización"
@@ -2745,7 +2745,7 @@
         "Archivos incrustados"
       ],
       "Export": [
-        "Exportar"
+        "Exportación"
       ],
       "Export separately": [
         "Exportar por separado"
@@ -3138,7 +3138,7 @@
         "Abrir panel de elementos vinculados"
       ],
       "Protected": [
-        "Protegida"
+        "Protegido"
       ],
       "Remove condition": [
         "Quitar condición"
@@ -3153,7 +3153,7 @@
         "Guardar nombre de la etiqueta"
       ],
       "Starred": [
-        "Destacados"
+        "Destacado"
       ],
       "Trash": [
         "Papelera"
@@ -3250,7 +3250,7 @@
         "Conflictos"
       ],
       "Created At": [
-        "Creada a las"
+        "Fecha de creación"
       ],
       "Created at:": [
         "Creado el:"
@@ -3385,7 +3385,7 @@
         "Corrector ortográfico"
       ],
       "Starred": [
-        "Destacados"
+        "Destacado"
       ],
       "Tag context menu": [
         "Menú contextual de la etiqueta"
@@ -3924,6 +3924,10 @@
       ]
     },
     "B6.Preferences.Account.Info": {
+      "${ filesQuotaUsedLabel } of ${ filesQuotaTotalLabel } used": [
+        "${ filesQuotaUsedLabel } de ${ filesQuotaTotalLabel } usado",
+        "${ filesQuotaUsedLabel } de ${ filesQuotaTotalLabel } usados"
+      ],
       "Already have an account? ${ loginLink }": [
         "¿Ya tiene una cuenta? ${ loginLink }"
       ],
@@ -3941,9 +3945,6 @@
       ],
       "Last synced ${ lastSyncSpan }": [
         "Últ. sincronización ${ lastSyncSpan }"
-      ],
-      "of": [
-        "de"
       ],
       "on ${ lastSyncDate }": [
         "el ${ lastSyncDate }"
@@ -3968,9 +3969,6 @@
       ],
       "This action is irreversible. After deletion completes, you will be signed out on all devices.": [
         "Esta acción es irreversible. Luego de que se complete la eliminación, cerrará sesión en todos los dispositivos."
-      ],
-      "used": [
-        "usado"
       ],
       "Want to sign out on all devices except this one?": [
         "¿Desea cerrar sesión en todos los dispositivos excepto en éste?"
@@ -4551,16 +4549,16 @@
       ]
     },
     "B6.Preferences.General.Language.Spotlight.ActionOpen": {
-      "Open language settings": [
-        "Abrir ajustes de idioma"
+      "Open language preferences": [
+        "Abrir preferencias de idioma"
       ]
     },
     "B6.Preferences.General.Language.Spotlight.Info": {
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
-        "Ahora puede usar la aplicación en su idioma preferido. Active esta función de Labs en Ajustes → General → Idioma. Si no ha configurado ninguna preferencia, se usará el idioma del navegador."
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your browser language is used when no preference is set.": [
+        "Ahora puede usar la aplicación en su idioma preferido. Active esta función de Laboratorio en Preferencias → General → Idioma. Si no ha configurado ninguna preferencia, se usará el idioma del navegador."
       ],
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
-        "Ahora puede usar la aplicación en su idioma preferido. Active esta función de Labs en Ajustes → General → Idioma. Si no ha configurado ninguna preferencia, se usará el idioma del SO."
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your OS language is used when no preference is set.": [
+        "Ahora puede usar la aplicación en su idioma preferido. Active esta función de Laboratorio en Preferencias → General → Idioma. Si no ha configurado ninguna preferencia, se usará el idioma del SO."
       ]
     },
     "B6.Preferences.General.Language.Subtitle": {
@@ -4569,8 +4567,8 @@
       ]
     },
     "B6.Preferences.General.Language.Title": {
-      "Language Settings": [
-        "Ajustes de idioma"
+      "Language Preferences": [
+        "Preferencias de idioma"
       ]
     },
     "B6.Preferences.General.Placeholder": {
@@ -5278,6 +5276,26 @@
       ]
     },
     "B6.Preferences.Security.Label": {
+      "${ archivedCount } archived note": [
+        "${ archivedCount } nota archivada",
+        "${ archivedCount } notas archivadas"
+      ],
+      "${ deletedCount } trashed note": [
+        "${ deletedCount } nota en papelera",
+        "${ deletedCount } notas en papelera"
+      ],
+      "${ filesTotal } file": [
+        "${ filesTotal } archivo",
+        "${ filesTotal } archivos"
+      ],
+      "${ notesCount } note": [
+        "${ notesCount } nota",
+        "${ notesCount } notas"
+      ],
+      "${ tagsCount } tag": [
+        "${ tagsCount } etiqueta",
+        "${ tagsCount } etiquetas"
+      ],
       "authentication code": [
         "código de autenticación"
       ],
@@ -5453,17 +5471,11 @@
       "Note:": [
         "Nota:"
       ],
-      "out of": [
-        "de"
-      ],
       "Redirecting you to the subscription page...": [
         "Redireccionándole a la página de suscripción..."
       ],
       "Subscription": [
         "Suscripción"
-      ],
-      "subscription invites.": [
-        "invitaciones de suscripción."
       ],
       "Subscription sharing": [
         "Compartir suscripción"
@@ -5480,8 +5492,9 @@
       "You don't have a ${ AppName } subscription yet.": [
         "Aún no tiene una suscripción a ${ AppName }."
       ],
-      "You've used": [
-        "Ha usado"
+      "You've used ${ usedInvitationsCount } out of ${ allowedInvitationsCount } subscription invite.": [
+        "Ha usado ${ usedInvitationsCount } de ${ allowedInvitationsCount } invitación de suscripción.",
+        "Ha usado ${ usedInvitationsCount } de ${ allowedInvitationsCount } invitaciones de suscripción."
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
         "Su suscripción de ${ appNameBold }${ subscriptionTierBold } expiró el ${ expirationDateBold }. Puede volver a suscribirse a continuación si lo desea."
@@ -5879,6 +5892,12 @@
       "Could not start upload session": [
         "No se pudo iniciar la sesión de subida"
       ],
+      "Encrypted file storage requires an active subscription. Upgrade your plan to download and upload files.": [
+        "El almacenamiento cifrado de archivos requiere una suscripción activa. Actualice el plan para descargar y cargar archivos."
+      ],
+      "Encrypted files are unavailable because your subscription has expired. Renew your subscription to download and upload files again.": [
+        "Los archivos cifrados no están disponibles porque la suscripción expiró. Renueve la suscripción para cargar y descargar archivos de nuevo."
+      ],
       "Failed to close an upload session.": [
         "Error al cerrar la sesión de subida."
       ],
@@ -5906,6 +5925,12 @@
       "File is not in a shared vault": [
         "El archivo no está en una bóveda compartida"
       ],
+      "Files cannot be uploaded because your subscription has expired. Renew your subscription to use encrypted file storage again.": [
+        "No se pueden cargar los archivos porque la suscripción expiró. Renueve la suscripción para usar el amacenamiento cifrado de nuevo."
+      ],
+      "Files cannot be uploaded without an active subscription. Upgrade your plan to use encrypted file storage.": [
+        "No se pueden cargar los archivos sin una suscripción activa. Actualice el plan para usar el almacenamiento cifrado."
+      ],
       "Please use ${ FileSafeName } or the ${ BoldName } Editor to attach images and files. Learn more at ${ FileSafeHelpUrl }.": [
         "Use ${ FileSafeName } o el editor ${ BoldName } para adjuntar imágenes y archivos. Más información en ${ FileSafeHelpUrl }."
       ],
@@ -5917,6 +5942,12 @@
       ],
       "There was an error while uploading the file": [
         "Hubo un error al subir el archivo"
+      ],
+      "This file cannot be downloaded because your subscription has expired. Renew your subscription to access your files again.": [
+        "No se puede descargar este archivo porque la suscripción expiró. Renueve la suscripción para acceder a sus archivos de nuevo."
+      ],
+      "This file cannot be downloaded without an active subscription. Upgrade your plan to access encrypted files.": [
+        "No se puede descargar este archivo sin una suscripción activa. Actualice el plan para acceder a los archivos cifrados."
       ],
       "This file exceeds the limits supported in this browser. To upload files greater than ${ maxFileSizeInMegabytes }MB, please use the desktop application or the Chrome browser.": [
         "Este archivo excede los límites admitidos por este navegador. Para subir archivos de más de ${ maxFileSizeInMegabytes }MB, use la aplicación de escritorio o el navegador Chrome."
@@ -5945,7 +5976,7 @@
         "Respaldada en ${ backedUpOn }"
       ],
       "Created:": [
-        "Creado:"
+        "Creada:"
       ],
       "Decrease size": [
         "Reducir el tamaño"
@@ -6247,7 +6278,7 @@
     },
     "B7.FilesSubscriptionHelp.Help.Label": {
       "Email us": [
-        "Contáctenos"
+        "Envíenos un correo electrónico"
       ],
       "Extension menu": [
         "Menú de la extensión"

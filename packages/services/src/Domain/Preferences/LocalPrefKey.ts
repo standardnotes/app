@@ -14,8 +14,6 @@ export enum LocalPrefKey {
   EditorLineHeight = 'editorLineHeight',
   EditorLineWidth = 'editorLineWidth',
   EditorFontSize = 'editorFontSize',
-
-  HasSeenLocalizationLabsSpotlight = 'hasSeenLocalizationLabsSpotlight',
 }
 
 export type LocalPrefValue = {
@@ -31,8 +29,6 @@ export type LocalPrefValue = {
   [LocalPrefKey.EditorLineHeight]: EditorLineHeight
   [LocalPrefKey.EditorLineWidth]: EditorLineWidth
   [LocalPrefKey.EditorFontSize]: EditorFontSize
-
-  [LocalPrefKey.HasSeenLocalizationLabsSpotlight]: boolean
 }
 
 export const LocalPrefDefaults = {
@@ -48,8 +44,6 @@ export const LocalPrefDefaults = {
   [LocalPrefKey.EditorLineHeight]: EditorLineHeight.Normal,
   [LocalPrefKey.EditorLineWidth]: EditorLineWidth.FullWidth,
   [LocalPrefKey.EditorFontSize]: EditorFontSize.Normal,
-
-  [LocalPrefKey.HasSeenLocalizationLabsSpotlight]: false,
 } satisfies {
   [key in LocalPrefKey]: LocalPrefValue[key]
 }

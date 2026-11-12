@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.212.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.8...@standardnotes/snjs@2.212.9) (2026-11-02)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.212.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.7...@standardnotes/snjs@2.212.8) (2026-10-30)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.212.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.6...@standardnotes/snjs@2.212.7) (2026-10-23)
+
+### Bug Fixes
+
+* Improves errors on file attachments for expired subs ([#3069](https://github.com/standardnotes/app/issues/3069)) ([7f9b07f](https://github.com/standardnotes/app/commit/7f9b07f9f88ae8885874fdb77425c883e4a41132))
+
 ## [2.212.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.212.5...@standardnotes/snjs@2.212.6) (2026-10-17)
 
 ### Bug Fixes

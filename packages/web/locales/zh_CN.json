@@ -341,7 +341,7 @@
     },
     "B1.Account.Session.Confirmation": {
       "There is ${ dirtyItemCount } item with unsynced changes. If you sign out, these changes will be lost forever. Are you sure you want to sign out?": [
-        "有 ${ dirtyItemCount } 个项目包含未同步的更改。如果登出，这些更改将永久丢失。您确定要登出吗？"
+        "有 ${ dirtyItemCount } 个项目存在未同步的更改。如果登出，这些更改将永久丢失。您确定要登出吗？"
       ]
     },
     "B1.Account.Session.Error": {
@@ -432,7 +432,7 @@
         "您已成功撤销在其他设备上的会话。"
       ],
       "You're signed in as:": [
-        "您已登录为："
+        "您已成功登录："
       ],
       "Your account has been successfully deleted.": [
         "您的账户已成功删除。"
@@ -456,7 +456,7 @@
         "您的会话已成功恢复。"
       ],
       "You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
-        "您处于离线状态。请登录以在所有设备间同步笔记和首选项，并启用端到端加密。"
+        "您处于离线状态。请登录以在所有设备间同步笔记和偏好设置，并启用端到端加密。"
       ]
     },
     "B1.Account.Session.Label": {
@@ -892,7 +892,7 @@
         "锁定应用程序"
       ],
       "Locks application and wipes unencrypted data from memory.": [
-        "锁定应用程序并从内存中清除未加密数据。"
+        "锁定应用并从内存中清除未加密数据。"
       ],
       "Open navigation menu": [
         "打开导航菜单"
@@ -1532,7 +1532,7 @@
         "可能会导致性能下降，尤其是在处理大型文档时。"
       ],
       "This editor does not support search result highlighting yet.": [
-        "此编辑器尚不支持突出显示搜索结果。"
+        "此编辑器尚不支持搜索结果高亮。"
       ]
     },
     "B3.Notes.EditorToolbar.Label": {
@@ -1606,7 +1606,7 @@
         "突出显示所有结果"
       ],
       "Highlight all unavailable": [
-        "全部突出显示不可用"
+        "突出显示所有不可用项"
       ],
       "Insert": [
         "插入"
@@ -2042,7 +2042,7 @@
         "清除所有筛选条件"
       ],
       "Clear tag filters": [
-        "清除标签筛选条件"
+        "清除标签筛选"
       ],
       "Create a new note in the selected tag ${ shortcut }": [
         "在所选标签中创建新笔记 ${ shortcut }"
@@ -2131,7 +2131,7 @@
         "搜索"
       ],
       "Search filters": [
-        "搜索筛选条件"
+        "搜索筛选器"
       ],
       "Select all items": [
         "选择所有项目"
@@ -2148,7 +2148,7 @@
         "已选择 ${ selectedItemsCount } 项"
       ],
       "${ titleFormatOptionsLink }. Use ${ bracketsLiteral } to escape formatting.": [
-        "${ titleFormatOptionsLink }。使用 ${ bracketsLiteral } 可转义格式设置。"
+        "${ titleFormatOptionsLink }。使用 ${ bracketsLiteral } 转义格式。"
       ],
       "and ${ additionalLinksCount } more...": [
         "以及其他 ${ additionalLinksCount } 个链接..."
@@ -2354,7 +2354,7 @@
         "受到保护"
       ],
       "Protected Contents": [
-        "受保护内容"
+        "受保护的内容"
       ],
       "Record video": [
         "录制视频"
@@ -2432,7 +2432,7 @@
         "显示选项"
       ],
       "Search filters": [
-        "搜索筛选条件"
+        "搜索筛选器"
       ]
     },
     "B4.Notes.EditingUI.Action": {
@@ -2692,7 +2692,7 @@
         "正在保存..."
       ],
       "Uploading file \"${ uploadProgress.file.name }\" (${ progress }%)": [
-        "正在上传文件 \"${ uploadProgress.file.name }\" (${ progress }%)"
+        "正在上传文件“${ uploadProgress.file.name }” (${ progress }%)"
       ]
     },
     "B4.Notes.EditingUI.Title": {
@@ -3434,7 +3434,7 @@
     },
     "B5.SecuritySync.Autolock.Info": {
       "Authentication is required to change autolock timer duration": [
-        "需要身份验证才能更改自动锁定计时器时长"
+        "更改自动锁定计时器时长需要进行身份验证"
       ]
     },
     "B5.SecuritySync.Autolock.Label": {
@@ -3445,7 +3445,7 @@
         "1 小时"
       ],
       "1m": [
-        "1 分钟"
+        "1分钟"
       ],
       "5m": [
         "5 分钟"
@@ -3462,7 +3462,7 @@
     },
     "B5.SecuritySync.Biometrics.Info": {
       "Authentication is required to disable biometrics": [
-        "需要通过身份验证才能停用生物识别"
+        "停用生物识别需要身份验证"
       ]
     },
     "B5.SecuritySync.Challenge.Action": {
@@ -3484,7 +3484,7 @@
         "获取设备响应失败"
       ],
       "Incorrect credentials entered. Please try again.": [
-        "输入的凭证有误，请重新尝试。"
+        "输入的凭证有误，请重试。"
       ],
       "Invalid authentication, please try again.": [
         "身份验证无效，请重试。"
@@ -3493,10 +3493,10 @@
         "此项目无法恢复。"
       ],
       "Unable to find key ${ keyId } for this item. You may try signing out and back in; if that doesn't help, check your backup files for a key with this ID and import it.": [
-        "找不到此项的密钥 ${ keyId }。您可以尝试登出后重新登录；如果不起作用，请在备份文件中查找具有此 ID 的密钥并将其导入。"
+        "无法找到此项目的密钥 ${ keyId }。您可以尝试登出后重新登入；如果仍无法解决，请检查备份文件中是否有使用此 ID 的密钥，并将其导入。"
       ],
       "Unable to recover your key with the attempted password. Please try again.": [
-        "无法使用所输入的密码恢复您的密钥。请重试。"
+        "无法使用所尝试的密码恢复您的密钥。请重试。"
       ]
     },
     "B5.SecuritySync.Challenge.Info": {
@@ -3504,49 +3504,49 @@
         "访问此文件需要身份验证"
       ],
       "Authentication is required to add a passcode": [
-        "添加密码需要进行身份验证"
+        "添加密码需要身份验证"
       ],
       "Authentication is required to approve this note for ${ ListedName }": [
-        "需要通过身份验证才能将此笔记批准发布至 ${ ListedName }"
+        "需要身份验证才能为 ${ ListedName } 批准此笔记。"
       ],
       "Authentication is required to change your passcode": [
-        "更改密码需要进行身份验证"
+        "更改密码需要身份验证。"
       ],
       "Authentication is required to delete your account": [
-        "删除您的账户需要进行身份验证"
+        "删除你的帐户需要进行身份验证"
       ],
       "Authentication is required to disable two-factor authentication": [
-        "停用双因素身份验证需要进行身份验证"
+        "需完成身份验证才能停用双因素身份验证"
       ],
       "Authentication is required to export a backup": [
         "导出备份需要进行身份验证"
       ],
       "Authentication is required to import a backup file": [
-        "导入备份文件需要进行身份验证"
+        "导入备份文件需要身份验证"
       ],
       "Authentication is required to remove your passcode": [
         "移除密码需要身份验证"
       ],
       "Authentication is required to revoke a session": [
-        "撤销会话需要进行身份验证"
+        "撤销会话需要身份验证"
       ],
       "Authentication is required to search protected contents": [
         "搜索受保护内容需要进行身份验证"
       ],
       "Authentication is required to select a protected note": [
-        "需通过身份验证才能选择受保护的笔记"
+        "选择受保护的笔记需要身份验证"
       ],
       "Authentication is required to unlock the application": [
-        "需要身份验证才能解锁应用"
+        "解锁应用需要身份验证"
       ],
       "Authentication is required to unprotect a file": [
-        "取消文件保护需要进行身份验证"
+        "取消文件保护需要身份验证"
       ],
       "Authentication is required to unprotect a note": [
-        "解除笔记保护需要进行身份验证"
+        "取消保护笔记需要身份验证"
       ],
       "Authentication is required to view this note": [
-        "查看此笔记需要进行身份验证"
+        "查看此笔记需要身份验证。"
       ],
       "Biometrics successful": [
         "生物识别成功"
@@ -3555,19 +3555,19 @@
         "删除 ${ vaultName }"
       ],
       "Enter your account password after it was changed on ${ dateString }.": [
-        "您的账号密码已于 ${ dateString } 更改，请重新输入。"
+        "请输入在 ${ dateString } 更改后的账号密码。"
       ],
       "Enter your account password as it was when you changed your email on ${ dateString }.": [
-        "请输入您在 ${ dateString } 更改电子邮件时的账号密码。"
+        "请输入您在 ${ dateString } 更改电子邮件时使用的账号密码。"
       ],
       "Enter your account password as it was when you registered ${ dateString }.": [
-        "请输入您在 ${ dateString } 注册时的账号密码。"
+        "请输入您在 ${ dateString } 注册时使用的账号密码。"
       ],
       "Enter your account password as it was when you upgraded your encryption version on ${ dateString }.": [
         "请输入您在 ${ dateString } 升级加密版本时使用的账号密码。"
       ],
       "Enter your application passcode after it was changed on ${ dateString }.": [
-        "您的应用程序密码已于 ${ dateString } 更改，请重新输入。"
+        "请输入在 ${ dateString } 更改后的应用程序密码。"
       ],
       "Enter your application passcode as it was when you created it on ${ dateString }.": [
         "请输入您在 ${ dateString } 创建时设置的应用程序密码。"
@@ -3579,16 +3579,16 @@
         "解锁 ${ vaultName }"
       ],
       "You must enter your passcode in order to save your new credentials.": [
-        "您必须输入密码才能保存新凭证。"
+        "您必须输入密码才能保存新的凭证。"
       ],
       "Your account password is required to recover an encryption key.": [
-        "恢复加密密钥需要输入您的账号密码。"
+        "恢复加密密钥需要您的账号密码。"
       ],
       "Your account password is required to revalidate your session.": [
-        "需要您的账号密码才能重新验证会话。"
+        "需要您的账号密码来重新验证会话。"
       ],
       "Your application passcode is required to perform an upgrade of your local data storage structure.": [
-        "需要应用程序密码才能升级本地数据存储结构。"
+        "需要您的应用程序密码才能升级本地数据存储结构。"
       ],
       "Your credentials have successfully been updated.": [
         "您的凭证已成功更新。"
@@ -3597,13 +3597,13 @@
         "您的密钥已成功恢复。"
       ],
       "Your passcode is required in order to register for an account.": [
-        "注册账户时需要输入您的密码。"
+        "注册账户需要输入密码。"
       ],
       "Your passcode is required in order to sign in to your account.": [
-        "您需要使用密码才能登录账户。"
+        "您需要输入密码才能登入您的帐户。"
       ],
       "Your passcode is required to process your credentials change.": [
-        "处理凭证更改时需要输入您的密码。"
+        "处理凭证更改需要您的密码。"
       ]
     },
     "B5.SecuritySync.Challenge.Label": {
@@ -3611,7 +3611,7 @@
         "账号密码"
       ],
       "Allow protected access for": [
-        "允许访问受保护内容，时长为"
+        "允许以下对象进行受保护访问："
       ],
       "Application Passcode": [
         "应用程序密码"
@@ -3632,10 +3632,10 @@
         "输入您的账号密码"
       ],
       "Enter your application passcode": [
-        "请输入应用程序密码"
+        "请输入您的应用程序密码"
       ],
       "Enter your application passcode to continue": [
-        "输入应用程序密码以继续"
+        "请输入应用程序密码以继续。"
       ],
       "Enter your credentials to download a decrypted backup": [
         "输入您的凭证以下载解密后的备份"
@@ -3667,7 +3667,7 @@
         "应用程序密码"
       ],
       "Two-factor authentication code": [
-        "双因素身份验证代码"
+        "2FA 验证码"
       ]
     },
     "B5.SecuritySync.Challenge.Status": {
@@ -3691,7 +3691,7 @@
     },
     "B5.SecuritySync.Info": {
       "Access to this note will not be restricted until you set up a passcode or account.": [
-        "在您设置密码或账户之前，对此笔记的访问不会受到限制。"
+        "在您设置密码或帐户之前，对此笔记的访问将不受限制。"
       ]
     },
     "B5.SecuritySync.KeyStorage.Confirmation": {
@@ -3706,10 +3706,10 @@
     },
     "B5.SecuritySync.KeyStorage.Info": {
       "The email or password you entered is incorrect.\n\nPlease note that this sign-in request is made against the default server. If you are using a custom server, you must uninstall the app then reinstall, and sign back into your account.": [
-        "您输入的电子邮箱或密码不正确。\n\n请注意，此登录请求针对的是默认服务器。如果使用的是自定义服务器，必须先卸载应用再重新安装，然后重新登录账户。"
+        "您输入的电子邮件或密码不正确。\n\n请注意，此登录请求针对的是默认服务器。如果您使用的是自定义服务器，必须先卸载应用再重新安装，然后重新登录您的帐户。"
       ],
       "We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password for \"${ email }\" to restore your account keys.": [
-        "我们检测到您的密钥串已被清除。从备份恢复设备时可能会发生这种情况。请输入“${ email }”的账号密码，以恢复您的账户密钥。"
+        "我们检测到您的密钥串已被清空。从备份恢复设备时可能会出现这种情况。请输入 \"${ email }\" 的账号密码，以恢复您的帐户密钥。"
       ]
     },
     "B5.SecuritySync.KeyStorage.Title": {
@@ -3719,12 +3719,12 @@
     },
     "B5.SecuritySync.Mfa.Error": {
       "Incorrect two-factor authentication code. Please try again.": [
-        "双因素身份验证代码有误。请重试。"
+        "双因素身份验证代码错误，请重试。"
       ]
     },
     "B5.SecuritySync.Mfa.Info": {
       "Your sign in request has been canceled.": [
-        "您的登录请求已被取消。"
+        "您的登入请求已被取消。"
       ]
     },
     "B5.SecuritySync.Passcode.Action": {
@@ -3734,10 +3734,10 @@
     },
     "B5.SecuritySync.Passcode.Confirmation": {
       "A passcode change is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
-        "密码更改正在进行中，退出应用可能导致数据丢失。确定要退出吗？"
+        "密码更改正在进行中。退出应用可能导致数据丢失。确定要退出吗？"
       ],
       "A passcode removal is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
-        "正在移除密码，退出应用可能导致数据丢失。确定要退出吗？"
+        "密码移除正在进行中，退出应用可能导致数据丢失。确定要退出吗？"
       ]
     },
     "B5.SecuritySync.Passcode.Error": {
@@ -3745,15 +3745,15 @@
         "请输入密码。"
       ],
       "The two passcodes you entered do not match. Please try again.": [
-        "您输入的两个密码不一致，请重试。"
+        "您输入的两个密码不一致。请重试。"
       ]
     },
     "B5.SecuritySync.Passcode.Info": {
       "If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.": [
-        "如果忘记了本地密码，唯一的办法就是清除本设备上的本地数据，然后重新登录您的账户。"
+        "如果您忘记了本地密码，唯一的选择是从此设备清除本地数据，然后重新登录您的帐户。"
       ],
       "Your keys are currently stored in your operating system's ${ keychainName }. Adding a passcode prevents even your operating system from reading them.": [
-        "您的密钥目前存储在操作系统的 ${ keychainName } 中。添加密码后，即使是操作系统也无法读取这些密钥。"
+        "您的密钥目前存储在操作系统的 ${ keychainName } 中。添加密码后，即使是您的操作系统也无法读取这些密钥。"
       ]
     },
     "B5.SecuritySync.Passcode.Label": {
@@ -3785,7 +3785,7 @@
     },
     "B5.SecuritySync.Passcode.Warning": {
       "Do not close the application until this process completes.": [
-        "在此过程完成之前，请勿关闭应用程序。"
+        "在此过程完成前，请勿关闭应用。"
       ]
     },
     "B5.SecuritySync.Protections.Error": {
@@ -3817,18 +3817,18 @@
     },
     "B5.SecuritySync.Sync.Error": {
       "There was an error while trying to save your items. Please contact support and share this message: ${ message }.": [
-        "保存项目时出错。请联系支持团队并提供以下消息：${ message }。"
+        "尝试保存你的项目时出错。请联系支持人员并分享此消息：${ message }。"
       ]
     },
     "B5.SecuritySync.Sync.Info": {
       "Quit the application and re-open it. Sometimes, this may resolve the issue.": [
-        "退出应用并重新打开。此操作有时可能会解决问题。"
+        "退出应用并重新打开。有时这样可以解决问题。"
       ],
       "Sign out of your account, then sign back in. This will ensure your data is consistent with the server. Be sure to download a backup of your data before doing so.": [
-        "请登出您的账户，然后重新登录。这将确保您的数据与服务器保持一致。执行此操作前，请务必备份您的数据。"
+        "请先登出您的帐户，然后重新登录。这将确保您的数据与服务器保持一致。执行此操作前，请务必先下载您的数据备份。"
       ],
       "We've detected that the data in the current application session may not match the data on the server. An attempt was made to auto-resolve the issue, but it was unable to reconcile the differences.": [
-        "检测到当前应用会话中的数据可能与服务器上的数据不一致。系统已尝试自动解决此问题，但未能消除差异。"
+        "我们检测到当前应用会话中的数据可能与服务器上的数据不一致。已尝试自动解决该问题，但未能协调这些差异。"
       ]
     },
     "B5.SecuritySync.Sync.Status": {
@@ -3841,7 +3841,7 @@
         "选项 1 — 重启应用："
       ],
       "Option 2 — Sign Out and Back In:": [
-        "选项 2 — 登出后重新登录："
+        "选项 2 — 登出后重新登入："
       ]
     },
     "B5.SecuritySync.Sync.Title": {
@@ -3906,13 +3906,16 @@
         "请输入当前密码。"
       ],
       "The current password you entered is not correct. Please try again.": [
-        "您输入的当前密码不正确，请重试。"
+        "您输入的当前密码不正确。请重试。"
       ],
       "There was an error when attempting to redirect you to the subscription page.": [
-        "尝试将您重定向到订阅页面时发生错误。"
+        "尝试将您重定向到订阅页面时出错。"
       ]
     },
     "B6.Preferences.Account.Info": {
+      "${ filesQuotaUsedLabel } of ${ filesQuotaTotalLabel } used": [
+        "已使用 ${ filesQuotaUsedLabel }，共 ${ filesQuotaTotalLabel }"
+      ],
       "Already have an account? ${ loginLink }": [
         "已有账户？${ loginLink }"
       ],
@@ -3920,19 +3923,16 @@
         "当前密码设置于 ${ passwordDateSpan }"
       ],
       "Disables email notifications when a new sign-in occurs on your account. (Email notifications are available only to paid subscribers).": [
-        "当您的账户发生新登录时，停用电子邮件通知。（电子邮件通知仅向付费订阅用户开放。）"
+        "禁用新登录发生时发送的邮件通知（邮件通知仅对付费订阅用户开放）。"
       ],
       "Disables email notifications with special deals and promotions.": [
-        "停用包含特惠和促销活动的电子邮件通知。"
+        "禁用包含特惠和促销活动的邮件通知。"
       ],
       "Files": [
         "文件"
       ],
       "Last synced ${ lastSyncSpan }": [
         "上次同步 ${ lastSyncSpan }"
-      ],
-      "of": [
-        "，共"
       ],
       "on ${ lastSyncDate }": [
         "于 ${ lastSyncDate }"
@@ -3947,10 +3947,10 @@
         "从应用中移除当前工作区的所有相关数据。"
       ],
       "Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.": [
-        "登录以在所有设备间同步笔记和首选项，并启用端到端加密。"
+        "登录以在所有设备间同步笔记和偏好设置，并启用端到端加密。"
       ],
       "Sign-in notification emails are available only on a subscription plan. Please upgrade in order to enable sign-in notifications.": [
-        "登录通知邮件仅适用于订阅套餐。请升级以启用登录通知。"
+        "登录通知邮件仅适用于订阅套餐，请升级以启用登录通知。"
       ],
       "Storage Quota": [
         "存储空间配额"
@@ -3958,14 +3958,11 @@
       "This action is irreversible. After deletion completes, you will be signed out on all devices.": [
         "此操作不可撤销！删除完成后，您将在所有设备上被登出。"
       ],
-      "used": [
-        "已使用"
-      ],
       "Want to sign out on all devices except this one?": [
         "是否要登出此设备之外的所有其他设备？"
       ],
       "You're signed in as ${ emailSpan }": [
-        "您当前以 ${ emailSpan } 身份登录"
+        "您已成功登录 ${ emailSpan }"
       ],
       "Your email has been successfully changed.": [
         "您的邮箱已更改！"
@@ -3979,7 +3976,7 @@
         "文件存储空间用量"
       ],
       "Learn More": [
-        "了解更多"
+        "了解详情"
       ],
       "New Email": [
         "新邮箱"
@@ -4005,7 +4002,7 @@
         "密码"
       ],
       "This workspace": [
-        "此工作区"
+        "工作区"
       ]
     },
     "B6.Preferences.Account.Title": {
@@ -4016,13 +4013,13 @@
         "清除工作区"
       ],
       "Credentials": [
-        "凭证"
+        "凭据"
       ],
       "Delete account": [
         "删除账户"
       ],
       "Email": [
-        "电子邮件"
+        "邮箱"
       ],
       "Sign out": [
         "登出"
@@ -4042,10 +4039,10 @@
         "选择纯文本笔记的行高"
       ],
       "Sets the font size in plaintext and ${ SuperName } notes": [
-        "设置纯文本和 ${ SuperName } 笔记的字体大小"
+        "设置纯文本笔记和 ${ SuperName } 笔记的字体大小"
       ],
       "Sets the line height (leading) in plaintext and ${ SuperName } notes": [
-        "设置纯文本和 ${ SuperName } 笔记的行高（行距）"
+        "设置纯文本笔记和 ${ SuperName } 笔记中的行高（行距）"
       ],
       "Sets the max editor width for all notes": [
         "设置所有笔记的最大编辑器宽度"
@@ -4053,19 +4050,19 @@
     },
     "B6.Preferences.Appearance.Info": {
       "Automatically change active theme based on your system settings.": [
-        "根据系统设置自动更改当前主题。"
+        "根据系统设置自动切换当前主题。"
       ],
       "Theme to be used for system dark mode:": [
-        "系统深色模式使用的主题："
+        "用于系统深色模式的主题："
       ],
       "Theme to be used for system light mode:": [
         "系统浅色模式使用的主题："
       ],
       "Toggles the font style in plaintext and ${ SuperName } notes": [
-        "切换纯文本和 ${ SuperName } 笔记的字体样式"
+        "切换纯文本笔记和 ${ SuperName } 笔记中的字体样式"
       ],
       "Use opaque style for UI elements instead of translucency": [
-        "对界面元素使用不透明样式，而非半透明效果"
+        "界面元素使用不透明样式而非半透明效果"
       ]
     },
     "B6.Preferences.Appearance.Label": {
@@ -4073,13 +4070,13 @@
         "默认"
       ],
       "Extra small": [
-        "特小"
+        "超小"
       ],
       "Large": [
         "大"
       ],
       "Loose": [
-        "松散"
+        "宽松"
       ],
       "Medium": [
         "中"
@@ -4103,7 +4100,7 @@
         "小"
       ],
       "Snug": [
-        "稍紧"
+        "紧凑"
       ],
       "Tight": [
         "紧凑"
@@ -4137,7 +4134,7 @@
     },
     "B6.Preferences.Appearance.Title": {
       "Editor": [
-        "编辑器"
+        "编辑者"
       ],
       "Themes": [
         "主题"
@@ -4145,7 +4142,7 @@
     },
     "B6.Preferences.Backups.Action": {
       "Attempting to decrypt metadata file...": [
-        "正在解密元数据文件…"
+        "正在尝试解密元数据文件……"
       ],
       "Change Location": [
         "更改位置"
@@ -4174,7 +4171,7 @@
     },
     "B6.Preferences.Backups.Error": {
       "Unable to save file to local directory. This may be caused by failure to decrypt, or failure to save the file locally.": [
-        "无法将文件保存到本地目录。这可能是由解密失败或本地保存失败导致的。"
+        "无法将文件保存到本地目录。这可能是由于解密失败或无法在本地保存文件所致。"
       ],
       "Unable to save local backup.": [
         "无法保存本地备份。"
@@ -4182,13 +4179,13 @@
     },
     "B6.Preferences.Backups.Info": {
       "${ decryptedFileNameBold } has been successfully decrypted and saved to your chosen directory.": [
-        "${ decryptedFileNameBold } 已成功解密，并已保存到您选择的目录中。"
+        "${ decryptedFileNameBold } 已成功解密并保存到您选择的目录。"
       ],
       "Automatically save encrypted and decrypted backups of your note and tag data.": [
         "自动保存笔记和标签数据的加密及解密备份。"
       ],
       "Backups are saved automatically throughout the day. You can perform a one-time backup now below.": [
-        "系统会在全天自动保存备份。您可以在下方立即执行一次性备份。"
+        "备份会在全天自动保存。您可以在下方立即执行一次性备份。"
       ],
       "Daily": [
         "每天"
@@ -4197,7 +4194,7 @@
         "请勿编辑此文件。"
       ],
       "Drag and drop this metadata file into the File Backups preferences pane in the ${ AppName } desktop or web application interface.": [
-        "将此元数据文件拖放到 ${ AppName } 桌面版或网页版应用界面中的“文件备份”首选项面板。"
+        "将此元数据文件拖放到 ${ AppName } 桌面或网络应用界面的“文件备份”首选项面板中。"
       ],
       "Files backups are enabled. When you upload a new file on any device and open this application, files will be backed up in encrypted form to:": [
         "文件备份已启用。当您在任何设备上上传新文件并打开此应用时，文件将以加密形式备份到："
@@ -4209,19 +4206,19 @@
         "无电子邮件备份"
       ],
       "Please drag the metadata file instead of the encrypted data file.": [
-        "请拖入元数据文件，而不是已加密的数据文件。"
+        "请拖入元数据文件，而不是加密数据文件。"
       ],
       "Receive daily encrypted email backups of all your notes directly in your email inbox.": [
-        "每天在您的电子邮件收件箱中直接接收所有笔记的加密电子邮件备份。"
+        "每天在你的电子邮件收件箱中直接接收所有笔记的已加密电子邮件备份。"
       ],
       "The file and key data below is encrypted with your account password.": [
-        "以下文件和密钥数据已使用您的账号密码加密。"
+        "下方的文件和密钥数据已使用您的账号密码加密。"
       ],
       "To decrypt a backup file, drag and drop the file's respective ${ metadataFileName } file here or select it below.": [
         "要解密备份文件，请将文件对应的 ${ metadataFileName } 文件拖放到此处，或在下方选择它。"
       ],
       "To enable file backups, use the ${ AppName } desktop application.": [
-        "要启用文件备份，请使用 ${ AppName } 桌面应用。"
+        "如需启用文件备份，请使用 ${ AppName } 桌面应用。"
       ],
       "To enable plaintext backups, use the ${ AppName } desktop application.": [
         "要启用明文备份，请使用 ${ AppName } 桌面应用。"
@@ -4241,13 +4238,13 @@
         "${ AppName } 备份 - ${ formattedDate }.zip"
       ],
       "${ AppName } Backup and Import File": [
-        "${ AppName } 备份和导入文件"
+        "${ AppName } 备份与导入文件"
       ],
       "${ AppName } Encrypted Backup and Import File - ${ formattedDate }": [
-        "${ AppName } 已加密备份和导入文件 - ${ formattedDate }"
+        "${ AppName } 已加密备份与导入文件 - ${ formattedDate }"
       ],
       "${ AppName } Encrypted Backup and Import File - ${ formattedDate }.txt": [
-        "${ AppName } 已加密备份和导入文件 - ${ formattedDate }.txt"
+        "${ AppName } 已加密备份与导入文件 - ${ formattedDate }.txt"
       ],
       "Automatic text backups": [
         "自动文本备份"
@@ -4273,48 +4270,48 @@
     },
     "B6.Preferences.Backups.Status": {
       "File backups are not enabled. Enable to choose where your files are backed up.": [
-        "文件备份尚未启用。启用后可选择文件备份的保存位置。"
+        "文件备份未启用。启用后可选择文件的备份位置。"
       ],
       "Plaintext backups are enabled and saved to:": [
         "已启用明文备份，并保存至："
       ],
       "Plaintext backups are not enabled. Enable to choose where your data is backed up.": [
-        "尚未启用明文备份。启用后可选择数据备份的存储位置。"
+        "明文备份未启用。启用后可选择数据的备份位置。"
       ],
       "Saving local backup…": [
         "正在保存本地备份…"
       ],
       "Successfully saved backup.": [
-        "备份保存成功。"
+        "已成功保存备份。"
       ],
       "Text backups are enabled and saved to:": [
-        "文本备份已启用并保存至："
+        "文本备份已启用并保存到："
       ],
       "Text backups are not enabled. Enable to choose where your data is backed up.": [
-        "未启用文本备份。启用后可选择数据的备份位置。"
+        "文本备份未启用。启用后可选择数据备份的位置。"
       ]
     },
     "B6.Preferences.Backups.Subtitle": {
       "1. Choose related data file": [
-        "1. 选择相关数据文件"
+        "1. 选择相关的数据文件"
       ],
       "2. Decrypt and save file to your computer": [
-        "2. 解密文件并保存到计算机"
+        "2. 解密文件并保存到您的计算机"
       ],
       "Automatically save backups of all your notes into plaintext, non-encrypted folders.": [
-        "将所有笔记的备份自动保存到纯文本且未加密的文件夹中。"
+        "自动将所有笔记的备份保存到纯文本、未加密的文件夹中。"
       ],
       "Automatically save backups of all your notes to this computer into plaintext, non-encrypted folders.": [
-        "自动将所有笔记的备份以纯文本形式保存到此计算机上未加密的文件夹中。"
+        "自动将所有笔记的备份以纯文本、未加密的文件夹形式保存到此计算机。"
       ],
       "Automatically save encrypted backups of your files.": [
-        "自动保存文件的已加密备份。"
+        "自动保存您文件的已加密备份。"
       ],
       "Automatically save encrypted backups of your uploaded files to this computer.": [
-        "自动将您上传文件的已加密备份保存到这台计算机。"
+        "自动将你上传的文件的已加密备份保存到此计算机。"
       ],
       "Automatically save encrypted text backups of all your note and tag data to this computer.": [
-        "自动将您所有笔记和标签数据的加密文本备份保存到此计算机。"
+        "自动将所有笔记和标签数据的已加密文本备份保存到此计算机。"
       ],
       "Download a backup of all your text-based data": [
         "下载所有文本数据的备份"
@@ -4348,10 +4345,10 @@
     },
     "B6.Preferences.Error": {
       "Failed to get settings.": [
-        "未能获取设置。"
+        "获取设置失败。"
       ],
       "Failed to update settings.": [
-        "未能更新设置。"
+        "未能更新设置."
       ],
       "Unable to register for ${ ListedName }. Please try again later.": [
         "无法注册 ${ ListedName }。请稍后重试。"
@@ -4368,7 +4365,7 @@
         "创建智能视图"
       ],
       "Create smart views to organize your notes according to conditions you define.": [
-        "创建智能视图，按您定义的条件整理笔记。"
+        "创建智能视图，根据您定义的条件整理笔记。"
       ],
       "Delete": [
         "删除"
@@ -4408,40 +4405,40 @@
     },
     "B6.Preferences.General.Info": {
       ". Use [] to escape formatting.": [
-        "。使用 [] 转义格式。"
+        "。使用 [] 可转义格式。"
       ],
       "Allows using gestures to navigate": [
         "允许使用手势进行导航"
       ],
       "Control whether the animated saving status is shown while editing. Error statuses are always shown regardless of preference.": [
-        "控制编辑期间是否显示动态保存状态。无论首选项如何设置，错误状态始终会显示。"
+        "控制编辑时是否显示动画保存状态。无论首选项如何设置，错误状态始终会显示。"
       ],
       "Default image alignment in ${ SuperName } notes": [
-        "${ SuperName } 笔记的默认图像对齐方式"
+        "${ SuperName } 笔记中的默认图像对齐方式"
       ],
       "Invalid JSON. Double check your entry and try again.": [
-        "JSON 无效。请仔细检查输入内容，然后重试。"
+        "JSON 无效。请仔细检查您的输入，然后重试。"
       ],
       "Moments lets you capture photos of yourself throughout the day, creating a visual record of your life, one photo at a time. Using your webcam or mobile selfie-cam, Moments takes a photo of you every half hour. All photos are end-to-end encrypted and stored in your files. Enable Moments on a per-device basis to get started.": [
-        "借助 Moments，您可以全天记录自己的影像，一张一张照片，为您的生活留下可视化的记录。Moments 会通过网络摄像头或手机前置摄像头，每半小时为您拍一张照片。所有照片均采用端到端加密，并存储在您的文件中。按设备启用 Moments 即可开始使用。"
+        "Moments 可让您全天拍摄自己的照片，每次一张，创建您生活的视觉记录。使用网络摄像头或手机自拍摄像头，Moments 每半小时为您拍摄一张照片。所有照片均经过端到端加密并存储在您的文件中。按设备启用 Moments 即可开始使用。"
       ],
       "No experimental features available.": [
         "没有可用的实验性功能。"
       ],
       "Only applies to web and desktop apps. On mobile, notes don't open automatically at launch.": [
-        "仅适用于网络和桌面应用。在移动端，笔记不会在启动时自动打开。"
+        "仅适用于网页和桌面应用。在移动端，笔记不会在启动时自动打开。"
       ],
       "The default spellcheck value for new notes. Spellcheck can be configured per note from the note context menu. Spellcheck may degrade overall typing performance with long notes.": [
-        "新笔记的默认拼写检查设置。可在笔记上下文菜单中为每个笔记配置拼写检查。拼写检查可能会降低长笔记的整体输入性能。"
+        "新笔记的默认拼写检查设置。可以通过笔记的上下文菜单为每篇笔记配置拼写检查。对于长笔记，拼写检查可能会降低整体输入性能。"
       ],
       "The first note in the list": [
-        "列表中的第一条笔记"
+        "列表中的第一篇笔记"
       ],
       "When enabled, adding a nested tag to a note will automatically add all associated parent tags.": [
-        "启用后，向笔记添加嵌套标签时会自动添加所有关联的父级标签。"
+        "启用后，为笔记添加嵌套标签时，会自动添加所有关联的父级标签。"
       ],
       "When enabled, the ${ SuperName } toolbar will always be shown at the top of the note. It can be temporarily toggled using Cmd/Ctrl+Shift+K. When disabled, the ${ SuperName } toolbar will only be shown as a floating toolbar when text is selected.": [
-        "启用后，${ SuperName } 工具栏将始终显示在笔记顶部。可使用 Cmd/Ctrl+Shift+K 临时切换其显示状态。停用后，仅在选择文本时才以浮动工具栏的形式显示 ${ SuperName } 工具栏。"
+        "启用后，${ SuperName } 工具栏将始终显示在笔记顶部。可使用 Cmd/Ctrl+Shift+K 临时切换。停用后，${ SuperName } 工具栏仅在选中文本时显示为浮动工具栏。"
       ],
       "Whether a confirmation dialog should be shown before closing the app.": [
         "关闭应用前是否显示确认对话框。"
@@ -4450,12 +4447,12 @@
         "您的离线订阅代码已成功激活。"
       ],
       "Your offline subscription code has been successfully removed.": [
-        "您的离线订阅代码已成功移除。"
+        "您的离线订阅代码已被成功移除。"
       ]
     },
     "B6.Preferences.General.Label": {
       "Capture Present Moment": [
-        "记录当下时刻"
+        "捕捉当下瞬间"
       ],
       "Center align": [
         "居中对齐"
@@ -4467,7 +4464,7 @@
         "实验室"
       ],
       "Left align": [
-        "左对齐"
+        "向左对齐"
       ],
       "Offline activation": [
         "离线激活"
@@ -4482,19 +4479,19 @@
         "面板切换手势"
       ],
       "Predicate:": [
-        "筛选条件："
+        "谓词："
       ],
       "Preview:": [
         "预览："
       ],
       "Right align": [
-        "右对齐"
+        "向右对齐"
       ],
       "Select the default note type": [
         "选择默认笔记类型"
       ],
       "The last viewed note": [
-        "上次查看的笔记"
+        "最后查看的笔记"
       ],
       "Title:": [
         "标题："
@@ -4502,7 +4499,7 @@
     },
     "B6.Preferences.General.Labs.Localization.Description": {
       "Use the app in your preferred language. Your browser language is used when no preference is set.": [
-        "以您偏好的语言使用应用。未设置首选项时，将使用浏览器语言。"
+        "以您偏好的语言使用应用。未设置语言首选项时，将使用浏览器语言。"
       ]
     },
     "B6.Preferences.General.Labs.Localization.Name": {
@@ -4520,7 +4517,7 @@
         "无法加载所选语言。"
       ],
       "Failed to load language options. Please reload the app and try again.": [
-        "无法加载语言选项。请重新加载应用并重试。"
+        "无法加载语言选项。请重新加载应用，然后重试。"
       ]
     },
     "B6.Preferences.General.Language.Info": {
@@ -4528,10 +4525,10 @@
         "语言已切换为 ${ languageName }"
       ],
       "Use the app in your preferred language. Your browser language is used when no preference is set.": [
-        "以您偏好的语言使用应用。未设置首选项时，将使用浏览器语言。"
+        "以首选语言使用应用。未设置首选项时，将使用浏览器语言。"
       ],
       "Use the app in your preferred language. Your OS language is used when no preference is set.": [
-        "以您偏好的语言使用应用。未设置首选项时，将使用 OS 语言。"
+        "应用会以您首选的语言显示。未设置偏好时，将使用您的 OS 语言。"
       ]
     },
     "B6.Preferences.General.Language.Spotlight.ActionDismiss": {
@@ -4540,26 +4537,26 @@
       ]
     },
     "B6.Preferences.General.Language.Spotlight.ActionOpen": {
-      "Open language settings": [
-        "打开语言设置"
+      "Open language preferences": [
+        "打开语言首选项"
       ]
     },
     "B6.Preferences.General.Language.Spotlight.Info": {
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
-        "现在，您可以以偏好的语言使用应用。请在设置 → 通用 → 语言中开启此实验室功能。未设置首选项时，将使用浏览器语言。"
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your browser language is used when no preference is set.": [
+        "您现在可以使用首选语言来使用本应用。请在“首选项”→“常规”→“语言”中开启此实验室功能。未设置首选项时，将使用您的浏览器语言。"
       ],
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
-        "现在，您可以以偏好的语言使用应用。请在设置 → 通用 → 语言中开启此实验室功能。未设置首选项时，将使用 OS 语言。"
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your OS language is used when no preference is set.": [
+        "您现在可以使用首选语言来使用本应用。请在“首选项”→“常规”→“语言”中开启此实验室功能。未设置首选项时，将使用您的 OS 语言。"
       ]
     },
     "B6.Preferences.General.Language.Subtitle": {
       "App language": [
-        "应用语言"
+        "语言"
       ]
     },
     "B6.Preferences.General.Language.Title": {
-      "Language Settings": [
-        "语言设置"
+      "Language Preferences": [
+        "语言首选项"
       ]
     },
     "B6.Preferences.General.Placeholder": {
@@ -4567,7 +4564,7 @@
         "例如 ${ NOTE_TITLE_FORMAT_PATTERN_EXAMPLE }"
       ],
       "Select tag to save Moments to...": [
-        "选择要保存 Moments 的目标标签..."
+        "选择要将 Moments 保存到的标签…"
       ]
     },
     "B6.Preferences.General.Subtitle": {
@@ -4575,13 +4572,13 @@
         "启用"
       ],
       "Add all parent tags when adding a nested tag to a note": [
-        "向笔记添加嵌套标签时，添加其所有父级标签"
+        "为笔记添加嵌套标签时，同时添加所有父级标签"
       ],
       "Always ask before closing app (Android)": [
-        "关闭应用前总是询问 (Android)"
+        "关闭应用前始终询问（Android）"
       ],
       "Default image alignment in ${ SuperName } notes": [
-        "${ SuperName } 笔记的默认图像对齐方式"
+        "${ SuperName } 笔记中的默认图片对齐方式"
       ],
       "Note Type": [
         "笔记类型"
@@ -4596,10 +4593,10 @@
         "标题格式"
       ],
       "Use always-visible toolbar in ${ SuperName } notes": [
-        "在 ${ SuperName } 笔记中使用始终可见的工具栏"
+        "在 ${ SuperName } 笔记中始终显示工具栏"
       ],
       "Your personal photo journal": [
-        "您的个人照片日志"
+        "您的个人照片日记"
       ]
     },
     "B6.Preferences.General.Title": {
@@ -4607,10 +4604,10 @@
         "选择图标"
       ],
       "Defaults": [
-        "默认设置"
+        "默认值"
       ],
       "Edit Smart View \"${ viewTitle }\"": [
-        "编辑智能视图“${ viewTitle }”"
+        "编辑智能视图 \"${ viewTitle }\""
       ],
       "Labs": [
         "实验室"
@@ -4631,7 +4628,7 @@
         "升级以使用智能视图"
       ],
       "When opening the app, show...": [
-        "打开应用时显示..."
+        "打开应用时，显示……"
       ]
     },
     "B6.Preferences.HomeServer.Action": {
@@ -4656,57 +4653,57 @@
     },
     "B6.Preferences.HomeServer.Error": {
       "${ locationError }. Restoring to initial location in a moment...": [
-        "${ locationError }。即将恢复到初始位置……"
+        "${ locationError }。即将恢复到初始位置..."
       ],
       "Please start your home server before activating offline features.": [
-        "激活离线功能之前，请先启动您的主服务器。"
+        "请先启动主服务器，再激活离线功能。"
       ]
     },
     "B6.Preferences.HomeServer.Info": {
       "Accessible on local network at": [
-        "可在本地网络通过以下地址访问："
+        "可通过局域网访问："
       ],
       "Activate the Tailscale VPN on your mobile device.": [
-        "在您的移动设备上激活 Tailscale VPN。"
+        "在移动设备上激活 Tailscale VPN。"
       ],
       "Change your server's data location by selecting \"Change Location\" in the Home Server section above.": [
-        "在上方的主服务器部分中选择“更改位置”，即可更改服务器的数据存储位置。"
+        "在上方的主服务器部分选择“更改位置”，即可更改服务器数据的位置。"
       ],
       "Changing the port will require you to sign out of all existing sessions.": [
         "更改端口后，您需要登出所有现有会话。"
       ],
       "Download Tailscale on your mobile device and sign into your Tailscale account.": [
-        "在您的移动设备上下载 Tailscale，然后登录您的 Tailscale 账户。"
+        "在您的移动设备上下载 Tailscale，并登入您的 Tailscale 帐户。"
       ],
       "Enter your purchased offline subscription code to activate all the features offered by your home server, likes files support and ${ SuperName } notes.": [
-        "输入您购买的离线订阅代码，以启用主服务器提供的所有功能，例如文件支持和 ${ SuperName } 笔记。"
+        "输入您购买的离线订阅代码，以激活主服务器提供的所有功能，例如文件支持和 ${ SuperName } 笔记。"
       ],
       "For automatic backups, you can place your server's data inside of a synced cloud folder, like Dropbox, Tresorit, or iCloud Drive.": [
-        "要进行自动备份，您可以将服务器的数据放在同步的云文件夹中，例如 Dropbox、Tresorit 或 iCloud Drive。"
+        "如需自动备份，您可以将服务器数据放入已同步的云文件夹中，例如 Dropbox、Tresorit 或 iCloud Drive。"
       ],
       "Home server is enabled. All data is stored at:": [
-        "主服务器已启用。所有数据均存储于："
+        "主服务器已启用。所有数据均存储在："
       ],
       "In order to connect to a MySQL database, ensure that your system has MySQL installed. For detailed instructions, visit the": [
-        "若要连接到 MySQL 数据库，请确保您的系统已安装 MySQL。有关详细说明，请访问"
+        "要连接到 MySQL 数据库，请确保您的系统已安装 MySQL。如需详细说明，请访问"
       ],
       "Open ${ AppName } on your mobile device and sign into your home server by specifying the sync server URL during sign in. The URL will be the Tailscale-based IP address of this computer, followed by the port number of your home server. For example, if your computer Tailscale IP address is 100.112.45.106 and your home server is running on port 3127, your sync server URL will be http://100.112.45.106:3127.": [
-        "在移动设备上打开 ${ AppName }，并在登录时指定同步服务器 URL，即可登录您的主服务器。该 URL 将是此计算机基于 Tailscale 的 IP 地址，后跟主服务器的端口号。例如，如果您计算机的 Tailscale IP 地址为 100.112.45.106，且主服务器在端口 3127 上运行，则您的同步服务器 URL 为 http://100.112.45.106:3127。"
+        "请在移动设备上打开 ${ AppName }，并在登入时指定同步服务器 URL 来登入主服务器。该 URL 将是此计算机基于 Tailscale 的 IP 地址，后接主服务器的端口号。例如，如果您的计算机的 Tailscale IP 地址为 100.112.45.106，且主服务器运行在端口 3127 上，那么您的同步服务器 URL 将是 http://100.112.45.106:3127。"
       ],
       "Restart your home server.": [
-        "重新启动您的主服务器。"
+        "请重启您的主服务器。"
       ],
       "Select a cloud drive to store your server's data in.": [
-        "选择一个云端硬盘来存储服务器数据。"
+        "选择用于存储服务器数据的云端硬盘。"
       ],
       "You are not currently signed into your home server. To use your home server, sign in or register using ${ url }": [
-        "您当前未登录主服务器。要使用主服务器，请使用 ${ url } 登录或注册。"
+        "您当前未登入主服务器。要使用主服务器，请通过 ${ url } 登入或注册。"
       ],
       "You are not currently signed into your home server. To use your home server, sign out of ${ email }, then sign in or register using ${ url }.": [
-        "您目前尚未登录主服务器。要使用主服务器，请先登出 ${ email }，然后通过 ${ url } 登录或注册。"
+        "你当前未登入主服务器。要使用主服务器，请先登出 ${ email }，然后使用 ${ url } 登入或注册。"
       ],
       "Your ${ AppName } data is always end-to-end encrypted on disk, so your cloud provider will not be able to read your notes or files.": [
-        "您的 ${ AppName } 数据始终在磁盘上进行端到端加密，因此您的云服务提供商将无法读取您的笔记或文件。"
+        "您的 ${ AppName } 数据在磁盘上始终处于端到端加密状态，因此您的云服务提供商无法读取您的笔记或文件。"
       ],
       "Your home server is offline.": [
         "您的主服务器处于离线状态。"
@@ -4735,7 +4732,7 @@
         "MySQL"
       ],
       "Register on ${ tailscaleLink } for free.": [
-        "免费注册 ${ tailscaleLink }。"
+        "在 ${ tailscaleLink } 上免费注册。"
       ],
       "SQLite": [
         "SQLite"
@@ -4752,7 +4749,7 @@
         "加密服务器密钥"
       ],
       "host": [
-        "主机地址"
+        "主机"
       ],
       "JWT Secret": [
         "JWT 密钥"
@@ -4784,7 +4781,7 @@
         "正在应用更改并重启..."
       ],
       "Download Tailscale on this computer and complete the Tailscale setup wizard until you are presented with the IP address of your computer. It should start with something like 100.xxx...": [
-        "在此计算机上下载 Tailscale 并完成 Tailscale 设置向导，直到显示计算机的 IP 地址。该地址应以类似 100.xxx... 的内容开头。"
+        "在此计算机上下载 Tailscale 并完成 Tailscale 设置向导，直到出现您计算机的 IP 地址。该地址应以类似 100.xxx... 的内容开头。"
       ],
       "Not Set": [
         "未设置"
@@ -4796,21 +4793,21 @@
         "在线"
       ],
       "Shutting down...": [
-        "正在关闭…"
+        "正在关闭……"
       ],
       "Starting...": [
         "正在启动..."
       ],
       "You are currently signed into your home server under ${ email }": [
-        "您当前已使用 ${ email } 登录主服务器"
+        "您当前已使用 ${ email } 登入主服务器"
       ]
     },
     "B6.Preferences.HomeServer.Subtitle": {
       "Accessing your home server while on the go is easy and secure with Tailscale.": [
-        "借助 Tailscale，您可以轻松、安全地随时随地访问主服务器。"
+        "借助 Tailscale，您可以随时随地轻松、安全地访问主服务器。"
       ],
       "Auth JWT Secret": [
-        "身份验证 JWT 密钥"
+        "Auth JWT 密钥"
       ],
       "Database Host": [
         "数据库主机"
@@ -4840,10 +4837,10 @@
         "端口"
       ],
       "Pseudo Params Key": [
-        "伪参数密钥"
+        "伪参数键"
       ],
       "Sync your data on a private cloud running on your home computer.": [
-        "在家庭计算机上运行的私有云中同步您的数据。"
+        "在运行于家用计算机的私有云上同步您的数据。"
       ],
       "Valet Token Secret": [
         "Valet Token 密钥"
@@ -4857,7 +4854,7 @@
         "高级设置"
       ],
       "Backing up your data": [
-        "备份您的数据"
+        "正在备份您的数据"
       ],
       "Database": [
         "数据库"
@@ -4888,19 +4885,19 @@
     },
     "B6.Preferences.Listed.Info": {
       "${ ListedName } is a free blogging platform that allows you to create a public journal published directly from your notes.": [
-        "${ ListedName } 是一个免费的博客平台，可让您直接从笔记发布公开日志。"
+        "${ ListedName } 是一个免费的博客平台，可让您直接通过笔记创建并发布公开日志。"
       ],
       "${ ListedName } will permanently shut down on December 31, 2026.": [
         "${ ListedName } 将于 2026 年 12 月 31 日永久关闭。"
       ],
       "Note: The ${ ListedName } platform will permanently shut down December 31, 2026. Your data published on ${ ListedName } will still be available in your personal ${ AppName } account.": [
-        "注意：${ ListedName } 平台将于 2026 年 12 月 31 日永久关闭。您在 ${ ListedName } 上发布的数据仍可在您的个人 ${ AppName } 帐户中使用。"
+        "注意：${ ListedName } 平台将于 2026 年 12 月 31 日永久关闭。您在 ${ ListedName } 上发布的数据仍可在您的个人 ${ AppName } 帐户中获取。"
       ],
       "To get started, sign in or register for a ${ AppName } account.": [
-        "如需开始使用，请登录或注册 ${ AppName } 账户。"
+        "要开始使用，请登入或注册 ${ AppName } 帐户。"
       ],
       "Your new ${ ListedName } blog has been successfully created! You can publish a new post to your blog from ${ AppName } via the <i>Actions</i> menu in the editor pane. Open your blog settings to begin setting it up.": [
-        "您的 ${ ListedName } 博客已成功创建！您可以在 ${ AppName } 中通过编辑器窗格的 <i>操作</i> 菜单向博客发布新帖子。打开博客设置即可开始配置。"
+        "你的新 ${ ListedName } 博客已成功创建！你可以通过编辑器窗格中的<i>操作</i>菜单，从 ${ AppName } 向博客发布新帖子。打开博客设置即可开始配置。"
       ]
     },
     "B6.Preferences.Listed.Status": {
@@ -4933,7 +4930,7 @@
         "确认"
       ],
       "Create a free ${ ListedName } author account to get started.": [
-        "创建免费的 ${ ListedName } 作者账户，即可开始使用。"
+        "创建免费的 ${ ListedName } 作者帐户以开始使用。"
       ],
       "Download URL": [
         "下载 URL"
@@ -4945,7 +4942,7 @@
         "打开博客"
       ],
       "Open Downloads": [
-        "打开下载内容"
+        "打开下载文件夹"
       ],
       "Open preferences": [
         "打开首选项"
@@ -4959,10 +4956,10 @@
     },
     "B6.Preferences.Other.Error": {
       "Failed to install plugin": [
-        "安装插件失败"
+        "插件安装失败"
       ],
       "Plugins may not be actively maintained. ${ AppName } cannot attest to the quality or user experience of these plugins, and is not responsible for any data loss that may arise from their use.": [
-        "这些插件可能不再得到积极维护。${ AppName } 无法保证这些插件的质量或用户体验，且对因使用它们而可能造成的任何数据丢失概不负责。"
+        "插件可能未得到积极维护。${ AppName } 无法保证这些插件的质量或用户体验，并且对因使用这些插件而可能导致的任何数据丢失不承担责任。"
       ]
     },
     "B6.Preferences.Other.Info": {
@@ -4993,10 +4990,10 @@
         "输入插件 URL"
       ],
       "Extension Type": [
-        "插件类型"
+        "扩展程序类型"
       ],
       "General": [
-        "常规"
+        "通用"
       ],
       "Get a free month": [
         "免费获得一个月"
@@ -5046,7 +5043,7 @@
     },
     "B6.Preferences.Other.Subtitle": {
       "Bug Fixes": [
-        "问题修复"
+        "Bug 修复"
       ],
       "Features": [
         "功能"
@@ -5066,7 +5063,7 @@
         "浏览插件"
       ],
       "Confirm Extension": [
-        "确认插件"
+        "确认扩展程序"
       ],
       "Install Custom Plugin": [
         "安装自定义插件"
@@ -5075,7 +5072,7 @@
         "管理插件"
       ],
       "Preferences": [
-        "首选项"
+        "偏好设置"
       ]
     },
     "B6.Preferences.Plugins.Confirmation": {
@@ -5091,12 +5088,12 @@
         "${ pluginName } 已成功安装。"
       ],
       "Plugins run in a secure sandbox and can only access data you allow it. Note types allow specialized editing experiences, but in most cases, the built-in ${ SuperName } note type can encapsulate any functionality found in plugins.": [
-        "插件在安全沙盒中运行，只能访问您允许其访问的数据。笔记类型可提供专门的编辑体验，但在大多数情况下，内置的 ${ SuperName } 笔记类型可以涵盖插件中的所有功能。"
+        "插件在安全的沙盒中运行，只能访问您允许其访问的数据。笔记类型可提供专门的编辑体验，但在大多数情况下，内置的 ${ SuperName } 笔记类型即可涵盖插件中的任何功能。"
       ]
     },
     "B6.Preferences.Plugins.Label": {
       "by": [
-        "作者："
+        "作者"
       ],
       "Uninstall": [
         "卸载"
@@ -5140,7 +5137,7 @@
         "停用多任务隐私保护"
       ],
       "Disable Multitasking/Screenshot Privacy": [
-        "停用多任务/截图隐私保护"
+        "停用多任务/截图隐私"
       ],
       "Enable Biometrics Lock": [
         "启用生物识别锁"
@@ -5149,10 +5146,10 @@
         "启用多任务隐私保护"
       ],
       "Enable Multitasking/Screenshot Privacy": [
-        "启用多任务/截图隐私保护"
+        "启用多任务/截屏隐私保护"
       ],
       "End Unprotected Access": [
-        "结束未受保护的访问"
+        "结束无保护访问"
       ],
       "Export": [
         "导出"
@@ -5186,7 +5183,7 @@
     },
     "B6.Preferences.Security.Error": {
       "${ erroredItems.length } items are errored and could not be decrypted.": [
-        "${ erroredItems.length } 个项目出错，无法解密。"
+        "有 ${ erroredItems.length } 个项目出错，无法解密。"
       ],
       "Could not prepare security key registration": [
         "无法准备安全密钥注册"
@@ -5203,16 +5200,16 @@
         "${ contentTypeDisplay } 创建于 ${ createdAtString }"
       ],
       "Actions like viewing or searching protected notes, exporting decrypted backups, or revoking an active session require additional authentication such as entering your account password or application passcode.": [
-        "查看或搜索受保护的笔记、导出解密后的备份、或撤销活动会话等操作需要额外的身份验证，例如输入账号密码或应用程序密码。"
+        "查看或搜索受保护的笔记、导出已解密的备份、撤销活动会话等操作需要额外的身份验证，例如输入您的账号密码或应用程序密码。"
       ],
       "Add a passcode to lock the application and encrypt on-device key storage.": [
         "添加密码以锁定应用并加密设备上的密钥存储空间。"
       ],
       "An extra layer of security when logging in to your account.": [
-        "登录账户时的额外安全保障。"
+        "登录帐户时增加一层额外的安全保护。"
       ],
       "Authenticate with a hardware security key such as YubiKey.": [
-        "使用 YubiKey 等硬件安全密钥进行身份验证。"
+        "使用硬件安全密钥（例如 YubiKey）进行身份验证。"
       ],
       "Incorrect authentication code, please try again.": [
         "身份验证码不正确，请重试。"
@@ -5230,43 +5227,58 @@
         "最后修改：${ updatedAtString }"
       ],
       "Passcode lock is enabled.": [
-        "密码锁定已启用。"
+        "密码锁已启用。"
       ],
       "Please visit the web app in order to add a hardware security key.": [
-        "请访问 Web 应用以添加硬件安全密钥。"
+        "请访问网络应用以添加硬件安全密钥。"
       ],
       "Save your secret key ${ safeStorageLink }:": [
-        "将您的密钥保存到 ${ safeStorageLink }："
+        "保存您的密钥 ${ safeStorageLink }："
       ],
       "Sign in or register for an account to configure 2FA.": [
-        "登录或注册账户以配置双重验证 (2FA)。"
+        "请登入或注册帐户以配置双重验证。"
       ],
       "Sign in or register for an account to configure hardware security keys.": [
-        "请登录或注册账户，以配置硬件安全密钥。"
+        "请登入或注册帐户以配置硬件安全密钥。"
       ],
       "Some apps, like Google Authenticator, do not back up and restore your secret keys if you lose your device or get a new one.": [
-        "部分应用（例如 Google Authenticator）无法在您丢失或更换设备时备份和恢复密钥。"
+        "某些应用（例如 Google Authenticator）在您丢失设备或更换新设备时，不会备份和恢复您的密钥。"
       ],
       "somewhere safe": [
         "安全的地方"
       ],
       "The autolock timer begins when the window or tab loses focus.": [
-        "自动锁定计时器会在窗口或标签页失去焦点时启动。"
+        "当窗口或标签页失去焦点时，自动锁定计时器开始计时。"
       ],
       "Two-factor authentication has been successfully enabled for your account.": [
-        "已成功为您的账户启用双因素身份验证。"
+        "您的帐户已成功启用双因素身份验证。"
       ],
       "User agent logging allows you to identify the devices or browsers signed into your account. For increased privacy, you can disable this feature, which will remove all saved user agent values from our server, and disable future logging of this value.": [
-        "用户代理日志记录可帮助您识别登录账户的设备或浏览器。为了更好地保护隐私，您可以停用此功能，这将从我们的服务器中移除所有已保存的用户代理值，并停止今后对该值的日志记录。"
+        "用户代理日志记录功能可让您识别已登入帐户的设备或浏览器。为了增强隐私，您可以停用此功能，这将从我们的服务器上移除所有已保存的用户代理值，并停止今后记录此值。"
       ],
       "You can use this key to generate codes if you lose access to your authenticator app.": [
         "如果您无法访问身份验证器应用，可以使用此密钥生成代码。"
       ],
       "You must enable two-factor authentication before adding a hardware security key.": [
-        "添加硬件安全密钥之前，必须先启用双因素身份验证。"
+        "添加硬件安全密钥前，您必须先启用双因素身份验证。"
       ]
     },
     "B6.Preferences.Security.Label": {
+      "${ archivedCount } archived note": [
+        "${ archivedCount } 条已归档笔记"
+      ],
+      "${ deletedCount } trashed note": [
+        "${ deletedCount } 条废件箱中的笔记"
+      ],
+      "${ filesTotal } file": [
+        "${ filesTotal } 个文件"
+      ],
+      "${ notesCount } note": [
+        "${ notesCount } 笔记"
+      ],
+      "${ tagsCount } tag": [
+        "${ tagsCount } 个标签"
+      ],
       "authentication code": [
         "身份验证码"
       ],
@@ -5286,7 +5298,7 @@
         "或"
       ],
       "Require Biometrics": [
-        "要求生物识别"
+        "需要生物识别"
       ],
       "Require Passcode": [
         "需要密码"
@@ -5298,7 +5310,7 @@
         "密钥"
       ],
       "Verify the ${ authenticationCodeBold } generated by your authenticator app:": [
-        "验证您的身份验证器应用生成的 ${ authenticationCodeBold }："
+        "请验证您的身份验证器应用生成的 ${ authenticationCodeBold }："
       ]
     },
     "B6.Preferences.Security.Placeholder": {
@@ -5314,7 +5326,7 @@
         "保护已启用。"
       ],
       "Unprotected access expires at ${ protectionsDisabledUntil }.": [
-        "停用保护后的访问将于 ${ protectionsDisabledUntil } 过期。"
+        "无保护访问将于 ${ protectionsDisabledUntil } 到期。"
       ]
     },
     "B6.Preferences.Security.Subtitle": {
@@ -5363,7 +5375,7 @@
         "密码自动锁定"
       ],
       "Passcode lock": [
-        "密码锁定"
+        "密码锁"
       ],
       "Privacy": [
         "隐私"
@@ -5372,10 +5384,10 @@
         "保护"
       ],
       "Step 1 of 3 - Scan QR code": [
-        "第 1 步（共 3 步）- 扫描二维码"
+        "第 1 步，共 3 步 - 扫描二维码"
       ],
       "Step 2 of 3 - Save secret key": [
-        "第 2 步（共 3 步）- 保存密钥"
+        "第 2 步，共 3 步 - 保存密钥"
       ],
       "Step 3 of 3 - Verification": [
         "第 3 步（共 3 步）- 验证"
@@ -5384,7 +5396,7 @@
         "已成功启用"
       ],
       "Two-factor authentication": [
-        "双因素身份验证"
+        "双因素身份验证 (2FA)"
       ],
       "Two-factor authentication not available": [
         "双因素身份验证不可用"
@@ -5392,7 +5404,7 @@
     },
     "B6.Preferences.Security.Warning": {
       "Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the \"Stay signed in\" option checked.": [
-        "临时会话不支持添加密码。请登出，然后勾选“保持登录状态”选项后重新登录。"
+        "临时会话不支持添加密码。请登出，然后勾选“保持登录状态”选项重新登入。"
       ]
     },
     "B6.Preferences.Subscription.Confirmation": {
@@ -5400,7 +5412,7 @@
         "该用户上传的所有文件都将被移除。此操作无法撤消。"
       ],
       "Are you sure you want to cancel this invitation?": [
-        "您确定要取消此邀请吗？"
+        "确定要取消此邀请吗？"
       ],
       "Cancel Invitation": [
         "取消邀请"
@@ -5408,22 +5420,22 @@
     },
     "B6.Preferences.Subscription.Error": {
       "An error occurred while sending the invite. Please try again or contact support if the issue persists.": [
-        "发送邀请时出现错误。请重试，若问题仍然存在，请联系支持团队。"
+        "发送邀请时发生错误。请重试；如果问题仍然存在，请联系客服。"
       ],
       "Cancelation already in progress.": [
-        "取消已在进行中。"
+        "取消操作已在进行中。"
       ],
       "Cannot close window until pending tasks are complete.": [
         "待处理任务完成前无法关闭窗口。"
       ],
       "Could not cancel invitation. Please try again or contact support if the issue persists.": [
-        "无法取消邀请。请重试，如果问题仍然存在，请联系支持团队。"
+        "无法取消邀请。请重试；如果问题仍然存在，请联系客服。"
       ],
       "The email you entered has an invalid format. Please review your input and try again.": [
-        "您输入的电子邮件格式无效。请检查输入内容后重试。"
+        "您输入的电子邮件格式无效。请检查您的输入并重试。"
       ],
       "There was an error when attempting to redirect you to the subscription page.": [
-        "尝试将您重定向到订阅页面时发生错误。"
+        "尝试将您重定向到订阅页面时出错。"
       ]
     },
     "B6.Preferences.Subscription.Info": {
@@ -5431,55 +5443,49 @@
         "有效邀请"
       ],
       "If an account is found with that email, they will receive an email with your invitation.": [
-        "如果找到使用该电子邮件的账户，对方将收到一封包含您邀请的电子邮件。"
+        "如果找到使用该电子邮件的帐户，对方将收到一封包含您邀请的电子邮件。"
       ],
       "Invitee Email": [
         "受邀者电子邮件"
       ],
       "Make your first subscription invite below.": [
-        "在下方创建您的首个订阅邀请。"
+        "请在下方发出您的首个订阅邀请。"
       ],
       "Note:": [
         "注意："
       ],
-      "out of": [
-        "/"
-      ],
       "Redirecting you to the subscription page...": [
-        "正在将您重定向到订阅页面…"
+        "正在将您重定向到订阅页面..."
       ],
       "Subscription": [
         "订阅"
       ],
-      "subscription invites.": [
-        "订阅邀请。"
-      ],
       "Subscription sharing": [
-        "订阅分享"
+        "订阅共享"
       ],
       "Subscription sharing is available only on the ${ ProfessionalPlanName } plan. Please upgrade in order to share your subscription.": [
-        "订阅分享仅适用于 ${ ProfessionalPlanName } 套餐，请升级以分享您的订阅。"
+        "订阅分享仅适用于 ${ ProfessionalPlanName } 套餐。请升级以分享您的订阅。"
       ],
       "The invitee must have an existing account with ${ AppName }. If they do not have an account yet, instruct them to make an account first.": [
-        "受邀者必须已拥有 ${ AppName } 账户。如果对方还没有账户，请告知对方先创建一个账户。"
+        "受邀者必须已有 ${ AppName } 帐户。如果对方还没有帐户，请让对方先创建一个帐户。"
       ],
       "This subscription has been shared with you and can only be managed by the owner.": [
-        "该订阅已与您分享，且只能由所有者管理。"
+        "此订阅已与你分享，只能由所有者管理。"
       ],
       "You don't have a ${ AppName } subscription yet.": [
         "您还没有 ${ AppName } 订阅。"
       ],
-      "You've used": [
-        "您已使用"
+      "You've used ${ usedInvitationsCount } out of ${ allowedInvitationsCount } subscription invite.": [
+        "您已使用 ${ usedInvitationsCount } 个订阅邀请，共 ${ allowedInvitationsCount } 个。"
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
-        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅已于 ${ expirationDateBold } 过期。如有需要，您可以在下方重新订阅。"
+        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅已于 ${ expirationDateBold } 过期。如您需要，可在下方重新订阅。"
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled and expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
-        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅已取消，并已于 ${ expirationDateBold } 过期。如有需要，您可以在下方重新订阅。"
+        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅已取消，并已于 ${ expirationDateBold } 过期。如需要，您可以在下方重新订阅。"
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription has been canceled but will remain valid until ${ expirationDateBold }. You may resubscribe below if you wish.": [
-        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅已取消，但在 ${ expirationDateBold } 之前仍然有效。如有需要，您可以在下方重新订阅。"
+        "您的 ${ appNameBold }${ subscriptionTierBold } 订阅已取消，但有效期将持续至 ${ expirationDateBold }。如需重新订阅，可在下方操作。"
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription will be renewed on ${ expirationDateBold }.": [
         "您的 ${ appNameBold }${ subscriptionTierBold } 订阅将于 ${ expirationDateBold } 续订。"
@@ -5493,7 +5499,7 @@
         "邀请"
       ],
       "Learn More": [
-        "了解更多"
+        "了解详情"
       ],
       "Manage subscription": [
         "管理订阅"
@@ -5504,7 +5510,7 @@
     },
     "B6.Preferences.Subscription.Status": {
       "Invite processed successfully.": [
-        "邀请已成功处理。"
+        "邀请已处理成功。"
       ]
     },
     "B6.Preferences.Subscription.Title": {
@@ -5550,7 +5556,7 @@
         "删除联系人"
       ],
       "Designate survivor": [
-        "指定继承人"
+        "指定幸存者"
       ],
       "Edit": [
         "编辑"
@@ -5565,7 +5571,7 @@
         "启用保险库共享"
       ],
       "Invite Selected Contacts": [
-        "邀请已选联系人"
+        "邀请选定的联系人"
       ],
       "Remove From Vault": [
         "从保险库中移除"
@@ -5577,12 +5583,12 @@
         "保存保险库"
       ],
       "Update Account": [
-        "更新账户"
+        "升级账户"
       ]
     },
     "B6.Preferences.Vaults.Confirmation": {
       "All items and files in this vault will be removed from your account.": [
-        "此保险库中的所有项目和文件都将从您的账户中移除。"
+        "此保险库中的所有项目和文件都将从您的帐户中移除。"
       ],
       "Are you sure you want to delete this contact?": [
         "您确认要删除此联系人吗？"
@@ -5602,10 +5608,10 @@
         "无法复制到剪贴板"
       ],
       "One or more subtags are in other vaults. Please remove those subtags from the vaults or move them to this vault first.": [
-        "一个或多个子标签位于其他保险库中。请先将这些子标签从相应保险库中移除，或将其移动到此保险库。"
+        "一个或多个子标签位于其他保险库中。请先将这些子标签从相应保险库中移除，或将它们移动到此保险库。"
       ],
       "This item is linked to other items that are not in the same vault. Please move those items to this vault first.": [
-        "此项目链接到的其他项目不在同一保险库中。请先将这些项目移至该保险库。"
+        "此项目链接到其他不在同一保险库中的项目。请先将这些项目移动到此保险库。"
       ],
       "Unable to create contact. Please try again.": [
         "无法创建联系人，请重试。"
@@ -5614,45 +5620,45 @@
         "无法删除保险库，请重试。"
       ],
       "Unable to leave vault. Please try again.": [
-        "无法离开保险库，请重试。"
+        "无法退出保险库，请重试。"
       ]
     },
     "B6.Preferences.Vaults.Info": {
       "Ask your contact for their ${ AppName } CollaborationID via secure email or chat. Then, enter it here to add them as a contact.": [
-        "请通过安全电子邮件或聊天向您的联系人索取其 ${ AppName } CollaborationID。然后在此输入，即可将其添加为联系人。"
+        "请通过安全电子邮件或聊天向您的联系人索取其 ${ AppName } CollaborationID，然后在此输入，将其添加为联系人。"
       ],
       "Choose your own key for your vault. This is an advanced option and is not recommended for most users.": [
-        "为您的保险库选择您自己的密钥。这是一个高级选项，不建议大多数用户使用。"
+        "为您的保险库选择自己的密钥。这是一项高级选项，不建议大多数用户使用。"
       ],
       "No contacts available to invite.": [
         "没有可邀请的联系人。"
       ],
       "Please upgrade in order to increase your vault limit.": [
-        "请升级以增加保险库上限。"
+        "请升级以增加您的保险库数量上限。"
       ],
       "The sender of this invite is not trusted. To accept this invite, first add the sender as a trusted contact.": [
-        "此邀请的发件人不受信任。如需接受此邀请，请先将该发件人添加为受信任联系人。"
+        "此邀请的发件人未受信任。要接受此邀请，请先将发件人添加为受信任联系人。"
       ],
       "The vault name and description are end-to-end encrypted.": [
-        "保险库名称和描述均经过端到端加密。"
+        "保险库名称和描述均采用端到端加密。"
       ],
       "Vault is locked.": [
         "保险库已锁定。"
       ],
       "Vaults that have no designated survivor will be deleted when the owner account is deleted. In order to ensure that no data is lost, please designate a survivor who will be transferred ownership of the vault.": [
-        "没有指定继承人的保险库将在所有者账户被删除时一并删除。为避免数据丢失，请指定一位继承人，保险库的所有权将转移给该继承人。"
+        "未指定幸存者的保险库将在所有者帐户被删除时一并删除。为确保不丢失任何数据，请指定幸存者，以便将保险库的所有权转移给该幸存者。"
       ],
       "Your vault key will be encrypted and saved locally on this device. You will need to manually enter your vault key on your other devices.": [
-        "您的保险库密钥将被加密并保存在此设备的本地。您需要在其他设备上手动输入保险库密钥。"
+        "你的保险库密钥将被加密并保存在此设备的本地。你需要手动在其他设备上输入保险库密钥。"
       ],
       "Your vault key will be encrypted and synced to your account and automatically available on your other devices.": [
-        "您的保险库密钥将被加密并同步到账户，并自动在您的其他设备上可用。"
+        "您的保险库密钥将被加密并同步到您的帐户，并自动在您的其他设备上可用。"
       ],
       "Your vault key will be randomly generated and synced to your account.": [
-        "您的保险库密钥将随机生成并同步到您的账户。"
+        "你的保险库密钥将被随机生成并同步到你的帐户。"
       ],
       "Your vault key will only be stored in memory and will be forgotten when you close the app. You will need to manually enter your vault key on your other devices.": [
-        "您的保险库密钥将仅存储在内存中，关闭应用后即会被遗忘。您需要在其他设备上手动输入保险库密钥。"
+        "您的保险库密钥将仅存储在内存中，关闭应用后便会丢失。您需要在其他设备上手动输入保险库密钥。"
       ]
     },
     "B6.Preferences.Vaults.Label": {
@@ -5669,13 +5675,13 @@
         "自定义（高级）"
       ],
       "Designated survivor": [
-        "指定继承人"
+        "指定幸存者"
       ],
       "Ephemeral": [
         "瞬态"
       ],
       "File storage used:": [
-        "文件存储空间用量："
+        "已用文件存储空间："
       ],
       "Invite Contacts": [
         "邀请联系人"
@@ -5687,13 +5693,13 @@
         "本地"
       ],
       "No designated survivor": [
-        "无指定继承人"
+        "未指定幸存者"
       ],
       "Pending Invites": [
         "待处理邀请"
       ],
       "Permission:": [
-        "权限："
+        "权限:"
       ],
       "Randomized (Recommended)": [
         "随机（推荐）"
@@ -5708,19 +5714,19 @@
         "已信任"
       ],
       "Trusted Sender:": [
-        "已信任发件人："
+        "已信任的发件人："
       ],
       "Unnamed contact": [
         "未命名联系人"
       ],
       "Untrusted": [
-        "未信任"
+        "未受信任"
       ],
       "Vault Description:": [
         "保险库描述："
       ],
       "Vault ID:": [
-        "保险库 ID："
+        "保险库 ID:"
       ],
       "Vault Info": [
         "保险库信息"
@@ -5753,21 +5759,21 @@
     },
     "B6.Preferences.Vaults.Subtitle": {
       "In order to use Vaults, you must update your account to use the latest data encryption version.": [
-        "要使用保险库，您必须将账户更新为使用最新的数据加密版本。"
+        "要使用保险库，您必须更新帐户以使用最新的数据加密版本。"
       ],
       "Share your CollaborationID with collaborators to join their vaults.": [
-        "与协作者分享您的 CollaborationID，即可加入他们的保险库。"
+        "与协作者分享您的 CollaborationID，以加入他们的保险库。"
       ]
     },
     "B6.Preferences.Vaults.Title": {
       "Account update required": [
-        "需要更新账户"
+        "需要更新帐户"
       ],
       "Add New Contact": [
         "添加新联系人"
       ],
       "Cannot move item to vault": [
-        "无法将项目移动到保险库"
+        "无法将项目移至保险库"
       ],
       "Choose icon": [
         "选择图标"
@@ -5782,7 +5788,7 @@
         "新建保险库"
       ],
       "Designate survivor": [
-        "指定继承人"
+        "指定幸存者"
       ],
       "Edit Contact": [
         "编辑联系人"
@@ -5843,10 +5849,10 @@
     },
     "B7.FilesSubscriptionHelp.Files.Confirmation": {
       "Delete Anyway": [
-        "仍要删除"
+        "仍然删除"
       ],
       "This file could not be deleted from the server, possibly because you are attempting to delete a file item that was imported from another account. Would you like to remove this file item from your account anyway? If you're sure the file is yours and still exists on the server, do not choose this option, and instead try to delete it again.": [
-        "无法从服务器删除此文件，可能是因为您尝试删除的文件项目是从其他账户导入的。是否仍要将此文件项目从您的账户中移除？如果您确定该文件属于您且仍存在于服务器上，请不要选择此选项，而应再次尝试删除。"
+        "无法从服务器删除此文件，可能是因为你尝试删除的是从其他帐户导入的文件项目。是否仍要从你的帐户中移除此文件项目？如果你确定该文件属于你且仍存在于服务器上，请不要选择此选项，而应尝试再次删除。"
       ],
       "Unable to Delete": [
         "无法删除"
@@ -5854,7 +5860,7 @@
     },
     "B7.FilesSubscriptionHelp.Files.Error": {
       "Could not attach file because selected note was deleted": [
-        "无法附加文件，因为所选笔记已被删除"
+        "无法附加文件，因为选中的笔记已被删除"
       ],
       "Could not close upload session": [
         "无法关闭上传会话"
@@ -5866,10 +5872,16 @@
         "无法移动文件"
       ],
       "Could not start upload session": [
-        "无法开始上传会话"
+        "无法启动上传会话"
+      ],
+      "Encrypted file storage requires an active subscription. Upgrade your plan to download and upload files.": [
+        "加密文件存储空间需要有效订阅。升级套餐即可下载和上传文件。"
+      ],
+      "Encrypted files are unavailable because your subscription has expired. Renew your subscription to download and upload files again.": [
+        "由于您的订阅已过期，加密文件不可用。续订订阅即可重新下载和上传文件。"
       ],
       "Failed to close an upload session.": [
-        "关闭上传会话失败。"
+        "无法关闭上传会话。"
       ],
       "Failed to create file token.": [
         "创建文件令牌失败。"
@@ -5881,13 +5893,13 @@
         "下载文件数据块失败。"
       ],
       "Failed to download files as archive": [
-        "将文件下载为存档失败"
+        "无法将文件作为存档下载"
       ],
       "Failed to push file bytes to server": [
-        "无法将文件字节推送到服务器"
+        "无法将文件字节推送至服务器"
       ],
       "Failed to start an upload session.": [
-        "启动上传会话失败。"
+        "无法启动上传会话。"
       ],
       "Failed to upload file chunk.": [
         "上传文件数据块失败。"
@@ -5895,20 +5907,32 @@
       "File is not in a shared vault": [
         "文件不在共享保险库中"
       ],
+      "Files cannot be uploaded because your subscription has expired. Renew your subscription to use encrypted file storage again.": [
+        "由于您的订阅已过期，无法上传文件。续订订阅即可重新使用加密文件存储空间。"
+      ],
+      "Files cannot be uploaded without an active subscription. Upgrade your plan to use encrypted file storage.": [
+        "没有有效订阅时无法上传文件。升级套餐即可使用加密文件存储空间。"
+      ],
       "Please use ${ FileSafeName } or the ${ BoldName } Editor to attach images and files. Learn more at ${ FileSafeHelpUrl }.": [
-        "请使用 ${ FileSafeName } 或 ${ BoldName } 编辑器来附加图像和文件。详情请访问 ${ FileSafeHelpUrl }。"
+        "请使用 ${ FileSafeName } 或 ${ BoldName } 编辑器来附加图像和文件，访问 ${ FileSafeHelpUrl } 了解更多。"
       ],
       "There was an error loading the file. Try again, or download the file and open it using another application.": [
-        "加载文件时出错。请重试，或下载文件并使用其他应用打开。"
+        "加载文件时出错。请重试，或下载该文件后使用其他应用打开。"
       ],
       "There was an error while downloading the file": [
-        "下载文件时出错"
+        "下载文件时出错。"
       ],
       "There was an error while uploading the file": [
         "上传文件时出错"
       ],
+      "This file cannot be downloaded because your subscription has expired. Renew your subscription to access your files again.": [
+        "由于您的订阅已过期，无法下载此文件。续订订阅即可重新访问您的文件。"
+      ],
+      "This file cannot be downloaded without an active subscription. Upgrade your plan to access encrypted files.": [
+        "没有有效订阅时无法下载此文件。升级套餐即可访问加密文件。"
+      ],
       "This file exceeds the limits supported in this browser. To upload files greater than ${ maxFileSizeInMegabytes }MB, please use the desktop application or the Chrome browser.": [
-        "此文件超出了当前浏览器支持的限制。如需上传大于 ${ maxFileSizeInMegabytes }MB 的文件，请使用桌面应用或 Chrome 浏览器。"
+        "此文件超出此浏览器支持的限制。要上传大于 ${ maxFileSizeInMegabytes }MB 的文件，请使用桌面应用或 Chrome 浏览器。"
       ]
     },
     "B7.FilesSubscriptionHelp.Files.Info": {
@@ -5916,10 +5940,10 @@
         "已选择 ${ count } 个文件"
       ],
       "Actions will be performed on all selected files.": [
-        "将对所有已选择的文件执行操作。"
+        "将对所有选定的文件执行操作。"
       ],
       "Add a passcode or create an account to require authentication to view this file.": [
-        "添加密码或创建账户，即可要求通过身份验证才能查看此文件。"
+        "添加密码或创建帐户，以便在查看此文件时要求进行身份验证。"
       ],
       "Attach to note": [
         "附加到笔记"
@@ -5937,7 +5961,7 @@
         "创建时间："
       ],
       "Decrease size": [
-        "缩小大小"
+        "减小大小"
       ],
       "Decrypted Size:": [
         "解密后大小："
@@ -5946,31 +5970,31 @@
         "已删除文件 \"${ fileName }\""
       ],
       "Deleting file \"${ fileName }\"...": [
-        "正在删除文件“${ fileName }”..."
+        "正在删除文件 \"${ fileName }\"..."
       ],
       "Detach from note": [
-        "从笔记分离"
+        "从笔记中分离"
       ],
       "Downloading \"${ truncatedFileName }\"": [
-        "正在下载“${ truncatedFileName }”"
+        "正在下载 \"${ truncatedFileName }\""
       ],
       "Downloading ${ fileCount } files as archive": [
-        "正在将 ${ fileCount } 个文件下载为存档"
+        "正在将 ${ fileCount } 个文件作为存档下载"
       ],
       "Downloading file \"${ fileName }\"": [
-        "正在下载文件\"${ fileName }\""
+        "正在下载文件 \"${ fileName }\""
       ],
       "Downloading file \"${ fileName }\" (0%)": [
-        "正在下载文件\"${ fileName }\" (0%)"
+        "正在下载文件 \"${ fileName }\" (0%)"
       ],
       "Drop your files to upload and link them to the current file": [
-        "拖放文件即可上传，并将其链接到当前文件"
+        "拖放文件即可上传并将其链接到当前文件"
       ],
       "Drop your files to upload them": [
-        "拖放文件以上传"
+        "拖放文件即可上传"
       ],
       "Encrypted Size:": [
-        "已加密大小："
+        "加密后大小："
       ],
       "File context menu": [
         "文件上下文菜单"
@@ -5982,19 +6006,19 @@
         "文件信息"
       ],
       "File not backed up locally": [
-        "文件未备份到本地"
+        "文件未在本地备份"
       ],
       "File options panel": [
         "文件选项面板"
       ],
       "Files attached to your notes appear here. You can also upload files directly from this page.": [
-        "附加到笔记的文件会显示在此处。您也可以直接从此页面上传文件。"
+        "附加到笔记的文件会显示在这里。您也可以直接从此页面上传文件。"
       ],
       "Increase size": [
-        "放大"
+        "增大尺寸"
       ],
       "Last Modified:": [
-        "最后修改时间:"
+        "最后修改时间："
       ],
       "Loading...": [
         "正在加载..."
@@ -6006,7 +6030,7 @@
         "密码保护"
       ],
       "Preparing archive...": [
-        "正在准备存档…"
+        "正在准备存档..."
       ],
       "Rename": [
         "重命名"
@@ -6024,7 +6048,7 @@
         "已成功下载文件"
       ],
       "Successfully downloaded file \"${ fileName }\"": [
-        "已成功下载文件“${ fileName }”"
+        "已成功下载文件 \"${ fileName }\""
       ],
       "Successfully downloaded file from local backup": [
         "已成功从本地备份下载文件"
@@ -6036,7 +6060,7 @@
         "无法预览此文件。"
       ],
       "This file is protected.": [
-        "此文件已受保护。"
+        "此文件受保护。"
       ],
       "This file is readonly": [
         "此文件为只读"
@@ -6045,25 +6069,25 @@
         "无法预览此视频。"
       ],
       "To view this file, download it and open it using another application.": [
-        "要查看此文件，请下载该文件并使用其他应用打开。"
+        "要查看此文件，请将其下载并使用其他应用打开。"
       ],
       "Total Size:": [
         "总大小："
       ],
       "Try again": [
-        "重试"
+        "请重试"
       ],
       "Type:": [
         "类型:"
       ],
       "Uploaded file \"${ uploadedFileName }\"": [
-        "已上传文件“${ uploadedFileName }”"
+        "已上传文件 \"${ uploadedFileName }\""
       ],
       "Uploading file \"${ fileName }\"": [
-        "正在上传文件“${ fileName }”"
+        "正在上传文件 \"${ fileName }\""
       ],
       "Uploading file \"${ fileName }\" (${ percentComplete }%)": [
-        "正在上传文件 \"${ fileName }\" (${ percentComplete }%)"
+        "正在上传文件“${ fileName }” (${ percentComplete }%)"
       ],
       "View file": [
         "查看文件"
@@ -6089,7 +6113,7 @@
         "居中对齐"
       ],
       "Close modal": [
-        "关闭模态窗口"
+        "关闭弹窗"
       ],
       "Done": [
         "完成"
@@ -6113,10 +6137,10 @@
         "文件选项菜单"
       ],
       "File preview modal": [
-        "文件预览窗口"
+        "文件预览弹窗"
       ],
       "Left align": [
-        "左对齐"
+        "向左对齐"
       ],
       "Open": [
         "打开"
@@ -6125,7 +6149,7 @@
         "重命名文件"
       ],
       "Right align": [
-        "右对齐"
+        "向右对齐"
       ],
       "Show file info": [
         "显示文件信息"
@@ -6156,52 +6180,52 @@
         "捕获可见内容"
       ],
       "Clip article": [
-        "剪藏文章"
+        "剪辑文章"
       ],
       "Clip as screenshot": [
-        "剪藏为截图"
+        "剪辑为截图"
       ],
       "Clip full page": [
-        "剪藏整个页面"
+        "剪辑整个页面"
       ],
       "Clip text selection": [
-        "剪藏所选文本"
+        "剪辑所选文本"
       ],
       "Select elements to capture": [
         "选择要捕获的元素"
       ],
       "Select elements to clip": [
-        "选择要剪藏的元素"
+        "选择要剪辑的元素"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Confirmation": {
       "Account related issue?": [
-        "遇到账户相关问题？"
+        "帐户相关问题？"
       ],
       "Can I collaborate with others on a note?": [
-        "我可以与其他人协作处理笔记吗？"
+        "我可以与他人协作处理笔记吗？"
       ],
       "Can I use ${ AppName } totally offline?": [
-        "我可以在完全离线的情况下使用 ${ AppName } 吗？"
+        "我可以完全离线使用 ${ AppName } 吗？"
       ],
       "Can’t find your question here?": [
-        "在这里找不到您的问题？"
+        "找不到您的问题？"
       ],
       "Who can read my private notes?": [
-        "谁可以阅读我的私有笔记？"
+        "谁能阅读我的私有笔记？"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Error": {
       "No content to clip": [
-        "没有可剪藏的内容"
+        "没有可剪辑的内容"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Info": {
       "${ AppName } can be used totally offline without an account, and without an internet connection. You can find ${ offlineHelpLink }": [
-        "${ AppName } 可以完全离线使用，无需帐户，也无需互联网连接。您可以查看 ${ offlineHelpLink }"
+        "${ AppName } 可完全离线使用，无需帐户，也无需互联网连接。您可以查看 ${ offlineHelpLink }"
       ],
       "Because of our encrypted architecture, ${ AppName } does not currently provide a real-time collaboration solution. Multiple users can share the same account however, but editing at the same time may result in sync conflicts, which may result in the duplication of notes.": [
-        "由于采用加密架构，${ AppName } 目前暂不提供实时协作解决方案。不过，多个用户可以共用同一账户，但同时编辑可能导致同步冲突，进而造成笔记重复。"
+        "由于我们的加密架构，${ AppName } 目前不提供实时协作解决方案。不过，多个用户可以共享同一帐户，但同时编辑可能会导致同步冲突，进而造成笔记重复。"
       ],
       "Community forum": [
         "社区论坛"
@@ -6213,25 +6237,25 @@
         "常见问题"
       ],
       "If you have an issue, found a bug or want to suggest a feature, you can browse or post to the forum. It’s recommended for non-account related issues.": [
-        "如果您遇到问题、发现了缺陷或想要建议新功能，可以在论坛中浏览或发帖。该论坛推荐用于与账户无关的问题。"
+        "如果您遇到问题、发现了错误，或想建议某项功能，可以浏览论坛或发帖。建议用于与帐户无关的问题。"
       ],
       "more details here.": [
-        "更多详细信息。"
+        "更多详细信息请见此处。"
       ],
       "Note clipped successfully": [
-        "已成功剪藏笔记"
+        "已成功剪辑笔记"
       ],
       "Privacy Manifesto.": [
         "隐私宣言。"
       ],
       "Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read ${ privacyPolicyLink }": [
-        "很简单：除了您，没有别人。不是我们，不是您的 ISP，不是黑客，也不是政府机构。只要您妥善保管密码，且密码强度足够，那么您就是世界上唯一能够解密您笔记的人。如需进一步了解我们如何处理您的隐私与安全，请查看我们通俗易懂的 ${ privacyPolicyLink }"
+        "简单来说：除了您，没有别人。不是我们，不是您的 ISP，不是黑客，也不是政府机构。只要您妥善保管密码，并且密码足够强，世界上就只有您能够解密您的笔记。如需进一步了解我们如何处理您的隐私和安全，请查看我们易于阅读的 ${ privacyPolicyLink }"
       ],
       "Send an email to ${ SupportEmail } and we’ll sort it out.": [
-        "发送电子邮件至 ${ SupportEmail }，我们会为您解决。"
+        "请发送电子邮件至 ${ SupportEmail }，我们会帮您解决。"
       ],
       "Want to meet other passionate note-takers and privacy enthusiasts? Want to share your feedback with us? Join the ${ AppName } Discord for discussions on security, themes, editors and more.": [
-        "想结识其他热爱笔记和隐私的热心用户？想与我们分享您的反馈？加入 ${ AppName } Discord，一起讨论安全、主题、编辑器等更多话题。"
+        "想认识其他热情的笔记爱好者和隐私爱好者吗？想与我们分享反馈吗？加入 ${ AppName } Discord，参与有关安全、主题、编辑器及更多内容的讨论。"
       ]
     },
     "B7.FilesSubscriptionHelp.Help.Label": {
@@ -6248,7 +6272,7 @@
         "加入我们的 Discord"
       ],
       "Open FAQ": [
-        "打开 FAQ"
+        "打开常见问题"
       ],
       "Privacy Policy": [
         "隐私政策"
@@ -6262,7 +6286,7 @@
     },
     "B7.FilesSubscriptionHelp.Help.Placeholder": {
       "Select tag to save clipped notes to...": [
-        "选择要保存剪藏笔记的目标标签..."
+        "选择要保存剪辑笔记的目标标签..."
       ]
     },
     "B7.FilesSubscriptionHelp.Subscription.Action": {
@@ -6282,12 +6306,12 @@
         "升级"
       ],
       "Upgrade Features": [
-        "升级功能"
+        "升级以解锁功能"
       ]
     },
     "B7.FilesSubscriptionHelp.Subscription.Error": {
       "An unknown issue occurred during offline activation. Please download your activation code again and try once more.": [
-        "离线激活时发生未知问题。请重新下载激活码，然后重试。"
+        "离线激活过程中发生未知问题。请重新下载激活代码，然后再试一次。"
       ],
       "Could not accept invitation.": [
         "无法接受邀请。"
@@ -6305,16 +6329,16 @@
         "无法加载购买流程 URL。"
       ],
       "Failed to access purchase flow.": [
-        "访问购买流程失败。"
+        "无法访问购买流程。"
       ],
       "Failed to get offline features.": [
         "无法获取离线功能。"
       ],
       "Failed to get subscription's information.": [
-        "无法获取订阅信息。"
+        "获取订阅信息失败。"
       ],
       "There was an error confirming your purchase. Please contact support at ${ SupportEmail }.": [
-        "确认您的购买时发生错误。请通过 ${ SupportEmail } 联系支持团队。"
+        "确认您的购买时出错。请通过 ${ SupportEmail } 联系支持。"
       ],
       "Your purchase was canceled or failed. Please try again.": [
         "您的购买已取消或失败。请重试。"
@@ -6337,76 +6361,76 @@
         "${ MarkdownEditorName } 替代方案"
       ],
       "${ MarkdownEditorName } with Math": [
-        "支持数学公式的 ${ MarkdownEditorName }"
+        "${ MarkdownEditorName }（支持数学公式）"
       ],
       "100GB encrypted file storage": [
-        "100 GB 加密文件存储空间"
+        "100GB 加密文件存储空间"
       ],
       "365 days note history": [
         "365 天笔记记录"
       ],
       "A ${ PlusPlanName } or ${ ProPlanName } plan is required to enable Tag folders.": [
-        "需要 ${ PlusPlanName } 或 ${ ProPlanName } 套餐才能启用标签文件夹。"
+        "启用标签文件夹需要 ${ PlusPlanName } 或 ${ ProPlanName } 套餐。"
       ],
       "A beautiful split-pane Markdown editor with synced-scroll, LaTeX support, and colorful syntax.": [
-        "一款美观的分栏 Markdown 编辑器，支持同步滚动、LaTeX 和多彩的语法高亮。"
+        "一款美观的分屏 Markdown 编辑器，支持同步滚动、LaTeX 和彩色语法高亮。"
       ],
       "A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.": [
-        "一款功能齐全的 Markdown 编辑器，支持实时预览、样式工具栏和分屏功能。"
+        "功能齐全的 Markdown 编辑器，支持实时预览、样式工具栏和分屏。"
       ],
       "A Markdown editor with dynamic split-pane preview.": [
-        "具有动态分屏预览功能的 Markdown 编辑器。"
+        "支持动态分屏预览的 Markdown 编辑器。"
       ],
       "A minimal Markdown editor with live rendering and in-text search via Ctrl/Cmd + F": [
-        "一款极简 Markdown 编辑器，支持实时渲染，并可通过 Ctrl/Cmd + F 进行文中搜索"
+        "简洁的 Markdown 编辑器，支持实时渲染，并可通过 Ctrl/Cmd + F 进行文内搜索"
       ],
       "A powerful spreadsheet editor with formatting and formula support. Not recommended for large data sets, as encryption of such data may decrease editor performance.": [
         "功能强大的电子表格编辑器，支持格式设置和公式。不建议用于大型数据集，因为对此类数据进行加密可能会降低编辑器性能。"
       ],
       "A simple and peaceful rich editor that helps you write and think clearly.": [
-        "一款简洁宁静的富文本编辑器，帮助您清晰地写作与思考。"
+        "一款简洁而宁静的富文本编辑器，帮助您清晰地书写和思考。"
       ],
       "A WYSIWYG-style Markdown editor that renders Markdown in preview-mode while you type without displaying any syntax.": [
-        "一款 WYSIWYG 风格的 Markdown 编辑器，可在您输入时以预览模式呈现 Markdown，且不显示任何语法。"
+        "一款所见即所得风格的 Markdown 编辑器，可在您输入时以预览模式渲染 Markdown，而不显示任何语法。"
       ],
       "Access to all note types, including ${ SuperName }, ${ MarkdownEditorName }, ${ RichTextEditorName }, ${ AuthenticatorName }, ${ ChecklistEditorName }, and ${ SpreadsheetName }": [
-        "可访问所有笔记类型，包括 ${ SuperName }、${ MarkdownEditorName }、${ RichTextEditorName }、${ AuthenticatorName }、${ ChecklistEditorName } 和 ${ SpreadsheetName }"
+        "访问所有笔记类型，包括 ${ SuperName }、${ MarkdownEditorName }、${ RichTextEditorName }、${ AuthenticatorName }、${ ChecklistEditorName } 和 ${ SpreadsheetName }"
       ],
       "Access to Daily Notebooks and Moments journals": [
         "访问每日笔记本和 Moments 日记"
       ],
       "Basic ${ MarkdownEditorName }": [
-        "基础 ${ MarkdownEditorName }"
+        "基础版 ${ MarkdownEditorName }"
       ],
       "Create smart filters for viewing notes matching specific criteria.": [
-        "创建智能筛选器，用于查看符合特定条件的笔记。"
+        "创建 Smart 筛选器，以便查看符合特定条件的笔记。"
       ],
       "Email backups": [
         "电子邮件备份"
       ],
       "Encrypt and protect your 2FA secrets for all your internet accounts. Authenticator handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.": [
-        "为所有互联网账户的双重验证密钥进行加密和保护。身份验证器会替您保管双重验证密钥，让您再也不会丢失它们，更换新设备时也无需从头开始。"
+        "加密并保护您所有互联网帐户的双重验证密钥。身份验证器会妥善保管您的双重验证密钥，让您不再丢失它们，也不必在更换新设备时从头开始。"
       ],
       "Encrypted attachments for your notes using your Dropbox, Google Drive, or WebDAV server. Limited to 50MB per file.": [
-        "使用您的 Dropbox、Google Drive 或 WebDAV 服务器为笔记添加加密附件。每个文件大小限制为 50 MB。"
+        "使用您的 Dropbox、Google Drive 或 WebDAV 服务器为笔记提供加密附件。每个文件最多 50MB。"
       ],
       "Encrypted files": [
         "已加密文件"
       ],
       "Enjoy your new powered up experience.": [
-        "尽情享受更强大的全新体验。"
+        "尽享全新升级体验。"
       ],
       "Files low storage tier": [
         "文件低存储空间层级"
       ],
       "Files maximum storage tier": [
-        "文件最大存储空间层级"
+        "文件最大存储层级"
       ],
       "Files medium storage tier": [
-        "文件中等存储空间层级"
+        "文件中级存储空间"
       ],
       "From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.": [
-        "从高亮显示到自定义字体大小和颜色，再到表格和列表，这款编辑器是打造任何文档的理想之选。"
+        "从高亮显示到自定义字体大小和颜色，再到表格和列表，这款编辑器非常适合撰写任何文档。"
       ],
       "Minimal ${ MarkdownEditorName }": [
         "极简 ${ MarkdownEditorName }"
@@ -6415,7 +6439,7 @@
         "为标签提供嵌套文件夹"
       ],
       "Note history going back indefinitely": [
-        "笔记记录可无限期回溯"
+        "可无限回溯的笔记记录"
       ],
       "Organize your tags into folders.": [
         "将标签整理到文件夹中。"
@@ -6424,10 +6448,10 @@
         "纯文本"
       ],
       "Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.": [
-        "订阅权益需要几分钟才能生效。订阅就绪后，应用中会显示确认提醒。"
+        "订阅权益需要几分钟才能激活。订阅就绪后，应用内会显示确认提示。"
       ],
       "Please upgrade your plan to access ${ featureNameLabel }": [
-        "请升级套餐以访问 ${ featureNameLabel }"
+        "请升级您的套餐以访问 ${ featureNameLabel }"
       ],
       "Plugin Gallery": [
         "插件库"
@@ -6439,7 +6463,7 @@
         "私有保险库"
       ],
       "Private vaults allow you to store notes, files and tags into separate, encrypted vaults.": [
-        "私有保险库让您能够将笔记、文件和标签存储在相互独立的加密保险库中。"
+        "私有保险库允许您将笔记、文件和标签存储到各自独立的已加密保险库中。"
       ],
       "Shared Vaults": [
         "共享保险库"
@@ -6454,10 +6478,10 @@
         "智能筛选器"
       ],
       "Smart Tags": [
-        "智能标签"
+        "Smart 标签"
       ],
       "Syntax highlighting and convenient keyboard shortcuts for over 120 programming languages. Ideal for code snippets and procedures.": [
-        "为 120 多种编程语言提供语法高亮和便捷的键盘快捷键。非常适合代码片段和操作流程。"
+        "为 120 多种编程语言提供语法高亮和便捷的键盘快捷键，非常适合代码片段和流程说明。"
       ],
       "Tag folders": [
         "标签文件夹"
@@ -6466,16 +6490,16 @@
         "标签嵌套"
       ],
       "The ${ ProfessionalPlanName } Plan costs $119.99/year and includes benefits like": [
-        "${ ProfessionalPlanName } 套餐价格为 $119.99/年，包含以下权益："
+        "${ ProfessionalPlanName } 套餐每年费用为 $119.99，包含以下权益："
       ],
       "The best way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note. Cmd/Ctrl + F to bring up search and replace.": [
-        "编辑笔记的最佳方式。输入 / 打开区块选择菜单，或输入 @ 嵌入图片或链接其他标签和笔记。输入 - 然后按空格键开始列表，或输入 [] 然后按空格键开始检查清单。拖放图片或文件即可将其嵌入笔记。按 Cmd/Ctrl + F 打开搜索和替换。"
+        "编辑笔记的最佳方式。输入 / 调出区块选择菜单，或输入 @ 嵌入图片，或链接其他标签和笔记。输入 - 再按空格创建列表，或输入 [] 再按空格创建检查清单。将图片或文件拖放到笔记中即可嵌入。按 Cmd/Ctrl + F 调出搜索和替换。"
       ],
       "To take advantage of ${ featureNameBold } and other advanced features, upgrade your current plan.": [
-        "如需使用 ${ featureNameBold } 及其他高级功能，请升级您当前的套餐。"
+        "要使用 ${ featureNameBold } 及其他高级功能，请升级当前套餐。"
       ],
       "To take advantage of all the advanced features ${ AppName } has to offer, upgrade your current plan.": [
-        "要充分利用 ${ AppName } 的所有高级功能，请升级您当前的套餐。"
+        "要享用 ${ AppName } 提供的所有高级功能，请升级您的当前套餐。"
       ],
       "Two factor authentication": [
         "双因素身份验证"
@@ -6496,7 +6520,7 @@
         "您的购买已成功！"
       ],
       "Your subscription expired on ${ expiredDateString }": [
-        "您的订阅已于 ${ expiredDateString } 到期"
+        "您的订阅已于 ${ expiredDateString } 过期"
       ],
       "Your subscription expired.": [
         "您的订阅已过期。"
@@ -6515,7 +6539,7 @@
     },
     "B7.FilesSubscriptionHelp.Subscription.Status": {
       "A great way to manage short-term and long-term to-do\"s. You can mark tasks as completed, change their order, and edit the text naturally in place.": [
-        "这是管理短期和长期待办事项的好方法。您可以将任务标记为已完成、调整顺序，并直接就地编辑文本。"
+        "管理短期和长期待办事项的好方法。您可以将任务标记为已完成、调整其顺序，并就地自然地编辑文本。"
       ]
     },
     "B7.FilesSubscriptionHelp.Subscription.Title": {
@@ -6523,7 +6547,7 @@
         "启用高级功能"
       ],
       "Try out ${ SuperName }": [
-        "试用 ${ SuperName }"
+        "体验 ${ SuperName }"
       ],
       "Upgrade": [
         "升级"
@@ -6531,7 +6555,7 @@
     },
     "B8.MobileDesktopShared.Desktop.Info": {
       "A new update is ready to install. Please use the top-level 'Updates' menu to manage installation.": [
-        "有新更新可供安装。请使用顶部的“更新”菜单管理安装。"
+        "新更新已准备好安装。请使用顶层的“更新”菜单来管理安装。"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Error": {
@@ -6547,10 +6571,10 @@
         "正在下载 ${ filename }.."
       ],
       "Fetching image from link...": [
-        "正在从链接获取图像..."
+        "正在从链接获取图片..."
       ],
       "Successfully created note from shared text": [
-        "已成功通过共享文本创建笔记"
+        "已成功从分享的文本创建笔记"
       ]
     }
   }

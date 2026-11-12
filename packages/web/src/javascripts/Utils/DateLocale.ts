@@ -52,7 +52,10 @@ export function isDateLocalizationEnabled(): boolean {
 }
 
 export async function configureDateLocale(options: { appLocale: string; localizationEnabled: boolean }): Promise<void> {
-  const { intlLocale, dayjsLocale } = resolveActiveDateLocales(options)
+  const { intlLocale, dayjsLocale } = resolveActiveDateLocales({
+    ...options,
+    preferredLocales: typeof navigator !== 'undefined' ? navigator.languages : undefined,
+  })
   activeIntlLocale = intlLocale
   setSharedItemDateFormattingLocale(intlLocale)
 

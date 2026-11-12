@@ -93,11 +93,11 @@
         "${ tags } etiket"
       ],
       "Drag and drop files to auto-detect and import": [
-        "Dosyaları sürükleyip bırakarak otomatik olarak algılayın ve içe aktarın"
+        "Dosyaları sürükleyip bırakarakın, otomatik olarak algılansınlar ve içe aktarın"
       ],
       "Import complete. ${ errorCount } item was not imported because there was an error decrypting it. Make sure the password is correct and try again.": [
-        "İçe aktarım tamamlandı. ${ errorCount } öge, şifresi çözülürken hata oluştuğu için içe aktarılmadı. Parolanın doğru olduğunu denetleyip yeniden deneyin.",
-        "İçe aktarım tamamlandı. ${ errorCount } öge, şifresi çözülürken hata oluştuğu için içe aktarılmadı. Parolanın doğru olduğunu denetleyip yeniden deneyin."
+        "İçe aktarım tamamlandı. ${ errorCount } öge, şifresi çözülürken sorun çıktığı için içe aktarılmadı. Parolanın doğru olduğunu denetleyip yeniden deneyin.",
+        "İçe aktarım tamamlandı. ${ errorCount } öge, şifresi çözülürken sorun çıktığı için içe aktarılmadı. Parolanın doğru olduğunu denetleyip yeniden deneyin."
       ],
       "Imported ${ list }": [
         "${ list } içe aktarıldı",
@@ -110,7 +110,7 @@
         "ya da şuradan içe aktar:"
       ],
       "Your data has been successfully imported.": [
-        "Verileriniz başarıyla içe aktarıldı."
+        "Verileriniz içe aktarıldı."
       ]
     },
     "B1.Account.ImportExport.Label": {
@@ -288,7 +288,7 @@
         "Çalışma alanını sil"
       ],
       "Email us": [
-        "Bize e-posta gönder"
+        "Bize e-posta gönderin"
       ],
       "End Sessions": [
         "Oturumları kapat"
@@ -353,13 +353,13 @@
     },
     "B1.Account.Session.Error": {
       "A server error occurred while trying to refresh your session. Please try again.": [
-        "Oturumunuz yenilenirken bir sunucu hatası oluştu. Lütfen yeniden deneyin."
+        "Oturumunuz yenilenirken bir sunucu sorunu çıktı. Lütfen yeniden deneyin."
       ],
       "An unknown error occured while loading sessions.": [
-        "Oturumlar yüklenirken bilinmeyen bir hata oluştu."
+        "Oturumlar yüklenirken bilinmeyen bir sorun çıktı."
       ],
       "An unknown error occured while revoking the session.": [
-        "Oturum geçersiz kılınırken bilinmeyen bir hata oluştu."
+        "Oturum geçersiz kılınırken bilinmeyen bir sorun çıktı."
       ],
       "Hmm...we can't seem to sync your account. The reason: ${ application.syncStatusController.errorMessage }": [
         "Hmm... Hesabınızı eşitleyemiyoruz gibi görünüyor. Nedeni: ${ application.syncStatusController.errorMessage }"
@@ -371,16 +371,16 @@
         "İsteğinizi ilerletmek için lütfen bir hesap ile oturum açın."
       ],
       "There was an error syncing. Please try again. If all else fails, try signing out and signing back in.": [
-        "Eşitleme sırasında bir hata oluştu. Lütfen yeniden deneyin. Hiçbir şey işe yaramazsa, oturumu kapatıp yeniden açmayı deneyin."
+        "Eşitleme sırasında bir sorun çıktı. Lütfen yeniden deneyin. Hiçbir şey işe yaramazsa, oturumu kapatıp yeniden açmayı deneyin."
       ],
       "There was an error while trying to update your settings. Please try again.": [
-        "Ayarlarınız güncellenirken bir hata oluştu. Lütfen yeniden deneyin."
+        "Ayarlarınız güncellenirken bir sorun çıktı. Lütfen yeniden deneyin."
       ],
       "We were unable to load your server session. This represents an inconsistency with your application state. Please take an opportunity to backup your data, then sign out and sign back in to resolve this issue.": [
         "Sunucu oturumunuz yüklenemedi. Bu durum, uygulama durumunuzla ilgili bir tutarsızlığı gösteriyor. Lütfen verilerinizi yedekleyin. Ardından bu sorunu çözmek için oturumunuzu kapatıp yeniden açın."
       ],
       "Your account was unable to be deleted due to an error. Please try your request again.": [
-        "Hesabınız bir hata nedeniyle silinemedi. Lütfen isteğinizi yeniden deneyin."
+        "Hesabınız bir sorun nedeniyle silinemedi. Lütfen isteğinizi yeniden deneyin."
       ]
     },
     "B1.Account.Session.Info": {
@@ -612,16 +612,16 @@
     },
     "B1.Account.SignIn.Error": {
       "A server error occurred while trying to register. Please try again.": [
-        "Kayıt yapılırken bir sunucu hatası oluştu. Lütfen yeniden deneyin."
+        "Kayıt yapılırken bir sunucu sorunu çıktı. Lütfen yeniden deneyin."
       ],
       "A server error occurred while trying to sign in. Please try again.": [
-        "Oturum açılırken bir sunucu hatası oluştu. Lütfen yeniden deneyin."
+        "Oturum açılırken bir sunucu sorunu çıktı. Lütfen yeniden deneyin."
       ],
       "Home server is not running. Please open the prefences and home server tab to start it.": [
         "Ana sunucu çalışmıyor. Sunucuyu başlatmak için lütfen ayarlar bölümünde ana sunucu sekmesini açın."
       ],
       "Invalid email or password.": [
-        "E-posta ya da parola geçersiz."
+        "E-posta adresi ya da parola geçersiz."
       ],
       "Invalid password.": [
         "Parola geçersiz."
@@ -645,7 +645,7 @@
         "Sıkı oturum açma, sunucunun oturum açma parametrelerini reddetti. Son hesap sürümü ${ latest }. Ancak sunucu hesabınızın sürümünü ${ current } olarak bildiriyor. Yine de oturum açmayı sürdürmek istiyorsanız, lütfen Sıkı oturum açma özelliğini kapatın ve yeniden deneyin."
       ],
       "The protocol version associated with your account is outdated and no longer supported by this application. Please visit ${ HelpSecurityUrl } for more information.": [
-        "Hesabınızda kullanılan iletişim kuralı sürümü güncel değil ve bu uygulama tarafından artık desteklenmiyor. Ayrıntılı bilgi almak için ${ HelpSecurityUrl } adresine bakabilirsiniz."
+        "Hesabınızda kullanılan iletişim kuralı sürümü güncel değil ve artık bu uygulama tarafından desteklenmiyor. Ayrıntılı bilgi almak için ${ HelpSecurityUrl } adresine bakabilirsiniz."
       ],
       "The two passwords you entered do not match. Please try again.": [
         "Parola ile onayı aynı değil. Lütfen yeniden deneyin."
@@ -660,7 +660,7 @@
         "Oturum, güvenli olmayan parola parametreleri nedeniyle açılamadı. Ayrıntılı bilgi almak için ${ HelpSecurityUrl } adresine bakabilirsiniz."
       ],
       "Your account was created on a platform with higher security capabilities than this browser supports. If we attempted to generate your login keys here, it would take hours. Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in.": [
-        "Hesabınız, bu tarayıcının desteklediğinden daha yüksek güvenlik özelliklerine sahip bir platformda oluşturuldu. Oturum açma anahtarlarınızı burada oluşturmaya çalışırsak, saatler sürer. Oturum açmak için lütfen Google Chrome veya Firefox gibi daha güncel güvenlik özellikleri olan bir tarayıcı kullanın."
+        "Hesabınız, bu tarayıcının desteklediğinden daha yüksek güvenlik özellikleri olan bir platformda oluşturulmuş. Oturum açma anahtarlarınızı burada oluşturmaya çalışırsak, saatler sürer. Oturum açmak için lütfen Google Chrome veya Firefox gibi daha güncel güvenlik özellikleri olan bir tarayıcı kullanın."
       ],
       "Your passcode is required in order to register for an account.": [
         "Bir hesap açmak için parola kodunuz gereklidir"
@@ -932,7 +932,7 @@
         "Bu işlem yapılırken bir sorun çıktı. Lütfen yeniden deneyin."
       ],
       "Could not check your data integrity with the server.": [
-        "Veri bütünlüğünüz sunucu ile denetlenemedi."
+        "Verilerinizin bütünlüğü sunucu ile denetlenemedi."
       ],
       "Could not connect to server.": [
         "Sunucu ile bağlantı kurulamadı."
@@ -956,13 +956,13 @@
         "Bu bileşen görüntülenirken bir sorun çıktı:"
       ],
       "Storage Error": [
-        "Depolama alanı hatası"
+        "Depolama alanı sorunu"
       ],
       "Sync error. Please try again later.": [
         "Eşitleme hatası oluştu. Lütfen bir süre sonra yeniden deneyin."
       ],
       "Sync error: ${ this.state.failedSyncError }": [
-        "Eşitleme hatası: ${ this.state.failedSyncError }"
+        "Eşitleme sorunu: ${ this.state.failedSyncError }"
       ],
       "The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.": [
         "Kaydetmeye çalıştığınız not bulunamadı veya silinmiş. Yaptığınız değişiklikler eşitlenmeyecek. Lütfen bu notun yazısını kopyalayın ve yeni bir not oluşturun."
@@ -977,13 +977,13 @@
         "Bu uygulama ekinde URL özelliği eksik."
       ],
       "Too many requests. Please try again later.": [
-        "Çok fazla sayıda istek alındı. Lütfen bir süre sonra yeniden deneyin."
+        "Çok fazla sayıda istek yapıldı. Lütfen bir süre sonra yeniden deneyin."
       ],
       "Too many successive server requests. Please wait a few minutes and try again.": [
         "Arka arkaya çok fazla sayıda sunucu isteği yapıldı. Lütfen birkaç dakika bekleyip yeniden deneyin."
       ],
       "Unable to change your credentials due to a sync error. Please try again.": [
-        "Kimlik doğrulama bilgileriniz bir eşitleme hatası nedeniyle değiştirilemedi. Lütfen yeniden deneyin."
+        "Kimlik doğrulama bilgileriniz bir eşitleme sorunu nedeniyle değiştirilemedi. Lütfen yeniden deneyin."
       ],
       "Unable to install external plugin due to a conflict with a native feature.": [
         "Dış uygulama eki yerel bir özellik ile çakıştığından yüklenemedi."
@@ -1007,13 +1007,13 @@
         "Eşitlenemedi"
       ],
       "Unable to write to local database. Please restart the app and try again.": [
-        "Yerel veri tabanına yazılamıyor. Lütfen uygulamayı yeniden başlatıp yeniden deneyin."
+        "Yerel veri tabanına yazılamadı. Lütfen uygulamayı yeniden başlatıp yeniden deneyin."
       ],
       "Unknown error": [
         "Bilinmeyen hata"
       ],
       "Unknown error.": [
-        "Bilinmeyen hata."
+        "Bilinmeyen bir sorun çıktı."
       ],
       "We could not process your request. Please try again or contact support if the issue persists.": [
         "İsteğiniz işlenemedi. Sorun sürerse lütfen yeniden deneyin veya destek ekibimizle görüşün."
@@ -1179,7 +1179,7 @@
         "Ön izleme:"
       ],
       "Protected overlay": [
-        "Korunan kaplama"
+        "Korunmuş kaplaması"
       ],
       "Recent": [
         "Son kullanılan"
@@ -1315,7 +1315,7 @@
         "${ LegacyAppHost } artık güncellenmiyor. Lütfen şuna geçin"
       ],
       "The extension you are attempting to install comes from an untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?": [
-        "Kurmaya çalıştığınız uygulama eki güvenilmeyen bir kaynaktan geliyor. Güvenilmeyen uygulama ekleri verilerinizin güvenliğini tehlikeye atabilir. Devam etmek istiyor musunuz?"
+        "Kurmaya çalıştığınız uygulama eki güvenilmeyen bir kaynaktan geliyor. Güvenilmeyen uygulama ekleri verilerinizin güvenliğini tehlikeye atabilir. İlerlemek istiyor musunuz?"
       ],
       "This extension is deprecated.": [
         "Bu uygulama eki kullanımdan kaldırılmıştır."
@@ -1392,10 +1392,10 @@
         "Bağlantıyı düzenle"
       ],
       "Generate ${ length }-character cryptographically secure password": [
-        "Kriptografik olarak güvenli ${ length } karakterlik parola oluştur"
+        "Şifreleme açısından güvenli ${ length } karakter uzunluğunda parola oluştur"
       ],
       "Generate cryptographically secure password": [
-        "Kriptografik olarak güvenli parola oluştur"
+        "Şifreleme için güvenli bir parola oluştur"
       ],
       "Go to next search result": [
         "Sonraki arama sonucuna git"
@@ -1888,10 +1888,10 @@
         "Daha az sıklıkla eşitlenecek. Değişiklikler normal şekilde çevrim dışı kaydedilecek."
       ],
       "One or more of these notes have editing disabled. If you'd like to ${ archiveAction } them, make sure editing is enabled on all of them, and try again.": [
-        "Bu notların biri veya birkaçı düzenlemeye kapatılmış. Bunlara ${ archiveAction } işlemi uygulamak istiyorsanız, tümünün düzenlemeye açıldığından emin olun ve yeniden deneyin."
+        "Bu notların biri ya da birkaçı düzenlemeye kapatılmış. Bunlara ${ archiveAction } işlemi uygulamak istiyorsanız, tümünün düzenlemeye açıldığından emin olun ve yeniden deneyin."
       ],
       "One or more of these notes have editing disabled. If you'd like to delete them, make sure editing is enabled on all of them, and try again.": [
-        "Bu notlardan bir veya daha fazlası düzenlemeye kapatılmış. Bunları silmek isterseniz, hepsini düzenlemeye açtığınızdan emin olun ve yeniden deneyin."
+        "Bu notlardan bir ya da birkaçı düzenlemeye kapatılmış. Bunları silmek isterseniz, hepsini düzenlemeye açtığınızdan emin olun ve yeniden deneyin."
       ],
       "Only the selected version will be kept; others will be deleted permanently.": [
         "Yalnızca seçilmiş sürüm tutulacak. Diğerleri kalıcı olarak silinecek."
@@ -1903,7 +1903,7 @@
         "Bu not düzenlenmeye kapatılmış. Silmek istiyorsanız düzenlemeye açtıktan sonra yeniden deneyin."
       ],
       "This note has editing disabled. If you'd like to ${ archiveAction } it, enable editing, and try again.": [
-        "Bu not düzenlenmeye kapatılmış. Bu nota ${ archiveAction } işlemi uygulamak istiyorsanız düzenlemeye açtıktan sonra yeniden deneyin."
+        "Bu not düzenlenmeye kapatılmış. Bu nota ${ archiveAction } işlemi yapmak istiyorsanız düzenlemeye açtıktan sonra yeniden deneyin."
       ],
       "This note has editing disabled. If you'd like to archive it, enable editing, and try again.": [
         "Bu not düzenlemeye kapatılmış. Arşivlemek istiyorsanız, düzenlemeye açtıktan sonra yeniden deneyin."
@@ -1915,7 +1915,7 @@
         "Bu not düzenlenmeye kapatılmış. Seçeneklerini düzenlemek istiyorsanız düzenlemeye açtıktan sonra yeniden deneyin."
       ],
       "This note has editing disabled. If you'd like to restore it to a previous revision, enable editing and try again.": [
-        "Bu not düzenlenmeye kapatılmış. Önceki bir revizyonunu geri yüklemek istiyorsanız düzenlemeye açtıktan sonra yeniden deneyin."
+        "Bu not düzenlenmeye kapatılmış. Önceki bir sürümünü geri yüklemek istiyorsanız düzenlemeye açtıktan sonra yeniden deneyin."
       ],
       "This note has editing disabled. If you'd like to unarchive it, enable editing, and try again.": [
         "Bu not düzenlemeye kapatılmış. Arşivden çıkarmak istiyorsanız, düzenlemeye açtıktan sonra yeniden deneyin."
@@ -1935,7 +1935,7 @@
         "İşlemler seçilmiş tüm notlara uygulanacak."
       ],
       "archive": [
-        "arşivleme"
+        "arşiv"
       ],
       "conflict": [
         "çakışma"
@@ -1998,19 +1998,19 @@
         "Kaydırma eşitlendi"
       ],
       "selected note(s)": [
-        "seçili notları"
+        "seçilmiş not"
       ],
       "this note": [
-        "adsız"
+        "bu not"
       ],
       "unarchive": [
-        "arşivden çıkarma"
+        "arşivden çıkar"
       ],
       "Unpin note (${ shortcut })": [
         "Notun sabitlemesini kaldır (${ shortcut })"
       ],
       "Version ${ versionNumber }": [
-        "${ versionNumber } sürümü"
+        "${ versionNumber }. sürüm"
       ]
     },
     "B3.Notes.NoteActions.Status": {
@@ -2183,7 +2183,7 @@
         "${ ListedName } hesabı bulunamadı"
       ],
       "No actions available": [
-        "Kullanılabilecek bir işlem yok"
+        "Yapılabilecek bir işlem yok"
       ],
       "No items.": [
         "Herhangi bir öge yok."
@@ -2218,7 +2218,7 @@
         "Takvim yerleşimi ile her gün yeni notlar alın"
       ],
       "Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook calendar layout.": [
-        "Her etikete özel görüntüleme ayarları ve yepyeni Günlük Not Defteri takvim yerleşimi ile güçlü iş akışları ve organizasyonel yerleşimler oluşturun."
+        "Her etikete özel görüntüleme ayarları ve yepyeni Günlük not defteri takvim yerleşimi ile güçlü iş akışları ve organizasyonel yerleşimler oluşturun."
       ],
       "Create powerful workflows and organizational layouts with per-tag display preferences.": [
         "Her etikete özel görüntüleme ayarları ile güçlü iş akışları ve organizasyonel yerleşimler oluşturun."
@@ -2239,7 +2239,7 @@
         "Özel biçim"
       ],
       "Daily Notebook": [
-        "Günlük Not Defteri"
+        "Günlük not defteri"
       ],
       "Date modified": [
         "Değiştirilme tarihi"
@@ -2521,7 +2521,7 @@
         "Emin misiniz?"
       ],
       "Doing so might result in minor formatting changes.": [
-        "Bunu yapmak küçük biçimlendirme değişikliklerine neden olabilir."
+        "Bunu yapmak biçimlendirmede küçük değişikliklere yol açabilir."
       ],
       "Yes, change it": [
         "Evet, değiştir"
@@ -2562,7 +2562,7 @@
         "Kaydetmeye çalıştığınız notlar düzenlemeye kapatılmış."
       ],
       "There was an error saving your note. Please try again.": [
-        "Notunuz kaydedilirken bir hata oluştu. Lütfen yeniden deneyin."
+        "Notunuz kaydedilirken bir sorun çıktı. Lütfen yeniden deneyin."
       ],
       "Unable to find component with ID ${ componentIdentifier }. Please restart the app and try again.": [
         "${ componentIdentifier } kimlikli bileşen bulunamadı. Lütfen uygulamayı yeniden başlatıp yeniden deneyin."
@@ -2597,7 +2597,7 @@
         "Bu biçim insan tarafından okunamaz. Notu insan tarafından okunabilir bir biçime dönüştürmek istiyorsanız, bunun yerine \"Dönüştür\" seçeneğini kullanın."
       ],
       "This option is useful if you switched this note's type from ${ SuperName } to another plaintext-based format, and want to return to ${ SuperName }.": [
-        "Bu seçenek bu notun türünü ${ SuperName } biçiminden başka bir düz metin temelli biçime dönüştürdüyseniz ve yeniden ${ SuperName } biçimine dönüştürmek istiyorsanız kullanışlıdır."
+        "Bu seçenek, bu notun türünü ${ SuperName } yerine başka bir düz yazı temelli biçime değiştirdiyseniz ve ${ SuperName } türüne dönmek istiyorsanız kullanışlıdır."
       ],
       "This option is useful if you want to edit the note's content which is in ${ SuperName }'s JSON format directly.": [
         "Bu seçenek ${ SuperName } JSON biçimindeki not içeriğini doğrudan düzenlemek istediğinizde kullanışlıdır."
@@ -2883,7 +2883,7 @@
         "Sayfa boyutu"
       ],
       "Password protect": [
-        "Parola koruma"
+        "Parola ile koru"
       ],
       "PDF": [
         "PDF"
@@ -3099,7 +3099,7 @@
         "Etiket oluştur ve ekle"
       ],
       "Create a new smart view": [
-        "Yeni bir Akıllı Görüntüleme oluştur"
+        "Yeni bir akıllı görünüm oluştur"
       ],
       "Create a new tag (${ shortcut })": [
         "Yeni bir etiket oluştur (${ shortcut })"
@@ -3611,7 +3611,7 @@
         "Bir hesap açmak için parola kodunuz gereklidir"
       ],
       "Your passcode is required in order to sign in to your account.": [
-        "Hesabınızda oturum açmak için parola kodunuz gereklidir"
+        "Hesabınızda oturum açmak için parola kodunuz gereklidir."
       ],
       "Your passcode is required to process your credentials change.": [
         "Kimlik doğrulama bilgilerinizi değiştirmek için parola kodunuz gereklidir"
@@ -3702,7 +3702,7 @@
     },
     "B5.SecuritySync.Info": {
       "Access to this note will not be restricted until you set up a passcode or account.": [
-        "Bir parola veya hesap oluşturana kadar bu nota erişim kısıtlanmayacak."
+        "Bir parola kodu veya hesap ayarlayana kadar bu nota erişim kısıtlanmayacak."
       ]
     },
     "B5.SecuritySync.KeyStorage.Confirmation": {
@@ -3717,7 +3717,7 @@
     },
     "B5.SecuritySync.KeyStorage.Info": {
       "The email or password you entered is incorrect.\n\nPlease note that this sign-in request is made against the default server. If you are using a custom server, you must uninstall the app then reinstall, and sign back into your account.": [
-        "Yazdığınız e-posta adresi ya da parola geçersiz.\n\nLütfen bu oturum açma isteğinin varsayılan sunucuya karşı yapıldığını unutmayın. Özel bir sunucu kullanıyorsanız, uygulamayı kaldırmanız, ardından yeniden kurmanız ve hesabınızda yeniden oturum açmanız gerekir."
+        "Yazdığınız e-posta adresi ya da parola geçersiz.\n\nLütfen bu oturum açma isteğinin varsayılan sunucuya yapıldığını unutmayın. Özel bir sunucu kullanıyorsanız, uygulamayı kaldırmanız, ardından yeniden kurmanız ve hesabınızda yeniden oturum açmanız gerekir."
       ],
       "We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password for \"${ email }\" to restore your account keys.": [
         "Anahtar zincirinizin silindiğini fark ettik. Bu durum, aygıtınızı bir yedekten geri yüklediğiniz için olabilir. Hesap anahtarlarınızı geri yüklemek için lütfen \"${ email }\" hesap parolanızı yazın."
@@ -3748,7 +3748,7 @@
         "Bir parola kodu değişikliği sürüyor. Uygulamadan çıkarsanız verileriniz kaybolabilir. Çıkmak istediğinize emin misiniz?"
       ],
       "A passcode removal is in progress. You may lose data if you quit the app. Are you sure you want to quit?": [
-        "Bir parola kodu kaldırması sürüyor. Uygulamadan çıkarsanız verileriniz kaybolabilir. Çıkmak istediğinize emin misiniz?"
+        "Bir parola kodunun kaldırılması sürüyor. Uygulamadan çıkarsanız verileriniz kaybolabilir. Çıkmak istediğinize emin misiniz?"
       ]
     },
     "B5.SecuritySync.Passcode.Error": {
@@ -3769,7 +3769,7 @@
     },
     "B5.SecuritySync.Passcode.Label": {
       "credential manager": [
-        "kimlik bilgileri yöneticisi"
+        "kimlik doğrulama bilgileri yöneticisi"
       ],
       "keychain": [
         "anahtar zinciri"
@@ -3828,7 +3828,7 @@
     },
     "B5.SecuritySync.Sync.Error": {
       "There was an error while trying to save your items. Please contact support and share this message: ${ message }.": [
-        "Ögeleriniz kaydedilirken bir hata oluştu. Lütfen destek ekibi ile görüşün ve şu iletiyi paylaşın: ${ message }."
+        "Ögeleriniz kaydedilirken bir sorun çıktı. Lütfen destek ekibi ile görüşün ve şu iletiyi paylaşın: ${ message }."
       ]
     },
     "B5.SecuritySync.Sync.Info": {
@@ -3924,6 +3924,10 @@
       ]
     },
     "B6.Preferences.Account.Info": {
+      "${ filesQuotaUsedLabel } of ${ filesQuotaTotalLabel } used": [
+        "${ filesQuotaTotalLabel } / ${ filesQuotaUsedLabel } öge kullanıldı",
+        "${ filesQuotaTotalLabel } / ${ filesQuotaUsedLabel } öge kullanıldı"
+      ],
       "Already have an account? ${ loginLink }": [
         "Zaten bir hesabınız var mı? ${ loginLink }"
       ],
@@ -3941,9 +3945,6 @@
       ],
       "Last synced ${ lastSyncSpan }": [
         "Son eşitleme ${ lastSyncSpan }"
-      ],
-      "of": [
-        "/"
       ],
       "on ${ lastSyncDate }": [
         "${ lastSyncDate } zamanında"
@@ -3968,9 +3969,6 @@
       ],
       "This action is irreversible. After deletion completes, you will be signed out on all devices.": [
         "Bu işlem geri alınamaz. Silme işlemi tamamlandıktan sonra tüm aygıtlarınızdaki oturumlarınız kapatılacak."
-      ],
-      "used": [
-        "kullanılmış"
       ],
       "Want to sign out on all devices except this one?": [
         "Bu aygıt dışındaki tüm aygıtlarda oturumun kapatılmasını istiyor musunuz?"
@@ -4004,10 +4002,10 @@
         "E-posta"
       ],
       "Mute marketing notification emails": [
-        "Pazarlama bildirimi e-postalarını sessize alın"
+        "Pazarlama bildirimi e-postalarını kapat"
       ],
       "Mute sign-in notification emails": [
-        "Oturum açma bildirimi e-postalarını sessize alın"
+        "Oturum açma bildirimi e-postalarını kapat"
       ],
       "Other devices": [
         "Diğer aygıtlar"
@@ -4542,7 +4540,7 @@
         "Uygulamayı tercih ettiğiniz dilde kullanın. Bir seçim yapılmazsa tarayıcınızın dili kullanılır."
       ],
       "Use the app in your preferred language. Your OS language is used when no preference is set.": [
-        "Uygulamayı tercih ettiğiniz dilde kullanın. Bir sçeim yapılmazsa işletim sisteminizin dili kullanılır."
+        "Uygulamayı tercih ettiğiniz dilde kullanın. Bir seçim yapılmazsa işletim sisteminizin dili kullanılır."
       ]
     },
     "B6.Preferences.General.Language.Spotlight.ActionDismiss": {
@@ -4551,16 +4549,16 @@
       ]
     },
     "B6.Preferences.General.Language.Spotlight.ActionOpen": {
-      "Open language settings": [
+      "Open language preferences": [
         "Dil ayarlarını aç"
       ]
     },
     "B6.Preferences.General.Language.Spotlight.Info": {
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your browser language is used when no preference is set.": [
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your browser language is used when no preference is set.": [
         "Artık uygulamayı tercih ettiğiniz dilde kullanabilirsiniz. Bu Labs özelliğini Ayarlar → Genel → Dil bölümünden açablirsiniz. Bir seçim yapılmadığında tarayıcınızın dili kullanılır."
       ],
-      "You can now use the app in your preferred language. Turn on this Labs feature in Settings → General → Language. Your OS language is used when no preference is set.": [
-        "Artık uygulamayı tercih ettiğiniz dilde kullanabilirsiniz. Bu Labs özelliğini Ayarlar → Genel → Dil bölümünden açabilirsiniz. Bir seçim yapılmazsa işletim sisteminizin dili kullanılır."
+      "You can now use the app in your preferred language. Turn on this Labs feature in Preferences → General → Language. Your OS language is used when no preference is set.": [
+        "Artık uygulamayı tercih ettiğiniz dilde kullanabilirsiniz. Bu Labs özelliğini Ayarlar → Genel → Dil bölümünden açablirsiniz. Bir seçim yapılmadığında işletim sisteminizin dili kullanılır."
       ]
     },
     "B6.Preferences.General.Language.Subtitle": {
@@ -4569,7 +4567,7 @@
       ]
     },
     "B6.Preferences.General.Language.Title": {
-      "Language Settings": [
+      "Language Preferences": [
         "Dil ayarları"
       ]
     },
@@ -4708,7 +4706,7 @@
         "Ana sunucunuzu yeniden başlatın."
       ],
       "Select a cloud drive to store your server's data in.": [
-        "Sunucunuzun verilerinin depolanacağı bir bulut depolama alanı seçin."
+        "Sunucunuzun verilerinin kaydedileceği bir bulut depolama alanı seçin."
       ],
       "You are not currently signed into your home server. To use your home server, sign in or register using ${ url }": [
         "Şu anda ana sunucunuzda oturum açmamışsınız. Ana sunucunuzu kullanmak için ${ url } adresini kullanarak oturum ya da hesap açın."
@@ -4731,7 +4729,7 @@
         "Hata"
       ],
       "Home Server": [
-        "Ana sunucu"
+        "Ev sunucusu"
       ],
       "Info": [
         "Bilgiler"
@@ -4818,7 +4816,7 @@
     },
     "B6.Preferences.HomeServer.Subtitle": {
       "Accessing your home server while on the go is easy and secure with Tailscale.": [
-        "Tailscale ile hareket ederken ana sunucunuza erişmek hem kolay hem de güvenlidir."
+        "Tailscale ile hareket ederken ev sunucunuza erişmek hem kolay hem de güvenlidir."
       ],
       "Auth JWT Secret": [
         "Auth JWT Gizli"
@@ -5214,7 +5212,7 @@
         "${ contentTypeDisplay }, ${ createdAtString } zamanında oluşturuldu"
       ],
       "Actions like viewing or searching protected notes, exporting decrypted backups, or revoking an active session require additional authentication such as entering your account password or application passcode.": [
-        "Korunmuş notları görüntülemek veya aramak, şifresi çözülmüş yedekleri dışa aktarmak veya etkin bir oturumu kapatmak gibi işlemleri yapmak için hesap parolanızı ya da uygulama parolanızı yazmak gibi bir ek kimlik doğrulaması gerekir."
+        "Korunmuş notları görüntülemek veya aramak, şifresi çözülmüş yedekleri dışa aktarmak veya etkin bir oturumu kapatmak gibi işlemleri yapmak için hesap parolanızı ya da uygulama parola kodunuzu yazmak gibi bir ek kimlik doğrulaması gerekir."
       ],
       "Add a passcode to lock the application and encrypt on-device key storage.": [
         "Uygulamayı kilitlemek ve aygıttaki anahtar depolamasını şifrelemek için bir parola ekleyin."
@@ -5278,6 +5276,26 @@
       ]
     },
     "B6.Preferences.Security.Label": {
+      "${ archivedCount } archived note": [
+        "${ archivedCount } arşivlenmiş not",
+        "${ archivedCount } arşivlenmiş not"
+      ],
+      "${ deletedCount } trashed note": [
+        "${ deletedCount } çöpe atılmış not",
+        "${ deletedCount } çöpe atılmış not"
+      ],
+      "${ filesTotal } file": [
+        "${ filesTotal } dosya",
+        "${ filesTotal } dosya"
+      ],
+      "${ notesCount } note": [
+        "${ notesCount } not",
+        "${ notesCount } not"
+      ],
+      "${ tagsCount } tag": [
+        "${ tagsCount } etiket",
+        "${ tagsCount } etiket"
+      ],
       "authentication code": [
         "kimlik doğrulama kodu"
       ],
@@ -5453,17 +5471,11 @@
       "Note:": [
         "Not:"
       ],
-      "out of": [
-        "/"
-      ],
       "Redirecting you to the subscription page...": [
         "Abonelik sayfasına yönlendiriliyorsunuz..."
       ],
       "Subscription": [
         "Abonelik"
-      ],
-      "subscription invites.": [
-        "abonelik daveti."
       ],
       "Subscription sharing": [
         "Abonelik paylaşımı"
@@ -5480,8 +5492,9 @@
       "You don't have a ${ AppName } subscription yet.": [
         "Henüz ${ AppName } aboneliğiniz yok."
       ],
-      "You've used": [
-        "Kullanımınız"
+      "You've used ${ usedInvitationsCount } out of ${ allowedInvitationsCount } subscription invite.": [
+        "${ allowedInvitationsCount } abonelik davetinin ${ usedInvitationsCount } tanesini kullandınız.",
+        "${ allowedInvitationsCount } abonelik davetinin ${ usedInvitationsCount } tanesini kullandınız."
       ],
       "Your ${ appNameBold }${ subscriptionTierBold } subscription expired on ${ expirationDateBold }. You may resubscribe below if you wish.": [
         "${ appNameBold }${ subscriptionTierBold } aboneliğinizin geçerlilik süresi ${ expirationDateBold } tarihinde doldu. Dilerseniz aşağıdan yeniden abone olabilirsiniz."
@@ -5879,6 +5892,12 @@
       "Could not start upload session": [
         "Yükleme oturumu başlatılamadı"
       ],
+      "Encrypted file storage requires an active subscription. Upgrade your plan to download and upload files.": [
+        "Şifrelenmiş dosya depolama alanını kullanabilmek için etkin bir abonelik gereklidir. Dosyaları indirmek ve yüklemek için tarifenizi yükseltin."
+      ],
+      "Encrypted files are unavailable because your subscription has expired. Renew your subscription to download and upload files again.": [
+        "Aboneliğinizin süresi dolduğu için şifrelenmiş dosyalar kullanılamıyor. Dosyaları yeniden indirebilmek ve yükleyebilmek için aboneliğinizi yenileyin."
+      ],
       "Failed to close an upload session.": [
         "Bir yükleme oturumu kapatılamadı."
       ],
@@ -5906,17 +5925,29 @@
       "File is not in a shared vault": [
         "Dosya, paylaşılan bir kasada değil"
       ],
+      "Files cannot be uploaded because your subscription has expired. Renew your subscription to use encrypted file storage again.": [
+        "Aboneliğinizin süresi dolduğu için dosyalar yüklenemiyor. Şifrelenmiş dosya depolama alanını yeniden kullanabilmek için aboneliğinizi yenileyin."
+      ],
+      "Files cannot be uploaded without an active subscription. Upgrade your plan to use encrypted file storage.": [
+        "Etkin bir abonelik olmadan dosyalar yüklenemez. Şifrelenmiş dosya depolama alanını kullanabilmek için tarifenizi yükseltin."
+      ],
       "Please use ${ FileSafeName } or the ${ BoldName } Editor to attach images and files. Learn more at ${ FileSafeHelpUrl }.": [
         "Görsel ve dosya eklemek için lütfen ${ FileSafeName } veya ${ BoldName } düzenleyicisini kullanın. Ayrıntılı bilgi almak için  ${ FileSafeHelpUrl } adresine bakabilirsiniz."
       ],
       "There was an error loading the file. Try again, or download the file and open it using another application.": [
-        "Dosya yüklenirken bir hata oluştu. Yeniden deneyin veya dosyayı indirin ve başka bir uygulama kullanarak açın."
+        "Dosya yüklenirken bir sorun çıktı. Yeniden deneyin ya da dosyayı indirin ve başka bir uygulama kullanarak açın."
       ],
       "There was an error while downloading the file": [
-        "Dosya indirilirken bir hata oluştu"
+        "Dosya indirilirken bir sorun çıktı"
       ],
       "There was an error while uploading the file": [
-        "Dosya yüklenirken bir hata oluştu"
+        "Dosya yüklenirken bir sorun çıktı"
+      ],
+      "This file cannot be downloaded because your subscription has expired. Renew your subscription to access your files again.": [
+        "Aboneliğinizin süresi dolduğu için bu dosya indirilemiyor. Dosyalarınıza yeniden erişmek için aboneliğinizi yenileyin."
+      ],
+      "This file cannot be downloaded without an active subscription. Upgrade your plan to access encrypted files.": [
+        "Bu dosya etkin bir abonelik olmadan indirilemez. Şifrelenmiş dosyalara erişmek için tarifenizi yükseltin."
       ],
       "This file exceeds the limits supported in this browser. To upload files greater than ${ maxFileSizeInMegabytes }MB, please use the desktop application or the Chrome browser.": [
         "Bu dosya bu tarayıcının desteklediği sınırları aşıyor. ${ maxFileSizeInMegabytes }MB boyutundan büyük dosyaları yüklemek için lütfen bilgisayar uygulamasını veya Chrome tarayıcısını kullanın."
@@ -5930,13 +5961,13 @@
         "İşlemler seçilmiş tüm dosyalara uygulanacak."
       ],
       "Add a passcode or create an account to require authentication to view this file.": [
-        "Bu dosyayı görüntülemek için kimlik doğrulama gerektirecek bir parola ekleyin veya bir hesap açın."
+        "Bu dosyayı görüntülemek için kimlik doğrulama gerektirecek bir parola kodu ekleyin veya bir hesap açın."
       ],
       "Attach to note": [
         "Nota ekle"
       ],
       "Authenticate": [
-        "Kimlik doğrula"
+        "Kimliği doğrula"
       ],
       "Authenticate to view this file.": [
         "Bu dosyayı görüntülemek için kimlik doğrulaması gerekli."
@@ -5978,7 +6009,7 @@
         "Dosyalarınızı yüklemek ve geçerli dosyaya bağlamak için dosyalarınızı bırakın"
       ],
       "Drop your files to upload them": [
-        "Yüklemek için dosyalarınızı sürükleyip bırakın"
+        "Yüklemek istediğiniz dosyalarınızı sürükleyip buraya bırakın"
       ],
       "Encrypted Size:": [
         "Şifrelenmiş boyut:"
@@ -6153,7 +6184,7 @@
     },
     "B7.FilesSubscriptionHelp.Files.Title": {
       "Details": [
-        "Ayrıntılar"
+        "Bilgiler"
       ],
       "File options": [
         "Dosya seçenekleri"
@@ -6164,7 +6195,7 @@
     },
     "B7.FilesSubscriptionHelp.Help.Action": {
       "Capture visible": [
-        "Görülebilir alanı yakala"
+        "Görülebilir alanı çek"
       ],
       "Clip article": [
         "Yazıyı kırp"
@@ -6176,7 +6207,7 @@
         "Tüm sayfayı kırp"
       ],
       "Clip text selection": [
-        "Metin seçimini kırp"
+        "Yazı seçimini kırp"
       ],
       "Select elements to capture": [
         "Yakalanacak bileşenleri seçin"
@@ -6212,7 +6243,7 @@
         "${ AppName }, hesap ve internet bağlantısı olmadan tümüyle çevrim dışı kullanılabilir. Ayrıntılı bilgi almak için ${ offlineHelpLink } adresine bakabilirsiniz"
       ],
       "Because of our encrypted architecture, ${ AppName } does not currently provide a real-time collaboration solution. Multiple users can share the same account however, but editing at the same time may result in sync conflicts, which may result in the duplication of notes.": [
-        "Şifrelenmiş mimarimiz nedeniyle, ${ AppName } şu anda gerçek zamanlı bir iş birliği çözümü sunmuyor. Bununla birlikte, birden fazla kullanıcı aynı hesabı paylaşabilir, ancak aynı anda düzenlemek, eşitleme çakışmalarına neden olabilir ve bu da notların çoğaltılmasına neden olabilir."
+        "Şifrelenmiş mimarimiz nedeniyle, ${ AppName } şu anda gerçek zamanlı bir iş birliği çözümü sunmuyor. Bununla birlikte, birden fazla kullanıcı aynı hesabı paylaşabilir. Ancak aynı anda düzenlemek, eşitleme çakışmalarına neden olabilir ve bu da notların çoğaltılmasına neden olabilir."
       ],
       "Community forum": [
         "Topluluk forumu"
@@ -6233,7 +6264,7 @@
         "Not kırpıldı"
       ],
       "Privacy Manifesto.": [
-        "Gizlilik Manifestosu."
+        "Gizlilik bildirgesi."
       ],
       "Quite simply: no one but you. Not us, not your ISP, not a hacker, and not a government agency. As long as you keep your password safe, and your password is reasonably strong, then you are the only person in the world with the ability to decrypt your notes. For more on how we handle your privacy and security, check out our easy to read ${ privacyPolicyLink }": [
         "Oldukça basit: Sizden başka kimse. Biz değil, internet hizmeti sağlayıcınız değil, bir bilgisayar korsanı değil ve bir devlet kurumu değil. Parolanızı güvende tuttuğunuz ve parolanız yeterince güçlü olduğu sürece, dünyada notlarınızın şifresini çözme yeteneği olan tek kişi sizsiniz. Gizliliğinizi ve güvenliğinizi nasıl ele aldığımız ile ilgili ayrıntılı bilgi almak için okunması kolay ${ privacyPolicyLink } belgemize bakabilirsiniz"
@@ -6384,7 +6415,7 @@
         "${ SuperName }, ${ MarkdownEditorName }, ${ RichTextEditorName }, ${ AuthenticatorName }, ${ ChecklistEditorName } ve ${ SpreadsheetName } gibi tüm not türlerine erişim"
       ],
       "Access to Daily Notebooks and Moments journals": [
-        "Günlük Not Defterlerine ve Moments günlüklerine erişim"
+        "Günlük not defterlerine ve Anlar günlüklerine erişim"
       ],
       "Basic ${ MarkdownEditorName }": [
         "Temel ${ MarkdownEditorName }"
@@ -6423,7 +6454,7 @@
         "Minimal ${ MarkdownEditorName }"
       ],
       "Nested folders for your tags": [
-        "Etiketleriniz için iç içe klasörler"
+        "Etiketleriniz için alt alta klasörler"
       ],
       "Note history going back indefinitely": [
         "Not geçmişi sonsuza kadar geri gidebilir"
@@ -6444,13 +6475,13 @@
         "Uygulama ekleri galerisi"
       ],
       "Premium support": [
-        "Ücretli destek"
+        "Öncelikli destek"
       ],
       "Private vaults": [
-        "Özel kasalar"
+        "Kişisel kasalar"
       ],
       "Private vaults allow you to store notes, files and tags into separate, encrypted vaults.": [
-        "Özel kasalar, notları, dosyaları ve etiketleri ayrı, şifrelenmiş kasalarda saklamanızı sağlar."
+        "Gizliliği korunan kasalar notlarınızı, dosyalarınızı ve etiketlerinizi ayrı ayrı ve şifrelenmiş kasalarda saklamanızı sağlar."
       ],
       "Shared Vaults": [
         "Paylaşılmış kasalar"
@@ -6477,7 +6508,7 @@
         "İç içe etiketler"
       ],
       "The ${ ProfessionalPlanName } Plan costs $119.99/year and includes benefits like": [
-        "${ ProfessionalPlanName } tarifesi yıllık 119,99 USD tutarındadır ve şu avantajları kapsar:"
+        "${ ProfessionalPlanName } tarifesi yıllık 119,99 USD tutarındadır ve şu özellikleri kapsar:"
       ],
       "The best way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note. Cmd/Ctrl + F to bring up search and replace.": [
         "Notları düzenlemenin en iyi yolu. Blok seçim menüsünü getirmek için / yazın veya görseller yerleştirmek ve diğer etiketleri ve notları bağlamak için @ yazın. Bir liste başlatmak için - ardından boşluk veya bir kontrol listesi başlatmak için [] ve ardından boşluk yazın. Notunuza yerleştirilecek bir görseli veya dosyayı sürükleyip bırakın. Arama ve değiştirme özelliğini açmak için Cmd/Ctrl + F tuşlarına basın."
