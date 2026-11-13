@@ -497,6 +497,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
         onRenderProcessGone={() => {
           webViewRef.current?.reload()
         }}
+        autoManageStatusBarEnabled={false}
         hideKeyboardAccessoryView={true}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
         allowFileAccess={true}
