@@ -16,6 +16,20 @@ packages/mobile/src/MobileWebAppContainer.tsx
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 1,
+    "ai_accepted": 1,
+    "git_diff_deleted_lines": 0,
+    "git_diff_added_lines": 1,
+    "tool_model_breakdown": {
+      "cursor::gpt-5.6-sol": {
+        "ai_additions": 1,
+        "ai_accepted": 1
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -49,6 +63,12 @@ packages/mobile/src/MobileWebAppContainer.tsx
         "cache_read_input_tokens": 8380545
       }
     }
+  },
+  "activity": {
+    "added_sloc": 14,
+    "deleted_sloc": 13,
+    "checkpoints": 4,
+    "span_seconds": 3040
   },
   "proton_build": "1.7.6-proton.8"
 }
