@@ -11,6 +11,7 @@ import { useKeyboardService } from '../KeyboardServiceProvider'
 import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import { useApplication } from '../ApplicationProvider'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type Props = {
   uiFeature: UIFeature<ThemeFeatureDescription>
@@ -57,11 +58,10 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ uiFeature }) => {
   const isMobile = application.isNativeMobileWeb() || isMobileScreen()
   const shouldHideButton = uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.DynamicTheme && isMobile
 
-  const darkThemeShortcut = useMemo(() => {
-    if (uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.DarkTheme) {
-      return keyboardService.keyboardShortcutForCommand(TOGGLE_DARK_MODE_COMMAND)
-    }
-  }, [keyboardService, uiFeature.featureIdentifier])
+  const darkThemeShortcut = useKeyboardShortcut(
+    keyboardService,
+    uiFeature.featureIdentifier === NativeFeatureIdentifier.TYPES.DarkTheme ? TOGGLE_DARK_MODE_COMMAND : undefined,
+  )
 
   if (shouldHideButton) {
     return null

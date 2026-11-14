@@ -2,12 +2,13 @@ import { CHANGE_EDITOR_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
 import { c } from 'ttag'
 import { WebApplication } from '@/Application/WebApplication'
 import { SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ChangeEditorMenu from '@/Components/ChangeEditor/ChangeEditorMenu'
 import Popover from '../Popover/Popover'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import MenuItem from '../Menu/MenuItem'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type ChangeEditorOptionProps = {
   application: WebApplication
@@ -30,10 +31,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
     setIsOpen((isOpen) => !isOpen)
   }, [])
 
-  const shortcut = useMemo(
-    () => application.keyboardService.keyboardShortcutForCommand(CHANGE_EDITOR_COMMAND),
-    [application],
-  )
+  const shortcut = useKeyboardShortcut(application.keyboardService, CHANGE_EDITOR_COMMAND)
 
   return (
     <div ref={menuContainerRef}>

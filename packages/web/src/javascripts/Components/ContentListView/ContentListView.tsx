@@ -36,6 +36,7 @@ import { mergeRefs } from '@/Hooks/mergeRefs'
 import Icon from '../Icon/Icon'
 import MobileMultiSelectionToolbar from './MobileMultiSelectionToolbar'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type Props = {
   application: WebApplication
@@ -253,10 +254,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       shouldUseTableView,
     ])
 
-    const shortcutForCreate = useMemo(
-      () => application.keyboardService.keyboardShortcutForCommand(CREATE_NEW_NOTE_KEYBOARD_COMMAND),
-      [application],
-    )
+    const shortcutForCreate = useKeyboardShortcut(application.keyboardService, CREATE_NEW_NOTE_KEYBOARD_COMMAND)
 
     const addButtonLabel = useMemo(() => {
       let shortcut = keyboardStringForShortcut(shortcutForCreate)

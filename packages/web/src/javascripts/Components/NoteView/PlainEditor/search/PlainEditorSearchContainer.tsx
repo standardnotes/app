@@ -13,6 +13,7 @@ import { registerUniversalSearchKeyboardHandlers } from '../../UniversalSearch/r
 import { createPlainEditorUniversalSearchProvider } from '../../UniversalSearch/providers/PlainEditorUniversalSearchProvider'
 import { UniversalSearchShell } from '../../UniversalSearch/UniversalSearchShell'
 import { PlainEditor, PlainEditorInterface } from '../PlainEditor'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type PlainEditorProps = ComponentProps<typeof PlainEditor>
 
@@ -106,13 +107,13 @@ export const PlainEditorSearchContainer = observer(
       : undefined
 
     const searchToggleShortcut = keyboardStringForShortcut(
-      keyboardService.keyboardShortcutForCommand(UNIVERSAL_TOGGLE_SEARCH),
+      useKeyboardShortcut(keyboardService, UNIVERSAL_TOGGLE_SEARCH),
     )
     const toggleReplaceShortcut = keyboardStringForShortcut(
-      keyboardService.keyboardShortcutForCommand(UNIVERSAL_SEARCH_TOGGLE_REPLACE_MODE),
+      useKeyboardShortcut(keyboardService, UNIVERSAL_SEARCH_TOGGLE_REPLACE_MODE),
     )
     const caseSensitivityShortcut = keyboardStringForShortcut(
-      keyboardService.keyboardShortcutForCommand(UNIVERSAL_SEARCH_TOGGLE_CASE_SENSITIVE),
+      useKeyboardShortcut(keyboardService, UNIVERSAL_SEARCH_TOGGLE_CASE_SENSITIVE),
     )
 
     if (!isUniversalSearchEnabled || !controller) {

@@ -26,6 +26,7 @@ import { createPortal } from 'react-dom'
 import { $createRangeSelection, $getSelection, $setSelection } from 'lexical'
 import StyledTooltip from '../../../StyledTooltip/StyledTooltip'
 import Icon from '../../../Icon/Icon'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 export function SearchPlugin() {
   const application = useApplication()
@@ -296,17 +297,12 @@ export function SearchPlugin() {
   }, [])
 
   const keyboardService = useKeyboardService()
-  const searchToggleShortcut = useMemo(
-    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(SUPER_TOGGLE_SEARCH)),
-    [keyboardService],
+  const searchToggleShortcut = keyboardStringForShortcut(useKeyboardShortcut(keyboardService, SUPER_TOGGLE_SEARCH))
+  const toggleReplaceShortcut = keyboardStringForShortcut(
+    useKeyboardShortcut(keyboardService, SUPER_SEARCH_TOGGLE_REPLACE_MODE),
   )
-  const toggleReplaceShortcut = useMemo(
-    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(SUPER_SEARCH_TOGGLE_REPLACE_MODE)),
-    [keyboardService],
-  )
-  const caseSensitivityShortcut = useMemo(
-    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(SUPER_SEARCH_TOGGLE_CASE_SENSITIVE)),
-    [keyboardService],
+  const caseSensitivityShortcut = keyboardStringForShortcut(
+    useKeyboardShortcut(keyboardService, SUPER_SEARCH_TOGGLE_CASE_SENSITIVE),
   )
 
   if (!isMounted) {
