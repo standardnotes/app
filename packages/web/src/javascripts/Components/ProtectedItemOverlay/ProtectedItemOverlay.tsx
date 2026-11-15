@@ -1,7 +1,11 @@
 import { jtString } from '@standardnotes/features'
+import { ChallengeReason } from '@standardnotes/snjs'
 import { c } from 'ttag'
 import Button from '@/Components/Button/Button'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
+import ChallengeForm from '../ChallengeModal/ChallengeForm'
+import { useInlineChallenge } from '../ChallengeModal/InlineChallenge'
+import { useApplication } from '../ApplicationProvider'
 
 function translatedProtectedItemType(itemType: 'note' | 'file'): string {
   return itemType === 'note'
@@ -11,13 +15,20 @@ function translatedProtectedItemType(itemType: 'note' | 'file'): string {
 
 type Props = {
   showAccountMenu: () => void
-  onViewItem: () => void
+  /** Authorizes access and reveals the item. Should be stable across renders. */
+  onViewItem: () => Promise<void>
   hasProtectionSources: boolean
   itemType: 'note' | 'file'
 }
 
 const ProtectedItemOverlay = ({ showAccountMenu, onViewItem, hasProtectionSources, itemType }: Props) => {
+  const application = useApplication()
   const itemTypeLabel = translatedProtectedItemType(itemType)
+
+  /** Protected notes ask for authentication right here instead of in the challenge modal. */
+  const inlineChallengeReason =
+    itemType === 'note' && hasProtectionSources ? ChallengeReason.AccessProtectedNote : undefined
+  const inlineChallenge = useInlineChallenge(inlineChallengeReason, onViewItem)
 
   const instructionText = hasProtectionSources
     ? jtString(c('B2.NavSharedUI.Info').jt`Authenticate to view this ${itemTypeLabel}.`)
@@ -37,24 +48,34 @@ const ProtectedItemOverlay = ({ showAccountMenu, onViewItem, hasProtectionSource
             {jtString(c('B2.NavSharedUI.Title').jt`This ${itemTypeLabel} is protected`)}
           </h1>
           <p className="mt-2 w-full text-lg">{instructionText}</p>
-          <div className="mt-4 flex gap-3">
-            {!hasProtectionSources && (
-              <Button
-                primary
-                small
-                onClick={() => {
-                  showAccountMenu()
-                }}
-              >
-                {c('B2.NavSharedUI.Action').t`Open account menu`}
+          {inlineChallenge.challenge ? (
+            <div className="mt-4 flex w-full flex-col items-center">
+              <ChallengeForm
+                application={application}
+                challenge={inlineChallenge.challenge}
+                onDismiss={inlineChallenge.onDismiss}
+              />
+            </div>
+          ) : (
+            <div className="mt-4 flex gap-3">
+              {!hasProtectionSources && (
+                <Button
+                  primary
+                  small
+                  onClick={() => {
+                    showAccountMenu()
+                  }}
+                >
+                  {c('B2.NavSharedUI.Action').t`Open account menu`}
+                </Button>
+              )}
+              <Button small onClick={inlineChallengeReason ? inlineChallenge.retry : onViewItem}>
+                {hasProtectionSources
+                  ? c('B2.NavSharedUI.Action').t`Authenticate`
+                  : jtString(c('B2.NavSharedUI.Action').jt`View ${itemTypeLabel}`)}
               </Button>
-            )}
-            <Button small onClick={onViewItem}>
-              {hasProtectionSources
-                ? c('B2.NavSharedUI.Action').t`Authenticate`
-                : jtString(c('B2.NavSharedUI.Action').jt`View ${itemTypeLabel}`)}
-            </Button>
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
