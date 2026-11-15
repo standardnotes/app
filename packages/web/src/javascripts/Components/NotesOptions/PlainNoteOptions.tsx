@@ -4,9 +4,10 @@ import MenuItem from '../Menu/MenuItem'
 import { iconClass } from './ClassNames'
 import MenuSection from '../Menu/MenuSection'
 import { UNIVERSAL_TOGGLE_SEARCH } from '@standardnotes/ui-services'
-import { useMemo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { c } from 'ttag'
 import { useKeyboardService } from '../KeyboardServiceProvider'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type Props = {
   closeMenu: () => void
@@ -15,10 +16,7 @@ type Props = {
 const PlainNoteOptions = ({ closeMenu }: Props) => {
   const keyboardService = useKeyboardService()
 
-  const findShortcut = useMemo(
-    () => keyboardService.keyboardShortcutForCommand(UNIVERSAL_TOGGLE_SEARCH),
-    [keyboardService],
-  )
+  const findShortcut = useKeyboardShortcut(keyboardService, UNIVERSAL_TOGGLE_SEARCH)
 
   const findInNote = useCallback(() => {
     keyboardService.triggerCommand(UNIVERSAL_TOGGLE_SEARCH)

@@ -53,6 +53,7 @@ export const PrefDefaults = {
   [PrefKey.AddImportsToTag]: true,
   [PrefKey.AlwaysCreateNewTagForImports]: true,
   [PrefKey.ExistingTagForImports]: undefined,
+  [PrefKey.KeyboardShortcutOverrides]: {},
 } satisfies {
   [key in PrefKey]: PrefValue[key]
 }

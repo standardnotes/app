@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { c } from 'ttag'
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import ChangeEditorMenu from './ChangeEditorMenu'
 import Popover from '../Popover/Popover'
 import RoundIconButton from '../Button/RoundIconButton'
@@ -9,6 +9,7 @@ import { CHANGE_EDITOR_COMMAND, keyboardStringForShortcut } from '@standardnotes
 import { useApplication } from '../ApplicationProvider'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
 import { NoteType, noteTypeForEditorIdentifier } from '@standardnotes/snjs'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type Props = {
   noteViewController?: NoteViewController
@@ -67,10 +68,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ noteViewController, onCl
     )
   }, [application, toggleMenu])
 
-  const shortcut = useMemo(
-    () => application.keyboardService.keyboardShortcutForCommand(CHANGE_EDITOR_COMMAND),
-    [application],
-  )
+  const shortcut = useKeyboardShortcut(application.keyboardService, CHANGE_EDITOR_COMMAND)
 
   const shortcutLabel = shortcut && keyboardStringForShortcut(shortcut)
 

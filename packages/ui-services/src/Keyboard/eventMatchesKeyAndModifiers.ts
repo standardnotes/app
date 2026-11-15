@@ -16,7 +16,8 @@ export function eventMatchesKeyAndModifiers(event: KeyboardEvent, shortcut: Keyb
     }
   }
 
-  if (shortcut.command === TOGGLE_COMMAND_PALETTE) {
+  // Only applies to the default ':' binding; an overridden palette shortcut is matched normally.
+  if (shortcut.command === TOGGLE_COMMAND_PALETTE && shortcut.code === 'Semicolon' && !shortcut.key) {
     if (event.key === ':') {
       return true
     }

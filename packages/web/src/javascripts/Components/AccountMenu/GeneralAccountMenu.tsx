@@ -17,6 +17,7 @@ import { TOGGLE_COMMAND_PALETTE, TOGGLE_KEYBOARD_SHORTCUTS_MODAL, isMobilePlatfo
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import { AppName, jtString, SupportMailtoUrl } from '@standardnotes/features'
 import { c } from 'ttag'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type Props = {
   mainApplicationGroup: WebApplicationGroup
@@ -93,12 +94,11 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({ setMenuPane, closeMenu, 
   const CREATE_ACCOUNT_INDEX = 1
   const SWITCHER_INDEX = 0
 
-  const keyboardShortcutsHelpShortcut = useMemo(() => {
-    return application.keyboardService.keyboardShortcutForCommand(TOGGLE_KEYBOARD_SHORTCUTS_MODAL)
-  }, [application.keyboardService])
-  const commandPaletteShortcut = useMemo(() => {
-    return application.keyboardService.keyboardShortcutForCommand(TOGGLE_COMMAND_PALETTE)
-  }, [application.keyboardService])
+  const keyboardShortcutsHelpShortcut = useKeyboardShortcut(
+    application.keyboardService,
+    TOGGLE_KEYBOARD_SHORTCUTS_MODAL,
+  )
+  const commandPaletteShortcut = useKeyboardShortcut(application.keyboardService, TOGGLE_COMMAND_PALETTE)
 
   return (
     <>
