@@ -1,0 +1,119 @@
+packages/web/src/javascripts/Components/NoteView/NoteView.tsx
+  s_e372ddb368bb0b::t_85e58952c7803d 285-289,291-292,296-299
+  s_e372ddb368bb0b::t_d2ad37fd1be546 1027
+  s_e372ddb368bb0b::t_b1e4c3b8d0f036 60-62
+  s_e372ddb368bb0b::t_570d30a4aaf7e1 300
+packages/web/src/javascripts/Components/SuperEditor/SuperEditor.tsx
+  s_1f8cd189c6effc::t_b983022efbd43c 13
+  s_e372ddb368bb0b::t_de64c3cecb46c1 35-36,61-64,221,234,265,287,309
+packages/web/src/javascripts/Components/SuperEditor/Plugins/EditorRefPlugin/EditorRefPlugin.tsx
+  s_e372ddb368bb0b::t_419d20eae183a3 1-13
+packages/web/src/javascripts/Components/NoteView/EditorPosition/superCaretOffset.ts
+  s_e372ddb368bb0b::t_7098061685377c 1,11-34,39-54
+  s_e372ddb368bb0b::t_3ac1c67b4b1238 3
+  s_ffc06f2ab12c13::t_d9e63be8573f09 38
+  s_e372ddb368bb0b::t_c7155404f9bc7b 2,4-10,35-37
+packages/web/src/javascripts/Components/NoteView/EditorPosition/superCaretOffset.spec.ts
+  s_e372ddb368bb0b::t_39cbc0fe613db2 101-102
+  s_e372ddb368bb0b::t_b27e256894d20c 1-61,63-66,70-82,84-90,108-113,115-129
+  s_e372ddb368bb0b::t_43087fcc502fb4 62,67-69,83,91-100,103-107,114
+packages/web/src/javascripts/Components/NoteView/EditorPosition/restoreSuperEditorCaret.ts
+  s_e372ddb368bb0b::t_3eeec17058d634 1-6,14-22,24,26-28,41
+  s_ffc06f2ab12c13::t_d793709874fd50 37-40
+  s_e372ddb368bb0b::t_39eddfc315fe94 7-11,23,25
+  s_e372ddb368bb0b::t_abc6dd278f65d4 12-13
+  s_e372ddb368bb0b::t_3ac1c67b4b1238 31-36
+  s_ffc06f2ab12c13::t_8dc0e0a0b81297 29-30
+packages/web/src/javascripts/Components/NoteView/EditorPosition/restoreSuperEditorCaret.spec.tsx
+  s_e372ddb368bb0b::t_2ab4c788daa843 1-44,46-64,71-84,86-102,104-106,108-114,123,125-131,133-140,142-155,157-158
+  s_e372ddb368bb0b::t_e680d688ec4890 45,65-70,103
+  s_e372ddb368bb0b::t_5e82a4f53e73ff 85
+  s_e372ddb368bb0b::t_39cbc0fe613db2 107,119,132,141,156
+  s_e372ddb368bb0b::t_39eddfc315fe94 115-117,121-122
+  s_e372ddb368bb0b::t_52a51f6cd687f8 118,120,124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "c273908737bfe1c9667b266602ebde7f054f8b99",
+  "prompts": {},
+  "sessions": {
+    "s_1f8cd189c6effc": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6fbbda1a-7f97-4384-b675-15866d1465f7",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    },
+    "s_e372ddb368bb0b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "27d2be57-91de-4005-9386-22f786a7254f",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    },
+    "s_ffc06f2ab12c13": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "400595f2-e056-4e48-b517-11ee89c82dec",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 2427298,
+        "output_tokens": 190828,
+        "cache_creation_input_tokens": 1152487,
+        "cache_read_input_tokens": 32451374
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 208,
+          "output_tokens": 67876,
+          "cache_creation_input_tokens": 1152487,
+          "cache_read_input_tokens": 10950190
+        },
+        "cursor::default": {
+          "input_tokens": 2427090,
+          "output_tokens": 122952,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 21501184
+        }
+      },
+      "tool_uses": {
+        "delete": 2,
+        "grep": 177,
+        "read": 178,
+        "readlints": 2,
+        "shell": 149,
+        "write": 132
+      }
+    },
+    "by_prompt": {
+      "s_1f8cd189c6effc": {
+        "input_tokens": 2349403,
+        "output_tokens": 116374,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 21062848
+      },
+      "s_e372ddb368bb0b": {
+        "input_tokens": 208,
+        "output_tokens": 67876,
+        "cache_creation_input_tokens": 1152487,
+        "cache_read_input_tokens": 10950190
+      },
+      "s_ffc06f2ab12c13": {
+        "input_tokens": 77687,
+        "output_tokens": 6578,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 438336
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
