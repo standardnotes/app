@@ -10,7 +10,7 @@ import {
   WebAppEvent,
   LocalPrefKey,
 } from '@standardnotes/snjs'
-import { CSSProperties, FocusEvent, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import { CSSProperties, FocusEvent, forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { BlocksEditor } from './BlocksEditor'
 import { BlocksEditorComposer } from './BlocksEditorComposer'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
@@ -32,6 +32,8 @@ import {
 import { SUPER_SHOW_MARKDOWN_PREVIEW, getPrimaryModifier } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
+import type { LexicalEditor } from 'lexical'
+import EditorRefPlugin from './Plugins/EditorRefPlugin/EditorRefPlugin'
 import { useResponsiveEditorFontSize } from '@/Utils/getPlaintextFontSize'
 import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
@@ -56,16 +58,10 @@ type Props = {
   onBlur?: (event: FocusEvent) => void
 }
 
-export const SuperEditor: FunctionComponent<Props> = ({
-  application,
-  linkingController,
-  filesController,
-  spellcheck,
-  controller,
-  readonly,
-  onFocus,
-  onBlur,
-}) => {
+export const SuperEditor = forwardRef<LexicalEditor, Props>(function SuperEditor(
+  { application, linkingController, filesController, spellcheck, controller, readonly, onFocus, onBlur },
+  ref,
+) {
   const note = useRef(controller.item)
   const changeEditorFunction = useRef<ChangeEditorFunction>()
   const ignoreNextChange = useRef(false)
@@ -222,7 +218,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const [fontSize] = useLocalPreference(LocalPrefKey.EditorFontSize)
   const responsiveFontSize = useResponsiveEditorFontSize(fontSize, false)
 
-  const ref = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const invalidURLClickFix = (event: MouseEvent) => {
@@ -235,7 +231,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
       }
     }
 
-    const element = ref.current
+    const element = containerRef.current
 
     if (element) {
       element.addEventListener('click', invalidURLClickFix)
@@ -266,7 +262,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
           '--font-size': responsiveFontSize,
         } as CSSProperties
       }
-      ref={ref}
+      ref={containerRef}
     >
       {featureStatus !== FeatureStatus.Entitled && (
         <NotEntitledBanner featureStatus={featureStatus} feature={GetSuperNoteFeature()} />
@@ -288,6 +284,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <FilePlugin currentNote={note.current} />
                 <ItemBubblePlugin />
                 <GetMarkdownPlugin ref={getMarkdownPlugin} />
+                <EditorRefPlugin ref={ref} />
                 <ChangeContentCallbackPlugin
                   providerCallback={(callback) => (changeEditorFunction.current = callback)}
                 />
@@ -309,4 +306,4 @@ export const SuperEditor: FunctionComponent<Props> = ({
       </ErrorBoundary>
     </div>
   )
-}
+})

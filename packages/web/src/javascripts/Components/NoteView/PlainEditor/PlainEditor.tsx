@@ -323,7 +323,6 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
 
       didRestoreCaret.current = true
 
-      /** Template notes have their own autofocus behavior. */
       if (!controller.isTemplateNote) {
         restorePlainEditorCaret(textarea, controller.item, application.preferences)
       }

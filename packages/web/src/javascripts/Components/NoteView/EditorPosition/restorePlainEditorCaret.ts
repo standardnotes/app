@@ -3,10 +3,6 @@ import { PreferenceServiceInterface } from '@standardnotes/snjs'
 import { scrollPlainTextareaToOffset } from '../PlainEditor/search/scrollPlainTextareaToOffset'
 import { isRestoreEditorPositionEnabled, shouldRestoreCaret } from './shouldRestoreCaret'
 
-/**
- * Focuses the editor whenever the setting is enabled, since a textarea only draws a caret while focused,
- * then moves the caret to where it was left off if there is a valid position to restore.
- */
 export function restorePlainEditorCaret(
   textarea: HTMLTextAreaElement,
   note: SNNote,

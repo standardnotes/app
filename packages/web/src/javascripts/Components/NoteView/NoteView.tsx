@@ -57,6 +57,9 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
 import Icon from '../Icon/Icon'
 import { EditorContentWithSafeAreaPadding } from './EditorContentWithSafeAreaPadding'
+import type { LexicalEditor } from 'lexical'
+import { restoreSuperEditorCaret } from './EditorPosition/restoreSuperEditorCaret'
+import { getSuperEditorCaretOffset } from './EditorPosition/superCaretOffset'
 
 function sortAlphabetically(array: ComponentInterface[]): ComponentInterface[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
@@ -279,14 +282,20 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   setPlainEditorRef = (ref: PlainEditorInterface | null) => {
     this.plainEditorRef = ref || undefined
-    if (this.caretReaderDisposer) {
-      this.caretReaderDisposer()
-    }
-    this.caretReaderDisposer = undefined
+    this.setCaretReader(ref ? () => ref.getCaretOffset() : undefined)
+  }
 
-    if (ref) {
-      this.caretReaderDisposer = this.controller.registerCaretReader(() => ref.getCaretOffset())
+  setSuperEditorRef = (editor: LexicalEditor | null) => {
+    this.setCaretReader(editor ? () => getSuperEditorCaretOffset(editor) : undefined)
+
+    if (editor && !this.controller.isTemplateNote) {
+      restoreSuperEditorCaret(editor, this.controller.item, this.application.preferences)
     }
+  }
+
+  private setCaretReader(reader: (() => number | undefined) | undefined) {
+    this.caretReaderDisposer?.()
+    this.caretReaderDisposer = reader && this.controller.registerCaretReader(reader)
   }
 
   override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {
@@ -1015,6 +1024,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             <div className={classNames('blocks-editor w-full flex-grow overflow-hidden')}>
               <SuperEditor
                 key={this.note.uuid}
+                ref={this.setSuperEditorRef}
                 application={this.application}
                 linkingController={this.application.linkingController}
                 filesController={this.application.filesController}

@@ -6,10 +6,6 @@ export function isRestoreEditorPositionEnabled(preferences: PreferenceServiceInt
   return featureTrunkRestoreEditorPositionEnabled() && preferences.getValue(PrefKey.RestoreEditorPosition, false)
 }
 
-/**
- * The caret is only restored if it was captured during the current enable window and the note
- * has not been edited since it was captured. Conflict copies are skipped since their text may not match the caret.
- */
 export function shouldRestoreCaret(
   note: SNNote,
   preferences: PreferenceServiceInterface,
