@@ -63,6 +63,24 @@ packages/web/src/javascripts/Components/NoteView/EditorPosition/restoreSuperEdit
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 423,
+    "ai_accepted": 423,
+    "git_diff_deleted_lines": 30,
+    "git_diff_added_lines": 423,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 415,
+        "ai_accepted": 415
+      },
+      "cursor::default": {
+        "ai_additions": 8,
+        "ai_accepted": 8
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "total": {
@@ -114,6 +132,12 @@ packages/web/src/javascripts/Components/NoteView/EditorPosition/restoreSuperEdit
         "cache_read_input_tokens": 438336
       }
     }
+  },
+  "activity": {
+    "added_sloc": 560,
+    "deleted_sloc": 248,
+    "checkpoints": 37,
+    "span_seconds": 240140
   },
   "proton_build": "1.7.6-proton.8"
 }
