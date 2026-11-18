@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "yarn clean && yarn copy:components && webpack --config web.webpack.prod.js && yarn tsc",
-    "clean": "rm -fr dist",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "format": "prettier --write src/javascripts",
     "lint": "eslint src/javascripts && yarn tsc",
     "lint:fix": "eslint src/javascripts --fix",
