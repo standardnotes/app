@@ -1,0 +1,91 @@
+packages/services/src/Domain/Component/ComponentViewerInterface.ts
+  s_e372ddb368bb0b::t_f49f424e911fd9 7-8,27-28
+packages/features/src/Domain/Component/ComponentAction.ts
+  s_e372ddb368bb0b::t_f49f424e911fd9 19
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
+  s_e372ddb368bb0b::t_43fcfa40fc31f3 2
+  s_e372ddb368bb0b::t_dc07828e3be616 365
+  s_e372ddb368bb0b::t_90be9e5f5a52d7 90,332,355-364,366-367,369-370,643
+  s_e372ddb368bb0b::t_f49f424e911fd9 89,91,218-225,568,621,632-642,644
+  s_e372ddb368bb0b::t_be2f131e1aaece 645
+packages/models/src/Domain/Abstract/Component/MessageData.ts
+  s_e372ddb368bb0b::t_f49f424e911fd9 36-37
+packages/web/src/javascripts/Components/NoteView/EditorPosition/restoreSuperEditorCaret.ts
+  s_e372ddb368bb0b::t_a793535ff815a7 22
+packages/web/src/javascripts/Components/NoteView/NoteView.tsx
+  s_e372ddb368bb0b::t_43fcfa40fc31f3 18,64,519,524-525,527-531
+  s_e372ddb368bb0b::t_ffa405032a7492 113,290,294,301-305,307,520
+  s_e372ddb368bb0b::t_dbbd6f0c7365b1 526,532
+  s_e372ddb368bb0b::t_1b202706c09631 70-71
+  s_e372ddb368bb0b::t_d67407ec54f659 533-534
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.spec.ts
+  s_e372ddb368bb0b::t_3bdb678cc9b0d3 2-13,18-27,133-134,136
+  s_e372ddb368bb0b::t_9993f6cd0db552 118-132,135,137-164
+  s_e372ddb368bb0b::t_27d22ce5c71538 1,14-17,28-117,165-166
+packages/web/src/javascripts/Components/NoteView/EditorPosition/restorePlainEditorCaret.ts
+  s_e372ddb368bb0b::t_a793535ff815a7 15,22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "ad4443c3cc51408361ab0878434af1c5e159296f",
+  "prompts": {},
+  "sessions": {
+    "s_e372ddb368bb0b": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "27d2be57-91de-4005-9386-22f786a7254f",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 348,
+        "output_tokens": 127152,
+        "cache_creation_input_tokens": 1319165,
+        "cache_read_input_tokens": 22850244
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5": {
+          "input_tokens": 348,
+          "output_tokens": 127152,
+          "cache_creation_input_tokens": 1319165,
+          "cache_read_input_tokens": 22850244
+        }
+      },
+      "tool_uses": {
+        "read": 10,
+        "shell": 122,
+        "write": 21
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 728704,
+        "output_tokens": 102100,
+        "cache_creation_input_tokens": 1998027,
+        "cache_read_input_tokens": 10037174
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5-high": {
+          "input_tokens": 728704,
+          "output_tokens": 102100,
+          "cache_creation_input_tokens": 1998027,
+          "cache_read_input_tokens": 10037174
+        }
+      }
+    },
+    "by_prompt": {
+      "s_e372ddb368bb0b": {
+        "input_tokens": 348,
+        "output_tokens": 127152,
+        "cache_creation_input_tokens": 1319165,
+        "cache_read_input_tokens": 22850244
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
