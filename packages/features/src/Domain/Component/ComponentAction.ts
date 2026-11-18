@@ -16,4 +16,5 @@ export enum ComponentAction {
   KeyDown = 'key-down',
   KeyUp = 'key-up',
   Click = 'click',
+  CaretOffset = 'caret-offset',
 }

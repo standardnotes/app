@@ -82,7 +82,6 @@ describe('restoreSuperEditorCaret', () => {
   beforeAll(() => {
     Range.prototype.getBoundingClientRect = () =>
       ({ top: 0, bottom: 0, left: 0, right: 0, width: 0, height: 0, x: 0, y: 0 }) as DOMRect
-    Element.prototype.scrollIntoView = jest.fn()
   })
 
   beforeEach(async () => {
@@ -110,16 +109,6 @@ describe('restoreSuperEditorCaret', () => {
     expect(document.activeElement).toBe(contentEditable())
     expect(selection?.focusNode?.textContent).toBe('cdef')
     expect(selection?.focusOffset).toBe(3)
-  })
-
-  it('scrolls the element holding the restored caret to the center', () => {
-    const scrollIntoView = jest.fn()
-    Element.prototype.scrollIntoView = scrollIntoView
-
-    restore({ lastCaretOffset: 5, lastCaretAt: 2_000, userModifiedDate: new Date(2_000) })
-
-    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'center' })
-    expect(scrollIntoView.mock.contexts[0].textContent).toBe('cdef')
   })
 
   it('focuses the editor when there is no caret to restore', () => {

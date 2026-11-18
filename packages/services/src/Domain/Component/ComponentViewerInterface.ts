@@ -4,6 +4,8 @@ import { ComponentViewerError } from './ComponentViewerError'
 import { IframeComponentFeatureDescription, NativeFeatureIdentifier } from '@standardnotes/features'
 import { Uuid } from '@standardnotes/domain-core'
 
+export type CaretRestoration = { offset?: number }
+
 export interface ComponentViewerInterface {
   readonly identifier: string
   readonly lockReadonly: boolean
@@ -22,6 +24,8 @@ export interface ComponentViewerInterface {
   setWindow(window: Window): void
   addEventObserver(observer: ComponentEventObserver): () => void
   addActionObserver(observer: ActionObserver): () => void
+  getCaretOffset(): number | undefined
+  setCaretRestoration(restoration: () => CaretRestoration | undefined): void
   postActiveThemes(): void
   handleMessage(message: ComponentMessage): void
 }

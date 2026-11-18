@@ -2,10 +2,8 @@ import { SNNote } from '@standardnotes/models'
 import { PreferenceServiceInterface } from '@standardnotes/snjs'
 import { restorePlainEditorCaret } from './restorePlainEditorCaret'
 import { isRestoreEditorPositionEnabled, shouldRestoreCaret } from './shouldRestoreCaret'
-import { scrollPlainTextareaToOffset } from '../PlainEditor/search/scrollPlainTextareaToOffset'
 
 jest.mock('./shouldRestoreCaret', () => ({ isRestoreEditorPositionEnabled: jest.fn(), shouldRestoreCaret: jest.fn() }))
-jest.mock('../PlainEditor/search/scrollPlainTextareaToOffset', () => ({ scrollPlainTextareaToOffset: jest.fn() }))
 
 describe('restorePlainEditorCaret', () => {
   const preferences = {} as PreferenceServiceInterface
@@ -33,14 +31,12 @@ describe('restorePlainEditorCaret', () => {
 
     expect(document.activeElement).toBe(textarea)
     expect([textarea.selectionStart, textarea.selectionEnd]).toEqual([3, 3])
-    expect(scrollPlainTextareaToOffset).toHaveBeenCalledWith(textarea, 3)
   })
 
   it('clamps an offset beyond the text length', () => {
     const textarea = restore(100)
 
     expect([textarea.selectionStart, textarea.selectionEnd]).toEqual([5, 5])
-    expect(scrollPlainTextareaToOffset).toHaveBeenCalledWith(textarea, 5)
   })
 
   it('clamps a negative offset', () => {
@@ -54,13 +50,11 @@ describe('restorePlainEditorCaret', () => {
 
     expect(document.activeElement).toBe(textarea)
     expect(textarea.selectionStart).toBe(5)
-    expect(scrollPlainTextareaToOffset).not.toHaveBeenCalled()
   })
 
   it('does nothing when the setting is disabled', () => {
     const textarea = restore(3, { enabled: false })
 
     expect(document.activeElement).not.toBe(textarea)
-    expect(scrollPlainTextareaToOffset).not.toHaveBeenCalled()
   })
 })

@@ -1,4 +1,5 @@
 import {
+  CaretRestoration,
   ComponentViewerInterface,
   ComponentViewerError,
   FeatureStatus,
@@ -85,6 +86,9 @@ export class ComponentViewer implements ComponentViewerInterface {
   private removeItemObserver: () => void
   public identifier = nonSecureRandomIdentifier()
   private actionObservers: ActionObserver[] = []
+  private caretOffset?: number
+  private lastContextItem?: DecryptedItemInterface
+  private caretRestoration: () => CaretRestoration | undefined = () => undefined
 
   private removeFeaturesObserver: () => void
   private eventObservers: ComponentEventObserver[] = []
@@ -211,6 +215,14 @@ export class ComponentViewer implements ComponentViewerInterface {
     }
   }
 
+  public getCaretOffset(): number | undefined {
+    return this.caretOffset
+  }
+
+  public setCaretRestoration(restoration: () => CaretRestoration | undefined): void {
+    this.caretRestoration = restoration
+  }
+
   public setReadonly(readonly: boolean): void {
     if (this.lockReadonly) {
       throw Error('Attempting to set readonly on lockedReadonly component viewer')
@@ -317,7 +329,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       }
 
       const matchingItem = nondeletedItems.find((item) => item.uuid === optionsItem.uuid)
-      if (matchingItem) {
+      if (matchingItem && !this.isCaretOnlyChange(matchingItem)) {
         this.sendContextItemThroughBridge(matchingItem, source)
       }
     }
@@ -340,7 +352,22 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
+  private isCaretOnlyChange(item: DecryptedItemInterface): boolean {
+    const previous = this.lastContextItem
+
+    if (!previous || !isNote(previous) || !isNote(item)) {
+      return false
+    }
+
+    const withoutCaret = (note: DecryptedItemInterface) =>
+      JSON.stringify({ ...note.content, lastCaretOffset: undefined, lastCaretAt: undefined })
+
+    return withoutCaret(previous) === withoutCaret(item)
+  }
+
   private sendContextItemThroughBridge(item: DecryptedItemInterface, source?: PayloadEmitSource): void {
+    this.lastContextItem = item
+
     const requiredContextPermissions = [
       {
         name: ComponentAction.StreamContextItem,
@@ -538,6 +565,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         environment: environmentToString(this.config.environment),
         platform: platformToString(this.config.platform),
         activeThemeUrls: this.config.componentManagerFunctions.urlsForActiveThemes(),
+        ...this.getCaretRestorationData(),
       },
     })
 
@@ -590,6 +618,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       [ComponentAction.CreateItem]: this.handleCreateItemsMessage.bind(this),
       [ComponentAction.SaveItems]: this.handleSaveItemsMessage.bind(this),
       [ComponentAction.SetSize]: this.handleSetSizeEvent.bind(this),
+      [ComponentAction.CaretOffset]: this.handleCaretOffsetMessage.bind(this),
     }
 
     const handler = messageHandlers[message.action]
@@ -597,6 +626,20 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     for (const observer of this.actionObservers) {
       observer(message.action, message.data)
+    }
+  }
+
+  private getCaretRestorationData(): MessageData {
+    const restoration = this.caretRestoration()
+
+    return restoration ? { restoreCaret: true, caretOffset: restoration.offset } : {}
+  }
+
+  private handleCaretOffsetMessage(message: ComponentMessage): void {
+    const { caretOffset } = message.data
+
+    if (typeof caretOffset === 'number') {
+      this.caretOffset = caretOffset
     }
   }
 

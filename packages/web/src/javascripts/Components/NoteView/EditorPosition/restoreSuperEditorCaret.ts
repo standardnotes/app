@@ -4,13 +4,6 @@ import type { LexicalEditor } from 'lexical'
 import { isRestoreEditorPositionEnabled, shouldRestoreCaret } from './shouldRestoreCaret'
 import { $selectCaretTextOffset } from './superCaretOffset'
 
-function scrollCaretToCenter(): void {
-  const node = window.getSelection()?.focusNode
-  const element = node instanceof HTMLElement ? node : node?.parentElement
-
-  element?.scrollIntoView({ block: 'center' })
-}
-
 export function restoreSuperEditorCaret(
   editor: LexicalEditor,
   note: SNNote,
@@ -26,16 +19,5 @@ export function restoreSuperEditorCaret(
     return
   }
 
-  let restored = false
-
-  editor.update(
-    () => {
-      restored = $selectCaretTextOffset(note.lastCaretOffset)
-    },
-    { discrete: true },
-  )
-
-  if (restored) {
-    scrollCaretToCenter()
-  }
+  editor.update(() => $selectCaretTextOffset(note.lastCaretOffset), { discrete: true })
 }
