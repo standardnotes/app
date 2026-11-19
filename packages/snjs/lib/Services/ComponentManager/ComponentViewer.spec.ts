@@ -95,14 +95,14 @@ describe('ComponentViewer caret', () => {
 
   it('asks the component to restore the caret on registration', () => {
     const { viewer } = createViewer()
-    viewer.setCaretRestoration(() => ({ offset: 12 }))
+    viewer.setCaretRestoration(() => ({ type: 'offset', offset: 12 }))
 
     expect(register(viewer)).toEqual(expect.objectContaining({ restoreCaret: true, caretOffset: 12 }))
   })
 
   it('asks the component to only focus when there is no caret to restore', () => {
     const { viewer } = createViewer()
-    viewer.setCaretRestoration(() => ({}))
+    viewer.setCaretRestoration(() => ({ type: 'focus' }))
 
     const data = register(viewer)
 

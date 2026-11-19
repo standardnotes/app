@@ -44,6 +44,7 @@ import {
   ComponentPreferencesEntry,
   UIFeature,
   ComponentInterface,
+  ItemContentsEqual,
 } from '@standardnotes/models'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
 import {
@@ -359,10 +360,8 @@ export class ComponentViewer implements ComponentViewerInterface {
       return false
     }
 
-    const withoutCaret = (note: DecryptedItemInterface) =>
-      JSON.stringify({ ...note.content, lastCaretOffset: undefined, lastCaretAt: undefined })
-
-    return withoutCaret(previous) === withoutCaret(item)
+    const caretKeys: (keyof NoteContent)[] = ['lastCaretOffset', 'lastCaretAt']
+    return ItemContentsEqual(previous.content, item.content, caretKeys, [])
   }
 
   private sendContextItemThroughBridge(item: DecryptedItemInterface, source?: PayloadEmitSource): void {
@@ -632,7 +631,14 @@ export class ComponentViewer implements ComponentViewerInterface {
   private getCaretRestorationData(): MessageData {
     const restoration = this.caretRestoration()
 
-    return restoration ? { restoreCaret: true, caretOffset: restoration.offset } : {}
+    if (!restoration) {
+      return {}
+    }
+
+    return {
+      restoreCaret: true,
+      caretOffset: restoration.type === 'offset' ? restoration.offset : undefined,
+    }
   }
 
   private handleCaretOffsetMessage(message: ComponentMessage): void {

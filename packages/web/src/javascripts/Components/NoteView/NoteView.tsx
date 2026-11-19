@@ -109,8 +109,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
   private plainEditorRef?: PlainEditorInterface
-  private caretReaderDisposer?: () => void
-  private caretReaderOwner?: CaretReaderOwner
+  private caretReaderDisposers: Partial<Record<CaretReaderOwner, () => void>> = {}
 
   constructor(props: NoteViewProps) {
     super(props, props.application)
@@ -153,10 +152,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   override deinit() {
     super.deinit()
-    if (this.caretReaderDisposer) {
-      this.caretReaderDisposer()
+    for (const dispose of Object.values(this.caretReaderDisposers)) {
+      dispose()
     }
-    this.caretReaderDisposer = undefined
+    this.caretReaderDisposers = {}
     ;(this.controller as unknown) = undefined
 
     for (let i = 0; i < this.#observers.length; i++) {
@@ -299,13 +298,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   private setCaretReader(owner: CaretReaderOwner, reader: (() => number | undefined) | undefined) {
-    if (!reader && this.caretReaderOwner !== owner) {
-      return
-    }
+    this.caretReaderDisposers[owner]?.()
+    delete this.caretReaderDisposers[owner]
 
-    this.caretReaderDisposer?.()
-    this.caretReaderOwner = owner
-    this.caretReaderDisposer = reader && this.controller.registerCaretReader(reader)
+    if (reader) {
+      this.caretReaderDisposers[owner] = this.controller.registerCaretReader(reader)
+    }
   }
 
   override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {
@@ -529,7 +527,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       return undefined
     }
 
-    return { offset: shouldRestoreCaret(note, preferences) ? note.lastCaretOffset : undefined }
+    return shouldRestoreCaret(note, preferences) ? { type: 'offset', offset: note.lastCaretOffset } : { type: 'focus' }
   }
 
   public editorComponentViewerRequestsReload = async (

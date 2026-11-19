@@ -4,7 +4,7 @@ import { ComponentViewerError } from './ComponentViewerError'
 import { IframeComponentFeatureDescription, NativeFeatureIdentifier } from '@standardnotes/features'
 import { Uuid } from '@standardnotes/domain-core'
 
-export type CaretRestoration = { offset?: number }
+export type CaretRestoration = { type: 'focus' } | { type: 'offset'; offset: number }
 
 export interface ComponentViewerInterface {
   readonly identifier: string

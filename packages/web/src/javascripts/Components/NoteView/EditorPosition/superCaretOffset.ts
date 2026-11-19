@@ -1,6 +1,9 @@
 import { $getRoot, $getSelection, $isRangeSelection, LexicalEditor, TextNode } from 'lexical'
 
-/** Counts only the note's own text, never rendered decorators, so the offset resolves identically on every device. */
+/**
+ * Counts only text nodes, never rendered decorators, so the offset resolves identically on every device.
+ * Structural boundaries are intentionally not counted: the end of one block and the start of the next can share an offset.
+ */
 export function $getCaretTextOffset(): number | undefined {
   const selection = $getSelection()
 

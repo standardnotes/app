@@ -47,7 +47,6 @@ export class NoteViewController implements ItemViewControllerInterface {
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
   private caretReader?: () => number | undefined
-  private caretPersistenceQueue: Promise<void> = Promise.resolve()
 
   private syncController!: NoteSyncController
 
@@ -148,21 +147,14 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
   }
 
-  public persistCaret(): Promise<void> {
+  public async persistCaret(): Promise<void> {
     const offset = this.readCaretOffset()
 
-    const operation = this.caretPersistenceQueue
-      .catch(() => undefined)
-      .then(async () => {
-        await this.syncController.savingLocallyPromise?.promise
+    await this.syncController.savingLocallyPromise?.promise
 
-        if (offset !== undefined) {
-          await this.saveCaretOnly(offset)
-        }
-      })
-
-    this.caretPersistenceQueue = operation
-    return operation
+    if (offset !== undefined) {
+      await this.saveCaretOnly(offset)
+    }
   }
 
   async initialize(): Promise<void> {
