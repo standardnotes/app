@@ -28,6 +28,20 @@ packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 33,
+    "ai_accepted": 33,
+    "git_diff_deleted_lines": 34,
+    "git_diff_added_lines": 33,
+    "tool_model_breakdown": {
+      "cursor::gpt-5.6-sol": {
+        "ai_additions": 33,
+        "ai_accepted": 33
+      }
+    }
+  },
   "token_usage": {
     "carried": {
       "total": {
@@ -51,6 +65,12 @@ packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
         }
       }
     }
+  },
+  "activity": {
+    "added_sloc": 46,
+    "deleted_sloc": 46,
+    "checkpoints": 9,
+    "span_seconds": 24506
   },
   "proton_build": "1.7.6-proton.8"
 }
