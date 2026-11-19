@@ -1,0 +1,55 @@
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
+  s_24f695a1dabaea::t_d7b39f67e6e992 645-648
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.spec.ts
+  s_24f695a1dabaea::t_fae93181494bc5 79,89,98-103
+  s_24f695a1dabaea::t_e2aea32782630d 104-105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "7d296bbe636a6fe75fc55ea1b420606d87265ca1",
+  "prompts": {},
+  "sessions": {
+    "s_24f695a1dabaea": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "bdaa1c0e-f15e-435a-b85b-d3bbf926769a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 72,
+        "output_tokens": 10330,
+        "cache_creation_input_tokens": 165071,
+        "cache_read_input_tokens": 3642678
+      },
+      "by_tool_model": {
+        "cursor::gpt-5.6-sol": {
+          "input_tokens": 72,
+          "output_tokens": 10330,
+          "cache_creation_input_tokens": 165071,
+          "cache_read_input_tokens": 3642678
+        }
+      },
+      "tool_uses": {
+        "grep": 2,
+        "read": 7,
+        "shell": 12,
+        "write": 7
+      }
+    },
+    "by_prompt": {
+      "s_24f695a1dabaea": {
+        "input_tokens": 72,
+        "output_tokens": 10330,
+        "cache_creation_input_tokens": 165071,
+        "cache_read_input_tokens": 3642678
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
