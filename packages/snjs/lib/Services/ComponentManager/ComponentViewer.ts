@@ -642,6 +642,10 @@ export class ComponentViewer implements ComponentViewerInterface {
   }
 
   private handleCaretOffsetMessage(message: ComponentMessage): void {
+    if (!this.caretRestoration()) {
+      return
+    }
+
     const { caretOffset } = message.data
 
     if (typeof caretOffset === 'number') {

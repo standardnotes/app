@@ -76,6 +76,7 @@ describe('ComponentViewer caret', () => {
 
   it('keeps the latest caret offset reported by the component', () => {
     const { viewer } = createViewer()
+    viewer.setCaretRestoration(() => ({ type: 'focus' }))
 
     viewer.handleMessage(caretOffsetMessage({ caretOffset: 4 }))
     viewer.handleMessage(caretOffsetMessage({ caretOffset: 9 }))
@@ -85,12 +86,21 @@ describe('ComponentViewer caret', () => {
 
   it('ignores malformed caret offset messages', () => {
     const { viewer } = createViewer()
+    viewer.setCaretRestoration(() => ({ type: 'focus' }))
     viewer.handleMessage(caretOffsetMessage({ caretOffset: 4 }))
 
     viewer.handleMessage(caretOffsetMessage({}))
     viewer.handleMessage(caretOffsetMessage({ caretOffset: '7' as unknown as number }))
 
     expect(viewer.getCaretOffset()).toBe(4)
+  })
+
+  it('ignores caret offsets when tracking is disabled', () => {
+    const { viewer } = createViewer()
+
+    viewer.handleMessage(caretOffsetMessage({ caretOffset: 4 }))
+
+    expect(viewer.getCaretOffset()).toBeUndefined()
   })
 
   it('asks the component to restore the caret on registration', () => {
