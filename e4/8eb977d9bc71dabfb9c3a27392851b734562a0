@@ -1,0 +1,56 @@
+packages/web/src/javascripts/Components/NoteView/NoteView.tsx
+  s_24f695a1dabaea::t_74ee03f57db903 112,155-156,158,301-302,304-306
+  s_24f695a1dabaea::t_6b8ff788f85c4d 530
+packages/web/src/javascripts/Components/NoteView/EditorPosition/superCaretOffset.ts
+  s_24f695a1dabaea::t_84d780392e8fbd 3-6
+packages/services/src/Domain/Component/ComponentViewerInterface.ts
+  s_24f695a1dabaea::t_48608cb6d6944c 7
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.spec.ts
+  s_24f695a1dabaea::t_57f4dc3ea1db3e 98,105
+packages/web/src/javascripts/Components/NoteView/Controller/NoteViewController.ts
+  s_24f695a1dabaea::t_0cc65ecaaaed6c 150,153,155-157
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
+  s_24f695a1dabaea::t_a05ddc2082d906 634-641
+  s_24f695a1dabaea::t_1d16fb1de1db01 47,363-364
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "e48eb977d9bc71dabfb9c3a27392851b734562a0",
+  "prompts": {},
+  "sessions": {
+    "s_24f695a1dabaea": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "bdaa1c0e-f15e-435a-b85b-d3bbf926769a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "carried": {
+      "total": {
+        "input_tokens": 156,
+        "output_tokens": 16032,
+        "cache_creation_input_tokens": 190683,
+        "cache_read_input_tokens": 2691613
+      },
+      "by_tool_model": {
+        "cursor::claude-sonnet-5-5-high": {
+          "input_tokens": 18,
+          "output_tokens": 4486,
+          "cache_creation_input_tokens": 135275,
+          "cache_read_input_tokens": 779876
+        },
+        "cursor::gpt-5.6-sol-medium": {
+          "input_tokens": 138,
+          "output_tokens": 11546,
+          "cache_creation_input_tokens": 55408,
+          "cache_read_input_tokens": 1911737
+        }
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
