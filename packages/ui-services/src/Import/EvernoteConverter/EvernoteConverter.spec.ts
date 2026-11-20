@@ -9,6 +9,7 @@ import { checkboxEnex, createTestResourceElement, emptyLineEnex, enTodoEnex, ene
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { GenerateUuid } from '@standardnotes/services'
 import { Converter } from '../Converter'
+import { SPAN_FONT_SIZE_ATTRIBUTE } from '../HighlightSpanImport'
 
 // Mock dayjs so dayjs.extend() doesn't throw an error in EvernoteConverter.ts
 jest.mock('dayjs', () => {
@@ -185,6 +186,103 @@ describe('EvernoteConverter', () => {
 
     expect(root.querySelector('span')?.textContent).toBe('plain')
     expect(root.querySelector('mark')?.textContent).toBe('Line 2')
+  })
+
+  it('should convert span styles to semantic tags and a font size attribute for Super import', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const root = document.createElement('div')
+    root.innerHTML =
+      '<span style="font-weight: bold; text-decoration: underline; font-size: 14pt;">styled</span><span>plain</span>'
+
+    converter.convertSpanStylesToSuperFormatting(root)
+
+    const [styled, plain] = Array.from(root.querySelectorAll('span'))
+    expect(styled.getAttribute(SPAN_FONT_SIZE_ATTRIBUTE)).toBe('14pt')
+    expect(styled.innerHTML).toBe('<strong><u>styled</u></strong>')
+    expect(plain.hasAttribute(SPAN_FONT_SIZE_ATTRIBUTE)).toBe(false)
+    expect(plain.innerHTML).toBe('plain')
+  })
+
+  it('should preserve formatting and font size when converting a highlighted span to a mark', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const root = document.createElement('div')
+    root.innerHTML =
+      '<span style="--en-highlight: yellow; font-weight: bold; font-size: 14pt;">highlighted</span>'
+
+    converter.convertSpanStylesToSuperFormatting(root)
+    converter.convertHighlightSpansToMarks(root)
+
+    const mark = root.querySelector('mark')
+    expect(mark?.getAttribute(SPAN_FONT_SIZE_ATTRIBUTE)).toBe('14pt')
+    expect(mark?.innerHTML).toBe('<strong>highlighted</strong>')
+  })
+
+  it('should propagate font size to nested spans and let inner sizes override', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const root = document.createElement('div')
+    root.innerHTML =
+      '<span style="font-size: 14pt;"><span>inherits</span><span style="font-size: 10pt;">overrides</span></span>'
+
+    converter.convertSpanStylesToSuperFormatting(root)
+
+    const sizes = Array.from(root.querySelectorAll('span')).map((span) => span.getAttribute(SPAN_FONT_SIZE_ATTRIBUTE))
+    expect(sizes).toEqual(['14pt', '14pt', '10pt'])
+  })
+
+  it('should ignore unsupported font size values', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const root = document.createElement('div')
+    root.innerHTML = '<span style="font-size: expression(alert(1));">text</span>'
+
+    converter.convertSpanStylesToSuperFormatting(root)
+
+    expect(root.querySelector('span')?.hasAttribute(SPAN_FONT_SIZE_ATTRIBUTE)).toBe(false)
+  })
+
+  it('should convert Evernote code blocks to pre elements with a language', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const root = document.createElement('div')
+    root.innerHTML =
+      '<div style="--en-codeblock:true; --en-syntaxLanguage:SQL; font-family: monospace;"><div>SELECT 1</div><div><br></div><div>&nbsp;&nbsp;FROM x</div></div><div>not code</div>'
+
+    converter.convertCodeBlocksToPre(root)
+
+    const pre = root.querySelector('pre')
+    expect(pre?.getAttribute('data-language')).toBe('sql')
+    expect(pre?.textContent).toBe('SELECT 1\n\n  FROM x')
+    expect(root.querySelectorAll('div')).toHaveLength(1)
+  })
+
+  it('should preserve br line breaks in Evernote code blocks without line divs', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const root = document.createElement('div')
+    root.innerHTML = '<div style="--en-codeblock:true;">first<br>second</div>'
+
+    converter.convertCodeBlocksToPre(root)
+
+    const pre = root.querySelector('pre')
+    expect(pre?.hasAttribute('data-language')).toBe(false)
+    expect(pre?.textContent).toBe('first\nsecond')
+  })
+
+  it('should preserve text mixed with line divs in Evernote code blocks', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const root = document.createElement('div')
+    root.innerHTML = '<div style="--en-codeblock:true;">first<div>second</div>third</div>'
+
+    converter.convertCodeBlocksToPre(root)
+
+    expect(root.querySelector('pre')?.textContent).toBe('first\nsecond\nthird')
+  })
+
+  it('should not treat divs with a false code block marker as code', () => {
+    const converter = new EvernoteConverter(generateUuid)
+    const root = document.createElement('div')
+    root.innerHTML = '<div style="--en-codeblock:false;">text</div>'
+
+    converter.convertCodeBlocksToPre(root)
+
+    expect(root.querySelector('pre')).toBeNull()
   })
 
   it('should convert highlight spans to mark elements before Super import', async () => {
