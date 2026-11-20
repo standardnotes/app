@@ -86,6 +86,28 @@ packages/web/src/javascripts/Components/SuperEditor/Tools/HeadlessSuperConverter
       "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
     }
   },
+  "commit_stats": {
+    "human_additions": 0,
+    "unknown_additions": 0,
+    "ai_additions": 617,
+    "ai_accepted": 617,
+    "git_diff_deleted_lines": 4,
+    "git_diff_added_lines": 617,
+    "tool_model_breakdown": {
+      "cursor::claude-sonnet-5-5": {
+        "ai_additions": 530,
+        "ai_accepted": 530
+      },
+      "cursor::default": {
+        "ai_additions": 1,
+        "ai_accepted": 1
+      },
+      "cursor::gpt-5.6-sol": {
+        "ai_additions": 86,
+        "ai_accepted": 86
+      }
+    }
+  },
   "token_usage": {
     "attributable": {
       "tool_uses": {
