@@ -77,6 +77,34 @@ export const enTodoEnex = `<?xml version="1.0" encoding="UTF-8"?>
   </note>
 </en-export>`
 
+export const styledInlineEnex = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+<en-export export-date="20261016T182530Z" application="Evernote" version="11.38.5">
+  <note>
+    <title>Styled inline test</title>
+    <created>20180808T013559Z</created>
+    <updated>20190217T101724Z</updated>
+    <content>
+      <![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note><div><span style="font-weight: bold; text-decoration: underline; font-size: 14pt;">General:</span></div><div><span style="font-weight: bold;">challenge</span></div></en-note>]]>
+    </content>
+  </note>
+</en-export>`
+
+export const codeBlockEnex = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+<en-export export-date="20261016T182530Z" application="Evernote" version="11.38.5">
+  <note>
+    <title>Code block test</title>
+    <created>20180808T013559Z</created>
+    <updated>20190217T101724Z</updated>
+    <content>
+      <![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note><div>Before</div><div style="--en-codeblock:true; --en-syntaxLanguage:sql; box-sizing: border-box; padding: 8px; font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; font-size: 12px; color: rgb(51, 51, 51); border-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.15); background-image: none; background-attachment: scroll; background-origin: padding-box; background-clip: border-box; background-size: auto; background-position: 0% 0%; background-repeat: repeat;"><div>SELECT id, name</div><div>FROM users</div><div><br/></div><div>&nbsp;&nbsp;WHERE id &lt; 10 AND name = 'a &amp; b';</div></div><div>After</div></en-note>]]>
+    </content>
+  </note>
+</en-export>`
+
 export const emptyLineEnex = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export3.dtd">
 <en-export export-date="20210408T052957Z" application="Evernote" version="10.8.5">
