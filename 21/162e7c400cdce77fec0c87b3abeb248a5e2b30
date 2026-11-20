@@ -1,0 +1,116 @@
+packages/ui-services/src/Import/EvernoteConverter/testData.ts
+  s_1f8cd189c6effc::t_f444c0de6e2458 94-106
+  s_1f8cd189c6effc::t_461e5452f3ede0 80-93
+  s_1f8cd189c6effc::t_8f90040f9779e7 79
+packages/ui-services/src/Import/EvernoteConverter/EvernoteConverter.spec.ts
+  s_4a4a5f12ee83f2::t_dc1fe99084fa87 206-219,256,259,265-275
+  s_1f8cd189c6effc::t_ccd353595e80fa 12
+  s_1f8cd189c6effc::t_31f9ae657a7ed3 191,194-195,197,200-205,220-239
+  s_1f8cd189c6effc::t_aad45795243de3 242-255,257-258,260-264,276-286
+  s_1f8cd189c6effc::t_6e44c539fb48af 192-193,196,198-199,240-241
+  s_50e759cfcd8757::t_48dbf51a6a4130 287
+packages/web/src/javascripts/Components/SuperEditor/Tools/EvernoteStyledImport.spec.ts
+  s_1f8cd189c6effc::t_e5ddefd8cd3437 67
+  s_1f8cd189c6effc::t_71805d3ed1968f 66,76,79
+  s_1f8cd189c6effc::t_fc95a0b6c8a60e 1-10,40-65,81-82
+  s_1f8cd189c6effc::t_a43c6583c55b75 68,78
+  s_1f8cd189c6effc::t_21af393779e5d1 69-70,72-75
+  s_1f8cd189c6effc::t_0ccd4df6c67caa 80
+  s_1f8cd189c6effc::t_931ba02671ce4c 71,77
+  s_1f8cd189c6effc::t_1f4380a5ee9431 14-17,33-39
+  s_1f8cd189c6effc::t_8f1cddcd03a51c 11-13,18-32
+packages/ui-services/src/Import/EvernoteConverter/EvernoteConverter.ts
+  s_1f8cd189c6effc::t_b13c849f8171ba 99
+  s_1f8cd189c6effc::t_e28a7f5f260636 15-16
+  s_1f8cd189c6effc::t_c31f7df47c0eef 11
+  s_4a4a5f12ee83f2::t_099bf2aa197bd9 263-266,329-330,363,366-378,381-395
+  s_1f8cd189c6effc::t_ee2f260f867cfc 352-353
+  s_1f8cd189c6effc::t_4430ffb71893ce 96
+  s_1f8cd189c6effc::t_dccba35ec6c479 276-328
+  s_4a4a5f12ee83f2::t_ba11430c13ab26 379-380
+  s_1f8cd189c6effc::t_9557945a7c7fbd 344-351,354-362,364-365
+  s_4a4a5f12ee83f2::t_f85bda2616a41e 331
+  s_4a4a5f12ee83f2::t_3305b366a0b86c 396
+packages/ui-services/src/Import/HighlightSpanImport.ts
+  s_1f8cd189c6effc::t_ed4c5b46558fc2 5
+  s_1f8cd189c6effc::t_3c83b4c54ed82c 4
+packages/web/src/javascripts/Components/SuperEditor/Tools/EvernoteCodeBlockImport.spec.ts
+  s_1f8cd189c6effc::t_bb06e6e533bf2f 37-38
+  s_1f8cd189c6effc::t_0e73114a9c2851 1-36,39-47
+packages/web/src/javascripts/Components/SuperEditor/Lexical/Utils/highlightHtmlImport.ts
+  s_1f8cd189c6effc::t_fb96ae2e0414c1 10-11,20-21,41-47,50-51,65-66,69,71-75
+  s_1f8cd189c6effc::t_f6edeb9d907dde 1-4,7-9,12-19,37,49,52,67-68,70
+  s_4a4a5f12ee83f2::t_21e3c1f4bb4f71 24,39-40
+packages/web/src/javascripts/Components/SuperEditor/Lexical/Utils/highlightHtmlImport.spec.ts
+  s_4a4a5f12ee83f2::t_7e4d71c0153982 35
+  s_1f8cd189c6effc::t_3e349a8417bb0f 1-5,9-27,38,40,42-47,52-71,75-82,90-95,98-103,107-112,115-119,122-125,127-128,146,148,155,157,161-162,164-165
+  s_1f8cd189c6effc::t_559c61c1529631 6-8,28-34,36-37,39,41,48-51,72-74,83-89,96-97,104-106,113-114,120-121,126,145,147,149-154,156,158
+  s_4a4a5f12ee83f2::t_81b4a962af170d 129-144
+  s_1f8cd189c6effc::t_cd462373f4c733 159-160,163
+packages/web/src/javascripts/Components/SuperEditor/Tools/HeadlessSuperConverter.spec.ts
+  s_1f8cd189c6effc::t_4a7e5c016e1343 40,43
+  s_1f8cd189c6effc::t_ec8049b41dfe7d 41-42,44-53
+  s_1f8cd189c6effc::t_fc06cf2c5c8718 54-55,57-69
+  s_1f8cd189c6effc::t_9a31710415f55e 8
+  s_1f8cd189c6effc::t_a88388e7f4db6c 56
+  s_1f8cd189c6effc::t_7bdfd335cf75ed 70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "21162e7c400cdce77fec0c87b3abeb248a5e2b30",
+  "prompts": {},
+  "sessions": {
+    "s_1f8cd189c6effc": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6fbbda1a-7f97-4384-b675-15866d1465f7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    },
+    "s_4a4a5f12ee83f2": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "4a49199d-4941-41f1-a989-2c3e35ea99a4",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    },
+    "s_50e759cfcd8757": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1131d54e-8cab-49d3-81fa-9dadbde48404",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "tool_uses": {
+        "grep": 26,
+        "read": 45,
+        "shell": 26,
+        "write": 12
+      }
+    },
+    "carried": {
+      "total": {
+        "input_tokens": 84,
+        "output_tokens": 9399,
+        "cache_creation_input_tokens": 35316,
+        "cache_read_input_tokens": 5063525
+      },
+      "by_tool_model": {
+        "cursor::gpt-5.6-sol-medium": {
+          "input_tokens": 84,
+          "output_tokens": 9399,
+          "cache_creation_input_tokens": 35316,
+          "cache_read_input_tokens": 5063525
+        }
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
