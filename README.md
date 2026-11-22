@@ -73,3 +73,40 @@ You can configure the `DEFAULT_SYNC_SERVER` environment variable to set the defa
 ```
 DEFAULT_SYNC_SERVER=https://sync.myserver
 ```
+
+---
+
+### Local AI Notes Assistant (Desktop Only)
+
+This fork includes a **Desktop-only** Local AI Notes Assistant (`packages/web/src/freellmapi`) that connects to any local OpenAI-compatible **Responses API** server (such as FreeLLM API, Ollama, or LM Studio) to interact with your decrypted notes locally.
+
+#### Features
+- **Browse, Search & Edit Notes**: In **Agent Browse** mode, the model can list notes, search across your notebook, read full notes (including Super/Lexical, Rich Text, Markdown, Plain, Code, Task, and Spreadsheet notes), open notes in the editor, create new notes, append timestamped notations, or perform targeted edits.
+- **Find & Recover Lost Information**:
+  - **Deep Lost-Info Search**: Searches across **Active notes**, **Archive**, **Trash**, **Session/Revision History**, **AI Pre-Edit Snapshots**, and **Loaded Local Backup files** using multi-keyword fuzzy matching.
+  - **Missing Info Audit**: Scans notes for empty stubs and unfinished placeholders (`TODO`, `TBD`, `FIXME`, `???`, `[ ]`).
+  - **Recovery Drawer (`Recovery`)**: One-click **Undo** snapshots before every AI edit, **Trash/Archive** restore, and a **Local Backups** loader (`.json` decrypted backups, `.md`, `.txt`).
+- **Save Notations to File**: Export any AI reply, notation, or proposed edit directly to a `.md` file.
+
+#### Build & Launch Desktop
+```bash
+node .yarn/releases/yarn-3.2.1.cjs install
+node .yarn/releases/yarn-3.2.1.cjs build:desktop
+node .yarn/releases/yarn-3.2.1.cjs workspace @standardnotes/desktop start
+```
+
+#### Configuring from the GUI
+1. Open the Desktop app and go to **Preferences → AI / FreeLLM API** (or click **AI Chat** in the bottom bar and then the **Settings** icon).
+2. Choose a quick preset (**FreeLLM Local**, **Ollama**, or **LM Studio**) or enter your settings manually:
+   - **Base URL**: e.g. `http://localhost:3001/v1` (requests are sent to `POST <baseURL>/responses`)
+   - **API Key**: your local API key (sent via `Authorization: Bearer <apiKey>`)
+   - **Model**: e.g. `auto`
+3. Click **Test Connection** to verify reachability and latency, then click **Save Configuration**.
+4. Optionally customize **Custom Instructions**, **Max Agent Tool Steps**, or **Auto-edit** (off by default—when off, every AI edit shows a preview/diff card for your approval before saving).
+
+> **Note on CORS**: Because requests are sent directly from the Desktop Electron renderer, your local API server should allow CORS (`Access-Control-Allow-Origin: *` and `Authorization`, `Content-Type` headers).
+
+#### Privacy & Safety
+- **Desktop only**: Disabled on Web and Mobile clients.
+- **Sensitive notes excluded**: Protected notes, locked notes, and 2FA (`Authentication`) notes are never read or edited by the AI.
+- **No plaintext snapshot leaks**: Pre-edit undo snapshots are stored strictly in memory per workspace and automatically wiped when you lock the app or sign out.
