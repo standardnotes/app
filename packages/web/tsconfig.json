@@ -19,8 +19,9 @@
     "typeRoots": ["./src/javascripts/Types/External", "../../node_modules/@types", "node_modules/@types"],
     "paths": {
       "@/*": ["./src/javascripts/*"],
-      "@Controllers/*": ["src/javascripts/Controllers/*"]
+      "@Controllers/*": ["src/javascripts/Controllers/*"],
+      "@freellmapi/*": ["./src/freellmapi/*"]
     }
   },
-  "include": ["src/javascripts"]
+  "include": ["src/javascripts", "src/freellmapi"]
 }

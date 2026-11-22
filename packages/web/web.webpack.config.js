@@ -89,6 +89,7 @@ module.exports = (env) => {
       },
       alias: {
         '@': path.resolve(__dirname, 'src/javascripts'),
+        '@freellmapi': path.resolve(__dirname, 'src/freellmapi'),
         '@Controllers': path.resolve(__dirname, 'src/javascripts/controllers'),
         '@Services': path.resolve(__dirname, 'src/javascripts/services'),
         '@Lib': path.resolve(__dirname, '../snjs/lib'),

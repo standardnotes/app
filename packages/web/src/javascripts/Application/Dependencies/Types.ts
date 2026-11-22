@@ -23,6 +23,7 @@ export const Web_TYPES = {
   ActionsMenuController: Symbol.for('ActionsMenuController'),
   ApplicationEventObserver: Symbol.for('ApplicationEventObserver'),
   FeaturesController: Symbol.for('FeaturesController'),
+  FreeLlmApiController: Symbol.for('FreeLlmApiController'),
   FilePreviewModalController: Symbol.for('FilePreviewModalController'),
   FilesController: Symbol.for('FilesController'),
   HistoryModalController: Symbol.for('HistoryModalController'),

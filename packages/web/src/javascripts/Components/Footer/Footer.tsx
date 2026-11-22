@@ -30,6 +30,7 @@ import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import UpgradeNow from './UpgradeNow'
 import PreferencesButton from './PreferencesButton'
 import VaultSelectionButton from './VaultSelectionButton'
+import FreeLlmApiFooterButton from '@freellmapi/FreeLlmApiFooterButton'
 
 type Props = {
   application: WebApplication
@@ -382,6 +383,9 @@ class Footer extends AbstractComponent<Props, State> {
 
             <div className="relative z-footer-bar-item  ml-1.5 select-none">
               <VaultSelectionButton />
+            </div>
+            <div className="relative z-footer-bar-item select-none">
+              <FreeLlmApiFooterButton />
             </div>
             <UpgradeNow
               application={this.application}

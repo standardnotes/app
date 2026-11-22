@@ -53,6 +53,7 @@ import { OpenSubscriptionDashboard } from '../UseCase/OpenSubscriptionDashboard'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 import { WebApplication } from '../WebApplication'
 import { CommandService } from '../../Components/CommandPalette/CommandService'
+import { FreeLlmApiController } from '@freellmapi/FreeLlmApiController'
 
 export class WebDependencies extends DependencyContainer {
   constructor(private application: WebApplication) {
@@ -150,6 +151,12 @@ export class WebDependencies extends DependencyContainer {
     this.bind(Web_TYPES.DesktopManager, () => {
       return isDesktopDevice(application.device)
         ? new DesktopManager(application, application.device, application.fileBackups as BackupServiceInterface)
+        : undefined
+    })
+
+    this.bind(Web_TYPES.FreeLlmApiController, () => {
+      return isDesktopDevice(application.device)
+        ? new FreeLlmApiController(application, this.get<HeadlessSuperConverter>(Web_TYPES.SuperConverter))
         : undefined
     })
 

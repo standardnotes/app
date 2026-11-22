@@ -86,6 +86,7 @@ import { removeFromArray } from '@standardnotes/utils'
 import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { RecentActionsState } from './Recents'
 import { CommandService } from '../Components/CommandPalette/CommandService'
+import { FreeLlmApiController } from '@freellmapi/FreeLlmApiController'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -589,6 +590,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   get desktopManager(): DesktopManagerInterface | undefined {
     return this.deps.get<DesktopManagerInterface | undefined>(Web_TYPES.DesktopManager)
+  }
+
+  get freeLlmApiController(): FreeLlmApiController | undefined {
+    return this.deps.get<FreeLlmApiController | undefined>(Web_TYPES.FreeLlmApiController)
   }
 
   get autolockService(): AutolockService | undefined {

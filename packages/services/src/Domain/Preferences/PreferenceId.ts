@@ -3,6 +3,7 @@ export type PreferencePaneId =
   | 'account'
   | 'security'
   | 'home-server'
+  | 'freellmapi'
   | 'vaults'
   | 'appearance'
   | 'backups'
