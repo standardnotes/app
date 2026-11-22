@@ -1,9 +1,18 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
-import { MutationType, NativeFeatureIdentifier, NoteMutator, NoteType, SNNote } from '@standardnotes/snjs'
+import {
+  MutationType,
+  NativeFeatureIdentifier,
+  NoteMutator,
+  NoteType,
+  SNNote,
+  StorageServiceInterface,
+  StorageValueModes,
+} from '@standardnotes/snjs'
 import { isNoteSafeForAi } from './noteConverter'
 
 const LEGACY_SNAPSHOTS_STORAGE_KEY = 'sn.freellmapi.snapshots.v1'
+export const SECURE_SNAPSHOTS_STORAGE_KEY = 'freellmapi_encrypted_snapshots_v1'
 const MAX_SNAPSHOTS = 50
 const MAX_BACKUP_FILE_BYTES = 25 * 1024 * 1024
 const MAX_BACKUP_RECORDS = 5000
@@ -20,6 +29,11 @@ export interface NoteEditSnapshot {
   reason: string
 }
 
+export interface SnapshotPersistenceOptions {
+  storage?: StorageServiceInterface
+  persistEncryptedSnapshots?: boolean
+}
+
 export interface BackupNoteRecord {
   id: string
   sourceFile: string
@@ -31,10 +45,23 @@ export interface BackupNoteRecord {
 }
 
 /**
- * Snapshots are kept strictly in memory (keyed by workspace identifier) and never written
- * unencrypted to localStorage so locked or signed-out sessions cannot leak note plaintext on disk.
+ * Snapshots are kept in memory by default (keyed by workspace identifier).
+ * They are persisted across restarts ONLY when the user explicitly opts in via
+ * `persistEncryptedSnapshots`, in which case they are stored in Standard Notes'
+ * encrypted storage (StorageValueModes.Default) and never in plain localStorage.
  */
 const inMemorySnapshotsByWorkspace = new Map<string, NoteEditSnapshot[]>()
+
+function canUseSecureStorage(storage?: StorageServiceInterface): storage is StorageServiceInterface {
+  if (!storage) {
+    return false
+  }
+  try {
+    return !storage.isStorageWrapped()
+  } catch {
+    return false
+  }
+}
 
 export function purgeLegacyLocalStorageSnapshots(): void {
   try {
@@ -44,15 +71,72 @@ export function purgeLegacyLocalStorageSnapshots(): void {
   }
 }
 
+export async function syncPersistedSnapshotsOptIn(
+  workspaceId: string,
+  options: SnapshotPersistenceOptions,
+): Promise<NoteEditSnapshot[]> {
+  purgeLegacyLocalStorageSnapshots()
+
+  if (!options.persistEncryptedSnapshots) {
+    if (canUseSecureStorage(options.storage)) {
+      await options.storage.removeValue(SECURE_SNAPSHOTS_STORAGE_KEY, StorageValueModes.Default).catch(() => undefined)
+    }
+    return loadNoteSnapshots(workspaceId)
+  }
+
+  if (canUseSecureStorage(options.storage)) {
+    try {
+      const persisted = options.storage.getValue<NoteEditSnapshot[] | undefined>(
+        SECURE_SNAPSHOTS_STORAGE_KEY,
+        StorageValueModes.Default,
+      )
+      if (Array.isArray(persisted) && persisted.length > 0) {
+        const current = loadNoteSnapshots(workspaceId)
+        const existingIds = new Set(current.map((s) => s.id))
+        const merged = [...current, ...persisted.filter((s) => !existingIds.has(s.id))].slice(0, MAX_SNAPSHOTS)
+        inMemorySnapshotsByWorkspace.set(workspaceId, merged)
+        options.storage.setValue(SECURE_SNAPSHOTS_STORAGE_KEY, merged, StorageValueModes.Default)
+        return merged
+      }
+      const current = loadNoteSnapshots(workspaceId)
+      if (current.length > 0) {
+        options.storage.setValue(SECURE_SNAPSHOTS_STORAGE_KEY, current, StorageValueModes.Default)
+      }
+    } catch {
+      // Storage unavailable
+    }
+  }
+
+  return loadNoteSnapshots(workspaceId)
+}
+
 export function loadNoteSnapshots(workspaceId = 'default'): NoteEditSnapshot[] {
   return [...(inMemorySnapshotsByWorkspace.get(workspaceId) || [])]
 }
 
-export function saveNoteSnapshots(snapshots: NoteEditSnapshot[], workspaceId = 'default'): void {
-  inMemorySnapshotsByWorkspace.set(workspaceId, snapshots.slice(0, MAX_SNAPSHOTS))
+export function saveNoteSnapshots(
+  snapshots: NoteEditSnapshot[],
+  workspaceId = 'default',
+  options?: SnapshotPersistenceOptions,
+): void {
+  const trimmed = snapshots.slice(0, MAX_SNAPSHOTS)
+  inMemorySnapshotsByWorkspace.set(workspaceId, trimmed)
+
+  if (options?.persistEncryptedSnapshots && canUseSecureStorage(options.storage)) {
+    try {
+      options.storage.setValue(SECURE_SNAPSHOTS_STORAGE_KEY, trimmed, StorageValueModes.Default)
+    } catch {
+      // Ignore storage write errors
+    }
+  }
 }
 
-export function captureNoteSnapshot(note: SNNote, reason: string, workspaceId = 'default'): NoteEditSnapshot {
+export function captureNoteSnapshot(
+  note: SNNote,
+  reason: string,
+  workspaceId = 'default',
+  options?: SnapshotPersistenceOptions,
+): NoteEditSnapshot {
   const snapshot: NoteEditSnapshot = {
     id: `snap-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     noteUuid: note.uuid,
@@ -66,18 +150,28 @@ export function captureNoteSnapshot(note: SNNote, reason: string, workspaceId = 
   }
 
   const existing = loadNoteSnapshots(workspaceId)
-  saveNoteSnapshots([snapshot, ...existing], workspaceId)
+  saveNoteSnapshots([snapshot, ...existing], workspaceId, options)
   return snapshot
 }
 
-export function deleteNoteSnapshot(snapshotId: string, workspaceId = 'default'): NoteEditSnapshot[] {
+export function deleteNoteSnapshot(
+  snapshotId: string,
+  workspaceId = 'default',
+  options?: SnapshotPersistenceOptions,
+): NoteEditSnapshot[] {
   const next = loadNoteSnapshots(workspaceId).filter((s) => s.id !== snapshotId)
-  saveNoteSnapshots(next, workspaceId)
+  saveNoteSnapshots(next, workspaceId, options)
   return next
 }
 
-export function clearAllNoteSnapshots(workspaceId = 'default'): void {
+export function clearAllNoteSnapshots(
+  workspaceId = 'default',
+  options?: { storage?: StorageServiceInterface; clearPersisted?: boolean },
+): void {
   inMemorySnapshotsByWorkspace.delete(workspaceId)
+  if (options?.clearPersisted && canUseSecureStorage(options.storage)) {
+    void options.storage.removeValue(SECURE_SNAPSHOTS_STORAGE_KEY, StorageValueModes.Default).catch(() => undefined)
+  }
 }
 
 export async function restoreNoteFromSnapshot(

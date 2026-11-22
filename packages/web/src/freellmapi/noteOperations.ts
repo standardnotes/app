@@ -2,8 +2,9 @@ import { WebApplication } from '@/Application/WebApplication'
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 import { MutationType, NativeFeatureIdentifier, NoteMutator, NoteType, SNNote } from '@standardnotes/snjs'
 import { sanitizeFileName } from '@standardnotes/utils'
+import { IMMUTABLE_OPERATION_LIMITS } from './config'
 import { convertNoteToText, isNoteSafeForAi } from './noteConverter'
-import { captureNoteSnapshot, NoteEditSnapshot } from './recoveryStore'
+import { captureNoteSnapshot, NoteEditSnapshot, SnapshotPersistenceOptions } from './recoveryStore'
 
 const PREVIEW_CHAR_LIMIT = 160
 
@@ -16,6 +17,7 @@ export interface EditNoteOptions {
   newText?: string
   newTitle?: string
   heading?: string
+  snapshotPersistence?: SnapshotPersistenceOptions
 }
 
 export type AiProposedAction =
@@ -72,7 +74,7 @@ export function parseAiActionBlock(responseText: string): {
   return { displayText: responseText.trim() }
 }
 
-function escapeHtml(text: string): string {
+export function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>')
 }
 
@@ -81,11 +83,20 @@ function makePreviewPlain(source: string): string {
   return cleaned.length > PREVIEW_CHAR_LIMIT ? `${cleaned.slice(0, PREVIEW_CHAR_LIMIT)}...` : cleaned
 }
 
+function assertEditSizeWithinLimit(text: string): void {
+  if (text.length > IMMUTABLE_OPERATION_LIMITS.MAX_SINGLE_EDIT_CHARS) {
+    throw new Error(
+      `Edit exceeds the immutable safety limit of ${IMMUTABLE_OPERATION_LIMITS.MAX_SINGLE_EDIT_CHARS.toLocaleString()} characters.`,
+    )
+  }
+}
+
 export async function openNoteInEditor(application: WebApplication, uuid: string): Promise<void> {
   await application.itemListController.selectItem(uuid, true).catch(console.error)
 }
 
 export async function createNoteFromAi(application: WebApplication, title: string, content: string): Promise<SNNote> {
+  assertEditSizeWithinLimit(content)
   const cleanTitle = title.trim() || 'AI Note'
   const note = await application.notesController.createNoteWithContent(
     NativeFeatureIdentifier.TYPES.PlainEditor,
@@ -131,10 +142,18 @@ export async function editNoteContent(
     throw new Error(`Cannot edit "${note.title || 'Untitled Note'}" because it is locked.`)
   }
 
+  if (options.content) {
+    assertEditSizeWithinLimit(options.content)
+  }
+  if (options.newText) {
+    assertEditSizeWithinLimit(options.newText)
+  }
+
   const snapshot = captureNoteSnapshot(
     note,
     `Before AI ${options.mode}${options.newTitle ? ` (rename to "${options.newTitle}")` : ''}`,
     application.identifier,
+    options.snapshotPersistence,
   )
 
   if (options.mode === 'append') {
@@ -187,6 +206,8 @@ export async function editNoteContent(
     nextPlainText = nextPlainText.replace(options.oldText, options.newText)
   }
 
+  assertEditSizeWithinLimit(nextPlainText)
+
   let storedText: string
   if (note.noteType === NoteType.Super) {
     storedText = superConverter.convertOtherFormatToSuperString(nextPlainText, 'md')
@@ -219,7 +240,7 @@ export async function appendNotationToNote(
   notationText: string,
   superConverter: HeadlessSuperConverter,
   heading?: string,
-  options?: { skipSnapshot?: boolean },
+  options?: { skipSnapshot?: boolean; snapshotPersistence?: SnapshotPersistenceOptions },
 ): Promise<SNNote> {
   if (!isNoteSafeForAi(note)) {
     throw new Error('Cannot add notation because this note is trashed, protected, or an authenticator note.')
@@ -228,8 +249,15 @@ export async function appendNotationToNote(
     throw new Error('Cannot add notation because this note is locked.')
   }
 
+  assertEditSizeWithinLimit(notationText)
+
   if (!options?.skipSnapshot) {
-    captureNoteSnapshot(note, `Before appending AI notation${heading ? `: ${heading}` : ''}`, application.identifier)
+    captureNoteSnapshot(
+      note,
+      `Before appending AI notation${heading ? `: ${heading}` : ''}`,
+      application.identifier,
+      options?.snapshotPersistence,
+    )
   }
 
   const timestamp = new Date().toLocaleString()

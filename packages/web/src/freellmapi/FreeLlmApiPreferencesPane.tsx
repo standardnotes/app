@@ -5,7 +5,13 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
 import { FormEvent, useEffect, useState } from 'react'
-import { FREE_LLM_PRESETS, FreeLlmApiConfig, validateFreeLlmApiConfig } from './config'
+import {
+  analyzeEndpointPolicy,
+  FREE_LLM_PRESETS,
+  FreeLlmApiConfig,
+  IMMUTABLE_OPERATION_LIMITS,
+  validateFreeLlmApiConfig,
+} from './config'
 
 const FreeLlmApiPreferencesPane = observer(() => {
   const application = useApplication()
@@ -30,6 +36,8 @@ const FreeLlmApiPreferencesPane = observer(() => {
     controller?.config.customInstructions,
     controller?.config.maxAgentSteps,
     controller?.config.autoApplyEdits,
+    controller?.config.persistEncryptedSnapshots,
+    controller?.config.acknowledgedRemoteOrigin,
   ])
 
   if (!controller || !draft) {
@@ -42,6 +50,8 @@ const FreeLlmApiPreferencesPane = observer(() => {
       </PreferencesPane>
     )
   }
+
+  const endpointPolicy = analyzeEndpointPolicy(draft.baseURL)
 
   const updateDraft = (partial: Partial<FreeLlmApiConfig>) => {
     setValidationError(undefined)
@@ -81,17 +91,17 @@ const FreeLlmApiPreferencesPane = observer(() => {
       <form onSubmit={handleSave}>
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>AI / FreeLLM API (Desktop Local)</Title>
+            <Title>AI / FreeLLM API (Desktop Opt-In)</Title>
             <Subtitle>
-              Configure your local OpenAI-compatible Responses API endpoint to chat with, browse, edit, and recover your
-              decrypted notes locally.
+              Disabled by default. Opt in below and configure an OpenAI-compatible Responses API endpoint to chat with,
+              browse, edit, and recover your decrypted notes locally.
             </Subtitle>
 
             <div className="mt-4 flex items-center justify-between rounded border border-border bg-contrast px-3 py-2.5">
               <div>
-                <div className="text-sm font-semibold text-text">Enable Local AI Assistant</div>
+                <div className="text-sm font-semibold text-text">Enable Local AI Assistant (Opt-In)</div>
                 <div className="text-xs text-neutral">
-                  Shows the AI Chat button in the bottom bar and enables the Command Palette shortcut.
+                  Shows the AI Chat button in the bottom bar and enables the AI assistant panel on Desktop.
                 </div>
               </div>
               <input
@@ -102,9 +112,16 @@ const FreeLlmApiPreferencesPane = observer(() => {
               />
             </div>
 
+            <div className="mt-3 rounded border border-border bg-contrast px-3 py-2 text-xs text-neutral">
+              <strong className="text-text">Storage:</strong>{' '}
+              {controller.isUsingSecureStorage
+                ? 'Saved inside Standard Notes encrypted storage (StorageValueModes.Default).'
+                : 'Uses encrypted Standard Notes storage once your workspace is unlocked/signed in.'}
+            </div>
+
             {/* Provider Presets */}
             <div className="mt-4">
-              <div className="mb-1.5 text-xs font-semibold uppercase text-neutral">Quick Presets</div>
+              <div className="mb-1.5 text-xs font-semibold uppercase text-neutral">Local Loopback Presets</div>
               <div className="flex flex-wrap gap-2">
                 {FREE_LLM_PRESETS.map((preset) => (
                   <button
@@ -138,8 +155,29 @@ const FreeLlmApiPreferencesPane = observer(() => {
                 />
                 <span className="text-xs text-neutral">
                   Requests are sent to <code className="text-info">{draft.baseURL.replace(/\/+$/, '')}/responses</code>.
+                  Plain HTTP is restricted to loopback hosts (<code>localhost</code>, <code>127.0.0.1</code>,{' '}
+                  <code>[::1]</code>); remote endpoints require <code>https://</code>.
                 </span>
               </label>
+
+              {endpointPolicy.valid && endpointPolicy.isLoopback && (
+                <div className="rounded border border-success bg-contrast px-3 py-1.5 text-xs text-success">
+                  Loopback endpoint detected ({endpointPolicy.origin}) — note data stays on this machine.
+                </div>
+              )}
+
+              {endpointPolicy.valid && endpointPolicy.isRemote && (
+                <div className="rounded border border-warning bg-contrast px-3 py-2 text-xs text-warning">
+                  <strong>Remote server warning:</strong> {endpointPolicy.warning} You will be asked to confirm before
+                  sending notes to this origin.
+                </div>
+              )}
+
+              {!endpointPolicy.valid && endpointPolicy.error && (
+                <div className="rounded border border-danger bg-contrast px-3 py-2 text-xs text-danger">
+                  {endpointPolicy.error}
+                </div>
+              )}
 
               {/* API Key */}
               <label className="flex flex-col gap-1">
@@ -149,7 +187,7 @@ const FreeLlmApiPreferencesPane = observer(() => {
                     type={showApiKey ? 'text' : 'password'}
                     value={draft.apiKey}
                     onChange={(e) => updateDraft({ apiKey: e.target.value })}
-                    placeholder="freellmapi-..."
+                    placeholder="Enter your API key (optional for unauthenticated local servers)"
                     className="flex-1 rounded border border-border bg-default px-3 py-2 text-sm text-text focus:border-info focus:outline-none"
                   />
                   <button
@@ -160,9 +198,6 @@ const FreeLlmApiPreferencesPane = observer(() => {
                     {showApiKey ? 'Hide' : 'Show'}
                   </button>
                 </div>
-                <span className="text-xs text-neutral">
-                  Sent in the <code>Authorization: Bearer ...</code> header. Stored locally on this machine.
-                </span>
               </label>
 
               {/* Model */}
@@ -224,8 +259,13 @@ const FreeLlmApiPreferencesPane = observer(() => {
 
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>Agent Behavior & Safety</Title>
-            <Subtitle>Control how the AI agent browses, edits, and talks to you.</Subtitle>
+            <Title>Agent Safety Limits & Recovery</Title>
+            <Subtitle>
+              Immutable safety caps: max {IMMUTABLE_OPERATION_LIMITS.MAX_AGENT_STEPS_HARD_CAP} steps/turn, max{' '}
+              {IMMUTABLE_OPERATION_LIMITS.MAX_WRITES_PER_TURN} writes/turn, max{' '}
+              {IMMUTABLE_OPERATION_LIMITS.MAX_AUTO_EDITS_PER_TURN} auto-edits/turn. Bulk edits (2+) and restore
+              operations always require manual confirmation.
+            </Subtitle>
 
             <div className="mt-4 flex flex-col gap-3">
               <label className="flex flex-col gap-1">
@@ -234,7 +274,7 @@ const FreeLlmApiPreferencesPane = observer(() => {
                   rows={3}
                   value={draft.customInstructions}
                   onChange={(e) => updateDraft({ customInstructions: e.target.value })}
-                  placeholder="e.g. Always reply concisely in bullet points, or respond in Arabic/English..."
+                  placeholder="e.g. Always reply concisely in bullet points..."
                   className="w-full resize-y rounded border border-border bg-default p-2.5 text-sm text-text focus:border-info focus:outline-none"
                 />
               </label>
@@ -243,31 +283,61 @@ const FreeLlmApiPreferencesPane = observer(() => {
                 <div>
                   <div className="text-xs font-semibold text-text">Max Agent Tool Steps per Turn</div>
                   <div className="text-xs text-neutral">
-                    How many browse/search/read/edit steps the model can chain automatically (1–15).
+                    Hard-capped between 1 and {IMMUTABLE_OPERATION_LIMITS.MAX_AGENT_STEPS_HARD_CAP}.
                   </div>
                 </div>
                 <input
                   type="number"
                   min={1}
-                  max={15}
+                  max={IMMUTABLE_OPERATION_LIMITS.MAX_AGENT_STEPS_HARD_CAP}
                   value={draft.maxAgentSteps}
-                  onChange={(e) => updateDraft({ maxAgentSteps: Number(e.target.value) || 7 })}
+                  onChange={(e) => updateDraft({ maxAgentSteps: Number(e.target.value) || 6 })}
                   className="w-20 rounded border border-border bg-default px-2.5 py-1.5 text-sm text-text"
                 />
               </label>
 
               <div className="flex items-center justify-between rounded border border-border bg-contrast px-3 py-2.5">
                 <div>
-                  <div className="text-xs font-semibold text-text">Auto-apply Note Edits</div>
+                  <div className="text-xs font-semibold text-text">Auto-apply Single-Note Edits</div>
                   <div className="text-xs text-neutral">
-                    Apply AI edits immediately without approval prompts (a recovery snapshot is still saved before every
-                    edit).
+                    When enabled, up to {IMMUTABLE_OPERATION_LIMITS.MAX_AUTO_EDITS_PER_TURN} single-note edits/turn
+                    apply automatically. Bulk edits and restores still require approval.
                   </div>
                 </div>
                 <input
                   type="checkbox"
                   checked={draft.autoApplyEdits}
-                  onChange={(e) => updateDraft({ autoApplyEdits: e.target.checked })}
+                  onChange={(e) => {
+                    const checked = e.target.checked
+                    if (checked) {
+                      void controller.requestSetAutoApplyEdits(true).then((ok) => {
+                        if (ok) {
+                          updateDraft({ autoApplyEdits: true })
+                        }
+                      })
+                    } else {
+                      updateDraft({ autoApplyEdits: false })
+                    }
+                  }}
+                  className="h-4 w-4 cursor-pointer"
+                />
+              </div>
+
+              <div className="flex items-center justify-between rounded border border-border bg-contrast px-3 py-2.5">
+                <div>
+                  <div className="text-xs font-semibold text-text">
+                    Persist Encrypted Undo Snapshots Across Restarts (Opt-In)
+                  </div>
+                  <div className="text-xs text-neutral">
+                    Off by default (snapshots stay in RAM only for the current session). Turn on to retain undo
+                    snapshots across restarts inside Standard Notes encrypted storage. Disabling purges stored snapshots
+                    immediately.
+                  </div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={draft.persistEncryptedSnapshots}
+                  onChange={(e) => updateDraft({ persistEncryptedSnapshots: e.target.checked })}
                   className="h-4 w-4 cursor-pointer"
                 />
               </div>
@@ -287,16 +357,18 @@ const FreeLlmApiPreferencesPane = observer(() => {
           <div className="mt-3 flex flex-wrap gap-2">
             <button
               type="button"
+              disabled={!controller.config.enabled}
               onClick={() => {
                 application.preferencesController.closePreferences()
                 controller.open()
               }}
-              className="cursor-pointer rounded bg-info px-3.5 py-1.5 text-xs font-semibold text-info-contrast hover:opacity-90"
+              className="cursor-pointer rounded bg-info px-3.5 py-1.5 text-xs font-semibold text-info-contrast hover:opacity-90 disabled:opacity-40"
             >
               Open AI Chat Panel
             </button>
             <button
               type="button"
+              disabled={!controller.config.enabled}
               onClick={() => {
                 application.preferencesController.closePreferences()
                 controller.open()
@@ -304,7 +376,7 @@ const FreeLlmApiPreferencesPane = observer(() => {
                   controller.toggleRecoveryDrawer()
                 }
               }}
-              className="cursor-pointer rounded border border-border bg-contrast px-3.5 py-1.5 text-xs font-semibold text-text hover:border-info"
+              className="cursor-pointer rounded border border-border bg-contrast px-3.5 py-1.5 text-xs font-semibold text-text hover:border-info disabled:opacity-40"
             >
               Open Recovery Drawer
             </button>

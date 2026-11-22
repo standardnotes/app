@@ -20,12 +20,13 @@ const FreeLlmApiPanel = observer(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [controller?.messages.length, controller?.isLoading])
 
-  if (!controller || !controller.isOpen) {
+  if (!controller || !controller.config.enabled || !controller.isOpen) {
     return null
   }
 
   const currentNote = controller.currentNote
   const activeTitle = currentNote?.title || 'Untitled Note'
+  const disclosure = controller.outboundDisclosure
 
   const handleSubmit = (event?: FormEvent) => {
     event?.preventDefault()
@@ -168,6 +169,10 @@ const FreeLlmApiPanel = observer(() => {
                 </span>
               </div>
 
+              {step.status === 'pending' && step.requiresConfirmationReason && (
+                <div className="mb-1.5 text-[11px] text-neutral">{step.requiresConfirmationReason}</div>
+              )}
+
               {renderWritePreview(step)}
 
               {step.error && <div className="mb-1.5 text-xs text-danger">{step.error}</div>}
@@ -269,7 +274,6 @@ const FreeLlmApiPanel = observer(() => {
       aria-label="Local AI Notes Assistant"
       className="fixed bottom-8 right-0 top-0 z-modal flex w-full max-w-md flex-col border-l border-border bg-default text-text shadow-main"
     >
-      {/* Hidden file input for local backup recovery */}
       <input
         ref={backupFileInputRef}
         type="file"
@@ -284,6 +288,11 @@ const FreeLlmApiPanel = observer(() => {
         <div className="flex items-center gap-1.5">
           <Icon type="search" size="small" className="text-info" />
           <span className="text-sm font-bold">FreeLLM AI</span>
+          {disclosure.policy.isRemote && (
+            <span className="rounded bg-warning px-1.5 py-0.5 text-[10px] font-bold text-warning-contrast">
+              Remote HTTPS
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-1">
           <button
@@ -373,6 +382,16 @@ const FreeLlmApiPanel = observer(() => {
               className="rounded border border-border bg-default px-2 py-1 text-xs text-text"
             />
           </label>
+          {!disclosure.policy.valid && disclosure.policy.error && (
+            <div className="rounded border border-danger bg-default px-2 py-1 text-[11px] text-danger">
+              {disclosure.policy.error}
+            </div>
+          )}
+          {disclosure.policy.valid && disclosure.policy.isRemote && (
+            <div className="rounded border border-warning bg-default px-2 py-1 text-[11px] text-warning">
+              {disclosure.policy.warning}
+            </div>
+          )}
           <label className="flex flex-col gap-0.5">
             <span className="font-semibold text-neutral">API Key</span>
             <div className="flex items-center gap-1">
@@ -380,7 +399,7 @@ const FreeLlmApiPanel = observer(() => {
                 type={showApiKey ? 'text' : 'password'}
                 value={controller.config.apiKey}
                 onChange={(e) => controller.updateConfig({ apiKey: e.target.value })}
-                placeholder="freellmapi-..."
+                placeholder="Enter your API key..."
                 className="flex-1 rounded border border-border bg-default px-2 py-1 text-xs text-text"
               />
               <button
@@ -435,7 +454,7 @@ const FreeLlmApiPanel = observer(() => {
         </div>
       )}
 
-      {/* Collapsible Recovery Drawer (Snapshots, Local Backups, Trash/Archive) */}
+      {/* Collapsible Recovery Drawer */}
       {controller.showRecoveryDrawer && (
         <div className="flex max-h-60 flex-col gap-2 border-b border-border bg-contrast px-3 py-2 text-xs">
           <div className="flex items-center justify-between gap-1">
@@ -472,6 +491,11 @@ const FreeLlmApiPanel = observer(() => {
 
           {controller.recoveryTab === 'snapshots' && (
             <div className="flex flex-1 flex-col gap-1 overflow-y-auto">
+              <div className="text-[10px] text-neutral">
+                {controller.config.persistEncryptedSnapshots
+                  ? 'Opt-in encrypted persistence ON (survives restart).'
+                  : 'Session-only RAM snapshots (opt in to encrypted persistence in Preferences).'}
+              </div>
               {controller.snapshots.length === 0 ? (
                 <div className="py-2 text-center text-neutral">
                   No AI edit snapshots yet. Every AI edit saves a restore point automatically.
@@ -712,12 +736,12 @@ const FreeLlmApiPanel = observer(() => {
 
           <label
             className="flex cursor-pointer select-none items-center gap-1 text-[11px]"
-            title="When enabled, the model edits notes immediately without asking for approval (snapshots are still saved)."
+            title="Allows up to 2 single-note edits/turn automatically. Bulk edits and restores always require confirmation."
           >
             <input
               type="checkbox"
               checked={controller.autoApplyEdits}
-              onChange={(e) => controller.setAutoApplyEdits(e.target.checked)}
+              onChange={(e) => void controller.requestSetAutoApplyEdits(e.target.checked)}
             />
             <span className={controller.autoApplyEdits ? 'font-bold text-warning' : 'text-neutral'}>Auto-edit</span>
           </label>
@@ -790,7 +814,8 @@ const FreeLlmApiPanel = observer(() => {
               <strong>Backup files</strong> loaded in <strong>Recovery</strong>.
             </p>
             <p className="text-[11px]">
-              Example: <em>&ldquo;I forgot where I saved my server SSH steps from an old note—find it for me&rdquo;</em>
+              Inspect exactly which notes & sources will be sent using the <strong>Context to send</strong> bar below
+              before sending.
             </p>
           </div>
         ) : (
@@ -837,6 +862,51 @@ const FreeLlmApiPanel = observer(() => {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Pre-Send Outbound Context Disclosure Bar */}
+      <div className="border-t border-border bg-default px-2.5 py-1.5 text-[11px]">
+        <button
+          type="button"
+          onClick={controller.toggleOutboundPreview}
+          className="flex w-full cursor-pointer items-center justify-between text-left text-neutral hover:text-text"
+        >
+          <span className="truncate">
+            <strong className="text-text">Will send:</strong> {disclosure.fullContentNotes.length} note body(s) (~
+            {disclosure.totalApproxChars.toLocaleString()} chars)
+            {disclosure.titleIndexCount > 0 ? ` + ${disclosure.titleIndexCount} titles` : ''} →{' '}
+            <code className={disclosure.policy.isRemote ? 'text-warning' : 'text-info'}>
+              {disclosure.policy.origin || disclosure.endpoint}
+            </code>
+          </span>
+          <span className="ml-1 shrink-0 font-semibold text-info">
+            {controller.showOutboundPreview ? 'Hide' : 'Inspect'}
+          </span>
+        </button>
+
+        {controller.showOutboundPreview && (
+          <div className="mt-1.5 flex max-h-32 flex-col gap-1 overflow-y-auto rounded border border-border bg-contrast p-2 text-[11px]">
+            <div className="font-semibold text-text">Immediate note contents sent:</div>
+            {disclosure.fullContentNotes.length === 0 ? (
+              <div className="text-neutral">(none — only titles/tools)</div>
+            ) : (
+              disclosure.fullContentNotes.map((n) => (
+                <div key={n.uuid} className="flex items-center justify-between gap-2 text-neutral">
+                  <span className="truncate text-text">
+                    {n.title}
+                    {n.archived ? ' [Archived]' : ''}
+                  </span>
+                  <span className="shrink-0">{n.approxChars.toLocaleString()} chars</span>
+                </div>
+              ))
+            )}
+            <div className="mt-1 font-semibold text-text">Sources accessible if model calls tools:</div>
+            <div className="text-neutral">{disclosure.toolAccessibleSources.join(' · ')}</div>
+            <div className="text-[10px] text-neutral">
+              Protected, locked, and 2FA Authenticator notes are strictly excluded.
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Prompt input */}
       <form onSubmit={handleSubmit} className="border-t border-border bg-contrast p-2.5">
         <textarea
@@ -849,11 +919,13 @@ const FreeLlmApiPanel = observer(() => {
         />
         <div className="mt-1.5 flex items-center justify-between">
           <span className="text-[10px] text-neutral">
-            {controller.autoApplyEdits ? 'Auto-edit ON (snapshots auto-saved)' : 'Review mode (approve edits first)'}
+            {controller.autoApplyEdits
+              ? 'Auto-edit ON (max 2/turn; bulk/restore confirm)'
+              : 'Review mode (approve edits first)'}
           </span>
           <button
             type="submit"
-            disabled={controller.isLoading || !inputValue.trim()}
+            disabled={controller.isLoading || !inputValue.trim() || !disclosure.policy.valid}
             className="cursor-pointer rounded bg-info px-3 py-1 text-xs font-semibold text-info-contrast hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Send

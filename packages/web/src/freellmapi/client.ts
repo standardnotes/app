@@ -1,4 +1,4 @@
-import { FreeLlmApiConfig } from './config'
+import { analyzeEndpointPolicy, FreeLlmApiConfig } from './config'
 
 export interface ResponsesCreateParams {
   instructions?: string
@@ -76,7 +76,12 @@ export class FreeLlmApiClient {
     signal?: AbortSignal,
     timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS,
   ): Promise<string> {
-    const baseURL = config.baseURL.replace(/\/+$/, '')
+    const policy = analyzeEndpointPolicy(config.baseURL)
+    if (!policy.valid) {
+      throw new Error(policy.error || 'Invalid endpoint URL.')
+    }
+
+    const baseURL = config.baseURL.trim().replace(/\/+$/, '')
     const endpoint = `${baseURL}/responses`
 
     const headers: Record<string, string> = {
@@ -91,10 +96,11 @@ export class FreeLlmApiClient {
     const onExternalAbort = () => internalAbort.abort()
     if (signal) {
       if (signal.aborted) {
-        internalAbort.abort()
-      } else {
-        signal.addEventListener('abort', onExternalAbort, { once: true })
+        const abortError = new Error('Request cancelled.')
+        abortError.name = 'AbortError'
+        throw abortError
       }
+      signal.addEventListener('abort', onExternalAbort, { once: true })
     }
     const timer = setTimeout(() => {
       didTimeout = true
@@ -121,7 +127,7 @@ export class FreeLlmApiClient {
         throw error
       }
       throw new Error(
-        `Could not reach FreeLLM API at ${baseURL}. Make sure your local server is running and allows CORS.`,
+        `Could not reach FreeLLM API at ${baseURL}. Verify the server is running and permits requests from this Desktop app.`,
       )
     } finally {
       clearTimeout(timer)
@@ -166,6 +172,7 @@ export class FreeLlmApiClient {
           input: 'Connection test. Reply with OK.',
         },
         abortController.signal,
+        15000,
       )
       return {
         ok: true,
