@@ -5,6 +5,7 @@ import { useCallback, useMemo } from 'react'
 import { useKeyboardService } from '../KeyboardServiceProvider'
 import { useApplication } from '../ApplicationProvider'
 import { c } from 'ttag'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 function TagsSectionAddButton() {
   const application = useApplication()
@@ -15,10 +16,7 @@ function TagsSectionAddButton() {
     [application.navigationController],
   )
 
-  const shortcut = useMemo(
-    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(CREATE_NEW_TAG_COMMAND)),
-    [keyboardService],
-  )
+  const shortcut = keyboardStringForShortcut(useKeyboardShortcut(keyboardService, CREATE_NEW_TAG_COMMAND))
 
   const title = useMemo(
     () => c('B4.Notes.TagsLinkedItems.Action').jt`Create a new tag (${shortcut})` as unknown as string,

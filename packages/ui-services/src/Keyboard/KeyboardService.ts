@@ -1,23 +1,58 @@
-import { Environment, Platform, UuidGenerator } from '@standardnotes/snjs'
+import { Environment, Platform, PrefDefaults, PrefKey, UuidGenerator } from '@standardnotes/snjs'
+import { PreferenceServiceInterface, PreferencesServiceEvent } from '@standardnotes/services'
 import { ComponentKeyboardEventInit } from './ComponentKeyboardEventInit'
 import { eventMatchesKeyAndModifiers } from './eventMatchesKeyAndModifiers'
-import { KeyboardCommand } from './KeyboardCommands'
+import { KeyboardCommand, keyboardCommandForId } from './KeyboardCommands'
 import { KeyboardKeyEvent } from './KeyboardKeyEvent'
 import { KeyboardModifier } from './KeyboardModifier'
 import { KeyboardCommandHandler } from './KeyboardCommandHandler'
-import { KeyboardShortcut, KeyboardShortcutHelpItem, PlatformedKeyboardShortcut } from './KeyboardShortcut'
+import {
+  KeyboardShortcut,
+  KeyboardShortcutCategory,
+  KeyboardShortcutHelpItem,
+  PlatformedKeyboardShortcut,
+} from './KeyboardShortcut'
 import { getKeyboardShortcuts } from './getKeyboardShortcuts'
+import { KeyboardShortcutOverrides, sanitizeKeyboardShortcutBinding } from './KeyboardShortcutBinding'
+
+type OverrideLayer = {
+  priority: number
+  order: number
+  overrides: KeyboardShortcutOverrides
+}
+
+/** Override layer holding the user's own customizations, from the synced preferences. Takes precedence over other layers. */
+const USER_OVERRIDES_LAYER = 'user'
+const USER_OVERRIDES_PRIORITY = 100
+
+type HandlerHelpEntry = {
+  command: KeyboardCommand
+  category: KeyboardShortcutCategory
+  description: string
+  id: string
+}
 
 export class KeyboardService {
   readonly activeModifiers = new Set<KeyboardModifier>()
   private commandHandlers = new Set<KeyboardCommandHandler>()
-  private commandMap = new Map<KeyboardCommand, KeyboardShortcut>()
 
+  /** Built-in bindings, before any overrides are applied. */
+  private defaultShortcuts = new Map<KeyboardCommand, KeyboardShortcut>()
+  /** Named sets of overrides (e.g. 'user', or a plugin id), applied on top of the defaults. */
+  private overrideLayers = new Map<string, OverrideLayer>()
+  private overrideLayerCounter = 0
+  /** Effective bindings: defaults with all override layers applied. Unbound commands are absent. */
+  private commandMap = new Map<KeyboardCommand, KeyboardShortcut>()
+  private shortcutChangeObservers = new Set<() => void>()
+  private removePreferencesObserver: () => void
+
+  private handlerHelpEntries = new Set<HandlerHelpEntry>()
   private keyboardShortcutHelpItems = new Set<KeyboardShortcutHelpItem>()
 
   constructor(
     private platform: Platform,
     environment: Environment,
+    private preferences: PreferenceServiceInterface,
   ) {
     window.addEventListener('keydown', this.handleKeyDown)
     window.addEventListener('keyup', this.handleKeyUp)
@@ -25,8 +60,28 @@ export class KeyboardService {
 
     const shortcuts = getKeyboardShortcuts(platform, environment)
     for (const shortcut of shortcuts) {
-      this.registerShortcut(shortcut)
+      this.defaultShortcuts.set(shortcut.command, shortcut)
     }
+
+    this.applyUserOverrides(false)
+    this.removePreferencesObserver = preferences.addEventObserver(async (event) => {
+      if (event === PreferencesServiceEvent.PreferencesChanged) {
+        this.applyUserOverrides()
+      }
+    })
+  }
+
+  private applyUserOverrides(notify = true): void {
+    const overrides = this.preferences.getValue(
+      PrefKey.KeyboardShortcutOverrides,
+      PrefDefaults[PrefKey.KeyboardShortcutOverrides],
+    )
+    this.overrideLayers.set(USER_OVERRIDES_LAYER, {
+      priority: USER_OVERRIDES_PRIORITY,
+      order: this.overrideLayers.get(USER_OVERRIDES_LAYER)?.order ?? this.overrideLayerCounter++,
+      overrides: { ...overrides },
+    })
+    this.rebuildCommandMap(notify)
   }
 
   private isDisabled = false
@@ -48,7 +103,10 @@ export class KeyboardService {
   }
 
   public deinit() {
+    this.removePreferencesObserver()
+    ;(this.preferences as unknown) = undefined
     this.commandHandlers.clear()
+    this.shortcutChangeObservers.clear()
     window.removeEventListener('keydown', this.handleKeyDown)
     window.removeEventListener('keyup', this.handleKeyUp)
     window.removeEventListener('blur', this.handleWindowBlur)
@@ -209,28 +267,117 @@ export class KeyboardService {
     }
   }
 
+  /**
+   * Registers or replaces the default binding for a command. Active overrides still take precedence.
+   */
   registerShortcut(shortcut: KeyboardShortcut): void {
-    this.commandMap.set(shortcut.command, shortcut)
+    this.defaultShortcuts.set(shortcut.command, shortcut)
+    this.rebuildCommandMap()
+  }
+
+  /**
+   * Sets a named layer of shortcut overrides, replacing any previous overrides for that layer.
+   * Layers with a higher priority win; layers with equal priority are applied in the order they were first set.
+   * Unknown command ids and invalid bindings are ignored.
+   *
+   * The user's own overrides are read from the synced preferences, with priority 100.
+   *
+   * @param layerId Identifies the source of the overrides, e.g. a plugin identifier.
+   */
+  setShortcutOverrides(layerId: string, overrides: KeyboardShortcutOverrides, priority = 0): void {
+    if (layerId === USER_OVERRIDES_LAYER) {
+      throw new Error(`Shortcut override layer '${USER_OVERRIDES_LAYER}' is reserved for user preferences`)
+    }
+
+    this.overrideLayers.set(layerId, {
+      priority,
+      order: this.overrideLayers.get(layerId)?.order ?? this.overrideLayerCounter++,
+      overrides: { ...overrides },
+    })
+    this.rebuildCommandMap()
+  }
+
+  removeShortcutOverrides(layerId: string): void {
+    if (layerId !== USER_OVERRIDES_LAYER && this.overrideLayers.delete(layerId)) {
+      this.rebuildCommandMap()
+    }
+  }
+
+  /**
+   * Called whenever the effective shortcuts change, e.g. when overrides are set or removed.
+   * Use this to refresh any displayed shortcut labels.
+   */
+  addShortcutChangeObserver(observer: () => void): () => void {
+    this.shortcutChangeObservers.add(observer)
+    return () => {
+      this.shortcutChangeObservers.delete(observer)
+    }
+  }
+
+  private rebuildCommandMap(notify = true): void {
+    const commandMap = new Map(this.defaultShortcuts)
+
+    const layers = Array.from(this.overrideLayers.values()).sort((a, b) => a.priority - b.priority || a.order - b.order)
+
+    for (const layer of layers) {
+      for (const [commandId, binding] of Object.entries(layer.overrides)) {
+        const command = keyboardCommandForId(commandId)
+        if (!command) {
+          continue
+        }
+
+        if (binding === null) {
+          commandMap.delete(command)
+          continue
+        }
+
+        const cleanBinding = sanitizeKeyboardShortcutBinding(binding)
+        if (!cleanBinding) {
+          continue
+        }
+
+        commandMap.set(command, {
+          ...cleanBinding,
+          command,
+          preventDefault: cleanBinding.preventDefault ?? this.defaultShortcuts.get(command)?.preventDefault,
+        })
+      }
+    }
+
+    this.commandMap = commandMap
+
+    if (notify) {
+      for (const observer of Array.from(this.shortcutChangeObservers)) {
+        observer()
+      }
+    }
   }
 
   addCommandHandler(observer: KeyboardCommandHandler): () => void {
     this.commandHandlers.add(observer)
 
-    const helpItem = this.getKeyboardShortcutHelpItemForHandler(observer)
-    if (helpItem) {
-      const existingItem = Array.from(this.keyboardShortcutHelpItems).find((item) => item.command === helpItem.command)
-      if (existingItem) {
-        this.keyboardShortcutHelpItems.delete(existingItem)
+    let helpEntry: HandlerHelpEntry | undefined
+    if (observer.category && observer.description) {
+      helpEntry = {
+        command: observer.command,
+        category: observer.category,
+        description: observer.description,
+        id: UuidGenerator.GenerateUuid(),
       }
-      this.keyboardShortcutHelpItems.add(helpItem)
+      for (const existingEntry of this.handlerHelpEntries) {
+        if (existingEntry.command === observer.command) {
+          this.handlerHelpEntries.delete(existingEntry)
+        }
+      }
+      this.handlerHelpEntries.add(helpEntry)
     }
 
     return () => {
       observer.onKeyDown = undefined
-      observer.onKeyDown = undefined
+      observer.onKeyUp = undefined
       this.commandHandlers.delete(observer)
-      if (helpItem) {
-        this.keyboardShortcutHelpItems.delete(helpItem)
+      if (helpEntry) {
+        this.handlerHelpEntries.delete(helpEntry)
       }
     }
   }
@@ -244,6 +391,11 @@ export class KeyboardService {
     }
   }
 
+  /** The built-in binding for a command, ignoring any overrides. */
+  defaultKeyboardShortcutForCommand(command: KeyboardCommand): KeyboardShortcut | undefined {
+    return this.defaultShortcuts.get(command)
+  }
+
   keyboardShortcutForCommand(command: KeyboardCommand): PlatformedKeyboardShortcut | undefined {
     const shortcut = this.commandMap.get(command)
     if (!shortcut) {
@@ -253,21 +405,6 @@ export class KeyboardService {
     return {
       platform: this.platform,
       ...shortcut,
-    }
-  }
-
-  getKeyboardShortcutHelpItemForHandler(handler: KeyboardCommandHandler): KeyboardShortcutHelpItem | undefined {
-    const shortcut = this.keyboardShortcutForCommand(handler.command)
-
-    if (!shortcut || !handler.category || !handler.description) {
-      return undefined
-    }
-
-    return {
-      ...shortcut,
-      category: handler.category,
-      description: handler.description,
-      id: UuidGenerator.GenerateUuid(),
     }
   }
 
@@ -298,7 +435,21 @@ export class KeyboardService {
     }
   }
 
-  getRegisteredKeyboardShorcutHelpItems(): KeyboardShortcutHelpItem[] {
-    return Array.from(this.keyboardShortcutHelpItems)
+  /**
+   * @param options.includeUnbound Also return items for commands that currently have no binding
+   * (e.g. unbound by an override), without key or modifiers. Useful for shortcut editing UI.
+   */
+  getRegisteredKeyboardShorcutHelpItems(options?: { includeUnbound?: boolean }): KeyboardShortcutHelpItem[] {
+    const handlerItems: KeyboardShortcutHelpItem[] = []
+    for (const entry of this.handlerHelpEntries) {
+      const shortcut = this.keyboardShortcutForCommand(entry.command)
+      if (shortcut) {
+        handlerItems.push({ ...shortcut, ...entry })
+      } else if (options?.includeUnbound) {
+        handlerItems.push({ platform: this.platform, ...entry })
+      }
+    }
+
+    return [...handlerItems, ...Array.from(this.keyboardShortcutHelpItems)]
   }
 }

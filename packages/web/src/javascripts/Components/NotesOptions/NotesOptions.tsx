@@ -33,6 +33,7 @@ import AddToVaultMenuOption from '../Vaults/AddToVaultMenuOption'
 import MenuSection from '../Menu/MenuSection'
 import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
 import { c } from 'ttag'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -103,28 +104,16 @@ const NotesOptions = ({ notes, closeMenu }: NotesOptionsProps) => {
     application.historyModalController.openModal(notesController.firstSelectedNote)
   }, [application.historyModalController, notesController.firstSelectedNote])
 
-  const historyShortcut = useMemo(
-    () => application.keyboardService.keyboardShortcutForCommand(OPEN_NOTE_HISTORY_COMMAND),
-    [application],
-  )
+  const historyShortcut = useKeyboardShortcut(application.keyboardService, OPEN_NOTE_HISTORY_COMMAND)
 
-  const pinShortcut = useMemo(
-    () => application.keyboardService.keyboardShortcutForCommand(PIN_NOTE_COMMAND),
-    [application],
-  )
+  const pinShortcut = useKeyboardShortcut(application.keyboardService, PIN_NOTE_COMMAND)
 
-  const starShortcut = useMemo(
-    () => application.keyboardService.keyboardShortcutForCommand(STAR_NOTE_COMMAND),
-    [application],
-  )
+  const starShortcut = useKeyboardShortcut(application.keyboardService, STAR_NOTE_COMMAND)
 
   const toggleLineWidthModal = useCallback(() => {
     application.keyboardService.triggerCommand(CHANGE_EDITOR_WIDTH_COMMAND)
   }, [application.keyboardService])
-  const editorWidthShortcut = useMemo(
-    () => application.keyboardService.keyboardShortcutForCommand(CHANGE_EDITOR_WIDTH_COMMAND),
-    [application],
-  )
+  const editorWidthShortcut = useKeyboardShortcut(application.keyboardService, CHANGE_EDITOR_WIDTH_COMMAND)
 
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {

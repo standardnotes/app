@@ -7,6 +7,15 @@ import { EditorLineWidth } from './EditorLineWidth'
 import { EditorFontSize } from './EditorFontSize'
 import { AllComponentPreferences } from './ComponentPreferences'
 
+/**
+ * User keyboard shortcut overrides, keyed by keyboard command id. `null` unbinds the command.
+ * Structurally matches `KeyboardShortcutOverrides` in @standardnotes/ui-services.
+ */
+export type KeyboardShortcutOverridesPreference = Record<
+  string,
+  { key?: string; code?: string; modifiers?: string[]; preventDefault?: boolean } | null
+>
+
 export enum PrefKey {
   TagsPanelWidth = 'tagsPanelWidth',
   NotesPanelWidth = 'notesPanelWidth',
@@ -45,6 +54,7 @@ export enum PrefKey {
   AddImportsToTag = 'addImportsToTag',
   AlwaysCreateNewTagForImports = 'alwaysCreateNewTagForImports',
   ExistingTagForImports = 'existingTagForImports',
+  KeyboardShortcutOverrides = 'keyboardShortcutOverrides',
   DEPRECATED_ActiveThemes = 'activeThemes',
   DEPRECATED_UseSystemColorScheme = 'useSystemColorScheme',
   DEPRECATED_UseTranslucentUI = 'useTranslucentUI',
@@ -103,4 +113,5 @@ export type PrefValue = {
   [PrefKey.AlwaysCreateNewTagForImports]: boolean
   [PrefKey.ExistingTagForImports]: string | undefined
   [PrefKey.SuperNoteImageAlignment]: 'left' | 'center' | 'right'
+  [PrefKey.KeyboardShortcutOverrides]: KeyboardShortcutOverridesPreference
 }

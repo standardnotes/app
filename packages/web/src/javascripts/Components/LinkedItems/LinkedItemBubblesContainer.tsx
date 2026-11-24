@@ -18,6 +18,7 @@ import LastEditedByBadge from '../Vaults/LastEditedByBadge'
 import { useItemVaultInfo } from '@/Hooks/useItemVaultInfo'
 import mergeRegister from '../../Hooks/mergeRegister'
 import { useApplication } from '../ApplicationProvider'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type Props = {
   linkingController: LinkingController
@@ -84,10 +85,7 @@ const LinkedItemBubblesContainer = ({
     )
   }, [application.commands, keyboardService])
 
-  const shortcut = useMemo(
-    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(FOCUS_TAGS_INPUT_COMMAND)),
-    [keyboardService],
-  )
+  const shortcut = keyboardStringForShortcut(useKeyboardShortcut(keyboardService, FOCUS_TAGS_INPUT_COMMAND))
 
   const [focusedId, setFocusedId] = useState<string>()
   const focusableIds = allItemsLinkedToItem

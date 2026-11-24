@@ -4,9 +4,10 @@ import MenuItem from '../Menu/MenuItem'
 import { iconClass } from './ClassNames'
 import MenuSection from '../Menu/MenuSection'
 import { SUPER_SHOW_MARKDOWN_PREVIEW, SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
-import { useMemo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useKeyboardService } from '../KeyboardServiceProvider'
 import { c } from 'ttag'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type Props = {
   closeMenu: () => void
@@ -15,12 +16,9 @@ type Props = {
 const SuperNoteOptions = ({ closeMenu }: Props) => {
   const keyboardService = useKeyboardService()
 
-  const markdownShortcut = useMemo(
-    () => keyboardService.keyboardShortcutForCommand(SUPER_SHOW_MARKDOWN_PREVIEW),
-    [keyboardService],
-  )
+  const markdownShortcut = useKeyboardShortcut(keyboardService, SUPER_SHOW_MARKDOWN_PREVIEW)
 
-  const findShortcut = useMemo(() => keyboardService.keyboardShortcutForCommand(SUPER_TOGGLE_SEARCH), [keyboardService])
+  const findShortcut = useKeyboardShortcut(keyboardService, SUPER_TOGGLE_SEARCH)
 
   const enableSuperMarkdownPreview = useCallback(() => {
     keyboardService.triggerCommand(SUPER_SHOW_MARKDOWN_PREVIEW)

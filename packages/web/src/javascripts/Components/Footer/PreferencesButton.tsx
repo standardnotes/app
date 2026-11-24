@@ -9,6 +9,7 @@ import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import RoundIconButton from '../Button/RoundIconButton'
 import CountBubble from '../Preferences/PreferencesComponents/CountBubble'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type Props = {
   openPreferences: (openWhatsNew: boolean) => void
@@ -18,10 +19,7 @@ const PreferencesButton = ({ openPreferences }: Props) => {
   const application = useApplication()
 
   const keyboardService = useKeyboardService()
-  const shortcut = useMemo(
-    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(OPEN_PREFERENCES_COMMAND)),
-    [keyboardService],
-  )
+  const shortcut = keyboardStringForShortcut(useKeyboardShortcut(keyboardService, OPEN_PREFERENCES_COMMAND))
 
   const [changelogLastReadVersion, setChangelogLastReadVersion] = useState(() =>
     application.changelogService.getLastReadVersion(),

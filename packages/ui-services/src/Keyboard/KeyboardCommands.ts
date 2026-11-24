@@ -1,7 +1,28 @@
 export type KeyboardCommand = symbol
 
-function createKeyboardCommand(type: string): KeyboardCommand {
-  return Symbol(type)
+/**
+ * Stable, serializable identifier for a keyboard command (the command symbol's description).
+ * Used to refer to commands from persisted data, such as shortcut overrides.
+ */
+export type KeyboardCommandId = string
+
+const commandsById = new Map<KeyboardCommandId, KeyboardCommand>()
+
+function createKeyboardCommand(id: KeyboardCommandId): KeyboardCommand {
+  if (commandsById.has(id)) {
+    throw new Error(`Duplicate keyboard command id: ${id}`)
+  }
+  const command = Symbol(id)
+  commandsById.set(id, command)
+  return command
+}
+
+export function keyboardCommandId(command: KeyboardCommand): KeyboardCommandId {
+  return command.description as KeyboardCommandId
+}
+
+export function keyboardCommandForId(id: KeyboardCommandId): KeyboardCommand | undefined {
+  return commandsById.get(id)
 }
 
 export const TOGGLE_LIST_PANE_KEYBOARD_COMMAND = createKeyboardCommand('TOGGLE_LIST_PANE_KEYBOARD_COMMAND')
@@ -48,3 +69,19 @@ export const CHANGE_EDITOR_WIDTH_COMMAND = createKeyboardCommand('CHANGE_EDITOR_
 
 export const TOGGLE_KEYBOARD_SHORTCUTS_MODAL = createKeyboardCommand('TOGGLE_KEYBOARD_SHORTCUTS_MODAL')
 export const TOGGLE_COMMAND_PALETTE = createKeyboardCommand('TOGGLE_COMMAND_PALETTE')
+
+/**
+ * Commands tied to fundamental navigation or editing keys, which users should not rebind.
+ */
+const NON_CUSTOMIZABLE_COMMANDS = new Set<KeyboardCommand>([
+  NEXT_LIST_ITEM_KEYBOARD_COMMAND,
+  PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
+  CANCEL_SEARCH_COMMAND,
+  SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
+  TAB_COMMAND,
+  ESCAPE_COMMAND,
+])
+
+export function isKeyboardCommandCustomizable(command: KeyboardCommand): boolean {
+  return !NON_CUSTOMIZABLE_COMMANDS.has(command)
+}

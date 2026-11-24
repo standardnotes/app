@@ -1,10 +1,10 @@
 import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
 import { c } from 'ttag'
-import { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { useKeyboardService } from '../KeyboardServiceProvider'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 const PanelSettingsSection = () => {
   const { isListPaneCollapsed, isNavigationPaneCollapsed, toggleListPane, toggleNavigationPane } =
@@ -12,15 +12,9 @@ const PanelSettingsSection = () => {
 
   const keyboardService = useKeyboardService()
 
-  const navigationShortcut = useMemo(
-    () => keyboardService.keyboardShortcutForCommand(TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND),
-    [keyboardService],
-  )
+  const navigationShortcut = useKeyboardShortcut(keyboardService, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND)
 
-  const listShortcut = useMemo(
-    () => keyboardService.keyboardShortcutForCommand(TOGGLE_LIST_PANE_KEYBOARD_COMMAND),
-    [keyboardService],
-  )
+  const listShortcut = useKeyboardShortcut(keyboardService, TOGGLE_LIST_PANE_KEYBOARD_COMMAND)
 
   return (
     <div className="hidden md:block pointer-coarse:md-only:hidden pointer-coarse:lg-only:hidden">

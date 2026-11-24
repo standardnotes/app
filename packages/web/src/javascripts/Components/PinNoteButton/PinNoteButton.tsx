@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useMemo } from 'react'
+import { FunctionComponent, useCallback } from 'react'
 import { c } from 'ttag'
 import Icon from '@/Components/Icon/Icon'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
@@ -7,6 +7,7 @@ import { classNames } from '@standardnotes/utils'
 import { keyboardStringForShortcut, PIN_NOTE_COMMAND } from '@standardnotes/ui-services'
 import { useKeyboardService } from '../KeyboardServiceProvider'
 import { VisuallyHidden } from '@ariakit/react'
+import { useKeyboardShortcut } from '@/Hooks/useKeyboardShortcut'
 
 type Props = {
   className?: string
@@ -27,10 +28,7 @@ const PinNoteButton: FunctionComponent<Props> = ({ className = '', notesControll
 
   const keyboardService = useKeyboardService()
 
-  const shortcut = useMemo(
-    () => keyboardStringForShortcut(keyboardService.keyboardShortcutForCommand(PIN_NOTE_COMMAND)),
-    [keyboardService],
-  )
+  const shortcut = keyboardStringForShortcut(useKeyboardShortcut(keyboardService, PIN_NOTE_COMMAND))
 
   const label = pinned
     ? (c('B3.Notes.NoteActions.Label').jt`Unpin note (${shortcut})` as unknown as string)
