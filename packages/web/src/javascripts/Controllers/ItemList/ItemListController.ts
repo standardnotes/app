@@ -1217,21 +1217,22 @@ export class ItemListController
 
     const hasShift = this.keyboardService.activeModifiers.has(KeyboardModifier.Shift)
     const hasMoreThanOneSelected = this.selectedItemsCount > 1
-    const isAuthorizedForAccess = await this.protections.authorizeItemAccess(item)
 
     if (userTriggered && hasShift && !isMobileScreen()) {
       await this.selectItemsRange({ selectedItem: item })
     } else if (userTriggered && this.isMultipleSelectionMode) {
       if (this.selectedUuids.has(uuid)) {
         this.removeSelectedItem(uuid)
-      } else if (isAuthorizedForAccess) {
+      } else if (await this.protections.authorizeItemAccess(item)) {
         this.selectedUuids.add(uuid)
         this.setSelectedUuids(this.selectedUuids)
         this.lastSelectedItem = item
       }
     } else {
       const shouldSelectNote = hasMoreThanOneSelected || !this.selectedUuids.has(uuid)
-      if (shouldSelectNote && isAuthorizedForAccess) {
+      /** A protected note is opened right away: the note view asks for authentication before showing its contents. */
+      const canOpen = isNote(item) || (await this.protections.authorizeItemAccess(item))
+      if (shouldSelectNote && canOpen) {
         this.replaceSelection(item)
         await this.openSingleSelectedItem({ userTriggered: userTriggered ?? false })
       }

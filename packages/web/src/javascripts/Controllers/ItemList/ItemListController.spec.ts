@@ -1,12 +1,13 @@
 import { ContentType, Result, SNTag } from '@standardnotes/snjs'
-import { InternalEventBus, ItemManagerInterface } from '@standardnotes/services'
+import { InternalEventBus, ItemManagerInterface, ProtectionsClientInterface } from '@standardnotes/services'
 import { WebApplication } from '@/Application/WebApplication'
 import { NavigationController } from '../Navigation/NavigationController'
 import { NotesController } from '../NotesController/NotesController'
 import { SearchOptionsController } from '../SearchOptionsController'
 import { ItemListController } from './ItemListController'
 import { ItemsReloadSource } from './ItemsReloadSource'
-import { IsNativeMobileWeb } from '@standardnotes/ui-services'
+import { IsNativeMobileWeb, KeyboardService } from '@standardnotes/ui-services'
+import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { observable, runInAction } from 'mobx'
 
 describe('item list controller', () => {
@@ -24,6 +25,12 @@ describe('item list controller', () => {
       items: {
         streamItems: jest.fn(),
       } as unknown as jest.Mocked<ItemManagerInterface>,
+      keyboardService: {
+        activeModifiers: new Set(),
+      } as unknown as jest.Mocked<KeyboardService>,
+      protections: {
+        authorizeItemAccess: jest.fn().mockResolvedValue(true),
+      } as unknown as jest.Mocked<ProtectionsClientInterface>,
     } as unknown as jest.Mocked<WebApplication>
 
     application.addEventObserver = jest.fn()
@@ -49,6 +56,42 @@ describe('item list controller', () => {
       application.recents,
       eventBus,
     )
+  })
+
+  describe('selectItemUsingInstance', () => {
+    const item = (contentType: string) =>
+      ({ uuid: contentType, content_type: contentType, protected: true }) as unknown as ListableContentItem
+
+    beforeEach(() => {
+      controller.replaceSelection = jest.fn()
+      controller.openSingleSelectedItem = jest.fn()
+    })
+
+    it('opens a protected note without authorizing, since the note view asks for authentication', async () => {
+      await controller.selectItemUsingInstance(item(ContentType.TYPES.Note), true)
+
+      expect(application.protections.authorizeItemAccess).not.toHaveBeenCalled()
+      expect(controller.openSingleSelectedItem).toHaveBeenCalled()
+    })
+
+    it('authorizes a protected file before opening it', async () => {
+      application.protections.authorizeItemAccess = jest.fn().mockResolvedValue(false)
+
+      await controller.selectItemUsingInstance(item(ContentType.TYPES.File), true)
+
+      expect(application.protections.authorizeItemAccess).toHaveBeenCalled()
+      expect(controller.openSingleSelectedItem).not.toHaveBeenCalled()
+    })
+
+    it('authorizes a protected note before adding it to a multiple selection', async () => {
+      controller.enableMultipleSelectionMode()
+      application.protections.authorizeItemAccess = jest.fn().mockResolvedValue(false)
+
+      await controller.selectItemUsingInstance(item(ContentType.TYPES.Note), true)
+
+      expect(application.protections.authorizeItemAccess).toHaveBeenCalled()
+      expect(controller.selectedUuids.has(ContentType.TYPES.Note)).toBe(false)
+    })
   })
 
   describe('shouldSelectFirstItem', () => {

@@ -7,6 +7,7 @@ import Footer from '@/Components/Footer/Footer'
 import SessionsModal from '@/Components/SessionsModal/SessionsModal'
 import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrapper'
 import ChallengeModal from '@/Components/ChallengeModal/ChallengeModal'
+import { InlineChallengeHandler, InlineChallengeHandlerContext } from '@/Components/ChallengeModal/InlineChallenge'
 import NotesContextMenu from '@/Components/NotesContextMenu/NotesContextMenu'
 import PurchaseFlowWrapper from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
 import { FunctionComponent, useCallback, useEffect, useMemo, useState, lazy, useRef } from 'react'
@@ -52,6 +53,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   const currentWriteErrorDialog = useRef<Promise<void> | null>(null)
   const currentLoadErrorDialog = useRef<Promise<void> | null>(null)
+  /** A component showing challenges in place (e.g. a protected note) gets to take each challenge first. */
+  const inlineChallengeHandler = useRef<InlineChallengeHandler>()
 
   useEffect(() => {
     const desktopService = application.desktopManager
@@ -63,6 +66,9 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     application
       .prepareForLaunch({
         receiveChallenge: async (challenge) => {
+          if (inlineChallengeHandler.current?.(challenge)) {
+            return
+          }
           const challengesCopy = challenges.slice()
           challengesCopy.push(challenge)
           setChallenges(challengesCopy)
@@ -245,7 +251,9 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
               <LinkingControllerProvider controller={application.linkingController}>
                 <div className={platformString + ' main-ui-view sn-component h-full'}>
                   <FileDragNDropProvider application={application}>
-                    <PanesSystemComponent />
+                    <InlineChallengeHandlerContext.Provider value={inlineChallengeHandler}>
+                      <PanesSystemComponent />
+                    </InlineChallengeHandlerContext.Provider>
                   </FileDragNDropProvider>
                   <>
                     <Footer application={application} applicationGroup={mainApplicationGroup} />
