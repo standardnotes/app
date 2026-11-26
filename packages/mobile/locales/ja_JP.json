@@ -6,12 +6,12 @@
   "contexts": {
     "B8.MobileDesktopShared.Mobile.Database.Info": {
       "The following items could not be loaded. This may happen if you are in low-memory conditions, or if the note is very large in size. We recommend breaking up large notes into smaller chunks using the desktop or web app.\n\nItems:\n${ items }": [
-        "次のアイテムを読み込めませんでした。メモリが不足している場合や、メモのサイズが非常に大きい場合に発生することがあります。大きなメモはデスクトップアプリまたはウェブアプリを使って小さなチャンクに分割することをおすすめします。\n\nアイテム:\n${ items }"
+        "次のアイテムを読み込めませんでした。これは、メモリ不足の状態にある場合や、メモのサイズが非常に大きい場合に発生することがあります。デスクトップまたはウェブアプリを使用して、大きなメモをより小さなチャンクに分割することをお勧めします。\n\nアイテム :\n${ items }"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Database.Title": {
       "Unable to load item(s)": [
-        "アイテムを読み込めませんでした"
+        "アイテムを読み込めません"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Device.Action": {
@@ -32,7 +32,7 @@
         "認証に失敗しました。30秒待ってからもう一度試してください。"
       ],
       "Unable to open URL ${ url }.": [
-        "URL ${ url } を開けません。"
+        "URL ${ url }を開けません。"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Device.Info": {
@@ -40,7 +40,7 @@
         "メモにアクセスするには生体認証が必要です。"
       ],
       "This is required to access your notes.": [
-        "メモへのアクセスに必要です。"
+        "メモにアクセスするにはこれが必要です。"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Device.Label": {
@@ -71,7 +71,7 @@
     },
     "B8.MobileDesktopShared.Mobile.WebView.Info": {
       "Please make sure your Android System Webview is updated to the latest version": [
-        "Android System Webviewが最新バージョンに更新されていることをご確認ください"
+        "Android System Webviewが最新バージョンに更新されていることを確認してください。"
       ]
     },
     "B8.MobileDesktopShared.Mobile.WebView.Title": {

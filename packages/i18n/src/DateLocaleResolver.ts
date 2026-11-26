@@ -15,10 +15,36 @@ export type ResolvedDateLocales = {
 export type ResolveActiveDateLocalesOptions = {
   appLocale: string
   localizationEnabled: boolean
+  /** The user's preferred languages, in order, e.g. `navigator.languages`. */
+  preferredLocales?: readonly string[]
 }
 
 export function toIntlLocale(appLocale: string): string {
   return INTL_LOCALE_OVERRIDES[appLocale] ?? appLocale.replace('_', '-')
+}
+
+/** Compares script too, so a Traditional Chinese preference doesn't format dates next to a Simplified Chinese UI. */
+function toLanguageAndScript(tag: string): string | undefined {
+  try {
+    const { language, script } = new Intl.Locale(tag).maximize()
+    return `${language}-${script}`
+  } catch {
+    return undefined
+  }
+}
+
+/**
+ * Prefers the user's own regional variant of the app language (e.g. `en-GB` for an `en_US` UI) so dates follow their
+ * regional conventions, falling back to the app locale when none of their preferred languages match it.
+ */
+export function resolveIntlLocale(appLocale: string, preferredLocales: readonly string[] = []): string {
+  const appIntlLocale = toIntlLocale(appLocale)
+  const appLanguage = toLanguageAndScript(appIntlLocale)
+  if (!appLanguage) {
+    return appIntlLocale
+  }
+
+  return preferredLocales.find((tag) => toLanguageAndScript(tag) === appLanguage) ?? appIntlLocale
 }
 
 export function toDayjsLocale(appLocale: string): string {
@@ -34,7 +60,7 @@ export function resolveActiveDateLocales(options: ResolveActiveDateLocalesOption
   }
 
   return {
-    intlLocale: toIntlLocale(options.appLocale),
+    intlLocale: resolveIntlLocale(options.appLocale, options.preferredLocales),
     dayjsLocale: toDayjsLocale(options.appLocale),
   }
 }

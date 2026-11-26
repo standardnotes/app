@@ -4,14 +4,18 @@ import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
 import { c } from 'ttag'
 
 export const IndentBlock = {
-  name: c('B3.Notes.EditorToolbar.Action').t`Indent`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Action').t`Indent`
+  },
   iconName: 'indent',
   keywords: ['indent'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined),
 }
 
 export const OutdentBlock = {
-  name: c('B3.Notes.EditorToolbar.Action').t`Outdent`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Action').t`Outdent`
+  },
   iconName: 'outdent',
   keywords: ['outdent'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined),

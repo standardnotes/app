@@ -161,7 +161,7 @@ describe('SignInWithRecoveryCodes', () => {
     })
 
     expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toEqual(EXPIRED_PROTOCOL_VERSION)
+    expect(result.getError()).toEqual(EXPIRED_PROTOCOL_VERSION())
   })
 
   it('should fail if the sign in with recovery code fails', async () => {

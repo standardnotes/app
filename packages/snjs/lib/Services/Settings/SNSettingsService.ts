@@ -5,13 +5,16 @@ import { EmailBackupFrequency } from '@standardnotes/settings'
 import { AbstractService, InternalEventBusInterface } from '@standardnotes/services'
 import { SettingsClientInterface } from './SettingsClientInterface'
 import { SettingName } from '@standardnotes/domain-core'
+import { c } from 'ttag'
 
 export class SettingsService extends AbstractService implements SettingsClientInterface {
   private provider!: SettingsGateway
-  private frequencyOptionsLabels = {
-    [EmailBackupFrequency.Disabled]: 'No email backups',
-    [EmailBackupFrequency.Daily]: 'Daily',
-    [EmailBackupFrequency.Weekly]: 'Weekly',
+  private get frequencyOptionsLabels(): Record<EmailBackupFrequency, string> {
+    return {
+      [EmailBackupFrequency.Disabled]: c('B6.Preferences.Backups.Info').t`No email backups`,
+      [EmailBackupFrequency.Daily]: c('B6.Preferences.Backups.Info').t`Daily`,
+      [EmailBackupFrequency.Weekly]: c('B6.Preferences.Backups.Info').t`Weekly`,
+    }
   }
 
   constructor(

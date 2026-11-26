@@ -5,7 +5,9 @@ import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
 import { c } from 'ttag'
 
 export const CollapsibleBlock = {
-  name: c('B3.Notes.EditorToolbar.Action').t`Collapsible`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Action').t`Collapsible`
+  },
   iconName: 'details-block' as IconType,
   keywords: ['collapse', 'collapsible', 'toggle'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined),

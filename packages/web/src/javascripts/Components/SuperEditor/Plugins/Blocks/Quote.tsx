@@ -6,7 +6,9 @@ import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
 import { c } from 'ttag'
 
 export const QuoteBlock = {
-  name: c('B3.Notes.EditorToolbar.Label').t`Quote`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Label').t`Quote`
+  },
   iconName: 'quote' as LexicalIconName,
   keywords: ['block quote'],
   onSelect: (editor: LexicalEditor) =>

@@ -8,7 +8,9 @@ const MIN_PASSWORD_LENGTH = 8
 const DEFAULT_PASSWORD_LENGTH = 16
 
 export const PasswordBlock = {
-  name: c('B3.Notes.EditorToolbar.Action').t`Generate cryptographically secure password`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Action').t`Generate cryptographically secure password`
+  },
   iconName: 'password',
   keywords: ['password', 'secure'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(INSERT_PASSWORD_COMMAND, String(DEFAULT_PASSWORD_LENGTH)),

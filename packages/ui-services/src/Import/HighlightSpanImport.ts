@@ -1,6 +1,8 @@
 const HIGHLIGHT_SPAN_PROPERTY =
   /(?:--en-highlight|-en-highlight|--evernote-highlight|-evernote-highlight)\s*:\s*([^;]+)/i
 
+export const SPAN_FONT_SIZE_ATTRIBUTE = 'data-sn-font-size'
+
 export function isHighlightSpanStyle(styleAttribute: string | null | undefined): boolean {
   if (!styleAttribute) {
     return false

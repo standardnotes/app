@@ -243,7 +243,7 @@ export class UserService
     if (!success) {
       return {
         error: true,
-        message: Messages.INVALID_PASSWORD,
+        message: Messages.INVALID_PASSWORD(),
       }
     }
 
@@ -418,7 +418,7 @@ export class UserService
     }
     const dismissBlockingDialog = await this.alerts.blockingDialog(
       Messages.DO_NOT_CLOSE_APPLICATION(),
-      Messages.UPGRADING_ENCRYPTION,
+      Messages.UPGRADING_ENCRYPTION(),
     )
     try {
       let passcode: string | undefined
@@ -598,7 +598,7 @@ export class UserService
     const accountPasswordValidation = await this.encryption.validateAccountPassword(parameters.currentPassword)
     if (!accountPasswordValidation.valid) {
       return {
-        error: Error(Messages.INVALID_PASSWORD),
+        error: Error(Messages.INVALID_PASSWORD()),
       }
     }
 

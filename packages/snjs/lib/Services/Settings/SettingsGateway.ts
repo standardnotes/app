@@ -25,7 +25,7 @@ export class SettingsGateway {
   private get userUuid() {
     const user = this.getUser()
     if (user == undefined || user.uuid == undefined) {
-      throw new Error(API_MESSAGE_INVALID_SESSION)
+      throw new Error(API_MESSAGE_INVALID_SESSION())
     }
     return user.uuid
   }

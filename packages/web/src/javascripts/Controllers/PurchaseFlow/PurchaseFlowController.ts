@@ -18,6 +18,7 @@ import { IsNativeIOS, IsAndroid } from '@standardnotes/ui-services'
 export class PurchaseFlowController extends AbstractViewController {
   isOpen = false
   currentPane = PurchaseFlowPane.CreateAccount
+  continueToCheckoutAfterSignIn = true
 
   constructor(
     private sessions: SessionsClientInterface,
@@ -46,13 +47,17 @@ export class PurchaseFlowController extends AbstractViewController {
     this.currentPane = currentPane
   }
 
-  openPurchaseFlow = async (plan = AppleIAPProductId.ProPlanYearly) => {
+  openPurchaseFlow = async ({
+    plan = AppleIAPProductId.ProPlanYearly,
+    continueToCheckoutAfterSignIn = true,
+  }: { plan?: AppleIAPProductId; continueToCheckoutAfterSignIn?: boolean } = {}) => {
     if (this._isAndroid.execute().getValue()) {
       return
     }
 
     const user = this.sessions.getUser()
     if (!user) {
+      this.continueToCheckoutAfterSignIn = continueToCheckoutAfterSignIn
       this.isOpen = true
       return
     }

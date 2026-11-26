@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.73.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.73.0...@standardnotes/services@1.73.1) (2026-11-12)
+
+### Bug Fixes
+
+* Improves errors on file attachments for expired subscriptions ([#3076](https://github.com/standardnotes/app/issues/3076)) ([cdb1b42](https://github.com/standardnotes/app/commit/cdb1b42cd9ce29abab07a735bf4137e5206f41ff))
+
+# [1.73.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.72.12...@standardnotes/services@1.73.0) (2026-11-02)
+
+### Features
+
+* Introduces localization with support for multiple languages ([#3073](https://github.com/standardnotes/app/issues/3073)) ([b2f812b](https://github.com/standardnotes/app/commit/b2f812bcac226d12c0217d6b92938e60ecc3f392))
+
+## [1.72.12](https://github.com/standardnotes/app/compare/@standardnotes/services@1.72.11...@standardnotes/services@1.72.12) (2026-10-30)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.72.11](https://github.com/standardnotes/app/compare/@standardnotes/services@1.72.10...@standardnotes/services@1.72.11) (2026-10-23)
+
+### Bug Fixes
+
+* Improves errors on file attachments for expired subs ([#3069](https://github.com/standardnotes/app/issues/3069)) ([7f9b07f](https://github.com/standardnotes/app/commit/7f9b07f9f88ae8885874fdb77425c883e4a41132))
+
+## [1.72.10](https://github.com/standardnotes/app/compare/@standardnotes/services@1.72.9...@standardnotes/services@1.72.10) (2026-10-17)
+
+**Note:** Version bump only for package @standardnotes/services
+
 ## [1.72.9](https://github.com/standardnotes/app/compare/@standardnotes/services@1.72.8...@standardnotes/services@1.72.9) (2026-10-08)
 
 **Note:** Version bump only for package @standardnotes/services

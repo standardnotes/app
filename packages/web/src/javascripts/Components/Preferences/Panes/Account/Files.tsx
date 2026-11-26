@@ -3,7 +3,7 @@ import Spinner from '@/Components/Spinner/Spinner'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { SettingName } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
-import { c } from 'ttag'
+import { c, msgid } from 'ttag'
 import { Subtitle, Title } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -42,6 +42,18 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
     getFilesQuota().catch(console.error)
   }, [application])
 
+  const filesQuotaUsedLabel = formatSizeToReadableString(filesQuotaUsed)
+  const filesQuotaTotalLabel = application.sessions.isSignedIntoFirstPartyServer()
+    ? formatSizeToReadableString(filesQuotaTotal)
+    : '∞'
+  /** The plural form must follow the number shown to the user (e.g. "1 MB"), not the raw byte count */
+  const filesQuotaUsedDisplayedAmount = parseFloat(filesQuotaUsedLabel)
+  const filesQuotaText = c('B6.Preferences.Account.Info').ngettext(
+    msgid`${filesQuotaUsedLabel} of ${filesQuotaTotalLabel} used`,
+    `${filesQuotaUsedLabel} of ${filesQuotaTotalLabel} used`,
+    filesQuotaUsedDisplayedAmount,
+  )
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -53,16 +65,7 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
           </div>
         ) : (
           <>
-            <div className="mb-1 mt-1">
-              <span className="font-semibold">{formatSizeToReadableString(filesQuotaUsed)}</span>{' '}
-              {c('B6.Preferences.Account.Info').t`of`}{' '}
-              <span>
-                {application.sessions.isSignedIntoFirstPartyServer()
-                  ? formatSizeToReadableString(filesQuotaTotal)
-                  : '∞'}
-              </span>{' '}
-              {c('B6.Preferences.Account.Info').t`used`}
-            </div>
+            <div className="mb-1 mt-1">{filesQuotaText}</div>
             <progress
               className="progress-bar w-full"
               aria-label={c('B6.Preferences.Account.Label').t`Files storage used`}

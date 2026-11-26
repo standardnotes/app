@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.203.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.203.2...@standardnotes/web@3.203.3) (2026-11-23)
+
+### Bug Fixes
+
+* Fixes Evernote converter formatting issues ([#3082](https://github.com/standardnotes/app/issues/3082)) ([f14d0b5](https://github.com/standardnotes/app/commit/f14d0b5bd26c1518018c3e11f83127a33a8d3927))
+
+## [3.203.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.203.1...@standardnotes/web@3.203.2) (2026-11-12)
+
+### Bug Fixes
+
+* Improves errors on file attachments for expired subscriptions ([#3076](https://github.com/standardnotes/app/issues/3076)) ([cdb1b42](https://github.com/standardnotes/app/commit/cdb1b42cd9ce29abab07a735bf4137e5206f41ff))
+
+## [3.203.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.203.0...@standardnotes/web@3.203.1) (2026-11-12)
+
+### Bug Fixes
+
+* Improves conflict resolver UI ([#3077](https://github.com/standardnotes/app/issues/3077)) ([b068189](https://github.com/standardnotes/app/commit/b0681895dd6f24c62c6e3cba83f44aafd18d0035))
+* Prevents custom plugin sandbox escape via Super notes ([#3075](https://github.com/standardnotes/app/issues/3075)) ([84adfbb](https://github.com/standardnotes/app/commit/84adfbb5df81474aba5573c53d35ee55698c0167))
+* Prevents redirect to checkout when clicking Sign up to sync ([#3078](https://github.com/standardnotes/app/issues/3078)) ([8194df3](https://github.com/standardnotes/app/commit/8194df3820271abe6b17e352a39ad519eca309f3))
+
+# [3.203.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.12...@standardnotes/web@3.203.0) (2026-11-02)
+
+### Features
+
+* Introduces localization with support for multiple languages ([#3073](https://github.com/standardnotes/app/issues/3073)) ([b2f812b](https://github.com/standardnotes/app/commit/b2f812bcac226d12c0217d6b92938e60ecc3f392))
+
+## [3.202.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.11...@standardnotes/web@3.202.12) (2026-10-30)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.202.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.10...@standardnotes/web@3.202.11) (2026-10-23)
+
+### Bug Fixes
+
+* Improves errors on file attachments for expired subs ([#3069](https://github.com/standardnotes/app/issues/3069)) ([7f9b07f](https://github.com/standardnotes/app/commit/7f9b07f9f88ae8885874fdb77425c883e4a41132))
+* Potentially fixes keyboard hiding when editing misspelt words ([#3070](https://github.com/standardnotes/app/issues/3070)) ([08ed33b](https://github.com/standardnotes/app/commit/08ed33bacd2877e504470b2b797724367336b387))
+* Uses default note type setting when creating note by sharing content on Android ([#3071](https://github.com/standardnotes/app/issues/3071)) ([72b05ff](https://github.com/standardnotes/app/commit/72b05ffdc0d14dec7be1804324b12b406b881b3b))
+
+## [3.202.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.9...@standardnotes/web@3.202.10) (2026-10-17)
+
+### Bug Fixes
+
+* Fixes backups copy styling ([#3065](https://github.com/standardnotes/app/issues/3065)) ([7a6f8b8](https://github.com/standardnotes/app/commit/7a6f8b8770d61b71383a2a958559d38018877d57))
+
 ## [3.202.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.202.8...@standardnotes/web@3.202.9) (2026-10-08)
 
 **Note:** Version bump only for package @standardnotes/web

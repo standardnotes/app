@@ -17,7 +17,7 @@ export function getCSSValueFromAlignment(format: ElementFormatType) {
   }
 }
 
-const Options = [
+const getOptions = () => [
   {
     alignment: 'left',
     label: c('B7.FilesSubscriptionHelp.Files.Label').t`Left align`,
@@ -39,7 +39,7 @@ export function ImageAlignmentOptions({
   alignment: ElementFormatType
   changeAlignment: (format: ElementFormatType) => void
 }) {
-  return Options.map(({ alignment, label }) => (
+  return getOptions().map(({ alignment, label }) => (
     <StyledTooltip label={label} key={alignment}>
       <IconButton
         className={classNames(

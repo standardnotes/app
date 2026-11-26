@@ -142,7 +142,7 @@ export class PluginsService implements PluginsServiceInterface {
 
     const response = await this.api.downloadFeatureUrl(url)
     if (response.data?.error) {
-      await this.alerts.alert(API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
+      await this.alerts.alert(API_MESSAGE_FAILED_DOWNLOADING_EXTENSION())
       return undefined
     }
 

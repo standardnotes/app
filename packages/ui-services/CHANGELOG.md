@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.40.10](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.40.9...@standardnotes/ui-services@1.40.10) (2026-11-23)
+
+### Bug Fixes
+
+* Fixes Evernote converter formatting issues ([#3082](https://github.com/standardnotes/app/issues/3082)) ([f14d0b5](https://github.com/standardnotes/app/commit/f14d0b5bd26c1518018c3e11f83127a33a8d3927))
+
+## [1.40.9](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.40.8...@standardnotes/ui-services@1.40.9) (2026-11-12)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.40.8](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.40.7...@standardnotes/ui-services@1.40.8) (2026-11-02)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.40.7](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.40.6...@standardnotes/ui-services@1.40.7) (2026-10-30)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.40.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.40.5...@standardnotes/ui-services@1.40.6) (2026-10-23)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.40.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.40.4...@standardnotes/ui-services@1.40.5) (2026-10-17)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.40.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.40.3...@standardnotes/ui-services@1.40.4) (2026-10-08)
 
 **Note:** Version bump only for package @standardnotes/ui-services

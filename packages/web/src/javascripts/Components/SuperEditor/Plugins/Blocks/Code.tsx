@@ -6,7 +6,9 @@ import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
 import { c } from 'ttag'
 
 export const CodeBlock = {
-  name: c('B3.Notes.EditorToolbar.Label').t`Code Block`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Label').t`Code Block`
+  },
   iconName: 'code' as LexicalIconName,
   keywords: ['javascript', 'python', 'js', 'codeblock'],
   onSelect: (editor: LexicalEditor) =>

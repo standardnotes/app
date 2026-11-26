@@ -6,12 +6,12 @@
   "contexts": {
     "B8.MobileDesktopShared.Mobile.Database.Info": {
       "The following items could not be loaded. This may happen if you are in low-memory conditions, or if the note is very large in size. We recommend breaking up large notes into smaller chunks using the desktop or web app.\n\nItems:\n${ items }": [
-        "Impossible de charger les éléments suivants. Cela peut se produire si la mémoire de l'appareil est insuffisante ou si la note est très volumineuse. Nous vous recommandons de diviser les notes volumineuses en segments plus petits à l'aide de l'application de bureau ou web.\n\nÉléments :\n${ items }"
+        "Les éléments suivants n'ont pas pu être chargés. Cela peut se produire si la mémoire disponible est faible ou si la note est très volumineuse. Il est recommandé de diviser les notes volumineuses en segments plus petits à l'aide de l'application de bureau ou de l'application web.\n\nÉléments :\n${ items }"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Database.Title": {
       "Unable to load item(s)": [
-        "Impossible de charger le(s) élément(s)"
+        "Impossible de charger un ou plusieurs éléments"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Device.Action": {
@@ -21,7 +21,7 @@
     },
     "B8.MobileDesktopShared.Mobile.Device.Confirmation": {
       "Do you want to close the app?": [
-        "Voulez-vous fermer l'application ?"
+        "Voulez-vous fermer l'application ?"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Device.Error": {
@@ -29,7 +29,7 @@
         "Échec de l'authentification. Appuyez pour réessayer."
       ],
       "Authentication failed. Wait 30 seconds to try again.": [
-        "Échec de l'authentification. Attendez 30 secondes avant de réessayer."
+        "Échec de l'authentification. Patientez 30 secondes avant de réessayer."
       ],
       "Unable to open URL ${ url }.": [
         "Impossible d'ouvrir l'URL ${ url }."
@@ -40,7 +40,7 @@
         "La biométrie est requise pour accéder à vos notes."
       ],
       "This is required to access your notes.": [
-        "Cette étape est requise pour accéder à vos notes."
+        "Cette authentification est requise pour accéder à vos notes."
       ]
     },
     "B8.MobileDesktopShared.Mobile.Device.Label": {
@@ -61,7 +61,7 @@
     },
     "B8.MobileDesktopShared.Mobile.Notifications.Label": {
       "File Upload/Download": [
-        "Import/Téléchargement de fichiers"
+        "Importer/Télécharger le fichier"
       ]
     },
     "B8.MobileDesktopShared.Mobile.WebView.Action": {
@@ -71,7 +71,7 @@
     },
     "B8.MobileDesktopShared.Mobile.WebView.Info": {
       "Please make sure your Android System Webview is updated to the latest version": [
-        "Assurez-vous que votre Android System Webview est mis à jour vers la dernière version"
+        "Vérifiez que votre Android System Webview est à jour."
       ]
     },
     "B8.MobileDesktopShared.Mobile.WebView.Title": {

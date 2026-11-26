@@ -75,6 +75,12 @@
       "(1) Update Available": [
         "(1) 有可用更新"
       ],
+      "About ${ appName }": [
+        "关于 ${ appName }"
+      ],
+      "Actual Size": [
+        "实际大小"
+      ],
       "Automatic Updates Disabled": [
         "自动更新已停用"
       ],
@@ -95,6 +101,15 @@
       ],
       "Close": [
         "关闭"
+      ],
+      "Close Window": [
+        "关闭窗口"
+      ],
+      "Copy": [
+        "复制"
+      ],
+      "Cut": [
+        "剪切"
       ],
       "Disable Automatic Backups": [
         "停用自动备份"
@@ -120,8 +135,17 @@
       "GitHub": [
         "GitHub"
       ],
+      "Help": [
+        "帮助"
+      ],
+      "Hide ${ appName }": [
+        "隐藏 ${ appName }"
+      ],
       "Hide Menu Bar": [
         "隐藏菜单栏"
+      ],
+      "Hide Others": [
+        "隐藏其他"
       ],
       "Install Pending Update (${ versionNumber })": [
         "安装待处理的更新 (${ versionNumber })"
@@ -141,8 +165,32 @@
       "Open Download Location": [
         "打开下载位置"
       ],
+      "Paste": [
+        "粘贴"
+      ],
+      "Paste and Match Style": [
+        "粘贴并匹配样式"
+      ],
+      "Quit ${ appName }": [
+        "退出 ${ appName }"
+      ],
+      "Redo": [
+        "重做"
+      ],
       "Release Notes": [
         "版本说明"
+      ],
+      "Reload": [
+        "重新加载"
+      ],
+      "Select All": [
+        "全选"
+      ],
+      "Services": [
+        "服务"
+      ],
+      "Show All": [
+        "显示全部"
       ],
       "Speech": [
         "语音"
@@ -150,11 +198,26 @@
       "Spellchecker Languages": [
         "拼写检查语言"
       ],
+      "Start Speaking": [
+        "开始说话"
+      ],
+      "Stop Speaking": [
+        "停止说话"
+      ],
+      "Toggle Developer Tools": [
+        "切换开发者工具"
+      ],
       "Toggle Error Console": [
         "切换错误控制台"
       ],
+      "Toggle Full Screen": [
+        "切换至全屏"
+      ],
       "Twitter": [
         "Twitter"
+      ],
+      "Undo": [
+        "撤消"
       ],
       "Updates": [
         "更新"
@@ -171,8 +234,17 @@
       "Website": [
         "网站"
       ],
+      "Window": [
+        "窗口"
+      ],
       "Zoom": [
         "缩放"
+      ],
+      "Zoom In": [
+        "放大"
+      ],
+      "Zoom Out": [
+        "缩小"
       ]
     },
     "B8.MobileDesktopShared.Desktop.Menu.Title": {

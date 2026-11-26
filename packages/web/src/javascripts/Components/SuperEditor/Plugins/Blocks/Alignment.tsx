@@ -4,28 +4,36 @@ import { BlockPickerOption } from '../BlockPickerPlugin/BlockPickerOption'
 import { c } from 'ttag'
 
 export const LeftAlignBlock = {
-  name: c('B3.Notes.EditorToolbar.Action').t`Align left`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Action').t`Align left`
+  },
   iconName: 'align-left',
   keywords: ['align', 'justify', 'left'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left'),
 }
 
 export const CenterAlignBlock = {
-  name: c('B3.Notes.EditorToolbar.Action').t`Align center`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Action').t`Align center`
+  },
   iconName: 'align-center',
   keywords: ['align', 'justify', 'center'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center'),
 }
 
 export const RightAlignBlock = {
-  name: c('B3.Notes.EditorToolbar.Action').t`Align right`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Action').t`Align right`
+  },
   iconName: 'align-right',
   keywords: ['align', 'justify', 'right'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right'),
 }
 
 export const JustifyAlignBlock = {
-  name: c('B3.Notes.EditorToolbar.Action').t`Align justify`,
+  get name() {
+    return c('B3.Notes.EditorToolbar.Action').t`Align justify`
+  },
   iconName: 'align-justify',
   keywords: ['align', 'justify', 'justify'],
   onSelect: (editor: LexicalEditor) => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify'),

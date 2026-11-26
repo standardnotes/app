@@ -2,7 +2,7 @@ import { c } from 'ttag'
 import {
   ChallengePrompt,
   ChallengeValidation,
-  ProtectionSessionDurations,
+  getProtectionSessionDurations,
   ReactNativeToWebEvent,
 } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
@@ -106,7 +106,7 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
           <div className="mb-2 text-sm font-medium">{c('B5.SecuritySync.Challenge.Label')
             .t`Allow protected access for`}</div>
           <div className="flex items-center justify-between rounded bg-passive-4 p-1">
-            {ProtectionSessionDurations.map((option) => {
+            {getProtectionSessionDurations().map((option) => {
               const selected = option.valueInSeconds === values[prompt.id].value
               return (
                 <label

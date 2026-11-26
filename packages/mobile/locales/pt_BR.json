@@ -29,15 +29,15 @@
         "Falha na autenticação. Toque para tentar novamente."
       ],
       "Authentication failed. Wait 30 seconds to try again.": [
-        "Falha na autenticação. Aguarde 30 segundos e tente novamente."
+        "Falha na autenticação. Aguarde 30 segundos para tentar novamente."
       ],
       "Unable to open URL ${ url }.": [
-        "Não foi possível abrir o URL ${ url }."
+        "Não foi possível abrir a URL ${ url }."
       ]
     },
     "B8.MobileDesktopShared.Mobile.Device.Info": {
       "Biometrics are required to access your notes.": [
-        "É necessário usar a biometria para acessar suas notas."
+        "A biometria é necessária para acessar suas notas."
       ],
       "This is required to access your notes.": [
         "Isso é necessário para acessar suas notas."
@@ -56,12 +56,12 @@
         "Não foi possível abrir"
       ],
       "Unsuccessful": [
-        "Falha"
+        "Sem sucesso"
       ]
     },
     "B8.MobileDesktopShared.Mobile.Notifications.Label": {
       "File Upload/Download": [
-        "Envio/Download de arquivos"
+        "Enviar/Baixar arquivo"
       ]
     },
     "B8.MobileDesktopShared.Mobile.WebView.Action": {
@@ -71,7 +71,7 @@
     },
     "B8.MobileDesktopShared.Mobile.WebView.Info": {
       "Please make sure your Android System Webview is updated to the latest version": [
-        "Verifique se o Android System Webview está atualizado para a versão mais recente"
+        "Certifique-se de que seu Android System Webview esteja atualizado para a versão mais recente."
       ]
     },
     "B8.MobileDesktopShared.Mobile.WebView.Title": {
