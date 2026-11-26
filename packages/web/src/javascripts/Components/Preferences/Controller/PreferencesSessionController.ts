@@ -29,12 +29,20 @@ export class PreferencesSessionController {
     }
 
     if (isDesktopApplication()) {
-      menuItems.push({
-        id: 'home-server',
-        label: c('B6.Preferences.HomeServer.Label').t`Home Server`,
-        icon: 'server',
-        order: 5,
-      })
+      menuItems.push(
+        {
+          id: 'home-server',
+          label: c('B6.Preferences.HomeServer.Label').t`Home Server`,
+          icon: 'server',
+          order: 5,
+        },
+        {
+          id: 'freellmapi',
+          label: 'AI / FreeLLM API',
+          icon: 'search',
+          order: 5.5,
+        },
+      )
     }
 
     this._menu = menuItems.sort((a, b) => a.order - b.order)

@@ -36,6 +36,7 @@ import { ProtectionEvent } from '@standardnotes/services'
 import KeyboardShortcutsModal from '../KeyboardShortcutsHelpModal/KeyboardShortcutsHelpModal'
 import CommandPalette from '../CommandPalette/CommandPalette'
 import SuperExportModal from '../NotesOptions/SuperExportModal'
+import FreeLlmApiPanel from '@freellmapi/FreeLlmApiPanel'
 
 type Props = {
   application: WebApplication
@@ -276,6 +277,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <KeyboardShortcutsModal keyboardService={application.keyboardService} />
                     <SuperExportModal />
                     <CommandPalette />
+                    <FreeLlmApiPanel />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}
                   {isIOS() && <IosKeyboardClose />}

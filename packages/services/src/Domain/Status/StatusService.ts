@@ -11,6 +11,7 @@ export class StatusService extends AbstractService<StatusServiceEvent, string> i
     account: 0,
     security: 0,
     'home-server': 0,
+    freellmapi: 0,
     vaults: 0,
     appearance: 0,
     backups: 0,
