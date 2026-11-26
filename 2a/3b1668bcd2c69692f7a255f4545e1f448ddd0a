@@ -48,5 +48,11 @@ packages/web/src/javascripts/Controllers/FeaturesController.ts
       }
     }
   },
+  "activity": {
+    "added_sloc": 17,
+    "deleted_sloc": 35,
+    "checkpoints": 8,
+    "span_seconds": 9
+  },
   "proton_build": "1.7.6-proton.8"
 }
