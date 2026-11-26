@@ -5,6 +5,7 @@
 import { HeadlessSuperConverter } from './HeadlessSuperConverter'
 import { EvernoteConverter } from '@standardnotes/ui-services/src/Import/EvernoteConverter/EvernoteConverter'
 import { checkboxEnex, highlightEnex } from '@standardnotes/ui-services/src/Import/EvernoteConverter/testData'
+import { SPAN_FONT_SIZE_ATTRIBUTE } from '@standardnotes/ui-services/src/Import/HighlightSpanImport'
 import { GenerateUuid } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
@@ -34,6 +35,37 @@ describe('HeadlessSuperConverter', () => {
 
     expect(superString).toContain('"format":128')
     expect(superString).toContain('background-color')
+  })
+
+  it('imports font size from spans carrying the Evernote font size attribute', () => {
+    const converter = new HeadlessSuperConverter()
+    const superString = converter.convertOtherFormatToSuperString(
+      `<p><span ${SPAN_FONT_SIZE_ATTRIBUTE}="14pt"><strong><u>General:</u></strong></span></p>`,
+      'html',
+      {
+        html: {
+          addLineBreaks: false,
+        },
+      },
+    )
+
+    expect(superString).toContain('"format":9')
+    expect(superString).toContain('font-size: 14pt')
+  })
+
+  it('does not import font size or formatting from unmarked spans, so pasted/other HTML is unchanged', () => {
+    const converter = new HeadlessSuperConverter()
+    const superString = converter.convertOtherFormatToSuperString(
+      '<p><span style="font-size: 11pt; font-family: Arial;">Pasted</span></p>',
+      'html',
+      {
+        html: {
+          addLineBreaks: false,
+        },
+      },
+    )
+
+    expect(superString).not.toContain('font-size')
   })
 
   it('imports legacy -evernote-highlight spans as highlight format', () => {

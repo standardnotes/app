@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.203.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.203.2...@standardnotes/web@3.203.3) (2026-11-23)
+
+### Bug Fixes
+
+* Fixes Evernote converter formatting issues ([#3082](https://github.com/standardnotes/app/issues/3082)) ([f14d0b5](https://github.com/standardnotes/app/commit/f14d0b5bd26c1518018c3e11f83127a33a8d3927))
+
 ## [3.203.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.203.1...@standardnotes/web@3.203.2) (2026-11-12)
 
 ### Bug Fixes
