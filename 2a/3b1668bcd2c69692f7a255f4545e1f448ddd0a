@@ -1,0 +1,52 @@
+packages/web/src/javascripts/Controllers/FeaturesController.ts
+  s_24f695a1dabaea::t_ac2b3326e975ad 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "2a3b1668bcd2c69692f7a255f4545e1f448ddd0a",
+  "prompts": {},
+  "sessions": {
+    "s_24f695a1dabaea": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "bdaa1c0e-f15e-435a-b85b-d3bbf926769a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 306,
+        "output_tokens": 16734,
+        "cache_creation_input_tokens": 264230,
+        "cache_read_input_tokens": 13016145
+      },
+      "by_tool_model": {
+        "cursor::gpt-5.6-sol": {
+          "input_tokens": 306,
+          "output_tokens": 16734,
+          "cache_creation_input_tokens": 264230,
+          "cache_read_input_tokens": 13016145
+        }
+      },
+      "tool_uses": {
+        "grep": 42,
+        "read": 40,
+        "shell": 30,
+        "write": 7
+      }
+    },
+    "by_prompt": {
+      "s_24f695a1dabaea": {
+        "input_tokens": 306,
+        "output_tokens": 16734,
+        "cache_creation_input_tokens": 264230,
+        "cache_read_input_tokens": 13016145
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
