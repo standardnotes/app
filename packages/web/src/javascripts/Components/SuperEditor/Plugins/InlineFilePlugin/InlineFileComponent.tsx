@@ -12,6 +12,7 @@ import Spinner from '@/Components/Spinner/Spinner'
 import usePreference from '@/Hooks/usePreference'
 import { getCSSValueFromAlignment, ImageAlignmentOptions } from '@/Components/FilePreview/ImageAlignmentOptions'
 import { getOverflows } from '@/Components/Popover/Utils/Collisions'
+import FilePreviewUnavailable from '@/Components/FilePreview/FilePreviewUnavailable'
 import { c } from 'ttag'
 
 type Props = {
@@ -60,7 +61,11 @@ const InlineFileComponent = ({ className, src, mimeType, fileName, format, setFo
     }
   }, [application, editor, fileName, mimeType, node, src])
 
+  const isImage = mimeType.startsWith('image')
+  const isVideo = mimeType.startsWith('video')
+  const isAudio = mimeType.startsWith('audio')
   const isPDF = mimeType === 'application/pdf'
+  const canSaveToFiles = isImage || isVideo || isAudio || isPDF
 
   const defaultSuperImageAlignment = usePreference(PrefKey.SuperNoteImageAlignment)
   const finalAlignment = format || defaultSuperImageAlignment
@@ -76,7 +81,7 @@ const InlineFileComponent = ({ className, src, mimeType, fileName, format, setFo
 
   return (
     <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
-      {mimeType.startsWith('image') ? (
+      {isImage ? (
         <div
           className="group relative flex min-h-[2rem] flex-col gap-2.5"
           style={{ alignItems }}
@@ -106,48 +111,49 @@ const InlineFileComponent = ({ className, src, mimeType, fileName, format, setFo
             </div>
           </div>
         </div>
-      ) : mimeType.startsWith('video') ? (
+      ) : isVideo ? (
         <video className="h-full w-full" controls autoPlay>
           <source src={src} type={mimeType} />
         </video>
-      ) : mimeType.startsWith('audio') ? (
+      ) : isAudio ? (
         <div className="flex h-full w-full items-center justify-center">
           <audio controls>
             <source src={src} type={mimeType} />
           </audio>
         </div>
+      ) : isPDF ? (
+        <object className="h-full min-h-[65vh] w-full" type="application/pdf" data={src + '#view=FitV'} />
       ) : (
-        <object
-          className={classNames('h-full w-full', isPDF && 'min-h-[65vh]')}
-          data={isPDF ? src + '#view=FitV' : src}
-        />
+        <FilePreviewUnavailable />
       )}
-      <button
-        className={classNames(
-          'mx-auto mt-2 flex items-center gap-2.5 rounded border border-border bg-default px-2.5 py-1.5',
-          !isSaving && 'hover:bg-info hover:text-info-contrast',
-        )}
-        onClick={() => {
-          const isIOSPlatform = application.platform === Platform.Ios || isIOS()
-          if (isIOSPlatform && document.activeElement) {
-            ;(document.activeElement as HTMLElement).blur()
-          }
-          saveToFilesAndReplaceNode().catch(console.error)
-        }}
-        disabled={isSaving}
-      >
-        {isSaving ? (
-          <>
-            <Spinner className="h-4 w-4" />
-            {c('B4.Notes.EditingUI.Status').t`Saving...`}
-          </>
-        ) : (
-          <>
-            <Icon type="download" />
-            {c('B4.Notes.EditingUI.Action').t`Save to Files`}
-          </>
-        )}
-      </button>
+      {canSaveToFiles && (
+        <button
+          className={classNames(
+            'mx-auto mt-2 flex items-center gap-2.5 rounded border border-border bg-default px-2.5 py-1.5',
+            !isSaving && 'hover:bg-info hover:text-info-contrast',
+          )}
+          onClick={() => {
+            const isIOSPlatform = application.platform === Platform.Ios || isIOS()
+            if (isIOSPlatform && document.activeElement) {
+              ;(document.activeElement as HTMLElement).blur()
+            }
+            saveToFilesAndReplaceNode().catch(console.error)
+          }}
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <>
+              <Spinner className="h-4 w-4" />
+              {c('B4.Notes.EditingUI.Status').t`Saving...`}
+            </>
+          ) : (
+            <>
+              <Icon type="download" />
+              {c('B4.Notes.EditingUI.Action').t`Save to Files`}
+            </>
+          )}
+        </button>
+      )}
     </BlockWithAlignableContents>
   )
 }

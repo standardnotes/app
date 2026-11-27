@@ -48,6 +48,7 @@ describe('NoteView', () => {
       notesController,
       noteViewController,
       vaults,
+      featuresController: { hasScrollToBottom: false },
     } as unknown as jest.Mocked<WebApplication>
 
     application.hasProtectionSources = jest.fn().mockReturnValue(true)

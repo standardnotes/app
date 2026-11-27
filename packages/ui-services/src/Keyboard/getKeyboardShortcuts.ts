@@ -20,6 +20,7 @@ import {
   CAPTURE_SAVE_COMMAND,
   STAR_NOTE_COMMAND,
   PIN_NOTE_COMMAND,
+  SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND,
   SUPER_SHOW_MARKDOWN_PREVIEW,
   OPEN_PREFERENCES_COMMAND,
   TOGGLE_DARK_MODE_COMMAND,
@@ -152,6 +153,12 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       key: 'p',
       modifiers: [primaryModifier, KeyboardModifier.Shift],
       preventDefault: true,
+    },
+    {
+      // Keep in sync with `isScrollToEndShortcut` in component-relay, which cancels the native key for component editors
+      command: SCROLL_NOTE_TO_BOTTOM_KEYBOARD_COMMAND,
+      key: isMacPlatform(platform) ? KeyboardKey.Down : KeyboardKey.End,
+      modifiers: [primaryModifier],
     },
     {
       command: SUPER_TOGGLE_TOOLBAR,

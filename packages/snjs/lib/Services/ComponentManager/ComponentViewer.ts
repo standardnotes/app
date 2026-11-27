@@ -45,6 +45,7 @@ import {
   UIFeature,
   ComponentInterface,
   ItemContentsEqual,
+  ComponentScrollState,
 } from '@standardnotes/models'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
 import {
@@ -90,6 +91,9 @@ export class ComponentViewer implements ComponentViewerInterface {
   private caretOffset?: number
   private lastContextItem?: DecryptedItemInterface
   private caretRestoration: () => CaretRestoration | undefined = () => undefined
+  private scrollStateObservers: ((state: ComponentScrollState) => void)[] = []
+  private scrollState?: ComponentScrollState
+  private handlesScrollToEndShortcut: () => boolean = () => false
 
   private removeFeaturesObserver: () => void
   private eventObservers: ComponentEventObserver[] = []
@@ -184,6 +188,7 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     this.eventObservers.length = 0
     this.actionObservers.length = 0
+    this.scrollStateObservers.length = 0
 
     this.removeFeaturesObserver()
     ;(this.removeFeaturesObserver as unknown) = undefined
@@ -222,6 +227,32 @@ export class ComponentViewer implements ComponentViewerInterface {
 
   public setCaretRestoration(restoration: () => CaretRestoration | undefined): void {
     this.caretRestoration = restoration
+  }
+
+  /**
+   * Only components that support scrolling to the end report their scroll state,
+   * so observers are not called for components that don't.
+   */
+  public addScrollStateObserver(observer: (state: ComponentScrollState) => void): () => void {
+    this.scrollStateObservers.push(observer)
+
+    if (this.scrollState) {
+      observer(this.scrollState)
+    }
+
+    const thislessScrollStateObservers = this.scrollStateObservers
+    return () => {
+      removeFromArray(thislessScrollStateObservers, observer)
+    }
+  }
+
+  /** Evaluated when the component registers, so availability changes before then are picked up */
+  public setHandlesScrollToEndShortcut(handles: () => boolean): void {
+    this.handlesScrollToEndShortcut = handles
+  }
+
+  public requestScrollToEnd(options: { moveCaret: boolean }): void {
+    this.sendMessage({ action: ComponentAction.ScrollToEnd, data: { moveCaret: options.moveCaret } }, false)
   }
 
   public setReadonly(readonly: boolean): void {
@@ -565,6 +596,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         platform: platformToString(this.config.platform),
         activeThemeUrls: this.config.componentManagerFunctions.urlsForActiveThemes(),
         ...this.getCaretRestorationData(),
+        handlesScrollToEndShortcut: this.handlesScrollToEndShortcut(),
       },
     })
 
@@ -618,6 +650,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       [ComponentAction.SaveItems]: this.handleSaveItemsMessage.bind(this),
       [ComponentAction.SetSize]: this.handleSetSizeEvent.bind(this),
       [ComponentAction.CaretOffset]: this.handleCaretOffsetMessage.bind(this),
+      [ComponentAction.ScrollState]: this.handleScrollStateMessage.bind(this),
     }
 
     const handler = messageHandlers[message.action]
@@ -650,6 +683,19 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     if (typeof caretOffset === 'number') {
       this.caretOffset = caretOffset
+    }
+  }
+
+  private handleScrollStateMessage(message: ComponentMessage): void {
+    const { canScroll, isAtBottom, bottomInset } = message.data
+    if (typeof canScroll !== 'boolean' || typeof isAtBottom !== 'boolean') {
+      return
+    }
+
+    this.scrollState = { canScroll, isAtBottom, bottomInset: typeof bottomInset === 'number' ? bottomInset : 0 }
+
+    for (const observer of this.scrollStateObservers) {
+      observer(this.scrollState)
     }
   }
 
@@ -821,7 +867,16 @@ export class ComponentViewer implements ComponentViewerInterface {
               uuid: mutator.getUuid(),
             })
 
-            mutator.setCustomContent(contextualPayload.content)
+            const item = mutator.getItem()
+            const content = Copy<ItemContent>(contextualPayload.content)
+
+            if (this.componentOrFeature.isComponent && isNote(item)) {
+              const noteContent = content as NoteContent
+              noteContent.noteType = item.payload.content.noteType
+              noteContent.editorIdentifier = item.payload.content.editorIdentifier
+            }
+
+            mutator.setCustomContent(content)
 
             const responseItem = sureSearchArray(responsePayloads, {
               uuid: mutator.getUuid(),

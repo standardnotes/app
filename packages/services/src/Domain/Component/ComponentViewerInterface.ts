@@ -1,4 +1,10 @@
-import { ActionObserver, ComponentEventObserver, ComponentMessage, UIFeature } from '@standardnotes/models'
+import {
+  ActionObserver,
+  ComponentEventObserver,
+  ComponentMessage,
+  ComponentScrollState,
+  UIFeature,
+} from '@standardnotes/models'
 import { FeatureStatus } from '../Feature/FeatureStatus'
 import { ComponentViewerError } from './ComponentViewerError'
 import { IframeComponentFeatureDescription, NativeFeatureIdentifier } from '@standardnotes/features'
@@ -26,6 +32,10 @@ export interface ComponentViewerInterface {
   addActionObserver(observer: ActionObserver): () => void
   getCaretOffset(): number | undefined
   setCaretRestoration(restoration: () => CaretRestoration | undefined): void
+  addScrollStateObserver(observer: (state: ComponentScrollState) => void): () => void
+  /** Tells the component that the host scrolls it to the end on the shortcut, so it can cancel its own handling */
+  setHandlesScrollToEndShortcut(handles: () => boolean): void
+  requestScrollToEnd(options: { moveCaret: boolean }): void
   postActiveThemes(): void
   handleMessage(message: ComponentMessage): void
 }

@@ -394,11 +394,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       })
 
       if (result instanceof ClientDisplayableError) {
-        addToast({
-          type: ToastType.Error,
-          message: result.text,
-        })
-        return
+        throw result
       }
 
       if (isUsingStreamingSaver(saver)) {
@@ -438,19 +434,24 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         return
       }
 
-      console.error(error)
+      if (!(error instanceof ClientDisplayableError)) {
+        console.error(error)
+      }
 
       addToast({
         type: ToastType.Error,
-        message: c('B7.FilesSubscriptionHelp.Files.Error').t`There was an error while downloading the file`,
+        message:
+          error instanceof ClientDisplayableError
+            ? error.text
+            : c('B7.FilesSubscriptionHelp.Files.Error').t`There was an error while downloading the file`,
       })
-    }
-
-    if (downloadingToastId) {
-      if (this.mobileDevice && canShowProgressNotification) {
-        this.mobileDevice.cancelNotification(downloadingToastId).catch(console.error)
-      } else {
-        dismissToast(downloadingToastId)
+    } finally {
+      if (downloadingToastId) {
+        if (this.mobileDevice && canShowProgressNotification) {
+          this.mobileDevice.cancelNotification(downloadingToastId).catch(console.error)
+        } else {
+          dismissToast(downloadingToastId)
+        }
       }
     }
   }
@@ -829,6 +830,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       message: c('B7.FilesSubscriptionHelp.Files.Info').t`Preparing archive...`,
     })
 
+    let failedDownloadsCount = 0
+    let downloadError: ClientDisplayableError | undefined
+
     try {
       const zip = await import('@zip.js/zip.js')
 
@@ -855,7 +859,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
         const writer = fileStream.writable.getWriter()
 
-        await this.files
+        const downloadFailure = await this.files
           .downloadFile(file, async (bytesChunk, progress) => {
             await writer.write(bytesChunk)
             const truncatedFileName = truncateString(file.name, 25)
@@ -864,7 +868,17 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
               progress: Math.floor(progress.percentComplete),
             })
           })
-          .catch(console.error)
+          .catch((error: unknown) => {
+            console.error(error)
+            return error
+          })
+
+        if (downloadFailure) {
+          failedDownloadsCount++
+          if (downloadFailure instanceof ClientDisplayableError) {
+            downloadError = downloadFailure
+          }
+        }
 
         await writer.close()
       }
@@ -872,6 +886,15 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       await zipWriter.close()
     } finally {
       dismissToast(toast)
+    }
+
+    if (failedDownloadsCount === fileCount) {
+      addToast({
+        type: ToastType.Error,
+        message:
+          downloadError?.text ?? c('B7.FilesSubscriptionHelp.Files.Error').t`Failed to download files as archive`,
+      })
+      return
     }
 
     addToast({

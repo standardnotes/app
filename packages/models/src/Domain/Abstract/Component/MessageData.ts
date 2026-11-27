@@ -35,4 +35,9 @@ export type MessageData = Partial<{
   altKey?: boolean
   caretOffset?: number
   restoreCaret?: boolean
+  moveCaret?: boolean
+  canScroll?: boolean
+  isAtBottom?: boolean
+  bottomInset?: number
+  handlesScrollToEndShortcut?: boolean
 }>

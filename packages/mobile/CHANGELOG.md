@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.59.3](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.59.2...@standardnotes/mobile@3.59.3) (2026-11-23)
+
+### Bug Fixes
+
+* Fixes hidden status bar icons on iOS ([#3083](https://github.com/standardnotes/app/issues/3083)) ([199b690](https://github.com/standardnotes/app/commit/199b690ee4ef3c97d2b8e5a1933b06cdf8bd531e))
+
+## [3.59.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.59.1...@standardnotes/mobile@3.59.2) (2026-11-12)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.59.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.59.0...@standardnotes/mobile@3.59.1) (2026-11-12)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 # [3.59.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.58.274...@standardnotes/mobile@3.59.0) (2026-11-02)
 
 ### Features

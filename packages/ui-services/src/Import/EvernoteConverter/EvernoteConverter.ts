@@ -8,10 +8,12 @@ import Base64 from 'crypto-js/enc-base64'
 import { Converter, UploadFileFn } from '../Converter'
 import { ConversionResult } from '../ConversionResult'
 import { getBlobFromBase64 } from '../Utils'
-import { isHighlightSpanElement } from '../HighlightSpanImport'
+import { isHighlightSpanElement, SPAN_FONT_SIZE_ATTRIBUTE } from '../HighlightSpanImport'
 
 const EVERNOTE_TODO = /--en-todo\s*:\s*true/i
 const EVERNOTE_CHECKED = /--en-checked\s*:\s*true/i
+const EVERNOTE_CODEBLOCK = /--en-codeblock\s*:\s*true/i
+const EVERNOTE_SYNTAX_LANGUAGE = /--en-syntaxlanguage\s*:\s*([^;]+)/i
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
@@ -91,8 +93,10 @@ export class EvernoteConverter implements Converter {
         const noteElement = content.getElementsByTagName('en-note')[0] as HTMLElement
 
         if (canUseSuper) {
+          this.convertCodeBlocksToPre(noteElement)
           this.convertTopLevelDivsToParagraphs(noteElement)
           this.convertLeftPaddingToSuperIndent(noteElement)
+          this.convertSpanStylesToSuperFormatting(noteElement)
           this.convertHighlightSpansToMarks(noteElement)
         }
 
@@ -256,12 +260,72 @@ export class EvernoteConverter implements Converter {
       if (style) {
         mark.setAttribute('style', style)
       }
+      const fontSize = span.getAttribute(SPAN_FONT_SIZE_ATTRIBUTE)
+      if (fontSize) {
+        mark.setAttribute(SPAN_FONT_SIZE_ATTRIBUTE, fontSize)
+      }
 
       while (span.firstChild) {
         mark.appendChild(span.firstChild)
       }
 
       span.replaceWith(mark)
+    }
+  }
+
+  convertSpanStylesToSuperFormatting(noteElement: HTMLElement) {
+    // Document order, so a span's ancestors have already been processed when it is
+    for (const span of Array.from(noteElement.querySelectorAll('span'))) {
+      const styles = new Map<string, string>()
+      for (const declaration of (span.getAttribute('style') ?? '').split(';')) {
+        const separatorIndex = declaration.indexOf(':')
+        if (separatorIndex !== -1) {
+          styles.set(
+            declaration.slice(0, separatorIndex).trim().toLowerCase(),
+            declaration
+              .slice(separatorIndex + 1)
+              .trim()
+              .toLowerCase(),
+          )
+        }
+      }
+
+      // Font size is inherited, and nested spans would otherwise lose the size of their ancestors
+      const fontSize = styles.get('font-size')
+      const effectiveFontSize =
+        fontSize && /^\d*\.?\d+(px|pt|em|rem|%)$/.test(fontSize)
+          ? fontSize
+          : span.parentElement?.closest(`span[${SPAN_FONT_SIZE_ATTRIBUTE}]`)?.getAttribute(SPAN_FONT_SIZE_ATTRIBUTE)
+      if (effectiveFontSize) {
+        span.setAttribute(SPAN_FONT_SIZE_ATTRIBUTE, effectiveFontSize)
+      }
+
+      const decorations = (styles.get('text-decoration') ?? '').split(/\s+/)
+      const verticalAlign = styles.get('vertical-align')
+      const fontWeight = styles.get('font-weight')
+      const tags = [
+        fontWeight === 'bold' || fontWeight === '700' ? 'strong' : null,
+        styles.get('font-style') === 'italic' ? 'em' : null,
+        decorations.includes('underline') ? 'u' : null,
+        decorations.includes('line-through') ? 's' : null,
+        verticalAlign === 'sub' ? 'sub' : null,
+        verticalAlign === 'super' ? 'sup' : null,
+      ].filter((tag): tag is string => tag !== null)
+
+      if (tags.length === 0) {
+        continue
+      }
+
+      const wrappers = tags.map((tag) => span.ownerDocument.createElement(tag))
+      wrappers.forEach((wrapper, index) => {
+        if (index > 0) {
+          wrappers[index - 1].appendChild(wrapper)
+        }
+      })
+      while (span.firstChild) {
+        wrappers[wrappers.length - 1].appendChild(span.firstChild)
+      }
+      span.appendChild(wrappers[0])
     }
   }
 
@@ -275,6 +339,59 @@ export class EvernoteConverter implements Converter {
     for (const group of getEnTodoBlockGroups(noteElement)) {
       convertEvernoteEnTodoGroup(group, forSuper)
     }
+  }
+
+  /**
+   * Evernote code blocks are a <div> marked with `--en-codeblock:true` (and optionally
+   * `--en-syntaxLanguage:<language>`) holding one inner <div> per line. Super imports `<pre data-language>`
+   * as a code block, so convert them before top-level divs are turned into paragraphs.
+   */
+  convertCodeBlocksToPre(noteElement: HTMLElement) {
+    for (const div of Array.from(noteElement.querySelectorAll('div'))) {
+      const style = div.getAttribute('style') ?? ''
+      // Skip blocks already removed along with an outer code block
+      if (!EVERNOTE_CODEBLOCK.test(style) || !noteElement.contains(div)) {
+        continue
+      }
+
+      const pre = div.ownerDocument.createElement('pre')
+      const language = style.match(EVERNOTE_SYNTAX_LANGUAGE)?.[1].trim().toLowerCase()
+      if (language) {
+        pre.setAttribute('data-language', language)
+      }
+      // Evernote indents with non-breaking spaces
+      pre.textContent = this.getCodeBlockText(div).replace(/\u00a0/g, ' ')
+
+      div.replaceWith(pre)
+    }
+  }
+
+  private getCodeBlockText(element: HTMLElement): string {
+    const lines: string[] = []
+    let inlineText = ''
+
+    for (const child of Array.from(element.childNodes)) {
+      if (child instanceof HTMLElement && child.tagName === 'DIV') {
+        if (inlineText) {
+          lines.push(inlineText)
+          inlineText = ''
+        }
+        const line = this.getCodeBlockText(child)
+        lines.push(line.endsWith('\n') ? line.slice(0, -1) : line)
+      } else if (child instanceof HTMLElement && child.tagName === 'BR') {
+        inlineText += '\n'
+      } else if (child instanceof HTMLElement) {
+        inlineText += this.getCodeBlockText(child)
+      } else {
+        inlineText += child.textContent ?? ''
+      }
+    }
+
+    if (inlineText || lines.length === 0) {
+      lines.push(inlineText)
+    }
+
+    return lines.join('\n')
   }
 
   convertTopLevelDivsToParagraphs(noteElement: HTMLElement) {

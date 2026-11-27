@@ -4,6 +4,7 @@ import {
   ApplicationEvent,
   FileDownloadProgress,
   FileItem,
+  FileStrings,
   fileProgressToHumanReadableString,
 } from '@standardnotes/snjs'
 import { useEffect, useMemo, useState } from 'react'
@@ -85,7 +86,7 @@ const FilePreview = ({
         })
 
         if (error) {
-          setDownloadErrorMessage(error.text)
+          setDownloadErrorMessage(FileStrings.ValetTokenPreviewFailureMessage(error.tag) ?? error.text)
         } else {
           const finalDecryptedBytes = concatenateUint8Arrays(chunks)
           setDownloadedBytes(finalDecryptedBytes)

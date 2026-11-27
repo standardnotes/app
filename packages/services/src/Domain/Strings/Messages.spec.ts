@@ -28,3 +28,22 @@ describe('FileStrings.ValetTokenFailureMessage', () => {
     expect(message).toContain('Failed to create file token')
   })
 })
+
+describe('FileStrings.ValetTokenPreviewFailureMessage', () => {
+  it('returns a preview message for expired subscription', () => {
+    const message = FileStrings.ValetTokenPreviewFailureMessage('expired-subscription')
+    expect(message).toContain('cannot be previewed')
+    expect(message).toContain('subscription has expired')
+  })
+
+  it('returns a preview message for missing subscription', () => {
+    const message = FileStrings.ValetTokenPreviewFailureMessage('no-subscription')
+    expect(message).toContain('cannot be previewed')
+    expect(message).toContain('active subscription')
+  })
+
+  it('returns undefined for other reasons', () => {
+    expect(FileStrings.ValetTokenPreviewFailureMessage('invalid-parameters')).toBeUndefined()
+    expect(FileStrings.ValetTokenPreviewFailureMessage(undefined)).toBeUndefined()
+  })
+})
