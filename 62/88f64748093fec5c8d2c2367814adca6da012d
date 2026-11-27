@@ -1,0 +1,95 @@
+packages/web/src/javascripts/FeatureTrunk.ts
+  s_24f695a1dabaea::t_db71c6b3bf8dbd 18
+  s_50e759cfcd8757::t_577290a17157b2 19-21
+packages/web/src/javascripts/Components/NoteView/NoteView.tsx
+  s_24f695a1dabaea::t_bdb13ed70a1375 300,305
+  s_50e759cfcd8757::t_4e7d28b7258349 65-70,105-106,155,270,321-324,535,906-908,1080-1089
+packages/features/src/Domain/Component/ComponentAction.ts
+  s_50e759cfcd8757::t_c6d16c527789f8 20-21
+packages/models/src/Domain/Abstract/Component/MessageData.ts
+  s_50e759cfcd8757::t_47a19678f28ce1 38-42
+packages/models/src/Domain/Syncable/UserPrefs/PrefDefaults.ts
+  s_50e759cfcd8757::t_84ffd89616f715 53
+packages/models/src/Domain/Syncable/UserPrefs/PrefKey.ts
+  s_50e759cfcd8757::t_72c54c1cafa578 45,105
+packages/services/src/Domain/Component/ComponentViewerInterface.ts
+  s_50e759cfcd8757::t_66220f4d363759 1-7,35-38
+packages/services/src/Domain/InternalFeatures/InternalFeature.ts
+  s_50e759cfcd8757::t_ad84c3fa472d29 4
+packages/snjs/lib/Services/ComponentManager/ComponentViewer.ts
+  s_50e759cfcd8757::t_c310e8eefb20d2 48,94-96,191,232-257,599,653,689-701,870-879
+packages/web/src/javascripts/Application/DevMode.ts
+  s_50e759cfcd8757::t_b583724ee5e8b0 8
+packages/web/src/javascripts/Components/Preferences/Panes/General/Defaults.tsx
+  s_50e759cfcd8757::t_626fd735f5c9e0 5,39,144-165,217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "6288f64748093fec5c8d2c2367814adca6da012d",
+  "prompts": {},
+  "sessions": {
+    "s_24f695a1dabaea": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "bdaa1c0e-f15e-435a-b85b-d3bbf926769a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    },
+    "s_50e759cfcd8757": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "1131d54e-8cab-49d3-81fa-9dadbde48404",
+        "model": "default"
+      },
+      "human_author": "Antonella Sgarlatta <anto@standardnotes.com>"
+    }
+  },
+  "token_usage": {
+    "attributable": {
+      "total": {
+        "input_tokens": 4198526,
+        "output_tokens": 149259,
+        "cache_creation_input_tokens": 79659,
+        "cache_read_input_tokens": 36740515
+      },
+      "by_tool_model": {
+        "cursor::default": {
+          "input_tokens": 4198517,
+          "output_tokens": 149038,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 36581888
+        },
+        "cursor::gpt-5.6-sol": {
+          "input_tokens": 9,
+          "output_tokens": 221,
+          "cache_creation_input_tokens": 79659,
+          "cache_read_input_tokens": 158627
+        }
+      },
+      "tool_uses": {
+        "delete": 8,
+        "grep": 289,
+        "read": 269,
+        "shell": 166,
+        "write": 145
+      }
+    },
+    "by_prompt": {
+      "s_24f695a1dabaea": {
+        "input_tokens": 9,
+        "output_tokens": 221,
+        "cache_creation_input_tokens": 79659,
+        "cache_read_input_tokens": 158627
+      },
+      "s_50e759cfcd8757": {
+        "input_tokens": 4198517,
+        "output_tokens": 149038,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 36581888
+      }
+    }
+  },
+  "proton_build": "1.7.6-proton.8"
+}
