@@ -12,6 +12,10 @@ export function featureTrunkVaultsEnabled(): boolean {
   return InternalFeatureService.get().isFeatureEnabled(InternalFeature.Vaults)
 }
 
+export function featureTrunkRestoreEditorPositionEnabled(): boolean {
+  return InternalFeatureService.get().isFeatureEnabled(InternalFeature.RestoreEditorPosition)
+}
+
 export function featureTrunkScrollToBottomEnabled(): boolean {
   return InternalFeatureService.get().isFeatureEnabled(InternalFeature.ScrollToBottom)
 }

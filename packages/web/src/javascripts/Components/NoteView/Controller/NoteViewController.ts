@@ -7,6 +7,8 @@ import {
   PayloadEmitSource,
   PrefKey,
   PayloadVaultOverrides,
+  NoteMutator,
+  MutationType,
 } from '@standardnotes/models'
 import {
   AlertService,
@@ -26,6 +28,7 @@ import { log, LoggingDomain } from '@/Logging'
 import { NoteSaveFunctionParams, NoteSyncController } from '../../../Controllers/NoteSyncController'
 import { IsNativeMobileWeb } from '@standardnotes/ui-services'
 import { NoteStatus } from '../NoteStatusIndicator'
+import { isRestoreEditorPositionEnabled } from '../EditorPosition/shouldRestoreCaret'
 
 export type EditorValues = {
   title: string
@@ -43,6 +46,7 @@ export class NoteViewController implements ItemViewControllerInterface {
   private disposers: (() => void)[] = []
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
+  private caretReader?: () => number | undefined
 
   private syncController!: NoteSyncController
 
@@ -82,24 +86,75 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   deinit(): void {
-    if (!this.syncController.savingLocallyPromise) {
+    if (!this.syncController.savingLocallyPromise && this.readCaretOffset() === undefined) {
       this.performDeinitSafely()
       return
     }
 
-    void this.syncController.savingLocallyPromise.promise.then(() => {
+    void this.persistCaretThenDeinit()
+  }
+
+  private async persistCaretThenDeinit(): Promise<void> {
+    try {
+      await this.persistCaret()
+    } catch (error) {
+      console.error(error)
+    } finally {
       this.performDeinitSafely()
-    })
+    }
   }
 
   private performDeinitSafely(): void {
     this.dealloced = true
+    this.caretReader = undefined
 
     for (const disposer of this.disposers) {
       disposer()
     }
     this.disposers.length = 0
     this.innerValueChangeObservers.length = 0
+  }
+
+  private readCaretOffset(): number | undefined {
+    if (!isRestoreEditorPositionEnabled(this.preferences) || this.isTemplateNote) {
+      return undefined
+    }
+
+    return this.caretReader?.()
+  }
+
+  private async saveCaretOnly(offset: number): Promise<void> {
+    if (this.item.lastCaretOffset === offset) {
+      return
+    }
+
+    await this.mutator.changeItem<NoteMutator>(
+      this.item,
+      (mutator) => mutator.setLastCaret(offset),
+      MutationType.NoUpdateUserTimestamps,
+    )
+
+    void this.sync.sync()
+  }
+
+  public registerCaretReader(reader: () => number | undefined): () => void {
+    this.caretReader = reader
+
+    return () => {
+      if (this.caretReader === reader) {
+        this.caretReader = undefined
+      }
+    }
+  }
+
+  public async persistCaret(): Promise<void> {
+    const offset = this.readCaretOffset()
+
+    await this.syncController.savingLocallyPromise?.promise
+
+    if (offset !== undefined) {
+      await this.saveCaretOnly(offset)
+    }
   }
 
   async initialize(): Promise<void> {
@@ -218,7 +273,17 @@ export class NoteViewController implements ItemViewControllerInterface {
       await this.insertTemplatedNote()
     }
 
-    await this.syncController.saveAndAwaitLocalPropagation(params)
+    await this.syncController.saveAndAwaitLocalPropagation({
+      ...params,
+      customMutate: (mutator) => {
+        params.customMutate?.(mutator)
+
+        const caretOffset = this.readCaretOffset()
+        if (caretOffset !== undefined) {
+          mutator.setLastCaret(caretOffset)
+        }
+      },
+    })
   }
 
   public get syncStatus(): NoteStatus | undefined {

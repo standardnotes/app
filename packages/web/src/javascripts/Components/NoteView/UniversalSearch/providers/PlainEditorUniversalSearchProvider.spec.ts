@@ -15,6 +15,7 @@ function createMockPlainEditor(text: string): PlainEditorInterface {
     focus: jest.fn(),
     getText: () => currentText,
     getTextarea: () => textarea,
+    getCaretOffset: () => textarea.selectionEnd,
     setSelection: jest.fn((start, end, options) => {
       if (options?.selectInEditor) {
         textarea.setSelectionRange(start, end)

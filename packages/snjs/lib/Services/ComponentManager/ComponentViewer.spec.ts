@@ -1,10 +1,31 @@
 import { ComponentAction, IframeComponentFeatureDescription } from '@standardnotes/features'
-import { ComponentMessage, Environment, Platform, SNNote, UIFeature } from '@standardnotes/models'
+import {
+  ComponentMessage,
+  DecryptedPayload,
+  Environment,
+  FillItemContent,
+  NoteContent,
+  Platform,
+  PayloadTimestampDefaults,
+  SNNote,
+  UIFeature,
+} from '@standardnotes/models'
+import { ContentType } from '@standardnotes/domain-core'
 import { UuidGenerator } from '@standardnotes/utils'
 import { ComponentViewer } from './ComponentViewer'
 import { ComponentViewerRequiresComponentManagerProperties } from './ComponentViewerRequiresComponentManagerFunctions'
 
-describe('ComponentViewer scroll to end', () => {
+const createNote = (content: Partial<NoteContent>) =>
+  new SNNote(
+    new DecryptedPayload({
+      uuid: 'note-uuid',
+      content_type: ContentType.TYPES.Note,
+      content: FillItemContent<NoteContent>(content),
+      ...PayloadTimestampDefaults(),
+    }),
+  )
+
+describe('ComponentViewer caret', () => {
   const createViewer = () => {
     const services = {
       items: { addObserver: jest.fn().mockReturnValue(jest.fn()) },
@@ -30,105 +51,126 @@ describe('ComponentViewer scroll to end', () => {
     return { viewer, services }
   }
 
-  const scrollStateMessage = (data: ComponentMessage['data']): ComponentMessage => ({
-    action: ComponentAction.ScrollState,
+  const caretOffsetMessage = (data: ComponentMessage['data']): ComponentMessage => ({
+    action: ComponentAction.CaretOffset,
     data,
   })
 
-  it('notifies scroll state observers and replays the latest state to new observers', () => {
-    const { viewer } = createViewer()
-    const observer = jest.fn()
-    viewer.addScrollStateObserver(observer)
-
-    viewer.handleMessage(scrollStateMessage({ canScroll: true, isAtBottom: false, bottomInset: 40 }))
-    expect(observer).toHaveBeenCalledWith({ canScroll: true, isAtBottom: false, bottomInset: 40 })
-
-    const lateObserver = jest.fn()
-    viewer.addScrollStateObserver(lateObserver)
-    expect(lateObserver).toHaveBeenCalledWith({ canScroll: true, isAtBottom: false, bottomInset: 40 })
-  })
-
-  it('defaults the bottom inset to none for components that do not report it', () => {
-    const { viewer } = createViewer()
-    const observer = jest.fn()
-    viewer.addScrollStateObserver(observer)
-
-    viewer.handleMessage(scrollStateMessage({ canScroll: true, isAtBottom: false }))
-
-    expect(observer).toHaveBeenCalledWith({ canScroll: true, isAtBottom: false, bottomInset: 0 })
-  })
-
-  it('does not call observers before the component reports a scroll state', () => {
-    const { viewer } = createViewer()
-    const observer = jest.fn()
-
-    viewer.addScrollStateObserver(observer)
-
-    expect(observer).not.toHaveBeenCalled()
-  })
-
-  it('ignores malformed scroll state messages', () => {
-    const { viewer } = createViewer()
-    const observer = jest.fn()
-    viewer.addScrollStateObserver(observer)
-
-    viewer.handleMessage(scrollStateMessage({ canScroll: true }))
-
-    expect(observer).not.toHaveBeenCalled()
-  })
-
-  it('stops notifying removed observers', () => {
-    const { viewer } = createViewer()
-    const observer = jest.fn()
-    const removeObserver = viewer.addScrollStateObserver(observer)
-
-    removeObserver()
-    viewer.handleMessage(scrollStateMessage({ canScroll: true, isAtBottom: true }))
-
-    expect(observer).not.toHaveBeenCalled()
-  })
-
-  it('sends a scroll-to-end message to the component window', () => {
-    const { viewer } = createViewer()
-    const postMessage = jest.fn()
-    ;(viewer as unknown as { window: Window }).window = { postMessage } as unknown as Window
-
-    viewer.requestScrollToEnd({ moveCaret: true })
-
-    expect(postMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ action: ComponentAction.ScrollToEnd, data: { moveCaret: true } }),
-      '*',
-    )
-  })
-
-  it('tells the component on registration whether the host handles the scroll to end shortcut', () => {
+  const register = (viewer: ComponentViewer) => {
     UuidGenerator.SetGenerator(() => 'session-key')
-    const { viewer } = createViewer()
     ;(viewer as unknown as { config: { componentManagerFunctions: object } }).config.componentManagerFunctions = {
       getComponentPreferences: () => undefined,
       urlsForActiveThemes: () => [],
     }
     const postMessage = jest.fn()
-
-    let hostHandlesShortcut = false
-    viewer.setHandlesScrollToEndShortcut(() => hostHandlesShortcut)
-    hostHandlesShortcut = true
     viewer.setWindow({ postMessage } as unknown as Window)
 
-    expect(postMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        action: ComponentAction.ComponentRegistered,
-        data: expect.objectContaining({ handlesScrollToEndShortcut: true }),
-      }),
-      '*',
-    )
+    return postMessage.mock.calls.find(([message]) => message.action === ComponentAction.ComponentRegistered)[0].data
+  }
+
+  it('has no caret offset until the component reports one', () => {
+    const { viewer } = createViewer()
+
+    expect(viewer.getCaretOffset()).toBeUndefined()
   })
 
-  it('does not alert when there is no component window yet', () => {
-    const { viewer, services } = createViewer()
+  it('keeps the latest caret offset reported by the component', () => {
+    const { viewer } = createViewer()
+    viewer.setCaretRestoration(() => ({ type: 'focus' }))
 
-    viewer.requestScrollToEnd({ moveCaret: false })
+    viewer.handleMessage(caretOffsetMessage({ caretOffset: 4 }))
+    viewer.handleMessage(caretOffsetMessage({ caretOffset: 9 }))
 
-    expect(services.alerts.alert).not.toHaveBeenCalled()
+    expect(viewer.getCaretOffset()).toBe(9)
+  })
+
+  it('ignores malformed caret offset messages', () => {
+    const { viewer } = createViewer()
+    viewer.setCaretRestoration(() => ({ type: 'focus' }))
+    viewer.handleMessage(caretOffsetMessage({ caretOffset: 4 }))
+
+    viewer.handleMessage(caretOffsetMessage({}))
+    viewer.handleMessage(caretOffsetMessage({ caretOffset: '7' as unknown as number }))
+
+    expect(viewer.getCaretOffset()).toBe(4)
+  })
+
+  it('ignores caret offsets when tracking is disabled', () => {
+    const { viewer } = createViewer()
+
+    viewer.handleMessage(caretOffsetMessage({ caretOffset: 4 }))
+
+    expect(viewer.getCaretOffset()).toBeUndefined()
+  })
+
+  it('asks the component to restore the caret on registration', () => {
+    const { viewer } = createViewer()
+    viewer.setCaretRestoration(() => ({ type: 'offset', offset: 12 }))
+
+    expect(register(viewer)).toEqual(expect.objectContaining({ restoreCaret: true, caretOffset: 12 }))
+  })
+
+  it('asks the component to only focus when there is no caret to restore', () => {
+    const { viewer } = createViewer()
+    viewer.setCaretRestoration(() => ({ type: 'focus' }))
+
+    const data = register(viewer)
+
+    expect(data.restoreCaret).toBe(true)
+    expect(data.caretOffset).toBeUndefined()
+  })
+
+  it('does not ask the component to restore the caret unless the host wants it', () => {
+    const { viewer } = createViewer()
+    viewer.setCaretRestoration(() => undefined)
+
+    expect(register(viewer).restoreCaret).toBeUndefined()
+  })
+
+  describe('context item updates', () => {
+    type Internals = {
+      streamContextItemOriginalMessage?: ComponentMessage
+      sendContextItemThroughBridge: (item: SNNote) => void
+      handleChangesInItems: (items: SNNote[], source: number) => void
+      options: { item: SNNote }
+    }
+
+    const setup = (note: SNNote) => {
+      const { viewer } = createViewer()
+      const internals = viewer as unknown as Internals
+      internals.options = { item: note }
+      internals.streamContextItemOriginalMessage = { action: ComponentAction.StreamContextItem, data: {} }
+      const send = jest.fn((item: SNNote) => {
+        ;(internals as unknown as { lastContextItem?: SNNote }).lastContextItem = item
+      })
+      internals.sendContextItemThroughBridge = send
+
+      return { internals, send }
+    }
+
+    const withContent = (note: SNNote, content: Record<string, unknown>) =>
+      new SNNote(note.payload.copy({ content: { ...note.content, ...content } } as never))
+
+    it('does not send the note again when only the caret changed', () => {
+      const note = createNote({ text: 'hello' })
+      const { internals, send } = setup(note)
+      internals.sendContextItemThroughBridge(note)
+      send.mockClear()
+
+      internals.handleChangesInItems([withContent(note, { lastCaretOffset: 3, lastCaretAt: 1 })], 0)
+
+      expect(send).not.toHaveBeenCalled()
+    })
+
+    it('sends the note when its text changed', () => {
+      const note = createNote({ text: 'hello' })
+      const { internals, send } = setup(note)
+      internals.sendContextItemThroughBridge(note)
+      send.mockClear()
+
+      internals.handleChangesInItems([withContent(note, { text: 'hello world', lastCaretOffset: 3 })], 0)
+
+      expect(send).toHaveBeenCalledTimes(1)
+    })
   })
 })

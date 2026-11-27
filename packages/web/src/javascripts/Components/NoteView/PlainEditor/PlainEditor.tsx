@@ -28,13 +28,13 @@ import {
   FocusEvent,
 } from 'react'
 import { NoteViewController } from '../Controller/NoteViewController'
+import { restorePlainEditorCaret } from '../EditorPosition/restorePlainEditorCaret'
 import { findStringMatches } from '../UniversalSearch/findStringMatches'
 import { PlainEditorSearchBackdrop } from './search/PlainEditorSearchBackdrop'
 import { buildPlainSearchHighlightHtml } from './search/buildPlainSearchHighlightHtml'
 import { replaceAllTextRangesWithUndoSupport, replaceTextRangeWithUndoSupport } from './replacePlainTextWithUndoSupport'
 import { scrollPlainTextareaToOffset } from './search/scrollPlainTextareaToOffset'
 import { TextRange } from '../UniversalSearch/types'
-
 export type PlainEditorSearchHighlightState = {
   isOpen: boolean
   query: string
@@ -59,6 +59,7 @@ export type PlainEditorInterface = {
   focus: () => void
   getText: () => string
   getTextarea: () => HTMLTextAreaElement | null
+  getCaretOffset: () => number | undefined
   setSelection: (
     start: number,
     end: number,
@@ -132,6 +133,14 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         },
         getTextarea() {
           return textareaRef.current
+        },
+        getCaretOffset() {
+          const textarea = textareaRef.current
+          if (!textarea) {
+            return undefined
+          }
+
+          return textarea.selectionDirection === 'backward' ? textarea.selectionStart : textarea.selectionEnd
         },
         setSelection(start, end, options) {
           const textarea = textareaRef.current
@@ -302,6 +311,22 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         focusEditor()
       }
     }, [controller, focusEditor])
+
+    const didRestoreCaret = useRef(false)
+
+    useEffect(() => {
+      const textarea = textareaRef.current
+
+      if (didRestoreCaret.current || editorText === undefined || !textarea) {
+        return
+      }
+
+      didRestoreCaret.current = true
+
+      if (!controller.isTemplateNote) {
+        restorePlainEditorCaret(textarea, controller.item, application.preferences)
+      }
+    }, [application.preferences, controller, editorText])
 
     const reloadPreferences = useCallback(() => {
       const lineHeight = application.preferences.getLocalValue(

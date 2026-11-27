@@ -6,8 +6,11 @@ import { ContentReferenceType } from '../../Abstract/Item'
 import { NoteType } from '@standardnotes/features'
 import { EditorLineWidth } from '../UserPrefs'
 import { ContentType } from '@standardnotes/domain-core'
+import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
+  private shouldStampLastCaretAt = false
+
   set title(title: string) {
     this.mutableContent.title = title
   }
@@ -46,6 +49,29 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
 
   set authorizedForListed(authorizedForListed: boolean) {
     this.mutableContent.authorizedForListed = authorizedForListed
+  }
+
+  setLastCaret(offset: number): void {
+    this.mutableContent.lastCaretOffset = offset
+    this.shouldStampLastCaretAt = true
+  }
+
+  clearLastCaret(): void {
+    this.mutableContent.lastCaretOffset = undefined
+    this.mutableContent.lastCaretAt = undefined
+    this.shouldStampLastCaretAt = false
+  }
+
+  override getResult(): DecryptedPayloadInterface<NoteContent> {
+    const result = super.getResult()
+
+    if (!this.shouldStampLastCaretAt) {
+      return result
+    }
+
+    const content: NoteContent = { ...result.content, lastCaretAt: Date.now() }
+
+    return result.copy({ content })
   }
 
   toggleSpellcheck(): void {

@@ -1,4 +1,5 @@
 import {
+  CaretRestoration,
   ComponentViewerInterface,
   ComponentViewerError,
   FeatureStatus,
@@ -43,6 +44,7 @@ import {
   ComponentPreferencesEntry,
   UIFeature,
   ComponentInterface,
+  ItemContentsEqual,
   ComponentScrollState,
 } from '@standardnotes/models'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
@@ -86,6 +88,9 @@ export class ComponentViewer implements ComponentViewerInterface {
   private removeItemObserver: () => void
   public identifier = nonSecureRandomIdentifier()
   private actionObservers: ActionObserver[] = []
+  private caretOffset?: number
+  private lastContextItem?: DecryptedItemInterface
+  private caretRestoration: () => CaretRestoration | undefined = () => undefined
   private scrollStateObservers: ((state: ComponentScrollState) => void)[] = []
   private scrollState?: ComponentScrollState
   private handlesScrollToEndShortcut: () => boolean = () => false
@@ -214,6 +219,14 @@ export class ComponentViewer implements ComponentViewerInterface {
     return () => {
       removeFromArray(thislessChangeObservers, observer)
     }
+  }
+
+  public getCaretOffset(): number | undefined {
+    return this.caretOffset
+  }
+
+  public setCaretRestoration(restoration: () => CaretRestoration | undefined): void {
+    this.caretRestoration = restoration
   }
 
   /**
@@ -348,7 +361,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       }
 
       const matchingItem = nondeletedItems.find((item) => item.uuid === optionsItem.uuid)
-      if (matchingItem) {
+      if (matchingItem && !this.isCaretOnlyChange(matchingItem)) {
         this.sendContextItemThroughBridge(matchingItem, source)
       }
     }
@@ -371,7 +384,20 @@ export class ComponentViewer implements ComponentViewerInterface {
     )
   }
 
+  private isCaretOnlyChange(item: DecryptedItemInterface): boolean {
+    const previous = this.lastContextItem
+
+    if (!previous || !isNote(previous) || !isNote(item)) {
+      return false
+    }
+
+    const caretKeys: (keyof NoteContent)[] = ['lastCaretOffset', 'lastCaretAt']
+    return ItemContentsEqual(previous.content, item.content, caretKeys, [])
+  }
+
   private sendContextItemThroughBridge(item: DecryptedItemInterface, source?: PayloadEmitSource): void {
+    this.lastContextItem = item
+
     const requiredContextPermissions = [
       {
         name: ComponentAction.StreamContextItem,
@@ -569,6 +595,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         environment: environmentToString(this.config.environment),
         platform: platformToString(this.config.platform),
         activeThemeUrls: this.config.componentManagerFunctions.urlsForActiveThemes(),
+        ...this.getCaretRestorationData(),
         handlesScrollToEndShortcut: this.handlesScrollToEndShortcut(),
       },
     })
@@ -622,6 +649,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       [ComponentAction.CreateItem]: this.handleCreateItemsMessage.bind(this),
       [ComponentAction.SaveItems]: this.handleSaveItemsMessage.bind(this),
       [ComponentAction.SetSize]: this.handleSetSizeEvent.bind(this),
+      [ComponentAction.CaretOffset]: this.handleCaretOffsetMessage.bind(this),
       [ComponentAction.ScrollState]: this.handleScrollStateMessage.bind(this),
     }
 
@@ -630,6 +658,31 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     for (const observer of this.actionObservers) {
       observer(message.action, message.data)
+    }
+  }
+
+  private getCaretRestorationData(): MessageData {
+    const restoration = this.caretRestoration()
+
+    if (!restoration) {
+      return {}
+    }
+
+    return {
+      restoreCaret: true,
+      caretOffset: restoration.type === 'offset' ? restoration.offset : undefined,
+    }
+  }
+
+  private handleCaretOffsetMessage(message: ComponentMessage): void {
+    if (!this.caretRestoration()) {
+      return
+    }
+
+    const { caretOffset } = message.data
+
+    if (typeof caretOffset === 'number') {
+      this.caretOffset = caretOffset
     }
   }
 

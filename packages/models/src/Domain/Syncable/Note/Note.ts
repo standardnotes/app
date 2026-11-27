@@ -1,6 +1,7 @@
 import { AppDataField } from './../../Abstract/Item/Types/AppDataField'
 import { NoteType } from '@standardnotes/features'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
+import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 import { NoteContent, NoteContentSpecialized } from './NoteContent'
@@ -22,6 +23,8 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
 
   /** The package_info.identifier of the editor (not its uuid), such as org.standardnotes.advanced-markdown */
   public readonly editorIdentifier?: string
+  public readonly lastCaretOffset?: number
+  public readonly lastCaretAt?: number
 
   constructor(payload: DecryptedPayloadInterface<NoteContent>) {
     super(payload)
@@ -36,6 +39,8 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
     this.noteType = this.payload.content.noteType
     this.editorIdentifier = this.payload.content.editorIdentifier
     this.authorizedForListed = this.payload.content.authorizedForListed || false
+    this.lastCaretOffset = this.payload.content.lastCaretOffset
+    this.lastCaretAt = this.payload.content.lastCaretAt
 
     if (!this.noteType) {
       const prefersPlain = this.getAppDomainValueWithDefault(AppDataField.LegacyPrefersPlainEditor, false)
@@ -43,5 +48,12 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
         this.noteType = NoteType.Plain
       }
     }
+  }
+
+  /** The caret is best-effort view state, so a difference in it alone must never create a conflict copy. */
+  public override contentKeysToIgnoreWhenCheckingEquality(): (keyof ItemContent)[] {
+    const noteKeys: (keyof NoteContent)[] = ['lastCaretOffset', 'lastCaretAt']
+
+    return [...noteKeys, ...super.contentKeysToIgnoreWhenCheckingEquality()] as (keyof ItemContent)[]
   }
 }

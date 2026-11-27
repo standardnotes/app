@@ -1,4 +1,6 @@
 import { createNote } from './../../Utilities/Test/SpecUtils'
+import { ConflictStrategy } from '../../Abstract/Item/Types/ConflictStrategy'
+import { ItemContentsDiffer } from '../../Utilities/Item/ItemContentsDiffer'
 
 describe('SNNote Tests', () => {
   it('should safely type required fields of Note when creating from PayloadContent', () => {
@@ -33,5 +35,22 @@ describe('SNNote Tests', () => {
     const note = createNote({})
 
     expect(note.noteType).toBe(undefined)
+  })
+
+  describe('caret fields and conflicts', () => {
+    it('should not consider notes different when only the caret differs', () => {
+      const base = createNote({ text: 'same', lastCaretOffset: 1, lastCaretAt: 100 })
+      const incoming = createNote({ text: 'same', lastCaretOffset: 3, lastCaretAt: 200 })
+
+      expect(ItemContentsDiffer(base, incoming)).toBe(false)
+      expect(base.strategyWhenConflictingWithItem(incoming)).toBe(ConflictStrategy.KeepApply)
+    })
+
+    it('should still consider notes different when the text differs', () => {
+      const base = createNote({ text: 'one', lastCaretOffset: 1, lastCaretAt: 100 })
+      const incoming = createNote({ text: 'two', lastCaretOffset: 1, lastCaretAt: 100 })
+
+      expect(ItemContentsDiffer(base, incoming)).toBe(true)
+    })
   })
 })

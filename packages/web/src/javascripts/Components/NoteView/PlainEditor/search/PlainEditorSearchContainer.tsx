@@ -47,6 +47,7 @@ export const PlainEditorSearchContainer = observer(
         focus: () => plainEditorRef.current?.focus(),
         getText: () => plainEditorRef.current?.getText() ?? '',
         getTextarea: () => plainEditorRef.current?.getTextarea() ?? null,
+        getCaretOffset: () => plainEditorRef.current?.getCaretOffset(),
         setSelection: (start, end, options) => plainEditorRef.current?.setSelection(start, end, options),
         replaceRange: async (start, end, replacement) => {
           await plainEditorRef.current?.replaceRange(start, end, replacement)

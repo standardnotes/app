@@ -46,6 +46,8 @@ export enum PrefKey {
   AddImportsToTag = 'addImportsToTag',
   AlwaysCreateNewTagForImports = 'alwaysCreateNewTagForImports',
   ExistingTagForImports = 'existingTagForImports',
+  RestoreEditorPosition = 'restoreEditorPosition',
+  RestoreEditorPositionEnabledAt = 'restoreEditorPositionEnabledAt',
   DEPRECATED_ActiveThemes = 'activeThemes',
   DEPRECATED_UseSystemColorScheme = 'useSystemColorScheme',
   DEPRECATED_UseTranslucentUI = 'useTranslucentUI',
@@ -105,4 +107,6 @@ export type PrefValue = {
   [PrefKey.AlwaysCreateNewTagForImports]: boolean
   [PrefKey.ExistingTagForImports]: string | undefined
   [PrefKey.SuperNoteImageAlignment]: 'left' | 'center' | 'right'
+  [PrefKey.RestoreEditorPosition]: boolean
+  [PrefKey.RestoreEditorPositionEnabledAt]: number | undefined
 }

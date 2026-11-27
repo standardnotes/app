@@ -15,6 +15,7 @@ import {
   ComponentArea,
   ComponentInterface,
   UIFeature,
+  CaretRestoration,
   ComponentViewerInterface,
   ContentType,
   EditorLineWidth,
@@ -29,6 +30,7 @@ import {
   SNNote,
   VaultUserServiceEvent,
   LocalPrefKey,
+  WebAppEvent,
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, FocusEvent, KeyboardEventHandler, RefObject } from 'react'
@@ -56,17 +58,22 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import NoteConflictResolutionModal from './NoteConflictResolutionModal/NoteConflictResolutionModal'
 import Icon from '../Icon/Icon'
 import { EditorContentWithSafeAreaPadding } from './EditorContentWithSafeAreaPadding'
+import type { LexicalEditor } from 'lexical'
+import { restoreSuperEditorCaret } from './EditorPosition/restoreSuperEditorCaret'
+import { getSuperEditorCaretOffset } from './EditorPosition/superCaretOffset'
+import { isRestoreEditorPositionEnabled, shouldRestoreCaret } from './EditorPosition/shouldRestoreCaret'
 import {
   ComponentScrollToBottomController,
   NoteScrollToBottomController,
 } from './ScrollToBottom/NoteScrollToBottomController'
 import { createPlainScrollableEditor, createSuperScrollableEditor } from './ScrollToBottom/scrollableEditors'
 import type { ScrollableEditor } from './ScrollToBottom/types'
-import type { LexicalEditor } from 'lexical'
 
 function sortAlphabetically(array: ComponentInterface[]): ComponentInterface[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
 }
+
+type CaretReaderOwner = 'plain' | 'super' | 'component'
 
 type State = {
   availableStackComponents: ComponentInterface[]
@@ -110,6 +117,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
   private plainEditorRef?: PlainEditorInterface
+  private caretReaderDisposers: Partial<Record<CaretReaderOwner, () => void>> = {}
 
   constructor(props: NoteViewProps) {
     super(props, props.application)
@@ -153,6 +161,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   override deinit() {
     super.deinit()
+    for (const dispose of Object.values(this.caretReaderDisposers)) {
+      dispose()
+    }
+    this.caretReaderDisposers = {}
     ;(this.controller as unknown) = undefined
 
     for (let i = 0; i < this.#observers.length; i++) {
@@ -235,6 +247,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       }),
     )
 
+    this.#observers.push(
+      this.application.addWebEventObserver((event) => {
+        if (event === WebAppEvent.WindowDidBlur) {
+          void this.controller.persistCaret().catch(console.error)
+        }
+      }),
+    )
+
     this.autorun(() => {
       const syncStatus = this.controller.syncStatus
 
@@ -276,11 +296,26 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   setPlainEditorRef = (ref: PlainEditorInterface | null) => {
     this.plainEditorRef = ref || undefined
+    this.setCaretReader('plain', ref ? () => ref.getCaretOffset() : undefined)
     this.setScrollableEditor(ref ? createPlainScrollableEditor(ref) : null)
   }
 
   setSuperEditorRef = (editor: LexicalEditor | null) => {
+    this.setCaretReader('super', editor ? () => getSuperEditorCaretOffset(editor) : undefined)
     this.setScrollableEditor(editor ? createSuperScrollableEditor(editor) : null)
+
+    if (editor && !this.controller.isTemplateNote) {
+      restoreSuperEditorCaret(editor, this.controller.item, this.application.preferences)
+    }
+  }
+
+  private setCaretReader(owner: CaretReaderOwner, reader: (() => number | undefined) | undefined) {
+    this.caretReaderDisposers[owner]?.()
+    delete this.caretReaderDisposers[owner]
+
+    if (reader) {
+      this.caretReaderDisposers[owner] = this.controller.registerCaretReader(reader)
+    }
   }
 
   private setScrollableEditor(editor: ScrollableEditor | null) {
@@ -495,8 +530,21 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       throw Error('Cannot create component viewer for undefined component')
     }
     const viewer = this.application.componentManager.createComponentViewer(component, { uuid: this.note.uuid })
+    viewer.setCaretRestoration(() => this.getCaretRestoration())
+    this.setCaretReader('component', () => viewer.getCaretOffset())
     viewer.setHandlesScrollToEndShortcut(() => this.application.featuresController.hasScrollToBottom)
     return viewer
+  }
+
+  private getCaretRestoration(): CaretRestoration | undefined {
+    const { preferences } = this.application
+    const note = this.note
+
+    if (this.controller.isTemplateNote || !isRestoreEditorPositionEnabled(preferences)) {
+      return undefined
+    }
+
+    return shouldRestoreCaret(note, preferences) ? { type: 'offset', offset: note.lastCaretOffset } : { type: 'focus' }
   }
 
   public editorComponentViewerRequestsReload = async (
