@@ -91,5 +91,11 @@ packages/web/src/javascripts/Components/Preferences/Panes/General/Defaults.tsx
       }
     }
   },
+  "activity": {
+    "added_sloc": 146,
+    "deleted_sloc": 52,
+    "checkpoints": 16,
+    "span_seconds": 26
+  },
   "proton_build": "1.7.6-proton.8"
 }
