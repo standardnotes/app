@@ -43,6 +43,7 @@ import {
   ComponentPreferencesEntry,
   UIFeature,
   ComponentInterface,
+  ComponentScrollState,
 } from '@standardnotes/models'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
 import {
@@ -85,6 +86,9 @@ export class ComponentViewer implements ComponentViewerInterface {
   private removeItemObserver: () => void
   public identifier = nonSecureRandomIdentifier()
   private actionObservers: ActionObserver[] = []
+  private scrollStateObservers: ((state: ComponentScrollState) => void)[] = []
+  private scrollState?: ComponentScrollState
+  private handlesScrollToEndShortcut: () => boolean = () => false
 
   private removeFeaturesObserver: () => void
   private eventObservers: ComponentEventObserver[] = []
@@ -179,6 +183,7 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     this.eventObservers.length = 0
     this.actionObservers.length = 0
+    this.scrollStateObservers.length = 0
 
     this.removeFeaturesObserver()
     ;(this.removeFeaturesObserver as unknown) = undefined
@@ -209,6 +214,32 @@ export class ComponentViewer implements ComponentViewerInterface {
     return () => {
       removeFromArray(thislessChangeObservers, observer)
     }
+  }
+
+  /**
+   * Only components that support scrolling to the end report their scroll state,
+   * so observers are not called for components that don't.
+   */
+  public addScrollStateObserver(observer: (state: ComponentScrollState) => void): () => void {
+    this.scrollStateObservers.push(observer)
+
+    if (this.scrollState) {
+      observer(this.scrollState)
+    }
+
+    const thislessScrollStateObservers = this.scrollStateObservers
+    return () => {
+      removeFromArray(thislessScrollStateObservers, observer)
+    }
+  }
+
+  /** Evaluated when the component registers, so availability changes before then are picked up */
+  public setHandlesScrollToEndShortcut(handles: () => boolean): void {
+    this.handlesScrollToEndShortcut = handles
+  }
+
+  public requestScrollToEnd(options: { moveCaret: boolean }): void {
+    this.sendMessage({ action: ComponentAction.ScrollToEnd, data: { moveCaret: options.moveCaret } }, false)
   }
 
   public setReadonly(readonly: boolean): void {
@@ -538,6 +569,7 @@ export class ComponentViewer implements ComponentViewerInterface {
         environment: environmentToString(this.config.environment),
         platform: platformToString(this.config.platform),
         activeThemeUrls: this.config.componentManagerFunctions.urlsForActiveThemes(),
+        handlesScrollToEndShortcut: this.handlesScrollToEndShortcut(),
       },
     })
 
@@ -590,6 +622,7 @@ export class ComponentViewer implements ComponentViewerInterface {
       [ComponentAction.CreateItem]: this.handleCreateItemsMessage.bind(this),
       [ComponentAction.SaveItems]: this.handleSaveItemsMessage.bind(this),
       [ComponentAction.SetSize]: this.handleSetSizeEvent.bind(this),
+      [ComponentAction.ScrollState]: this.handleScrollStateMessage.bind(this),
     }
 
     const handler = messageHandlers[message.action]
@@ -597,6 +630,19 @@ export class ComponentViewer implements ComponentViewerInterface {
 
     for (const observer of this.actionObservers) {
       observer(message.action, message.data)
+    }
+  }
+
+  private handleScrollStateMessage(message: ComponentMessage): void {
+    const { canScroll, isAtBottom, bottomInset } = message.data
+    if (typeof canScroll !== 'boolean' || typeof isAtBottom !== 'boolean') {
+      return
+    }
+
+    this.scrollState = { canScroll, isAtBottom, bottomInset: typeof bottomInset === 'number' ? bottomInset : 0 }
+
+    for (const observer of this.scrollStateObservers) {
+      observer(this.scrollState)
     }
   }
 

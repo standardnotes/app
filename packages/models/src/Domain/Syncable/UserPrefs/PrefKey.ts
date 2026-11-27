@@ -42,6 +42,7 @@ export enum PrefKey {
   ComponentPreferences = 'componentPreferences',
   ActiveComponents = 'activeComponents',
   AlwaysShowSuperToolbar = 'alwaysShowSuperToolbar',
+  ShowScrollToBottomButton = 'showScrollToBottomButton',
   AddImportsToTag = 'addImportsToTag',
   AlwaysCreateNewTagForImports = 'alwaysCreateNewTagForImports',
   ExistingTagForImports = 'existingTagForImports',
@@ -99,6 +100,7 @@ export type PrefValue = {
   [PrefKey.ComponentPreferences]: AllComponentPreferences
   [PrefKey.ActiveComponents]: string[]
   [PrefKey.AlwaysShowSuperToolbar]: boolean
+  [PrefKey.ShowScrollToBottomButton]: boolean
   [PrefKey.AddImportsToTag]: boolean
   [PrefKey.AlwaysCreateNewTagForImports]: boolean
   [PrefKey.ExistingTagForImports]: string | undefined

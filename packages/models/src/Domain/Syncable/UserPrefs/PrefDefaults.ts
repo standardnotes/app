@@ -50,6 +50,7 @@ export const PrefDefaults = {
   [PrefKey.DEPRECATED_ActiveThemes]: [],
   [PrefKey.ActiveComponents]: [],
   [PrefKey.AlwaysShowSuperToolbar]: true,
+  [PrefKey.ShowScrollToBottomButton]: true,
   [PrefKey.AddImportsToTag]: true,
   [PrefKey.AlwaysCreateNewTagForImports]: true,
   [PrefKey.ExistingTagForImports]: undefined,
